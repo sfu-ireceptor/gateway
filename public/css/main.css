@@ -1,0 +1,297 @@
+/* @override http://ireceptor_gateway.dev/css/main.css */
+
+body {
+	font-size: 16px;
+}
+
+.jumbotron {
+	margin-top: 10px;
+	padding-top: 10px;
+}
+
+.jumbotron p {
+	font-size: 16px;
+}
+
+h1 {
+	margin-bottom: 30px;
+}
+
+.tagline_h1 {
+	margin-top: -30px;
+	color: gray;
+}
+
+pre.wrap {
+	white-space: pre-wrap;
+}
+
+nav.navbar-default {
+	margin-bottom: 0;
+}
+
+/* @group table */
+
+table.system_list > tbody > tr.selected > td {
+	background-color: #fcf8e3;
+}
+
+table.system_list > tbody > tr.selected > td {
+	font-weight: bold;
+}
+
+table td .progress {
+	margin-bottom: 0;
+}
+
+table.jobs .status {
+	width: 80%;
+}
+
+table.sample_list td, table.sample_list th {
+	white-space: nowrap;
+}
+
+/* @end */
+
+em.dateRelative {
+	color: gray;
+}
+
+h2 {
+	margin-top: 30px;
+}
+
+/* @group forms */
+
+form {
+	margin-bottom: 20px;
+}
+
+fieldset {
+	margin-top: 30px;
+}
+
+.radio, .checkbox {
+	margin-bottom: 5px;
+	margin-top: 0;	
+}
+
+.checkbox label {
+	font-weight: normal;
+	font-style: normal;
+}
+
+
+.sequences_stats {
+	list-style-type: none;
+	padding-top: 0;
+	padding-bottom: 15px;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	margin-top: 30px;
+	background-color: #f7f7f9;
+	padding-left: 8px;
+	margin-bottom: 30px;
+}
+
+form .error {
+	color: #a94442;
+	font-style: italic;
+}
+
+.bs-example {
+    padding: 0 15px 15px;
+    position: relative;
+    background-color: #f8f8f8;
+    border-radius: 4px 4px 0 0;
+    margin-left: 0;
+    margin-right: 0;
+	margin-top: 30px;
+	border: 1px solid #e7e7e7;
+}
+
+.bs-example fieldset legend {
+	border-color: #ccc;
+	padding-top: 12px;
+}
+
+.bs-example fieldset {
+	margin-top: 0;
+}
+
+.bs-example + input {
+	margin-top: 30px;
+}
+
+/* @end */
+
+.job_view_progress {
+	margin-bottom: 80px;
+}
+
+.sample_list .label {
+	font-size: 95%;
+	font-weight: normal;
+	font-style: normal;
+}
+
+/* @group sequence column selector */
+
+.sequence_column_selector .checkbox {
+	margin-top: -2px;
+}
+
+#sequence_column_selector {
+	margin-top: 10px;
+}
+
+.table > thead > tr > th.column_selector, .table > tbody > tr > td.column_selector {
+	width: 25px;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+form.sequence_column_selector {
+	-webkit-column-count: 6; /* Chrome, Safari, Opera */
+    -moz-column-count: 6; /* Firefox */
+    column-count: 6;
+	margin-bottom: 0;
+}
+
+#sequence_column_selector .panel {
+	margin-bottom: 0;
+}
+
+.analysis_apps_tabpanel .nav-tabs {
+	margin-bottom: 15px;
+}
+
+/* @end */
+
+.analysis_apps_tabpanel .tab-content {
+	min-height: 200px;
+}
+
+.local-job-progress {
+	width: 60px;
+}
+
+.whattodo {
+	margin-top: 20px;
+}
+
+.whattodo .panel-collapse {
+	background-color: #e9f2f7;	
+}
+
+.whattodo > .panel-info > .panel-heading + .panel-collapse > .panel-body {
+	border-top-width: 0;
+}
+
+
+.whattodo .panel-body {
+    padding: 0 15px 10px;
+}
+
+p.workflow {
+	margin-top: 40px;
+	margin-bottom: 40px;
+}
+
+.jstree-default .jstree-node  {
+	background-image: none;
+}
+
+.jstree-default .jstree-closed > .jstree-ocl {
+    background-position: 0px -4px;
+}
+
+.jstree-default .jstree-open > .jstree-ocl {
+    background-position: -32px -4px;
+}
+
+/* @group footer */
+
+footer {
+	position: relative;
+	display: block;
+}
+
+.footer_container {
+	background-color: #f8f8f8;
+	margin-top: 10px;
+	padding-top: 20px;
+	margin-bottom: 0;
+	border-top: 1px solid #e7e7e7;
+}
+
+.footer {
+}
+
+.footer .col-md-4  {
+	vertical-align: text-top;
+}
+
+.footer h4 {
+    border-bottom: 1px solid #ccc;
+	padding-bottom: 10px;
+	margin-bottom: 20px;
+}
+
+.footer h4.powered {
+	margin-bottom: 10px;
+}
+
+.footer img {
+	max-width: 200px;
+	margin-bottom: 20px;
+}
+
+.footer .canarie img {
+	max-width: 210px;	
+}
+
+.footer .compute_canada img {
+	max-width: 290px;		
+}
+
+.footer a.agave {
+	background-color: #04a5b7;
+	display: inline-block;
+	margin-left: 60px;
+	padding-top: 20px;
+}
+
+.footer .agave img {
+	max-width: 150px;
+	margin-bottom: 5px;
+}
+
+.footer .irmacs img {
+	max-width: 150px;	
+}
+
+/* @end */
+
+
+@media (min-width: 992px) {
+	
+.jumbotron {
+	margin-top: 100px;
+	padding-top: 28px;
+}
+
+.login-box {
+	margin-top: 280px;
+	margin-left: 150px;
+}
+
+.footer_container {
+	margin-top: 100px;
+}
+
+.jumbotron p {
+	font-size: 21px;
+}
+}
