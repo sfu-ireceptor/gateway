@@ -148,7 +148,6 @@ class UserController extends Controller {
 
     public function getChangePersonalInfo()
     {
-
         $agave = new Agave;
         $token = $agave->getAdminToken();
 
@@ -180,10 +179,10 @@ class UserController extends Controller {
             'required' => 'This field is required.',
         );
 
-        $validator = Validator::make(Input::all(), $rules, $messages);
+        $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails())
         {
-            Input::flash();
+            $request->flash();
             return redirect('/user/change-personal-info')->withErrors($validator);
         }
 
