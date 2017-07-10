@@ -2,30 +2,45 @@
 
 /*
 |--------------------------------------------------------------------------
-| Public routes
+| user
 |--------------------------------------------------------------------------
 */
 
+Route::prefix('user')->group(function () {
+	// public
+	Route::get('login', 'UserController@getLogin')->name('login');
+	Route::post('login', 'UserController@postLogin');
+
+	Route::get('logout', 'UserController@getLogout');
+
+	// protected
+	Route::middleware('auth')->group(function () {
+		Route::get('account', 'UserController@getAccount');
+
+		Route::get('change-password', 'UserController@getChangePassword');
+		Route::post('change-password', 'UserController@postChangePassword');
+
+		Route::get('change-personal-info', 'UserController@getChangePersonalInfo');
+		Route::post('change-personal-info', 'UserController@postChangePersonalInfo');
+	});
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| other
+|--------------------------------------------------------------------------
+*/
+
+// public
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/home', 'HomeController@index')->name('home');
-
-Route::get('test', 'TestController@getIndex');
-
-Route::get('user/login', 'UserController@getLogin');
-Route::post('user/login', 'UserController@postLogin');
-
-Route::get('user/logout', 'UserController@getLogout');
-
-Route::get('user/account', 'UserController@getAccount');
-
-Route::get('user/change-password', 'UserController@getChangePassword');
-Route::post('user/change-password', 'UserController@postChangePassword');
-
-Route::get('user/change-personal-info', 'UserController@getChangePersonalInfo');
-Route::post('user/change-personal-info', 'UserController@postChangePersonalInfo');
-
-//Auth::routes();
+// protected
+Route::middleware('auth')->group(function () {
+	Route::get('/home', 'HomeController@index')->name('home');
+	Route::get('test', 'TestController@getIndex');
+});
 
