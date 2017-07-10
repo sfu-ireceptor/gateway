@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 
 use App\User;
@@ -70,7 +71,6 @@ class UserController extends Controller {
             $data['notification'] = session('notification');
 
             return view('userChangePassword', $data);
-            return $view;
     }
 
     public function postChangePassword(Request $request)
@@ -100,10 +100,10 @@ class UserController extends Controller {
             'current_password' => 'Invalid'
         );
 
-        $validator = Validator::make(Input::all(), $rules, $messages);
+        $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails())
         {
-            Input::flash();
+            $request->flash();
             return redirect('user/change-password')->withErrors($validator);
         }
 
