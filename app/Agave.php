@@ -46,12 +46,6 @@ class Agave {
 
 	public function getToken($url, $username, $password, $api_key, $api_secret)
 	{
-		$arg_list = func_get_args();
-	    $numargs = func_num_args();
-	    for ($i = 0; $i < $numargs; $i++) {
-	        echo "Argument $i is: " . $arg_list[$i] . "\n";
-	    }
-
 		$request = $this->client->createRequest('POST', '/token', ['auth' => [$api_key, $api_secret]]);
 		$request->addHeader('Content-Type', 'application/x-www-form-urlencoded');
 		
