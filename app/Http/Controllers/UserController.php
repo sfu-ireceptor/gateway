@@ -127,17 +127,12 @@ class UserController extends Controller {
 
     public function getAccount()
     {
-        // var_dump(auth()->user());die();
-
         $username = auth()->user()->username;
         
         $agave = new Agave;
         $token = $agave->getAdminToken();
         $l = $agave->getUser($username, $token);
         $user = $l->result;
-
-        //$user = auth()->user();
-        // var_dump($user);
 
         $data = array();
         $data['user'] = $user;;
@@ -191,7 +186,6 @@ class UserController extends Controller {
         $lastName = $request->input('last_name');
         $email = $request->input('email');
 
-        // create Agave account
         $agave = new Agave;
         $token = $agave->getAdminToken();
         $t = $agave->updateUser($token, $username, $firstName, $lastName, $email);
