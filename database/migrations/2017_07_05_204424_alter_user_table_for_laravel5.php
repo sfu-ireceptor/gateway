@@ -14,6 +14,9 @@ class AlterUserTableForLaravel5 extends Migration
     public function up()
     {
         Schema::table('user', function (Blueprint $table) {
+            $table->dateTime('created_at')->nullable()->default(NULL)->change();
+            $table->dateTime('updated_at')->nullable()->default(NULL)->change();
+
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email');
