@@ -44,5 +44,6 @@ Route::middleware('auth')->group(function () {
 	Route::get('/home', 'HomeController@index')->name('home');
 	Route::get('test', 'TestController@getIndex');
 	Route::get('/samples', 'SampleController@index')->name('samples');
+	Route::get('/sequences', 'SequenceController@index')->name('sequences');
 });
 
