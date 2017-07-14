@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Log;
 use App\User;
 use App\Agave;
 
-class UserController extends Controller {
-
+class UserController extends Controller
+{
 	public function getLogin()
 	{
 		return view('userLogin');

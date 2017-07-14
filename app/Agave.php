@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Post\PostFile;
 use GuzzleHttp\Exception\ClientException;
 
+use phpseclib\Crypt\RSA;
+
 class Agave {
 
 	private $client;
@@ -379,8 +381,8 @@ class Agave {
 	}
 
 	public function generateSSHKeys() {
-		$rsa = new Crypt_RSA();
-		$rsa->setPublicKeyFormat(CRYPT_RSA_PUBLIC_FORMAT_OPENSSH);
+		$rsa = new RSA();
+		$rsa->setPublicKeyFormat(RSA::PUBLIC_FORMAT_OPENSSH);
 		$keys = $rsa->createKey();
 
 		return array('public' => $keys['publickey'], 'private' => $keys['privatekey']);
@@ -398,13 +400,13 @@ class Agave {
 	private function raiseExceptionIfAgaveError($response)
 	{
 		if ($response == NULL) {
-			throw new Exception('AGAVE error: response was empty');
+			throw new \Exception('AGAVE error: response was empty');
 		}
 		if (property_exists($response, 'error')) {
-			throw new Exception('AGAVE error: ' . $response->error . ': ' . $response->error_description);
+			throw new \Exception('AGAVE error: ' . $response->error . ': ' . $response->error_description);
 		}
 		if (property_exists($response, 'status') && $response->status == 'error') {
-			throw new Exception('AGAVE error: ' . $response->message);
+			throw new \Exception('AGAVE error: ' . $response->message);
 		}
 	}
 

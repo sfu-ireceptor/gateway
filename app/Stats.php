@@ -31,7 +31,7 @@ class Stats extends Model {
 	public static function currentStats()
 	{
     	$start_date = new Carbon('first day of this month');
-		$s = static::firstByAttributes(array('start_date' => $start_date->toDateString()));
+		$s = static::where(['start_date' => $start_date->toDateString()])->first();
 
 		if ($s == NULL) {
 			$s = new Stats;

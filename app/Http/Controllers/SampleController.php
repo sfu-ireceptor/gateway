@@ -10,8 +10,8 @@ use App\User;
 use App\Agave;
 use App\RestService;
 
-class SampleController extends Controller {
-
+class SampleController extends Controller
+{
 	public function index(Request $request)
     {
         $username = auth()->user()->username;

@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Log;
 
 use App\Agave;
 
-class TestController extends Controller {
-
+class TestController extends Controller
+{
     public function getIndex()
     {
 		echo 'index';

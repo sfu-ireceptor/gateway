@@ -13,8 +13,8 @@ use App\RestService;
 use App\SequenceColumnName;
 use App\System;
 
-class SequenceController extends Controller {
- 
+class SequenceController extends Controller
+{ 
     public function index(Request $request)
     {
        $filters = $request->all();

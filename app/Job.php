@@ -250,7 +250,7 @@ STR;
 
     public static function get($id, $user_id)
     {
-        $job = static::firstByAttributes(array('user_id' => $user_id, 'id' => $id));
+        $job = static::where(['user_id' => $user_id, 'id' => $id])->first();
         return $job;
     }
 

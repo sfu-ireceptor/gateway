@@ -43,7 +43,8 @@ class Bookmark extends Model {
 
 	public static function get($id, $user_id)
 	{
-		$b = static::where('user_id', 1)->where('id', $id)->first();
+
+		$b = static::where(['user_id' => 1, 'id'=> $id])->first();
 		return $b;
 	}
 
