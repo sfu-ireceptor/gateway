@@ -4,6 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+
+use App\Agave;
+use App\Job;
+use App\JobStep;
+use App\LocalJob;
+use App\RestService;
+use App\User;
 
 class AdminController extends Controller
 {

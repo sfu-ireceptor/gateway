@@ -6,15 +6,34 @@
 |--------------------------------------------------------------------------
 */
 
+// home
 Route::get('/', function() {
     return redirect('home');
 });
 
+// user authentication
 Route::get('user/login', 'UserController@getLogin')->name('login');
 Route::post('user/login', 'UserController@postLogin');
-
 Route::get('user/logout', 'UserController@getLogout');
 
+// Agave jobs notifications
+Route::post('agave/update-status/{id}/{status}', 'AgaveController@postUpdateStatus');
+
+// CANARIE monitoring - dynamic pages
+Route::get('platform/info', 'CanarieController@platformInfo');
+Route::get('auth/service/info', 'CanarieController@authInfo');
+Route::get('computation/service/info', 'CanarieController@computationInfo');
+
+Route::get('platform/stats', 'CanarieController@platformStats');
+Route::get('auth/service/stats', 'CanarieController@authStats');
+Route::get('computation/service/stats', 'CanarieController@computationStats');
+
+// CANARIE monitoring - static pages
+Route::get('canarie', 'CanarieController@links');
+
+Route::get('platform/{page}', 'CanarieController@linkPage');
+Route::get('auth/service/{page}', 'CanarieController@linkPage');
+Route::get('computation/service/{page}', 'CanarieController@linkPage');
 
 /*
 |--------------------------------------------------------------------------

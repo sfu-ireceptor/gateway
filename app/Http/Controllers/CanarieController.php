@@ -3,7 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+
+use Carbon\Carbon;
+
+use App\Agave;
+use App\RestService;
+use App\Stats;
 
 class CanarieController extends Controller
 {
@@ -38,7 +47,7 @@ class CanarieController extends Controller
         return view('canarieLink', $data);
     }
     
-    public function platformInfo()
+    public function platformInfo(Request $request, Response $response)
     {
         $t = array();
 
@@ -52,16 +61,16 @@ class CanarieController extends Controller
         $t['supportEmail'] = 'help@irmacs.sfu.ca';
         $t['tags'] = array('immunology','iReceptor');
 
-        if (Request::wantsJson())
+        if ($request->wantsJson())
         {
-            return Response::json($t);
+            return $response->json($t);
         }
         else {
             return view('canarieInfo', $t);
         }
     }
 
-    public function authInfo()
+    public function authInfo(Request $request, Response $response)
     {
         $t = array();
 
@@ -76,16 +85,16 @@ class CanarieController extends Controller
         $t['supportEmail'] = 'help@irmacs.sfu.ca';
         $t['tags'] = array('immunology','iReceptor');
 
-        if (Request::wantsJson())
+        if ($request->wantsJson())
         {
-            return Response::json($t);
+            return $response->json($t);
         }
         else {
             return view('canarieInfo', $t);
         }
     }
 
-    public function computationInfo()
+    public function computationInfo(Request $request, Response $response)
     {
         $t = array();
 
@@ -100,16 +109,16 @@ class CanarieController extends Controller
         $t['supportEmail'] = 'help@irmacs.sfu.ca';
         $t['tags'] = array('immunology','iReceptor');
 
-        if (Request::wantsJson())
+        if ($request->wantsJson())
         {
-            return Response::json($t);
+            return $response->json($t);
         }
         else {
             return view('canarieInfo', $t);
         }
     }
 
-    public function platformStats()
+    public function platformStats(Request $request, Response $response)
     {
     	$t = array();
 
@@ -118,9 +127,9 @@ class CanarieController extends Controller
     	$t['nbRequests'] = $s->nb_requests;
     	$t['lastReset'] = $s->startDateIso8601();
 
-        if (Request::wantsJson())
+        if ($request->wantsJson())
         {
-            return Response::json($t);
+            return $response->json($t);
         }
         else {
             $t['name'] = 'iReceptor Gateway Stats';
@@ -130,11 +139,11 @@ class CanarieController extends Controller
         }
 }
 
-    public function authStats()
+    public function authStats(Request $request, Response $response)
     {
 		$agave = new Agave;
 		if(! $agave->isUp()) {
-			App::abort(503, 'iReceptor Authentication Service is down.');
+			app()->abort(503, 'iReceptor Authentication Service is down.');
 		}
 
     	$t = array();
@@ -143,9 +152,9 @@ class CanarieController extends Controller
     	$d = new Carbon('last day of June 2015', 'UTC');
     	$t['lastReset'] = $d->toDateString() . 'T'  . $d->toTimeString() . 'Z';
 
-        if (Request::wantsJson())
+        if ($request->wantsJson())
         {
-            return Response::json($t);
+            return $response->json($t);
         }
         else {
             $t['name'] = 'iReceptor Authentication Service Stats';
@@ -155,11 +164,11 @@ class CanarieController extends Controller
         }
     }
 
-    public function computationStats()
+    public function computationStats(Request $request, Response $response)
     {
         $agave = new Agave;
         if(! $agave->isUp()) {
-            App::abort(503, 'iReceptor Computation Service is down.');
+            app()->abort(503, 'iReceptor Computation Service is down.');
         }
 
         $t = array();
@@ -168,9 +177,9 @@ class CanarieController extends Controller
         $d = new Carbon('last day of June 2015', 'UTC');
         $t['lastReset'] = $d->toDateString() . 'T'  . $d->toTimeString() . 'Z';
 
-        if (Request::wantsJson())
+        if ($request->wantsJson())
         {
-            return Response::json($t);
+            return $response->json($t);
         }
         else {
             $t['name'] = 'iReceptor Commputation Service Stats';

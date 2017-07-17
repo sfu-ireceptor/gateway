@@ -47,7 +47,7 @@
 
 		      <ul class="nav navbar-nav navbar-right">
 		    	@if(Auth::check())
-{{-- 			    	@if(Auth::user()->isAdmin())		    	
+			    	@if(Auth::user()->isAdmin())		    	
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">admin<span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
@@ -58,7 +58,7 @@
 							</ul>
 						</li>
 					@endif
- --}}					<li class="dropdown">
+					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->username }}<span class="caret"></span></a>
 						<ul class="dropdown-menu" role="menu">
 						  <li><a href="/user/account">My account</a></li>

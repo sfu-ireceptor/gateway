@@ -5,14 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
+use App\LocalJob;
+use App\Job;
+
 class AgaveController extends Controller
 {
-
-    public function getIndex()
-    {
-        echo "agave index";
-    }
-
     // called by AGAVE
     public function postUpdateStatus($id, $status)
     {
