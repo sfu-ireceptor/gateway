@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+
+use Illuminate\Http\Request;
+
+use App\Agave;
+use App\Job;
+use App\JobStep;
 
 class JobController extends Controller
 {
@@ -205,9 +211,11 @@ class JobController extends Controller
         
         $data['files'] = array();
         if($job['input_folder'] != '') {
-            $folder = 'data/' . $job['input_folder'];
-            $data['files'] = File::allFiles($folder);        
-            $data['filesHTML'] = dir_to_html($folder);          
+            $folder = 'data/' . $job['input_folder'];         
+            if(File::exists($folder)) {
+                $data['files'] = File::allFiles($folder);        
+                $data['filesHTML'] = dir_to_html($folder);          
+            }
         }
 
         $data['steps'] = JobStep::findAllForJob($id);
@@ -218,19 +226,15 @@ class JobController extends Controller
     public function getAgaveHistory($id)
     {
         $job = Job::where('id', '=', $id)->first();
-        if($job != null)
+        if($job != null && $job->agave_id != '')
         {
             $job_agave_id = $job->agave_id;            
-        }
-        else
-        {
-            $job_agave_id = $id;
-        }
-        $token = auth()->user()->password;
+            $token = auth()->user()->password;
 
-        $agave = new Agave;
-        $response = $agave->getJobHistory($job_agave_id, $token);
-        echo '<pre>' . $response . '</pre>';
+            $agave = new Agave;
+            $response = $agave->getJobHistory($job_agave_id, $token);
+            echo '<pre>' . $response . '</pre>';
+        }
     }
 
     // ajax-called from view page

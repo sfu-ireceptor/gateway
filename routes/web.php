@@ -52,7 +52,7 @@ Route::middleware('auth')->group(function () {
 	    Route::get('delete/{id}', 'SystemController@getDelete');
 	});
 
-	Route::prefix('job')->group(function () {
+	Route::prefix('jobs')->group(function () {
 	    Route::get('', 'JobController@getIndex');
 	    Route::get('job-data/{job_id}', 'JobController@getJobData');
 	    Route::get('job-list-grouped-by-month', 'JobController@getJobListGroupedByMonth');
