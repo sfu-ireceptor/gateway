@@ -15,12 +15,11 @@ class AlterAllTablesTimestampsForLaravel5 extends Migration
     {
         $tables = \DB::connection()->getDoctrineSchemaManager()->listTableNames();
         foreach ($tables as $table_name) {
-            if($table_name != 'migrations' && $table_name != 'password_resets')
-            {
+            if ($table_name != 'migrations' && $table_name != 'password_resets') {
                 Schema::table($table_name, function (Blueprint $table) {
-                    $table->dateTime('created_at')->nullable()->default(NULL)->change();
-                    $table->dateTime('updated_at')->nullable()->default(NULL)->change();
-                });                
+                    $table->dateTime('created_at')->nullable()->default(null)->change();
+                    $table->dateTime('updated_at')->nullable()->default(null)->change();
+                });
             }
         }
     }

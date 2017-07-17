@@ -2,9 +2,9 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -22,17 +22,17 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    protected $dates = ['token_expiration_date',];
+    protected $dates = ['token_expiration_date'];
 
     public function updateToken($t)
     {
         // token
         $token = $t->access_token;
         $this->password = $token;
-        
+
         // refresh token
         $refreshToken = $t->refresh_token;
-        $this->refresh_token = $refreshToken;       
+        $this->refresh_token = $refreshToken;
 
         // token expiration date
         $tokenExpirationDate = new Carbon();

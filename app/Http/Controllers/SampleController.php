@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
-
-use App\User;
-use App\Agave;
 use App\RestService;
+use Illuminate\Http\Request;
 
 class SampleController extends Controller
 {
-	public function index(Request $request)
+    public function index(Request $request)
     {
         $username = auth()->user()->username;
 
@@ -24,7 +19,6 @@ class SampleController extends Controller
         $data['sample_list'] = $sample_data['items'];
         $data['rs_list'] = $sample_data['rs_list'];
         $data['total_samples'] = $sample_data['total'];
-
 
         // re-populate form values
         $request->flash();
