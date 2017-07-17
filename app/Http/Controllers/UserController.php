@@ -2,38 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Agave;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
-use App\User;
-use App\Agave;
-
 class UserController extends Controller
 {
-	public function getLogin()
-	{
-		return view('userLogin');
-	}
+    public function getLogin()
+    {
+        return view('userLogin');
+    }
 
-	public function postLogin(Request $request)
-	{
-		$username = $request->input('username');
-		$password = $request->input('password');
+    public function postLogin(Request $request)
+    {
+        $username = $request->input('username');
+        $password = $request->input('password');
 
-		// try to get Agave OAuth token
-		$agave = new Agave;
-		$t = $agave->getTokenForUser($username, $password);
+        // try to get Agave OAuth token
+        $agave = new Agave();
+        $t = $agave->getTokenForUser($username, $password);
 
-		// if fail -> display form with error
-		if ($t == NULL) {
-	        return redirect()->back()->withErrors(array('Invalid credentials'));			
-		}
+        // if fail -> display form with error
+        if ($t == null) {
+            return redirect()->back()->withErrors(['Invalid credentials']);
+        }
 
         // create user in local DB if necessary
         $user = User::where('username', $username)->first();
-        if($user == NULL)
-        {
+        if ($user == null) {
             // get user info from Agave
             $token = $agave->getAdminToken();
             $u = $agave->getUser($username, $token);
@@ -51,65 +49,66 @@ class UserController extends Controller
         }
 
         // save Agave OAuth token in local DB
-		$user->updateToken($t);
+        $user->updateToken($t);
 
         // log user in
-		auth()->login($user);
+        auth()->login($user);
 
-	    return redirect()->intended('home');
-	}
+        return redirect()->intended('home');
+    }
 
     public function getLogout()
     {
         auth()->logout();
+
         return redirect('user/login');
     }
 
     public function getChangePassword()
     {
-            $data = array();
-            $data['notification'] = session('notification');
+        $data = [];
+        $data['notification'] = session('notification');
 
-            return view('userChangePassword', $data);
+        return view('userChangePassword', $data);
     }
 
     public function postChangePassword(Request $request)
     {
         // custom form validation rule to check user's current password
-        Validator::extend('current_password', function($field, $value, $parameters) {
+        Validator::extend('current_password', function ($field, $value, $parameters) {
             $username = auth()->user()->username;
             $password = $value;
 
-            $agave = new Agave;
+            $agave = new Agave();
             $t = $agave->getTokenForUser($username, $password);
-            
-            return $t != NULL;
+
+            return $t != null;
         });
 
         // validate form
-        $rules = array(
-            'current_password' => 'required|current_password',
-            'password' => 'required|min:6',
-            'password_confirmation' => 'required|same:password'
-        );
+        $rules = [
+            'current_password'      => 'required|current_password',
+            'password'              => 'required|min:6',
+            'password_confirmation' => 'required|same:password',
+        ];
 
-        $messages = array(
-            'required' => 'Required.',
-            'min' => 'Must have at least :min characters.',
-            'same' => 'Didn\'t match',
-            'current_password' => 'Invalid'
-        );
+        $messages = [
+            'required'         => 'Required.',
+            'min'              => 'Must have at least :min characters.',
+            'same'             => 'Didn\'t match',
+            'current_password' => 'Invalid',
+        ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
-        if ($validator->fails())
-        {
+        if ($validator->fails()) {
             $request->flash();
+
             return redirect('user/change-password')->withErrors($validator);
         }
 
         $username = auth()->user()->username;
-        
-        $agave = new Agave;
+
+        $agave = new Agave();
         $token = $agave->getAdminToken();
         $l = $agave->getUser($username, $token);
         $user = $l->result;
@@ -121,21 +120,21 @@ class UserController extends Controller
         $password = $request->input('password');
 
         $t = $agave->updateUser($token, $username, $first_name, $last_name, $email, $password);
-        
+
         return redirect('user/account')->with('notification', 'Your password was successfully changed.');
     }
 
     public function getAccount()
     {
         $username = auth()->user()->username;
-        
-        $agave = new Agave;
+
+        $agave = new Agave();
         $token = $agave->getAdminToken();
         $l = $agave->getUser($username, $token);
         $user = $l->result;
 
-        $data = array();
-        $data['user'] = $user;;
+        $data = [];
+        $data['user'] = $user;
         $data['notification'] = session('notification');
 
         return view('userAccount', $data);
@@ -143,14 +142,14 @@ class UserController extends Controller
 
     public function getChangePersonalInfo()
     {
-        $agave = new Agave;
+        $agave = new Agave();
         $token = $agave->getAdminToken();
 
         $username = auth()->user()->username;
         $l = $agave->getUser($username, $token);
         $l = $l->result;
 
-        $data = array();
+        $data = [];
         $data['username'] = $l->username;
         $data['first_name'] = $l->first_name;
         $data['last_name'] = $l->last_name;
@@ -163,21 +162,21 @@ class UserController extends Controller
     public function postChangePersonalInfo(Request $request)
     {
         // validate form
-        $rules = array(
-            'username' => 'required',
+        $rules = [
+            'username'   => 'required',
             'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => 'required|email|unique:user,username'
-        );
+            'last_name'  => 'required',
+            'email'      => 'required|email|unique:user,username',
+        ];
 
-        $messages = array(
+        $messages = [
             'required' => 'This field is required.',
-        );
+        ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
-        if ($validator->fails())
-        {
+        if ($validator->fails()) {
             $request->flash();
+
             return redirect('/user/change-personal-info')->withErrors($validator);
         }
 
@@ -186,10 +185,10 @@ class UserController extends Controller
         $lastName = $request->input('last_name');
         $email = $request->input('email');
 
-        $agave = new Agave;
+        $agave = new Agave();
         $token = $agave->getAdminToken();
         $t = $agave->updateUser($token, $username, $firstName, $lastName, $email);
-        
+
         return redirect('/user/account')->with('notification', 'Personal information was successfully chaged.');
-    } 
+    }
 }

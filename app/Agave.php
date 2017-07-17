@@ -2,540 +2,531 @@
 
 namespace App;
 
-use Illuminate\Support\Facades\Log;
-
-use GuzzleHttp\Post\PostFile;
 use GuzzleHttp\Exception\ClientException;
-
+use GuzzleHttp\Post\PostFile;
+use Illuminate\Support\Facades\Log;
 use phpseclib\Crypt\RSA;
 
-class Agave {
+class Agave
+{
+    private $client;
 
-	private $client;
+    public function __construct()
+    {
+        $this->initGuzzleRESTClient();
+    }
 
-	function __construct() {
-		 $this->initGuzzleRESTClient();
-	}
+    public function isUp()
+    {
+        $url = config('services.agave.tenant_url');
+        $apiKey = config('services.agave.api_key');
+        $apiSecret = config('services.agave.api_token');
 
-	public function isUp()
-	{
-		$url = config('services.agave.tenant_url');
-		$apiKey = config('services.agave.api_key');
-		$apiSecret = config('services.agave.api_token');
+        // user created specifically to test if AGAVE is up
+        $username = config('services.agave.test_user_username');
+        $password = config('services.agave.test_user_password');
 
-		// user created specifically to test if AGAVE is up
-		$username = config('services.agave.test_user_username');;
-		$password = config('services.agave.test_user_password');;
+        // try to get OAuth token
+        $t = $this->getToken($url, $username, $password, $apiKey, $apiSecret);
 
-		// try to get OAuth token
-		$t = $this->getToken($url, $username, $password, $apiKey, $apiSecret);
+        return $t != null;
+    }
 
-		return $t != NULL;	
-	}
+    public function getTokenForUser($username, $password)
+    {
+        $url = config('services.agave.tenant_url');
+        $apiKey = config('services.agave.api_key');
+        $apiSecret = config('services.agave.api_token');
 
-	public function getTokenForUser($username, $password)
-	{
-		$url = config('services.agave.tenant_url');
-		$apiKey = config('services.agave.api_key');
-		$apiSecret = config('services.agave.api_token');
+        // try to get token
+        $t = $this->getToken($url, $username, $password, $apiKey, $apiSecret);
 
-		// try to get token
-		$t = $this->getToken($url, $username, $password, $apiKey, $apiSecret);
+        // return NULL or array with token and refresh token
+        return $t;
+    }
 
-		// return NULL or array with token and refresh token
-		return $t; 
-	}
+    public function getToken($url, $username, $password, $api_key, $api_secret)
+    {
+        $request = $this->client->createRequest('POST', '/token', ['auth' => [$api_key, $api_secret]]);
+        $request->addHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-	public function getToken($url, $username, $password, $api_key, $api_secret)
-	{
-		$request = $this->client->createRequest('POST', '/token', ['auth' => [$api_key, $api_secret]]);
-		$request->addHeader('Content-Type', 'application/x-www-form-urlencoded');
-		
-		$postBody = $request->getBody();
-		$postBody->setField('grant_type', 'password');
-		$postBody->setField('username', $username);
-		$postBody->setField('password', $password);
-		$postBody->setField('scope', 'PRODUCTION');
+        $postBody = $request->getBody();
+        $postBody->setField('grant_type', 'password');
+        $postBody->setField('username', $username);
+        $postBody->setField('password', $password);
+        $postBody->setField('scope', 'PRODUCTION');
 
-		try {
-			$response = $this->client->send($request);
+        try {
+            $response = $this->client->send($request);
 
-			$response = json_decode($response->getBody());
-			$this->raiseExceptionIfAgaveError($response);						
-		} catch (ClientException $e) {
-			return NULL;
-		}		
+            $response = json_decode($response->getBody());
+            $this->raiseExceptionIfAgaveError($response);
+        } catch (ClientException $e) {
+            return;
+        }
 
-		return $response;
-	}
+        return $response;
+    }
 
-	public function getAdminToken()
-	{
-		$url = config('services.agave.tenant_url');
-		$apiKey = config('services.agave.api_key');
-		$apiSecret = config('services.agave.api_token');
+    public function getAdminToken()
+    {
+        $url = config('services.agave.tenant_url');
+        $apiKey = config('services.agave.api_key');
+        $apiSecret = config('services.agave.api_token');
 
-		// admin user allowed to create user accounts
-		$username = config('services.agave.admin_username');
-		$password = config('services.agave.admin_password');
+        // admin user allowed to create user accounts
+        $username = config('services.agave.admin_username');
+        $password = config('services.agave.admin_password');
 
-		$t = $this->getToken($url, $username, $password, $apiKey, $apiSecret);
+        $t = $this->getToken($url, $username, $password, $apiKey, $apiSecret);
 
-		return $t->access_token;			
-	}
+        return $t->access_token;
+    }
 
-	public function renewToken($url, $refresh_token, $api_key, $api_secret)
-	{
-		$request = $this->client->createRequest('POST', '/token', ['auth' => [$api_key, $api_secret]]);
-		$request->addHeader('Content-Type', 'application/x-www-form-urlencoded');
-		
-		$postBody = $request->getBody();
-		$postBody->setField('grant_type', 'refresh_token');
-		$postBody->setField('refresh_token', $refresh_token);
-		$postBody->setField('scope', 'PRODUCTION');
+    public function renewToken($url, $refresh_token, $api_key, $api_secret)
+    {
+        $request = $this->client->createRequest('POST', '/token', ['auth' => [$api_key, $api_secret]]);
+        $request->addHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-		try {
-			$response = $this->client->send($request);
+        $postBody = $request->getBody();
+        $postBody->setField('grant_type', 'refresh_token');
+        $postBody->setField('refresh_token', $refresh_token);
+        $postBody->setField('scope', 'PRODUCTION');
 
-			$response = json_decode($response->getBody());
-			$this->raiseExceptionIfAgaveError($response);						
-		} catch (ClientException $e) {
-			return NULL;
-		}		
+        try {
+            $response = $this->client->send($request);
 
-		return $response;
-	}
+            $response = json_decode($response->getBody());
+            $this->raiseExceptionIfAgaveError($response);
+        } catch (ClientException $e) {
+            return;
+        }
 
-	public function createSystem($token, $config)
-	{
-		$url = '/systems/v2/?pretty=true';
-		return $this->doPOSTRequestWithJSON($url, $token, $config);
-	}	
+        return $response;
+    }
 
-	public function createApp($token, $config)
-	{
-		$url = '/apps/v2/?pretty=true';
-		return $this->doPOSTRequestWithJSON($url, $token, $config);
-	}
+    public function createSystem($token, $config)
+    {
+        $url = '/systems/v2/?pretty=true';
 
-	public function createJob($token, $config)
-	{
-		$url = '/jobs/v2/?pretty=true';
-		return $this->doPOSTRequestWithJSON($url, $token, $config);
-	}
+        return $this->doPOSTRequestWithJSON($url, $token, $config);
+    }
 
-	public function createUser($token, $first_name, $last_name, $email)
-	{
-		$first_name_stripped = $string = str_replace(' ', '', $first_name);
-		$last_name_stripped = $string = str_replace(' ', '', $last_name);
-        $username = strtolower($first_name_stripped) . '_' . strtolower($last_name_stripped);
+    public function createApp($token, $config)
+    {
+        $url = '/apps/v2/?pretty=true';
+
+        return $this->doPOSTRequestWithJSON($url, $token, $config);
+    }
+
+    public function createJob($token, $config)
+    {
+        $url = '/jobs/v2/?pretty=true';
+
+        return $this->doPOSTRequestWithJSON($url, $token, $config);
+    }
+
+    public function createUser($token, $first_name, $last_name, $email)
+    {
+        $first_name_stripped = $string = str_replace(' ', '', $first_name);
+        $last_name_stripped = $string = str_replace(' ', '', $last_name);
+        $username = strtolower($first_name_stripped).'_'.strtolower($last_name_stripped);
         $password = str_random(24);
 
-		$url = '/profiles/v2/?pretty=true';
-	
-		$variables = array (
-			'username' => $username,
-			'password' => $password,
-			'email' => $email,
-			'first_name' => $first_name,
-			'last_name' => $last_name
-		);
+        $url = '/profiles/v2/?pretty=true';
 
-		$this->doPOSTRequest($url, $token, $variables);
+        $variables = [
+            'username'   => $username,
+            'password'   => $password,
+            'email'      => $email,
+            'first_name' => $first_name,
+            'last_name'  => $last_name,
+        ];
 
-		return $variables;
-	}
+        $this->doPOSTRequest($url, $token, $variables);
 
-	public function updateUser($token, $username, $first_name, $last_name, $email, $password = '')
-	{
-		$url = '/profiles/v2/' . $username;
-	
-		$variables = array (
-			'first_name' => $first_name,
-			'last_name' => $last_name,
-			'email' => $email
-		);
+        return $variables;
+    }
 
-		if ($password != '')
-		{
-			$variables['password'] = $password;
-		}
+    public function updateUser($token, $username, $first_name, $last_name, $email, $password = '')
+    {
+        $url = '/profiles/v2/'.$username;
 
-		$this->doPUTRequest($url, $token, $variables);
+        $variables = [
+            'first_name' => $first_name,
+            'last_name'  => $last_name,
+            'email'      => $email,
+        ];
 
-		return $variables;
-	}
+        if ($password != '') {
+            $variables['password'] = $password;
+        }
 
-	public function deleteUser($token, $username)
-	{
-		$url = '/profiles/v2/' . $username;
-		$this->doDELETERequest($url, $token);
-	}
+        $this->doPUTRequest($url, $token, $variables);
 
-	public function listApps($token)
-	{
-		$url = '/apps/v2/?pretty=true';
-		return $this->doGETRequest($url, $token);
-	}
+        return $variables;
+    }
 
-	public function listSystems($token)
-	{
-		$url = '/systems/v2/?pretty=true';
-		return $this->doGETRequest($url, $token);
-	}
+    public function deleteUser($token, $username)
+    {
+        $url = '/profiles/v2/'.$username;
+        $this->doDELETERequest($url, $token);
+    }
 
-	public function getJobHistory($job_id, $token)
-	{
-		$url = '/jobs/v2/' . $job_id . '/history?pretty=true';
-		return $this->doGETRequest($url, $token, true);
-	}
+    public function listApps($token)
+    {
+        $url = '/apps/v2/?pretty=true';
 
-	public function getExcutionSystemConfig($name, $host, $username, $privateKey, $publicKey)
-	{
-		$t = array (
-			'id' => $name,
-			'name' => $name,
-			'type' => 'EXECUTION',
-			'executionType' => 'HPC',
-			'scheduler' => 'PBS',
-			'queues' => 
-				array (
-					array (
-						'name' => 'pre',
-					)
-				),
-			'login' => 
-				array (
-					'protocol' => 'SSH',
-					'host' => $host,
-					'port' => 22,
-					'auth' => 
-						array (
-							'type' => 'SSHKEYS',
-							'username' => $username,
-							'publicKey' => $publicKey,
-							'privateKey' => $privateKey,
-						),
-				),
-			'storage' => 
-				array (
-					'protocol' => 'SFTP',
-					'host' => $host,
-					'port' => 22,
-					'auth' => 
-						array (
-							'type' => 'SSHKEYS',
-							'username' => $username,
-							'publicKey' => $publicKey,
-							'privateKey' => $privateKey,
-						),
-					'rootDir' => '/home' . '/' . $username . '/scratch',
-				),
-		);
+        return $this->doGETRequest($url, $token);
+    }
 
-		return $t;
-	}
+    public function listSystems($token)
+    {
+        $url = '/systems/v2/?pretty=true';
 
-	public function getStorageSystemConfig($name, $host, $auth, $rootDir)
-	{
-		$t = array (
-			'id' => $name,
-			'name' => $name,
-			'type' => 'STORAGE',
-			'storage' => 
-				array (
-					'protocol' => 'SFTP',
-					'host' => $host,
-					'port' => 22,
-					'auth' => $auth,
-					'rootDir' => $rootDir,
-				),
-		);
+        return $this->doGETRequest($url, $token);
+    }
 
-		return $t;
-	}
+    public function getJobHistory($job_id, $token)
+    {
+        $url = '/jobs/v2/'.$job_id.'/history?pretty=true';
 
-	public function getAppConfig($id, $name, $executionSystem, $deploymentSystem, $deploymentPath)
-	{
-		$params = array();
-		$inputs = array();
+        return $this->doGETRequest($url, $token, true);
+    }
 
-		if($id == 1)
-		{
-			$params = array (
-				array (
-					'id' => 'param1',
-					'value' => 
-					array (
-						'type' => 'string',
-					),
-				),
-			);
+    public function getExcutionSystemConfig($name, $host, $username, $privateKey, $publicKey)
+    {
+        $t = [
+            'id'            => $name,
+            'name'          => $name,
+            'type'          => 'EXECUTION',
+            'executionType' => 'HPC',
+            'scheduler'     => 'PBS',
+            'queues'        => [
+                    [
+                        'name' => 'pre',
+                    ],
+                ],
+            'login' => [
+                    'protocol' => 'SSH',
+                    'host'     => $host,
+                    'port'     => 22,
+                    'auth'     => [
+                            'type'       => 'SSHKEYS',
+                            'username'   => $username,
+                            'publicKey'  => $publicKey,
+                            'privateKey' => $privateKey,
+                        ],
+                ],
+            'storage' => [
+                    'protocol' => 'SFTP',
+                    'host'     => $host,
+                    'port'     => 22,
+                    'auth'     => [
+                            'type'       => 'SSHKEYS',
+                            'username'   => $username,
+                            'publicKey'  => $publicKey,
+                            'privateKey' => $privateKey,
+                        ],
+                    'rootDir' => '/home'.'/'.$username.'/scratch',
+                ],
+        ];
 
-			$inputs = array (
-				array (
-					'id' => 'file1',
-				),
-			);
-		}
-		else if($id == 2)
-		{
-			$params = array (
-				array (
-					'id' => 'param1',
-					'value' => 
-					array (
-						'type' => 'string',
-					),
-				),
-				array (
-					'id' => 'red',
-					'value' => 
-					array (
-						'type' => 'number',
-					),
-				),
-				array (
-					'id' => 'green',
-					'value' => 
-					array (
-						'type' => 'number',
-					),
-				),
-				array (
-					'id' => 'blue',
-					'value' => 
-					array (
-						'type' => 'number',
-					),
-				)				
-			);
+        return $t;
+    }
 
-			$inputs = array (
-				array (
-					'id' => 'file1',
-				),
-			);
-		}
-		else if($id == 3)
-		{
-			$inputs = array (
-				array (
-					'id' => 'file1',
-				),
-			);
-		}
+    public function getStorageSystemConfig($name, $host, $auth, $rootDir)
+    {
+        $t = [
+            'id'      => $name,
+            'name'    => $name,
+            'type'    => 'STORAGE',
+            'storage' => [
+                    'protocol' => 'SFTP',
+                    'host'     => $host,
+                    'port'     => 22,
+                    'auth'     => $auth,
+                    'rootDir'  => $rootDir,
+                ],
+        ];
 
-		$t = array (
-			'name' => $name,
-			'version' => '1.00',
-			'executionSystem' => $executionSystem,
-			'parallelism' => 'SERIAL',
-			'executionType' => 'CLI',
-			'deploymentSystem' => $deploymentSystem,
-			'deploymentPath' => $deploymentPath,
-			'templatePath' => 'app.sh',
-			'testPath' => 'test.sh',
-			'parameters' => $params,
-			'inputs' => $inputs,
-		);
+        return $t;
+    }
 
-		return $t;
-	}
+    public function getAppConfig($id, $name, $executionSystem, $deploymentSystem, $deploymentPath)
+    {
+        $params = [];
+        $inputs = [];
 
-	public function getJobConfig($name, $app_id, $storage_archiving, $notification_url, $inputFolder, $params, $inputs)
-	{
-		$t = array (
-			'name' => $name,
-			'appId' => $app_id,
-			'parameters' => $params,
-			'inputs' => $inputs,
-			'maxRunTime' => '00:10:00',
-			'archive' => true,
-			'archiveSystem' => $storage_archiving,
-			'archivePath' => $inputFolder,
-			'notifications' => 
-			array (
-				array (
-					'url' => $notification_url . '/agave/update-status/${JOB_ID}/${JOB_STATUS}',
-					'event' => '*',
-					'persistent' => true,
-				),
-			),
-		);
+        if ($id == 1) {
+            $params = [
+                [
+                    'id'    => 'param1',
+                    'value' => [
+                        'type' => 'string',
+                    ],
+                ],
+            ];
 
-		return $t;
-	}
+            $inputs = [
+                [
+                    'id' => 'file1',
+                ],
+            ];
+        } elseif ($id == 2) {
+            $params = [
+                [
+                    'id'    => 'param1',
+                    'value' => [
+                        'type' => 'string',
+                    ],
+                ],
+                [
+                    'id'    => 'red',
+                    'value' => [
+                        'type' => 'number',
+                    ],
+                ],
+                [
+                    'id'    => 'green',
+                    'value' => [
+                        'type' => 'number',
+                    ],
+                ],
+                [
+                    'id'    => 'blue',
+                    'value' => [
+                        'type' => 'number',
+                    ],
+                ],
+            ];
 
-	public function getUsers($token)
-	{
-		$url = '/profiles/v2/?pretty=true';
-		$response = $this->doGETRequest($url, $token);
-		return $response->result;
-	}
+            $inputs = [
+                [
+                    'id' => 'file1',
+                ],
+            ];
+        } elseif ($id == 3) {
+            $inputs = [
+                [
+                    'id' => 'file1',
+                ],
+            ];
+        }
 
-	public function getUser($username, $token)
-	{
-		$url = '/profiles/v2/' . $username;
-		return $this->doGETRequest($url, $token);
-	}
+        $t = [
+            'name'             => $name,
+            'version'          => '1.00',
+            'executionSystem'  => $executionSystem,
+            'parallelism'      => 'SERIAL',
+            'executionType'    => 'CLI',
+            'deploymentSystem' => $deploymentSystem,
+            'deploymentPath'   => $deploymentPath,
+            'templatePath'     => 'app.sh',
+            'testPath'         => 'test.sh',
+            'parameters'       => $params,
+            'inputs'           => $inputs,
+        ];
 
-	public function generateSSHKeys() {
-		$rsa = new RSA();
-		$rsa->setPublicKeyFormat(RSA::PUBLIC_FORMAT_OPENSSH);
-		$keys = $rsa->createKey();
+        return $t;
+    }
 
-		return array('public' => $keys['publickey'], 'private' => $keys['privatekey']);
-	}
+    public function getJobConfig($name, $app_id, $storage_archiving, $notification_url, $inputFolder, $params, $inputs)
+    {
+        $t = [
+            'name'          => $name,
+            'appId'         => $app_id,
+            'parameters'    => $params,
+            'inputs'        => $inputs,
+            'maxRunTime'    => '00:10:00',
+            'archive'       => true,
+            'archiveSystem' => $storage_archiving,
+            'archivePath'   => $inputFolder,
+            'notifications' => [
+                [
+                    'url'        => $notification_url.'/agave/update-status/${JOB_ID}/${JOB_STATUS}',
+                    'event'      => '*',
+                    'persistent' => true,
+                ],
+            ],
+        ];
 
-	private function initGuzzleRESTClient() {
-		// set tenant URL
-		$tenant_url = config('services.agave.tenant_url');
-		$this->client = new \GuzzleHttp\Client(['base_url' => $tenant_url]);
+        return $t;
+    }
 
-		// accept self-signed SSL certificates
-		$this->client->setDefaultOption('verify', false);
-	}
+    public function getUsers($token)
+    {
+        $url = '/profiles/v2/?pretty=true';
+        $response = $this->doGETRequest($url, $token);
 
-	private function raiseExceptionIfAgaveError($response)
-	{
-		if ($response == NULL) {
-			throw new \Exception('AGAVE error: response was empty');
-		}
-		if (property_exists($response, 'error')) {
-			throw new \Exception('AGAVE error: ' . $response->error . ': ' . $response->error_description);
-		}
-		if (property_exists($response, 'status') && $response->status == 'error') {
-			throw new \Exception('AGAVE error: ' . $response->message);
-		}
-	}
+        return $response->result;
+    }
 
-	private function doGETRequest($url, $token, $raw_json = false)
-	{
-		// build request
-		$request = $this->client->createRequest('GET', $url);
-		$request->addHeader('Content-Type', 'application/x-www-form-urlencoded');
-		$request->addHeader('Authorization', 'Bearer ' .  $token);
+    public function getUser($username, $token)
+    {
+        $url = '/profiles/v2/'.$username;
 
-		// execute request
-		$response = $this->client->send($request);
+        return $this->doGETRequest($url, $token);
+    }
 
-		// return response as object		
-		$json = $response->getBody();
-		Log::info('json response -> ' . $json);
-		if($raw_json) {
-			return $json;
-		}
-		else {
-			$response = json_decode($json);
-			$this->raiseExceptionIfAgaveError($response);
-			return $response;			
-		}
-	}
+    public function generateSSHKeys()
+    {
+        $rsa = new RSA();
+        $rsa->setPublicKeyFormat(RSA::PUBLIC_FORMAT_OPENSSH);
+        $keys = $rsa->createKey();
 
-	public function doPOSTRequestWithJSON($url, $token, $config)
-	{
-		// Log::info('doPOSTRequestWithJSON url: ' . $url);
-		// Log::info('token: ' . $token);
-		// Log::info('config: ' . var_export($config, true));
+        return ['public' => $keys['publickey'], 'private' => $keys['privatekey']];
+    }
 
-		// convert config object to json
-		$json = json_encode($config, JSON_PRETTY_PRINT);
-		Log::info('json request -> ' . $json);	
+    private function initGuzzleRESTClient()
+    {
+        // set tenant URL
+        $tenant_url = config('services.agave.tenant_url');
+        $this->client = new \GuzzleHttp\Client(['base_url' => $tenant_url]);
 
-		// add to files array
-		$files = array();
-		$files['fileToUpload'] = $json;		
+        // accept self-signed SSL certificates
+        $this->client->setDefaultOption('verify', false);
+    }
 
-		return $this->doPOSTRequest($url, $token, [], $files);
-	}
+    private function raiseExceptionIfAgaveError($response)
+    {
+        if ($response == null) {
+            throw new \Exception('AGAVE error: response was empty');
+        }
+        if (property_exists($response, 'error')) {
+            throw new \Exception('AGAVE error: '.$response->error.': '.$response->error_description);
+        }
+        if (property_exists($response, 'status') && $response->status == 'error') {
+            throw new \Exception('AGAVE error: '.$response->message);
+        }
+    }
 
-	public function doPOSTRequest($url, $token, $variables = [], $files = [])
-	{	
-		// build request
-		$request = $this->client->createRequest('POST', $url);
-		$request->addHeader('Authorization', 'Bearer ' .  $token);
-		if(count($files) > 0)
-		{
-			$request->addHeader('Content-Type', 'multipart/form-data');
-		}
+    private function doGETRequest($url, $token, $raw_json = false)
+    {
+        // build request
+        $request = $this->client->createRequest('GET', $url);
+        $request->addHeader('Content-Type', 'application/x-www-form-urlencoded');
+        $request->addHeader('Authorization', 'Bearer '.$token);
 
-		$request->setQuery($variables);
+        // execute request
+        $response = $this->client->send($request);
 
-		$postBody = $request->getBody();
-		foreach ($files as $filename => $file_str) {
-			$postBody->addFile(new PostFile($filename, $file_str));
-		}
+        // return response as object
+        $json = $response->getBody();
+        Log::info('json response -> '.$json);
+        if ($raw_json) {
+            return $json;
+        } else {
+            $response = json_decode($json);
+            $this->raiseExceptionIfAgaveError($response);
 
-		// execute request
-		try {
-			$response = $this->client->send($request);
-		} catch (ClientException $exception) {
-		    $response = $exception->getResponse();
-		    Log::error($response);
-		}
+            return $response;
+        }
+    }
 
-		// return response as object		
-		$json = $response->getBody();
-		Log::info('json response -> ' . $json);
-		$response = json_decode($json);
-		$this->raiseExceptionIfAgaveError($response);
-		return $response;
-	}
+    public function doPOSTRequestWithJSON($url, $token, $config)
+    {
+        // Log::info('doPOSTRequestWithJSON url: ' . $url);
+        // Log::info('token: ' . $token);
+        // Log::info('config: ' . var_export($config, true));
 
-	public function doPUTRequest($url, $token, $variables = [], $files = [])
-	{	
-		// build request
-		$request = $this->client->createRequest('PUT', $url);
-		$request->addHeader('Authorization', 'Bearer ' .  $token);
-		if(count($files) > 0)
-		{
-			$request->addHeader('Content-Type', 'multipart/form-data');
-		}
+        // convert config object to json
+        $json = json_encode($config, JSON_PRETTY_PRINT);
+        Log::info('json request -> '.$json);
 
-		$request->setQuery($variables);
+        // add to files array
+        $files = [];
+        $files['fileToUpload'] = $json;
 
-		$postBody = $request->getBody();
-		foreach ($files as $filename => $file_str) {
-			$postBody->addFile(new PostFile($filename, $file_str));
-		}
+        return $this->doPOSTRequest($url, $token, [], $files);
+    }
 
-		// execute request
-		try {
-			$response = $this->client->send($request);
-		} catch (ClientException $exception) {
-		    $response = $exception->getResponse();
-		    Log::error($response);
-		}
+    public function doPOSTRequest($url, $token, $variables = [], $files = [])
+    {
+        // build request
+        $request = $this->client->createRequest('POST', $url);
+        $request->addHeader('Authorization', 'Bearer '.$token);
+        if (count($files) > 0) {
+            $request->addHeader('Content-Type', 'multipart/form-data');
+        }
 
-		// return response as object		
-		$json = $response->getBody();
-		Log::info('json response -> ' . $json);
-		$response = json_decode($json);
-		$this->raiseExceptionIfAgaveError($response);
-		return $response;
-	}
+        $request->setQuery($variables);
 
-	public function doDELETERequest($url, $token)
-	{	
-		// build request
-		$request = $this->client->createRequest('DELETE', $url);
-		$request->addHeader('Authorization', 'Bearer ' .  $token);
+        $postBody = $request->getBody();
+        foreach ($files as $filename => $file_str) {
+            $postBody->addFile(new PostFile($filename, $file_str));
+        }
 
-		// execute request
-		try {
-			$response = $this->client->send($request);
-		} catch (ClientException $exception) {
-		    $response = $exception->getResponse();
-		    Log::error($response);
-		}
+        // execute request
+        try {
+            $response = $this->client->send($request);
+        } catch (ClientException $exception) {
+            $response = $exception->getResponse();
+            Log::error($response);
+        }
 
-		// return response as object		
-		$json = $response->getBody();
-		Log::info('json response -> ' . $json);
-		$response = json_decode($json);
-		$this->raiseExceptionIfAgaveError($response);
-		return $response;
-	}
+        // return response as object
+        $json = $response->getBody();
+        Log::info('json response -> '.$json);
+        $response = json_decode($json);
+        $this->raiseExceptionIfAgaveError($response);
 
+        return $response;
+    }
+
+    public function doPUTRequest($url, $token, $variables = [], $files = [])
+    {
+        // build request
+        $request = $this->client->createRequest('PUT', $url);
+        $request->addHeader('Authorization', 'Bearer '.$token);
+        if (count($files) > 0) {
+            $request->addHeader('Content-Type', 'multipart/form-data');
+        }
+
+        $request->setQuery($variables);
+
+        $postBody = $request->getBody();
+        foreach ($files as $filename => $file_str) {
+            $postBody->addFile(new PostFile($filename, $file_str));
+        }
+
+        // execute request
+        try {
+            $response = $this->client->send($request);
+        } catch (ClientException $exception) {
+            $response = $exception->getResponse();
+            Log::error($response);
+        }
+
+        // return response as object
+        $json = $response->getBody();
+        Log::info('json response -> '.$json);
+        $response = json_decode($json);
+        $this->raiseExceptionIfAgaveError($response);
+
+        return $response;
+    }
+
+    public function doDELETERequest($url, $token)
+    {
+        // build request
+        $request = $this->client->createRequest('DELETE', $url);
+        $request->addHeader('Authorization', 'Bearer '.$token);
+
+        // execute request
+        try {
+            $response = $this->client->send($request);
+        } catch (ClientException $exception) {
+            $response = $exception->getResponse();
+            Log::error($response);
+        }
+
+        // return response as object
+        $json = $response->getBody();
+        Log::info('json response -> '.$json);
+        $response = json_decode($json);
+        $this->raiseExceptionIfAgaveError($response);
+
+        return $response;
+    }
 }

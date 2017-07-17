@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AlterUserTableForLaravel5 extends Migration
 {
@@ -14,8 +14,8 @@ class AlterUserTableForLaravel5 extends Migration
     public function up()
     {
         Schema::table('user', function (Blueprint $table) {
-            $table->dateTime('created_at')->nullable()->default(NULL)->change();
-            $table->dateTime('updated_at')->nullable()->default(NULL)->change();
+            $table->dateTime('created_at')->nullable()->default(null)->change();
+            $table->dateTime('updated_at')->nullable()->default(null)->change();
 
             $table->string('first_name');
             $table->string('last_name');
