@@ -37,7 +37,7 @@ return [
 
     'agave' => [
         'tenant_url'  => env('AGAVE_TENANT_URL', 'https://irec.tenants.prod.agaveapi.co'),
-        
+
         'api_key' => env('AGAVE_API_KEY'),
         'api_token' => env('AGAVE_API_TOKEN'),
 
@@ -47,19 +47,19 @@ return [
         'test_user_username' => env('TEST_USER_USERNAME'),
         'test_user_password' => env('TEST_USER_PASSWORD'),
 
-        'system_staging' => array(
+        'system_staging' => [
             'name_prefix'  => env('AGAVE_SYSTEM_STAGING_NAME_PREFIX', 'system-staging-irec-'),
             'host'  => env('AGAVE_SYSTEM_STAGING_HOST', 'ireceptorgw.irmacs.sfu.ca'),
             'auth' => env('AGAVE_SYSTEM_STAGING_AUTH'),
             'rootdir'  => env('AGAVE_SYSTEM_STAGING_ROOTDIR'),
-        ),
+        ],
 
-        'system_deploy' => array(
+        'system_deploy' => [
             'name_prefix'  => env('AGAVE_SYSTEM_DEPLOY_NAME_PREFIX', 'system-deploy-irec-'),
             'host'  => env('AGAVE_SYSTEM_DEPLOY_HOST', 'ireceptorgw.irmacs.sfu.ca'),
             'auth' => env('AGAVE_SYSTEM_DEPLOY_AUTH'),
             'rootdir'  => env('AGAVE_SYSTEM_DEPLOY_ROOTDIR'),
-        ),
+        ],
 
         'gw_notification_url' => env('AGAVE_GW_NOTIFICATION_URL', 'https://ireceptorgw.irmacs.sfu.ca'),
     ],

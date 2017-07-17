@@ -2,77 +2,67 @@
 
 namespace App\Http\Controllers;
 
+use App\Agave;
+use App\Stats;
+use Carbon\Carbon;
+use App\RestService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
-
-use Carbon\Carbon;
-
-use App\Agave;
-use App\RestService;
-use App\Stats;
 
 class CanarieController extends Controller
 {
     public function links()
     {
-        $data = array();
-        
+        $data = [];
+
         $rs_list = RestService::all();
         $data['rs_list'] = $rs_list;
-        
+
         return view('canarieLinks', $data);
     }
 
     public function linkPage($page)
     {
-        $url = 'http://ireceptor.irmacs.sfu.ca/platform/' . $page;
+        $url = 'http://ireceptor.irmacs.sfu.ca/platform/'.$page;
 
-        if($page == 'factsheet')
-        {
+        if ($page == 'factsheet') {
             $url = 'http://www.canarie.ca/software/platforms/ireceptor/';
-        }
-        else if ($page == 'provenance' || $page == 'licence')
-        {
+        } elseif ($page == 'provenance' || $page == 'licence') {
             $url = 'http://ireceptor.irmacs.sfu.ca/platform/doc';
         }
 
-        $data = array();
-        $data['title'] = '/' . $page;
+        $data = [];
+        $data['title'] = '/'.$page;
         $data['page'] = $page;
         $data['url'] = $url;
 
         return view('canarieLink', $data);
     }
-    
+
     public function platformInfo(Request $request, Response $response)
     {
-        $t = array();
+        $t = [];
 
         $t['name'] = 'iReceptor Gateway';
         $t['synopsis'] = 'A Distributed Data Management System and Scientific Gateway for Mining Next Generation Sequence Data from Immune Responses';
         $t['version'] = '0.1';
         $t['institution'] = 'IRMACS/Simon Fraser University';
         $d = new Carbon('first day of July 2015', 'UTC');
-        $t['releaseTime'] = $d->toDateString() . 'T'  . $d->toTimeString() . 'Z';
+        $t['releaseTime'] = $d->toDateString().'T'.$d->toTimeString().'Z';
         $t['researchSubject'] = 'Immunology';
         $t['supportEmail'] = 'help@irmacs.sfu.ca';
-        $t['tags'] = array('immunology','iReceptor');
+        $t['tags'] = ['immunology', 'iReceptor'];
 
-        if ($request->wantsJson())
-        {
+        if ($request->wantsJson()) {
             return $response->json($t);
-        }
-        else {
+        } else {
             return view('canarieInfo', $t);
         }
     }
 
     public function authInfo(Request $request, Response $response)
     {
-        $t = array();
+        $t = [];
 
         $t['name'] = 'iReceptor Authentication Service';
         $t['category'] = 'User Management/Authentication';
@@ -80,23 +70,21 @@ class CanarieController extends Controller
         $t['version'] = '0.1';
         $t['institution'] = 'IRMACS/Simon Fraser University';
         $d = new Carbon('first day of July 2015', 'UTC');
-        $t['releaseTime'] = $d->toDateString() . 'T'  . $d->toTimeString() . 'Z';
+        $t['releaseTime'] = $d->toDateString().'T'.$d->toTimeString().'Z';
         $t['researchSubject'] = 'Immunology';
         $t['supportEmail'] = 'help@irmacs.sfu.ca';
-        $t['tags'] = array('immunology','iReceptor');
+        $t['tags'] = ['immunology', 'iReceptor'];
 
-        if ($request->wantsJson())
-        {
+        if ($request->wantsJson()) {
             return $response->json($t);
-        }
-        else {
+        } else {
             return view('canarieInfo', $t);
         }
     }
 
     public function computationInfo(Request $request, Response $response)
     {
-        $t = array();
+        $t = [];
 
         $t['name'] = 'iReceptor Computation Service';
         $t['category'] = 'Data Manipulation';
@@ -104,62 +92,58 @@ class CanarieController extends Controller
         $t['version'] = '0.1';
         $t['institution'] = 'IRMACS/Simon Fraser University';
         $d = new Carbon('first day of July 2015', 'UTC');
-        $t['releaseTime'] = $d->toDateString() . 'T'  . $d->toTimeString() . 'Z';
+        $t['releaseTime'] = $d->toDateString().'T'.$d->toTimeString().'Z';
         $t['researchSubject'] = 'Immunology';
         $t['supportEmail'] = 'help@irmacs.sfu.ca';
-        $t['tags'] = array('immunology','iReceptor');
+        $t['tags'] = ['immunology', 'iReceptor'];
 
-        if ($request->wantsJson())
-        {
+        if ($request->wantsJson()) {
             return $response->json($t);
-        }
-        else {
+        } else {
             return view('canarieInfo', $t);
         }
     }
 
     public function platformStats(Request $request, Response $response)
     {
-    	$t = array();
+        $t = [];
 
-    	$s = Stats::currentStats();
+        $s = Stats::currentStats();
 
-    	$t['nbRequests'] = $s->nb_requests;
-    	$t['lastReset'] = $s->startDateIso8601();
+        $t['nbRequests'] = $s->nb_requests;
+        $t['lastReset'] = $s->startDateIso8601();
 
-        if ($request->wantsJson())
-        {
+        if ($request->wantsJson()) {
             return $response->json($t);
-        }
-        else {
+        } else {
             $t['name'] = 'iReceptor Gateway Stats';
             $t['key'] = 'Number of requests';
             $t['val'] = $s->nb_requests;
+
             return view('canarieStats', $t);
         }
-}
+    }
 
     public function authStats(Request $request, Response $response)
     {
-		$agave = new Agave;
-		if(! $agave->isUp()) {
-			app()->abort(503, 'iReceptor Authentication Service is down.');
-		}
-
-    	$t = array();
-
-    	$t['nbUsers'] = User::count();    	
-    	$d = new Carbon('last day of June 2015', 'UTC');
-    	$t['lastReset'] = $d->toDateString() . 'T'  . $d->toTimeString() . 'Z';
-
-        if ($request->wantsJson())
-        {
-            return $response->json($t);
+        $agave = new Agave;
+        if (! $agave->isUp()) {
+            app()->abort(503, 'iReceptor Authentication Service is down.');
         }
-        else {
+
+        $t = [];
+
+        $t['nbUsers'] = User::count();
+        $d = new Carbon('last day of June 2015', 'UTC');
+        $t['lastReset'] = $d->toDateString().'T'.$d->toTimeString().'Z';
+
+        if ($request->wantsJson()) {
+            return $response->json($t);
+        } else {
             $t['name'] = 'iReceptor Authentication Service Stats';
             $t['key'] = 'Number of users';
             $t['val'] = $t['nbUsers'];
+
             return view('canarieStats', $t);
         }
     }
@@ -167,24 +151,23 @@ class CanarieController extends Controller
     public function computationStats(Request $request, Response $response)
     {
         $agave = new Agave;
-        if(! $agave->isUp()) {
+        if (! $agave->isUp()) {
             app()->abort(503, 'iReceptor Computation Service is down.');
         }
 
-        $t = array();
+        $t = [];
 
-        $t['nbJobs'] = Job::count();      
+        $t['nbJobs'] = Job::count();
         $d = new Carbon('last day of June 2015', 'UTC');
-        $t['lastReset'] = $d->toDateString() . 'T'  . $d->toTimeString() . 'Z';
+        $t['lastReset'] = $d->toDateString().'T'.$d->toTimeString().'Z';
 
-        if ($request->wantsJson())
-        {
+        if ($request->wantsJson()) {
             return $response->json($t);
-        }
-        else {
+        } else {
             $t['name'] = 'iReceptor Commputation Service Stats';
             $t['key'] = 'Number of jobs';
             $t['val'] = $t['nbJobs'];
+
             return view('canarieStats', $t);
         }
     }

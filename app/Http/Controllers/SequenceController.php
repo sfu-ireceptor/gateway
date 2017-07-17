@@ -1,35 +1,30 @@
 <?php
- 
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
-
-use App\User;
-use App\Agave;
+use App\System;
 use App\Bookmark;
 use App\RestService;
 use App\SequenceColumnName;
-use App\System;
+use Illuminate\Http\Request;
 
 class SequenceController extends Controller
-{ 
+{
     public function index(Request $request)
     {
-       $filters = $request->all();
-       $username = auth()->user()->username;
+        $filters = $request->all();
+        $username = auth()->user()->username;
 
         // if csv
-        if(isset($filters['csv']))
-        {
-            $csvFilePath = RestService::sequencesCSV($filters, $username);  
+        if (isset($filters['csv'])) {
+            $csvFilePath = RestService::sequencesCSV($filters, $username);
+
             return redirect($csvFilePath);
         }
 
         $request->flashExcept('project_sample_id_list');   // keep submitted form values
 
-        $data = array();
+        $data = [];
 
         // get sequence list
         $sequence_data = RestService::sequences($filters, $username);
@@ -41,17 +36,14 @@ class SequenceController extends Controller
         // for bookmarking
         $current_url = $request->fullUrl();
         $data['url'] = $current_url;
-        $data['bookmark_id'] =  Bookmark::getIdFromURl($current_url, auth()->user()->id);
+        $data['bookmark_id'] = Bookmark::getIdFromURl($current_url, auth()->user()->id);
 
         // columns to display
-        $defaultSequenceColumns = array(3, 65, 26, 6, 10, 64, 113);
-        if(isset($filters['cols']))
-        {
+        $defaultSequenceColumns = [3, 65, 26, 6, 10, 64, 113];
+        if (isset($filters['cols'])) {
             $currentSequenceColumns = explode('_', $filters['cols']);
-        }
-        else
-        {
-            $currentSequenceColumns  = $defaultSequenceColumns;            
+        } else {
+            $currentSequenceColumns = $defaultSequenceColumns;
         }
         $data['current_sequence_columns'] = $currentSequenceColumns;
         $data['sequence_column_name_list'] = SequenceColumnName::findEnabled();
@@ -62,30 +54,24 @@ class SequenceController extends Controller
         $currentSequenceColumnsStr = implode('_', $currentSequenceColumns);
 
         // filters
-        $defaultFiltersListIds = array(65, 26, 6, 10, 64);
-        $filtersListIds = array();
-        if(isset($filters['filters_order']))
-        {
+        $defaultFiltersListIds = [65, 26, 6, 10, 64];
+        $filtersListIds = [];
+        if (isset($filters['filters_order'])) {
             $filtersListIds = explode('_', $filters['filters_order']);
-        }
-        else
-        {
-            $filtersListIds  = $defaultFiltersListIds;            
+        } else {
+            $filtersListIds = $defaultFiltersListIds;
         }
 
-
-        $filtersListDisplayed = array();
-        $filtersListSelect = array();
+        $filtersListDisplayed = [];
+        $filtersListSelect = [];
 
         $sequenceColumnNameList = SequenceColumnName::findEnabled();
 
-        // create array for select field 
-        foreach ($sequenceColumnNameList as $s)
-        {
+        // create array for select field
+        foreach ($sequenceColumnNameList as $s) {
             $name = $s['name'];
             $title = $s['title'];
-            if( ! in_array($s['id'], $filtersListIds))
-            {
+            if (! in_array($s['id'], $filtersListIds)) {
                 $filtersListSelect[$name] = $title;
             }
         }
@@ -94,31 +80,30 @@ class SequenceController extends Controller
         foreach ($filtersListIds as $filterId) {
             $field = SequenceColumnName::find($filterId);
             $name = $field['name'];
-            $title = $field['title'];            
+            $title = $field['title'];
             $filtersListDisplayed[$name] = $title;
         }
-  
+
         $data['filters_list'] = $filtersListDisplayed;
         $data['filters_list_select'] = $filtersListSelect;
         $currentFiltersListIdsStr = implode('_', $filtersListIds);
 
         // hidden form fields
-        $hidden_fields = array();
+        $hidden_fields = [];
 
         foreach ($filters as $p => $v) {
-            if(starts_with($p, 'project_sample_id_list_')) {
+            if (starts_with($p, 'project_sample_id_list_')) {
                 foreach ($v as $sample_id) {
-                    $hidden_fields[] = array('name' => $p . '[]', 'value' => $sample_id);                    
+                    $hidden_fields[] = ['name' => $p.'[]', 'value' => $sample_id];
                 }
             }
-
         }
-        $hidden_fields[] = array('name' => 'cols', 'value' => $currentSequenceColumnsStr);                    
-        $hidden_fields[] = array('name' => 'filters_order', 'value' => $currentFiltersListIdsStr);                    
+        $hidden_fields[] = ['name' => 'cols', 'value' => $currentSequenceColumnsStr];
+        $hidden_fields[] = ['name' => 'filters_order', 'value' => $currentFiltersListIdsStr];
         $data['hidden_fields'] = $hidden_fields;
 
         // for analysis app
-        $amazingHistogramGeneratorColorList = array();
+        $amazingHistogramGeneratorColorList = [];
         $amazingHistogramGeneratorColorList['1_0_0'] = 'Red';
         $amazingHistogramGeneratorColorList['1_0.5_0'] = 'Orange';
         $amazingHistogramGeneratorColorList['1_0_1'] = 'Pink';
@@ -126,13 +111,12 @@ class SequenceController extends Controller
         $data['amazingHistogramGeneratorColorList'] = $amazingHistogramGeneratorColorList;
 
         // for histogram generator
-        $var_list = array();
+        $var_list = [];
         $var_list['cdr3_length'] = 'CDR3 Length';
         $data['var_list'] = $var_list;
-        
+
         $data['filters_json'] = json_encode($filters);
         $data['system'] = System::getCurrentSystem(auth()->user()->id);
-
 
         // display view
         return view('sequence', $data);
@@ -143,9 +127,8 @@ class SequenceController extends Controller
     //         <strong>{{ $sample->project_name }}</strong>
     //         -
     //         <strong>{{ $sample->sample_name }}</strong>
-    //         <br />              
+    //         <br />
     //     @endforeach
     // </p>
-
-    } 
+    }
 }
