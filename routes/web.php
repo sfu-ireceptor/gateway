@@ -103,8 +103,6 @@ Route::middleware('auth')->group(function () {
 */
 
 // update page count for CANARIE
-use App\Stats;
-
 if (! App::runningInConsole()) {
-    Stats::incrementNbRequests();
+    App\Stats::incrementNbRequests();
 }
