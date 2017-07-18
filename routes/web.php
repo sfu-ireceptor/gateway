@@ -95,3 +95,16 @@ Route::middleware('auth')->group(function () {
 
     Route::get('test', 'TestController@getIndex');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Misc
+|--------------------------------------------------------------------------
+*/
+
+// update page count for CANARIE
+use App\Stats;
+if( ! App::runningInConsole()) {
+    Stats::incrementNbRequests();
+}
+
