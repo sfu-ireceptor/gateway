@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Job;
 use App\Agave;
+use App\Job;
 use App\JobStep;
+use App\LocalJob;
+use App\System;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
@@ -39,11 +41,11 @@ class JobController extends Controller
 
         $d = [];
         $d['job'] = $job;
-        $data['progress'] = View::make('jobProgress', $d)->render();
+        $data['progress'] = view()->make('jobProgress', $d)->render();
 
         $d = [];
         $d['steps'] = JobStep::findAllForJob($job_id);
-        $data['steps'] = View::make('jobSteps', $d)->render();
+        $data['steps'] = view()->make('jobSteps', $d)->render();
 
         $json = json_encode($data);
 
