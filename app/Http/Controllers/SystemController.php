@@ -27,7 +27,7 @@ class SystemController extends Controller
     public function postAdd(Request $request)
     {
         // get user input
-            $systemHost = $request->get('host');
+        $systemHost = $request->get('host');
         $systemHost = parse_url($systemHost, PHP_URL_PATH);
         $systemHostStr = str_replace('.', '-', $systemHost);
 
@@ -35,11 +35,11 @@ class SystemController extends Controller
 
         $token = auth()->user()->password;
 
-            // create systems
-            $agave = new Agave;
+        // create systems
+        $agave = new Agave;
 
-            // create execution system
-            $sshKeys = $agave->generateSSHKeys();
+        // create execution system
+        $sshKeys = $agave->generateSSHKeys();
 
         $systemExecutionName = 'system-exec--'.$systemHostStr.'-'.$username;
         $systemExecutionHost = $systemHost;
@@ -51,19 +51,19 @@ class SystemController extends Controller
         $response = $agave->createSystem($token, $config);
         Log::info('execution system created: '.$systemExecutionName);
 
-            // add exec system to DB
-            $systemExecution = System::firstOrNew(['user_id' => auth()->user()->id, 'host' => $systemExecutionHost, 'username' => $username]);
+        // add exec system to DB
+        $systemExecution = System::firstOrNew(['user_id' => auth()->user()->id, 'host' => $systemExecutionHost, 'username' => $username]);
         $systemExecution->name = $systemExecutionName;
         $systemExecution->public_key = $systemExecutionPublicKey;
         $systemExecution->private_key = $systemExecutionPrivateKey;
         $systemExecution->selected = false;
         $systemExecution->save();
 
-            // select exec system
-            System::select($systemExecution->id);
+        // select exec system
+        System::select($systemExecution->id);
 
-            // create deployment system (where the app originally is)
-            $systemDeploymentName = config('services.agave.system_deploy.name_prefix').$username;
+        // create deployment system (where the app originally is)
+        $systemDeploymentName = config('services.agave.system_deploy.name_prefix').$username;
         $systemDeploymentHost = config('services.agave.system_deploy.host');
         $systemDeploymentAuth = json_decode(config('services.agave.system_deploy.auth'));
         $systemDeploymentRootDir = config('services.agave.system_deploy.rootdir');
@@ -72,8 +72,8 @@ class SystemController extends Controller
         $response = $agave->createSystem($token, $config);
         Log::info('deployment system created: '.$systemDeploymentName);
 
-            // create staging system (on this machine, where the data files will copied from)
-            $systemStagingName = config('services.agave.system_staging.name_prefix').$username;
+        // create staging system (on this machine, where the data files will copied from)
+        $systemStagingName = config('services.agave.system_staging.name_prefix').$username;
         $systemStagingHost = config('services.agave.system_staging.host');
         $systemStagingAuth = json_decode(config('services.agave.system_staging.auth'));
         $systemStagingRootDir = config('services.agave.system_staging.rootdir');
