@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Agave;
 use App\Job;
+use App\Agave;
+use App\System;
 use App\JobStep;
 use App\LocalJob;
-use App\System;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
