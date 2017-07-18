@@ -22,17 +22,17 @@ class LocalJob extends Model
 
     public function submitted()
     {
-        return human_date_time($this->submitted);
+        return \human_date_time($this->submitted);
     }
 
     public function start()
     {
-        return human_date_time($this->start);
+        return \human_date_time($this->start);
     }
 
     public function end()
     {
-        return human_date_time($this->end);
+        return \human_date_time($this->end);
     }
 
     public function progress()
