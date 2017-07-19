@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5dccb4bc6d3bac08afa8577ffa2b7eef",
+    "content-hash": "f7cf202a58f33f840bb026d4adc60f5f",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -2535,48 +2535,6 @@
                 "dump"
             ],
             "time": "2017-06-02T09:10:29+00:00"
-        },
-        {
-            "name": "themsaid/laravel-routes-publisher",
-            "version": "v1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/themsaid/laravel-routes-publisher.git",
-                "reference": "75bdb2f45ded6e8f796c439715cfb037437b63a7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/themsaid/laravel-routes-publisher/zipball/75bdb2f45ded6e8f796c439715cfb037437b63a7",
-                "reference": "75bdb2f45ded6e8f796c439715cfb037437b63a7",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "^5.2",
-                "php": ">=5.5.9"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Themsaid\\RoutesPublisher\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Mohamed Said",
-                    "email": "theMohamedSaid@gmail.com"
-                }
-            ],
-            "description": "A command to replace deprecated Route::controller with explicit routes.",
-            "homepage": "https://github.com/themsaid/laravel-routes-publisher",
-            "keywords": [
-                "laravel",
-                "routes"
-            ],
-            "time": "2016-03-23T14:17:47+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
