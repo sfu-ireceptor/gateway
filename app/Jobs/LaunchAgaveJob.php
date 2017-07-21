@@ -2,21 +2,17 @@
 
 namespace App\Jobs;
 
+use App\Job;
+use App\Agave;
+use App\LocalJob;
+use App\RestService;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-
-use App\Job;
-use App\Agave;
-use App\System;
-use App\JobStep;
-use App\LocalJob;
-use App\RestService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\File;
 
 class LaunchAgaveJob implements ShouldQueue
 {
@@ -55,7 +51,6 @@ class LaunchAgaveJob implements ShouldQueue
     // execute job
     public function handle()
     {
-
         try {
             $localJob = LocalJob::find($this->localJobId);
             $localJob->setRunning();
@@ -95,7 +90,6 @@ class LaunchAgaveJob implements ShouldQueue
             Log::error($e->getMessage());
             Log::error($e);
             $job->updateStatus('FAILED');
-
 
             $localJob = LocalJob::find($localJobId);
             $localJob->setFailed();
