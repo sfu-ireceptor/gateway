@@ -112,8 +112,6 @@ class JobController extends Controller
         $agaveAppId = $response->result->id;
         Log::info('app created: '.$appId);
 
-        //return;
-
         // create job in DB
         $job = new Job;
         $job->user_id = auth()->user()->id;
@@ -137,57 +135,8 @@ class JobController extends Controller
         $lj->save();
         $localJobId = $lj->id;
 
-        Queue::push(function ($j) use ($jobId, $f, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $localJobId) {
-            try {
-                $localJob = LocalJob::find($localJobId);
-                $localJob->setRunning();
-
-                // find job in DB
-                $job = Job::find($jobId);
-
-                // generate csv file
-                $job->updateStatus('FEDERATING DATA');
-                Log::info('$f[filters_json]'.$f['filters_json']);
-                $filters = json_decode($f['filters_json'], true);
-                $csvFilePath = RestService::sequencesCSV($filters, $gw_username);
-                $folder = dirname($csvFilePath);
-                $folder = str_replace('/data/', '', $folder);
-
-                Log::info('folder='.$folder);
-                $job->input_folder = $folder;
-                $job->save();
-
-                // update input paths for AGAVE job
-                foreach ($inputs as $key => $value) {
-                    $inputs[$key] = 'agave://'.$systemStaging.'/'.$folder.'/'.$value;
-                }
-
-                // submit AGAVE job
-                $job->updateStatus('SENDING JOB TO AGAVE');
-
-                $agave = new Agave;
-                $config = $agave->getJobConfig('irec-job-'.$jobId, $agaveAppId, $systemStaging, $notificationUrl, $folder, $params, $inputs);
-                $response = $agave->createJob($token, $config);
-
-                $job->agave_id = $response->result->id;
-                $job->updateStatus('JOB ACCEPTED BY AGAVE. PENDING.');
-
-                // remove job from Laravel queue
-                $j->delete();
-
-                $localJob->setFinished();
-            } catch (Exception $e) {
-                Log::error($e->getMessage());
-                Log::error($e);
-                $job->updateStatus('FAILED');
-
-                // remove job from Laravel queue
-                $j->delete();
-
-                $localJob = LocalJob::find($localJobId);
-                $localJob->setFailed();
-            }
-        });
+        // queue job
+        $this->dispatch(new \App\Jobs\LaunchAgaveJob($jobId, $f, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $localJobId));
 
         return redirect('jobs/view/'.$jobId);
     }
