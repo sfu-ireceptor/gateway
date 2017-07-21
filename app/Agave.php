@@ -47,17 +47,19 @@ class Agave
 
     public function getToken($url, $username, $password, $api_key, $api_secret)
     {
-        $request = $this->client->createRequest('POST', '/token', ['auth' => [$api_key, $api_secret]]);
-        $request->addHeader('Content-Type', 'application/x-www-form-urlencoded');
+        $headers = [];
+        $headers['Content-Type'] = 'application/x-www-form-urlencoded';
 
-        $postBody = $request->getBody();
-        $postBody->setField('grant_type', 'password');
-        $postBody->setField('username', $username);
-        $postBody->setField('password', $password);
-        $postBody->setField('scope', 'PRODUCTION');
+        $auth = [$api_key, $api_secret];
+
+        $params = [];
+        $params['grant_type'] = 'password';
+        $params['username'] = $username;
+        $params['password'] = $password;
+        $params['scope'] = 'PRODUCTION';
 
         try {
-            $response = $this->client->send($request);
+            $response = $this->client->request('POST', '/token', ['auth' => $auth, 'headers' => $headers, 'form_params' => $params]);
 
             $response = json_decode($response->getBody());
             $this->raiseExceptionIfAgaveError($response);
@@ -380,12 +382,16 @@ class Agave
 
     private function initGuzzleRESTClient()
     {
+        $defaults = [];
+
         // set tenant URL
         $tenant_url = config('services.agave.tenant_url');
-        $this->client = new \GuzzleHttp\Client(['base_url' => $tenant_url]);
+        $defaults['base_uri'] = $tenant_url;
 
         // accept self-signed SSL certificates
-        $this->client->setDefaultOption('verify', false);
+        $defaults['verify'] = false;
+
+        $this->client = new \GuzzleHttp\Client($defaults);
     }
 
     private function raiseExceptionIfAgaveError($response)
