@@ -87,17 +87,18 @@ class Agave
 
     public function renewToken($url, $refresh_token, $api_key, $api_secret)
     {
-        $request = $this->client->createRequest('POST', '/token', ['auth' => [$api_key, $api_secret]]);
-        $request->addHeader('Content-Type', 'application/x-www-form-urlencoded');
+        $headers = [];
+        $headers['Content-Type'] = 'application/x-www-form-urlencoded';
 
-        $postBody = $request->getBody();
-        $postBody->setField('grant_type', 'refresh_token');
-        $postBody->setField('refresh_token', $refresh_token);
-        $postBody->setField('scope', 'PRODUCTION');
+        $auth = [$api_key, $api_secret];
+
+        $params = [];
+        $params['grant_type'] = 'refresh_token';
+        $params['refresh_token'] = $refresh_token;
+        $params['scope'] = 'PRODUCTION';
 
         try {
-            $response = $this->client->send($request);
-
+            $response = $this->client->request('POST', '/token', ['auth' => $auth, 'headers' => $headers, 'form_params' => $params]);
             $response = json_decode($response->getBody());
             $this->raiseExceptionIfAgaveError($response);
         } catch (ClientException $e) {
@@ -409,13 +410,11 @@ class Agave
 
     private function doGETRequest($url, $token, $raw_json = false)
     {
-        // build request
-        $request = $this->client->createRequest('GET', $url);
-        $request->addHeader('Content-Type', 'application/x-www-form-urlencoded');
-        $request->addHeader('Authorization', 'Bearer '.$token);
+        $headers = [];
+        $headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        $headers['Authorization'] = 'Bearer '.$token;
 
-        // execute request
-        $response = $this->client->send($request);
+        $response = $this->client->request('GET', $url, ['headers' => $headers]);
 
         // return response as object
         $json = $response->getBody();
