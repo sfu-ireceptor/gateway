@@ -3,7 +3,6 @@
 namespace App;
 
 use phpseclib\Crypt\RSA;
-use GuzzleHttp\Post\PostFile;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Exception\ClientException;
 
@@ -448,25 +447,30 @@ class Agave
 
     public function doPOSTRequest($url, $token, $variables = [], $files = [])
     {
-        // build request
-        $request = $this->client->createRequest('POST', $url);
-        $request->addHeader('Authorization', 'Bearer '.$token);
-        if (count($files) > 0) {
-            $request->addHeader('Content-Type', 'multipart/form-data');
+        $headers = [];
+        $headers['Authorization'] = 'Bearer '.$token;
+        
+        $data = [];
+        if (count($files) == 0) {
+            $data = ['headers' => $headers, 'form_params' => $variables];
+        }
+        else {
+            $multipart = [];
+            foreach ($variables as $key => $value) {
+                $multipart[] = ['name' => $key, 'contents' => $value];
+            }
+
+            foreach ($files as $filename => $file_str) {
+                $multipart[] = ['filename' => $filename, 'name' => $filename, 'contents' => $file_str];
+            }
+
+            $data = ['headers' => $headers, 'multipart' => $multipart];
         }
 
-        $request->setQuery($variables);
-
-        $postBody = $request->getBody();
-        foreach ($files as $filename => $file_str) {
-            $postBody->addFile(new PostFile($filename, $file_str));
-        }
-
-        // execute request
         try {
-            $response = $this->client->send($request);
+            $response = $this->client->request('POST', $url, $data);
         } catch (ClientException $exception) {
-            $response = $exception->getResponse();
+            $response = $exception->getResponse()->getBody()->getContents();
             Log::error($response);
         }
 
@@ -514,13 +518,12 @@ class Agave
 
     public function doDELETERequest($url, $token)
     {
-        // build request
-        $request = $this->client->createRequest('DELETE', $url);
-        $request->addHeader('Authorization', 'Bearer '.$token);
+        $headers = [];
+        $headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        $headers['Authorization'] = 'Bearer '.$token;
 
-        // execute request
         try {
-            $response = $this->client->send($request);
+            $response = $this->client->request('DELETE', $url, ['headers' => $headers]);
         } catch (ClientException $exception) {
             $response = $exception->getResponse();
             Log::error($response);
