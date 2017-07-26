@@ -407,45 +407,7 @@ class Agave
         }
     }
 
-    private function doGETRequest($url, $token, $raw_json = false)
-    {
-        $headers = [];
-        $headers['Content-Type'] = 'application/x-www-form-urlencoded';
-        $headers['Authorization'] = 'Bearer '.$token;
-
-        $response = $this->client->request('GET', $url, ['headers' => $headers]);
-
-        // return response as object
-        $json = $response->getBody();
-        Log::info('json response -> '.$json);
-        if ($raw_json) {
-            return $json;
-        } else {
-            $response = json_decode($json);
-            $this->raiseExceptionIfAgaveError($response);
-
-            return $response;
-        }
-    }
-
-    public function doPOSTRequestWithJSON($url, $token, $config)
-    {
-        // Log::info('doPOSTRequestWithJSON url: ' . $url);
-        // Log::info('token: ' . $token);
-        // Log::info('config: ' . var_export($config, true));
-
-        // convert config object to json
-        $json = json_encode($config, JSON_PRETTY_PRINT);
-        Log::info('json request -> '.$json);
-
-        // add to files array
-        $files = [];
-        $files['fileToUpload'] = $json;
-
-        return $this->doPOSTRequest($url, $token, [], $files);
-    }
-
-    public function doPOSTRequest($url, $token, $variables = [], $files = [])
+    private function doHTTPRequest($method, $url, $token, $variables = [], $files = [], $raw_json = false)
     {
         $headers = [];
         $headers['Authorization'] = 'Bearer '.$token;
@@ -456,6 +418,7 @@ class Agave
         }
         else {
             $multipart = [];
+
             foreach ($variables as $key => $value) {
                 $multipart[] = ['name' => $key, 'contents' => $value];
             }
@@ -468,7 +431,7 @@ class Agave
         }
 
         try {
-            $response = $this->client->request('POST', $url, $data);
+            $response = $this->client->request($method, $url, $data);
         } catch (ClientException $exception) {
             $response = $exception->getResponse()->getBody()->getContents();
             Log::error($response);
@@ -477,64 +440,43 @@ class Agave
         // return response as object
         $json = $response->getBody();
         Log::info('json response -> '.$json);
-        $response = json_decode($json);
-        $this->raiseExceptionIfAgaveError($response);
+        if ($raw_json) {
+            return $json;
+        }
+        else {
+            $response = json_decode($json);
+            $this->raiseExceptionIfAgaveError($response);
 
-        return $response;
+            return $response;            
+        }
+    }
+
+    private function doGETRequest($url, $token, $raw_json = false)
+    {
+        return $this->doHTTPRequest('GET', $url, $token, [], [], $raw_json);
+    }
+
+    public function doPOSTRequestWithJSON($url, $token, $config)
+    {
+        // convert config object to json
+        $json = json_encode($config, JSON_PRETTY_PRINT);
+        Log::info('json request -> '.$json);
+
+        return $this->doPOSTRequest($url, $token, [], ['fileToUpload' => $json]);
+    }
+
+    public function doPOSTRequest($url, $token, $variables = [], $files = [])
+    {
+        return $this->doHTTPRequest('POST', $url, $token, $variables, $files);
     }
 
     public function doPUTRequest($url, $token, $variables = [], $files = [])
     {
-        // build request
-        $request = $this->client->createRequest('PUT', $url);
-        $request->addHeader('Authorization', 'Bearer '.$token);
-        if (count($files) > 0) {
-            $request->addHeader('Content-Type', 'multipart/form-data');
-        }
-
-        $request->setQuery($variables);
-
-        $postBody = $request->getBody();
-        foreach ($files as $filename => $file_str) {
-            $postBody->addFile(new PostFile($filename, $file_str));
-        }
-
-        // execute request
-        try {
-            $response = $this->client->send($request);
-        } catch (ClientException $exception) {
-            $response = $exception->getResponse();
-            Log::error($response);
-        }
-
-        // return response as object
-        $json = $response->getBody();
-        Log::info('json response -> '.$json);
-        $response = json_decode($json);
-        $this->raiseExceptionIfAgaveError($response);
-
-        return $response;
+        return $this->doHTTPRequest('PUT', $url, $token, $variables, $files);
     }
 
     public function doDELETERequest($url, $token)
     {
-        $headers = [];
-        $headers['Content-Type'] = 'application/x-www-form-urlencoded';
-        $headers['Authorization'] = 'Bearer '.$token;
-
-        try {
-            $response = $this->client->request('DELETE', $url, ['headers' => $headers]);
-        } catch (ClientException $exception) {
-            $response = $exception->getResponse();
-            Log::error($response);
-        }
-
-        // return response as object
-        $json = $response->getBody();
-        Log::info('json response -> '.$json);
-        $response = json_decode($json);
-        $this->raiseExceptionIfAgaveError($response);
-
-        return $response;
+        return $this->doHTTPRequest('DELETE', $url, $token);
     }
 }
