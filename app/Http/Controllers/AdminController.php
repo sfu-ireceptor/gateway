@@ -123,9 +123,9 @@ class AdminController extends Controller
             $message->to($t['email'])->subject('iReceptor account');
         });
 
-        Log::info('An account has been created for user '.$t['username'].'. Pwd: '.$t['password']);
+        Log::info('An account has been created for user ' . $t['username'] . '. Pwd: ' . $t['password']);
 
-        return redirect('admin/users')->with('notification', 'The user '.$t['username'].' has been created. An email with credentials was sent. Remember to add the user to the iReceptor services.');
+        return redirect('admin/users')->with('notification', 'The user ' . $t['username'] . ' has been created. An email with credentials was sent. Remember to add the user to the iReceptor services.');
     }
 
     public function getEditUser($username)
@@ -164,7 +164,7 @@ class AdminController extends Controller
             $request->flash();
             $username = $request->get('username');
 
-            return redirect('admin/edit-user/'.$username)->withErrors($validator);
+            return redirect('admin/edit-user/' . $username)->withErrors($validator);
         }
 
         $username = $request->get('username');
@@ -177,7 +177,7 @@ class AdminController extends Controller
         $token = $agave->getAdminToken();
         $t = $agave->updateUser($token, $username, $firstName, $lastName, $email);
 
-        return redirect('admin/users')->with('notification', 'Modifications for user '.$username.' were successfully saved.');
+        return redirect('admin/users')->with('notification', 'Modifications for user ' . $username . ' were successfully saved.');
     }
 
     public function getDeleteUser($username)
@@ -187,6 +187,6 @@ class AdminController extends Controller
         $token = $agave->getAdminToken();
         $agave->deleteUser($token, $username);
 
-        return redirect('admin/users')->with('notification', 'User '.$username.' was successfully deleted.');
+        return redirect('admin/users')->with('notification', 'User ' . $username . ' was successfully deleted.');
     }
 }

@@ -23,7 +23,7 @@ class CanarieController extends Controller
 
     public function linkPage($page)
     {
-        $url = 'http://ireceptor.irmacs.sfu.ca/platform/'.$page;
+        $url = 'http://ireceptor.irmacs.sfu.ca/platform/' . $page;
 
         if ($page == 'factsheet') {
             $url = 'http://www.canarie.ca/software/platforms/ireceptor/';
@@ -32,7 +32,7 @@ class CanarieController extends Controller
         }
 
         $data = [];
-        $data['title'] = '/'.$page;
+        $data['title'] = '/' . $page;
         $data['page'] = $page;
         $data['url'] = $url;
 
@@ -48,7 +48,7 @@ class CanarieController extends Controller
         $t['version'] = '0.1';
         $t['institution'] = 'IRMACS/Simon Fraser University';
         $d = new Carbon('first day of July 2015', 'UTC');
-        $t['releaseTime'] = $d->toDateString().'T'.$d->toTimeString().'Z';
+        $t['releaseTime'] = $d->toDateString() . 'T' . $d->toTimeString() . 'Z';
         $t['researchSubject'] = 'Immunology';
         $t['supportEmail'] = 'help@irmacs.sfu.ca';
         $t['tags'] = ['immunology', 'iReceptor'];
@@ -70,7 +70,7 @@ class CanarieController extends Controller
         $t['version'] = '0.1';
         $t['institution'] = 'IRMACS/Simon Fraser University';
         $d = new Carbon('first day of July 2015', 'UTC');
-        $t['releaseTime'] = $d->toDateString().'T'.$d->toTimeString().'Z';
+        $t['releaseTime'] = $d->toDateString() . 'T' . $d->toTimeString() . 'Z';
         $t['researchSubject'] = 'Immunology';
         $t['supportEmail'] = 'help@irmacs.sfu.ca';
         $t['tags'] = ['immunology', 'iReceptor'];
@@ -92,7 +92,7 @@ class CanarieController extends Controller
         $t['version'] = '0.1';
         $t['institution'] = 'IRMACS/Simon Fraser University';
         $d = new Carbon('first day of July 2015', 'UTC');
-        $t['releaseTime'] = $d->toDateString().'T'.$d->toTimeString().'Z';
+        $t['releaseTime'] = $d->toDateString() . 'T' . $d->toTimeString() . 'Z';
         $t['researchSubject'] = 'Immunology';
         $t['supportEmail'] = 'help@irmacs.sfu.ca';
         $t['tags'] = ['immunology', 'iReceptor'];
@@ -135,7 +135,7 @@ class CanarieController extends Controller
 
         $t['nbUsers'] = User::count();
         $d = new Carbon('last day of June 2015', 'UTC');
-        $t['lastReset'] = $d->toDateString().'T'.$d->toTimeString().'Z';
+        $t['lastReset'] = $d->toDateString() . 'T' . $d->toTimeString() . 'Z';
 
         if ($request->wantsJson()) {
             return $response->json($t);
@@ -159,7 +159,7 @@ class CanarieController extends Controller
 
         $t['nbJobs'] = Job::count();
         $d = new Carbon('last day of June 2015', 'UTC');
-        $t['lastReset'] = $d->toDateString().'T'.$d->toTimeString().'Z';
+        $t['lastReset'] = $d->toDateString() . 'T' . $d->toTimeString() . 'Z';
 
         if ($request->wantsJson()) {
             return $response->json($t);

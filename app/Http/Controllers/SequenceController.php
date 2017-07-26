@@ -94,7 +94,7 @@ class SequenceController extends Controller
         foreach ($filters as $p => $v) {
             if (starts_with($p, 'project_sample_id_list_')) {
                 foreach ($v as $sample_id) {
-                    $hidden_fields[] = ['name' => $p.'[]', 'value' => $sample_id];
+                    $hidden_fields[] = ['name' => $p . '[]', 'value' => $sample_id];
                 }
             }
         }
