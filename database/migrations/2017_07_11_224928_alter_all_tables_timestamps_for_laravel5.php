@@ -13,6 +13,9 @@ class AlterAllTablesTimestampsForLaravel5 extends Migration
      */
     public function up()
     {
+        // minor fix for entries created manually in some tables
+        $affected = DB::update('update rest_service set created_at = ? where created_at = ?', ['2017-06-20 03:52:50', '0000-00-00 00:00:00']);
+
         $tables = \DB::connection()->getDoctrineSchemaManager()->listTableNames();
         foreach ($tables as $table_name) {
             if ($table_name != 'migrations' && $table_name != 'password_resets') {
