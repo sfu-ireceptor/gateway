@@ -24,18 +24,16 @@ class RestService extends Model
 
     public static function postRequest($rs, $path, $params, $filePath = '')
     {
-        $client = new \GuzzleHttp\Client([
-            'base_url' => $rs->url,
-            'defaults' => [
-                'auth' => [$rs->username, $rs->password],
-            ],
-        ]);
-
-        // accept self-signed SSL certificates
-        $client->setDefaultOption('verify', false);
+        $defaults = [];
+        $defaults['base_uri'] = $rs->url;
+        $defaults['verify'] = false;    // accept self-signed SSL certificates
+        $client = new \GuzzleHttp\Client($defaults);
 
         // build request
         $options = [];
+        $options['auth'] = [$rs->username, $rs->password];
+        $options['form_params'] = $params;
+
         if ($filePath != '') {
             $dirPath = dirname($filePath);
             if (! is_dir($dirPath)) {
@@ -43,17 +41,12 @@ class RestService extends Model
                 mkdir($dirPath, 0755, true);
             }
 
-            $options['save_to'] = fopen($filePath, 'a');
+            $options['sink'] = fopen($filePath, 'a');
             Log::info('Guzzle: saving to ' . $filePath);
         }
-        $request = $client->createRequest('POST', $path, $options);
-
-        // params
-        $postBody = $request->getBody();
-        $postBody->replaceFields($params);
 
         // execute request
-        $response = $client->send($request);
+        $response = $client->request('POST', $path, $options);
 
         if ($filePath == '') {
             // return object generated from json response
