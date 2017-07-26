@@ -3,16 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Job;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class TestController extends Controller
 {
     public function getIndex()
     {
         echo 'index';
-
 
         // try {
         //     $client = new \GuzzleHttp\Client();
@@ -29,7 +28,6 @@ class TestController extends Controller
         //     // Log::error($exception->getResponse()->getBody()->getContents());
         //     // ddd($e->getResponse()->getBody()->getContents());
         // }
-
 
 // //         $to      = 'jlj7@sfu.ca';
 // //      $subject = 'the subject';
@@ -49,7 +47,6 @@ class TestController extends Controller
 //             $message->to('')->subject('just a test');
 //             echo "ok";
 //         });
-
 
         // $job = new Job;
         // $job->updateStatus('PENDING');
@@ -73,11 +70,11 @@ class TestController extends Controller
     public function index2(Request $request)
     {
         Log::info('ok!');
-        echo $request->header('Content-Type') . "\n";
-        echo $request->header('User-Agent') . "\n";
-        echo $request->method() . "\n";
-        var_dump($request->header()) . "\n";
-        var_dump($request->file()) . "\n";
+        echo $request->header('Content-Type')."\n";
+        echo $request->header('User-Agent')."\n";
+        echo $request->method()."\n";
+        var_dump($request->header())."\n";
+        var_dump($request->file())."\n";
         var_dump($request->all());
-    }    
+    }
 }

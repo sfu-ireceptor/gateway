@@ -411,12 +411,11 @@ class Agave
     {
         $headers = [];
         $headers['Authorization'] = 'Bearer '.$token;
-        
+
         $data = [];
         if (count($files) == 0) {
             $data = ['headers' => $headers, 'form_params' => $variables];
-        }
-        else {
+        } else {
             $multipart = [];
 
             foreach ($variables as $key => $value) {
@@ -442,12 +441,11 @@ class Agave
         Log::info('json response -> '.$json);
         if ($raw_json) {
             return $json;
-        }
-        else {
+        } else {
             $response = json_decode($json);
             $this->raiseExceptionIfAgaveError($response);
 
-            return $response;            
+            return $response;
         }
     }
 
