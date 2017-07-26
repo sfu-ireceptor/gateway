@@ -35,6 +35,10 @@ Route::get('platform/{page}', 'CanarieController@linkPage');
 Route::get('auth/service/{page}', 'CanarieController@linkPage');
 Route::get('computation/service/{page}', 'CanarieController@linkPage');
 
+// just for dev
+Route::get('test', 'TestController@getIndex');
+Route::any('test2', 'TestController@index2');
+
 /*
 |--------------------------------------------------------------------------
 | Require authentication
@@ -93,7 +97,6 @@ Route::middleware('auth')->group(function () {
         Route::get('delete-user/{username}', 'AdminController@getDeleteUser');
     });
 
-    Route::get('test', 'TestController@getIndex');
 });
 
 /*
