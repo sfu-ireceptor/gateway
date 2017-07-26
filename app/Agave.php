@@ -380,6 +380,35 @@ class Agave
         return ['public' => $keys['publickey'], 'private' => $keys['privatekey']];
     }
 
+    private function doGETRequest($url, $token, $raw_json = false)
+    {
+        return $this->doHTTPRequest('GET', $url, $token, [], [], $raw_json);
+    }
+
+    public function doPOSTRequest($url, $token, $variables = [], $files = [])
+    {
+        return $this->doHTTPRequest('POST', $url, $token, $variables, $files);
+    }
+
+    public function doPUTRequest($url, $token, $variables = [], $files = [])
+    {
+        return $this->doHTTPRequest('PUT', $url, $token, $variables, $files);
+    }
+
+    public function doDELETERequest($url, $token)
+    {
+        return $this->doHTTPRequest('DELETE', $url, $token);
+    }
+
+    public function doPOSTRequestWithJSON($url, $token, $config)
+    {
+        // convert config object to json
+        $json = json_encode($config, JSON_PRETTY_PRINT);
+        Log::info('json request -> '.$json);
+
+        return $this->doPOSTRequest($url, $token, [], ['fileToUpload' => $json]);
+    }
+
     private function initGuzzleRESTClient()
     {
         $defaults = [];
@@ -392,19 +421,6 @@ class Agave
         $defaults['verify'] = false;
 
         $this->client = new \GuzzleHttp\Client($defaults);
-    }
-
-    private function raiseExceptionIfAgaveError($response)
-    {
-        if ($response == null) {
-            throw new \Exception('AGAVE error: response was empty');
-        }
-        if (property_exists($response, 'error')) {
-            throw new \Exception('AGAVE error: '.$response->error.': '.$response->error_description);
-        }
-        if (property_exists($response, 'status') && $response->status == 'error') {
-            throw new \Exception('AGAVE error: '.$response->message);
-        }
     }
 
     private function doHTTPRequest($method, $url, $token, $variables = [], $files = [], $raw_json = false)
@@ -449,32 +465,16 @@ class Agave
         }
     }
 
-    private function doGETRequest($url, $token, $raw_json = false)
+    private function raiseExceptionIfAgaveError($response)
     {
-        return $this->doHTTPRequest('GET', $url, $token, [], [], $raw_json);
-    }
-
-    public function doPOSTRequestWithJSON($url, $token, $config)
-    {
-        // convert config object to json
-        $json = json_encode($config, JSON_PRETTY_PRINT);
-        Log::info('json request -> '.$json);
-
-        return $this->doPOSTRequest($url, $token, [], ['fileToUpload' => $json]);
-    }
-
-    public function doPOSTRequest($url, $token, $variables = [], $files = [])
-    {
-        return $this->doHTTPRequest('POST', $url, $token, $variables, $files);
-    }
-
-    public function doPUTRequest($url, $token, $variables = [], $files = [])
-    {
-        return $this->doHTTPRequest('PUT', $url, $token, $variables, $files);
-    }
-
-    public function doDELETERequest($url, $token)
-    {
-        return $this->doHTTPRequest('DELETE', $url, $token);
+        if ($response == null) {
+            throw new \Exception('AGAVE error: response was empty');
+        }
+        if (property_exists($response, 'error')) {
+            throw new \Exception('AGAVE error: '.$response->error.': '.$response->error_description);
+        }
+        if (property_exists($response, 'status') && $response->status == 'error') {
+            throw new \Exception('AGAVE error: '.$response->message);
+        }
     }
 }
