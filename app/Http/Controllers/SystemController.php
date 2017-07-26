@@ -41,7 +41,7 @@ class SystemController extends Controller
         // create execution system
         $sshKeys = $agave->generateSSHKeys();
 
-        $systemExecutionName = 'system-exec--'.$systemHostStr.'-'.$username;
+        $systemExecutionName = 'system-exec--' . $systemHostStr . '-' . $username;
         $systemExecutionHost = $systemHost;
         $systemExecutionUsername = $username;
         $systemExecutionPublicKey = $sshKeys['public'];
@@ -49,7 +49,7 @@ class SystemController extends Controller
 
         $config = $agave->getExcutionSystemConfig($systemExecutionName, $systemExecutionHost, $systemExecutionUsername, $systemExecutionPrivateKey, $systemExecutionPublicKey);
         $response = $agave->createSystem($token, $config);
-        Log::info('execution system created: '.$systemExecutionName);
+        Log::info('execution system created: ' . $systemExecutionName);
 
         // add exec system to DB
         $systemExecution = System::firstOrNew(['user_id' => auth()->user()->id, 'host' => $systemExecutionHost, 'username' => $username]);
@@ -63,24 +63,24 @@ class SystemController extends Controller
         System::select($systemExecution->id);
 
         // create deployment system (where the app originally is)
-        $systemDeploymentName = config('services.agave.system_deploy.name_prefix').$username;
+        $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . $username;
         $systemDeploymentHost = config('services.agave.system_deploy.host');
         $systemDeploymentAuth = json_decode(config('services.agave.system_deploy.auth'));
         $systemDeploymentRootDir = config('services.agave.system_deploy.rootdir');
 
         $config = $agave->getStorageSystemConfig($systemDeploymentName, $systemDeploymentHost, $systemDeploymentAuth, $systemDeploymentRootDir);
         $response = $agave->createSystem($token, $config);
-        Log::info('deployment system created: '.$systemDeploymentName);
+        Log::info('deployment system created: ' . $systemDeploymentName);
 
         // create staging system (on this machine, where the data files will copied from)
-        $systemStagingName = config('services.agave.system_staging.name_prefix').$username;
+        $systemStagingName = config('services.agave.system_staging.name_prefix') . $username;
         $systemStagingHost = config('services.agave.system_staging.host');
         $systemStagingAuth = json_decode(config('services.agave.system_staging.auth'));
         $systemStagingRootDir = config('services.agave.system_staging.rootdir');
 
         $config = $agave->getStorageSystemConfig($systemStagingName, $systemStagingHost, $systemStagingAuth, $systemStagingRootDir);
         $response = $agave->createSystem($token, $config);
-        Log::info('staging system created: '.$systemStagingName);
+        Log::info('staging system created: ' . $systemStagingName);
 
         return redirect('systems')->with('notification', 'The system was successfully created and selected. Add the SSH key in ~/.ssh/authorized_keys');
     }
@@ -98,7 +98,7 @@ class SystemController extends Controller
         if ($system != null) {
             $system->delete();
 
-            return redirect('systems')->with('notification', 'The system <strong>'.$system->username.'@'.$system->host.'</strong> was successfully deleted.');
+            return redirect('systems')->with('notification', 'The system <strong>' . $system->username . '@' . $system->host . '</strong> was successfully deleted.');
         }
 
         return redirect('systems');

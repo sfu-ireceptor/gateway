@@ -132,7 +132,7 @@ class Agave
     {
         $first_name_stripped = $string = str_replace(' ', '', $first_name);
         $last_name_stripped = $string = str_replace(' ', '', $last_name);
-        $username = strtolower($first_name_stripped).'_'.strtolower($last_name_stripped);
+        $username = strtolower($first_name_stripped) . '_' . strtolower($last_name_stripped);
         $password = str_random(24);
 
         $url = '/profiles/v2/?pretty=true';
@@ -152,7 +152,7 @@ class Agave
 
     public function updateUser($token, $username, $first_name, $last_name, $email, $password = '')
     {
-        $url = '/profiles/v2/'.$username;
+        $url = '/profiles/v2/' . $username;
 
         $variables = [
             'first_name' => $first_name,
@@ -171,7 +171,7 @@ class Agave
 
     public function deleteUser($token, $username)
     {
-        $url = '/profiles/v2/'.$username;
+        $url = '/profiles/v2/' . $username;
         $this->doDELETERequest($url, $token);
     }
 
@@ -191,7 +191,7 @@ class Agave
 
     public function getJobHistory($job_id, $token)
     {
-        $url = '/jobs/v2/'.$job_id.'/history?pretty=true';
+        $url = '/jobs/v2/' . $job_id . '/history?pretty=true';
 
         return $this->doGETRequest($url, $token, true);
     }
@@ -230,7 +230,7 @@ class Agave
                             'publicKey' => $publicKey,
                             'privateKey' => $privateKey,
                         ],
-                    'rootDir' => '/home'.'/'.$username.'/scratch',
+                    'rootDir' => '/home' . '/' . $username . '/scratch',
                 ],
         ];
 
@@ -346,7 +346,7 @@ class Agave
             'archivePath' => $inputFolder,
             'notifications' => [
                 [
-                    'url' => $notification_url.'/agave/update-status/${JOB_ID}/${JOB_STATUS}',
+                    'url' => $notification_url . '/agave/update-status/${JOB_ID}/${JOB_STATUS}',
                     'event' => '*',
                     'persistent' => true,
                 ],
@@ -366,7 +366,7 @@ class Agave
 
     public function getUser($username, $token)
     {
-        $url = '/profiles/v2/'.$username;
+        $url = '/profiles/v2/' . $username;
 
         return $this->doGETRequest($url, $token);
     }
@@ -404,7 +404,7 @@ class Agave
     {
         // convert config object to json
         $json = json_encode($config, JSON_PRETTY_PRINT);
-        Log::info('json request -> '.$json);
+        Log::info('json request -> ' . $json);
 
         return $this->doPOSTRequest($url, $token, [], ['fileToUpload' => $json]);
     }
@@ -426,7 +426,7 @@ class Agave
     private function doHTTPRequest($method, $url, $token, $variables = [], $files = [], $raw_json = false)
     {
         $headers = [];
-        $headers['Authorization'] = 'Bearer '.$token;
+        $headers['Authorization'] = 'Bearer ' . $token;
 
         $data = [];
         if (count($files) == 0) {
@@ -454,7 +454,7 @@ class Agave
 
         // return response as object
         $json = $response->getBody();
-        Log::info('json response -> '.$json);
+        Log::info('json response -> ' . $json);
         if ($raw_json) {
             return $json;
         } else {
@@ -471,10 +471,10 @@ class Agave
             throw new \Exception('AGAVE error: response was empty');
         }
         if (property_exists($response, 'error')) {
-            throw new \Exception('AGAVE error: '.$response->error.': '.$response->error_description);
+            throw new \Exception('AGAVE error: ' . $response->error . ': ' . $response->error_description);
         }
         if (property_exists($response, 'status') && $response->status == 'error') {
-            throw new \Exception('AGAVE error: '.$response->message);
+            throw new \Exception('AGAVE error: ' . $response->message);
         }
     }
 }

@@ -70,11 +70,11 @@ class TestController extends Controller
     public function index2(Request $request)
     {
         Log::info('ok!');
-        echo $request->header('Content-Type')."\n";
-        echo $request->header('User-Agent')."\n";
-        echo $request->method()."\n";
-        var_dump($request->header())."\n";
-        var_dump($request->file())."\n";
+        echo $request->header('Content-Type') . "\n";
+        echo $request->header('User-Agent') . "\n";
+        echo $request->method() . "\n";
+        var_dump($request->header()) . "\n";
+        var_dump($request->file()) . "\n";
         var_dump($request->all());
     }
 }

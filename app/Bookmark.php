@@ -18,7 +18,7 @@ class Bookmark extends Model
     public function createdAtFull()
     {
         // March 11 2015, 16:28
-        return Carbon::parse($this->created_at)->format('F j, Y').' at '.Carbon::parse($this->created_at)->format('H:i');
+        return Carbon::parse($this->created_at)->format('F j, Y') . ' at ' . Carbon::parse($this->created_at)->format('H:i');
     }
 
     public function createdAtRelative()

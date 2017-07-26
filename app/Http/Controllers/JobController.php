@@ -72,21 +72,21 @@ class JobController extends Controller
         $executionSystem = System::getCurrentSystem(auth()->user()->id);
         $username = $executionSystem->username;
         $appExecutionSystem = $executionSystem->name;
-        $appDeploymentSystem = $systemDeploymentName = config('services.agave.system_deploy.name_prefix').$username;
+        $appDeploymentSystem = $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . $username;
         $params = [];
         $inputs = [];
         $appHumanName = '';
 
         if ($appId == 1) {
             Log::info('1');
-            $appName = 'app-histogram--'.$executionSystem->name;
+            $appName = 'app-histogram--' . $executionSystem->name;
             $appDeploymentPath = 'histogram';
             $params['param1'] = 'cdr3_length';
             $inputs['file1'] = 'data.csv.zip';
             $appHumanName = 'Standard Histogram Generator';
         } elseif ($appId == 2) {
             Log::info('2');
-            $appName = 'app-histogram2--'.$executionSystem->name;
+            $appName = 'app-histogram2--' . $executionSystem->name;
             $appDeploymentPath = 'histogram2';
             $params['param1'] = 'cdr3_length';
 
@@ -100,7 +100,7 @@ class JobController extends Controller
             $appHumanName = 'Amazing Historgram Generator';
         } elseif ($appId == 3) {
             Log::info('3');
-            $appName = 'app-nishanth01--'.$executionSystem->name;
+            $appName = 'app-nishanth01--' . $executionSystem->name;
             $appDeploymentPath = 'nishanth01';
             $inputs['file1'] = 'data.csv.zip';
             $appHumanName = 'Nishanth App 01';
@@ -110,7 +110,7 @@ class JobController extends Controller
         $config = $agave->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
         $response = $agave->createApp($token, $config);
         $agaveAppId = $response->result->id;
-        Log::info('app created: '.$appId);
+        Log::info('app created: ' . $appId);
 
         // create job in DB
         $job = new Job;
@@ -124,12 +124,12 @@ class JobController extends Controller
         $jobId = $job->id;
         $executionSystem = System::getCurrentSystem(auth()->user()->id);
         $tenant_url = config('services.agave.tenant_url');
-        $systemStaging = config('services.agave.system_staging.name_prefix').$username;
+        $systemStaging = config('services.agave.system_staging.name_prefix') . $username;
         $notificationUrl = config('services.agave.gw_notification_url');
         $gw_username = auth()->user()->username;
 
         $lj = new LocalJob;
-        $lj->description = 'Job '.$jobId.' (data federation + submission to AGAVE)';
+        $lj->description = 'Job ' . $jobId . ' (data federation + submission to AGAVE)';
         // $lg->user = auth()->user()->username;
         // $lg->job_id = $jobId;
         $lj->save();
@@ -138,7 +138,7 @@ class JobController extends Controller
         // queue job
         $this->dispatch(new \App\Jobs\LaunchAgaveJob($jobId, $f, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $localJobId));
 
-        return redirect('jobs/view/'.$jobId);
+        return redirect('jobs/view/' . $jobId);
     }
 
     public function getView($id)
@@ -154,7 +154,7 @@ class JobController extends Controller
 
         $data['files'] = [];
         if ($job['input_folder'] != '') {
-            $folder = 'data/'.$job['input_folder'];
+            $folder = 'data/' . $job['input_folder'];
             if (File::exists($folder)) {
                 $data['files'] = File::allFiles($folder);
                 $data['filesHTML'] = dir_to_html($folder);
@@ -175,7 +175,7 @@ class JobController extends Controller
 
             $agave = new Agave;
             $response = $agave->getJobHistory($job_agave_id, $token);
-            echo '<pre>'.$response.'</pre>';
+            echo '<pre>' . $response . '</pre>';
         }
     }
 
@@ -194,7 +194,7 @@ class JobController extends Controller
         if ($job != null) {
             // delete job files
             if ($job['input_folder']) { // IMPORTANT: this "if" prevents accidental deletion of ALL jobs data
-                $dataFolder = 'data/'.$job['input_folder'];
+                $dataFolder = 'data/' . $job['input_folder'];
                 File::deleteDirectory($dataFolder);
             }
 
@@ -207,7 +207,7 @@ class JobController extends Controller
             // delete job
             $job->delete();
 
-            return redirect('jobs')->with('notification', 'The job <strong>'.$job->id.'</strong> was successfully deleted.');
+            return redirect('jobs')->with('notification', 'The job <strong>' . $job->id . '</strong> was successfully deleted.');
         }
 
         return redirect('jobs');

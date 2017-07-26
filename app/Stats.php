@@ -25,7 +25,7 @@ class Stats extends Model
     {
         $d = new Carbon($this->start_date, 'UTC');
 
-        return $d->toDateString().'T'.$d->toTimeString().'Z';
+        return $d->toDateString() . 'T' . $d->toTimeString() . 'Z';
     }
 
     public static function currentStats()

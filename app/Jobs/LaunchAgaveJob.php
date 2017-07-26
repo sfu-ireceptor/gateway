@@ -60,19 +60,19 @@ class LaunchAgaveJob implements ShouldQueue
 
             // generate csv file
             $job->updateStatus('FEDERATING DATA');
-            Log::info('$f[filters_json]'.$this->f['filters_json']);
+            Log::info('$f[filters_json]' . $this->f['filters_json']);
             $filters = json_decode($this->f['filters_json'], true);
             $csvFilePath = RestService::sequencesCSV($filters, $this->gw_username);
             $folder = dirname($csvFilePath);
             $folder = str_replace('/data/', '', $folder);
 
-            Log::info('folder='.$folder);
+            Log::info('folder=' . $folder);
             $job->input_folder = $folder;
             $job->save();
 
             // update input paths for AGAVE job
             foreach ($this->inputs as $key => $value) {
-                $inputs[$key] = 'agave://'.$this->systemStaging.'/'.$folder.'/'.$value;
+                $inputs[$key] = 'agave://' . $this->systemStaging . '/' . $folder . '/' . $value;
             }
 
             // submit AGAVE job
@@ -80,7 +80,7 @@ class LaunchAgaveJob implements ShouldQueue
 
             $agave = new Agave;
 
-            $config = $agave->getJobConfig('irec-job-'.$this->jobId, $this->agaveAppId, $this->systemStaging, $this->notificationUrl, $folder, $this->params, $inputs);
+            $config = $agave->getJobConfig('irec-job-' . $this->jobId, $this->agaveAppId, $this->systemStaging, $this->notificationUrl, $folder, $this->params, $inputs);
             $response = $agave->createJob($this->token, $config);
 
             $job->agave_id = $response->result->id;

@@ -11,10 +11,10 @@ class AgaveController extends Controller
     // called by AGAVE
     public function postUpdateStatus($id, $status)
     {
-        Log::info('AGAVE job status update: job '.$id.' has status '.$status);
+        Log::info('AGAVE job status update: job ' . $id . ' has status ' . $status);
 
         $lj = new LocalJob('agave');
-        $lj->description = 'Job '.$id.': '.$status;
+        $lj->description = 'Job ' . $id . ': ' . $status;
         $lj->save();
 
         // ignore this status because it happens at the same time as FINISHED

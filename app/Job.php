@@ -10,8 +10,8 @@ if (! function_exists('curl_file_create')) {
     function curl_file_create($filename, $mimetype = '', $postname = '')
     {
         return "@$filename;filename="
-            .($postname ?: basename($filename))
-            .($mimetype ? ";type=$mimetype" : '');
+            . ($postname ?: basename($filename))
+            . ($mimetype ? ";type=$mimetype" : '');
     }
 }
 
@@ -28,7 +28,7 @@ class Job extends Model
     public function createdAtFull()
     {
         // March 11 2015, 16:28
-        return Carbon::parse($this->created_at)->format('F j, Y').' at '.Carbon::parse($this->created_at)->format('H:i');
+        return Carbon::parse($this->created_at)->format('F j, Y') . ' at ' . Carbon::parse($this->created_at)->format('H:i');
     }
 
     public function createdAtRelative()
@@ -84,12 +84,12 @@ class Job extends Model
 
         // POST data
         curl_setopt($c, CURLOPT_POST, true);
-        $post_data = 'grant_type=password&username='.$username.'&password='.$password.'&scope=PRODUCTION';
+        $post_data = 'grant_type=password&username=' . $username . '&password=' . $password . '&scope=PRODUCTION';
         curl_setopt($c, CURLOPT_POSTFIELDS, $post_data);
 
         // auth
         curl_setopt($c, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($c, CURLOPT_USERPWD, $api_key.':'.$api_secret);
+        curl_setopt($c, CURLOPT_USERPWD, $api_key . ':' . $api_secret);
 
         // return output instead of displaying it
         curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
@@ -97,7 +97,7 @@ class Job extends Model
         $json = curl_exec($c);
         curl_close($c);
 
-        Log::info('createToken -> '.$json);
+        Log::info('createToken -> ' . $json);
         $response = json_decode($json);
 
         return $response->access_token;
@@ -136,7 +136,7 @@ class Job extends Model
     ]
 }
 STR;
-        Log::info('json file -> '.$str);
+        Log::info('json file -> ' . $str);
 
         return $str;
     }
@@ -151,7 +151,7 @@ STR;
         // headers
         $h = [];
         $h[0] = 'Content-type: multipart/form-data';
-        $h[1] = 'Authorization: Bearer '.$token;
+        $h[1] = 'Authorization: Bearer ' . $token;
         curl_setopt($c, CURLOPT_HTTPHEADER, $h);
 
         // POST
@@ -161,7 +161,7 @@ STR;
         $f = tempnam(sys_get_temp_dir(), 'agave_job_');
         file_put_contents($f, $job_json);
         $post = [
-            'fileToUpload'=>'@'.$f,
+            'fileToUpload'=>'@' . $f,
         ];
         $post_data['fileToUpload'] = curl_file_create($f);
         curl_setopt($c, CURLOPT_POSTFIELDS, $post_data);
@@ -173,7 +173,7 @@ STR;
         curl_close($c);
         unlink($f);
 
-        Log::info('submitJob -> '.$json);
+        Log::info('submitJob -> ' . $json);
         $response = json_decode($json);
 
         return $response->result->id;

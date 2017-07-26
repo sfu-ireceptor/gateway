@@ -11,10 +11,10 @@ if (! function_exists('dir_to_array')) {
         $cdir = scandir($dir);
         foreach ($cdir as $key => $value) {
             if (! in_array($value, ['.', '..'])) {
-                if (is_dir($dir.DIRECTORY_SEPARATOR.$value)) {
-                    $result[$value] = dir_to_array($dir.DIRECTORY_SEPARATOR.$value);
+                if (is_dir($dir . DIRECTORY_SEPARATOR . $value)) {
+                    $result[$value] = dir_to_array($dir . DIRECTORY_SEPARATOR . $value);
                 } else {
-                    $result[] = $dir.'/'.$value;
+                    $result[] = $dir . '/' . $value;
                 }
             }
         }
@@ -33,7 +33,7 @@ if (! function_exists('array_to_html')) {
                 $s .= $k;
                 $s .= array_to_html($v);
             } else {
-                $s .= '<a href="/'.$v.'">'.basename($v).'</a>';
+                $s .= '<a href="/' . $v . '">' . basename($v) . '</a>';
             }
             $s .= '</li>';
         }

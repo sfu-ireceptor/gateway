@@ -39,12 +39,12 @@ class RestService extends Model
         if ($filePath != '') {
             $dirPath = dirname($filePath);
             if (! is_dir($dirPath)) {
-                Log::info('Creating directory '.$dirPath);
+                Log::info('Creating directory ' . $dirPath);
                 mkdir($dirPath, 0755, true);
             }
 
             $options['save_to'] = fopen($filePath, 'a');
-            Log::info('Guzzle: saving to '.$filePath);
+            Log::info('Guzzle: saving to ' . $filePath);
         }
         $request = $client->createRequest('POST', $path, $options);
 
@@ -87,7 +87,7 @@ class RestService extends Model
                 $rs->labs = $labs;
                 foreach ($labs as $lab) {
                     foreach ($lab->projects as $project) {
-                        $project->id = $rs->id.'_'.$project->id;
+                        $project->id = $rs->id . '_' . $project->id;
                     }
                 }
 
@@ -254,7 +254,7 @@ class RestService extends Model
         unset($filters['filters_order']);
 
         foreach (self::findEnabled() as $rs) {
-            $sample_id_list_key = 'project_sample_id_list_'.$rs->id;
+            $sample_id_list_key = 'project_sample_id_list_' . $rs->id;
             if (array_key_exists($sample_id_list_key, $filters) && ! empty($filters[$sample_id_list_key])) {
                 // remove REST service id
                 // project_sample_id_list_2 -> project_sample_id_list
@@ -288,14 +288,14 @@ class RestService extends Model
     {
         // directory
         $time_str = date('Y-m-d_G-i-s', time());
-        $directory_path = $time_str.'_'.uniqid();
+        $directory_path = $time_str . '_' . uniqid();
         $old = umask(0);
-        File::makeDirectory(public_path().'/data/'.$directory_path, 0777, true, true);
+        File::makeDirectory(public_path() . '/data/' . $directory_path, 0777, true, true);
         umask($old);
 
         // file
-        $filePath = '/data/'.$directory_path.'/data.csv';
-        $systemFilePath = public_path().$filePath;
+        $filePath = '/data/' . $directory_path . '/data.csv';
+        $systemFilePath = public_path() . $filePath;
 
         // add username to filters
         $filters['output'] = 'csv';
@@ -304,14 +304,14 @@ class RestService extends Model
         // get csv data and write it to file
         $csv_header_written = false;
         foreach (self::findEnabled() as $rs) {
-            Log::info('RS: '.$rs->id);
+            Log::info('RS: ' . $rs->id);
 
             $filters['csv_header'] = false;
             if (! $csv_header_written) {
                 $filters['csv_header'] = true;
             }
 
-            $sample_id_list_key = 'project_sample_id_list_'.$rs->id;
+            $sample_id_list_key = 'project_sample_id_list_' . $rs->id;
             if (array_key_exists($sample_id_list_key, $filters) && ! empty($filters[$sample_id_list_key])) {
                 // remove REST service id
                 // project_sample_id_list_2 -> project_sample_id_list
@@ -337,17 +337,17 @@ class RestService extends Model
         }
 
         // zip file
-        $zipSystemFilePath = $systemFilePath.'.zip';
+        $zipSystemFilePath = $systemFilePath . '.zip';
         $zip = new ZipArchive();
         $zip->open($zipSystemFilePath, ZipArchive::CREATE);
         $zip->addFile($systemFilePath, 'data.csv');
         $zip->close();
-        $zipFilePath = $filePath.'.zip';
+        $zipFilePath = $filePath . '.zip';
 
         // delete original file
         File::delete($systemFilePath);
 
-        Log::info('$zipFilePath='.$zipFilePath);
+        Log::info('$zipFilePath=' . $zipFilePath);
 
         return $zipFilePath;
     }
