@@ -12,7 +12,7 @@ class UserController extends Controller
 {
     public function getLogin()
     {
-        return view('userLogin');
+        return view('user/login');
     }
 
     public function postLogin(Request $request)
@@ -69,7 +69,7 @@ class UserController extends Controller
         $data = [];
         $data['notification'] = session('notification');
 
-        return view('userChangePassword', $data);
+        return view('user/changePassword', $data);
     }
 
     public function postChangePassword(Request $request)
@@ -137,7 +137,7 @@ class UserController extends Controller
         $data['user'] = $user;
         $data['notification'] = session('notification');
 
-        return view('userAccount', $data);
+        return view('user/account', $data);
     }
 
     public function getChangePersonalInfo()
@@ -156,7 +156,7 @@ class UserController extends Controller
         $data['email'] = $l->email;
         $data['notification'] = session('notification');
 
-        return view('userChangePersonalInfo', $data);
+        return view('user/changePersonalInfo', $data);
     }
 
     public function postChangePersonalInfo(Request $request)
