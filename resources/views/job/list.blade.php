@@ -21,7 +21,7 @@
 	@endif
 
 	<div class="job_list_grouped_by_month">
-		@include('jobListGroupedByMonth')
+		@include('job/listGroupedByMonth')
 	</div>
 </div>
 @stop

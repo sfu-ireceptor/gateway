@@ -22,7 +22,7 @@ class JobController extends Controller
 
         $data['notification'] = session()->get('notification');
 
-        return view('jobList', $data);
+        return view('job/list', $data);
     }
 
     public function getJobData($job_id)
@@ -41,11 +41,11 @@ class JobController extends Controller
 
         $d = [];
         $d['job'] = $job;
-        $data['progress'] = view()->make('jobProgress', $d)->render();
+        $data['progress'] = view()->make('job/progress', $d)->render();
 
         $d = [];
         $d['steps'] = JobStep::findAllForJob($job_id);
-        $data['steps'] = view()->make('jobSteps', $d)->render();
+        $data['steps'] = view()->make('job/steps', $d)->render();
 
         $json = json_encode($data);
 
@@ -59,7 +59,7 @@ class JobController extends Controller
         $data = [];
         $data['job_list_grouped_by_month'] = $job_list;
 
-        return view('jobListGroupedByMonth', $data);
+        return view('job/istGroupedByMonth', $data);
     }
 
     public function postLaunchApp(Request $request)
@@ -163,7 +163,7 @@ class JobController extends Controller
 
         $data['steps'] = JobStep::findAllForJob($id);
 
-        return view('jobView', $data);
+        return view('job/view', $data);
     }
 
     public function getAgaveHistory($id)
