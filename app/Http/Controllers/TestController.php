@@ -6,12 +6,37 @@ use App\Job;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class TestController extends Controller
 {
     public function getIndex()
     {
-        echo 'index';
+        // echo 'index';
+        $email = 'jlj7@sfu.ca';
+
+        $table = 'password_resets';
+
+        $hashKey = config('app.key');
+        $token = hash_hmac('sha256', Str::random(40), $hashKey);
+        // echo $token;
+
+        $hashedToken = Hash::make($token);
+        // echo $hashedToken;
+
+
+        DB::table($table)->where('email', 'jlj7@sfu.ca')->delete();
+        DB::table($table)->insert([
+            'email' => $email,
+            'token' => $hashedToken,
+            'created_at' => Carbon::now()
+        ]);
+
+
+
 
         // try {
         //     $client = new \GuzzleHttp\Client();
