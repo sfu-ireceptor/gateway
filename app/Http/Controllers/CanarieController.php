@@ -18,7 +18,7 @@ class CanarieController extends Controller
         $rs_list = RestService::all();
         $data['rs_list'] = $rs_list;
 
-        return view('canarieLinks', $data);
+        return view('canarie/links', $data);
     }
 
     public function linkPage($page)
@@ -36,7 +36,7 @@ class CanarieController extends Controller
         $data['page'] = $page;
         $data['url'] = $url;
 
-        return view('canarieLink', $data);
+        return view('canarie/link', $data);
     }
 
     public function platformInfo(Request $request, Response $response)
@@ -56,7 +56,7 @@ class CanarieController extends Controller
         if ($request->wantsJson()) {
             return $response->json($t);
         } else {
-            return view('canarieInfo', $t);
+            return view('canarie/info', $t);
         }
     }
 
@@ -78,7 +78,7 @@ class CanarieController extends Controller
         if ($request->wantsJson()) {
             return $response->json($t);
         } else {
-            return view('canarieInfo', $t);
+            return view('canarie/info', $t);
         }
     }
 
@@ -100,7 +100,7 @@ class CanarieController extends Controller
         if ($request->wantsJson()) {
             return $response->json($t);
         } else {
-            return view('canarieInfo', $t);
+            return view('canarie/info', $t);
         }
     }
 
@@ -120,7 +120,7 @@ class CanarieController extends Controller
             $t['key'] = 'Number of requests';
             $t['val'] = $s->nb_requests;
 
-            return view('canarieStats', $t);
+            return view('canarie/stats', $t);
         }
     }
 
@@ -144,7 +144,7 @@ class CanarieController extends Controller
             $t['key'] = 'Number of users';
             $t['val'] = $t['nbUsers'];
 
-            return view('canarieStats', $t);
+            return view('canarie/stats', $t);
         }
     }
 
@@ -168,7 +168,7 @@ class CanarieController extends Controller
             $t['key'] = 'Number of jobs';
             $t['val'] = $t['nbJobs'];
 
-            return view('canarieStats', $t);
+            return view('canarie/stats', $t);
         }
     }
 }
