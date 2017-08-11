@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Job;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class TestController extends Controller
 {
@@ -27,16 +27,12 @@ class TestController extends Controller
         $hashedToken = Hash::make($token);
         // echo $hashedToken;
 
-
         DB::table($table)->where('email', 'jlj7@sfu.ca')->delete();
         DB::table($table)->insert([
             'email' => $email,
             'token' => $hashedToken,
-            'created_at' => Carbon::now()
+            'created_at' => Carbon::now(),
         ]);
-
-
-
 
         // try {
         //     $client = new \GuzzleHttp\Client();
