@@ -87,10 +87,8 @@ function showData(json) {
 	*/
 	
 	// Generate the text content for displaying the summary data.
-	document.getElementById("header").innerHTML = "Your query returned " + numSequences + " Sequences from " +
-	    numProjects + " Projects, " + 
-	    numSubjects + " Subjects, and " + 
-	    numSamples + " Samples!";
+    var s = " " + numSequences + " sequences from " + numProjects + " projects (" +  numSubjects + " subjects,  " +  numSamples + " samples)";
+    $('#summary_text').text(s);
 
     // Generate the six charts for the six types of aggregated data. For each chart, we
 	// get the aggregated data for the field of interest, convert that aggregated data
@@ -154,6 +152,7 @@ function irBuildChart(fieldTitle, data, type)
             plotBackgroundColor: null,
             plotBorderWidth: null,
             plotShadow: false,
+            backgroundColor: 'transparent',
             type: type
         },
         title: {

@@ -23,7 +23,7 @@
 
 	<body>
 		<nav class="navbar navbar-default" role="navigation">
-		<div class="container-fluid">
+		<div class="container-fluid"
 		    <!-- Brand and toggle get grouped for better mobile display -->
 			<div class="navbar-header">
 		    	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -78,10 +78,8 @@
 		<script src="/js/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 		
-		<script src="https://code.highcharts.com/highcharts.js"></script>
-		<script src="https://code.highcharts.com/modules/exporting.js"></script>
-
 		<script src="/js/jstree.min.js"></script>
+		<script src="https://code.highcharts.com/highcharts.js"></script>
 		
 		<script src="/js/main.js?v=2"></script>
 		<script src="/js/visualization.js?v=3"></script>
