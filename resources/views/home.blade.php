@@ -11,7 +11,7 @@
 </div>
 
 
-<div class="row">
+<div id="summary_charts" class="row">
 <div class="col-md-12">
 
 <!-- A DIV section for putting the header information. -->

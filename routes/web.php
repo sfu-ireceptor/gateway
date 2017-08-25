@@ -48,6 +48,7 @@ Route::any('test2', 'TestController@index2');
 Route::middleware('auth')->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/samples', 'SampleController@index')->name('samples');
+    Route::get('/samples/json', 'SampleController@json')->name('samples-json');
     Route::get('/sequences', 'SequenceController@index')->name('sequences');
 
     Route::prefix('user')->group(function () {

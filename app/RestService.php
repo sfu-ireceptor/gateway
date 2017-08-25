@@ -173,34 +173,39 @@ class RestService extends Model
         $filters['num_results'] = 500;
 
         foreach (self::findEnabled() as $rs) {
-            // project list: convert string to array - ex: [1_1, 2_3, 2_4]
-            $project_id_list = array_filter(explode(',', $filters['project_id_list']));
-
-            // project list: break up array by rest service with actual project id
-            // ex: [1_1, 2_3, 2_4] -> {1:[1], 2:[3,4]}
-            $project_list_rs = [];
-            foreach ($project_id_list as $project_id) {
-                $t = explode('_', $project_id);
-                if (! isset($project_list_rs[$t[0]])) {
-                    $project_list_rs[$t[0]] = [];
-                }
-                $project_list_rs[$t[0]][] = $t[1];
-            }
-
-            // if no project of this service is selected, skip
-            if (! isset($project_list_rs[$rs->id]) || empty($project_list_rs[$rs->id])) {
-                continue;
-            }
-
             // filters: customization for this specific REST service
             $params = $filters;
             $params['username'] = $username;
-
-            // project id list
             unset($params['project_id_list']);
             unset($params['project_id']);
-            if (isset($project_list_rs[$rs->id])) {
-                $params['project_id'] = $project_list_rs[$rs->id];
+
+            if(isset($filters['ajax'])) {
+                // do nothing??
+            }
+            else {
+                // project list: convert string to array - ex: [1_1, 2_3, 2_4]
+                $project_id_list = array_filter(explode(',', $filters['project_id_list']));
+
+                // project list: break up array by rest service with actual project id
+                // ex: [1_1, 2_3, 2_4] -> {1:[1], 2:[3,4]}
+                $project_list_rs = [];
+                foreach ($project_id_list as $project_id) {
+                    $t = explode('_', $project_id);
+                    if (! isset($project_list_rs[$t[0]])) {
+                        $project_list_rs[$t[0]] = [];
+                    }
+                    $project_list_rs[$t[0]][] = $t[1];
+                }
+
+                // if no project of this service is selected, skip
+                if (! isset($project_list_rs[$rs->id]) || empty($project_list_rs[$rs->id])) {
+                    continue;
+                }
+
+                // project id list
+                if (isset($project_list_rs[$rs->id])) {
+                    $params['project_id'] = $project_list_rs[$rs->id];
+                }                
             }
 
             // get samples from REST service

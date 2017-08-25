@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\RestService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SampleController extends Controller
 {
@@ -24,5 +25,19 @@ class SampleController extends Controller
         $request->flash();
 
         return view('sample', $data);
+    }
+
+    public function json(Request $request)
+    {
+        $username = auth()->user()->username;
+
+        // get sample list
+        $params = $request->all();
+        $params['ajax'] = true;
+        
+        $sample_data = RestService::samples($params, $username);
+        $sample_list = $sample_data['items'];
+
+        return json_encode($sample_list);
     }
 }

@@ -84,7 +84,7 @@
 		<script src="/js/jstree.min.js"></script>
 		
 		<script src="/js/main.js?v=2"></script>
-		<script src="/js/visualization.js?v=1"></script>
+		<script src="/js/visualization.js?v=3"></script>
 	</body>
 
 </html>
