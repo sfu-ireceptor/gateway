@@ -77,8 +77,14 @@
 		<!-- javascript -->
 		<script src="/js/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		
+		<script src="https://code.highcharts.com/highcharts.js"></script>
+		<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
 		<script src="/js/jstree.min.js"></script>
+		
 		<script src="/js/main.js?v=2"></script>
+		<script src="/js/visualization.js?v=1"></script>
 	</body>
 
 </html>

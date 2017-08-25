@@ -10,6 +10,69 @@
   <p>iReceptor provides searches and downloads over a billion of sequences.</p>
 </div>
 
+
+<div class="row">
+<div class="col-md-12">
+
+<!-- A DIV section for putting the header information. -->
+<center>
+<div id="header"></div>
+</center>
+
+<!--
+Our container structure for the charts, a 2x3 table. Note the layout of the  
+HTML can change arbitrarily and this will not effect the code. Chart 1 through
+6 will go in container 1 through 6 no matter where they are. 
+-->
+
+<center>
+<table>
+<!-- This section not used as we use the DIV section above for summary stats.
+<tr>
+<td>
+<div id="labs" style="min-width: 300px; max-width: 300px; margin: 0 auto"></div>
+</td>
+<td>
+<div id="subjects" style="min-width: 300px; max-width: 300px; margin: 0 auto"></div>
+</td>
+<td>
+<div id="samples" style="min-width: 300px; max-width: 300px; margin: 0 auto"></div>
+</td>
+</tr>
+<tr>
+-->
+
+<td>
+<div id="container1" style="min-width: 300px; height: 300px; max-width: 300px; margin: 0 auto"></div>
+</td>
+<td>
+<div id="container2" style="min-width: 300px; height: 300px; max-width: 300px; margin: 0 auto"></div>
+</td>
+<td>
+<div id="container3" style="min-width: 300px; height: 300px; max-width: 300px; margin: 0 auto"></div>
+</td>
+</tr>
+<tr>
+<td>
+<div id="container4" style="min-width: 300px; height: 300px; max-width: 300px; margin: 0 auto"></div>
+</td>
+<td>
+<div id="container5" style="min-width: 300px; height: 300px; max-width: 300px; margin: 0 auto"></div>
+</td>
+<td>
+<div id="container6" style="min-width: 300px; height: 300px; max-width: 300px; margin: 0 auto"></div>
+</td>
+</tr>
+</table>
+</center>
+
+<!-- A debug section for debug output -->
+<p id="debug"></p>
+
+
+</div>
+</div>
+
 <div class="row">
 
 	<div class="col-md-5">
