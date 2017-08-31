@@ -179,10 +179,9 @@ class RestService extends Model
             unset($params['project_id_list']);
             unset($params['project_id']);
 
-            if(isset($filters['ajax'])) {
+            if (isset($filters['ajax'])) {
                 // do nothing??
-            }
-            else {
+            } else {
                 // project list: convert string to array - ex: [1_1, 2_3, 2_4]
                 $project_id_list = array_filter(explode(',', $filters['project_id_list']));
 
@@ -205,7 +204,7 @@ class RestService extends Model
                 // project id list
                 if (isset($project_list_rs[$rs->id])) {
                     $params['project_id'] = $project_list_rs[$rs->id];
-                }                
+                }
             }
 
             // get samples from REST service

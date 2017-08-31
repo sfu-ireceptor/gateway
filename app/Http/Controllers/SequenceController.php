@@ -121,7 +121,7 @@ class SequenceController extends Controller
         // display view
         return view('sequence', $data);
 
-    // for later: display current project/sample names
+        // for later: display current project/sample names
     // <p>
     //     @foreach ($sample_list as $sample)
     //         <strong>{{ $sample->project_name }}</strong>
