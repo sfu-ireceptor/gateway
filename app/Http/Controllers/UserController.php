@@ -191,4 +191,10 @@ class UserController extends Controller
 
         return redirect('/user/account')->with('notification', 'Personal information was successfully chaged.');
     }
+
+    public function getResetPassword()
+    {
+        return view('userResetPassword');
+        // return view('auth/passwords/reset');
+    }
 }

@@ -14,7 +14,10 @@ Route::get('/', function () {
 // user authentication
 Route::get('user/login', 'UserController@getLogin')->name('login');
 Route::post('user/login', 'UserController@postLogin');
+
 Route::get('user/logout', 'UserController@getLogout');
+
+Route::get('user/reset-password', 'UserController@getResetPassword');
 
 // Agave jobs notifications
 Route::post('agave/update-status/{id}/{status}', 'AgaveController@postUpdateStatus');
