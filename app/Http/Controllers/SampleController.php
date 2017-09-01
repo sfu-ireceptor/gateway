@@ -25,4 +25,18 @@ class SampleController extends Controller
 
         return view('sample', $data);
     }
+
+    public function json(Request $request)
+    {
+        $username = auth()->user()->username;
+
+        // get sample list
+        $params = $request->all();
+        $params['ajax'] = true;
+
+        $sample_data = RestService::samples($params, $username);
+        $sample_list = $sample_data['items'];
+
+        return json_encode($sample_list);
+    }
 }

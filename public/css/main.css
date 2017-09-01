@@ -211,6 +211,18 @@ p.workflow {
     background-position: -32px -4px;
 }
 
+#summary_charts {
+	
+}
+
+.chart {
+	height: 300px;
+}
+
+.chart text.highcharts-credits {
+	display: none;
+}
+
 /* @group footer */
 
 footer {
