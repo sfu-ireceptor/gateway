@@ -5,7 +5,7 @@
 @section('content')
 <div class="container">
 	
-	<h1>Success</h1>
+	<h1>Success: email sent</h1>
 
 	<div class="row">
 

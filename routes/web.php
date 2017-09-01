@@ -21,6 +21,9 @@ Route::get('user/forgot-password', 'UserController@getForgotPassword');
 Route::post('user/forgot-password', 'UserController@postForgotPassword');
 Route::get('user/forgot-password-email-sent', 'UserController@getForgotPasswordEmailSent');
 
+Route::get('user/reset-password', 'UserController@getResetPassword');
+Route::get('user/reset-password-confirmation', 'UserController@getResetPasswordConfirmation');
+
 // Agave jobs notifications
 Route::post('agave/update-status/{id}/{status}', 'AgaveController@postUpdateStatus');
 

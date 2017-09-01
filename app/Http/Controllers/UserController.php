@@ -226,4 +226,14 @@ class UserController extends Controller
         return view('user/forgotPasswordEmailSent');
     }
 
+    public function getResetPassword()
+    {
+        return redirect('/user/reset-password-confirmation');
+    }
+
+    public function getResetPasswordConfirmation()
+    {
+        return view('user/resetPasswordConfirmation');
+    }
+
 }
