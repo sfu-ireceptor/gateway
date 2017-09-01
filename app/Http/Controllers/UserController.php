@@ -192,9 +192,38 @@ class UserController extends Controller
         return redirect('/user/account')->with('notification', 'Personal information was successfully chaged.');
     }
 
-    public function getResetPassword()
+    public function getForgotPassword()
     {
-        return view('user/resetPassword');
+        return view('user/forgotPassword');
         // return view('auth/passwords/reset');
     }
+
+    public function postForgotPassword(Request $request)
+    {
+        // validate form
+        $rules = [
+            'email' => 'required|email',
+        ];
+
+        $messages = [
+            'required' => 'This field is required.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
+            $request->flash();
+
+            return redirect('/user/forgot-password')->withErrors($validator);
+        }
+
+        $email = $request->input('email');
+
+        return redirect('/user/forgot-password-email-sent');
+    }
+
+    public function getForgotPasswordEmailSent()
+    {
+        return view('user/forgotPasswordEmailSent');
+    }
+
 }
