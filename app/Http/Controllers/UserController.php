@@ -6,8 +6,8 @@ use App\User;
 use App\Agave;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -223,6 +223,7 @@ class UserController extends Controller
         $user = $agave->getUserWithEmail($email, $token);
         if ($user == null) {
             $request->flash();
+
             return redirect()->back()->withErrors(['email' => 'Sorry, we could not find an iReceptor user with this email address.']);
         }
 
