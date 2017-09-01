@@ -1,4 +1,4 @@
-Hi ,
+Hi {{ $first_name }},
 
 To reset your iReceptor password, click on this link:
-https://ireceptorgw.irmacs.sfu.ca/user/login 
+{{ $reset_link }}

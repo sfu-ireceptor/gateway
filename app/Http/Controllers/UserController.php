@@ -214,13 +214,22 @@ class UserController extends Controller
         if ($validator->fails()) {
             $request->flash();
 
-            return redirect('/user/forgot-password')->withErrors($validator);
+            return redirect()->back()->withErrors($validator);
         }
 
         $email = $request->input('email');
+        $agave = new Agave;
+        $token = $agave->getAdminToken();
+        $user = $agave->getUserWithEmail($email, $token);
+        if ($user == null) {
+            $request->flash();
+            return redirect()->back()->withErrors(['email' => 'Sorry, we could not find an iReceptor user with this email address.']);
+        }
 
         // email reset link
         $t = [];
+        $t['first_name'] = $user->first_name;
+        $t['reset_link'] = 'https://ireceptorgw.irmacs.sfu.ca/user/reset-password/';
         Mail::send(['text' => 'emails.auth.resetPasswordLink'], $t, function ($message) use ($t, $email) {
             $message->to($email)->subject('Password reset');
         });

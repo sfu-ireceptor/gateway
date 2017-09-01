@@ -371,6 +371,21 @@ class Agave
         return $this->doGETRequest($url, $token);
     }
 
+    public function getUserWithEmail($email, $token)
+    {
+        $user = NULL;
+        
+        $user_list = $this->getUsers($token);
+        foreach ($user_list as $u) {
+            if($u->email == $email)
+            {
+                $user = $u;
+            }
+        }
+
+        return $user;
+    }    
+
     public function generateSSHKeys()
     {
         $rsa = new RSA();

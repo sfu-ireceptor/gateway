@@ -10,11 +10,26 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use App\Agave;
 
 class TestController extends Controller
 {
     public function getIndex()
     {
+
+        $agave = new Agave;
+        $token = $agave->getAdminToken();
+
+        $user = $agave->getUserWithEmail('jlj7@sfu.ca', $token);
+        if ($user == NULL) {
+            echo "ok";
+            die();
+        }
+        var_dump($user);
+        
+
+        die();
+
         // echo 'index';
         $email = 'jlj7@sfu.ca';
 
