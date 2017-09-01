@@ -7,6 +7,7 @@ use App\Agave;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -218,6 +219,12 @@ class UserController extends Controller
 
         $email = $request->input('email');
 
+        // email reset link
+        $t = [];
+        Mail::send(['text' => 'emails.auth.resetPasswordLink'], $t, function ($message) use ($t, $email) {
+            $message->to($email)->subject('Password reset');
+        });
+
         return redirect('/user/forgot-password-email-sent');
     }
 
@@ -228,6 +235,14 @@ class UserController extends Controller
 
     public function getResetPassword()
     {
+        $email = 'jlj7@sfu.ca';
+
+        // email new password
+        $t = [];
+        Mail::send(['text' => 'emails.auth.newPassword'], $t, function ($message) use ($t, $email) {
+            $message->to($email)->subject('Your new password');
+        });
+
         return redirect('/user/reset-password-confirmation');
     }
 
