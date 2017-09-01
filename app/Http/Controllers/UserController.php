@@ -194,7 +194,7 @@ class UserController extends Controller
 
     public function getResetPassword()
     {
-        return view('userResetPassword');
+        return view('user/resetPassword');
         // return view('auth/passwords/reset');
     }
 }
