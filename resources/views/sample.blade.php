@@ -7,7 +7,18 @@
 
 	{{ Form::open(array('url' => 'samples#results', 'role' => 'form', 'method' => 'get', 'class' => 'sample_search')) }}
 		<input type="hidden" name="project_id_list" />
-
+		<div class="bs-example">
+		<div id="sample_charts">
+			<div class="row">
+				<div class="col-md-2 chart" id="sample_chart1"></div>
+				<div class="col-md-2 chart" id="sample_chart2"></div>
+				<div class="col-md-2 chart" id="sample_chart3"></div>
+				<div class="col-md-2 chart" id="sample_chart4"></div>
+				<div class="col-md-2 chart" id="sample_chart5"></div>
+				<div class="col-md-2 chart" id="sample_chart6"></div>
+			</div>
+		</div>
+		</div>
 		<div class="bs-example">
 			<fieldset class="first">
 				<legend>Data Sites</legend>

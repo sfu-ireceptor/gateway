@@ -6,7 +6,18 @@
 <div class="container-fluid">
 
 	<h1>Search Sequences</h1>
-
+	<div class="bs-example">
+	<div id="sequence_charts">
+		<div class="row">
+			<div class="col-md-2 chart" id="sequence_chart1"></div>
+			<div class="col-md-2 chart" id="sequence_chart2"></div>
+			<div class="col-md-2 chart" id="sequence_chart3"></div>
+			<div class="col-md-2 chart" id="sequence_chart4"></div>
+			<div class="col-md-2 chart" id="sequence_chart5"></div>
+			<div class="col-md-2 chart" id="sequence_chart6"></div>
+		</div>
+	</div>
+	</div>
 	<!-- template for fields added dynamically -->
 	<div id="field_template" class="hidden">
 		<div class="col-md-2">
