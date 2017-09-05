@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -223,16 +227,29 @@ class UserController extends Controller
         $user = $agave->getUserWithEmail($email, $token);
         if ($user == null) {
             $request->flash();
-
             return redirect()->back()->withErrors(['email' => 'Sorry, we could not find an iReceptor user with this email address.']);
         }
 
+        // generate token
+        $hashKey = config('app.key');
+        $token = hash_hmac('sha256', Str::random(40), $hashKey);
+        Log::debug('Token: ' . $token);
+
+        // add token to DB
+        $table = 'password_resets';
+        DB::table($table)->where('email', $email)->delete();
+        DB::table($table)->insert([
+            'email' => $email,
+            'token' => $token,
+            'created_at' => Carbon::now(),
+        ]);
+
         // email reset link
         $t = [];
+        $t['reset_link'] = config('app.url') . '/user/reset-password/' . $token;
         $t['first_name'] = $user->first_name;
-        $t['reset_link'] = 'https://ireceptorgw.irmacs.sfu.ca/user/reset-password/';
         Mail::send(['text' => 'emails.auth.resetPasswordLink'], $t, function ($message) use ($t, $email) {
-            $message->to($email)->subject('Password reset');
+            $message->to($email)->subject('Reset your password');
         });
 
         return redirect('/user/forgot-password-email-sent');
@@ -243,12 +260,50 @@ class UserController extends Controller
         return view('user/forgotPasswordEmailSent');
     }
 
-    public function getResetPassword()
+    public function getResetPassword($reset_token)
     {
-        $email = 'jlj7@sfu.ca';
+        Log::debug('Token from email: ' . $reset_token);
+        
+        // check token
+        $table = 'password_resets';
+        $entry = DB::table($table)->where('token', $reset_token)->first();
+        if($entry == NULL) {
+            return "Couldn't find token.";
+            die();
+        }
+
+        // find user
+        $agave = new Agave;
+        $token = $agave->getAdminToken();
+        // echo $entry->email;die();
+        $agave_user = $agave->getUserWithEmail($entry->email, $token);
+
+        // update user passord in Agave
+        $new_password = str_random(24);
+        $t = $agave->updateUser($token, $agave_user->username, $agave_user->first_name, $agave_user->last_name, $agave_user->email, $new_password);
+
+        // create user in local DB if necessary
+        $user = User::where('username', $agave_user->username)->first();
+        if ($user == null) {
+            $user = new User();
+
+            $user->username = $agave_user->username;
+            $user->first_name = $agave_user->first_name;
+            $user->last_name = $agave_user->last_name;
+            $user->email = $agave_user->email;
+
+            $user->save();
+        }
+        // log user in
+        auth()->login($user);
 
         // email new password
+        $email = $user->email;
         $t = [];
+        $t['first_name'] = $user->first_name;
+        $t['username'] = $user->username;
+        $t['password'] = $new_password;
+        $t['login_link'] = config('app.url') . '/user/login';
         Mail::send(['text' => 'emails.auth.newPassword'], $t, function ($message) use ($t, $email) {
             $message->to($email)->subject('Your new password');
         });

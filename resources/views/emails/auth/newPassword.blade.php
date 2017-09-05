@@ -1,7 +1,9 @@
-Hi ,
+Hi {{ $first_name }},
 
-Your new password: 
-Your username: 
+Your password has been successfully reset. Here are your new credentials:
 
-Log in at https://ireceptorgw.irmacs.sfu.ca/user/login 
+Username: {{ $username }}
+Password: {{ $password }}
+
+Log in at {{ $login_link }}
 
