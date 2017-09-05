@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Job;
+use App\Agave;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -15,6 +16,21 @@ class TestController extends Controller
 {
     public function getIndex()
     {
+        echo Hash::make('0bed3fd19bc087e03ca5e99f98f7e976d330fbf1b966e23de17b41534a942cb6');
+        die();
+
+        $agave = new Agave;
+        $token = $agave->getAdminToken();
+
+        $user = $agave->getUserWithEmail('jlj7@sfu.ca', $token);
+        if ($user == null) {
+            echo 'ok';
+            die();
+        }
+        var_dump($user);
+
+        die();
+
         // echo 'index';
         $email = 'jlj7@sfu.ca';
 

@@ -79,14 +79,14 @@ class AdminController extends Controller
         $data['notification'] = session()->get('notification');
         $data['l'] = $l;
 
-        return view('userList', $data);
+        return view('user/list', $data);
     }
 
     public function getAddUser()
     {
         $data = [];
 
-        return view('userAdd', $data);
+        return view('user/add', $data);
     }
 
     public function postAddUser(Request $request)
@@ -116,11 +116,17 @@ class AdminController extends Controller
         // create Agave account
         $agave = new Agave;
         $token = $agave->getAdminToken();
-        $t = $agave->createUser($token, $firstName, $lastName, $email);
+        $u = $agave->createUser($token, $firstName, $lastName, $email);
+
+        $t = [];
+        $t['login_link'] = config('app.url') . '/user/login';
+        $t['first_name'] = $u['first_name'];
+        $t['username'] = $u['username'];
+        $t['password'] = $u['password'];
 
         // email credentials
-        Mail::send(['text' => 'emails.auth.accountCreated'], $t, function ($message) use ($t) {
-            $message->to($t['email'])->subject('iReceptor account');
+        Mail::send(['text' => 'emails.auth.accountCreated'], $t, function ($message) use ($u) {
+            $message->to($u['email'])->subject('iReceptor account');
         });
 
         Log::info('An account has been created for user ' . $t['username'] . '. Pwd: ' . $t['password']);
@@ -142,7 +148,7 @@ class AdminController extends Controller
         $data['last_name'] = $l->last_name;
         $data['email'] = $l->email;
 
-        return view('userEdit', $data);
+        return view('user/edit', $data);
     }
 
     public function postEditUser(Request $request)

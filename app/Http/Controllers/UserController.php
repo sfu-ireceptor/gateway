@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Agave;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -190,5 +194,124 @@ class UserController extends Controller
         $t = $agave->updateUser($token, $username, $firstName, $lastName, $email);
 
         return redirect('/user/account')->with('notification', 'Personal information was successfully chaged.');
+    }
+
+    public function getForgotPassword()
+    {
+        return view('user/forgotPassword');
+        // return view('auth/passwords/reset');
+    }
+
+    public function postForgotPassword(Request $request)
+    {
+        // validate form
+        $rules = [
+            'email' => 'required|email',
+        ];
+
+        $messages = [
+            'required' => 'This field is required.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
+            $request->flash();
+
+            return redirect()->back()->withErrors($validator);
+        }
+
+        $email = $request->input('email');
+        $agave = new Agave;
+        $token = $agave->getAdminToken();
+        $user = $agave->getUserWithEmail($email, $token);
+        if ($user == null) {
+            $request->flash();
+
+            return redirect()->back()->withErrors(['email' => 'Sorry, we could not find an iReceptor user with this email address.']);
+        }
+
+        // generate token
+        $hashKey = config('app.key');
+        $token = hash_hmac('sha256', Str::random(40), $hashKey);
+        Log::debug('Token: ' . $token);
+
+        // add token to DB
+        $table = 'password_resets';
+        DB::table($table)->where('email', $email)->delete();
+        DB::table($table)->insert([
+            'email' => $email,
+            'token' => $token,
+            'created_at' => Carbon::now(),
+        ]);
+
+        // email reset link
+        $t = [];
+        $t['reset_link'] = config('app.url') . '/user/reset-password/' . $token;
+        $t['first_name'] = $user->first_name;
+        Mail::send(['text' => 'emails.auth.resetPasswordLink'], $t, function ($message) use ($t, $email) {
+            $message->to($email)->subject('Reset your password');
+        });
+
+        return redirect('/user/forgot-password-email-sent');
+    }
+
+    public function getForgotPasswordEmailSent()
+    {
+        return view('user/forgotPasswordEmailSent');
+    }
+
+    public function getResetPassword($reset_token)
+    {
+        Log::debug('Token from email: ' . $reset_token);
+
+        // check token
+        $table = 'password_resets';
+        $entry = DB::table($table)->where('token', $reset_token)->first();
+        if ($entry == null) {
+            abort(401, 'Sorry, your reset link is invalid. Could you make sure you copied it properly?');
+        }
+
+        // find user
+        $agave = new Agave;
+        $token = $agave->getAdminToken();
+        // echo $entry->email;die();
+        $agave_user = $agave->getUserWithEmail($entry->email, $token);
+
+        // update user passord in Agave
+        $new_password = str_random(24);
+        $t = $agave->updateUser($token, $agave_user->username, $agave_user->first_name, $agave_user->last_name, $agave_user->email, $new_password);
+
+        // create user in local DB if necessary
+        $user = User::where('username', $agave_user->username)->first();
+        if ($user == null) {
+            $user = new User();
+
+            $user->username = $agave_user->username;
+            $user->first_name = $agave_user->first_name;
+            $user->last_name = $agave_user->last_name;
+            $user->email = $agave_user->email;
+
+            $user->save();
+        }
+        // log user in
+        auth()->login($user);
+
+        // email new password
+        $email = $user->email;
+        $t = [];
+        $t['first_name'] = $user->first_name;
+        $t['username'] = $user->username;
+        $t['password'] = $new_password;
+        $t['login_link'] = config('app.url') . '/user/login';
+        Mail::send(['text' => 'emails.auth.newPassword'], $t, function ($message) use ($t, $email) {
+            $message->to($email)->subject('Your new password');
+        });
+
+        return redirect('/user/reset-password-confirmation');
+    }
+
+    public function getResetPasswordConfirmation()
+    {
+        return view('user/resetPasswordConfirmation');
     }
 }
