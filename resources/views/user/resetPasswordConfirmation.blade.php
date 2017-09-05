@@ -10,7 +10,8 @@
 	<div class="row">
 
 		<div class="col-md-6">
-			<p>Hi, we just sent you an email containing your new password. No need to enter it right now though, we already logged you in. Enjoy :)</p>
+			<p>We emailed you the new password. But no need to enter it right now, we already logged you in :)</p>
+			<p><a href="/home">Go to home page.</a></p>
 		</div>
 
 	</div>

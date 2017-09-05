@@ -5,12 +5,12 @@
 @section('content')
 <div class="container">
 	
-	<h1>Success: email sent</h1>
+	<h1>Success. The reset link has been sent.</h1>
 
 	<div class="row">
 
 		<div class="col-md-6">
-			<p>We just emailed you the link to reset your password.</p>
+			<p>Please check your email inbox now.</p>
 		</div>
 
 	</div>

@@ -18,7 +18,7 @@
 	<div class="row">
 
 		<div class="col-md-4">
-			<p>No worries, we can email you a link to reset it.</p>
+			<p>No worries, we'll email you a link to reset it (to make sure it's you).</p>
 			{{ Form::open(array('url' => 'user/forgot-password', 'role' => 'form')) }}
 			    <div class="form-group {{ $errors->first('current_password') ? 'has-error' : ''}}">
 					{{ Form::label('email', 'Email') }} <span class="error">{{ $errors->first('email') }}</span>
@@ -26,7 +26,7 @@
 				</div>
 				
 
-				{{ Form::submit('Send email', array('class' => 'btn btn-primary')) }}
+				{{ Form::submit('Send me a reset link', array('class' => 'btn btn-primary')) }}
 
 			{{ Form::close() }}
 		</div>

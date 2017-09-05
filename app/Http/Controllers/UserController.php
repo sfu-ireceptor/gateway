@@ -268,8 +268,7 @@ class UserController extends Controller
         $table = 'password_resets';
         $entry = DB::table($table)->where('token', $reset_token)->first();
         if ($entry == null) {
-            return "Couldn't find token.";
-            die();
+            abort(401, 'Sorry, your reset link is invalid. Could you make sure you copied it properly?');
         }
 
         // find user
