@@ -34,6 +34,7 @@
 				{{ Form::password('password', array('class' => 'form-control')) }}
 			</p>
 			{{ Form::submit('Log In', array('class' => 'btn btn-primary')) }}
+			<a class="forgot" href="/user/forgot-password">Forgot your password?</a>
 			{{ Form::close() }}
 		</div>
 	</div>

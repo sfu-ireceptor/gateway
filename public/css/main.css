@@ -223,6 +223,14 @@ p.workflow {
 	display: none;
 }
 
+.login-box .forgot {
+	font-style: italic;
+	font-size: 14px;
+	margin-left: 6px;
+	position: relative;
+	top: 2px;
+}
+
 /* @group footer */
 
 footer {
