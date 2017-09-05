@@ -4,14 +4,13 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Agave;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -227,6 +226,7 @@ class UserController extends Controller
         $user = $agave->getUserWithEmail($email, $token);
         if ($user == null) {
             $request->flash();
+
             return redirect()->back()->withErrors(['email' => 'Sorry, we could not find an iReceptor user with this email address.']);
         }
 
@@ -263,11 +263,11 @@ class UserController extends Controller
     public function getResetPassword($reset_token)
     {
         Log::debug('Token from email: ' . $reset_token);
-        
+
         // check token
         $table = 'password_resets';
         $entry = DB::table($table)->where('token', $reset_token)->first();
-        if($entry == NULL) {
+        if ($entry == null) {
             return "Couldn't find token.";
             die();
         }

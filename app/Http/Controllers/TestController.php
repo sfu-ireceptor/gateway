@@ -16,15 +16,8 @@ class TestController extends Controller
 {
     public function getIndex()
     {
-
-        echo Hash::make('0bed3fd19bc087e03ca5e99f98f7e976d330fbf1b966e23de17b41534a942cb6');die();
-
-
-
-
-
-
-
+        echo Hash::make('0bed3fd19bc087e03ca5e99f98f7e976d330fbf1b966e23de17b41534a942cb6');
+        die();
 
         $agave = new Agave;
         $token = $agave->getAdminToken();
