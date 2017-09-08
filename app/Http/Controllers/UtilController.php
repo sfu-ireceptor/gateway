@@ -50,15 +50,15 @@ class UtilController extends Controller
     // called by GitHub hook
     public function deploy($secret)
     {
-        if($secret == config('app.deploy_secret')) {
+        if ($secret == config('app.deploy_secret')) {
             Log::info('Deploying modifications from GitHub...');
-            
+
             $root_path = base_path();
             $process = new Process('cd ' . $root_path . '; ./deploy.sh');
             $process->run(function ($type, $buffer) {
                 echo $buffer;
             });
-            
+
             Log::info('...done');
         }
     }

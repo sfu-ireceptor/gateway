@@ -20,28 +20,28 @@ class TestController extends Controller
     {
 
 // $process = new Process('ls -lsa');
-// $process->run();
+        // $process->run();
 
-// // executes after the command finishes
-// if (!$process->isSuccessful()) {
+        // // executes after the command finishes
+        // if (!$process->isSuccessful()) {
 //     throw new ProcessFailedException($process);
-// }
+        // }
 
-// echo $process->getOutput();
+        // echo $process->getOutput();
 
-// $deploy_script_path = base_path('deploy.sh');
+        // $deploy_script_path = base_path('deploy.sh');
 
-// $process = new Process($deploy_script_path);
-// $process->run(function ($type, $buffer) {
+        // $process = new Process($deploy_script_path);
+        // $process->run(function ($type, $buffer) {
 //     echo $buffer;
-// });
+        // });
 
-$root_path = base_path();
+        $root_path = base_path();
 
-$process = new Process('cd ' . $root_path . '; ./deploy.sh');
-$process->run(function ($type, $buffer) {
-    echo $buffer;
-});
+        $process = new Process('cd ' . $root_path . '; ./deploy.sh');
+        $process->run(function ($type, $buffer) {
+            echo $buffer;
+        });
         // echo "aa";
         die();
 
