@@ -51,7 +51,7 @@ class UtilController extends Controller
     public function deploy($secret)
     {
         if ($secret == config('app.deploy_secret')) {
-            Log::info('Deploying modifications from GitHub..');
+            Log::info('-------- Deployment START --------');
 
             $root_path = base_path();
             $process = new Process('cd ' . $root_path . '; ./deploy.sh');
@@ -59,7 +59,10 @@ class UtilController extends Controller
                 echo $buffer;
             });
 
-            Log::info('...done');
+            Log::info('-------- Deployment END --------');
+        }
+        else {
+            Log::error('Deployment attempt failed because of deploy secret mismatch.');            
         }
     }
 }

@@ -24,12 +24,6 @@ Route::get('user/forgot-password-email-sent', 'UserController@getForgotPasswordE
 Route::get('user/reset-password/{token}', 'UserController@getResetPassword');
 Route::get('user/reset-password-confirmation', 'UserController@getResetPasswordConfirmation');
 
-// Agave jobs notifications
-Route::post('agave/update-status/{id}/{status}', 'UtilController@updateAgaveStatus');
-
-// Deployment trigger for GitHub hook
-Route::any('deploy/{secret}', 'UtilController@deploy');
-
 // CANARIE monitoring - dynamic pages
 Route::get('platform/info', 'CanarieController@platformInfo');
 Route::get('auth/service/info', 'CanarieController@authInfo');
@@ -48,7 +42,7 @@ Route::get('computation/service/{page}', 'CanarieController@linkPage');
 
 // just for dev
 Route::get('test', 'TestController@getIndex');
-Route::any('test2', 'TestController@index2');
+Route::get('test2', 'TestController@index2');
 
 /*
 |--------------------------------------------------------------------------
