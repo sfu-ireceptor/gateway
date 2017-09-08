@@ -60,9 +60,8 @@ class UtilController extends Controller
             });
 
             Log::info('-------- Deployment END --------');
-        }
-        else {
-            Log::error('Deployment attempt failed because of deploy secret mismatch.');            
+        } else {
+            Log::error('Deployment attempt failed because of deploy secret mismatch.');
         }
     }
 }
