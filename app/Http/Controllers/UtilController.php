@@ -68,6 +68,7 @@ class UtilController extends Controller
             Log::error('Deployment attempt failed because of deploy secret mismatch.');
             Log::info('$gitHubToken=' . $gitHubToken);
             Log::info('$localReferenceToken=' . $localReferenceToken);
+            var_dump($request->header());
         }
     }
 }
