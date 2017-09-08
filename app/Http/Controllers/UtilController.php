@@ -51,7 +51,7 @@ class UtilController extends Controller
     public function deploy($secret)
     {
         if ($secret == config('app.deploy_secret')) {
-            Log::info('Deploying modifications from GitHub...');
+            Log::info('Deploying modifications from GitHub..');
 
             $root_path = base_path();
             $process = new Process('cd ' . $root_path . '; ./deploy.sh');
