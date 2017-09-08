@@ -51,7 +51,10 @@ class UtilController extends Controller
     // called by GitHub hook
     public function deploy(Request $request)
     {
-        if ($request->header('X-Hub-Signature') == config('app.deploy_secret')) {
+        $gitHubToken = $request->header('X-Hub-Signature');
+        $localReferenceToken = 'sha1=' . config('app.deploy_secret');
+
+        if (hash_equals($gitHubToken, $localReferenceToken)) {
             Log::info('-------- Deployment START --------');
 
             $root_path = base_path();
@@ -63,8 +66,8 @@ class UtilController extends Controller
             Log::info('-------- Deployment END --------');
         } else {
             Log::error('Deployment attempt failed because of deploy secret mismatch.');
-            Log::info("header('X-Hub-Signature')=" . header('X-Hub-Signature'));
-            Log::info("config('app.deploy_secret')=" . config('app.deploy_secret'));
+            Log::info('$gitHubToken=' . $gitHubToken);
+            Log::info('$localReferenceToken=' . $localReferenceToken);
         }
     }
 }
