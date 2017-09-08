@@ -19,8 +19,7 @@ class TestController extends Controller
     public function getIndex()
     {
         echo base64_encode('706d5ebc88cbf4d69d85baecb83e78c2cf4ece7c9c08f5796f89dcb7afdb850b');
-die();
-
+        die();
 
         $message = <<<'EOD'
 {
