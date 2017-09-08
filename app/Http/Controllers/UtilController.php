@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Job;
 use App\LocalJob;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
-use Illuminate\Http\Request;
 
 class UtilController extends Controller
 {
