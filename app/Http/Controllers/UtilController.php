@@ -58,7 +58,7 @@ class UtilController extends Controller
         $localHash = 'sha1=' . hash_hmac('SHA256', $githubPayload, $localToken);
 
         if (hash_equals($githubHash, $localHash)) {
-            Log::info('-------- Deployment START --------');
+            Log::info('-------- Deployment START -------- ');
 
             $root_path = base_path();
             $process = new Process('cd ' . $root_path . '; ./deploy.sh');
