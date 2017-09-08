@@ -6,6 +6,7 @@ use App\Job;
 use App\LocalJob;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
+use Illuminate\Http\Request;
 
 class UtilController extends Controller
 {
