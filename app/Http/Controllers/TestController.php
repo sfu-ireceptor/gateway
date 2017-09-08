@@ -18,8 +18,7 @@ class TestController extends Controller
 {
     public function getIndex()
     {
-
-$message = <<<EOD
+        $message = <<<'EOD'
 {
   "ref": "refs/heads/master",
   "before": "bf13e1982e384a723f59dcc59087f65648d6badd",
@@ -218,12 +217,11 @@ $message = <<<EOD
 }
 EOD;
 
-$secret = 'CkG7nqY8Rs5haGk7hH6mFLz37CSnuesr';
-print hash_hmac('SHA256', $message, $secret) . "\n";
+        $secret = 'CkG7nqY8Rs5haGk7hH6mFLz37CSnuesr';
+        echo hash_hmac('SHA256', $message, $secret) . "\n";
 
-
-die();
-// $process = new Process('ls -lsa');
+        die();
+        // $process = new Process('ls -lsa');
         // $process->run();
 
         // // executes after the command finishes
