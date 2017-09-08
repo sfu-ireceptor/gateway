@@ -25,7 +25,10 @@ Route::get('user/reset-password/{token}', 'UserController@getResetPassword');
 Route::get('user/reset-password-confirmation', 'UserController@getResetPasswordConfirmation');
 
 // Agave jobs notifications
-Route::post('agave/update-status/{id}/{status}', 'AgaveController@postUpdateStatus');
+Route::post('agave/update-status/{id}/{status}', 'UtilController@updateAgaveStatus');
+
+// Deployment trigger for GitHub hook
+Route::any('deploy/{secret}', 'UtilController@deploy');
 
 // CANARIE monitoring - dynamic pages
 Route::get('platform/info', 'CanarieController@platformInfo');

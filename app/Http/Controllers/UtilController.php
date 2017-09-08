@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Job;
 use App\LocalJob;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Process\Process;
 
-class AgaveController extends Controller
+class UtilController extends Controller
 {
     // called by AGAVE
-    public function postUpdateStatus($id, $status)
+    public function updateAgaveStatus($id, $status)
     {
         Log::info('AGAVE job status update: job ' . $id . ' has status ' . $status);
 
@@ -44,5 +45,21 @@ class AgaveController extends Controller
             $j->delete(); // remove job from Laravel queue
             $localJob->setFinished();
         }, null, 'agave');
+    }
+
+    // called by GitHub hook
+    public function deploy($secret)
+    {
+        if($secret == config('app.deploy_secret')) {
+            Log::info('Deploying modifications from GitHub...');
+            
+            $root_path = base_path();
+            $process = new Process('cd ' . $root_path . '; ./deploy.sh');
+            $process->run(function ($type, $buffer) {
+                echo $buffer;
+            });
+            
+            Log::info('...done');
+        }
     }
 }

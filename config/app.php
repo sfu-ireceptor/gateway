@@ -233,4 +233,17 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
     ],
 
+        'locale' => 'en',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Deploy secret
+    |--------------------------------------------------------------------------
+    |
+    | Secret string allowing deployment. Used by GitHub hook
+    |
+    */
+
+    'deploy_secret' => env('APP_DEPLOY_SECRET'),
+
 ];
