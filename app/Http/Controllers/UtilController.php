@@ -55,7 +55,7 @@ class UtilController extends Controller
         $githubHash = $request->header('X-Hub-Signature');
 
         $localToken = config('app.deploy_secret');
-        $localHash = 'sha1=' . hash_hmac('SHA256', $githubPayload, $localToken);
+        $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
 
         if (hash_equals($githubHash, $localHash)) {
             Log::info('-------- Deployment START -------- ');
@@ -69,9 +69,9 @@ class UtilController extends Controller
             Log::info('-------- Deployment END --------');
         } else {
             Log::error('Deployment attempt failed because of hash mismatch.');
-            Log::info('$githubHash=' . $githubHash);
-            Log::info('$localHash=' . $localHash);
-            Log::info('$localToken=' . $localToken);
+            Log::info('$githubHash =' . $githubHash);
+            Log::info('$localHash  =' . $localHash);
+            Log::info('$localToken =' . $localToken);
             Log::info('$githubPayload=' . $githubPayload);
             var_dump($request->header());
         }
