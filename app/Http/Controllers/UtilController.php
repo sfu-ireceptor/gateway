@@ -63,6 +63,8 @@ class UtilController extends Controller
             Log::info('-------- Deployment END --------');
         } else {
             Log::error('Deployment attempt failed because of deploy secret mismatch.');
+            Log::info("header('X-Hub-Signature')=" . header('X-Hub-Signature'));
+            Log::info("config('app.deploy_secret')=" . config('app.deploy_secret'));
         }
     }
 }
