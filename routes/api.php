@@ -14,4 +14,4 @@
 Route::post('agave/update-status/{id}/{status}', 'UtilController@updateAgaveStatus');
 
 // Deployment trigger for GitHub hook
-Route::any('deploy/{secret}', 'UtilController@deploy');
+Route::any('deploy', 'UtilController@deploy');

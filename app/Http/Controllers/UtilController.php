@@ -48,9 +48,9 @@ class UtilController extends Controller
     }
 
     // called by GitHub hook
-    public function deploy($secret)
+    public function deploy(Request $request)
     {
-        if ($secret == config('app.deploy_secret')) {
+        if ($request->header('X-Hub-Signature') == config('app.deploy_secret')) {
             Log::info('-------- Deployment START -------- ');
 
             $root_path = base_path();
