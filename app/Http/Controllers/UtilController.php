@@ -51,14 +51,14 @@ class UtilController extends Controller
     // called by GitHub hook
     public function deploy(Request $request)
     {
-        $githubPayload = $request->getContent();
-        $githubHash = $request->header('X-Hub-Signature');
+        // $githubPayload = $request->getContent();
+        // $githubHash = $request->header('X-Hub-Signature');
 
-        $localToken = config('app.deploy_secret');
-        $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
+        // $localToken = config('app.deploy_secret');
+        // $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
 
-        if (hash_equals($githubHash, $localHash)) {
-            Log::info('-------- Deployment STARTED --------');
+        // if (hash_equals($githubHash, $localHash)) {
+            Log::info('-------- Deployment STARTED -------- ');
 
             $root_path = base_path();
             $process = new Process('cd ' . $root_path . '; ./deploy.sh');
@@ -68,13 +68,13 @@ class UtilController extends Controller
             });
 
             Log::info('-------- Deployment FINISHED --------');
-        } else {
-            Log::error('Deployment attempt failed because of hash mismatch.');
-            Log::info('$githubHash =' . $githubHash);
-            Log::info('$localHash  =' . $localHash);
-            Log::info('$localToken =' . $localToken);
-            Log::info('$githubPayload=' . $githubPayload);
-            var_dump($request->header());
-        }
+        // } else {
+        //     Log::error('Deployment attempt failed because of hash mismatch.');
+        //     Log::info('$githubHash =' . $githubHash);
+        //     Log::info('$localHash  =' . $localHash);
+        //     Log::info('$localToken =' . $localToken);
+        //     Log::info('$githubPayload=' . $githubPayload);
+        //     var_dump($request->header());
+        // }
     }
 }
