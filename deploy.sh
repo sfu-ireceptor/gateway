@@ -23,4 +23,4 @@ php artisan migrate --force
 
 # stop maintenance mode
 ############################################
-php artisan down
+php artisan up
