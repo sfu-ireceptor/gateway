@@ -58,16 +58,16 @@ class UtilController extends Controller
         // $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
 
         // if (hash_equals($githubHash, $localHash)) {
-            Log::info('-------- Deployment STARTED -------- ');
+        Log::info('-------- Deployment STARTED -------- ');
 
-            $root_path = base_path();
-            $process = new Process('cd ' . $root_path . '; ./deploy.sh');
-            $process->run(function ($type, $buffer) {
-                echo $buffer;
-                Log::info($buffer);
-            });
+        $root_path = base_path();
+        $process = new Process('cd ' . $root_path . '; ./deploy.sh');
+        $process->run(function ($type, $buffer) {
+            echo $buffer;
+            Log::info($buffer);
+        });
 
-            Log::info('-------- Deployment FINISHED --------');
+        Log::info('-------- Deployment FINISHED --------');
         // } else {
         //     Log::error('Deployment attempt failed because of hash mismatch.');
         //     Log::info('$githubHash =' . $githubHash);
