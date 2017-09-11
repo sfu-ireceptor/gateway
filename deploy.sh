@@ -9,7 +9,7 @@ git pull
 # update PHP dependencies
 ############################################
 
-export COMPOSER_HOME=`pwd`
+export COMPOSER_HOME='/tmp/composer'
 composer install --no-interaction --no-dev --prefer-dist
 	# --no-interaction	Do not ask any interactive question
 	# --no-dev			Disables installation of require-dev packages.
