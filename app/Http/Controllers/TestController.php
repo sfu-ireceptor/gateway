@@ -16,6 +16,14 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class TestController extends Controller
 {
+    public function email()
+    {
+      Mail::send(['text' => 'emails.test'], [], function ($message) {
+            $message->to('jlj7@sfu.ca')->subject('Test Email');
+        });
+      echo "done";
+    }
+
     public function getIndex()
     {
         echo base64_encode('706d5ebc88cbf4d69d85baecb83e78c2cf4ece7c9c08f5796f89dcb7afdb850b');
