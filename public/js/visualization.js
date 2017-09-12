@@ -182,7 +182,7 @@ function irBuildChart(fieldTitle, data, type)
             type: type
         },
         title: {
-            text: fieldTitle,
+            text: fieldTitle, 
             floating: false,
             margin: 0
         },
@@ -200,7 +200,8 @@ function irBuildChart(fieldTitle, data, type)
             }
         },
         legend: {
-            floating: true
+            maxHeight: 75,
+            floating: false
         },
         series: [{
             name: fieldTitle,
