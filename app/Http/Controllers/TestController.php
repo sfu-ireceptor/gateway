@@ -18,10 +18,10 @@ class TestController extends Controller
 {
     public function email()
     {
-      Mail::send(['text' => 'emails.test'], [], function ($message) {
+        Mail::send(['text' => 'emails.test'], [], function ($message) {
             $message->to('jlj7@sfu.ca')->subject('Test Email');
         });
-      echo "done";
+        echo 'done';
     }
 
     public function getIndex()
