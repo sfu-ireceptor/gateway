@@ -11,7 +11,7 @@
 			<div class="jumbotron">
 				<h1>iReceptor Gateway</h1>
 				<p>The iReceptor gateway is part of iReceptor, a distributed data management system for mining “Next Generation” sequence data from immune responses.</p> 
-				<p>Researchers can apply for an account by sending an email to <a href="mailto:ireceptor-help@sfu.ca">ireceptor-help@sfu.ca</a>.</p>
+				<p>Researchers can apply for an account by sending an email to <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
 			</div>
 		</div>
 
