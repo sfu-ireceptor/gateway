@@ -7,18 +7,29 @@
 
 <div class="jumbotron">
 	<h1>Welcome to iReceptor</h1>
-	<p id="ad">iReceptor provides searches and downloads over <span id="summary_text">a billion of sequences</span>.</p>
+	<p id="ad">iReceptor federates searches and downloads over <span id="landing_summary"> a billion sequences</span>.</p>
 
-	<div id="summary_charts" >
+	<div id="landing_charts">
+		<!--
 		<div class="row">
-			<div class="col-md-4 chart" id="container1"></div>
-			<div class="col-md-4 chart" id="container2"></div>
-			<div class="col-md-4 chart" id="container3"></div>
+			<div class="col-md-2 chart" id="landing_chart1"></div>
+			<div class="col-md-2 chart" id="landing_chart2"></div>
+			<div class="col-md-2 chart" id="landing_chart3"></div>
+			<div class="col-md-2 chart" id="landing_chart4"></div>
+			<div class="col-md-2 chart" id="landing_chart5"></div>
+			<div class="col-md-2 chart" id="landing_chart6"></div>
+		</div>
+		-->
+
+		<div class="row">
+			<div class="col-md-4 chart" id="landing_chart1"></div>
+			<div class="col-md-4 chart" id="landing_chart2"></div>
+			<div class="col-md-4 chart" id="landing_chart3"></div>
 		</div>
 		<div class="row">
-			<div class="col-md-4 chart" id="container4"></div>
-			<div class="col-md-4 chart" id="container5"></div>
-			<div class="col-md-4 chart" id="container6"></div>
+			<div class="col-md-4 chart" id="landing_chart4"></div>
+			<div class="col-md-4 chart" id="landing_chart5"></div>
+			<div class="col-md-4 chart" id="landing_chart6"></div>
 		</div>
 	</div>
 </div>
