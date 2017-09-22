@@ -37,7 +37,8 @@ table.system_list > tbody > tr.selected > td {
 }
 
 table.system_list > tbody > tr.selected > td {
-	font-weight: bold;
+	font-weight: normal;
+	font-style: normal;
 }
 
 table td .progress {
@@ -89,10 +90,10 @@ fieldset {
 	padding-bottom: 15px;
 	border-top: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
-	margin-top: 30px;
+	margin-top: 28px;
 	background-color: #f7f7f9;
 	padding-left: 8px;
-	margin-bottom: 30px;
+	margin-bottom: 10px;
 }
 
 form .error {
@@ -216,7 +217,7 @@ p.workflow {
 }
 
 .chart {
-	height: 300px;
+	height: 150px;
 }
 
 .chart text.highcharts-credits {
@@ -242,6 +243,10 @@ p.workflow {
 .samples_sequences_nav {
 	margin-top: 30px;
 	margin-bottom: 50px;
+}
+
+.charts {
+	max-width: 1100px;
 }
 
 /* @group footer */

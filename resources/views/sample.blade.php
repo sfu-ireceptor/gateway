@@ -120,8 +120,17 @@
 			</div>
 
 			<div class="col-md-10">
-				<div class="bs-example">
-					<div id="sample_charts">
+				<!-- statistics box -->
+				<div class="sequences_stats">
+					<h4>Results</h4>
+					@foreach ($rs_list as $rs)
+						<p>
+							{{ $rs['rs']['name'] }}:
+							{{ number_format($rs['total_samples'], 0 ,'.' ,',') }} samples
+						</p>
+					@endforeach
+
+					<div id="sample_charts" class="charts">
 						<div class="row">
 							<div class="col-md-2 chart" id="sample_chart1"></div>
 							<div class="col-md-2 chart" id="sample_chart2"></div>
@@ -136,19 +145,6 @@
 				@if (! empty($sample_list))
 				{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'get')) }}
 
-					<!-- statistics box -->
-					<div class="sequences_stats">
-
-						<h4>Results</h4>
-
-						@foreach ($rs_list as $rs)
-							<p>
-								{{ $rs['rs']['name'] }}:
-								{{ number_format($rs['total_samples'], 0 ,'.' ,',') }} samples
-							</p>
-						@endforeach
-
-					</div>
 
 					{{ Form::submit('Browse sequences', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
 

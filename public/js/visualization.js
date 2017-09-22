@@ -184,7 +184,8 @@ function irBuildChart(fieldTitle, data, type)
         title: {
             text: fieldTitle, 
             floating: false,
-            margin: 0
+            margin: 0,
+            style: {"font-size": "14px"}
         },
         tooltip: {
             pointFormat: '<b>{point.y:.0f} ({point.percentage:.1f}%)</b>'
@@ -196,12 +197,13 @@ function irBuildChart(fieldTitle, data, type)
                 dataLabels: {
                     enabled: false
                 },
-                showInLegend: true
+                showInLegend: false
             }
         },
         legend: {
             maxHeight: 75,
-            floating: false
+            floating: false,
+            itemStyle: {"font-weight":"normal", "font-size": "11px"}
         },
         series: [{
             name: fieldTitle,
