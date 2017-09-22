@@ -239,6 +239,11 @@ p.workflow {
 	top: -1px;	
 }
 
+.samples_sequences_nav {
+	margin-top: 30px;
+	margin-bottom: 50px;
+}
+
 /* @group footer */
 
 footer {
