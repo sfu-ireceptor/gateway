@@ -18,70 +18,56 @@
 					<input type="hidden" name="{{$hf['name']}}" value="{{$hf['value']}}">
 				@endforeach
 
-
 				<!-- template for fields added dynamically -->
 				<div id="field_template" class="hidden">
-					<div class="col-md-2">
-						<div class="form-group">
-							
-							<label for="junction_sequence_aa">CDR3 AA Sequence</label>
-
-							<div class="input-group">
-								<input type="text" id="junction_sequence_aa" value="" name="junction_sequence_aa" class="form-control">
-								
-								<span class="input-group-btn">
-					    			<button type="button" class="btn btn-default remove_field">
-					      				<span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
-					    			</button>
-					      		</span>
-							</div>
-
+					<div class="form-group">						
+						<label for="junction_sequence_aa">CDR3 AA Sequence</label>
+						<div class="input-group">
+							<input type="text" id="junction_sequence_aa" value="" name="junction_sequence_aa" class="form-control">
+							<span class="input-group-btn">
+				    			<button type="button" class="btn btn-default remove_field">
+				      				<span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
+				    			</button>
+				      		</span>
 						</div>
 					</div>
 				</div>
 
-
 				<!-- filters -->
-			    <div class="row filter_list">
-
+			    <div class="filter_list">
 					@foreach ($filters_list as $name => $title)
-				    	<div class="col-md-2">
-						    <div class="form-group">
-								{{ Form::label($name, $title) }}
-								<div class="input-group">
-									{{ Form::text($name, '', array('class' => 'form-control')) }}
-									<span class="input-group-btn">
-				        				<button class="btn btn-default remove_field" type="button">
-				        				<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-				        				</button>
-				      				</span>
-								</div>
+					    <div class="form-group">
+							{{ Form::label($name, $title) }}
+							<div class="input-group">
+								{{ Form::text($name, '', array('class' => 'form-control')) }}
+								<span class="input-group-btn">
+			        				<button class="btn btn-default remove_field" type="button">
+			        				<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+			        				</button>
+			      				</span>
 							</div>
-						</div>				
+						</div>
 					@endforeach
 				</div>
 
-				<div class="row">
-			    	<div class="col-md-4">
-			    		<div class="form-group">
-						    <div class="input-group">
-								{{ Form::select('add_field', $filters_list_select, '', array('class' => 'form-control add_field')) }}
-								<span class="input-group-btn">
-				       				<button class="btn btn-default add_field" type="button">
-					       				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-				    	   				Add filter
-				       				</button>
-				      			</span>
-							</div>
-		   				</div>				
-		    		</div>
-				</div>
+	    		<div class="form-group add_filter">
+				    <div class="input-group">
+						{{ Form::select('add_field', $filters_list_select, '', array('class' => 'form-control add_field')) }}
+						<span class="input-group-btn">
+		       				<button class="btn btn-default add_field" type="button">
+			       				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+		    	   				Add filter
+		       				</button>
+		      			</span>
+					</div>
+   				</div>				
 
 
-				{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}
+				<p>{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}</p>
 
-				{{ Form::submit('Download everything ' . '(' . number_format($total_sequences, 0 ,'.' ,',') . ' sequences)' . ' as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}
-					
+				<p>{{ Form::submit('Download all '  . number_format($total_sequences, 0 ,'.' ,',') . ' sequences as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}</p>
+
+				<p>
 					<a class="bookmark" href="/system/" data-uri="{{ $url }}">
 						@if ($bookmark_id)
 							<button type="button" class="btn btn-success" aria-label="Bookmark" data-id="{{ $bookmark_id }}">
@@ -95,7 +81,8 @@
 							</button>
 						@endif
 					</a>
-			{{ Form::close() }}				
+				</p>
+		{{ Form::close() }}				
 		</div>
 
 		<div class="col-md-10">
@@ -111,19 +98,21 @@
 							{{ number_format($rs['total_sequences'], 0 ,'.' ,',') }} sequences
 						</p>
 					@endforeach
+
+					<div id="sequence_charts" class="charts">
+						<div class="row">
+							<div class="col-md-2 chart" id="sequence_chart1"></div>
+							<div class="col-md-2 chart" id="sequence_chart2"></div>
+							<div class="col-md-2 chart" id="sequence_chart3"></div>
+							<div class="col-md-2 chart" id="sequence_chart4"></div>
+							<div class="col-md-2 chart" id="sequence_chart5"></div>
+							<div class="col-md-2 chart" id="sequence_chart6"></div>
+						</div>
+					</div>
+					
 				</div>
 			@endif
 
-			<div id="sequence_charts" class="charts">
-				<div class="row">
-					<div class="col-md-2 chart" id="sequence_chart1"></div>
-					<div class="col-md-2 chart" id="sequence_chart2"></div>
-					<div class="col-md-2 chart" id="sequence_chart3"></div>
-					<div class="col-md-2 chart" id="sequence_chart4"></div>
-					<div class="col-md-2 chart" id="sequence_chart5"></div>
-					<div class="col-md-2 chart" id="sequence_chart6"></div>
-				</div>
-			</div>
 
 			@if (! empty($sequence_list))
 				<!-- sequence data column selector -->

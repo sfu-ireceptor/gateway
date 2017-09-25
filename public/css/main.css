@@ -249,6 +249,10 @@ p.workflow {
 	max-width: 1100px;
 }
 
+.add_filter {
+	margin-top: 50px;
+}
+
 /* @group footer */
 
 footer {
