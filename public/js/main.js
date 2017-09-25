@@ -157,9 +157,11 @@ $(document).ready(function() {
     	var fieldTitle = $('label', div).text();
     	var select = $('select.add_field');
 
-    	select.append('<option value="' + fieldName + '">' + fieldTitle + '</option>');
-    	div.parent().remove();
+    	// remove filter
+    	div.remove();
 
+    	// update "add new filter" select
+    	select.append('<option value="' + fieldName + '">' + fieldTitle + '</option>');
     	updateFiltersOrderField();
     });
 
