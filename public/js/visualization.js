@@ -185,7 +185,7 @@ function irBuildChart(fieldTitle, data, type)
             text: fieldTitle, 
             floating: false,
             margin: 0,
-            style: {"font-size": "14px"}
+            style: {"font-size": "12px"}
         },
         tooltip: {
             pointFormat: '<b>{point.y:.0f} ({point.percentage:.1f}%)</b>'
