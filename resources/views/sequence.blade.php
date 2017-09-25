@@ -6,8 +6,8 @@
 <div class="container-fluid">
 
 	<ul class="nav nav-tabs nav-justified samples_sequences_nav">
-		<li role="presentation" class="active"><a href="/samples">Samples</a></li>
-		<li role="presentation"><a href="#">Sequences</a></li>
+		<li role="presentation"><a href="/samples">Samples</a></li>
+		<li role="presentation" class="active"><a href="#">Sequences</a></li>
 	</ul>
 
 	<div class="row">
