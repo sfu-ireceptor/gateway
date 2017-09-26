@@ -1,20 +1,34 @@
 /* @override http://ireceptor_gateway.dev/css/main.css */
 
+.navbar-header {
+	width: 170px;
+}
+
 .navbar-brand {
 	padding-top: 9px;
+	font-size: 24px;
+}
+
+.navbar-default .navbar-brand {
+    color: #333;
 }
 
 .navbar-brand img {
 	width: 32px;
 	height: 32px;
 	display: inline-block;
-	margin-right: 5px;
+	margin-right: 7px;
 }
 
 .navbar-brand span {
 	margin-top: 7px;
 	float: right;
 	display: block;
+}
+
+.navbar-default .navbar-nav > li > a {
+	padding-top: 19px;
+	padding-bottom: 11px;
 }
 
 body {
