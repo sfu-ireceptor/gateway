@@ -1,5 +1,22 @@
 /* @override http://ireceptor_gateway.dev/css/main.css */
 
+.navbar-brand {
+	padding-top: 9px;
+}
+
+.navbar-brand img {
+	width: 32px;
+	height: 32px;
+	display: inline-block;
+	margin-right: 5px;
+}
+
+.navbar-brand span {
+	margin-top: 7px;
+	float: right;
+	display: block;
+}
+
 body {
 	font-size: 16px;
 }

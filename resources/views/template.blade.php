@@ -32,7 +32,10 @@
 			        <span class="icon-bar"></span>
 			        <span class="icon-bar"></span>
 		      	</button>
-		      	<a class="navbar-brand" href="/">iReceptor</a>
+		      	<a class="navbar-brand" href="/">
+					<img src="/images/logos/ireceptor_logo.png">
+		      		<span>iReceptor</span>
+		      	</a>
 		     </div>
 
 		    <!-- Collect the nav links, forms, and other content for toggling -->
