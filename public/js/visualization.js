@@ -198,6 +198,11 @@ function irBuildChart(fieldTitle, data, type)
                     enabled: false
                 },
                 showInLegend: false
+            },
+            series: {
+                animation: {
+                    duration: 10
+                }
             }
         },
         legend: {

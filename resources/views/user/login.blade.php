@@ -11,6 +11,18 @@
 			<div class="intro">
 				<p><strong>iReceptor</strong> provides access to “Next Generation” sequence data from immune responses. More than 1 billion sequences, coming from multiple curated databases, are available for download.</p> 
 			</div>
+				<div id="landing_charts">
+					<div class="row">
+						<div class="col-md-3 chart" id="landing_chart1"></div>
+						<div class="col-md-3 chart" id="landing_chart2"></div>
+						<div class="col-md-3 chart" id="landing_chart3"></div>
+					</div>
+					<div class="row">
+						<div class="col-md-3 chart" id="landing_chart4"></div>
+						<div class="col-md-3 chart" id="landing_chart5"></div>
+						<div class="col-md-3 chart" id="landing_chart6"></div>
+					</div>
+				</div>
 		</div>
 
 

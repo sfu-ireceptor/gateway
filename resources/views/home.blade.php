@@ -10,17 +10,6 @@
 	<p id="ad">iReceptor federates searches and downloads over <span id="landing_summary"> a billion sequences</span>.</p>
 
 	<div id="landing_charts">
-		<!--
-		<div class="row">
-			<div class="col-md-2 chart" id="landing_chart1"></div>
-			<div class="col-md-2 chart" id="landing_chart2"></div>
-			<div class="col-md-2 chart" id="landing_chart3"></div>
-			<div class="col-md-2 chart" id="landing_chart4"></div>
-			<div class="col-md-2 chart" id="landing_chart5"></div>
-			<div class="col-md-2 chart" id="landing_chart6"></div>
-		</div>
-		-->
-
 		<div class="row">
 			<div class="col-md-4 chart" id="landing_chart1"></div>
 			<div class="col-md-4 chart" id="landing_chart2"></div>
