@@ -9,8 +9,7 @@
 		
 		<div class="col-md-9">
 			<div class="intro">
-				<p>The iReceptor gateway is part of iReceptor, a distributed data management system for mining “Next Generation” sequence data from immune responses.</p> 
-				<p>Researchers can apply for an account by sending an email to <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
+				<p><strong>iReceptor</strong> provides access to “Next Generation” sequence data from immune responses. More than 1 billion sequences, coming from multiple curated databases, are available for download.</p> 
 			</div>
 		</div>
 
@@ -37,9 +36,44 @@
 							<a class="forgot" href="/user/forgot-password">Forgot your password?</a>
 						</p>					
 					{{ Form::close() }}
+				<p>Researchers can apply for an account by sending an email to <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
 				</div>
 			</div>
+
+{{-- 			<div class="panel panel-default">
+				<div class="panel-heading">
+				 	<h3 class="panel-title">Need an account?</h3>
+				</div>
+				<div class="panel-body">
+					{{ Form::open(array('role' => 'form')) }}
+					    <div class="text-danger">
+					    	{{ $errors->first() }}
+					    </div>
+
+						<p>
+							{{ Form::label('username', 'Last Name') }}
+							{{ Form::text('username', '', array('class' => 'form-control')) }}
+						</p>
+						<p>
+							{{ Form::label('username', 'First Name') }}
+							{{ Form::text('username', '', array('class' => 'form-control')) }}
+						</p>
+
+						<p>
+							{{ Form::label('username', 'Email') }}
+							{{ Form::text('username', '', array('class' => 'form-control')) }}
+						</p>
+						<p class="submit">
+							{{ Form::submit('Request an account', array('class' => 'btn btn-primary')) }}
+						</p>					
+					{{ Form::close() }}
+				</div>
+			</div> --}}
+
+
 		</div>
+
+
 
 	</div>
 

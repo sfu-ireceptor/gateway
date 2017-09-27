@@ -255,14 +255,6 @@ p.workflow {
 	display: none;
 }
 
-.login-box .forgot {
-	font-style: italic;
-	font-size: 12px;
-	margin-left: 3px;
-	position: relative;
-	top: 8px;
-}
-
 .change_password .forgot {
 	font-style: italic;
 	font-size: 14px;
@@ -282,6 +274,12 @@ p.workflow {
 
 .add_filter {
 	margin-top: 50px;
+}
+
+.intro {
+	font-size: 31px;
+	font-weight: 200;
+	line-height: 1.5;
 }
 
 /* @group footer */
@@ -360,7 +358,7 @@ footer {
 
 
 .login_container {
-	padding-top: 100px;
+	padding-top: 50px;
 }
 
 .login-box .panel-body {
@@ -369,6 +367,14 @@ footer {
 
 .login-box .submit {
 	margin-top: 20px;
+}
+
+.login-box .forgot {
+	font-style: italic;
+	font-size: 12px;
+	margin-left: 3px;
+	position: relative;
+	top: 8px;
 }
 
 .footer_container {
