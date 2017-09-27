@@ -49,10 +49,10 @@
 		<div class="col-md-3">
 			<h4>Funded by</h4>
 			<a href="http://www.innovation.ca" class="cfi">
-				<img src="/images/logos/CFI_CMYK.png">
+				<img src="/images/logos/cfi.png">
 			</a>
 			<a href="http://www2.gov.bc.ca/gov/content/governments/about-the-bc-government/technology-innovation/bckdf" class="bckdf">
-				<img src="/images/logos/BCKDF-logo-acs-2.png">
+				<img src="/images/logos/bckdf.png">
 			</a>
 			<a href="http://www.canarie.ca" class="canarie">
 				<img src="/images/logos/canarie.png">
