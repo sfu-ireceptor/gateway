@@ -323,32 +323,30 @@ footer {
 
 .footer .canarie img {
 	max-width: 210px;
-	margin-left: 10px;
 }
 
 .footer .compute_canada img {
-	max-width: 290px;		
+	max-width: 230px;		
 }
 
 .footer .bckdf img {
-	max-width: 110px;
-	margin-left: 2px;
+	max-width: 100px;
 }
 
 .footer a.agave {
 	background-color: #04a5b7;
 	display: inline-block;
-	margin-left: 60px;
+	margin-left: 10px;
 	padding-top: 20px;
 }
 
 .footer .agave img {
-	max-width: 150px;
+	max-width: 140px;
 	margin-bottom: 5px;
 }
 
 .footer .irmacs img {
-	max-width: 150px;	
+	max-width: 140px;	
 }
 
 /* @end */
