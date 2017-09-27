@@ -3,40 +3,44 @@
 @section('title', 'Log In')
  
 @section('content')
-<div class="container">
+<div class="container login_container">
 
 	<div class="row">
 		
-		<div class="col-md-6">
-			<div class="jumbotron">
-				<h1>iReceptor Gateway</h1>
+		<div class="col-md-9">
+			<div class="intro">
 				<p>The iReceptor gateway is part of iReceptor, a distributed data management system for mining “Next Generation” sequence data from immune responses.</p> 
 				<p>Researchers can apply for an account by sending an email to <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
 			</div>
 		</div>
 
 
-		<div class="col-md-4 col-md-offset-1 login-box">
+		<div class="col-md-3 login-box">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					{{ Form::open(array('role' => 'form')) }}
+					    <div class="text-danger">
+					    	{{ $errors->first() }}
+					    </div>
 
-			{{ Form::open(array('role' => 'form')) }}			
-
-		    <div class="text-danger">
-		    	{{ $errors->first() }}
-		    </div>
-
-			<p>
-				{{ Form::label('username', 'Username') }}
-				{{ Form::text('username', '', array('class' => 'form-control')) }}
-			</p>
-			<p>
-				{{ Form::label('password', 'Password') }}
-				{{ $errors->first("password") }}
-				{{ Form::password('password', array('class' => 'form-control')) }}
-			</p>
-			{{ Form::submit('Log In', array('class' => 'btn btn-primary')) }}
-			<a class="forgot" href="/user/forgot-password">Forgot your password?</a>
-			{{ Form::close() }}
+						<p>
+							{{ Form::label('username', 'Username') }}
+							{{ Form::text('username', '', array('class' => 'form-control')) }}
+						</p>
+						<p>
+							{{ Form::label('password', 'Password') }}
+							{{ $errors->first("password") }}
+							{{ Form::password('password', array('class' => 'form-control')) }}
+						</p>
+						<p class="submit">
+							{{ Form::submit('Log In', array('class' => 'btn btn-primary')) }}
+							<a class="forgot" href="/user/forgot-password">Forgot your password?</a>
+						</p>					
+					{{ Form::close() }}
+				</div>
+			</div>
 		</div>
+
 	</div>
 
 

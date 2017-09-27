@@ -257,10 +257,10 @@ p.workflow {
 
 .login-box .forgot {
 	font-style: italic;
-	font-size: 14px;
-	margin-left: 6px;
+	font-size: 12px;
+	margin-left: 3px;
 	position: relative;
-	top: 2px;
+	top: 8px;
 }
 
 .change_password .forgot {
@@ -355,13 +355,20 @@ footer {
 @media (min-width: 992px) {
 	
 .jumbotron {
-	margin-top: 100px;
 	padding-top: 28px;
 }
 
-.login-box {
-	margin-top: 280px;
-	margin-left: 150px;
+
+.login_container {
+	padding-top: 100px;
+}
+
+.login-box .panel-body {
+	padding-bottom: 0;
+}
+
+.login-box .submit {
+	margin-top: 20px;
 }
 
 .footer_container {
