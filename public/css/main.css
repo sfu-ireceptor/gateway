@@ -329,6 +329,10 @@ footer {
 	max-width: 290px;		
 }
 
+.footer .bckdf img {
+	max-width: 100px;		
+}
+
 .footer a.agave {
 	background-color: #04a5b7;
 	display: inline-block;
