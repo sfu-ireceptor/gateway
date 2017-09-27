@@ -65,7 +65,7 @@ class UserController extends Controller
     {
         auth()->logout();
 
-        return redirect('user/login');
+        return redirect('login');
     }
 
     public function getChangePassword()
@@ -302,7 +302,7 @@ class UserController extends Controller
         $t['first_name'] = $user->first_name;
         $t['username'] = $user->username;
         $t['password'] = $new_password;
-        $t['login_link'] = config('app.url') . '/user/login';
+        $t['login_link'] = config('app.url') . '/login';
         Mail::send(['text' => 'emails.auth.newPassword'], $t, function ($message) use ($t, $email) {
             $message->to($email)->subject('Your new password');
         });

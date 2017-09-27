@@ -66,7 +66,7 @@
 						<ul class="dropdown-menu" role="menu">
 						  <li><a href="/user/account">My account</a></li>
 						  <li><a href="/systems">Systems</a></li>
-						  <li><a href="/user/logout">Log Out</a></li>
+						  <li><a href="/logout">Log Out</a></li>
 						</ul>
 					</li>
 				@endif

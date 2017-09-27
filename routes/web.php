@@ -12,10 +12,10 @@ Route::get('/', function () {
 });
 
 // user authentication
-Route::get('user/login', 'UserController@getLogin')->name('login');
-Route::post('user/login', 'UserController@postLogin');
+Route::get('login', 'UserController@getLogin')->name('login');
+Route::post('login', 'UserController@postLogin');
 
-Route::get('user/logout', 'UserController@getLogout');
+Route::get('logout', 'UserController@getLogout');
 
 Route::get('user/forgot-password', 'UserController@getForgotPassword');
 Route::post('user/forgot-password', 'UserController@postForgotPassword');

@@ -119,7 +119,7 @@ class AdminController extends Controller
         $u = $agave->createUser($token, $firstName, $lastName, $email);
 
         $t = [];
-        $t['login_link'] = config('app.url') . '/user/login';
+        $t['login_link'] = config('app.url') . '/login';
         $t['first_name'] = $u['first_name'];
         $t['username'] = $u['username'];
         $t['password'] = $u['password'];
