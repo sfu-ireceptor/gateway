@@ -34,12 +34,12 @@
 			<div class="panel panel-default">
 				<div class="panel-body">
 					{{ Form::open(array('role' => 'form')) }}
-					    <div class="text-danger">
-					    	{{ $errors->first() }}
-					    	@if ($errors->first())
+						<div class="text-danger">
+							{{ $errors->first() }}
+							@if ($errors->first())
 								<p><a class="forgot" href="/user/forgot-password">Forgot your username or password?</a></p>
 							@endif
-					    </div>
+						</div>
 
 						<p>
 							{{ Form::label('username', 'Username') }}
