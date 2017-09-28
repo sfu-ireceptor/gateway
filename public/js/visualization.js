@@ -24,7 +24,7 @@ function doLandingCharts()
     ];
 
     // Get the JSON from the samples/json API entry point.
-    $.getJSON('samples/json', function(data)
+    $.getJSON('samples/stats', function(data)
     {
         var sequenceAPIData = false;
 

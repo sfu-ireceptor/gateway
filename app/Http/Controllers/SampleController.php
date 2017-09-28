@@ -39,4 +39,16 @@ class SampleController extends Controller
 
         return json_encode($sample_list);
     }
+
+    public function stats(Request $request)
+    {
+        // get sample list
+        $params = $request->all();
+        $params['ajax'] = true;
+
+        $sample_data = RestService::samples($params, 'titi');
+        $sample_list = $sample_data['items'];
+
+        return json_encode($sample_list);
+    }
 }
