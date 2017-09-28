@@ -111,6 +111,11 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
+// legacy route redirect
+Route::get('user/login', function () {
+    return redirect('login');
+});
+
 // update page count for CANARIE
 if (! App::runningInConsole()) {
     App\Stats::incrementNbRequests();
