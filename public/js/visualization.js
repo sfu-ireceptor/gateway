@@ -53,6 +53,7 @@ function doLandingCharts()
         // Generate the text content for displaying the summary data.
         var s = numSequences.toLocaleString() + " sequences from " + numProjects + " projects (" +  numSubjects + " subjects,  " +  numSamples + " samples)";
         $('#landing_summary').text(s);
+        $('.stats_total_sequences').text(numSequences.toLocaleString());
 
         showData(data, graphFields, graphNames, "landing_chart");
     });

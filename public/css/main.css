@@ -279,7 +279,7 @@ p.workflow {
 .intro {
 	font-size: 31px;
 	font-weight: 200;
-	margin-bottom: 80px;
+	margin-bottom: 50px;
 }
 
 /* @group footer */
@@ -358,7 +358,7 @@ footer {
 
 
 .login_container {
-	padding-top: 65px;
+	padding-top: 80px;
 }
 
 .login_container #landing_charts {
@@ -366,7 +366,7 @@ footer {
 }
 
 .login-box .panel {
-	margin-top: 230px;
+	margin-top: 36px;
 }
 
 .login-box .panel-body {
