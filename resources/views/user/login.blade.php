@@ -36,6 +36,9 @@
 					{{ Form::open(array('role' => 'form')) }}
 					    <div class="text-danger">
 					    	{{ $errors->first() }}
+					    	@if ($errors->first())
+							    <p><a class="forgot" href="/user/forgot-password">Forgot your username or password?</a></p>
+							@endif
 					    </div>
 
 						<p>
@@ -48,11 +51,10 @@
 							{{ Form::password('password', array('class' => 'form-control')) }}
 						</p>
 						<p class="submit">
-							{{ Form::submit('Log In', array('class' => 'btn btn-primary')) }}
-							<a class="forgot" href="/user/forgot-password">Forgot your password?</a>
+							{{ Form::submit('Log In →', array('class' => 'btn btn-primary')) }}
 						</p>					
 					{{ Form::close() }}
-				<p>Researchers can apply for an account by sending an email to <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
+					<p>Researchers can apply for an account by sending an email to <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
 				</div>
 			</div>
 
