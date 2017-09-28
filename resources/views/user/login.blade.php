@@ -37,7 +37,7 @@
 					    <div class="text-danger">
 					    	{{ $errors->first() }}
 					    	@if ($errors->first())
-							    <p><a class="forgot" href="/user/forgot-password">Forgot your username or password?</a></p>
+								<p><a class="forgot" href="/user/forgot-password">Forgot your username or password?</a></p>
 							@endif
 					    </div>
 
