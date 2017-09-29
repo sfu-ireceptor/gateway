@@ -282,6 +282,22 @@ p.workflow {
 	margin-bottom: 50px;
 }
 
+.home_container {
+	padding-top: 50px;
+}
+
+.quick_search_link {
+	margin-top: 55px;
+}
+
+.adv_search_link {
+	margin-top: 45px;
+}
+
+.side_search_links {
+	margin-left: -120px;
+}
+
 /* @group footer */
 
 footer {

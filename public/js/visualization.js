@@ -51,7 +51,7 @@ function doLandingCharts()
         var numSamples = aggregateData.length;  
     
         // Generate the text content for displaying the summary data.
-        var s = numSequences.toLocaleString() + " sequences from " + numProjects + " projects (" +  numSubjects + " subjects,  " +  numSamples + " samples)";
+        var s = numSequences.toLocaleString() + " sequences \n from " + numProjects + " projects, " +  numSubjects + " subjects and  " +  numSamples + " samples";
         $('#landing_summary').text(s);
         $('.stats_total_sequences').text(numSequences.toLocaleString());
 
@@ -201,9 +201,7 @@ function irBuildChart(fieldTitle, data, type)
                 showInLegend: false
             },
             series: {
-                animation: {
-                    duration: 10
-                }
+                animation: false
             }
         },
         legend: {
