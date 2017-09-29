@@ -16,7 +16,7 @@
 		</div>
 	</div>
 
-	<div class="row footer">
+	<div class="row credits">
 		<div class="col-md-4">
 			<h4>Funded by</h4>
 			<a href="http://www.innovation.ca" class="cfi">

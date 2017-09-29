@@ -305,7 +305,7 @@ footer {
 	display: block;
 }
 
-.footer_container {
+.credits_container {
 	background-color: #f8f8f8;
 	margin-top: 10px;
 	padding-top: 20px;
@@ -313,57 +313,60 @@ footer {
 	border-top: 1px solid #e7e7e7;
 }
 
-.footer {
+.credits {
 	margin-top: 90px;
 }
 
-.footer .col-md-4  {
+.credits .col-md-4  {
 	vertical-align: text-top;
 }
 
-.footer h4 {
+.credits h4 {
     border-bottom: 1px solid #ccc;
 	padding-bottom: 10px;
 	margin-bottom: 20px;
 }
 
-.footer h4.powered {
+.credits h4.powered {
 	margin-bottom: 10px;
 }
 
-.footer img {
+.credits img {
 	max-width: 200px;
 	margin-bottom: 20px;
 }
 
-.footer .canarie img {
+.credits .canarie img {
 	max-width: 210px;
 }
 
-.footer .compute_canada img {
+.credits .compute_canada img {
 	max-width: 230px;		
 }
 
-.footer .bckdf img {
+.credits .bckdf img {
 	max-width: 100px;
 }
 
-.footer a.agave {
+.credits a.agave {
 	background-color: #04a5b7;
 	display: inline-block;
 	margin-left: 10px;
 	padding-top: 20px;
 }
 
-.footer .agave img {
+.credits .agave img {
 	max-width: 140px;
 	margin-bottom: 5px;
 }
 
-.footer .irmacs img {
+.credits .irmacs img {
 	max-width: 140px;	
 }
 
+.credits_container {
+	margin-top: 100px;
+}
 /* @end */
 
 
@@ -397,10 +400,6 @@ footer {
 .login-box .forgot {
 	font-style: italic;
 	font-size: 14px;
-}
-
-.footer_container {
-	margin-top: 100px;
 }
 
 .jumbotron p {
