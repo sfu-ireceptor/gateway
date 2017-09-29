@@ -97,17 +97,5 @@
 
 
 </div>
-
-<footer>
-<div class="container-fluid footer_container">
-	<div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			Footer
-		</div>
-	</div>
-	</div>
-</footer>
-
 </div>
 @stop
