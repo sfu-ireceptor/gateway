@@ -24,6 +24,9 @@ Route::get('user/forgot-password-email-sent', 'UserController@getForgotPasswordE
 Route::get('user/reset-password/{token}', 'UserController@getResetPassword');
 Route::get('user/reset-password-confirmation', 'UserController@getResetPasswordConfirmation');
 
+// about
+Route::get('about', 'HomeController@about')->name('about');
+
 // public stats
 Route::get('/samples/stats', 'SampleController@stats')->name('samples-stats');
 
