@@ -8,14 +8,14 @@ class HomeController extends Controller
 {
     public function index()
     {
-    	$username = auth()->user()->username;
+        $username = auth()->user()->username;
         $sample_data = RestService::samples(['ajax' => true], $username);
         $sample_list = $sample_data['items'];
 
         $data = [];
         $data['sample_list_json'] = json_encode($sample_list);
 
-    	// var_dump($sample_data);die();
+        // var_dump($sample_data);die();
 
         return view('home', $data);
     }
