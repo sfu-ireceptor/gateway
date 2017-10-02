@@ -156,10 +156,11 @@ function showData(json, graphFields, graphNames, htmlBase)
 function irBuildChart(fieldTitle, data, type)
 {
     // Debug level for when developing...
-    var debugLevel = 1;
+    var debugLevel = 0;
     // Build a chart using the "HighCharts" chart, using the data provided.
     var seriesData = [];
     var count = 0;
+
     // Convert iReceptor aggregate data into a form for HighChart.
     for (d in data)
     {
@@ -168,53 +169,110 @@ function irBuildChart(fieldTitle, data, type)
             console.log("--" + data[d] + "--" + "<br>\n");
             console.log("--" + data[d].name + " = " + data[d].count + "--" + "<br>");
         }
-        seriesData[count] = {name:data[d].name,y:data[d].count};
+        if (type == "bar")
+        {
+            seriesData[count] = {name:data[d].name,data:[data[d].count]};
+        }
+        else if (type == "pie")
+        {
+            seriesData[count] = {name:data[d].name,y:data[d].count};
+        }
         count = count + 1;
     }
     
     // Generate the chart data structure for HighChart.
     var chartData;
-    chartData = {
-        chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: null,
-            plotShadow: false,
-            backgroundColor: 'transparent',
-            type: type
-        },
-        title: {
-            text: fieldTitle, 
-            floating: false,
-            margin: 0,
-            style: {"font-size": "12px"}
-        },
-        tooltip: {
-            pointFormat: '<b>{point.y:.0f} ({point.percentage:.1f}%)</b>'
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: false
-                },
-                showInLegend: false
+    if (type == "bar")
+    {
+        chartData = {
+            chart: {
+                type: 'column',
+                marginLeft: 5,
+                marginRight: 5
             },
-            series: {
-                animation: false
-            }
-        },
-        legend: {
-            maxHeight: 75,
-            floating: false,
-            itemStyle: {"font-weight":"normal", "font-size": "11px"}
-        },
-        series: [{
-            name: fieldTitle,
-            colorByPoint: true,
-            data: seriesData
-        }]
-    };
+            title: {
+                text: fieldTitle,
+                style: {"font-size": "12px"},
+                floating: false,
+                margin: 0
+            },
+            xAxis: {
+                labels: {enabled:false},
+                visible: false
+            },
+            yAxis: {
+                visible: false,
+                min: 0,
+                title: {
+                    text: '%'
+                }
+            },
+            tooltip: {
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+                shared: true
+            },
+            plotOptions: {
+                column: {
+                    //stacking: 'percent',
+                    stacking: 'normal',
+                    borderWidth: 0
+                }
+            },
+            legend: {
+                enabled: false,
+                maxHeight: 75,
+                floating: false,
+                itemStyle: {"font-weight":"normal", "font-size": "11px"}
+            },
+            series: seriesData
+        };
+    }
+    else if (type == "pie")
+    {
+        chartData = {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                backgroundColor: 'transparent',
+                type: type
+            },
+            title: {
+                text: fieldTitle, 
+                floating: false,
+                margin: 0,
+                style: {"font-size": "12px"}
+            },
+            tooltip: {
+                pointFormat: '<b>{point.y:.0f} ({point.percentage:.1f}%)</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: false
+                },
+                series: {
+                    animation: false
+                }
+            },
+            legend: {
+                enabled: false,
+                maxHeight: 75,
+                floating: false,
+                itemStyle: {"font-weight":"normal", "font-size": "11px"}
+            },
+            series: [{
+                name: fieldTitle,
+                colorByPoint: true,
+                data: seriesData
+            }]
+        };
+    }
+    
     return chartData;
 }
 
@@ -246,7 +304,7 @@ function irBuildChart(fieldTitle, data, type)
 function irAggregateData(seriesName, jsonData, sequenceSummaryAPI)
 {
     // Debug level so we can debug the code...
-    var debugLevel = 1;
+    var debugLevel = 0;
     // Arrays to hold the aggregated value names and aggregated counts
     // e.g. an aggregateName might be "Mature T Cell" and the count might be 1,000,000 sequences
     var aggregateName = [];

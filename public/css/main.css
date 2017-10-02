@@ -121,7 +121,7 @@ fieldset {
 	padding-bottom: 15px;
 	border-top: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
-	margin-top: 28px;
+	/*margin-top: 28px;*/
 	background-color: #f7f7f9;
 	padding-left: 8px;
 	margin-bottom: 10px;
@@ -248,7 +248,7 @@ p.workflow {
 }
 
 .chart {
-	height: 150px;
+	height: 200px;
 }
 
 .chart text.highcharts-credits {
@@ -269,7 +269,7 @@ p.workflow {
 }
 
 .charts {
-	max-width: 1100px;
+	/* max-width: 1100px;*/
 }
 
 .add_filter {
@@ -277,13 +277,13 @@ p.workflow {
 }
 
 .intro {
-	font-size: 31px;
+	font-size: 20px;
 	font-weight: 200;
-	margin-bottom: 50px;
+	margin-bottom: 20px;
 }
 
 .home_container {
-	padding-top: 50px;
+	padding-top: 20px;
 }
 
 .quick_search_link {
@@ -293,17 +293,17 @@ p.workflow {
 .adv_search_link {
 	margin-top: 45px;
 }
-
+/*
 .side_search_links {
 	margin-left: -120px;
 }
-
+*/
 /* @group footer */
 
 footer {
 	position: relative;
-	display: block;
-	margin-top: 250px;
+	/* display: block; */
+	margin-top: 20px;
 }
 
 footer a {
@@ -390,11 +390,11 @@ footer a:hover {
 
 
 .login_container {
-	padding-top: 80px;
+	padding-top: 20px;
 }
 
 .login_container #landing_charts {
-	margin-top: 40px;
+	margin-top: 20px;
 }
 
 .login-box .panel {

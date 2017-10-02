@@ -3,12 +3,15 @@
 @section('title', 'Search samples')
 
 @section('content')
-<div class="container-fluid">
-
-	<ul class="nav nav-tabs nav-justified samples_sequences_nav">
-		<li role="presentation" class="active"><a href="#">Samples</a></li>
-		<li role="presentation"><a href="/sequences">Sequences</a></li>
-	</ul>
+<div class="container-fluid sample_container">
+	<div class="row">
+		<div class="col-md-12">
+			<ul class="nav nav-tabs nav-justified samples_sequences_nav">
+				<li role="presentation" class="active"><a href="#">Samples</a></li>
+				<li role="presentation"><a href="/sequences">Sequences</a></li>
+			</ul>
+		</div>
+	</div>
 
 	<div class="row">
 		<div class="col-md-2">
@@ -135,6 +138,10 @@
 						<div class="col-md-2 chart" id="sample_chart1"></div>
 						<div class="col-md-2 chart" id="sample_chart2"></div>
 						<div class="col-md-2 chart" id="sample_chart3"></div>
+					<!--
+					</div>
+					<div class="row">
+					-->
 						<div class="col-md-2 chart" id="sample_chart4"></div>
 						<div class="col-md-2 chart" id="sample_chart5"></div>
 						<div class="col-md-2 chart" id="sample_chart6"></div>
@@ -217,11 +224,10 @@
 				{{ Form::submit('Browse sequences', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
 
 			{{ Form::close() }}
+			@endif
 
-			</div>
 		</div>
-	@endif
-
+	</div>
 </div>
 @stop
 

@@ -3,12 +3,15 @@
 @section('title', 'Browse sequences')
 
 @section('content')
-<div class="container-fluid">
-
-	<ul class="nav nav-tabs nav-justified samples_sequences_nav">
-		<li role="presentation"><a href="/samples">Samples</a></li>
-		<li role="presentation" class="active"><a href="#">Sequences</a></li>
-	</ul>
+<div class="container-fluid sequence_container">
+	<div class="row">
+		<div class="col-md-12">
+			<ul class="nav nav-tabs nav-justified samples_sequences_nav">
+				<li role="presentation"><a href="/samples">Samples</a></li>
+				<li role="presentation" class="active"><a href="#">Sequences</a></li>
+			</ul>
+		</div>
+	</div>
 
 	<div class="row">
 		<div class="col-md-2">
@@ -82,12 +85,14 @@
 						@endif
 					</a>
 				</p>
-		{{ Form::close() }}				
+			{{ Form::close() }}				
 		</div>
 
 		<div class="col-md-10">
 			<!-- statistics box -->
 			@if (! empty($sequence_list))
+			@endif
+
 				<div class="sequences_stats">
 
 					<h4>Results</h4>
@@ -111,7 +116,6 @@
 					</div>
 					
 				</div>
-			@endif
 
 
 			@if (! empty($sequence_list))
@@ -246,9 +250,8 @@
 						<a href="systems">Add a system</a> to be able to use analysis apps.
 					</p>
 				@endif
-			</div>
+			@endif
 		</div>
-	@endif
-
+	</div>
 </div>
 @stop

@@ -6,25 +6,25 @@
 <div class="container login_container">
 
 	<div class="row">
-		<div class="col-md-10">
+		<div class="col-md-12">
 			<div class="intro">
-				<p><strong>iReceptor</strong> provides access to “Next Generation” sequence data from immune responses: <span class="stats_total_sequences">millions of </span> sequences, from 5 distributed curated databases, are available for mining and download.</p> 
+				<p><strong>Welcome to iReceptor!</strong> iReceptor provides access to “Next Generation” sequence data from the immune response: <span class="stats_total_sequences">millions of </span> sequences from 5 distributed curated data repositories are currently available for exploration, analysis, and download.</p> 
 			</div>
 		</div>
 	</div>
 
-	<div class="row">		
+	<div class="row">
 		<div class="col-md-9">
 			<div id="landing_charts">
 				<div class="row">
-					<div class="col-md-3 chart" id="landing_chart1"></div>
-					<div class="col-md-3 chart" id="landing_chart2"></div>
-					<div class="col-md-3 chart" id="landing_chart3"></div>
+					<div class="col-md-4 chart" id="landing_chart1"></div>
+					<div class="col-md-4 chart" id="landing_chart2"></div>
+					<div class="col-md-4 chart" id="landing_chart3"></div>
 				</div>
 				<div class="row">
-					<div class="col-md-3 chart" id="landing_chart4"></div>
-					<div class="col-md-3 chart" id="landing_chart5"></div>
-					<div class="col-md-3 chart" id="landing_chart6"></div>
+					<div class="col-md-4 chart" id="landing_chart4"></div>
+					<div class="col-md-4 chart" id="landing_chart5"></div>
+					<div class="col-md-4 chart" id="landing_chart6"></div>
 				</div>
 			</div>
 		</div>
