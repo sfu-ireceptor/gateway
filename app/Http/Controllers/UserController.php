@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Agave;
 use Carbon\Carbon;
+use App\RestService;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use App\RestService;
 
 class UserController extends Controller
 {
