@@ -69,10 +69,7 @@ function doSampleCharts()
         "Disease State", "DNA Type"
     ];
 
-    // Get the JSON and process it.
-    $.getJSON('samples/json', function(data) {
-        showData(data, graphFields, graphNames, "sample_chart");
-    });
+    showData(data, graphFields, graphNames, "sample_chart");
 }
 
 function doSequenceCharts()

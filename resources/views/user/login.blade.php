@@ -100,7 +100,7 @@
 </div>
 
 <script>
-var data = {!! $samples_json !!};
+var data = {!! $sample_list_json !!};
 </script>
 
 @stop

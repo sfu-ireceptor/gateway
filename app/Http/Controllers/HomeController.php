@@ -13,7 +13,7 @@ class HomeController extends Controller
         $sample_list = $sample_data['items'];
 
         $data = [];
-        $data['samples_json'] = json_encode($sample_list);
+        $data['sample_list_json'] = json_encode($sample_list);
 
     	// var_dump($sample_data);die();
 

@@ -15,7 +15,7 @@
 
 	<div class="row">
 		<div class="col-md-2">
-			{{ Form::open(array('url' => 'samples#results', 'role' => 'form', 'method' => 'get', 'class' => 'sample_search')) }}
+			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'get', 'class' => 'sample_search')) }}
 				<input type="hidden" name="project_id_list" />
 
 			    <div class="form-group">
@@ -229,6 +229,8 @@
 		</div>
 	</div>
 </div>
-@stop
 
-	
+<script>
+var data = {!! $sample_list_json !!};
+</script>
+@stop

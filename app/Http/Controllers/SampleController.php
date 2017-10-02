@@ -17,6 +17,7 @@ class SampleController extends Controller
         // get sample list
         $sample_data = RestService::samples($request->all(), $username);
         $data['sample_list'] = $sample_data['items'];
+        $data['sample_list_json'] = json_encode($sample_data['items']);
         $data['rs_list'] = $sample_data['rs_list'];
         $data['total_samples'] = $sample_data['total'];
 

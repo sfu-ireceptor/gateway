@@ -22,7 +22,7 @@ class UserController extends Controller
         $sample_list = $sample_data['items'];
 
         $data = [];
-        $data['samples_json'] = json_encode($sample_list);
+        $data['sample_list_json'] = json_encode($sample_list);
 
         return view('user/login', $data);
     }
