@@ -47,6 +47,11 @@
 	</div>
 
 </div>
+
+<script>
+var data = {!! $samples_json !!};
+</script>
+
 @stop
 
 	

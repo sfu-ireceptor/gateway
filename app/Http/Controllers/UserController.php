@@ -11,12 +11,20 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use App\RestService;
 
 class UserController extends Controller
 {
     public function getLogin()
     {
-        return view('user/login');
+        $username = 'titi';
+        $sample_data = RestService::samples(['ajax' => true], $username);
+        $sample_list = $sample_data['items'];
+
+        $data = [];
+        $data['samples_json'] = json_encode($sample_list);
+
+        return view('user/login', $data);
     }
 
     public function postLogin(Request $request)

@@ -23,40 +23,36 @@ function doLandingCharts()
         "Disease State", "DNA Type"
     ];
 
-    // Get the JSON from the samples/json API entry point.
-    $.getJSON('samples/stats', function(data)
+    var sequenceAPIData = false;
+
+    // Aggregate over the projects and get the number of projects.
+    var aggregateData = irAggregateData("project_name", data, sequenceAPIData);
+    var numProjects = aggregateData.length;
+
+    // Get the total sequence count by looping over the sequence counts for
+    // all of the projects.
+    var numSequences = 0;
+    for (project in aggregateData)
     {
-        var sequenceAPIData = false;
+        numSequences += aggregateData[project].count;
+    }
 
-        // Aggregate over the projects and get the number of projects.
-        var aggregateData = irAggregateData("project_name", data, sequenceAPIData);
-        var numProjects = aggregateData.length;
-    
-        // Get the total sequence count by looping over the sequence counts for
-        // all of the projects.
-        var numSequences = 0;
-        for (project in aggregateData)
-        {
-            numSequences += aggregateData[project].count;
-        }
-    
-        // Aggregate over the subjects and get the number of subjects. We don't use the
-        // aggregated data.
-        aggregateData = irAggregateData("subject_code", data, sequenceAPIData);
-        var numSubjects = aggregateData.length;
-    
-        // Aggregate over the samples and get the numebr of samples. We don't use the 
-        // aggregated data.
-        aggregateData = irAggregateData("sample_name", data, sequenceAPIData);
-        var numSamples = aggregateData.length;  
-    
-        // Generate the text content for displaying the summary data.
-        var s = numSequences.toLocaleString() + " sequences \n from " + numProjects + " projects, " +  numSubjects + " subjects and  " +  numSamples + " samples";
-        $('#landing_summary').text(s);
-        $('.stats_total_sequences').text(numSequences.toLocaleString());
+    // Aggregate over the subjects and get the number of subjects. We don't use the
+    // aggregated data.
+    aggregateData = irAggregateData("subject_code", data, sequenceAPIData);
+    var numSubjects = aggregateData.length;
 
-        showData(data, graphFields, graphNames, "landing_chart");
-    });
+    // Aggregate over the samples and get the numebr of samples. We don't use the 
+    // aggregated data.
+    aggregateData = irAggregateData("sample_name", data, sequenceAPIData);
+    var numSamples = aggregateData.length;  
+
+    // Generate the text content for displaying the summary data.
+    var s = numSequences.toLocaleString() + " sequences \n from " + numProjects + " projects, " +  numSubjects + " subjects and  " +  numSamples + " samples";
+    $('#landing_summary').text(s);
+    $('.stats_total_sequences').text(numSequences.toLocaleString());
+
+    showData(data, graphFields, graphNames, "landing_chart");
 }
 
 function doSampleCharts()

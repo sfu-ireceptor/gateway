@@ -2,11 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\RestService;
+
 class HomeController extends Controller
 {
     public function index()
     {
-        return view('home');
+    	$username = auth()->user()->username;
+        $sample_data = RestService::samples(['ajax' => true], $username);
+        $sample_list = $sample_data['items'];
+
+        $data = [];
+        $data['samples_json'] = json_encode($sample_list);
+
+    	// var_dump($sample_data);die();
+
+        return view('home', $data);
     }
 
     public function about()
