@@ -116,6 +116,7 @@ function showData(json, graphFields, graphNames, htmlBase)
     // sequenceAPIData - Whether or not the data came from the sequence_summary API or not.
     // The summary JSON data from the /v2/samples and /v2/sequences APIs are slightly different.
     var sequenceAPIData = false;
+    var aggregateBySequence = true;
 
     // Generate the  charts for the  types of aggregated data provided. For each chart, we
     // get the aggregated data for the field of interest, convert that aggregated data
@@ -129,7 +130,7 @@ function showData(json, graphFields, graphNames, htmlBase)
     for (index in graphFields)
     {
         // Get the aggregated data for this field.
-        aggregateData = irAggregateData(graphFields[index], json, sequenceAPIData);
+        aggregateData = irAggregateData(graphFields[index], json, sequenceAPIData, aggregateBySequence);
         // Build the chart data structure.
         chart = irBuildPieChart(graphNames[index], aggregateData, 3);
         //chart = irBuildBarChart(graphNames[index], aggregateData, 4);
@@ -266,7 +267,7 @@ function irBuildPieChart(fieldTitle, data, level)
             }],
             drilldown: {
                 drillUpButton:{
-                    position: {y:-10, x:-50},
+                    position: {y:-10},
                     relativeTo: 'spacingBox'
                 },
                 series: 
@@ -376,7 +377,7 @@ function irBuildBarChart(fieldTitle, data, level)
 // aggregationSummary: A boolean flag that denotes whether jsonData came from
 // the /v2/sequence_summary API or not. If not, we assume the data came from the
 // /v1/samples API.
-function irAggregateData(seriesName, jsonData, sequenceSummaryAPI)
+function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregateBySequence=true)
 {
     // Debug level so we can debug the code...
     var debugLevel = 0;
@@ -435,12 +436,14 @@ function irAggregateData(seriesName, jsonData, sequenceSummaryAPI)
             // of the data that doesn't have this field. This should be rare, but
             // it can happen if the data models are different and are missing data.
             fieldValue = "NODATA";
-            fieldCount = elementData[countField];
+            if (aggregateBySequence) fieldCount = elementData[countField];
+            else fieldCount = 1;
         }
         else
         {
             // If the element is found, extract the count.
-            fieldCount = elementData[countField];
+            if (aggregateBySequence) fieldCount = elementData[countField];
+            else fieldCount = 1;
         }
 
         // Do the aggregation step.
