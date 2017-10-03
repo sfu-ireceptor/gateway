@@ -131,7 +131,8 @@ function showData(json, graphFields, graphNames, htmlBase)
         // Get the aggregated data for this field.
         aggregateData = irAggregateData(graphFields[index], json, sequenceAPIData);
         // Build the chart data structure.
-        chart = irBuildChart(graphNames[index], aggregateData, "pie");
+        chart = irBuildPieChart(graphNames[index], aggregateData, 3);
+        //chart = irBuildBarChart(graphNames[index], aggregateData, 4);
         // Generate the container ID to use, we expect containers numberd at 1.
         containerID = htmlBase + String(containerNumber);
         // Render the chart in the container using the HighChart graph API.
@@ -144,9 +145,140 @@ function showData(json, graphFields, graphNames, htmlBase)
     }
 }
 
+function bubbleSort(a, b)
+{
+    var swapped;
+    do {
+        swapped = false;
+        for (var i=0; i < a.length-1; i++) {
+            if (a[i] < a[i+1]) {
+                var temp = a[i];
+                var btemp = b[i];
+                a[i] = a[i+1];
+                a[i+1] = temp;
+                b[i] = b[i+1];
+                b[i+1] = btemp;
+                swapped = true;
+            }
+        }
+    } while (swapped);
+}
 
 // Build a chart for the iReceptor aggregation data using HighCharts.
-function irBuildChart(fieldTitle, data, type)
+function irBuildPieChart(fieldTitle, data, level)
+{
+    // Debug level for when developing...
+    var debugLevel = 1;
+
+    // Sort the data
+    var keys = [];
+    var values = [];
+    for(var d in data) 
+    {
+        keys.push(data[d].name);
+        values.push(data[d].count);
+    }
+    bubbleSort(values, keys);
+
+    // Convert iReceptor aggregate data into a form for HighChart.
+    var seriesData = [];
+    var otherSequences = 0;
+    var otherData = [];
+    var otherCount = 0;
+    for (var i = 0; i<keys.length; i++)
+    {
+        if (i < level)
+        {
+            if (debugLevel > 0)
+            {
+                console.log("--" + "count = " + i + "--" + "\n");
+                console.log("--" + keys[i] + " = " + values[i] + "--" + "\n");
+            }
+            seriesData[i] = {name:keys[i],y:values[i],drilldown:null};
+        }
+        else
+        {
+            otherSequences += values[i];
+            otherData[otherCount] = [keys[i],values[i]];
+            if (debugLevel > 0)
+            {
+                console.log("--" + "count = " + i + "--" + "\n");
+                console.log("--" + "Other" + " = " + otherSequences + "--" + "\n");
+                console.log("--" + keys[i] + " = " + values[i] + "--" + "\n");
+            }
+            otherCount++
+        }
+    }
+    if (level < keys.length)
+        seriesData[level] = {name:'Other',y:otherSequences,drilldown:'OtherDetails'};
+
+    // Generate the chart data structure for HighChart.
+    var chartData;
+
+        chartData = {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                backgroundColor: 'transparent',
+                type: "pie"
+            },
+            title: {
+                text: fieldTitle, 
+                floating: false,
+                margin: 0,
+                style: {"font-size": "12px"}
+            },
+            tooltip: {
+                pointFormat: '<b>{point.y:.0f} ({point.percentage:.1f}%)</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        /*overflow: "justify",*/
+                        crop: false,
+                        /* inside: true, */
+                        formatter: function()
+                        {
+                            return(this.point.name.substring(0,14));
+                        },
+                        distance: -20
+                    },
+                    showInLegend: false
+                },
+                series: {
+                    animation: false,
+                }
+            },
+            legend: {
+                enabled: false,
+                maxHeight: 75,
+                floating: false,
+                itemStyle: {"font-weight":"normal", "font-size": "11px"}
+            },
+            series: [{
+                name: fieldTitle,
+                colorByPoint: true,
+                data: seriesData
+            }],
+            drilldown: {
+                series: 
+                [{
+                    name: 'Other',
+                    id: 'OtherDetails',
+                    data: otherData
+                }]
+            }
+        };
+
+    return chartData;
+}
+
+// Build a chart for the iReceptor aggregation data using HighCharts.
+function irBuildBarChart(fieldTitle, data, level)
 {
     // Debug level for when developing...
     var debugLevel = 0;
@@ -162,21 +294,14 @@ function irBuildChart(fieldTitle, data, type)
             console.log("--" + data[d] + "--" + "<br>\n");
             console.log("--" + data[d].name + " = " + data[d].count + "--" + "<br>");
         }
-        if (type == "bar")
-        {
-            seriesData[count] = {name:data[d].name,data:[data[d].count]};
-        }
-        else if (type == "pie")
-        {
-            seriesData[count] = {name:data[d].name,y:data[d].count};
-        }
+
+
+        seriesData[count] = {name:data[d].name,data:[data[d].count]};
         count = count + 1;
     }
-    
+
     // Generate the chart data structure for HighChart.
     var chartData;
-    if (type == "bar")
-    {
         chartData = {
             chart: {
                 type: 'column',
@@ -219,53 +344,6 @@ function irBuildChart(fieldTitle, data, type)
             },
             series: seriesData
         };
-    }
-    else if (type == "pie")
-    {
-        chartData = {
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                backgroundColor: 'transparent',
-                type: type
-            },
-            title: {
-                text: fieldTitle, 
-                floating: false,
-                margin: 0,
-                style: {"font-size": "12px"}
-            },
-            tooltip: {
-                pointFormat: '<b>{point.y:.0f} ({point.percentage:.1f}%)</b>'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false
-                    },
-                    showInLegend: false
-                },
-                series: {
-                    animation: false
-                }
-            },
-            legend: {
-                enabled: false,
-                maxHeight: 75,
-                floating: false,
-                itemStyle: {"font-weight":"normal", "font-size": "11px"}
-            },
-            series: [{
-                name: fieldTitle,
-                colorByPoint: true,
-                data: seriesData
-            }]
-        };
-    }
-    
     return chartData;
 }
 
