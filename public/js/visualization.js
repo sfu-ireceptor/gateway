@@ -265,6 +265,10 @@ function irBuildPieChart(fieldTitle, data, level)
                 data: seriesData
             }],
             drilldown: {
+                drillUpButton:{
+                    position: {y:-10, x:-50},
+                    relativeTo: 'spacingBox'
+                },
                 series: 
                 [{
                     name: 'Other',
