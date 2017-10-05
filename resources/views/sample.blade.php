@@ -123,8 +123,11 @@
 		</div>
 
 		<div class="col-md-10">
+			<div class="samples_filters">
+				<b>Active filters:</b> TBD
+			</div>
 			<!-- statistics box -->
-			<div class="sequences_stats">
+			<div class="samples_stats">
 				<?php
 					# The rest_service_list contains information about the 
 					# metadata that is cached about the repositories and their
@@ -159,7 +162,7 @@
 						$nSequences = $nSequences + $sample->sequence_count;
 					}
 				?>
-				<p>Query results: {{$nSamples}} samples and {{number_format($nSequences)}} sequences. Query depth: Data retrieved and federated from {{$totalRepositories}} remote repositories and {{$totalLabs}} research labs.</p>
+				<p><b>Query result:</b> {{$nSamples}} samples and {{number_format($nSequences)}} sequences. <b>Query depth</b>: Data retrieved and federated from {{$totalRepositories}} remote repositories and {{$totalLabs}} research labs.</p>
 
 				<div id="sample_charts" class="charts">
 					<div class="row">
