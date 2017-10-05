@@ -12,7 +12,7 @@
 	</div>
 
 	<div class="row">
-		<div class="col-md-8">
+		<div class="col-md-9">
 			<div id="landing_charts">
 				<div class="row">
 					<div class="col-md-4 chart" id="landing_chart1"></div>
@@ -21,7 +21,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-md-4 side_search_links">
+		<div class="col-md-3 side_search_links">
 			<p class="quick_search_link">
 				<a class="btn btn-default btn-lg" role="button" href="/sequences?cols=3_65_26_6_10_64_113&amp;filters_order=64&amp;cdr3region_sequence_aa=&amp;add_field=cdr3_length">Quick CDR3 Search →</a>
 			</p>
@@ -29,7 +29,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-8">
+		<div class="col-md-9">
 			<div id="landing_charts">	
 				<div class="row">
 					<div class="col-md-4 chart" id="landing_chart4"></div>
@@ -38,7 +38,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-md-4 side_search_links">
+		<div class="col-md-3 side_search_links">
 			<p class="adv_search_link">	
 				<a  class="btn btn-default btn-lg" role="button" href="/samples">Advanced Search →</a>
 			</p>

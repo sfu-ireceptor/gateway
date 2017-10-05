@@ -13,17 +13,15 @@ function doLandingCharts()
 {
     // Fields and names that the landing page displays.
     var graphFields = [
-        "ireceptor_cell_subset_name", "subject_species",
-        "sample_source_name", "project_type",
-        "disease_state_name", "dna_type"
+        "project_type", "subject_species", "disease_state_name",
+        "ireceptor_cell_subset_name",  "sample_source_name", "dna_type"
     ];
     var graphNames = [
-        "Cell Type", "Species",
-        "Tissue Source", "Study Type",
-        "Disease State", "DNA Type"
+        "Study Type", "Species", "Disease State",
+        "Cell Type", "Tissue Source", "DNA Type"
     ];
-
     var sequenceAPIData = false;
+    var internalLabels = false;
 
     // Aggregate over the projects and get the number of projects.
     var aggregateData = irAggregateData("project_name", data, sequenceAPIData);
@@ -52,43 +50,41 @@ function doLandingCharts()
     $('#landing_summary').text(s);
     $('.stats_total_sequences').text(numSequences.toLocaleString());
 
-    showData(data, graphFields, graphNames, "landing_chart");
+    showData(data, graphFields, graphNames, "landing_chart", internalLabels);
 }
 
 function doSampleCharts()
 {
     // Fields and names that the samples page displays.
     var graphFields = [
-        "ireceptor_cell_subset_name", "subject_species",
-        "sample_source_name", "project_type",
-        "disease_state_name", "dna_type"
+        "project_type", "subject_species", "disease_state_name",
+        "ireceptor_cell_subset_name",  "sample_source_name", "dna_type"
     ];
     var graphNames = [
-        "Cell Type", "Species",
-        "Tissue Source", "Study Type",
-        "Disease State", "DNA Type"
+        "Study Type", "Species", "Disease State",
+        "Cell Type", "Tissue Source", "DNA Type"
     ];
+    var internalLabels = true;
 
-    showData(data, graphFields, graphNames, "sample_chart");
+    showData(data, graphFields, graphNames, "sample_chart", internalLabels);
 }
 
 function doSequenceCharts()
 {
     // Fields and names that the sequences page displays.
     var graphFields = [
-        "ireceptor_cell_subset_name", "subject_species",
-        "sample_source_name", "project_type",
-        "disease_state_name", "dna_type"
+        "project_type", "subject_species", "disease_state_name",
+        "ireceptor_cell_subset_name",  "sample_source_name", "dna_type"
     ];
     var graphNames = [
-        "Cell Type", "Species",
-        "Tissue Source", "Study Type",
-        "Disease State", "DNA Type"
+        "Study Type", "Species", "Disease State",
+        "Cell Type", "Tissue Source", "DNA Type"
     ];
+    var internalLabels = true;
 
     // Get the JSON and process it.
     $.getJSON('samples/json', function(data) {
-        showData(data, graphFields, graphNames, "sequence_chart");
+        showData(data, graphFields, graphNames, "sequence_chart", internalLabels);
     });
 }
 
@@ -110,7 +106,7 @@ function doSequenceCharts()
 // of the graph (starting at 1). For example, if there are N graphs and htmlBase
 // is "foo" then there should be N valid html containers with the IDs "foo1",
 // "foo2" up to "fooN".
-function showData(json, graphFields, graphNames, htmlBase)
+function showData(json, graphFields, graphNames, htmlBase, internalLabels)
 {
     // Initial variables. These should be provided by the gateway, but they are constants for now.
     // sequenceAPIData - Whether or not the data came from the sequence_summary API or not.
@@ -132,8 +128,8 @@ function showData(json, graphFields, graphNames, htmlBase)
         // Get the aggregated data for this field.
         aggregateData = irAggregateData(graphFields[index], json, sequenceAPIData, aggregateBySequence);
         // Build the chart data structure.
-        chart = irBuildPieChart(graphNames[index], aggregateData, 3);
-        //chart = irBuildBarChart(graphNames[index], aggregateData, 4);
+        chart = irBuildPieChart(graphNames[index], aggregateData, 3, internalLabels);
+        //chart = irBuildBarChart(graphNames[index], aggregateData, 4, internalLabels);
         // Generate the container ID to use, we expect containers numberd at 1.
         containerID = htmlBase + String(containerNumber);
         // Render the chart in the container using the HighChart graph API.
@@ -166,10 +162,10 @@ function bubbleSort(a, b)
 }
 
 // Build a chart for the iReceptor aggregation data using HighCharts.
-function irBuildPieChart(fieldTitle, data, level)
+function irBuildPieChart(fieldTitle, data, level, internalLabels)
 {
     // Debug level for when developing...
-    var debugLevel = 1;
+    var debugLevel = 0;
 
     // Sort the data
     var keys = [];
@@ -213,6 +209,10 @@ function irBuildPieChart(fieldTitle, data, level)
     if (level < keys.length)
         seriesData[level] = {name:'Other',y:otherSequences,drilldown:'OtherDetails'};
 
+    // Set up the label display
+    if (internalLabels) labelDistance = -10;
+    else labelDistance = 3;
+
     // Generate the chart data structure for HighChart.
     var chartData;
 
@@ -228,27 +228,49 @@ function irBuildPieChart(fieldTitle, data, level)
                 text: fieldTitle, 
                 floating: false,
                 margin: 0,
-                style: {"font-size": "12px"}
+                style: {"font-size": "14px","font-weight":"bold"}
             },
             tooltip: {
                 pointFormat: '<b>{point.y:.0f} ({point.percentage:.1f}%)</b>'
             },
             plotOptions: {
                 pie: {
+                    center: ["50%","50%"],
+                    // We want a start angle for the pie chart to be 90 deg
+                    // such that internal labelling is more likely to have
+                    // text that does not overlap.
+                    startAngle: 90,
                     allowPointSelect: true,
                     cursor: 'pointer',
                     dataLabels: {
+                        // Do we want to display labels.
                         enabled: true,
                         /*overflow: "justify",*/
+                        // Hide data labels that are outside the plot area. From the 
+                        // manual - "To display data labels outside the plot area, set
+                        // crop to false and overflow to 'none'""
                         crop: false,
+                        overflow: "justify",
                         /* inside: true, */
+                        // Format of the data label. We want to use a formatter
+                        // so that we can shorten up all the labels that are used
+                        // within the graph proper (we don't want to display really
+                        // long names as it makes the graph ugly).
                         formatter: function()
                         {
-                            return(this.point.name.substring(0,14));
+                            return(this.point.name.substring(0,20));
                         },
-                        distance: -20
-                    },
-                    showInLegend: false
+                        // Distance says how far values are from pie chart,
+                        // negative numbers mean values are inside the pie.
+                        // -10 is a good value for labels within the pie, as
+                        // it minimizes text overlap and truncation...
+                        // 5 is a good value for labels external to the pie
+                        // as it minimizes the length of the line joining the
+                        // label to the pie.
+                        distance: labelDistance
+                        
+                    }
+                    //showInLegend: false
                 },
                 series: {
                     animation: false,
@@ -267,7 +289,7 @@ function irBuildPieChart(fieldTitle, data, level)
             }],
             drilldown: {
                 drillUpButton:{
-                    position: {y:-10},
+                    position: {y:-10, x:10},
                     relativeTo: 'spacingBox'
                 },
                 series: 
@@ -418,7 +440,7 @@ function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregat
                 console.log(element + "<br>");
             elementData = aggregationList[element];
             if (debugLevel > 0)
-               console.log(elementData + "<br>");           
+                console.log(elementData + "<br>");           
         }
         else
         {

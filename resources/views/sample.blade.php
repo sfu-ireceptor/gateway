@@ -125,13 +125,41 @@
 		<div class="col-md-10">
 			<!-- statistics box -->
 			<div class="sequences_stats">
-				<h4>Results</h4>
-				@foreach ($rs_list as $rs)
-					<p>
-						{{ $rs['rs']['name'] }}:
-						{{ number_format($rs['total_samples'], 0 ,'.' ,',') }} samples
-					</p>
-				@endforeach
+				<?php
+					# The rest_service_list contains information about the 
+					# metadata that is cached about the repositories and their
+					# contents. This does not change based on the filters used
+					$totalRepositories = sizeof($rest_service_list);
+					$totalLabs = 0;
+					$totalProjects = 0;
+					$totalSamples = 0;
+					foreach ($rest_service_list as $rs)
+					{
+						foreach ($rs->labs as $lab)
+						{
+							$totalLabs = $totalLabs + 1;
+							foreach ($lab->projects as $project)
+							{
+								$totalProjects = $totalProjects + 1;
+								#$totalSamples += sizeof($project->samples);
+							}
+						}
+					}
+					# The rs_list is the response data from the service based on
+					# the query parameters. It is this data that provides the details
+					# about the results of the query.
+					$nSamples = 0;
+					foreach ($rs_list as $rs)
+					{
+						$nSamples = $nSamples + $rs['total_samples'];
+					}
+					$nSequences = 0;
+					foreach ($sample_list as $sample)
+					{
+						$nSequences = $nSequences + $sample->sequence_count;
+					}
+				?>
+				<p>Query results: {{$nSamples}} samples and {{number_format($nSequences)}} sequences. Query depth: Data retrieved and federated from {{$totalRepositories}} remote repositories and {{$totalLabs}} research labs.</p>
 
 				<div id="sample_charts" class="charts">
 					<div class="row">
