@@ -11,7 +11,7 @@ class RestServiceSeeder extends Seeder
      */
     public function run()
     {
-    	$table = 'rest_service';
+        $table = 'rest_service';
         DB::table($table)->truncate();
 
         $l = [
