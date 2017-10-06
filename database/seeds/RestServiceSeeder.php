@@ -24,7 +24,7 @@ class RestServiceSeeder extends Seeder
         ];
 
         foreach ($l as $item) {
-            DB::table($table)->insert($item):
+            DB::table($table)->insert($item);
         }
     }
 }
