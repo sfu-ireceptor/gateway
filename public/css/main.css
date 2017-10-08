@@ -118,6 +118,8 @@ fieldset {
 	list-style-type: none;
 	padding-top: 0;
 	padding-bottom: 15px;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;	
 	border-top: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
 	/*margin-top: 28px;*/
@@ -130,6 +132,8 @@ fieldset {
 	list-style-type: none;
 	padding-top: 5px;
 	padding-bottom: 5px;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;	
 	border-top: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
 	/*margin-top: 28px;*/
@@ -142,12 +146,28 @@ fieldset {
 	list-style-type: none;
 	padding-top: 0;
 	padding-bottom: 15px;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;	
 	border-top: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
 	/*margin-top: 28px;*/
 	background-color: #f7f7f9;
 	padding-left: 8px;
 	margin-bottom: 10px;
+}
+.sequences_filters {
+	list-style-type: none;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	/*margin-top: 28px;*/
+	background-color: #f7f7f9;
+	padding-left: 8px;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 form .error {

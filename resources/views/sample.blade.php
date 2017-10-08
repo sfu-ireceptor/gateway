@@ -162,17 +162,16 @@
 						$nSequences = $nSequences + $sample->sequence_count;
 					}
 				?>
-				<p><b>Query result:</b> {{$nSamples}} samples and {{number_format($nSequences)}} sequences. <b>Query depth</b>: Data retrieved and federated from {{$totalRepositories}} remote repositories and {{$totalLabs}} research labs.</p>
+				<p>
+				<b>Query result:</b> {{$nSamples}} samples and {{number_format($nSequences)}} sequences.
+				<b>Query breadth</b>: Data retrieved and federated from {{$totalRepositories}} remote repositories across {{$totalLabs}} research labs.
+				</p>
 
 				<div id="sample_charts" class="charts">
 					<div class="row">
 						<div class="col-md-2 chart" id="sample_chart1"></div>
 						<div class="col-md-2 chart" id="sample_chart2"></div>
 						<div class="col-md-2 chart" id="sample_chart3"></div>
-					<!--
-					</div>
-					<div class="row">
-					-->
 						<div class="col-md-2 chart" id="sample_chart4"></div>
 						<div class="col-md-2 chart" id="sample_chart5"></div>
 						<div class="col-md-2 chart" id="sample_chart6"></div>
