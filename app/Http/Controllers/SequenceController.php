@@ -125,7 +125,6 @@ class SequenceController extends Controller
         $data['filters_json'] = json_encode($filters);
         $data['system'] = System::getCurrentSystem(auth()->user()->id);
 
-
         // display view
         return view('sequence', $data);
 

@@ -15,15 +15,13 @@ class SampleController extends Controller
         $metadata_data = RestService::metadata($username);
         // Build up global data (unfiltered).
         $repository_list = $metadata_data['rest_service_list'];
-        $totalRepositories = sizeof($repository_list);
+        $totalRepositories = count($repository_list);
         $totalLabs = 0;
         $totalProjects = 0;
-        foreach ($repository_list as $repo)
-        {
-            foreach ($repo->labs as $lab)
-            {
+        foreach ($repository_list as $repo) {
+            foreach ($repo->labs as $lab) {
                 $totalLabs = $totalLabs + 1;
-                $totalProjects += sizeof($lab->projects);
+                $totalProjects += count($lab->projects);
             }
         }
 
@@ -36,8 +34,7 @@ class SampleController extends Controller
         // about the results of the query.
         $nFilteredSamples = $sample_data['total'];
         $nFilteredSequences = 0;
-        foreach ($sample_data['items'] as $sample)
-        {
+        foreach ($sample_data['items'] as $sample) {
             $nFilteredSequences = $nFilteredSequences + $sample->sequence_count;
         }
 
