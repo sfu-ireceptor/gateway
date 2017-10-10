@@ -124,48 +124,43 @@
 
 		<div class="col-md-10">
 			<div class="samples_filters">
-				<b>Active filters:</b> TBD
+				<b>Active filters:</b>
+				@foreach ($filters as $filter)
+				<span class="filter_box">
+					{{$filter}}
+				</span>
+				@endforeach
+			</div>
+			<div class="samples_filters">
+				<b>Query breadth</b>:
+				<span class="filter_box">
+					{{$totalRepositories}} remote repositories
+				</span>
+				<span class="filter_box">
+					{{$totalLabs}} research labs
+				</span>
+				<span class="filter_box">
+					{{$totalStudies}} studies
+				</span>
+				<span class="filter_box">
+					{{$totalSamples}} samples
+				</span>
+				<span class="filter_box">
+					{{number_format($totalSequences)}} sequences
+				</span>
+			</div>
+			<div class="samples_filters">
+				<b>Query result:</b>
+				<span class="filter_box">
+					{{$nFilteredSamples}} samples
+				</span>
+				<span class="filter_box">
+					{{number_format($nFilteredSequences)}} sequences.
+				</span>
 			</div>
 			<!-- statistics box -->
 			<div class="samples_stats">
-				<?php
-					# The rest_service_list contains information about the 
-					# metadata that is cached about the repositories and their
-					# contents. This does not change based on the filters used
-					$totalRepositories = sizeof($rest_service_list);
-					$totalLabs = 0;
-					$totalProjects = 0;
-					$totalSamples = 0;
-					foreach ($rest_service_list as $rs)
-					{
-						foreach ($rs->labs as $lab)
-						{
-							$totalLabs = $totalLabs + 1;
-							foreach ($lab->projects as $project)
-							{
-								$totalProjects = $totalProjects + 1;
-								#$totalSamples += sizeof($project->samples);
-							}
-						}
-					}
-					# The rs_list is the response data from the service based on
-					# the query parameters. It is this data that provides the details
-					# about the results of the query.
-					$nSamples = 0;
-					foreach ($rs_list as $rs)
-					{
-						$nSamples = $nSamples + $rs['total_samples'];
-					}
-					$nSequences = 0;
-					foreach ($sample_list as $sample)
-					{
-						$nSequences = $nSequences + $sample->sequence_count;
-					}
-				?>
-				<p>
-				<b>Query result:</b> {{$nSamples}} samples and {{number_format($nSequences)}} sequences.
-				<b>Query breadth</b>: Data retrieved and federated from {{$totalRepositories}} remote repositories across {{$totalLabs}} research labs.
-				</p>
+
 
 				<div id="sample_charts" class="charts">
 					<div class="row">

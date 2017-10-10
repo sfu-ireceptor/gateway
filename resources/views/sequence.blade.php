@@ -93,68 +93,50 @@
 			@if (! empty($sequence_list))
 			@endif
 			<div class="sequences_filters">
-				<b>Active filters:</b> TBD
+				<b>Active filters:</b>
+				@foreach ($filters as $filter)
+				<span class="filter_box">
+					{{$filter}}
+				</span>
+				@endforeach
+			</div>
+			<div class="samples_filters">
+				<b>Query breadth</b>:
+				<span class="filter_box">
+					{{$totalRepositories}} remote repositories
+				</span>
+				<span class="filter_box">
+					{{$totalLabs}} research labs
+				</span>
+				<span class="filter_box">
+					{{$totalStudies}} studies
+				</span>
+				<span class="filter_box">
+					{{$totalSamples}} samples
+				</span>
+				<span class="filter_box">
+					{{number_format($totalSequences)}} sequences
+				</span>
+			</div>
+			<div class="samples_filters">
+				<b>Query result:</b>
+				<span class="filter_box">
+					 {{number_format($nFilteredSequences)}} sequences.
+				</span>
 			</div>
 
-				<div class="sequences_stats">
-					<!--
-					<h4>Results</h4>
-					@foreach ($rs_list as $rs)
-						<p>
-							{{ $rs['rs']['name'] }}:
-							{{ number_format($rs['total_sequences'], 0 ,'.' ,',') }} sequences
-						</p>
-					@endforeach
-					-->
-					<?php
-						# The rest_service_list contains information about the 
-						# metadata that is cached about the repositories and their
-						# contents. This does not change based on the filters used
-						#$totalRepositories = sizeof($rest_service_list);
-						$totalRepositories = 0;
-						$totalLabs = 0;
-						$totalProjects = 0;
-						$totalSamples = 0;
-						#foreach ($rest_service_list as $rs)
-						#{
-						#	foreach ($rs->labs as $lab)
-						#	{
-						#		$totalLabs = $totalLabs + 1;
-						#		foreach ($lab->projects as $project)
-						#		{
-						#			$totalProjects = $totalProjects + 1;
-						#			#$totalSamples += sizeof($project->samples);
-						#		}
-						#	}
-						#}
-						# The rs_list is the response data from the service based on
-						# the query parameters. It is this data that provides the details
-						# about the results of the query.
-						$nSamples = 0;
-						$nSequences = 0;
-						foreach ($rs_list as $rs)
-						{
-							$nSequences = $nSequences + $rs['total_sequences'];
-							#$nSamples = $nSamples + $rs['total_samples'];
-						}
-						#foreach ($sample_list as $sample)
-						#{
-						#	$nSequences = $nSequences + $sample->sequence_count;
-						#}
-					?>
-					<p><b>Query result:</b> {{$nSamples}} samples and {{number_format($nSequences)}} sequences. <b>Query breadth</b>: Data retrieved and federated from {{$totalRepositories}} remote repositories across {{$totalLabs}} research labs.</p>
-					<div id="sequence_charts" class="charts">
-						<div class="row">
-							<div class="col-md-2 chart" id="sequence_chart1"></div>
-							<div class="col-md-2 chart" id="sequence_chart2"></div>
-							<div class="col-md-2 chart" id="sequence_chart3"></div>
-							<div class="col-md-2 chart" id="sequence_chart4"></div>
-							<div class="col-md-2 chart" id="sequence_chart5"></div>
-							<div class="col-md-2 chart" id="sequence_chart6"></div>
-						</div>
+			<div class="sequences_stats">
+				<div id="sequence_charts" class="charts">
+					<div class="row">
+						<div class="col-md-2 chart" id="sequence_chart1"></div>
+						<div class="col-md-2 chart" id="sequence_chart2"></div>
+						<div class="col-md-2 chart" id="sequence_chart3"></div>
+						<div class="col-md-2 chart" id="sequence_chart4"></div>
+						<div class="col-md-2 chart" id="sequence_chart5"></div>
+						<div class="col-md-2 chart" id="sequence_chart6"></div>
 					</div>
-					
 				</div>
+			</div>
 
 
 			@if (! empty($sequence_list))

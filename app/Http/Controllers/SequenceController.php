@@ -32,6 +32,13 @@ class SequenceController extends Controller
         $data['sequence_list'] = $sequence_data['items'];
         $data['rs_list'] = $sequence_data['rs_list'];
         $data['total_sequences'] = $sequence_data['total'];
+        $data['filters'] = $sequence_data['filters'];
+        $data['totalRepositories'] = $sequence_data['totalRepositories'];
+        $data['totalLabs'] = $sequence_data['totalLabs'];
+        $data['totalStudies'] = $sequence_data['totalStudies'];
+        $data['totalSamples'] = $sequence_data['totalSamples'];
+        $data['totalSequences'] = $sequence_data['totalSequences'];
+        $data['nFilteredSequences'] = $sequence_data['total'];
 
         // for bookmarking
         $current_url = $request->fullUrl();
@@ -117,6 +124,7 @@ class SequenceController extends Controller
 
         $data['filters_json'] = json_encode($filters);
         $data['system'] = System::getCurrentSystem(auth()->user()->id);
+
 
         // display view
         return view('sequence', $data);

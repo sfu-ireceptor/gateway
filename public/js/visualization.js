@@ -13,42 +13,15 @@ function doLandingCharts()
 {
     // Fields and names that the landing page displays.
     var graphFields = [
-        "project_type", "subject_species", "disease_state_name",
-        "ireceptor_cell_subset_name",  "sample_source_name", "dna_type"
+        "study_description", "species_name", "disease_state_sample",
+        "sample_type", "cell_subset", "library_source"
     ];
     var graphNames = [
-        "Study Type", "Species", "Disease State",
-        "Cell Type", "Tissue Source", "DNA Type"
+        "Study Type", "Species", "Sample Disease State",
+        "Sample Type", "Cell Subset", "Target Substrate"
     ];
     var sequenceAPIData = false;
     var internalLabels = false;
-
-    // Aggregate over the projects and get the number of projects.
-    var aggregateData = irAggregateData("project_name", data, sequenceAPIData);
-    var numProjects = aggregateData.length;
-
-    // Get the total sequence count by looping over the sequence counts for
-    // all of the projects.
-    var numSequences = 0;
-    for (project in aggregateData)
-    {
-        numSequences += aggregateData[project].count;
-    }
-
-    // Aggregate over the subjects and get the number of subjects. We don't use the
-    // aggregated data.
-    aggregateData = irAggregateData("subject_code", data, sequenceAPIData);
-    var numSubjects = aggregateData.length;
-
-    // Aggregate over the samples and get the numebr of samples. We don't use the 
-    // aggregated data.
-    aggregateData = irAggregateData("sample_name", data, sequenceAPIData);
-    var numSamples = aggregateData.length;  
-
-    // Generate the text content for displaying the summary data.
-    var s = numSequences.toLocaleString() + " sequences \n from " + numProjects + " projects, " +  numSubjects + " subjects and  " +  numSamples + " samples";
-    $('#landing_summary').text(s);
-    $('.stats_total_sequences').text(numSequences.toLocaleString());
 
     showData(data, graphFields, graphNames, "landing_chart", internalLabels);
 }
@@ -57,12 +30,12 @@ function doSampleCharts()
 {
     // Fields and names that the samples page displays.
     var graphFields = [
-        "project_type", "subject_species", "disease_state_name",
-        "ireceptor_cell_subset_name",  "sample_source_name", "dna_type"
+        "study_description", "species_name", "disease_state_sample",
+        "sample_type", "cell_subset", "library_source"
     ];
     var graphNames = [
-        "Study Type", "Species", "Disease State",
-        "Cell Type", "Tissue Source", "DNA Type"
+        "Study Type", "Species", "Sample Disease State",
+        "Sample Type", "Cell Subset", "Target Substrate"
     ];
     var internalLabels = true;
 
@@ -73,12 +46,12 @@ function doSequenceCharts()
 {
     // Fields and names that the sequences page displays.
     var graphFields = [
-        "project_type", "subject_species", "disease_state_name",
-        "ireceptor_cell_subset_name",  "sample_source_name", "dna_type"
+        "study_description", "species_name", "disease_state_sample",
+        "sample_type", "cell_subset", "library_source"
     ];
     var graphNames = [
-        "Study Type", "Species", "Disease State",
-        "Cell Type", "Tissue Source", "DNA Type"
+        "Study Type", "Species", "Sample Disease State",
+        "Sample Type", "Cell Subset", "Target Substrate"
     ];
     var internalLabels = true;
 

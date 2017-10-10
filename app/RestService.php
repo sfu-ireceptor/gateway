@@ -15,6 +15,81 @@ class RestService extends Model
         'url', 'name', 'username', 'password', 'enabled',
     ];
 
+    // Keep track of the total number of publicly available metadata
+    // for the users.
+    static protected $totalRepositories = 0;
+    static protected $totalLabs = 0;
+    static protected $totalStudies = 0;
+    static protected $totalSamples = 0;
+    static protected $totalSequences = 0;
+    // Keep track of whether the repositories have changed or not. If
+    // they have changed, then we need to refresh the above stats. If
+    // not then we don't. Note: We don't have a mechanism to determine
+    // if the repositories change. For now, we will just run the refresh
+    // once. The other alternative is to do it every call, but it is an
+    // expensive operation as it hits all of the metadata and sample API
+    // entry points of all repositories.
+    static protected $repositoriesChanged = true;
+
+    static protected $v1Keys = [
+        "sra_accession", "project_name", "project_type", "lab_name", "subject_code",
+        "subject_gender", "subject_ethnicity", "subject_species", "case_control_name",
+        "sample_name", "sample_source_name", "disease_state_name", "ireceptor_cell_subset_name",
+        "lab_cell_subset_name", "dna_type"
+    ];
+    static protected $v2Keys = [
+        "study_id", "study_title", "study_description", "lab_name", "subject_id",
+        "sex", "ethnicity", "species_name", "study_group_description", 
+        "sample_id", "sample_type", "disease_state_sample", "cell_subset",
+        "cell_phenotype", "library_source"
+    ];
+    static protected $shortNamesAIRR = [
+        "Study", "Study title", "Study type", "Lab name", "Subject ID", 
+        "Sex", "Ethnicity", "Species", "Study group",
+        "Sample ID", "Sample type", "Disease state", "Cell subset",
+        "Lab Cell subset", "Target substrate"
+    ];
+    static protected $longNamesAIRR = [
+        "Study", "Study title", "Study type", "Lab name", "Subject ID", 
+        "Sex", "Ethnicity", "Species name", "Study group description",
+        "Biological sample ID", "Sample type", "Disease state of sample", "Cell subset",
+        "Cell subset phenotype", "Target substrate"
+    ];
+
+    public static function convertAPIKey($fromVersion, $toVersion, $key)
+    {
+        // Build the correct conversion array based on the from/to variables
+        $fromArray = [];
+        $toArray = [];
+        switch ($fromVersion)
+        {
+            case "v1": $fromArray = self::$v1Keys; break;
+            case "v2": $fromArray = self::$v2Keys; break;
+            case "AIRR Short": $fromArray = self::$shortNamesAIRR; break;
+            case "AIRR Long": $fromArray = self::$longNamesAIRR; break;
+        }
+        switch ($toVersion)
+        {
+            case "v1": $toArray = self::$v1Keys; break;
+            case "v2": $toArray = self::$v2Keys; break;
+            case "AIRR Short": $toArray = self::$shortNamesAIRR; break;
+            case "AIRR Long": $toArray = self::$longNamesAIRR; break;
+        }
+        if (sizeof($fromArray) != sizeof($toArray))
+        {
+            Log::error("convertAPIKey: trying to compare API versions that are not compatible");
+            Log::error("convertAPIKey: from = " . $fromVersion . ", to = " . $toVersion);
+            return false;
+        }
+        $convertArray = array_combine($fromArray, $toArray);
+
+        // Check to see if the key exists, it does return the conversion,
+        // otherwise return false;
+        if (array_key_exists($key, $convertArray))
+            return $convertArray[$key];
+        else return false;
+    }
+
     public static function findEnabled()
     {
         $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get();
@@ -57,6 +132,67 @@ class RestService extends Model
         }
     }
 
+    // This is an expensive operation, but it should only need to occur
+    // rarely as the totals will only change when the repositories change.
+    // That is, when a new study/subject/sample is added to a repository,
+    // these values will change, but they are independent of the query so
+    // will typically stay consistent for long periods of time.
+    public static function refreshCounts($username)
+    {
+        // If the repositories haven't changed, then do nothing.
+        if (!self::$repositoriesChanged) return;
+
+        self::$totalRepositories = 0;
+        self::$totalLabs = 0;
+        self::$totalStudies = 0;
+        self::$totalSamples = 0;
+        self::$totalSequences = 0;
+
+        $repositories = self::findEnabled();
+        foreach ($repositories as $repo)
+        {
+            try {
+                // Get the metadata information from this repository service.
+                $params = [];
+                $params['username'] = $username;
+                $metadata_obj = self::postRequest($repo, 'metadata', $params);
+
+
+                // Get the lab and study information.
+                $labs = $metadata_obj->labs_projects;
+                $repo->labs = $labs;
+                foreach ($labs as $lab)
+                {
+                    self::$totalLabs++;
+                    self::$totalStudies += sizeof($lab->projects);
+                }
+
+                // Get the summary sample information for this repository service.
+                $params = [];
+                $params['ajax'] = true;
+                $params['username'] = $username;
+                $samples_obj = self::postRequest($repo, 'samples', $params);
+
+                // Get the subject, sample, and sequence information.
+                self::$totalSamples += count($samples_obj);
+                foreach ($samples_obj as $sample)
+                {
+                    self::$totalSequences += $sample->sequence_count;
+                }
+                // Keep  track of how many repositories...
+                self::$totalRepositories++;
+
+            } catch (\Exception $e) {
+                $response = $e->getResponse();
+                Log::error($response);
+                continue;
+            }
+        }
+        // Set the flag so that we don't re-execute this function unless the 
+        // repositories have changed.
+        self::$repositoriesChanged = false;
+    }
+
     public static function metadata($username)
     {
         $rest_service_list = [];
@@ -66,6 +202,9 @@ class RestService extends Model
         $dna_type_list = [];
         $sample_source_list = [];
         $cell_type_list = [];
+
+        $numLabs = 0;
+        $numProjects = 0;
 
         // get metadata from each REST service
         foreach (self::findEnabled() as $rs) {
@@ -79,7 +218,9 @@ class RestService extends Model
                 $labs = $obj->labs_projects;
                 $rs->labs = $labs;
                 foreach ($labs as $lab) {
+                    $numLabs++;
                     foreach ($lab->projects as $project) {
+                        $numProjects++;
                         $project->id = $rs->id . '_' . $project->id;
                     }
                 }
@@ -144,10 +285,19 @@ class RestService extends Model
             }
         }
 
+
         // build metadata array
         $metadata = [];
-        $metadata['rest_service_list'] = $rest_service_list;
+        // Update global data to make sure it is current, and store the return total data counts.
+        self::refreshCounts($username);
+        $metadata['totalRepositories'] = self::$totalRepositories;
+        $metadata['totalLabs'] = self::$totalLabs;
+        $metadata['totalStudies'] = self::$totalStudies;
+        $metadata['totalSamples'] = self::$totalSamples;
+        $metadata['totalSequences'] = self::$totalSequences;
 
+
+        $metadata['rest_service_list'] = $rest_service_list;
         $metadata['subject_ethnicity_list'] = $ethnicity_list;
         $metadata['subject_gender_list'] = $gender_list;
         $metadata['case_control_list'] = $case_control_list;
@@ -160,16 +310,48 @@ class RestService extends Model
 
     public static function samples($filters, $username)
     {
+        // Initialize the return data structure
         $data = [];
         $data['items'] = [];
         $data['rs_list'] = [];
         $data['total'] = 0;
+
+        // Initialize the set of filters being used.
+        $data['filters'] = [];
+
+        // See if we need to update data, and store the return total data counts.
+        self::refreshCounts($username);
+        $data['totalRepositories'] = self::$totalRepositories;
+        $data['totalLabs'] = self::$totalLabs;
+        $data['totalStudies'] = self::$totalStudies;
+        $data['totalSamples'] = self::$totalSamples;
+        $data['totalSequences'] = self::$totalSequences;
 
         // no filters -> do nothing
         if (empty($filters)) {
             return $data;
         }
 
+        // For each filter that is active, keep track of the filter field so
+        // UI can display the filters that are active.
+        foreach($filters as $filterKey => $filterValue)
+        {
+            // Filters are sometimes given to the API without values, so we
+            // have to detect this and only display if there are values.
+            if (sizeof($filterValue)>0)
+            {
+                $filterAIRRName = self::convertAPIKey("v1", "AIRR Short", $filterKey);
+                if (!$filterAIRRName)
+                {
+                    if ($filterKey == "project_id_list")
+                        $data['filters'][] = "Repository/Lab/Study";
+                    else $data['filters'][] = $filterKey;
+                }
+                else $data['filters'][] = $filterAIRRName;
+            }
+        }
+
+        // Limit the number of results returned by the API.
         $filters['num_results'] = 500;
 
         foreach (self::findEnabled() as $rs) {
@@ -224,7 +406,6 @@ class RestService extends Model
             $rs_data['total_samples'] = count($obj);
             $data['rs_list'][] = $rs_data;
             $data['total'] += $rs_data['total_samples'];
-
             $data['items'] = array_merge($obj, $data['items']);
         }
 
@@ -233,14 +414,51 @@ class RestService extends Model
 
     public static function sequences($filters, $username)
     {
+        // Initialize the return data structure
         $data = [];
         $data['items'] = [];
         $data['rs_list'] = [];
         $data['total'] = 0;
 
+        // Initialize the set of filters being used.
+        $data['filters'] = [];
+
+        // See if we need to update data, and store the return total data counts.
+        self::refreshCounts($username);
+        $data['totalRepositories'] = self::$totalRepositories;
+        $data['totalLabs'] = self::$totalLabs;
+        $data['totalStudies'] = self::$totalStudies;
+        $data['totalSamples'] = self::$totalSamples;
+        $data['totalSequences'] = self::$totalSequences;
+
         // no filters -> do nothing
         if (empty($filters)) {
             return $data;
+        }
+
+        // For each filter that is active, keep track of the filter field so
+        // UI can display the active filters.
+        foreach($filters as $filterKey => $filterValue)
+        {
+            // If the filterValue has some data in it (we ignore empty filters)
+            if (sizeof($filterValue)>0)
+            {
+                // If the filter isn't one of our internal web page filters
+                if ($filterKey != "cols" && $filterKey != "filters_order" && $filterKey != "add_field")
+                {
+                    // Get the short form of the AIRR description for the keyword.
+                    $filterAIRRName = self::convertAPIKey("v1", "AIRR Short", $filterKey);
+                    if (!$filterAIRRName)
+                    {
+                        // Special case to detect if we have some samples set from the previous
+                        // samples call. Otherwise, just map the key.
+                        if (strpos($filterKey, "project_sample_id_list_") !== false)
+                            $data['filters'][] = "Samples: Repository/Lab/Study/Sample";
+                        else $data['filters'][] = $filterKey;
+                    }
+                    else $data['filters'][] = $filterAIRRName;
+                }
+            }
         }
 
         // add username to filters
@@ -277,6 +495,7 @@ class RestService extends Model
 
             $data['total'] += $obj->total;
         }
+
 
         return $data;
     }
