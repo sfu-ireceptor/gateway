@@ -181,6 +181,7 @@ return [
          * Other Providers...
          */
         Collective\Html\HtmlServiceProvider::class,
+        Jenssegers\Mongodb\MongodbServiceProvider::class,
     ],
 
     /*

@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use App\CacheSample;
+use App\RestService;
 
 class TestController extends Controller
 {
@@ -26,6 +28,14 @@ class TestController extends Controller
 
     public function getIndex()
     {
+
+      // $metadata_data = RestService::metadata($username);
+      // die();
+
+      CacheSample::create(['name' => 'John']);
+      echo "aa";
+      die();
+
         echo base64_encode('706d5ebc88cbf4d69d85baecb83e78c2cf4ece7c9c08f5796f89dcb7afdb850b');
         die();
 
