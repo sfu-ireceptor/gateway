@@ -208,6 +208,12 @@ class RestService extends Model
         }
     }
 
+    public static function metadata2($username)
+    {
+        $t = [];
+        return $t;
+    }
+
     public static function metadata($username)
     {
         $rest_service_list = [];
