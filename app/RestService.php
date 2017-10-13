@@ -6,7 +6,6 @@ use ZipArchive;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
-use App\CacheSample;
 
 class RestService extends Model
 {
@@ -201,7 +200,7 @@ class RestService extends Model
                 $obj = self::postRequest($rs, 'samples', $params, '', true);
                 foreach ($obj as $s) {
                     CacheSample::create($s);
-                }                
+                }
             } catch (\Exception $e) {
                 continue;
             }
@@ -211,6 +210,7 @@ class RestService extends Model
     public static function metadata2($username)
     {
         $t = [];
+
         return $t;
     }
 
