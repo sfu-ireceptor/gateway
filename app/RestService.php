@@ -6,6 +6,7 @@ use ZipArchive;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
+use App\CacheSample;
 
 class RestService extends Model
 {
@@ -97,7 +98,7 @@ class RestService extends Model
         return $l;
     }
 
-    public static function postRequest($rs, $path, $params, $filePath = '')
+    public static function postRequest($rs, $path, $params, $filePath = '', $returnArray = false)
     {
         $defaults = [];
         $defaults['base_uri'] = $rs->url;
@@ -126,7 +127,7 @@ class RestService extends Model
         if ($filePath == '') {
             // return object generated from json response
             $json = $response->getBody();
-            $obj = json_decode($json);
+            $obj = json_decode($json, $returnArray);
 
             return $obj;
         }
@@ -188,6 +189,23 @@ class RestService extends Model
         // Set the flag so that we don't re-execute this function unless the
         // repositories have changed.
         self::$repositoriesChanged = false;
+    }
+
+    public static function samples2($username)
+    {
+        foreach (self::findEnabled() as $rs) {
+            $params = [];
+            $params['username'] = $username;
+
+            try {
+                $obj = self::postRequest($rs, 'samples', $params, '', true);
+                foreach ($obj as $s) {
+                    CacheSample::create($s);
+                }                
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
     }
 
     public static function metadata($username)
@@ -281,110 +299,6 @@ class RestService extends Model
                 }
             }
         }
-
-    public static function metadata2($filters, $username)
-    {
-        // Initialize the return data structure
-        $data = [];
-        $data['items'] = [];
-        $data['rs_list'] = [];
-        $data['total'] = 0;
-
-        // Initialize the set of filters being used.
-        $data['filters'] = [];
-
-        // See if we need to update data, and store the return total data counts.
-        self::refreshCounts($username);
-        $data['totalRepositories'] = self::$totalRepositories;
-        $data['totalLabs'] = self::$totalLabs;
-        $data['totalStudies'] = self::$totalStudies;
-        $data['totalSamples'] = self::$totalSamples;
-        $data['totalSequences'] = self::$totalSequences;
-
-        // no filters -> do nothing
-        if (empty($filters)) {
-            return $data;
-        }
-
-        // For each filter that is active, keep track of the filter field so
-        // UI can display the filters that are active.
-        foreach ($filters as $filterKey => $filterValue) {
-            // Filters are sometimes given to the API without values, so we
-            // have to detect this and only display if there are values.
-            if (count($filterValue) > 0) {
-                $filterAIRRName = self::convertAPIKey('v1', 'AIRR Short', $filterKey);
-                if (! $filterAIRRName) {
-                    if ($filterKey == 'project_id_list') {
-                        $data['filters'][] = 'Repository/Lab/Study';
-                    } else {
-                        $data['filters'][] = $filterKey;
-                    }
-                } else {
-                    $data['filters'][] = $filterAIRRName;
-                }
-            }
-        }
-
-        // Limit the number of results returned by the API.
-        $filters['num_results'] = 500;
-
-        foreach (self::findEnabled() as $rs) {
-            // filters: customization for this specific REST service
-            $params = $filters;
-            $params['username'] = $username;
-            unset($params['project_id_list']);
-            unset($params['project_id']);
-
-            if (isset($filters['ajax'])) {
-                // do nothing??
-            } else {
-                // project list: convert string to array - ex: [1_1, 2_3, 2_4]
-                $project_id_list = array_filter(explode(',', $filters['project_id_list']));
-
-                // project list: break up array by rest service with actual project id
-                // ex: [1_1, 2_3, 2_4] -> {1:[1], 2:[3,4]}
-                $project_list_rs = [];
-                foreach ($project_id_list as $project_id) {
-                    $t = explode('_', $project_id);
-                    if (! isset($project_list_rs[$t[0]])) {
-                        $project_list_rs[$t[0]] = [];
-                    }
-                    $project_list_rs[$t[0]][] = $t[1];
-                }
-
-                // if no project of this service is selected, skip
-                if (! isset($project_list_rs[$rs->id]) || empty($project_list_rs[$rs->id])) {
-                    continue;
-                }
-
-                // project id list
-                if (isset($project_list_rs[$rs->id])) {
-                    $params['project_id'] = $project_list_rs[$rs->id];
-                }
-            }
-
-            // get samples from REST service
-            try {
-                $obj = self::postRequest($rs, 'samples', $params);
-            } catch (\Exception $e) {
-                continue;
-            }
-
-            foreach ($obj as $s) {
-                $s->rs_id = $rs->id;
-                $s->rs_name = $rs->name;
-            }
-
-            $rs_data = [];
-            $rs_data['rs'] = $rs;
-            $rs_data['total_samples'] = count($obj);
-            $data['rs_list'][] = $rs_data;
-            $data['total'] += $rs_data['total_samples'];
-            $data['items'] = array_merge($obj, $data['items']);
-        }
-
-        return $data;
-    }
 
         // build metadata array
         $metadata = [];

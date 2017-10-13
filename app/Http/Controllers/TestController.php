@@ -28,9 +28,12 @@ class TestController extends Controller
 
     public function getIndex()
     {
+      RestService::samples2('titi');
+      die();
 
-      // $metadata_data = RestService::metadata($username);
-      // die();
+      $metadata_data = RestService::metadata2('titi');
+      var_dump($metadata_data);
+      die();
 
       CacheSample::create(['name' => 'John']);
       echo "aa";
