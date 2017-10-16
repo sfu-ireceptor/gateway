@@ -28,20 +28,19 @@ class TestController extends Controller
 
     public function getIndex()
     {
-      $metadata = RestService::metadata2('titi');
+        $metadata = RestService::metadata2('titi');
 
-      var_dump($metadata);
-      die();
+        var_dump($metadata);
+        die();
 
+        foreach ($metadata['subject_code'] as $k => $v) {
+            echo $v . "\n";
+        }
+        // var_dump($metadata);
+        die();
 
-      foreach ($metadata['subject_code'] as $k => $v) {
-        echo $v . "\n";
-      }
-      // var_dump($metadata);
-      die();
-
-      RestService::samples2('titi');
-      die();
+        RestService::samples2('titi');
+        die();
 
         $metadata_data = RestService::metadata2('titi');
         var_dump($metadata_data);
