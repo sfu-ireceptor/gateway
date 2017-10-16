@@ -10,11 +10,27 @@ class CacheSample extends Model
     protected $collection = 'samples';
     protected $guarded = [];
 
-    public static function list($params)
+    public static function metadata()
     {
-        $l = static::all();
+    	$t = [];
 
-        return $l;
+        // get distinct values for simple sample fields
+        $fields = ['case_control_name', 'dna_type', 'subject_ethnicity', 'sample_source_name', 'subject_gender', 'ireceptor_cell_subset_name'];
+        foreach ($fields as $field) {
+            $t[$field] = self::distinctValues($field);
+        }
+
+        // get distinct values for combined sample fields (ex: project_id/project_name)
+        $t['lab_list'] = self::distinctValuesGrouped(['lab_id', 'lab_name']);
+        $t['project_list'] = self::distinctValuesGrouped(['project_id', 'project_name']);
+
+        // get list of REST services
+        $t['rest_service_list'] = RestService::findEnabled(['id', 'name'])->toArray();
+
+        // misc stats
+        // $t['totalRepositories'] = self::$totalRepositories;
+
+        return $t;
     }
 
     public static function distinctValues($fieldName)
@@ -35,18 +51,19 @@ class CacheSample extends Model
     public static function distinctValuesGrouped($fields)
     {
         $l = self::groupBy($fields)->get();
-        // $l = self::whereNotNull($fieldName)->distinct($fieldName)->get();
         $l = $l->toArray();
 
         // remove useless '_id' key
-        $t = [];
         foreach ($l as $k => $v) {
             unset($v['_id']);
             $l[$k] = $v;
         }
 
-        $t = $l;
+        return $l;
+    }
 
-        return $t;
+    public static function stats()
+    {
+
     }
 }

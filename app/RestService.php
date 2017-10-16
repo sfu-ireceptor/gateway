@@ -209,22 +209,7 @@ class RestService extends Model
 
     public static function metadata2($username)
     {
-        $t = [];
-
-        // get distinct values for simple sample fields
-        $fields = ['case_control_name', 'dna_type', 'subject_ethnicity', 'sample_source_name', 'subject_gender', 'ireceptor_cell_subset_name'];
-        foreach ($fields as $field) {
-            $t[$field] = CacheSample::distinctValues($field);
-        }
-
-        // get distinct values for combined sample fields (ex: project_id/project_name)
-        $t['lab_list'] = CacheSample::distinctValuesGrouped(['lab_id', 'lab_name']);
-        $t['project_list'] = CacheSample::distinctValuesGrouped(['project_id', 'project_name']);
-
-        // get list of REST services
-        $t['rest_service_list'] = self::findEnabled(['id', 'name'])->toArray();
-
-        return $t;
+        return CacheSample::metadata();
     }
 
     public static function metadata($username)
