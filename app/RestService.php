@@ -221,7 +221,7 @@ class RestService extends Model
 
         // $t = CacheSample::groupBy('subject_code')->get();
         // $t = CacheSample::distinct('subject_code')->get();
-        
+
         return $t;
     }
 
