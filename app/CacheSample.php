@@ -28,7 +28,11 @@ class CacheSample extends Model
         $t['rest_service_list'] = RestService::findEnabled(['id', 'name'])->toArray();
 
         // misc stats
-        // $t['totalRepositories'] = self::$totalRepositories;
+        $t['total_repositories'] = RestService::findEnabled()->count();
+        $t['total_samples'] = self::count();
+		$t['total_sequences'] = self::sum('sequence_count');
+		// $t['total_labs'] = self::groupBy([])->count();whereNotNull($fieldName)->distinct($fieldName);
+	
 
         return $t;
     }
@@ -60,9 +64,5 @@ class CacheSample extends Model
         }
 
         return $l;
-    }
-
-    public static function stats()
-    {
     }
 }
