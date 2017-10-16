@@ -12,7 +12,7 @@ class CacheSample extends Model
 
     public static function metadata()
     {
-    	$t = [];
+        $t = [];
 
         // get distinct values for simple sample fields
         $fields = ['case_control_name', 'dna_type', 'subject_ethnicity', 'sample_source_name', 'subject_gender', 'ireceptor_cell_subset_name'];
@@ -64,6 +64,5 @@ class CacheSample extends Model
 
     public static function stats()
     {
-
     }
 }
