@@ -210,14 +210,20 @@ class RestService extends Model
 
     public static function metadata2($username)
     {
+        $fields = ['case_control_name', 'dna_type', 'subject_ethnicity', 'sample_source_name', 'subject_gender', 'ireceptor_cell_subset_name'];
+
         $t = [];
+        foreach ($fields as $field) {
+            $t[$field] = CacheSample::distinctValues($field);
+        }
 
         // $t = CacheSample::groupBy('subject_id')->get(['subject_code', 'subject_id']);
 
         // $t = CacheSample::groupBy('subject_code')->get();
-        $t = CacheSample::distinct('subject_code')->get();
+        // $t = CacheSample::distinct('subject_code')->get();
+        
 
-        return $t->toArray();
+        return $t;
     }
 
     public static function metadata($username)
