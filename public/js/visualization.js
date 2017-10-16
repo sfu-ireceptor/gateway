@@ -150,6 +150,12 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels)
     }
     bubbleSort(values, keys);
 
+    // Catch the special case where we want N levels and we have N+1.
+    // In this case, the "Other" category would hold only 1 value, and
+    // it is pointless. Thus in this case we accept N+1 levels in our
+    // graph and avoid having an Other slice with 1 data value.
+    if (keys.length == level+1) level++;
+
     // Convert iReceptor aggregate data into a form for HighChart.
     var seriesData = [];
     var otherSequences = 0;
