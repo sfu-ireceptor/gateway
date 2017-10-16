@@ -179,17 +179,15 @@ class RestService extends Model
                 }
                 // Keep  track of how many repositories...
                 self::$totalRepositories++;
-            }
-            catch (GuzzleHttp\Exception\BadResponseException $e) {
+            } catch (GuzzleHttp\Exception\BadResponseException $e) {
                 $response = $e->getResponse();
                 Log::error($response);
-                Log::error("Response");
+                Log::error('Response');
                 continue;
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $message = $e->getMessage();
                 Log::error($message);
-                Log::error("Exception");
+                Log::error('Exception');
                 continue;
             }
         }
@@ -245,13 +243,11 @@ class RestService extends Model
                 $rs->dnainfo_list = $obj->dnainfo;
                 $rs->source_list = $obj->source;
                 $rs->cellsubsettypes_list = $obj->cellsubsettypes;
-            }
-            catch (GuzzleHttp\Exception\BadResponseException $e) {
+            } catch (GuzzleHttp\Exception\BadResponseException $e) {
                 $response = $e->getResponse();
                 Log::error($response);
                 //continue;
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $message = $e->getMessage();
                 Log::error($message);
                 //continue;
