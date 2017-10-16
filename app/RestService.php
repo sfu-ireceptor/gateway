@@ -211,7 +211,13 @@ class RestService extends Model
     public static function metadata2($username)
     {
         $t = [];
-        return $t;
+
+        // $t = CacheSample::groupBy('subject_id')->get(['subject_code', 'subject_id']);
+
+        // $t = CacheSample::groupBy('subject_code')->get();
+        $t = CacheSample::distinct('subject_code')->get();
+
+        return $t->toArray();
     }
 
     public static function metadata($username)
