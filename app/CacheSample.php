@@ -31,4 +31,21 @@ class CacheSample extends Model
 
         return $t;
     }
+
+    public static function distinctValuesGrouped($fields)
+    {
+    	$l = CacheSample::groupBy($fields)->get();
+        // $l = self::whereNotNull($fieldName)->distinct($fieldName)->get();
+        $l = $l->toArray();
+
+        // remove useless '_id' key
+        $t = [];
+        foreach ($l as $k => $v) {
+            unset($v['_id']);
+            $l[$k] = $v;
+        }
+
+        $t = $l;
+        return $t;
+    }
 }

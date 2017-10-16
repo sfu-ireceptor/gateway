@@ -90,9 +90,9 @@ class RestService extends Model
         }
     }
 
-    public static function findEnabled()
+    public static function findEnabled($fieldList = null)
     {
-        $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get();
+        $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get($fieldList);
 
         return $l;
     }
@@ -209,18 +209,20 @@ class RestService extends Model
 
     public static function metadata2($username)
     {
-        $fields = ['case_control_name', 'dna_type', 'subject_ethnicity', 'sample_source_name', 'subject_gender', 'ireceptor_cell_subset_name'];
-
         $t = [];
 
+        // get distinct values for simple sample fields
+        $fields = ['case_control_name', 'dna_type', 'subject_ethnicity', 'sample_source_name', 'subject_gender', 'ireceptor_cell_subset_name'];
         foreach ($fields as $field) {
             $t[$field] = CacheSample::distinctValues($field);
         }
 
-        // $t = CacheSample::groupBy('subject_id')->get(['subject_code', 'subject_id']);
+        // get distinct values for combined sample fields (ex: project_id/project_name)
+        $t['lab_list'] = CacheSample::distinctValuesGrouped(['lab_id', 'lab_name']);
+        $t['project_list'] = CacheSample::distinctValuesGrouped(['project_id', 'project_name']);
 
-        // $t = CacheSample::groupBy('subject_code')->get();
-        // $t = CacheSample::distinct('subject_code')->get();
+        // get list of REST services
+        $t['rest_service_list'] = self::findEnabled(['id', 'name'])->toArray();
 
         return $t;
     }
