@@ -179,9 +179,17 @@ class RestService extends Model
                 }
                 // Keep  track of how many repositories...
                 self::$totalRepositories++;
-            } catch (\Exception $e) {
+            }
+            catch (GuzzleHttp\Exception\BadResponseException $e) {
                 $response = $e->getResponse();
                 Log::error($response);
+                Log::error("Response");
+                continue;
+            }
+            catch (\Exception $e) {
+                $message = $e->getMessage();
+                Log::error($message);
+                Log::error("Exception");
                 continue;
             }
         }
@@ -208,6 +216,14 @@ class RestService extends Model
             // perform query
             $params = [];
             $params['username'] = $username;
+            // get data from json: everything else
+            $rs->ethnicity_list = [];
+            $rs->gender_list = [];
+            $rs->casecontrol_list = [];
+            $rs->dnainfo_list = [];
+            $rs->source_list = [];
+            $rs->cellsubsettypes_list = [];
+            $rs->labs = [];
             try {
                 $obj = self::postRequest($rs, 'metadata', $params);
 
@@ -229,10 +245,16 @@ class RestService extends Model
                 $rs->dnainfo_list = $obj->dnainfo;
                 $rs->source_list = $obj->source;
                 $rs->cellsubsettypes_list = $obj->cellsubsettypes;
-            } catch (\Exception $e) {
+            }
+            catch (GuzzleHttp\Exception\BadResponseException $e) {
                 $response = $e->getResponse();
                 Log::error($response);
-                continue;
+                //continue;
+            }
+            catch (\Exception $e) {
+                $message = $e->getMessage();
+                Log::error($message);
+                //continue;
             }
 
             // service response was successfully parsed -> show the service
