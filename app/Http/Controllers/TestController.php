@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Job;
 use App\Agave;
 use Carbon\Carbon;
+use App\CacheSample;
+use App\RestService;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,8 +15,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use App\CacheSample;
-use App\RestService;
 
 class TestController extends Controller
 {
@@ -43,13 +43,13 @@ class TestController extends Controller
       RestService::samples2('titi');
       die();
 
-      $metadata_data = RestService::metadata2('titi');
-      var_dump($metadata_data);
-      die();
+        $metadata_data = RestService::metadata2('titi');
+        var_dump($metadata_data);
+        die();
 
-      CacheSample::create(['name' => 'John']);
-      echo "aa";
-      die();
+        CacheSample::create(['name' => 'John']);
+        echo 'aa';
+        die();
 
         echo base64_encode('706d5ebc88cbf4d69d85baecb83e78c2cf4ece7c9c08f5796f89dcb7afdb850b');
         die();

@@ -62,8 +62,8 @@ return [
             'username' => env('CACHE_DB_USERNAME'),
             'password' => env('CACHE_DB_PASSWORD'),
             'options'  => [
-                'database' => 'admin' // sets the authentication database required by mongo 3
-            ]
+                'database' => 'admin', // sets the authentication database required by mongo 3
+            ],
         ],
 
         'pgsql' => [

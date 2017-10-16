@@ -1,6 +1,9 @@
 <?php
+
 namespace App;
+
 use Jenssegers\Mongodb\Eloquent\Model;
+
 class CacheSample extends Model
 {
 	protected $connection = 'mongodb'; // https://github.com/jenssegers/laravel-mongodb
@@ -9,8 +12,8 @@ class CacheSample extends Model
 
     public static function list($params)
     {
-    	$l = static::all();
-    	
+        $l = static::all();
+
         return $l;
     }
 

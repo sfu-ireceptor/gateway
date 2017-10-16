@@ -6,7 +6,6 @@ use ZipArchive;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
-use App\CacheSample;
 
 class RestService extends Model
 {
@@ -201,7 +200,7 @@ class RestService extends Model
                 $obj = self::postRequest($rs, 'samples', $params, '', true);
                 foreach ($obj as $s) {
                     CacheSample::create($s);
-                }                
+                }
             } catch (\Exception $e) {
                 continue;
             }
@@ -213,6 +212,7 @@ class RestService extends Model
         $fields = ['case_control_name', 'dna_type', 'subject_ethnicity', 'sample_source_name', 'subject_gender', 'ireceptor_cell_subset_name'];
 
         $t = [];
+
         foreach ($fields as $field) {
             $t[$field] = CacheSample::distinctValues($field);
         }
@@ -222,7 +222,6 @@ class RestService extends Model
         // $t = CacheSample::groupBy('subject_code')->get();
         // $t = CacheSample::distinct('subject_code')->get();
         
-
         return $t;
     }
 
