@@ -34,7 +34,7 @@ class CacheSample extends Model
 
     public static function distinctValuesGrouped($fields)
     {
-    	$l = CacheSample::groupBy($fields)->get();
+        $l = self::groupBy($fields)->get();
         // $l = self::whereNotNull($fieldName)->distinct($fieldName)->get();
         $l = $l->toArray();
 
@@ -46,6 +46,7 @@ class CacheSample extends Model
         }
 
         $t = $l;
+
         return $t;
     }
 }
