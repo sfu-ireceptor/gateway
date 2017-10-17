@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Job;
 use App\Agave;
 use Carbon\Carbon;
-use App\CacheSample;
+use App\Sample;
 use App\RestService;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -46,7 +46,7 @@ class TestController extends Controller
         var_dump($metadata_data);
         die();
 
-        CacheSample::create(['name' => 'John']);
+        Sample::create(['name' => 'John']);
         echo 'aa';
         die();
 

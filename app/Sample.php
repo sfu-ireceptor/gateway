@@ -4,7 +4,7 @@ namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model;
 
-class CacheSample extends Model
+class Sample extends Model
 {
     protected $connection = 'mongodb'; // https://github.com/jenssegers/laravel-mongodb
     protected $collection = 'samples';

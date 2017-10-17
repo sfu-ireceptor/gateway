@@ -137,7 +137,7 @@ class RestService extends Model
 
                 foreach ($obj as $s) {
                     $s['rest_service_id'] = $rs->id;
-                    CacheSample::create($s);
+                    Sample::create($s);
                 }
             } catch (\Exception $e) {
                 continue;
@@ -147,7 +147,7 @@ class RestService extends Model
 
     public static function metadata2($username)
     {
-        return CacheSample::metadata();
+        return Sample::metadata();
     }
 
     public static function metadata($username)
