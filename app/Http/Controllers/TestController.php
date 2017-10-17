@@ -33,8 +33,6 @@ class TestController extends Controller
       $data[] = ['project_id' => 1, 'subject_id' => 2];
       $data[] = ['project_id' => 2, 'subject_id' => 3, 'test' => 4];
 
-      $data = ['project_id' => 2, 'subject_id' => 3, 'test' => 4];
-
       var_dump($data);
 
       $t = SampleField::convert($data, 'v1', 'airr');

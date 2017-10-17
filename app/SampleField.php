@@ -26,6 +26,15 @@ class SampleField extends Model
 
     public static function convert($data, $from, $to)
     {
+    	$t = [];
+    	foreach ($data as $d) {
+    		$t[] = self::convertItem($d, $from, $to);
+    	}
+    	return $t;
+    }
+
+    public static function convertItem($data, $from, $to)
+    {
     	$mapping = SampleField::all()->toArray();
     	$t = [];
 
@@ -49,19 +58,5 @@ class SampleField extends Model
     	}
 
     	return $t;
-    }
-
-    public static function distinctValuesGrouped($fields)
-    {
-        $l = self::groupBy($fields)->get();
-        $l = $l->toArray();
-
-        // remove useless '_id' key
-        foreach ($l as $k => $v) {
-            unset($v['_id']);
-            $l[$k] = $v;
-        }
-
-        return $l;
     }
 }
