@@ -10,7 +10,7 @@ class SampleField extends Model
     protected $collection = 'sample_fields';
     protected $guarded = [];
 
-    // temporary way to create data
+    // temporary way to create a dataset
     public static function init()
     {
         $t = [];
@@ -23,44 +23,11 @@ class SampleField extends Model
         }
     }
 
-    // convert keys for 1 sample
-    // ex: [project_id => 1, subject_id => 2] to [study_id => 1, subject_id => 2]
-    public static function convertItem($data, $from, $to)
-    {
-        $mapping = self::all()->toArray();
-
-        $t = [];
-        foreach ($data as $key => $value) {
-            $converted = false;
-
-            foreach ($mapping as $m) {
-                if (isset($m[$from]) && $m[$from] == $key) {
-                    if (isset($m[$to])) {
-                        $t[$m[$to]] = $value;
-                        $converted = true;
-                        break;
-                    }
-                }
-            }
-
-            // no mapping found for this field name
-            if ($converted == false) {
-                $t[$key] = $value;
-            }
-        }
-
-        return $t;
-    }
-
-    // convert keys for a list of samples
+    // convert field names for a list of samples
     public static function convert($data, $from, $to)
     {
-        $t = [];
-        foreach ($data as $d) {
-            $t[] = self::convertItem($d, $from, $to);
-        }
-
-        return $t;
+        $mapping = self::all()->toArray();
+        return convert_arrays_keys($data, $mapping, $from, $to);
     }
 
 }
