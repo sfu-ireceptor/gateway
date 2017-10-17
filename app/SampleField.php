@@ -19,44 +19,44 @@ class SampleField extends Model
         $t[] = ['airr' => 'person_id', 'v1' => 'subject_id', 'v2' => 'person_id', 'airr_name' => 'Person', 'diplay_name' => 'Person'];
 
         foreach ($t as $sf) {
-			self::create($sf);
+            self::create($sf);
         }
-
     }
 
     public static function convert($data, $from, $to)
     {
-    	$t = [];
-    	foreach ($data as $d) {
-    		$t[] = self::convertItem($d, $from, $to);
-    	}
-    	return $t;
+        $t = [];
+        foreach ($data as $d) {
+            $t[] = self::convertItem($d, $from, $to);
+        }
+
+        return $t;
     }
 
     public static function convertItem($data, $from, $to)
     {
-    	$mapping = SampleField::all()->toArray();
-    	$t = [];
+        $mapping = self::all()->toArray();
+        $t = [];
 
-    	foreach ($data as $key => $value) {
-    		$converted = false;
+        foreach ($data as $key => $value) {
+            $converted = false;
 
-    		foreach ($mapping as $m) {
-    			if(isset($m[$from]) && $m[$from] == $key) {
-    				if(isset($m[$to])) {
-	    				$t[$m[$to]] = $value;
-		    			$converted = true;    					
-		    			break;
-    				}
-    			}
-    		}
+            foreach ($mapping as $m) {
+                if (isset($m[$from]) && $m[$from] == $key) {
+                    if (isset($m[$to])) {
+                        $t[$m[$to]] = $value;
+                        $converted = true;
+                        break;
+                    }
+                }
+            }
 
-    		// no mapping found for this field name
-    		if($converted == false) {
-    			$t[$key] = $value;
-    		}
-    	}
+            // no mapping found for this field name
+            if ($converted == false) {
+                $t[$key] = $value;
+            }
+        }
 
-    	return $t;
+        return $t;
     }
 }
