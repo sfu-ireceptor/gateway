@@ -27,7 +27,7 @@ class SampleField extends Model
     public static function convert($data, $from, $to)
     {
         $mapping = self::all()->toArray();
+
         return convert_arrays_keys($data, $mapping, $from, $to);
     }
-
 }
