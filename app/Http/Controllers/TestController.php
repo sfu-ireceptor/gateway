@@ -35,7 +35,7 @@ class TestController extends Controller
 
         var_dump($data);
 
-        $t = SampleField::convert($data, 'v1', 'airr');
+        $t = SampleField::convertSamples($data, 'v1', 'airr');
         var_dump($t);
 
         die();

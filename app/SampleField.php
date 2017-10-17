@@ -23,8 +23,16 @@ class SampleField extends Model
         }
     }
 
+    // convert field names for 1 sample
+    public static function convertSample($data, $from, $to)
+    {
+        $mapping = self::all()->toArray();
+
+        return convert_array_keys($data, $mapping, $from, $to);
+    }
+
     // convert field names for a list of samples
-    public static function convert($data, $from, $to)
+    public static function convertSamples($data, $from, $to)
     {
         $mapping = self::all()->toArray();
 
