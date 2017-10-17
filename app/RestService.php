@@ -12,7 +12,7 @@ class RestService extends Model
     protected $table = 'rest_service';
 
     protected $fillable = [
-        'url', 'name', 'username', 'password', 'enabled', 'version'
+        'url', 'name', 'username', 'password', 'enabled', 'version',
     ];
 
     public static function findEnabled($fieldList = null)

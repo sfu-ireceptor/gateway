@@ -63,8 +63,7 @@ if (! function_exists('human_date_time')) {
     }
 }
 
-
-// Convert an array's keys using a mapping array 
+// Convert an array's keys using a mapping array
 //  $data = [project_id => 1, ...]
 //  $mapping = [['v1' => 'project_id', 'airr' => 'study_id', ...], ...]
 //  returns [study_id => 1, ...]
