@@ -6,6 +6,7 @@ use App\Job;
 use App\Agave;
 use Carbon\Carbon;
 use App\Sample;
+use App\SampleField;
 use App\RestService;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -28,6 +29,10 @@ class TestController extends Controller
 
     public function getIndex()
     {
+
+        SampleField::init();
+        die();
+
         $metadata = RestService::metadata2('titi');
 
         var_dump($metadata);
