@@ -54,7 +54,7 @@ class TestController extends Controller
         // var_dump($metadata);
         die();
 
-        RestService::samples2('titi');
+        RestService::cacheSamples('titi');
         die();
 
         $metadata_data = RestService::metadata2('titi');

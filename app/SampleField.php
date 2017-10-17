@@ -23,21 +23,13 @@ class SampleField extends Model
         }
     }
 
-    public static function convert($data, $from, $to)
-    {
-        $t = [];
-        foreach ($data as $d) {
-            $t[] = self::convertItem($d, $from, $to);
-        }
-
-        return $t;
-    }
-
+    // convert keys for 1 sample
+    // ex: [project_id => 1, subject_id => 2] to [study_id => 1, subject_id => 2]
     public static function convertItem($data, $from, $to)
     {
         $mapping = self::all()->toArray();
-        $t = [];
 
+        $t = [];
         foreach ($data as $key => $value) {
             $converted = false;
 
@@ -59,4 +51,16 @@ class SampleField extends Model
 
         return $t;
     }
+
+    // convert keys for a list of samples
+    public static function convert($data, $from, $to)
+    {
+        $t = [];
+        foreach ($data as $d) {
+            $t[] = self::convertItem($d, $from, $to);
+        }
+
+        return $t;
+    }
+
 }

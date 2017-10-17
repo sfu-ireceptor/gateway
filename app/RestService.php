@@ -12,76 +12,8 @@ class RestService extends Model
     protected $table = 'rest_service';
 
     protected $fillable = [
-        'url', 'name', 'username', 'password', 'enabled',
+        'url', 'name', 'username', 'password', 'enabled', 'version'
     ];
-
-    // Keep track of whether the repositories have changed or not. If
-    // they have changed, then we need to refresh the above stats. If
-    // not then we don't. Note: We don't have a mechanism to determine
-    // if the repositories change. For now, we will just run the refresh
-    // once. The other alternative is to do it every call, but it is an
-    // expensive operation as it hits all of the metadata and sample API
-    // entry points of all repositories.
-    protected static $repositoriesChanged = true;
-
-    protected static $v1Keys = [
-        'sra_accession', 'project_name', 'project_type', 'lab_name', 'subject_code',
-        'subject_gender', 'subject_ethnicity', 'subject_species', 'case_control_name',
-        'sample_name', 'sample_source_name', 'disease_state_name', 'ireceptor_cell_subset_name',
-        'lab_cell_subset_name', 'dna_type',
-    ];
-    protected static $v2Keys = [
-        'study_id', 'study_title', 'study_description', 'lab_name', 'subject_id',
-        'sex', 'ethnicity', 'species_name', 'study_group_description',
-        'sample_id', 'sample_type', 'disease_state_sample', 'cell_subset',
-        'cell_phenotype', 'library_source',
-    ];
-    protected static $shortNamesAIRR = [
-        'Study', 'Study title', 'Study type', 'Lab name', 'Subject ID',
-        'Sex', 'Ethnicity', 'Species', 'Study group',
-        'Sample ID', 'Sample type', 'Disease state', 'Cell subset',
-        'Lab Cell subset', 'Target substrate',
-    ];
-    protected static $longNamesAIRR = [
-        'Study', 'Study title', 'Study type', 'Lab name', 'Subject ID',
-        'Sex', 'Ethnicity', 'Species name', 'Study group description',
-        'Biological sample ID', 'Sample type', 'Disease state of sample', 'Cell subset',
-        'Cell subset phenotype', 'Target substrate',
-    ];
-
-    public static function convertAPIKey($fromVersion, $toVersion, $key)
-    {
-        // Build the correct conversion array based on the from/to variables
-        $fromArray = [];
-        $toArray = [];
-        switch ($fromVersion) {
-            case 'v1': $fromArray = self::$v1Keys; break;
-            case 'v2': $fromArray = self::$v2Keys; break;
-            case 'AIRR Short': $fromArray = self::$shortNamesAIRR; break;
-            case 'AIRR Long': $fromArray = self::$longNamesAIRR; break;
-        }
-        switch ($toVersion) {
-            case 'v1': $toArray = self::$v1Keys; break;
-            case 'v2': $toArray = self::$v2Keys; break;
-            case 'AIRR Short': $toArray = self::$shortNamesAIRR; break;
-            case 'AIRR Long': $toArray = self::$longNamesAIRR; break;
-        }
-        if (count($fromArray) != count($toArray)) {
-            Log::error('convertAPIKey: trying to compare API versions that are not compatible');
-            Log::error('convertAPIKey: from = ' . $fromVersion . ', to = ' . $toVersion);
-
-            return false;
-        }
-        $convertArray = array_combine($fromArray, $toArray);
-
-        // Check to see if the key exists, it does return the conversion,
-        // otherwise return false;
-        if (array_key_exists($key, $convertArray)) {
-            return $convertArray[$key];
-        } else {
-            return false;
-        }
-    }
 
     public static function findEnabled($fieldList = null)
     {
@@ -126,7 +58,7 @@ class RestService extends Model
     }
 
     // cache sample data locally
-    public static function samples2($username)
+    public static function cacheSamples($username)
     {
         foreach (self::findEnabled() as $rs) {
             $params = [];
@@ -272,24 +204,24 @@ class RestService extends Model
             return $data;
         }
 
-        // For each filter that is active, keep track of the filter field so
-        // UI can display the filters that are active.
-        foreach ($filters as $filterKey => $filterValue) {
-            // Filters are sometimes given to the API without values, so we
-            // have to detect this and only display if there are values.
-            if (count($filterValue) > 0) {
-                $filterAIRRName = self::convertAPIKey('v1', 'AIRR Short', $filterKey);
-                if (! $filterAIRRName) {
-                    if ($filterKey == 'project_id_list') {
-                        $data['filters'][] = 'Repository/Lab/Study';
-                    } else {
-                        $data['filters'][] = $filterKey;
-                    }
-                } else {
-                    $data['filters'][] = $filterAIRRName;
-                }
-            }
-        }
+        // // For each filter that is active, keep track of the filter field so
+        // // UI can display the filters that are active.
+        // foreach ($filters as $filterKey => $filterValue) {
+        //     // Filters are sometimes given to the API without values, so we
+        //     // have to detect this and only display if there are values.
+        //     if (count($filterValue) > 0) {
+        //         $filterAIRRName = self::convertAPIKey('v1', 'AIRR Short', $filterKey);
+        //         if (! $filterAIRRName) {
+        //             if ($filterKey == 'project_id_list') {
+        //                 $data['filters'][] = 'Repository/Lab/Study';
+        //             } else {
+        //                 $data['filters'][] = $filterKey;
+        //             }
+        //         } else {
+        //             $data['filters'][] = $filterAIRRName;
+        //         }
+        //     }
+        // }
 
         // Limit the number of results returned by the API.
         $filters['num_results'] = 500;
