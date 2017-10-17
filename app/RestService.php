@@ -198,7 +198,7 @@ class RestService extends Model
 
             try {
                 $obj = self::postRequest($rs, 'samples', $params, '', true);
-            
+
                 foreach ($obj as $s) {
                     $s['rest_service_id'] = $rs->id;
                     CacheSample::create($s);
