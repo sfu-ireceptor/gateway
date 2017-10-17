@@ -15,13 +15,6 @@ class RestService extends Model
         'url', 'name', 'username', 'password', 'enabled',
     ];
 
-    // Keep track of the total number of publicly available metadata
-    // for the users.
-    protected static $totalRepositories = 0;
-    protected static $totalLabs = 0;
-    protected static $totalStudies = 0;
-    protected static $totalSamples = 0;
-    protected static $totalSequences = 0;
     // Keep track of whether the repositories have changed or not. If
     // they have changed, then we need to refresh the above stats. If
     // not then we don't. Note: We don't have a mechanism to determine
@@ -132,64 +125,7 @@ class RestService extends Model
         }
     }
 
-    // This is an expensive operation, but it should only need to occur
-    // rarely as the totals will only change when the repositories change.
-    // That is, when a new study/subject/sample is added to a repository,
-    // these values will change, but they are independent of the query so
-    // will typically stay consistent for long periods of time.
-    public static function refreshCounts($username)
-    {
-        // If the repositories haven't changed, then do nothing.
-        if (! self::$repositoriesChanged) {
-            return;
-        }
-
-        self::$totalRepositories = 0;
-        self::$totalLabs = 0;
-        self::$totalStudies = 0;
-        self::$totalSamples = 0;
-        self::$totalSequences = 0;
-
-        $repositories = self::findEnabled();
-        foreach ($repositories as $repo) {
-            try {
-                // Get the metadata information from this repository service.
-                $params = [];
-                $params['username'] = $username;
-                $metadata_obj = self::postRequest($repo, 'metadata', $params);
-
-                // Get the lab and study information.
-                $labs = $metadata_obj->labs_projects;
-                $repo->labs = $labs;
-                foreach ($labs as $lab) {
-                    self::$totalLabs++;
-                    self::$totalStudies += count($lab->projects);
-                }
-
-                // Get the summary sample information for this repository service.
-                $params = [];
-                $params['ajax'] = true;
-                $params['username'] = $username;
-                $samples_obj = self::postRequest($repo, 'samples', $params);
-
-                // Get the subject, sample, and sequence information.
-                self::$totalSamples += count($samples_obj);
-                foreach ($samples_obj as $sample) {
-                    self::$totalSequences += $sample->sequence_count;
-                }
-                // Keep  track of how many repositories...
-                self::$totalRepositories++;
-            } catch (\Exception $e) {
-                $response = $e->getResponse();
-                Log::error($response);
-                continue;
-            }
-        }
-        // Set the flag so that we don't re-execute this function unless the
-        // repositories have changed.
-        self::$repositoriesChanged = false;
-    }
-
+    // cache sample data locally
     public static function samples2($username)
     {
         foreach (self::findEnabled() as $rs) {
@@ -308,13 +244,6 @@ class RestService extends Model
 
         // build metadata array
         $metadata = [];
-        // Update global data to make sure it is current, and store the return total data counts.
-        self::refreshCounts($username);
-        $metadata['totalRepositories'] = self::$totalRepositories;
-        $metadata['totalLabs'] = self::$totalLabs;
-        $metadata['totalStudies'] = self::$totalStudies;
-        $metadata['totalSamples'] = self::$totalSamples;
-        $metadata['totalSequences'] = self::$totalSequences;
 
         $metadata['rest_service_list'] = $rest_service_list;
         $metadata['subject_ethnicity_list'] = $ethnicity_list;
@@ -337,14 +266,6 @@ class RestService extends Model
 
         // Initialize the set of filters being used.
         $data['filters'] = [];
-
-        // See if we need to update data, and store the return total data counts.
-        self::refreshCounts($username);
-        $data['totalRepositories'] = self::$totalRepositories;
-        $data['totalLabs'] = self::$totalLabs;
-        $data['totalStudies'] = self::$totalStudies;
-        $data['totalSamples'] = self::$totalSamples;
-        $data['totalSequences'] = self::$totalSequences;
 
         // no filters -> do nothing
         if (empty($filters)) {
@@ -441,14 +362,6 @@ class RestService extends Model
 
         // Initialize the set of filters being used.
         $data['filters'] = [];
-
-        // See if we need to update data, and store the return total data counts.
-        self::refreshCounts($username);
-        $data['totalRepositories'] = self::$totalRepositories;
-        $data['totalLabs'] = self::$totalLabs;
-        $data['totalStudies'] = self::$totalStudies;
-        $data['totalSamples'] = self::$totalSamples;
-        $data['totalSequences'] = self::$totalSequences;
 
         // no filters -> do nothing
         if (empty($filters)) {
