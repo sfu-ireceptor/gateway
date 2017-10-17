@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Job;
 use App\Agave;
-use Carbon\Carbon;
 use App\Sample;
-use App\SampleField;
+use Carbon\Carbon;
 use App\RestService;
+use App\SampleField;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -29,16 +29,16 @@ class TestController extends Controller
 
     public function getIndex()
     {
-      $data = [];
-      $data[] = ['project_id' => 1, 'subject_id' => 2];
-      $data[] = ['project_id' => 2, 'subject_id' => 3, 'test' => 4];
+        $data = [];
+        $data[] = ['project_id' => 1, 'subject_id' => 2];
+        $data[] = ['project_id' => 2, 'subject_id' => 3, 'test' => 4];
 
-      var_dump($data);
+        var_dump($data);
 
-      $t = SampleField::convert($data, 'v1', 'airr');
-      var_dump($t);
+        $t = SampleField::convert($data, 'v1', 'airr');
+        var_dump($t);
 
-die();
+        die();
 
         // SampleField::init();
         // die();
