@@ -29,9 +29,21 @@ class TestController extends Controller
 
     public function getIndex()
     {
+      $data = [];
+      $data[] = ['project_id' => 1, 'subject_id' => 2];
+      $data[] = ['project_id' => 2, 'subject_id' => 3, 'test' => 4];
 
-        SampleField::init();
-        die();
+      $data = ['project_id' => 2, 'subject_id' => 3, 'test' => 4];
+
+      var_dump($data);
+
+      $t = SampleField::convert($data, 'v1', 'airr');
+      var_dump($t);
+
+die();
+
+        // SampleField::init();
+        // die();
 
         $metadata = RestService::metadata2('titi');
 
