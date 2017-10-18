@@ -45,14 +45,14 @@
 					</div>
 				</div>
 
-{{-- 			    <div class="form-group">
+			    <div class="form-group">
 					{{ Form::label('sample_name', 'Sample Record') }}
 					{{ Form::text('sample_name', '', array('class' => 'form-control')) }}
 				</div>
 
 				<div class="form-group">
 					{{ Form::label('ireceptor_cell_subset_name', 'Cell Type') }}
-					@foreach ($ireceptor_cell_subset_name_list as $id => $name)
+					@foreach ($cell_type_list as $id => $name)
 					<div class="checkbox">
 						<label>
 						{{ Form::checkbox('ireceptor_cell_subset_name[]', $id) }}
@@ -62,7 +62,7 @@
 					@endforeach
 				</div>
 
-			    <div class="form-group">
+{{-- 			    <div class="form-group">
 					{{ Form::label('sample_source_name', 'Sample Source') }}
 					@foreach ($sample_source_list as $id => $name)
 					<div class="checkbox">

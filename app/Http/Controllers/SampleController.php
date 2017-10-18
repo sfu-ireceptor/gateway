@@ -29,6 +29,11 @@ class SampleController extends Controller
             $subject_ethnicity_list[$v] = $v;
         }
 
+        // cell type
+        $cell_type_list = [];
+        foreach ($metadata['ireceptor_cell_subset_name'] as $v) {
+            $cell_type_list[$v] = $v;
+        }
         
         // var_export($subject_gender_list);die();
         
@@ -36,6 +41,7 @@ class SampleController extends Controller
         $data = [];
         $data['subject_gender_list'] = $subject_gender_list;
         $data['subject_ethnicity_list'] = $subject_ethnicity_list;
+        $data['cell_type_list'] = $cell_type_list;
         
         // get filtered sample list
         $sample_data = RestService::samples($request->all(), $username);

@@ -43,7 +43,7 @@ class TestController extends Controller
         // SampleField::init();
         // die();
 
-        $metadata = RestService::metadata2('titi');
+        $metadata = RestService::metadata('titi');
 
         var_dump($metadata);
         die();
