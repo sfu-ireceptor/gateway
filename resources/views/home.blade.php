@@ -8,29 +8,11 @@
 	<div class="row">
 		<div class="col-md-12">
 			<p class="intro">iReceptor provides access to
-			{{number_format($totalSequences)}} sequences from
-			{{$totalRepositories}} remote repositories,
-			{{$totalLabs}} research labs,
-			{{$totalStudies}} studies, and
-			{{$totalSamples}} samples.</p>
-			<!--
-				<b>Through iReceptor, you have access to:</b>
-				<span class="filter_box">
-					{{$totalRepositories}} remote repositories
-				</span>
-				<span class="filter_box">
-					{{$totalLabs}} research labs
-				</span>
-				<span class="filter_box">
-					{{$totalStudies}} studies
-				</span>
-				<span class="filter_box">
-					{{$totalSamples}} samples
-				</span>
-				<span class="filter_box">
-					{{number_format($totalSequences)}} sequences
-				</span>
-			-->
+			{{number_format($total_sequences)}} sequences from
+			{{$total_repositories}} remote repositories,
+			{{$total_labs}} research labs,
+			{{$total_projects}} studies, and
+			{{$total_samples}} samples.</p>
 		</div>
 	</div>
 
