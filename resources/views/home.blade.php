@@ -7,12 +7,14 @@
 
 	<div class="row">
 		<div class="col-md-12">
-			<p class="intro">iReceptor provides access to
-			{{number_format($total_sequences)}} sequences from
-			{{$total_repositories}} remote repositories,
-			{{$total_labs}} research labs,
-			{{$total_projects}} studies, and
-			{{$total_samples}} samples.</p>
+			<p class="intro">
+				iReceptor provides access to
+				{{ number_format($total_sequences) }} sequences from
+				{{ $total_repositories }} remote repositories,
+				{{ $total_labs }} research labs,
+				{{ $total_projects }} studies, and
+				{{ $total_samples }} samples.
+			</p>
 		</div>
 	</div>
 
