@@ -73,7 +73,7 @@
 					</div>
 					@endforeach
 				</div>
-{{--
+
 				 <div class="form-group">
 					{{ Form::label('dna_type', 'DNA Type') }}
 					@foreach ($dna_type_list as $id => $name)
@@ -85,7 +85,7 @@
 					</div>
 					@endforeach
 				</div>
---}}
+
 
 				<div id="results"></div>
 				{{ Form::submit('Search samples', array('class' => 'btn btn-primary search_samples')) }}

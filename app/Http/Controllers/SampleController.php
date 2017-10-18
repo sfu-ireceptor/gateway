@@ -43,6 +43,12 @@ class SampleController extends Controller
         foreach ($metadata['sample_source_name'] as $v) {
             $sample_source_list[$v] = $v;
         }
+
+        // dna type
+        $dna_type_list = [];
+        foreach ($metadata['dna_type'] as $v) {
+            $dna_type_list[$v] = $v;
+        }
         
         // var_export($subject_gender_list);die();
         
@@ -52,7 +58,8 @@ class SampleController extends Controller
         $data['subject_ethnicity_list'] = $subject_ethnicity_list;
         $data['cell_type_list'] = $cell_type_list;
         $data['sample_source_list'] = $sample_source_list;
-        
+        $data['dna_type_list'] = $dna_type_list;
+
         /*************************************************
         * get filtered sample list
         *************************************************/
