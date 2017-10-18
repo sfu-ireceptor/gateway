@@ -49,9 +49,9 @@ class SampleController extends Controller
         foreach ($metadata['dna_type'] as $v) {
             $dna_type_list[$v] = $v;
         }
-        
+
         // var_export($subject_gender_list);die();
-        
+
         // view data
         $data = [];
         $data['subject_gender_list'] = $subject_gender_list;
@@ -75,7 +75,6 @@ class SampleController extends Controller
             $nFilteredSequences = $nFilteredSequences + $sample->sequence_count;
         }
 
-        
         $data['sample_list'] = $sample_data['items'];
         $data['sample_list_json'] = json_encode($sample_data['items']);
         $data['rs_list'] = $sample_data['rs_list'];
@@ -83,14 +82,14 @@ class SampleController extends Controller
 
         // Filters being used.
         $data['filters'] = $sample_data['filters'];
-        
+
         // // Summary statistics of overall repositories
         // $data['totalRepositories'] = $sample_data['totalRepositories'];
         // $data['totalLabs'] = $sample_data['totalLabs'];
         // $data['totalStudies'] = $sample_data['totalStudies'];
         // $data['totalSamples'] = $sample_data['totalSamples'];
         // $data['totalSequences'] = $sample_data['totalSequences'];
-        
+
         // Summary statistics about the query with the filters applied.
         $data['nFilteredSamples'] = $nFilteredSamples;
         $data['nFilteredSequences'] = $nFilteredSequences;
