@@ -199,7 +199,6 @@ class RestService extends Model
         // Initialize the set of filters being used.
         $data['filters'] = [];
 
-
         // Limit the number of results returned by the API.
         $filters['num_results'] = 500;
         $filters['username'] = $username;
