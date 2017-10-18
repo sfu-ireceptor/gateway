@@ -28,6 +28,8 @@
 					{{ Form::select('subject_gender', $subject_gender_list, '', array('class' => 'form-control')) }}
 				</div>
 
+
+{{-- 
 			    <div class="form-group">
 					{{ Form::label('subject_ethnicity', 'Ethnicity') }}
 					{{ Form::select('subject_ethnicity', $subject_ethnicity_list, '', array('class' => 'form-control')) }}
@@ -85,6 +87,7 @@
 					</div>
 					@endforeach
 				</div>
+--}}
 
 				<div id="results"></div>
 				{{ Form::submit('Search samples', array('class' => 'btn btn-primary search_samples')) }}
