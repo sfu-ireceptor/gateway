@@ -11,22 +11,31 @@ class SampleController extends Controller
     {
         $username = auth()->user()->username;
 
-        // get data for form widgets
+        // prepare data for form widgets
+        // get data
         $metadata = RestService::metadata2($username);
 
-        // customize data for form widgets
         // gender
         $subject_gender_list = [];
         $subject_gender_list[''] = '';
         foreach ($metadata['subject_gender'] as $v) {
             $subject_gender_list[$v] = $v;
         }
+
+        // ethnicity
+        $subject_ethnicity_list = [];
+        $subject_ethnicity_list[''] = '';
+        foreach ($metadata['subject_ethnicity'] as $v) {
+            $subject_ethnicity_list[$v] = $v;
+        }
+
         
         // var_export($subject_gender_list);die();
         
         // view data
         $data = [];
         $data['subject_gender_list'] = $subject_gender_list;
+        $data['subject_ethnicity_list'] = $subject_ethnicity_list;
         
         // get filtered sample list
         $sample_data = RestService::samples($request->all(), $username);
