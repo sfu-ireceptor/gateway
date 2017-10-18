@@ -86,82 +86,15 @@
 					@endforeach
 				</div>
 
-				<div class="bs-example">
-					<fieldset class="first">
-						<legend>Data Sites</legend>
-						<div id="rest_service_list">
-							<ul>
-								@foreach ($rest_service_list as $rs)
-							     <li>
-							     	{{ $rs->name }}
-								    <ul>
-							 			@foreach ($rs->labs as $lab)
-										<li>
-											Lab: {{ $lab->name }}
-										    <ul>
-								     			@foreach ($lab->projects as $project)
-
-												<li id="{{ $project->id }}" data-jstree='{"selected":{{ in_array($project->id, explode(',', old('project_id_list'))) ? 'true' : 'false'}}}'>
-													Project: {{ $project->name }}
-													{{-- <span class="sra">{{ $project->sra_accession }}</span> --}}
-												</li>
-										 		@endforeach
-									 		</ul>
-										</li>
-								 		@endforeach
-							 		</ul>
-							     </li>
-								@endforeach
-							</ul>
-						</div>
-					</fieldset>
-				</div>
-
 				<div id="results"></div>
 				{{ Form::submit('Search samples', array('class' => 'btn btn-primary search_samples')) }}
 			{{ Form::close() }}				
 		</div>
 
 		<div class="col-md-10">
-			<div class="samples_filters">
-				<b>Active filters:</b>
-				@foreach ($filters as $filter)
-				<span class="filter_box">
-					{{$filter}}
-				</span>
-				@endforeach
-			</div>
-			<div class="samples_filters">
-				<b>Query breadth</b>:
-				<span class="filter_box">
-					{{$totalRepositories}} remote repositories
-				</span>
-				<span class="filter_box">
-					{{$totalLabs}} research labs
-				</span>
-				<span class="filter_box">
-					{{$totalStudies}} studies
-				</span>
-				<span class="filter_box">
-					{{$totalSamples}} samples
-				</span>
-				<span class="filter_box">
-					{{number_format($totalSequences)}} sequences
-				</span>
-			</div>
-			<div class="samples_filters">
-				<b>Query result:</b>
-				<span class="filter_box">
-					{{$nFilteredSamples}} samples
-				</span>
-				<span class="filter_box">
-					{{number_format($nFilteredSequences)}} sequences.
-				</span>
-			</div>
+			
 			<!-- statistics box -->
 			<div class="samples_stats">
-
-
 				<div id="sample_charts" class="charts">
 					<div class="row">
 						<div class="col-md-2 chart" id="sample_chart1"></div>
