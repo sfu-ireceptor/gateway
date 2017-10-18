@@ -62,7 +62,7 @@
 					@endforeach
 				</div>
 
-{{-- 			    <div class="form-group">
+ 			    <div class="form-group">
 					{{ Form::label('sample_source_name', 'Sample Source') }}
 					@foreach ($sample_source_list as $id => $name)
 					<div class="checkbox">
@@ -73,7 +73,7 @@
 					</div>
 					@endforeach
 				</div>
-
+{{--
 				 <div class="form-group">
 					{{ Form::label('dna_type', 'DNA Type') }}
 					@foreach ($dna_type_list as $id => $name)
