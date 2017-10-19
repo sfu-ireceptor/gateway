@@ -22,7 +22,7 @@ class Sample extends Model
 
         // cache data
         foreach ($sample_list as $s) {
-            Sample::create(json_decode(json_encode($s), true));
+            self::create(json_decode(json_encode($s), true));
         }
 
         return count($sample_list);
