@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use App\Sample;
 
 class AdminController extends Controller
 {
@@ -195,4 +196,12 @@ class AdminController extends Controller
 
         return redirect('admin/users')->with('notification', 'User ' . $username . ' was successfully deleted.');
     }
+
+    public function getUpdateSampleCache()
+    {
+        $username = auth()->user()->username;
+        $n = Sample::cache($username);
+        return "It's done. $n samples have been retrieved and cached.";
+    }
+
 }

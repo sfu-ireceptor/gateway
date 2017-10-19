@@ -10,6 +10,25 @@ class Sample extends Model
     protected $collection = 'samples';
     protected $guarded = [];
 
+    // cache samples from REST services
+    public static function cache($username)
+    {
+        // get data
+        $sample_data = RestService::samples([], $username);
+        $sample_list = $sample_data['items'];
+
+        // delete any previously cached data
+        self::truncate();
+
+        // cache data
+        foreach ($sample_list as $s) {
+            Sample::create(json_decode(json_encode($s), true));
+        }
+
+        return count($sample_list);
+    }
+
+    // return metadata by querying cached samples
     public static function metadata()
     {
         $t = [];

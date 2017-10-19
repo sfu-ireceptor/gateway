@@ -57,26 +57,6 @@ class RestService extends Model
         }
     }
 
-    // cache sample data locally
-    public static function cacheSamples($username)
-    {
-        foreach (self::findEnabled() as $rs) {
-            $params = [];
-            $params['username'] = $username;
-
-            try {
-                $obj = self::postRequest($rs, 'samples', $params, '', true);
-
-                foreach ($obj as $s) {
-                    $s['rest_service_id'] = $rs->id;
-                    Sample::create($s);
-                }
-            } catch (\Exception $e) {
-                continue;
-            }
-        }
-    }
-
     public static function metadata2($username)
     {
         return Sample::metadata();
@@ -200,7 +180,7 @@ class RestService extends Model
         $data['filters'] = [];
 
         // Limit the number of results returned by the API.
-        $filters['num_results'] = 500;
+        //$filters['num_results'] = 500;
         $filters['username'] = $username;
 
         // get samples from each REST service
@@ -214,8 +194,8 @@ class RestService extends Model
             }
 
             foreach ($obj as $s) {
-                $s->rs_id = $rs->id;
-                $s->rs_name = $rs->name;
+                $s->rest_service_id = $rs->id;
+                $s->rest_service_name = $rs->name;
             }
 
             $rs_data = [];
