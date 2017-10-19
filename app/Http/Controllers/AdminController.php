@@ -32,6 +32,7 @@ class AdminController extends Controller
 
         $data = [];
         $data['rs_list'] = $rs_list;
+        $data['notification'] = session()->get('notification');
 
         return view('databases', $data);
     }
@@ -201,7 +202,9 @@ class AdminController extends Controller
     {
         $username = auth()->user()->username;
         $n = Sample::cache($username);
-        return "It's done. $n samples have been retrieved and cached.";
+        
+        $message = "$n samples have been retrieved and cached.";
+        return redirect('admin/databases')->with('notification', $message);
     }
 
 }

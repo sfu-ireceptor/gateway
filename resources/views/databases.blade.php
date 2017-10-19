@@ -5,6 +5,14 @@
 @section('content')
 <div class="container">
 	<h1>Databases</h1>
+
+	@if (isset($notification))
+	<div class="alert alert-warning alert-dismissible" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		{!! $notification !!}
+	</div>
+	@endif
+
 	<div class="row">
 		<div class="col-md-4">
 
@@ -24,6 +32,15 @@
 					@endforeach
 				</tbody>
 			</table>
+
+			<p>
+				<a href="/admin/samples/update-cache">
+					<button type="button" class="btn btn-default" aria-label="Edit">
+						<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+						Refresh cached samples
+					</button>
+				</a>
+			</p>
 
 		</div>
 	</div>
