@@ -37,7 +37,7 @@ class RestService extends Model
         'sample_name', 'sample_source_name', 'disease_state_name', 'ireceptor_cell_subset_name',
         'lab_cell_subset_name', 'dna_type', '',
         'vgene_allele', 'dgene_allele', 'jgene_allele',
-        'junction_sequence_aa', 'functionality'
+        'junction_sequence_aa', 'functionality',
     ];
     protected static $v2Keys = [
         'study_id', 'study_title', 'study_description', 'lab_name', 'subject_id',
@@ -45,7 +45,7 @@ class RestService extends Model
         'sample_id', 'tissue', 'disease_state_sample', 'cell_subset',
         'cell_phenotype', 'library_source', 'platform',
         'v_gene', 'd_gene', 'j_gene',
-        'junction_aa', 'functional'
+        'junction_aa', 'functional',
     ];
     protected static $shortNamesAIRR = [
         'Study', 'Study title', 'Study type', 'Lab name', 'Subject ID',
@@ -53,7 +53,7 @@ class RestService extends Model
         'Sample ID', 'Tissue', 'Disease state', 'Cell subset',
         'Lab Cell subset', 'Target substrate', 'Platform',
         'V Gene', 'D Gene', 'J Gene',
-        'Junction (AA)', 'Functional'
+        'Junction (AA)', 'Functional',
     ];
     protected static $longNamesAIRR = [
         'Study', 'Study title', 'Study type', 'Lab name', 'Subject ID',
@@ -61,7 +61,7 @@ class RestService extends Model
         'Biological sample ID', 'Tissue', 'Disease state of sample', 'Cell subset',
         'Cell subset phenotype', 'Target substrate', 'Platform',
         'V Gene Allele', 'D Gene Allele', 'J Gene Allele',
-        'Junction (CDR3 with conserved residues)(AA)', 'Functional'
+        'Junction (CDR3 with conserved residues)(AA)', 'Functional',
     ];
 
     public static function convertAPIKey($fromVersion, $toVersion, $key)
