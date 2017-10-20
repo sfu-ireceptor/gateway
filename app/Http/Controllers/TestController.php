@@ -29,16 +29,16 @@ class TestController extends Controller
 
     public function getIndex()
     {
-        // $data = [];
-        // $data[] = ['project_id' => 1, 'subject_id' => 2];
-        // $data[] = ['project_id' => 2, 'subject_id' => 3, 'test' => 4];
+        $data = [];
+        $data[] = ['project_id' => 1, 'subject_id' => 2];
+        $data[] = ['project_id' => 2, 'subject_id' => 3, 'test' => 4];
 
-        // var_dump($data);
+        var_dump($data);
 
-        // $t = SampleField::convertSamples($data, 'v1', 'airr');
-        // var_dump($t);
+        $t = SampleField::convertSamples($data, 'v1', 'airr');
+        var_dump($t);
 
-        // die();
+        die();
 
         // SampleField::init();
         // die();
