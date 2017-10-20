@@ -35,7 +35,7 @@ class RestService extends Model
         'sra_accession', 'project_name', 'project_type', 'lab_name', 'subject_code',
         'subject_gender', 'subject_ethnicity', 'subject_species', 'case_control_name',
         'sample_name', 'sample_source_name', 'disease_state_name', 'ireceptor_cell_subset_name',
-        'lab_cell_subset_name', 'dna_type', "",
+        'lab_cell_subset_name', 'dna_type', '',
         'vgene_allele', 'dgene_allele', 'jgene_allele',
         'junction_sequence_aa', 'functionality'
     ];
@@ -43,7 +43,7 @@ class RestService extends Model
         'study_id', 'study_title', 'study_description', 'lab_name', 'subject_id',
         'sex', 'ethnicity', 'organism', 'study_group_description',
         'sample_id', 'tissue', 'disease_state_sample', 'cell_subset',
-        'cell_phenotype', 'library_source', "platform",
+        'cell_phenotype', 'library_source', 'platform',
         'v_gene', 'd_gene', 'j_gene',
         'junction_aa', 'functional'
     ];
@@ -51,7 +51,7 @@ class RestService extends Model
         'Study', 'Study title', 'Study type', 'Lab name', 'Subject ID',
         'Sex', 'Ethnicity', 'Organism', 'Study group',
         'Sample ID', 'Tissue', 'Disease state', 'Cell subset',
-        'Lab Cell subset', 'Target substrate', "Platform",
+        'Lab Cell subset', 'Target substrate', 'Platform',
         'V Gene', 'D Gene', 'J Gene',
         'Junction (AA)', 'Functional'
     ];
@@ -59,7 +59,7 @@ class RestService extends Model
         'Study', 'Study title', 'Study type', 'Lab name', 'Subject ID',
         'Sex', 'Ethnicity', 'Organism', 'Study group description',
         'Biological sample ID', 'Tissue', 'Disease state of sample', 'Cell subset',
-        'Cell subset phenotype', 'Target substrate', "Platform"
+        'Cell subset phenotype', 'Target substrate', 'Platform',
         'V Gene Allele', 'D Gene Allele', 'J Gene Allele',
         'Junction (CDR3 with conserved residues)(AA)', 'Functional'
     ];
