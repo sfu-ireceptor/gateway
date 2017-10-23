@@ -12,7 +12,7 @@ class SampleField extends Model
     // convert field names for 1 sample
     public static function convertSample($data, $from, $to)
     {
-        $mapping = self::all()->toArray();
+        $mapping = self::all([$from, $to])->toArray();
 
         return convert_array_keys($data, $mapping, $from, $to);
     }
@@ -20,7 +20,7 @@ class SampleField extends Model
     // convert field names for a list of samples
     public static function convertSamples($data, $from, $to)
     {
-        $mapping = self::all()->toArray();
+        $mapping = self::all([$from, $to])->toArray();
         // var_dump($mapping);die();
 
         return convert_arrays_keys($data, $mapping, $from, $to);
