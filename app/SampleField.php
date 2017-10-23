@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 
 class SampleField extends Model

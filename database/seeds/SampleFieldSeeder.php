@@ -1,40 +1,36 @@
 <?php
 
 use Flynsarmy\CsvSeeder\CsvSeeder;
-use App\SampleField;
 
 class SampleFieldSeeder extends CsvSeeder
 {
+    public function __construct()
+    {
+        $this->table = 'sample_field';
+        $this->filename = base_path() . '/database/seeds/csv/sample_fields.csv';
+    }
 
+    public function run()
+    {
+        DB::table($this->table)->truncate();
 
-	public function __construct()
-	{
-		$this->table = 'sample_field';
-		$this->filename = base_path().'/database/seeds/csv/sample_fields.csv';
-	}
+        $this->mapping = [
+             1 => 'airr_full',
+            2 => 'airr',
+            6 => 'ir_v1',
+            14 => 'ir_v2',
+            28 => 'ir_full',
+            29 => 'ir_short',
+        ];
 
-	public function run()
-	{
-		DB::table($this->table)->truncate();
+        parent::run();
 
-		$this->mapping = [
-		     1 => 'airr_full',
-		    2 => 'airr',
-		    6 => 'ir_v1',
-		    14 => 'ir_v2',
-		    28 => 'ir_full',
-		    29 => 'ir_short'
-		];
+        // update "ir_id" column using, in order of preference: airr, ir_v2, ir_v1
+        DB::table($this->table)->whereNull('ir_id')->update(['ir_id' => DB::raw('airr')]);
+        DB::table($this->table)->whereNull('ir_id')->update(['ir_id' => DB::raw('ir_v2')]);
+        DB::table($this->table)->whereNull('ir_id')->update(['ir_id' => DB::raw('ir_v1')]);
 
-		parent::run();
-
-		// update "ir_id" column using, in order of preference: airr, ir_v2, ir_v1
-		DB::table($this->table)->whereNull('ir_id')->update(['ir_id' => DB::raw('airr')]);
-		DB::table($this->table)->whereNull('ir_id')->update(['ir_id' => DB::raw('ir_v2')]);
-		DB::table($this->table)->whereNull('ir_id')->update(['ir_id' => DB::raw('ir_v1')]);
-
-		// delete empty rows
-		DB::table($this->table)->whereNull('ir_id')->delete();
-	}
-
+        // delete empty rows
+        DB::table($this->table)->whereNull('ir_id')->delete();
+    }
 }
