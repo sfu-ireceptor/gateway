@@ -80,8 +80,8 @@ class SampleController extends Controller
         $data['rs_list'] = $sample_data['rs_list'];
         $data['total_samples'] = $sample_data['total'];
 
-        // Filters being used.
-        $data['filters'] = $sample_data['filters'];
+        // // Filters being used.
+        // $data['filters'] = $sample_data['filters'];
 
         // // Summary statistics of overall repositories
         // $data['totalRepositories'] = $sample_data['totalRepositories'];
