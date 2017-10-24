@@ -10,7 +10,7 @@ class HomeController extends Controller
     {
         // get metadata for form options
         $username = auth()->user()->username;
-        $data = RestService::metadata2($username);
+        $data = RestService::metadata($username);
 
         $sample_data = RestService::samples(['ajax' => true], $username);
         $sample_list = $sample_data['items'];

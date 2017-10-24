@@ -16,7 +16,7 @@ class SampleController extends Controller
         *************************************************/
 
         // get data
-        $metadata = RestService::metadata2($username);
+        $metadata = RestService::metadata($username);
 
         // gender
         $subject_gender_list = [];
@@ -66,14 +66,14 @@ class SampleController extends Controller
 
         $sample_data = RestService::samples($request->all(), $username);
 
-        // The rs_list is the response data from the service based on
-        // the query parameters. It is this data that provides the details
-        // about the results of the query.
-        $nFilteredSamples = $sample_data['total'];
-        $nFilteredSequences = 0;
-        foreach ($sample_data['items'] as $sample) {
-            $nFilteredSequences = $nFilteredSequences + $sample->sequence_count;
-        }
+        // // The rs_list is the response data from the service based on
+        // // the query parameters. It is this data that provides the details
+        // // about the results of the query.
+        // $nFilteredSamples = $sample_data['total'];
+        // $nFilteredSequences = 0;
+        // foreach ($sample_data['items'] as $sample) {
+        //     $nFilteredSequences = $nFilteredSequences + $sample->sequence_count;
+        // }
 
         $data['sample_list'] = $sample_data['items'];
         $data['sample_list_json'] = json_encode($sample_data['items']);
@@ -90,9 +90,9 @@ class SampleController extends Controller
         // $data['totalSamples'] = $sample_data['totalSamples'];
         // $data['totalSequences'] = $sample_data['totalSequences'];
 
-        // Summary statistics about the query with the filters applied.
-        $data['nFilteredSamples'] = $nFilteredSamples;
-        $data['nFilteredSequences'] = $nFilteredSequences;
+        // // Summary statistics about the query with the filters applied.
+        // $data['nFilteredSamples'] = $nFilteredSamples;
+        // $data['nFilteredSequences'] = $nFilteredSequences;
 
         // re-populate form values
         $request->flash();

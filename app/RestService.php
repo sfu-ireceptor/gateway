@@ -57,116 +57,10 @@ class RestService extends Model
         }
     }
 
-    public static function metadata2($username)
+    public static function metadata($username)
     {
         return Sample::metadata();
     }
-
-    // public static function metadata($username)
-    // {
-    //     $rest_service_list = [];
-    //     $ethnicity_list = ['' => ''];
-    //     $gender_list = ['' => ''];
-    //     $case_control_list = ['' => ''];
-    //     $dna_type_list = [];
-    //     $sample_source_list = [];
-    //     $cell_type_list = [];
-
-    //     $numLabs = 0;
-    //     $numProjects = 0;
-
-    //     // get metadata from each REST service
-    //     foreach (self::findEnabled() as $rs) {
-    //         // perform query
-    //         $params = [];
-    //         $params['username'] = $username;
-    //         try {
-    //             $obj = self::postRequest($rs, 'metadata', $params);
-
-    //             // get data from json: labs and projects
-    //             $labs = $obj->labs_projects;
-    //             $rs->labs = $labs;
-    //             foreach ($labs as $lab) {
-    //                 $numLabs++;
-    //                 foreach ($lab->projects as $project) {
-    //                     $numProjects++;
-    //                     $project->id = $rs->id . '_' . $project->id;
-    //                 }
-    //             }
-
-    //             // get data from json: everything else
-    //             $rs->ethnicity_list = $obj->ethnicity;
-    //             $rs->gender_list = $obj->gender;
-    //             $rs->casecontrol_list = $obj->casecontrol;
-    //             $rs->dnainfo_list = $obj->dnainfo;
-    //             $rs->source_list = $obj->source;
-    //             $rs->cellsubsettypes_list = $obj->cellsubsettypes;
-    //         } catch (\Exception $e) {
-    //             $response = $e->getResponse();
-    //             Log::error($response);
-    //             continue;
-    //         }
-
-    //         // service response was successfully parsed -> show the service
-    //         $rest_service_list[] = $rs;
-
-    //         // add metadata from that service to global values
-    //         // subject ethnicity
-    //         foreach ($rs->ethnicity_list as $eth) {
-    //             if (array_search($eth, $ethnicity_list) === false) { // avoid duplicate values
-    //                 $ethnicity_list[$eth] = $eth;
-    //             }
-    //         }
-
-    //         // subject gender
-    //         foreach ($rs->gender_list  as $gender) {
-    //             if (array_search($gender, $gender_list) === false) {
-    //                 $gender_list[$gender] = $gender;
-    //             }
-    //         }
-
-    //         // case control
-    //         foreach ($rs->casecontrol_list as $cc) {
-    //             if (array_search($cc, $case_control_list) === false) {
-    //                 $case_control_list[$cc] = $cc;
-    //             }
-    //         }
-
-    //         // dna info
-    //         foreach ($rs->dnainfo_list as $di) {
-    //             if (array_search($di, $dna_type_list) === false) {
-    //                 $dna_type_list[$di] = $di;
-    //             }
-    //         }
-
-    //         // sample source
-    //         foreach ($rs->source_list as $s) {
-    //             if (array_search($s, $sample_source_list) === false) {
-    //                 $sample_source_list[$s] = $s;
-    //             }
-    //         }
-
-    //         // cell type
-    //         foreach ($rs->cellsubsettypes_list as $c) {
-    //             if (array_search($c, $cell_type_list) === false) {
-    //                 $cell_type_list[$c] = $c;
-    //             }
-    //         }
-    //     }
-
-    //     // build metadata array
-    //     $metadata = [];
-
-    //     $metadata['rest_service_list'] = $rest_service_list;
-    //     $metadata['subject_ethnicity_list'] = $ethnicity_list;
-    //     $metadata['subject_gender_list'] = $gender_list;
-    //     $metadata['case_control_list'] = $case_control_list;
-    //     $metadata['dna_type_list'] = $dna_type_list;
-    //     $metadata['sample_source_list'] = $sample_source_list;
-    //     $metadata['ireceptor_cell_subset_name_list'] = $cell_type_list;
-
-    //     return $metadata;
-    // }
 
     public static function samples($filters, $username)
     {
@@ -181,7 +75,7 @@ class RestService extends Model
         // get samples from each REST service
         foreach (self::findEnabled() as $rs) {
             try {
-                $sample_list = self::postRequest($rs, 'samples', $filters);
+                $sample_list = self::postRequest($rs, 'v2/samples', $filters);
             } catch (\Exception $e) {
                 $message = $e->getMessage();
                 Log::error($message);

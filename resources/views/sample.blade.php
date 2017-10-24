@@ -19,8 +19,8 @@
 				<input type="hidden" name="project_id_list" />
 
 			    <div class="form-group">
-					{{ Form::label('subject_code', 'Subject Record') }}
-					{{ Form::text('subject_code', '', array('class' => 'form-control')) }}
+					{{ Form::label('subject_id', 'Subject Record') }}
+					{{ Form::text('subject_id', '', array('class' => 'form-control')) }}
 				</div>
 
 				<div class="form-group">
@@ -46,16 +46,16 @@
 				</div>
 
 			    <div class="form-group">
-					{{ Form::label('sample_name', 'Sample Record') }}
-					{{ Form::text('sample_name', '', array('class' => 'form-control')) }}
+					{{ Form::label('sample_id', 'Sample Record') }}
+					{{ Form::text('sample_id', '', array('class' => 'form-control')) }}
 				</div>
 
 				<div class="form-group">
-					{{ Form::label('ireceptor_cell_subset_name', 'Cell Type') }}
+					{{ Form::label('cell_subset', 'Cell Type') }}
 					@foreach ($cell_type_list as $id => $name)
 					<div class="checkbox">
 						<label>
-						{{ Form::checkbox('ireceptor_cell_subset_name[]', $id) }}
+						{{ Form::checkbox('cell_subset[]', $id) }}
 						{{ $name }}
 						</label>
 					</div>
@@ -63,11 +63,11 @@
 				</div>
 
  			    <div class="form-group">
-					{{ Form::label('sample_source_name', 'Sample Source') }}
+					{{ Form::label('tissue', 'Sample Source') }}
 					@foreach ($sample_source_list as $id => $name)
 					<div class="checkbox">
 						<label>
-						{{ Form::checkbox('sample_source_name[]', $id) }}
+						{{ Form::checkbox('tissue[]', $id) }}
 						{{ $name }}
 						</label>
 					</div>
@@ -134,7 +134,7 @@
 					<tbody>
 						@foreach ($sample_list as $sample)
 						<tr>
-							<td>{{ Form::checkbox('project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->project_sample_id) }}</td>
+							<td>{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id) }}</td>
 							<td class="text-nowrap">{{ $sample->rest_service_name }}</td>
 							<td class="text-nowrap">
 									<span title="{{ $sample->lab_name }}">
@@ -143,36 +143,31 @@
 							</td>
 							<td>
 								<?php if (isset($sample->sra_accession)): ?>
-									<a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study={{ $sample->sra_accession }}" title="{{ $sample->project_name }}">
-										{{ str_limit($sample->project_name, $limit = 50, $end = '...') }}
+									<a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study={{ $sample->sra_accession }}" title="{{ $sample->study_title }}">
+										{{ str_limit($sample->study_title, $limit = 50, $end = '...') }}
 									</span>
 								<?php else: ?>
-									<span title="{{ $sample->project_name }}">
-									{{ str_limit($sample->project_name, $limit = 50, $end = '...') }}
+									<span title="{{ $sample->study_title }}">
+									{{ str_limit($sample->study_title, $limit = 50, $end = '...') }}
 									</span>							
 								<?php endif ?>
 							</td>
-							<td>{{ $sample->sample_name }}</td>
+							<td>{{ $sample->sample_id }}</td>
 							<td>
-								@if ($sample->sequence_count > 0)
-								<a href="sequences?project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->project_sample_id }}">
-									<span class="label label-primary">{{number_format($sample->sequence_count, 0 ,'.' ,',') }}</span>
+								@if ($sample->ir_sequence_count > 0)
+								<a href="sequences?ir_project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}">
+									<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
 								</a>
 								@endif
 							</td>
-							<td>{{ $sample->subject_code }}</td>
-							<td>{{ $sample->sample_source_name }}</td>
-							<td>{{ $sample->ireceptor_cell_subset_name }}</td>
-							<td>{{ $sample->lab_cell_subset_name }}</td>
+							<td>{{ $sample->subject_id }}</td>
+							<td>{{ $sample->tissue }}</td>
+							<td>{{ $sample->cell_subset }}</td>
+							<td>{{ $sample->ir_lab_cell_subset_name }}</td>
 							<td>
-								{{ $sample->marker_1 }}
-								{{ $sample->marker_2 }}
-								{{ $sample->marker_3 }}
-								{{ $sample->marker_4 }}
-								{{ $sample->marker_5 }}
-								{{ $sample->marker_6 }}
+								{{ $sample->cell_phenotype }}
 							</td>
-							<td>{{ $sample->dna_type }}</td>
+							<td>{{ $sample->library_source }}</td>
 						</tr>
 						@endforeach
 					</tbody>
