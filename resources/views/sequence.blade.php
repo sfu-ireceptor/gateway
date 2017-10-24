@@ -68,7 +68,7 @@
 
 				<p>{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}</p>
 
-				<p>{{ Form::submit('Download all '  . number_format($total_sequences, 0 ,'.' ,',') . ' sequences as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}</p>
+				<p>{{ Form::submit('Download as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}</p>
 
 				<p>
 					<a class="bookmark" href="/system/" data-uri="{{ $url }}">
@@ -92,38 +92,6 @@
 			<!-- statistics box -->
 			@if (! empty($sequence_list))
 			@endif
-			<div class="sequences_filters">
-				<b>Active filters:</b>
-				@foreach ($filters as $filter)
-				<span class="filter_box">
-					{{$filter}}
-				</span>
-				@endforeach
-			</div>
-			<div class="samples_filters">
-				<b>Query breadth</b>:
-				<span class="filter_box">
-					{{$totalRepositories}} remote repositories
-				</span>
-				<span class="filter_box">
-					{{$totalLabs}} research labs
-				</span>
-				<span class="filter_box">
-					{{$totalStudies}} studies
-				</span>
-				<span class="filter_box">
-					{{$totalSamples}} samples
-				</span>
-				<span class="filter_box">
-					{{number_format($totalSequences)}} sequences
-				</span>
-			</div>
-			<div class="samples_filters">
-				<b>Query result:</b>
-				<span class="filter_box">
-					 {{number_format($nFilteredSequences)}} sequences.
-				</span>
-			</div>
 
 			<div class="sequences_stats">
 				<div id="sequence_charts" class="charts">

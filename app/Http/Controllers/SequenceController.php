@@ -27,18 +27,20 @@ class SequenceController extends Controller
         $data = [];
 
         // get sequence list
-        $sequence_data = RestService::sequences($filters, $username);
+        $sequence_data = RestService::sequences_summary($filters, $username);
+        // var_dump($sequence_data);die();
+
         //print_r($sequence_data['items'][0]);die();
         $data['sequence_list'] = $sequence_data['items'];
         $data['rs_list'] = $sequence_data['rs_list'];
-        $data['total_sequences'] = $sequence_data['total'];
-        $data['filters'] = $sequence_data['filters'];
-        $data['totalRepositories'] = $sequence_data['totalRepositories'];
-        $data['totalLabs'] = $sequence_data['totalLabs'];
-        $data['totalStudies'] = $sequence_data['totalStudies'];
-        $data['totalSamples'] = $sequence_data['totalSamples'];
-        $data['totalSequences'] = $sequence_data['totalSequences'];
-        $data['nFilteredSequences'] = $sequence_data['total'];
+        // $data['total_sequences'] = $sequence_data['total'];
+        // $data['filters'] = $sequence_data['filters'];
+        // $data['totalRepositories'] = $sequence_data['totalRepositories'];
+        // $data['totalLabs'] = $sequence_data['totalLabs'];
+        // $data['totalStudies'] = $sequence_data['totalStudies'];
+        // $data['totalSamples'] = $sequence_data['totalSamples'];
+        // $data['totalSequences'] = $sequence_data['totalSequences'];
+        // $data['nFilteredSequences'] = $sequence_data['total'];
 
         // for bookmarking
         $current_url = $request->fullUrl();
