@@ -31,7 +31,8 @@ class TestController extends Controller
     {
         echo __('sample.study_description');
 
-        echo "uuuu";die();
+        echo 'uuuu';
+        die();
         $data = [];
         $data[] = ['project_id' => 1, 'subject_id' => 2];
         $data[] = ['project_id' => 2, 'subject_id' => 3, 'test' => 4];
