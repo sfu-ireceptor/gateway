@@ -18,6 +18,7 @@ class RestService extends Model
     public static function findEnabled($fieldList = null)
     {
         $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get($fieldList);
+
         return $l;
     }
 
@@ -78,7 +79,7 @@ class RestService extends Model
         // add username to filters
         $filters['username'] = $username;
 
-        // remove gateway-specific filters 
+        // remove gateway-specific filters
         unset($filters['cols']);
         unset($filters['filters_order']);
 
