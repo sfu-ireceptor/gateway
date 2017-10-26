@@ -29,9 +29,9 @@ class TestController extends Controller
 
     public function getIndex()
     {
-        echo __('sp.study_description');
+        echo __('sp.sex');
 
-        echo 'uuuu';
+        // echo 'uuuu';
         die();
         $data = [];
         $data[] = ['project_id' => 1, 'subject_id' => 2];

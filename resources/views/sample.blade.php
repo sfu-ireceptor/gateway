@@ -19,7 +19,7 @@
 				<input type="hidden" name="project_id_list" />
 
 			    <div class="form-group">
-					{{ Form::label('subject_id', 'Subject Record') }}
+					{{ Form::label('subject_id', __('sp.subject_id')) }}
 					{{ Form::text('subject_id', '', array('class' => 'form-control')) }}
 				</div>
 

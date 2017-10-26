@@ -28,7 +28,7 @@ class SampleFieldSeeder extends CsvSeeder
         // update "ir_id" column using, in order of preference: airr, ir_v2, ir_v1
         DB::table($this->table)->whereNull('ir_id')->update(['ir_id' => DB::raw('airr')]);
         DB::table($this->table)->whereNull('ir_id')->update(['ir_id' => DB::raw('ir_v2')]);
-        DB::table($this->table)->whereNull('ir_id')->update(['ir_id' => DB::raw('ir_v1')]);
+        // DB::table($this->table)->whereNull('ir_id')->update(['ir_id' => DB::raw('ir_v1')]);
 
         // delete empty rows
         DB::table($this->table)->whereNull('ir_id')->delete();
