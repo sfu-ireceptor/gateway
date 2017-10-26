@@ -29,7 +29,7 @@ class TestController extends Controller
 
     public function getIndex()
     {
-        echo __('sample.study_description');
+        echo __('sp.study_description');
 
         echo 'uuuu';
         die();
