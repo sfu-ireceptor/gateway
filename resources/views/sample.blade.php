@@ -137,68 +137,66 @@
 							<td>{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id) }}</td>
 							<td class="text-nowrap">{{ $sample->rest_service_name }}</td>
 							<td class="text-nowrap">
-								<?php if (isset($sample->lab_name)): ?>
+								@isset($sample->lab_name)
 									<span title="{{ $sample->lab_name }}">
 									{{ str_limit($sample->lab_name, $limit = 40, $end = '...') }}
 									</span>
-								<?php endif ?>
+								@endisset
 							</td>
 							<td>
-								<?php if (isset($sample->sra_accession)): ?>
+								@if(isset($sample->sra_accession))
 									<a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study={{ $sample->sra_accession }}" title="{{ $sample->study_title }}">
 										{{ str_limit($sample->study_title, $limit = 50, $end = '...') }}
 									</span>
-								<?php else: ?>
-									<?php if (isset($sample->study_title)): ?>
-										<span title="{{ $sample->study_title }}">
-										{{ str_limit($sample->study_title, $limit = 50, $end = '...') }}
-										</span>							
-									<?php endif ?>
-								<?php endif ?>
+								@elseif(isset($sample->study_title))
+									<span title="{{ $sample->study_title }}">
+									{{ str_limit($sample->study_title, $limit = 50, $end = '...') }}
+									</span>							
+								@endif
 							</td>
 							<td>
-								<?php if (isset($sample->sample_id)): ?>
+								@isset($sample->sample_id)
 									{{ $sample->sample_id }}
-								<?php endif ?>
+								@endisset
 							</td>
 							<td>
-								<?php if (isset($sample->ir_sequence_count)): ?>
+								@isset($sample->ir_sequence_count)
 									@if ($sample->ir_sequence_count > 0)
 									<a href="sequences?ir_project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}">
 										<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
 									</a>
 									@endif
-								<?php endif ?>
+								@endisset
 							</td>
 							<td>
-								<?php if (isset($sample->subject_id)): ?>
+								@isset($sample->subject_id)
 									{{ $sample->subject_id }}
-								<?php endif ?>
+								@endisset
 							</td>
 							<td>
-								<?php if (isset($sample->tissue)): ?>
+								@isset($sample->tissue)
 									{{ $sample->tissue }}
-								<?php endif ?>
+								@endisset
 							</td>
 							<td>
-								<?php if (isset($sample->cell_subset)): ?>
+								@isset($sample->cell_subset)
 									{{ $sample->cell_subset }}
-								<?php endif ?>
+								@endisset
 							</td>
 							<td>
-								<?php if (isset($sample->ir_lab_cell_subset_name)): ?>
+								@isset($sample->ir_lab_cell_subset_name)
 									{{ $sample->ir_lab_cell_subset_name }}
-								<?php endif ?>
+								@endisset
 							</td>
 							<td>
-								<?php if (isset($sample->cell_phenotype)): ?>
+								@isset($sample->cell_phenotype)
 									{{ $sample->cell_phenotype }}
-								<?php endif ?>
+								@endisset
 							</td>
 							<td>
-								<?php if (isset($sample->library_source)): ?>
+								@isset($sample->library_source)
 									{{ $sample->library_source }}
-								<?php endif ?>
+								@endisset
 							</td>
 						</tr>
 						@endforeach
