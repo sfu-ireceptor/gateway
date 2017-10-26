@@ -29,44 +29,50 @@ class TestController extends Controller
 
     public function getIndex()
     {
+        echo __('sample.study_description');
+
+        echo 'uuuu';
+        die();
         $data = [];
         $data[] = ['project_id' => 1, 'subject_id' => 2];
         $data[] = ['project_id' => 2, 'subject_id' => 3, 'test' => 4];
 
         var_dump($data);
 
+        echo "\n-------------------------------------\n\n";
+
         $t = SampleField::convertSamples($data, 'ir_v1', 'ir_v2');
         var_dump($t);
 
         die();
 
-        // SampleField::init();
+        // // SampleField::init();
+        // // die();
+
+        // $metadata = RestService::metadata('titi');
+
+        // var_dump($metadata);
         // die();
 
-        $metadata = RestService::metadata('titi');
+        // foreach ($metadata['subject_code'] as $k => $v) {
+        //     echo $v . "\n";
+        // }
+        // // var_dump($metadata);
+        // die();
 
-        var_dump($metadata);
-        die();
+        // RestService::cacheSamples('titi');
+        // die();
 
-        foreach ($metadata['subject_code'] as $k => $v) {
-            echo $v . "\n";
-        }
-        // var_dump($metadata);
-        die();
+        // $metadata_data = RestService::metadata2('titi');
+        // var_dump($metadata_data);
+        // die();
 
-        RestService::cacheSamples('titi');
-        die();
+        // Sample::create(['name' => 'John']);
+        // echo 'aa';
+        // die();
 
-        $metadata_data = RestService::metadata2('titi');
-        var_dump($metadata_data);
-        die();
-
-        Sample::create(['name' => 'John']);
-        echo 'aa';
-        die();
-
-        echo base64_encode('706d5ebc88cbf4d69d85baecb83e78c2cf4ece7c9c08f5796f89dcb7afdb850b');
-        die();
+        // echo base64_encode('706d5ebc88cbf4d69d85baecb83e78c2cf4ece7c9c08f5796f89dcb7afdb850b');
+        // die();
 
         $message = <<<'EOD'
 {

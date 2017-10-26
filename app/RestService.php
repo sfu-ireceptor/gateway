@@ -36,6 +36,7 @@ class RestService extends Model
         $data['total'] = 0;
 
         $filters['username'] = $username;
+        $filters['ir_username'] = $username;
 
         // get samples from each REST service
         foreach (self::findEnabled() as $rs) {
@@ -78,6 +79,7 @@ class RestService extends Model
 
         // add username to filters
         $filters['username'] = $username;
+        $filters['ir_username'] = $username;
 
         // remove gateway-specific filters
         unset($filters['cols']);
