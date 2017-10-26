@@ -137,9 +137,11 @@
 							<td>{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id) }}</td>
 							<td class="text-nowrap">{{ $sample->rest_service_name }}</td>
 							<td class="text-nowrap">
+								<?php if (isset($sample->lab_name)): ?>
 									<span title="{{ $sample->lab_name }}">
 									{{ str_limit($sample->lab_name, $limit = 40, $end = '...') }}
 									</span>
+								<?php endif ?>
 							</td>
 							<td>
 								<?php if (isset($sample->sra_accession)): ?>
@@ -147,27 +149,57 @@
 										{{ str_limit($sample->study_title, $limit = 50, $end = '...') }}
 									</span>
 								<?php else: ?>
-									<span title="{{ $sample->study_title }}">
-									{{ str_limit($sample->study_title, $limit = 50, $end = '...') }}
-									</span>							
+									<?php if (isset($sample->study_title)): ?>
+										<span title="{{ $sample->study_title }}">
+										{{ str_limit($sample->study_title, $limit = 50, $end = '...') }}
+										</span>							
+									<?php endif ?>
 								<?php endif ?>
 							</td>
-							<td>{{ $sample->sample_id }}</td>
 							<td>
-								@if ($sample->ir_sequence_count > 0)
-								<a href="sequences?ir_project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}">
-									<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
-								</a>
-								@endif
+								<?php if (isset($sample->sample_id)): ?>
+									{{ $sample->sample_id }}
+								<?php endif ?>
 							</td>
-							<td>{{ $sample->subject_id }}</td>
-							<td>{{ $sample->tissue }}</td>
-							<td>{{ $sample->cell_subset }}</td>
-							<td>{{ $sample->ir_lab_cell_subset_name }}</td>
 							<td>
-								{{ $sample->cell_phenotype }}
+								<?php if (isset($sample->ir_sequence_count)): ?>
+									@if ($sample->ir_sequence_count > 0)
+									<a href="sequences?ir_project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}">
+										<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
+									</a>
+									@endif
+								<?php endif ?>
 							</td>
-							<td>{{ $sample->library_source }}</td>
+							<td>
+								<?php if (isset($sample->subject_id)): ?>
+									{{ $sample->subject_id }}
+								<?php endif ?>
+							</td>
+							<td>
+								<?php if (isset($sample->tissue)): ?>
+									{{ $sample->tissue }}
+								<?php endif ?>
+							</td>
+							<td>
+								<?php if (isset($sample->cell_subset)): ?>
+									{{ $sample->cell_subset }}
+								<?php endif ?>
+							</td>
+							<td>
+								<?php if (isset($sample->ir_lab_cell_subset_name)): ?>
+									{{ $sample->ir_lab_cell_subset_name }}
+								<?php endif ?>
+							</td>
+							<td>
+								<?php if (isset($sample->cell_phenotype)): ?>
+									{{ $sample->cell_phenotype }}
+								<?php endif ?>
+							</td>
+							<td>
+								<?php if (isset($sample->library_source)): ?>
+									{{ $sample->library_source }}
+								<?php endif ?>
+							</td>
 						</tr>
 						@endforeach
 					</tbody>
