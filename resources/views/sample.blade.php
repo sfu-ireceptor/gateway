@@ -295,8 +295,8 @@ var graphFields = [
     ];
 */
 var graphFields = [
-        "project_type", "subject_species", "disease_state_name",
-        "sample_source_name", "ireceptor_cell_subset_name", "dna_type"
+        "study_type", "organism", "disease_state_sample",
+        "tissue", "cell_subset", "library_source"
     ];
 var graphNames = [
         "Study Type", "Organism", "Sample Disease State",
