@@ -108,34 +108,32 @@
 			</div>
 			<div class="data_container_box">
 				<b>Query breadth</b>:
-				<?php /*
 				<span class="data_text_box">
-					{{$totalRepositories}} remote repositories
+					{{$total_repositories}} remote repositories
 				</span>
 				<span class="data_text_box">
-					{{$totalLabs}} research labs
+					{{$total_labs}} research labs
 				</span>
 				<span class="data_text_box">
-					{{$totalStudies}} studies
+					{{$total_studies}} studies
 				</span>
 				<span class="data_text_box">
-					{{$totalSamples}} samples
+					{{$total_samples}} samples
 				</span>
 				<span class="data_text_box">
-					{{number_format($totalSequences)}} sequences
+					{{number_format($total_sequences)}} sequences
 				</span>
-				*/ ?>
 			</div>
 			<div class="data_container_box">
 				<b>Query result:</b>
-				<?php /*
+				<?php  				 ?>
+
 				<span class="data_text_box">
-					{{$nFilteredSamples}} samples
+					{{$total_filtered_samples}} samples
 				</span>
 				<span class="data_text_box">
-					{{number_format($nFilteredSequences)}} sequences.
+					{{number_format($total_filtered_sequences)}} sequences.
 				</span>
-				*/ ?>
 			</div>
 			<div class="data_container_box">
 				<div id="sample_charts" class="charts">
@@ -155,12 +153,12 @@
 			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'get')) }}
 
 				<?php
-					$max_count = 10;
+					$max_count = 1000;
 				?>
 
-				<?php /* if ($nFilteredSamples > $max_count): ?>
-					{{ Form::submit('View all samples ('.(string)($nFilteredSamples-$max_count).' more)', array('class' => 'btn btn-primary show-more-samples-button', 'disabled' => 'disabled')) }}
-				<?php endif	*/ ?>
+				<?php if ($total_filtered_samples > $max_count): ?>
+					{{ Form::submit('View all samples ('.(string)($total_filtered_samples-$max_count).' more)', array('class' => 'btn btn-primary show-more-samples-button', 'disabled' => 'disabled')) }}
+				<?php endif ?>
 
 				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
 
@@ -260,21 +258,19 @@
 								@endisset
 							</td>
 						</tr>
-						<?php /*
+						<?php 
 							$count = $count + 1;
 							if ($count >= $max_count) break;
-						*/ ?>
+						?>
 						@endforeach
 					</tbody>
 				</table>
 
 				<input type="hidden" name="project_id_list" />
 				
-				<?php /*if ($nFilteredSamples > $max_count): */?>
-					<?php /*
-					{{ Form::submit('View all samples ('.(string)($nFilteredSamples-$max_count).' more)', array('class' => 'btn btn-primary show-more-samples-button', 'disabled' => 'disabled')) }}
-					*/ ?>
-				<?php /* endif	*/ ?>
+				<?php if ($total_filtered_samples > $max_count): ?>
+					{{ Form::submit('View all samples ('.(string)($total_filtered_samples-$max_count).' more)', array('class' => 'btn btn-primary show-more-samples-button', 'disabled' => 'disabled')) }}
+				<?php endif	?>
 				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
 
 			{{ Form::close() }}
