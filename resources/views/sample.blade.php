@@ -4,12 +4,6 @@
 
 @section('content')
 
-<?php
-
-use App\RestService;
-
-?>
-
 <div class="container-fluid sample_container">
 	<div class="row">
 		<div class="col-md-12">
@@ -29,18 +23,18 @@ use App\RestService;
 					{{ Form::submit('Update Filters', array('class' => 'btn btn-primary search_samples')) }}
 				</p>
 			    <div class="form-group">
-					{{ Form::label('subject_code', __('sp.subject_id')) }}
-					{{ Form::text('subject_code', '', array('class' => 'form-control')) }}
+					{{ Form::label('subject_id', __('sp.subject_id')) }}
+					{{ Form::text('subject_id', '', array('class' => 'form-control')) }}
 				</div>
 
 				<div class="form-group">
-					{{ Form::label('subject_gender', __('sp.sex')) }}
-					{{ Form::select('subject_gender', $subject_gender_list, '', array('class' => 'form-control')) }}
+					{{ Form::label('sex', __('sp.sex')) }}
+					{{ Form::select('sex', $subject_gender_list, '', array('class' => 'form-control')) }}
 				</div>
 
 			    <div class="form-group">
-					{{ Form::label('subject_ethnicity', __('sp.ethnicity')) }}
-					{{ Form::select('subject_ethnicity', $subject_ethnicity_list, '', array('class' => 'form-control')) }}
+					{{ Form::label('ethnicity', __('sp.ethnicity')) }}
+					{{ Form::select('ethnicity', $subject_ethnicity_list, '', array('class' => 'form-control')) }}
 				</div>
 
 				 <div class="form-group">
@@ -56,16 +50,16 @@ use App\RestService;
 				</div>
 
 			    <div class="form-group">
-					{{ Form::label('sample_name', __('sp.sample_id')) }}
-					{{ Form::text('sample_name', '', array('class' => 'form-control')) }}
+					{{ Form::label('sample_id', __('sp.sample_id')) }}
+					{{ Form::text('sample_id', '', array('class' => 'form-control')) }}
 				</div>
 
 				<div class="form-group">
-					{{ Form::label('ireceptor_cell_subset_name', __('sp.cell_subset')) }}
+					{{ Form::label('cell_subset', __('sp.cell_subset')) }}
 					@foreach ($cell_type_list as $id => $name)
 					<div class="checkbox">
 						<label>
-						{{ Form::checkbox('ireceptor_cell_subset_name[]', $id) }}
+						{{ Form::checkbox('cell_subset[]', $id) }}
 						{{ $name }}
 						</label>
 					</div>
@@ -73,11 +67,11 @@ use App\RestService;
 				</div>
 
 			    <div class="form-group">
-					{{ Form::label('sample_source_name', __('sp.tissue')) }}
+					{{ Form::label('tissue', __('sp.tissue')) }}
 					@foreach ($sample_source_list as $id => $name)
 					<div class="checkbox">
 						<label>
-						{{ Form::checkbox('sample_source_name[]', $id) }}
+						{{ Form::checkbox('tissue[]', $id) }}
 						{{ $name }}
 						</label>
 					</div>
@@ -85,11 +79,11 @@ use App\RestService;
 				</div>
 
 				 <div class="form-group">
-					{{ Form::label('dna_type', __('sp.library_source')) }}
+					{{ Form::label('library_source', __('sp.library_source')) }}
 					@foreach ($dna_type_list as $id => $name)
 					<div class="checkbox">
 						<label>
-							{{ Form::checkbox('dna_type[]', $id) }}
+							{{ Form::checkbox('library_source[]', $id) }}
 							{{ $name }}
 						</label>
 					</div>
