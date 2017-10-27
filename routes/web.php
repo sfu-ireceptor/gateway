@@ -109,6 +109,7 @@ Route::middleware('auth')->group(function () {
         Route::post('edit-user', 'AdminController@postEditUser');
         Route::get('delete-user/{username}', 'AdminController@getDeleteUser');
         Route::get('samples/update-cache', 'AdminController@getUpdateSampleCache');
+        Route::get('samples/fields', 'AdminController@getSampleFields');
     });
 });
 

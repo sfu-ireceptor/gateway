@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Agave;
 use App\Sample;
+use App\SampleField;
 use App\LocalJob;
 use App\RestService;
 use Illuminate\Http\Request;
@@ -206,5 +207,13 @@ class AdminController extends Controller
         $message = "$n samples have been retrieved and cached.";
 
         return redirect('admin/databases')->with('notification', $message);
+    }
+
+    public function getSampleFields()
+    {
+        $data = [];
+        $data['sample_field_list'] = SampleField::all()->toArray();
+
+        return view('sampleFields', $data);
     }
 }

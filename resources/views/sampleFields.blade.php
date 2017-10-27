@@ -3,7 +3,7 @@
 @section('title', 'Sample fields')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
 	<h1>Sample fields</h1>
 	<div class="row">
 		<div class="col-md-12">
@@ -16,6 +16,7 @@
 							<th>ir_short</th>
 							<th>airr</th>
 							<th>ir_full</th>
+							<th>ir_v1</th>
 							<th>airr_full</th>
 						</tr>
 					</thead>
@@ -27,6 +28,7 @@
 							<td class="text-nowrap">{{ $s['ir_short'] }}</td>
 							<td class="text-nowrap">{{ $s['airr'] }}</td>
 							<td class="text-nowrap">{{ $s['ir_full'] }}</td>
+							<td class="text-nowrap">{{ $s['ir_v1'] }}</td>
 							<td class="text-nowrap">{{ $s['airr_full'] }}</td>
 						@endforeach
 					</tbody>
