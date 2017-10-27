@@ -17,5 +17,8 @@ composer install --no-interaction --no-dev --prefer-dist
 php artisan migrate --force
 	# --force			Required to run when in production.
 
+# seed tables
+php artisan db:seed --force
+
 # stop maintenance mode
 php artisan up
