@@ -24,17 +24,17 @@
 				</div>
 
 				<div class="form-group">
-					{{ Form::label('subject_gender', 'Gender') }}
+					{{ Form::label('subject_gender', __('sp.sex')) }}
 					{{ Form::select('subject_gender', $subject_gender_list, '', array('class' => 'form-control')) }}
 				</div>
 
 			    <div class="form-group">
-					{{ Form::label('subject_ethnicity', 'Ethnicity') }}
+					{{ Form::label('subject_ethnicity', __('sp.ethnicity')) }}
 					{{ Form::select('subject_ethnicity', $subject_ethnicity_list, '', array('class' => 'form-control')) }}
 				</div>
 
 				 <div class="form-group">
-					{{ Form::label('subject_age_min', 'Age') }}
+					{{ Form::label('subject_age_min', __('sp.age')) }}
 					<div class="row">
 						<div class="col-md-6">
 							{{ Form::text('subject_age_min', '', array('class' => 'form-control', 'placeholder' => 'From')) }}
@@ -46,12 +46,12 @@
 				</div>
 
 			    <div class="form-group">
-					{{ Form::label('sample_id', 'Sample Record') }}
+					{{ Form::label('sample_id',  __('sp.sample_id')) }}
 					{{ Form::text('sample_id', '', array('class' => 'form-control')) }}
 				</div>
 
 				<div class="form-group">
-					{{ Form::label('cell_subset', 'Cell Type') }}
+					{{ Form::label('cell_subset',  __('sp.cell_subset')) }}
 					@foreach ($cell_type_list as $id => $name)
 					<div class="checkbox">
 						<label>
@@ -63,7 +63,7 @@
 				</div>
 
  			    <div class="form-group">
-					{{ Form::label('tissue', 'Sample Source') }}
+					{{ Form::label('tissue',  __('sp.tissue')) }}
 					@foreach ($sample_source_list as $id => $name)
 					<div class="checkbox">
 						<label>
@@ -75,7 +75,7 @@
 				</div>
 
 				 <div class="form-group">
-					{{ Form::label('dna_type', 'DNA Type') }}
+					{{ Form::label('dna_type',  __('sp.library_source')) }}
 					@foreach ($dna_type_list as $id => $name)
 					<div class="checkbox">
 						<label>
@@ -118,17 +118,16 @@
 					<thead>
 						<tr>
 							<th></th>
-							<th>Data Site</th>
-							<th>Lab</th>
-							<th>Project</th>
-							<th>Sample Record</th>
+							<th>Repository</th>
+							<th>{{ __('sp.lab_name') }}</th>
+							<th>{{ __('sp.study_title') }}</th>
+							<th>{{ __('sp.sample_id') }}</th>
 							<th>Sequences</th>
-							<th>Subject Record</th>
-							<th>Sample Source</th>
-							<th>Cell Type</th>
-							<th>User-defined Cell Type</th>
-							<th>Markers</th>
-							<th>DNA Type</th>
+							<th>{{ __('sp.subject_id') }}</th>
+							<th>{{ __('sp.tissue') }}</th>
+							<th>{{ __('sp.cell_subset') }}</th>
+							<th>{{ __('sp.cell_phenotype') }}</th>
+							<th>{{ __('sp.library_source') }}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -139,18 +138,18 @@
 							<td class="text-nowrap">
 								@isset($sample->lab_name)
 									<span title="{{ $sample->lab_name }}">
-									{{ str_limit($sample->lab_name, $limit = 40, $end = '...') }}
+									{{ str_limit($sample->lab_name, $limit = 20, $end = '...') }}
 									</span>
 								@endisset
 							</td>
 							<td>
 								@if(isset($sample->sra_accession))
 									<a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study={{ $sample->sra_accession }}" title="{{ $sample->study_title }}">
-										{{ str_limit($sample->study_title, $limit = 50, $end = '...') }}
+										{{ str_limit($sample->study_title, $limit = 20, $end = '...') }}
 									</span>
 								@elseif(isset($sample->study_title))
 									<span title="{{ $sample->study_title }}">
-									{{ str_limit($sample->study_title, $limit = 50, $end = '...') }}
+									{{ str_limit($sample->study_title, $limit = 20, $end = '...') }}
 									</span>							
 								@endif
 							</td>
@@ -181,11 +180,6 @@
 							<td>
 								@isset($sample->cell_subset)
 									{{ $sample->cell_subset }}
-								@endisset
-							</td>
-							<td>
-								@isset($sample->ir_lab_cell_subset_name)
-									{{ $sample->ir_lab_cell_subset_name }}
 								@endisset
 							</td>
 							<td>
