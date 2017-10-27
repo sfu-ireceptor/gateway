@@ -7,57 +7,31 @@ $(document).ready(function()
 }
 );
 
-// Function to process the Landing Page charts. This function
-// iterates over the landing page's chart component and 
+// Function to process the Landing Page charts. Data (graphData,
+// graphFields, and graphNames) is provided by the appropriate 
+// blades that contain the relevant DIV (in this case landing_charts)
 function doLandingCharts()
 {
-    // Fields and names that the landing page displays.
-    var graphFields = [
-        "study_description", "species_name", "disease_state_sample",
-        "sample_type", "cell_subset", "library_source"
-    ];
-    var graphNames = [
-        "Study Type", "Species", "Sample Disease State",
-        "Sample Type", "Cell Subset", "Target Substrate"
-    ];
-    var sequenceAPIData = false;
-    var internalLabels = false;
-
-    showData(data, graphFields, graphNames, "landing_chart", internalLabels);
+    showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels);
 }
-
+// Function to process the Landing Page charts. Data (graphData,
+// graphFields, and graphNames) is provided by the appropriate 
+// blades that contain the relevant DIV (in this case sample_charts)
 function doSampleCharts()
 {
-    // Fields and names that the samples page displays.
-    var graphFields = [
-        "study_description", "species_name", "disease_state_sample",
-        "sample_type", "cell_subset", "library_source"
-    ];
-    var graphNames = [
-        "Study Type", "Species", "Sample Disease State",
-        "Sample Type", "Cell Subset", "Target Substrate"
-    ];
-    var internalLabels = true;
-
-    showData(data, graphFields, graphNames, "sample_chart", internalLabels);
+    showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels);
 }
 
+// Function to process the Landing Page charts. Data (graphData,
+// graphFields, and graphNames) is provided by the appropriate 
+// blades that contain the relevant DIV (in this case sequence_charts)
 function doSequenceCharts()
 {
-    // Fields and names that the sequences page displays.
-    var graphFields = [
-        "study_description", "species_name", "disease_state_sample",
-        "sample_type", "cell_subset", "library_source"
-    ];
-    var graphNames = [
-        "Study Type", "Species", "Sample Disease State",
-        "Sample Type", "Cell Subset", "Target Substrate"
-    ];
-    var internalLabels = true;
-
-    // Get the JSON and process it.
+    // Get the JSON and process it. We currently have no mechanism to get the 
+    // filtered data to the visualization - working on it...
+    //showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels);
     $.getJSON('samples/json', function(data) {
-        showData(data, graphFields, graphNames, "sequence_chart", internalLabels);
+        showData(data, graphFields, graphNames, graphDIV, graphInternalLabels);
     });
 }
 
@@ -145,10 +119,20 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels)
     var values = [];
     for(var d in data) 
     {
+        if (debugLevel > 0)
+        {
+            console.log("++" + "name = " + data[d].name + "count = " + data[d].count + "++" + "\n");
+        }
         keys.push(data[d].name);
         values.push(data[d].count);
     }
     bubbleSort(values, keys);
+
+    // Catch the special case where we want N levels and we have N+1.
+    // In this case, the "Other" category would hold only 1 value, and
+    // it is pointless. Thus in this case we accept N+1 levels in our
+    // graph and avoid having an Other slice with 1 data value.
+    if (keys.length == level+1) level++;
 
     // Convert iReceptor aggregate data into a form for HighChart.
     var seriesData = [];
@@ -190,6 +174,13 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels)
     var chartData;
 
         chartData = {
+            lang: {
+                noData: "No results found</br>Try removing a filter"
+            },
+            noData:
+            {
+                useHTML: true
+            },
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
@@ -201,7 +192,7 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels)
                 text: fieldTitle, 
                 floating: false,
                 margin: 0,
-                style: {"font-size": "14px","font-weight":"bold"}
+                style: {"font-size": "12px","font-weight":"bold"}
             },
             tooltip: {
                 pointFormat: '<b>{point.y:.0f} ({point.percentage:.1f}%)</b>'
@@ -231,7 +222,11 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels)
                         // long names as it makes the graph ugly).
                         formatter: function()
                         {
-                            return(this.point.name.substring(0,20));
+                            //var newname = this.point.name.substring(0,20);
+                            //var newname = this.point.name.replace(/ /,"</br>");
+                            var newname = this.point.name;
+
+                            return(newname);
                         },
                         // Distance says how far values are from pie chart,
                         // negative numbers mean values are inside the pie.
@@ -240,7 +235,9 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels)
                         // 5 is a good value for labels external to the pie
                         // as it minimizes the length of the line joining the
                         // label to the pie.
-                        distance: labelDistance
+                        distance: labelDistance,
+                        // We want to use HTML in case we want a line break in a label.
+                        //useHTML: true
                         
                     }
                     //showInLegend: false
@@ -253,7 +250,7 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels)
                 enabled: false,
                 maxHeight: 75,
                 floating: false,
-                itemStyle: {"font-weight":"normal", "font-size": "11px"}
+                itemStyle: {"font-weight":"normal", "font-size": "10px"}
             },
             series: [{
                 name: fieldTitle,
@@ -385,7 +382,7 @@ function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregat
     
     // Debug: tell us the series name we are looking for.
     if (debugLevel > 0)
-        console.log(seriesName + "<br>");
+        console.log("Series name = " + seriesName + "\n");
     
     if (sequenceSummaryAPI)
     {
@@ -395,12 +392,12 @@ function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregat
     else
     {
         aggregationList = jsonData;
-        countField = "sequence_count";
+        countField = "ir_sequence_count";
     }
     if (debugLevel > 0)
-        console.log("Hello" + "<br>");
+        console.log("Hello\n");
     if (debugLevel > 0)
-        console.log("aggregation list has " + aggregationList.stringify + "<br>");
+        console.log("aggregation list has " + JSON.stringify(aggregationList) + "\n");
     
     // Process each element in the data from iReceptor. 
     var count = 0
@@ -419,7 +416,8 @@ function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregat
         {
             elementData = aggregationList[count];
         }
-        
+        if (debugLevel > 0)
+            console.log("series = " + seriesName + ", element = " + JSON.stringify(elementData) + "\n");        
         // Get the value of the field we are aggregating on for this element.
         var fieldValue;
         var fieldCount;
