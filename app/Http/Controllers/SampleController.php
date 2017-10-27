@@ -21,32 +21,32 @@ class SampleController extends Controller
         // gender
         $subject_gender_list = [];
         $subject_gender_list[''] = '';
-        foreach ($metadata['subject_gender'] as $v) {
+        foreach ($metadata['sex'] as $v) {
             $subject_gender_list[$v] = $v;
         }
 
         // ethnicity
         $subject_ethnicity_list = [];
         $subject_ethnicity_list[''] = '';
-        foreach ($metadata['subject_ethnicity'] as $v) {
+        foreach ($metadata['ethnicity'] as $v) {
             $subject_ethnicity_list[$v] = $v;
         }
 
         // cell type
         $cell_type_list = [];
-        foreach ($metadata['ireceptor_cell_subset_name'] as $v) {
+        foreach ($metadata['cell_subset'] as $v) {
             $cell_type_list[$v] = $v;
         }
 
         // sample source
         $sample_source_list = [];
-        foreach ($metadata['sample_source_name'] as $v) {
+        foreach ($metadata['tissue'] as $v) {
             $sample_source_list[$v] = $v;
         }
 
         // dna type
         $dna_type_list = [];
-        foreach ($metadata['dna_type'] as $v) {
+        foreach ($metadata['library_source'] as $v) {
             $dna_type_list[$v] = $v;
         }
 
