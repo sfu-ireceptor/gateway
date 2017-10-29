@@ -191,9 +191,11 @@
 								</span>
 							</td>
 							<td class="text-nowrap">
+								@isset($sample->lab_name)
 									<span title="{{ $sample->lab_name }}">
 									{{ str_limit($sample->lab_name, $limit = 20, $end = '...') }}
 									</span>
+								@endif
 							</td>
 							<td>
 								@if (isset($sample->sra_accession))
