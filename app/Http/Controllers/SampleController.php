@@ -70,9 +70,8 @@ class SampleController extends Controller
         // returned by the query.
         $total_filtered_sequences = 0;
         foreach ($sample_data['items'] as $sample) {
-            if (isset($sample->ir_sequence_count))
-            {
-               $total_filtered_sequences = $total_filtered_sequences + $sample->ir_sequence_count;
+            if (isset($sample->ir_sequence_count)) {
+                $total_filtered_sequences = $total_filtered_sequences + $sample->ir_sequence_count;
             }
         }
 
