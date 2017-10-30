@@ -8,6 +8,7 @@ class SampleFieldSeeder extends CsvSeeder
     {
         $this->table = 'sample_field';
         $this->filename = base_path() . '/database/seeds/csv/sample_fields.csv';
+        $this->offset_rows = 8;
     }
 
     public function run()
@@ -15,7 +16,7 @@ class SampleFieldSeeder extends CsvSeeder
         DB::table($this->table)->truncate();
 
         $this->mapping = [
-             1 => 'airr_full',
+            1 => 'airr_full',
             2 => 'airr',
             6 => 'ir_v1',
             14 => 'ir_v2',
