@@ -66,12 +66,13 @@ class SampleController extends Controller
 
         $sample_data = RestService::samples($request->all(), $username);
 
-        // // The rs_list is the response data from the service based on
-        // // the query parameters. It is this data that provides the details
-        // // about the results of the query.
+        // Go through the filtered samples and count the total number of sequences
+        // returned by the query.
         $total_filtered_sequences = 0;
         foreach ($sample_data['items'] as $sample) {
-            $total_filtered_sequences = $total_filtered_sequences + $sample->ir_sequence_count;
+            if (isset($sample->ir_sequence_count)) {
+                $total_filtered_sequences = $total_filtered_sequences + $sample->ir_sequence_count;
+            }
         }
 
         $data['sample_list'] = $sample_data['items'];

@@ -156,9 +156,9 @@
 					$max_count = 1000;
 				?>
 
-				<?php if ($total_filtered_samples > $max_count): ?>
+				@if ($total_filtered_samples > $max_count)
 					{{ Form::submit('View all samples ('.(string)($total_filtered_samples-$max_count).' more)', array('class' => 'btn btn-primary show-more-samples-button', 'disabled' => 'disabled')) }}
-				<?php endif ?>
+				@endif
 
 				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
 
@@ -167,15 +167,15 @@
 						<tr>
 							<th>{{ Form::checkbox('select_all') }}</th>
 							<th>Repository</th>
-							<th>{{ __('sp.lab_name') }}</th>
-							<th>{{ __('sp.study_title') }}</th>
-							<th>{{ __('sp.subject_id') }}</th>
+							<th>@lang('sp.lab_name')</th>
+							<th>@lang('sp.study_title')</th>
+							<th>@lang('sp.subject_id')</th>
 							<th>Sequences</th>
-							<th>{{ __('sp.sample_id') }}</th>
-							<th>{{ __('sp.tissue') }}</th>
-							<th>{{ __('sp.cell_subset') }}</th>
-							<th>{{ __('sp.cell_phenotype') }}</th>
-							<th>{{ __('sp.library_source') }}</th>
+							<th>@lang('sp.sample_id')</th>
+							<th>@lang('sp.tissue')</th>
+							<th>@lang('sp.cell_subset')</th>
+							<th>@lang('sp.cell_phenotype')</th>
+							<th>@lang('sp.library_source')</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -191,20 +191,22 @@
 								</span>
 							</td>
 							<td class="text-nowrap">
+								@isset($sample->lab_name)
 									<span title="{{ $sample->lab_name }}">
 									{{ str_limit($sample->lab_name, $limit = 20, $end = '...') }}
 									</span>
+								@endif
 							</td>
 							<td>
-								<?php if (isset($sample->sra_accession)): ?>
+								@if (isset($sample->sra_accession))
 									<a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study={{ $sample->sra_accession }}" title="{{ $sample->study_title }}">
 										{{ str_limit($sample->study_title, $limit = 20, $end = '...') }}
 									</span>
-								<?php elseif (isset($sample->study_title)): ?>
+								@elseif (isset($sample->study_title))
 									<span title="{{ $sample->study_title }}">
 									{{ str_limit($sample->study_title, $limit = 20, $end = '...') }}
 									</span>							
-								<?php endif ?>
+								@endif
 							</td>
 							<td>
 								@isset($sample->subject_id)
@@ -268,9 +270,9 @@
 
 				<input type="hidden" name="project_id_list" />
 				
-				<?php if ($total_filtered_samples > $max_count): ?>
+				@if ($total_filtered_samples > $max_count):
 					{{ Form::submit('View all samples ('.(string)($total_filtered_samples-$max_count).' more)', array('class' => 'btn btn-primary show-more-samples-button', 'disabled' => 'disabled')) }}
-				<?php endif	?>
+				@endif
 				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
 
 			{{ Form::close() }}
