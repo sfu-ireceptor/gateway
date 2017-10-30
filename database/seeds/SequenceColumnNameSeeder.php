@@ -5,11 +5,6 @@ use Illuminate\Database\Seeder;
 
 class SequenceColumnNameSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
         DB::table('sequence_column_name')->truncate();

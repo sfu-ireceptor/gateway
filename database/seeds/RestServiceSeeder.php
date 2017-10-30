@@ -1,19 +1,12 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\RestService;
 
 class RestServiceSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        $table = 'rest_service';
-        DB::table($table)->truncate();
-
         $l = [
             [
               'url' => 'https://ipa.ireceptor.org/',
@@ -21,10 +14,16 @@ class RestServiceSeeder extends Seeder
               'username' => '',
               'password' => '',
             ],
+            [
+              'url' => 'https://vdj-dev.tacc.utexas.edu/ireceptor/',
+              'name' => 'VDJServer',
+              'username' => '',
+              'password' => '',
+            ],
         ];
 
-        foreach ($l as $item) {
-            DB::table($table)->insert($item);
+        foreach ($l as $t) {
+          RestService::firstOrCreate(['url' => $t['url']], ['name' => $t['name']]);
         }
     }
 }
