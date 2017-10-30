@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\RestService;
+use Illuminate\Database\Seeder;
 
 class RestServiceSeeder extends Seeder
 {
@@ -32,7 +32,7 @@ class RestServiceSeeder extends Seeder
             ];
 
         foreach ($l as $t) {
-          RestService::firstOrCreate(['url' => $t['url']], $t);
+            RestService::firstOrCreate(['url' => $t['url']], $t);
         }
     }
 }
