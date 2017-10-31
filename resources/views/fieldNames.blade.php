@@ -4,10 +4,10 @@
 
 @section('content')
 <div class="container-fluid">
-	<h1>Sample fields</h1>
+	<h1>Field names</h1>
 	<div class="row">
 		<div class="col-md-12">
-			@if (count($sample_field_list) > 0)
+			@if (count($field_name_list) > 0)
 				<table class="table table-striped system_list">
 					<thead>
 						<tr>
@@ -21,7 +21,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						@foreach ($sample_field_list as $s)
+						@foreach ($field_name_list as $s)
 						<tr>
 							<td class="text-nowrap">{{ $s['ir_id'] }}</td>
 							<td class="text-nowrap">{{ $s['ir_v2'] }}</td>

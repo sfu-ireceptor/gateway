@@ -57,7 +57,7 @@
 							  <li><a href="/admin/users">Users</a></li>
 							  <li><a href="/admin/databases">Databases</a></li>
 							  <li><a href="/admin/queues">Queues</a></li>
-							  <li><a href="/admin/samples/fields">Sample fields</a></li>
+							  <li><a href="/admin/field-names">Field names</a></li>
 							  <li><a href="/canarie">CANARIE</a></li>
 							</ul>
 						</li>

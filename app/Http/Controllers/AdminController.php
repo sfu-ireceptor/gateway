@@ -209,11 +209,11 @@ class AdminController extends Controller
         return redirect('admin/databases')->with('notification', $message);
     }
 
-    public function getSampleFields()
+    public function getFieldNames()
     {
         $data = [];
-        $data['sample_field_list'] = FieldName::all()->toArray();
+        $data['field_name_list'] = FieldName::all()->toArray();
 
-        return view('sampleFields', $data);
+        return view('fieldNames', $data);
     }
 }
