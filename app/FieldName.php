@@ -35,7 +35,7 @@ class FieldName extends Model
 
         $object_list = [];
         foreach ($array_list as $a) {
-            $object_list[] = (object)$a;
+            $object_list[] = (object) $a;
         }
 
         return $object_list;
