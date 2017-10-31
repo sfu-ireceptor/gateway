@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use App\SequenceColumnName;
 
 class TestController extends Controller
 {
@@ -29,6 +30,14 @@ class TestController extends Controller
 
     public function getIndex()
     {
+        $l = SequenceColumnName::all();
+        foreach ($l as $s) {
+            $name = $s['name'];
+            $title = $s['title'];
+            echo $name . "\t" . $title . "\n";
+        }
+
+
         // echo __('sp.sex');
 
         // // echo 'uuuu';
