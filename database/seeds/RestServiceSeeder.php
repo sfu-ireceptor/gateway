@@ -24,7 +24,7 @@ class RestServiceSeeder extends Seeder
                 ],
                 [
                     'url' => 'https://206.12.99.171/',
-                    'name' => 'iReceptor Public Archive 2 (MongoDB)',
+                    'name' => 'MongoDB iReceptor Public Archive',
                     'username' => '',
                     'password' => '',
                     'version' => 2,
