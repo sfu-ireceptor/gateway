@@ -38,12 +38,23 @@ class RestService extends Model
         $filters['username'] = $username;
         $filters['ir_username'] = $username;
 
-        // get samples from each REST service
+        // get samples from each service
         foreach (self::findEnabled() as $rs) {
             try {
-                $sample_list = self::postRequest($rs, 'v2/samples', $filters);
-                // $sample_list = self::postRequest($rs, 'samples', $filters);
-                // $sample_list = FieldName::convertObjectList($sample_list, 'ir_v1', 'ir_v2');
+                $uri = 'samples';
+
+                // add version prefix if not v1
+                if($rs->version > 1) {
+                    $uri = 'v' . $rs->version . '/' . $uri;
+                }
+
+                // get sample data from service
+                $sample_list = self::postRequest($rs, $uri, $filters);
+                
+                // convert sample data to v2 (if necessary)
+                if ($rs->version != 2) {
+                    $sample_list = FieldName::convertObjectList($sample_list, 'ir_v' . $rs->version, 'ir_v2');
+                }
             } catch (\Exception $e) {
                 $message = $e->getMessage();
                 Log::error($message);
