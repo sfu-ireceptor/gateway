@@ -8,7 +8,7 @@ class FieldNameSeeder extends CsvSeeder
     {
         $this->table = 'field_name';
         $this->filename = base_path() . '/database/seeds/csv/field_names.csv';
-        $this->offset_rows = 8;
+        $this->offset_rows = 7;
     }
 
     public function run()
