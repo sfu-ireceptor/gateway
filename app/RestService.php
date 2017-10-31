@@ -44,13 +44,13 @@ class RestService extends Model
                 $uri = 'samples';
 
                 // add version prefix if not v1
-                if($rs->version > 1) {
+                if ($rs->version > 1) {
                     $uri = 'v' . $rs->version . '/' . $uri;
                 }
 
                 // get sample data from service
                 $sample_list = self::postRequest($rs, $uri, $filters);
-                
+
                 // convert sample data to v2 (if necessary)
                 if ($rs->version != 2) {
                     $sample_list = FieldName::convertObjectList($sample_list, 'ir_v' . $rs->version, 'ir_v2');
