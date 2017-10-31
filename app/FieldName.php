@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SampleField extends Model
+class FieldName extends Model
 {
-    protected $table = 'sample_field';
+    protected $table = 'field_name';
     protected $guarded = [];
 
     // convert field names for 1 sample

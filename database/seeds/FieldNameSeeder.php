@@ -2,12 +2,12 @@
 
 use Flynsarmy\CsvSeeder\CsvSeeder;
 
-class SampleFieldSeeder extends CsvSeeder
+class FieldNameSeeder extends CsvSeeder
 {
     public function __construct()
     {
-        $this->table = 'sample_field';
-        $this->filename = base_path() . '/database/seeds/csv/sample_fields.csv';
+        $this->table = 'field_name';
+        $this->filename = base_path() . '/database/seeds/csv/field_names.csv';
         $this->offset_rows = 8;
     }
 

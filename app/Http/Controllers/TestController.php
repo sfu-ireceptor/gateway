@@ -7,7 +7,7 @@ use App\Agave;
 use App\Sample;
 use Carbon\Carbon;
 use App\RestService;
-use App\SampleField;
+use App\FieldName;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -29,10 +29,10 @@ class TestController extends Controller
 
     public function getIndex()
     {
-        echo __('sp.sex');
+        // echo __('sp.sex');
 
-        // echo 'uuuu';
-        die();
+        // // echo 'uuuu';
+        // die();
         $data = [];
         $data[] = ['project_id' => 1, 'subject_id' => 2];
         $data[] = ['project_id' => 2, 'subject_id' => 3, 'test' => 4];
@@ -41,7 +41,7 @@ class TestController extends Controller
 
         echo "\n-------------------------------------\n\n";
 
-        $t = SampleField::convertSamples($data, 'ir_v1', 'ir_v2');
+        $t = FieldName::convertSamples($data, 'ir_v1', 'ir_v2');
         var_dump($t);
 
         die();

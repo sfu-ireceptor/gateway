@@ -7,7 +7,7 @@ use App\Agave;
 use App\Sample;
 use App\LocalJob;
 use App\RestService;
-use App\SampleField;
+use App\FieldName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -212,7 +212,7 @@ class AdminController extends Controller
     public function getSampleFields()
     {
         $data = [];
-        $data['sample_field_list'] = SampleField::all()->toArray();
+        $data['sample_field_list'] = FieldName::all()->toArray();
 
         return view('sampleFields', $data);
     }
