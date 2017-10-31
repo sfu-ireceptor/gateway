@@ -71,7 +71,7 @@ if (! function_exists('convert_array_keys')) {
     function convert_array_keys($data, $mapping, $from, $to)
     {
         $t = [];
-        foreach ($data as $key => $value) {
+        foreach ((array)$data as $key => $value) {
             $converted = false;
 
             foreach ($mapping as $m) {

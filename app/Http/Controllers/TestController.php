@@ -41,7 +41,7 @@ class TestController extends Controller
 
         echo "\n-------------------------------------\n\n";
 
-        $t = FieldName::convertSamples($data, 'ir_v1', 'ir_v2');
+        $t = FieldName::convertList($data, 'ir_v1', 'ir_v2');
         var_dump($t);
 
         die();

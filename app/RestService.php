@@ -42,6 +42,8 @@ class RestService extends Model
         foreach (self::findEnabled() as $rs) {
             try {
                 $sample_list = self::postRequest($rs, 'v2/samples', $filters);
+                // $sample_list = self::postRequest($rs, 'samples', $filters);
+                // $sample_list = FieldName::convertObjectList($sample_list, 'ir_v1', 'ir_v2');
             } catch (\Exception $e) {
                 $message = $e->getMessage();
                 Log::error($message);
