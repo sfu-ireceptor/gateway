@@ -16,12 +16,12 @@ class FieldNameSeeder extends CsvSeeder
         DB::table($this->table)->truncate();
 
         $this->mapping = [
-            1 => 'airr_full',
-            2 => 'airr',
-            6 => 'ir_v1',
-            14 => 'ir_v2',
-            28 => 'ir_full',
-            29 => 'ir_short',
+            3 => 'airr_full',
+            4 => 'airr',
+            10 => 'ir_v1',
+            18 => 'ir_v2',
+            34 => 'ir_full',
+            35 => 'ir_short',
         ];
 
         parent::run();
