@@ -8,6 +8,7 @@ use App\Sample;
 use App\FieldName;
 use Carbon\Carbon;
 use App\RestService;
+use App\SequenceColumnName;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use App\SequenceColumnName;
 
 class TestController extends Controller
 {
@@ -36,7 +36,6 @@ class TestController extends Controller
             $title = $s['title'];
             echo $name . "\t" . $title . "\n";
         }
-
 
         // echo __('sp.sex');
 
