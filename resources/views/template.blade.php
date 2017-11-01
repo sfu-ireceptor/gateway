@@ -42,11 +42,9 @@
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		      <ul class="nav navbar-nav">
 		    	@if(Auth::check())
-			      	<li role="presentation" class="<?= Request::is('bookmarks') ? 'active' : '' ?>"><a href="/bookmarks">Bookmarks</a></li>
-			      	<li role="presentation" class="<?= Request::is('jobs') || Request::is('job/*') ? 'active' : '' ?>"><a href="/jobs">Jobs</a></li>
+					<li role="presentation" class="<?= Request::is('samples*') ||  Request::is('sequences*') ? 'active' : '' ?>"><a href="/samples">Search</a></li>
 				@endif
 		      </ul>
-
 
 		      <ul class="nav navbar-nav navbar-right">
 		    	@if(Auth::check())
@@ -65,9 +63,11 @@
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->username }}<span class="caret"></span></a>
 						<ul class="dropdown-menu" role="menu">
-						  <li><a href="/user/account">My account</a></li>
-						  <li><a href="/systems">Systems</a></li>
-						  <li><a href="/logout">Log Out</a></li>
+							<li><a href="/user/account">My account</a></li>
+							<li><a href="/bookmarks">Bookmarks</a></li>
+							<li><a href="/jobs">Jobs</a></li>
+							<li><a href="/systems">Systems</a></li>
+							<li><a href="/logout">Log Out</a></li>
 						</ul>
 					</li>
 				@endif
