@@ -22,7 +22,7 @@ class SequenceController extends Controller
             return redirect($csvFilePath);
         }
 
-        $request->flashExcept('project_sample_id_list');   // keep submitted form values
+        $request->flashExcept('ir_project_sample_id_list');   // keep submitted form values
 
         $data = [];
 
@@ -101,7 +101,7 @@ class SequenceController extends Controller
         $hidden_fields = [];
 
         foreach ($filters as $p => $v) {
-            if (starts_with($p, 'project_sample_id_list_')) {
+            if (starts_with($p, 'ir_project_sample_id_list_')) {
                 foreach ($v as $sample_id) {
                     $hidden_fields[] = ['name' => $p . '[]', 'value' => $sample_id];
                 }

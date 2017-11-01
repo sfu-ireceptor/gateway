@@ -184,7 +184,7 @@
 						?>
 						@foreach ($sample_list as $sample)
 						<tr>
-							<td>{{ Form::checkbox('project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id) }}</td>
+							<td>{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id) }}</td>
 							<td class="text-nowrap">
 								<span title="{{ $sample->rest_service_name }}">
 									{{ str_limit($sample->rest_service_name, $limit = 16, $end = '...') }}
@@ -219,7 +219,7 @@
 							<td>
 								@isset($sample->ir_sequence_count)
 									@if ($sample->ir_sequence_count > 0)
-										<a href="sequences?project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}">
+										<a href="sequences?ir_project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}">
 											<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
 										</a>
 									@endif

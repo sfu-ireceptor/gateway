@@ -102,7 +102,7 @@ class RestService extends Model
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             if (array_key_exists($sample_id_list_key, $filters) && ! empty($filters[$sample_id_list_key])) {
                 // remove REST service id
-                // project_sample_id_list_2 -> project_sample_id_list
+                // ir_project_sample_id_list_2 -> ir_project_sample_id_list
                 $filters['ir_project_sample_id_list'] = $filters[$sample_id_list_key];
                 unset($filters[$sample_id_list_key]);
             } else {
@@ -154,12 +154,12 @@ class RestService extends Model
                 $filters['csv_header'] = true;
             }
 
-            $sample_id_list_key = 'project_sample_id_list_' . $rs->id;
+            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             if (array_key_exists($sample_id_list_key, $filters) && ! empty($filters[$sample_id_list_key])) {
                 // remove REST service id
-                // project_sample_id_list_2 -> project_sample_id_list
-                unset($filters['project_sample_id_list']);
-                $filters['project_sample_id_list'] = $filters[$sample_id_list_key];
+                // ir_project_sample_id_list_2 -> ir_project_sample_id_list
+                unset($filters['ir_project_sample_id_list']);
+                $filters['ir_project_sample_id_list'] = $filters[$sample_id_list_key];
             } else {
                 // if no sample id for this REST service, don't query it.
                 continue;
