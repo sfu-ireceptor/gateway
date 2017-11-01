@@ -18,6 +18,7 @@ class SequenceController extends Controller
         // if csv
         if (isset($filters['csv'])) {
             $csvFilePath = RestService::sequencesCSV($filters, $username);
+
             return redirect($csvFilePath);
         }
 
