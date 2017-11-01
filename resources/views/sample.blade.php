@@ -162,7 +162,7 @@
 
 				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
 
-				<table class="table table-striped sample_list">
+				<table class="table table-striped sample_list table-condensed">
 					<thead>
 						<tr>
 							<th>{{ Form::checkbox('select_all') }}</th>

@@ -133,7 +133,7 @@
 				</div>
 
 				<!-- sequence data -->
-				<table class="table table-striped">
+				<table class="table table-striped  table-condensed">
 					<thead>
 						<tr>
 							@foreach ($sequence_column_name_list as $sequence_column_name)
