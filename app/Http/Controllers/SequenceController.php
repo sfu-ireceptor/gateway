@@ -18,21 +18,25 @@ class SequenceController extends Controller
         // if csv
         if (isset($filters['csv'])) {
             $csvFilePath = RestService::sequencesCSV($filters, $username);
-
             return redirect($csvFilePath);
         }
 
         $request->flashExcept('ir_project_sample_id_list');   // keep submitted form values
 
-        $data = [];
-
-        // get sequence list
+        // sequence list
         $sequence_data = RestService::sequences_summary($filters, $username);
         // var_dump($sequence_data);die();
 
-        //print_r($sequence_data['items'][0]);die();
+        // summary for each REST service
+        $rs_list = $sequence_data['rs_list'];
+        foreach ($rs_list as $rs) {
+            $summary = $rs['summary'];
+            // var_dump($summary);die();
+        }
+
+        $data = [];
         $data['sequence_list'] = $sequence_data['items'];
-        $data['rs_list'] = $sequence_data['rs_list'];
+        $data['rs_list'] = $rs_list;
         // $data['total_sequences'] = $sequence_data['total'];
         // $data['filters'] = $sequence_data['filters'];
         // $data['totalRepositories'] = $sequence_data['totalRepositories'];
