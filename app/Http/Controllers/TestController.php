@@ -30,7 +30,7 @@ class TestController extends Controller
 
     public function getIndex()
     {
-        $l = SequenceColumnName::all(); 
+        $l = SequenceColumnName::all();
         foreach ($l as $s) {
             $name = $s['name'];
             $title = $s['title'];
