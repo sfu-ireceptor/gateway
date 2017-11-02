@@ -16,83 +16,114 @@
 
 	<div class="row">
 		<div class="col-md-2">
-		<div class="data_container_box">	
+
 			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'get', 'class' => 'sample_search')) }}
 				<input type="hidden" name="project_id_list" />
+
+				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+					<div class="panel panel-default">
+						<div class="panel-heading" role="tab" id="headingOne">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+									Filter by subject
+								</a>
+							</h4>
+						</div>
+						<div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+							<div class="panel-body">
+							    <div class="form-group">
+									{{ Form::label('subject_id', __('sp.subject_id')) }}
+									{{ Form::text('subject_id', '', array('class' => 'form-control')) }}
+								</div>
+
+								<div class="form-group">
+									{{ Form::label('sex', __('sp.sex')) }}
+									{{ Form::select('sex', $subject_gender_list, '', array('class' => 'form-control')) }}
+								</div>
+
+							    <div class="form-group">
+									{{ Form::label('ethnicity', __('sp.ethnicity')) }}
+									{{ Form::select('ethnicity', $subject_ethnicity_list, '', array('class' => 'form-control')) }}
+								</div>
+
+								 <div class="form-group">
+									{{ Form::label('subject_age_min', __('sp.age')) }}
+									<div class="row">
+										<div class="col-md-6">
+											{{ Form::text('subject_age_min', '', array('class' => 'form-control', 'placeholder' => 'From')) }}
+										</div>
+										<div class="col-md-6">
+											{{ Form::text('subject_age_max', '', array('class' => 'form-control', 'placeholder' => 'To')) }}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="panel panel-default">
+						<div class="panel-heading" role="tab" id="headingTwo">
+							<h4 class="panel-title">
+								<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+									Filter by sample
+								</a>
+							</h4>
+						</div>
+						<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+							<div class="panel-body">
+								<div class="form-group">
+									{{ Form::label('sample_id', __('sp.sample_id')) }}
+									{{ Form::text('sample_id', '', array('class' => 'form-control')) }}
+								</div>
+
+								<div class="form-group">
+									{{ Form::label('cell_subset', __('sp.cell_subset')) }}
+									@foreach ($cell_type_list as $id => $name)
+									<div class="checkbox">
+										<label>
+										{{ Form::checkbox('cell_subset[]', $id) }}
+										{{ $name }}
+										</label>
+									</div>
+									@endforeach
+								</div>
+
+							    <div class="form-group">
+									{{ Form::label('tissue', __('sp.tissue')) }}
+									@foreach ($sample_source_list as $id => $name)
+									<div class="checkbox">
+										<label>
+										{{ Form::checkbox('tissue[]', $id) }}
+										{{ $name }}
+										</label>
+									</div>
+									@endforeach
+								</div>
+
+								 <div class="form-group">
+									{{ Form::label('library_source', __('sp.library_source')) }}
+									@foreach ($dna_type_list as $id => $name)
+									<div class="checkbox">
+										<label>
+											{{ Form::checkbox('library_source[]', $id) }}
+											{{ $name }}
+										</label>
+									</div>
+									@endforeach
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+	
 				<p>
-					{{ Form::submit('Update Filters', array('class' => 'btn btn-primary search_samples')) }}
+					{{ Form::submit('Search', array('class' => 'btn btn-primary search_samples')) }}
 				</p>
-			    <div class="form-group">
-					{{ Form::label('subject_id', __('sp.subject_id')) }}
-					{{ Form::text('subject_id', '', array('class' => 'form-control')) }}
-				</div>
 
-				<div class="form-group">
-					{{ Form::label('sex', __('sp.sex')) }}
-					{{ Form::select('sex', $subject_gender_list, '', array('class' => 'form-control')) }}
-				</div>
 
-			    <div class="form-group">
-					{{ Form::label('ethnicity', __('sp.ethnicity')) }}
-					{{ Form::select('ethnicity', $subject_ethnicity_list, '', array('class' => 'form-control')) }}
-				</div>
-
-				 <div class="form-group">
-					{{ Form::label('subject_age_min', __('sp.age')) }}
-					<div class="row">
-						<div class="col-md-6">
-							{{ Form::text('subject_age_min', '', array('class' => 'form-control', 'placeholder' => 'From')) }}
-						</div>
-						<div class="col-md-6">
-							{{ Form::text('subject_age_max', '', array('class' => 'form-control', 'placeholder' => 'To')) }}
-						</div>
-					</div>
-				</div>
-
-			    <div class="form-group">
-					{{ Form::label('sample_id', __('sp.sample_id')) }}
-					{{ Form::text('sample_id', '', array('class' => 'form-control')) }}
-				</div>
-
-				<div class="form-group">
-					{{ Form::label('cell_subset', __('sp.cell_subset')) }}
-					@foreach ($cell_type_list as $id => $name)
-					<div class="checkbox">
-						<label>
-						{{ Form::checkbox('cell_subset[]', $id) }}
-						{{ $name }}
-						</label>
-					</div>
-					@endforeach
-				</div>
-
-			    <div class="form-group">
-					{{ Form::label('tissue', __('sp.tissue')) }}
-					@foreach ($sample_source_list as $id => $name)
-					<div class="checkbox">
-						<label>
-						{{ Form::checkbox('tissue[]', $id) }}
-						{{ $name }}
-						</label>
-					</div>
-					@endforeach
-				</div>
-
-				 <div class="form-group">
-					{{ Form::label('library_source', __('sp.library_source')) }}
-					@foreach ($dna_type_list as $id => $name)
-					<div class="checkbox">
-						<label>
-							{{ Form::checkbox('library_source[]', $id) }}
-							{{ $name }}
-						</label>
-					</div>
-					@endforeach
-				</div>
-
-				<div id="results"></div>
+			    
 			{{ Form::close() }}				
-		</div>
+
 		</div>
 
 		<div class="col-md-10">

@@ -114,22 +114,6 @@ fieldset {
 	font-style: normal;
 }
 
-.data_container_box {
-	list-style-type: none;
-	padding-top: 5px;
-	padding-bottom: 5px;
-	border-left: 1px solid #ddd;
-	border-right: 1px solid #ddd;	
-	border-top: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;
-	/*margin-top: 28px;*/
-	background-color: #f7f7f9;
-	padding-left: 8px;
-	padding-right: 8px;
-	margin-top: 5px;
-	margin-bottom: 5px;
-}
-
 .data_text_box {
 	list-style-type: none;
 	padding-left: 3px;
