@@ -23,9 +23,7 @@
 
 	<body>
 		<nav class="navbar navbar-default" role="navigation">
-		<div class="container-fluid">
-
-		    <!-- Collect the nav links, forms, and other content for toggling -->
+		  <div class="container-fluid">
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		      <ul class="nav navbar-nav">
 				<li role="presentation" class="<?= Request::is('home*') ? 'active' : '' ?>">

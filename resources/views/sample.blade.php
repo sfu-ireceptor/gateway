@@ -7,7 +7,9 @@
 <div class="container-fluid sample_container">
 
 	<div class="row">
-		<div class="col-md-2">
+		<div class="col-md-2 filters">
+
+			<h3>Filters</h3>
 
 			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'get', 'class' => 'sample_search')) }}
 				<input type="hidden" name="project_id_list" />
@@ -115,6 +117,8 @@
 		</div>
 
 		<div class="col-md-10">
+			<h1>Samples <small>Filter for and select samples to view their sequences</small></h1>
+
 			<div class="data_container_box">
 				<b>Active filters:</b>
 				<?php /*
