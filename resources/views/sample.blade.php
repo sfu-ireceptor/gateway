@@ -210,31 +210,31 @@
 							<td>{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id) }}</td>
 							<td class="text-nowrap">
 								<span title="{{ $sample->rest_service_name }}">
-									{{ str_limit($sample->rest_service_name, $limit = 16, $end = '...') }}
+									{{ str_limit($sample->rest_service_name, $limit = 9, $end = '‥') }}
 								</span>
 							</td>
 							<td class="text-nowrap">
 								@isset($sample->lab_name)
 									<span title="{{ $sample->lab_name }}">
-									{{ str_limit($sample->lab_name, $limit = 20, $end = '...') }}
+									{{ str_limit($sample->lab_name, $limit = 10, $end = '‥') }}
 									</span>
 								@endif
 							</td>
 							<td>
 								@if (isset($sample->sra_accession))
 									<a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study={{ $sample->sra_accession }}" title="{{ $sample->study_title }}">
-										{{ str_limit($sample->study_title, $limit = 20, $end = '...') }}
+										{{ str_limit($sample->study_title, $limit = 30, $end = '‥') }}
 									</span>
 								@elseif (isset($sample->study_title))
 									<span title="{{ $sample->study_title }}">
-									{{ str_limit($sample->study_title, $limit = 20, $end = '...') }}
+									{{ str_limit($sample->study_title, $limit = 30, $end = '‥') }}
 									</span>							
 								@endif
 							</td>
 							<td>
 								@isset($sample->subject_id)
 									<span title="{{ $sample->subject_id }}">
-									{{ str_limit($sample->subject_id, $limit = 12, $end = '...') }}
+									{{ str_limit($sample->subject_id, $limit = 15, $end = '‥') }}
 									</span>
 								@endisset
 							</td>							
@@ -251,34 +251,34 @@
 							<td>
 								@isset($sample->sample_id)
 									<span title="{{ $sample->sample_id }}">
-									{{ str_limit($sample->sample_id, $limit = 12, $end = '...') }}
+									{{ str_limit($sample->sample_id, $limit = 12, $end = '') }}
 									</span>
 								@endisset
 							</td>	
 							<td>
 								@isset($sample->tissue)
 									<span title="{{ $sample->tissue }}">
-									{{ str_limit($sample->tissue, $limit = 12, $end = '...') }}
+									{{ str_limit($sample->tissue, $limit = 12, $end = '‥') }}
 									</span>
 								@endisset
 							</td>
 							<td>
 								@isset($sample->cell_subset)
 									<span title="{{ $sample->cell_subset }}">
-									{{ str_limit($sample->cell_subset, $limit = 12, $end = '...') }}
+									{{ str_limit($sample->cell_subset, $limit = 12, $end = '‥') }}
 									</span>
 								@endisset
 							<td>
 								@isset($sample->cell_phenotype)
 									<span title="{{ $sample->cell_phenotype }}">
-									{{ str_limit($sample->cell_phenotype, $limit = 12, $end = '...') }}
+									{{ str_limit($sample->cell_phenotype, $limit = 12, $end = '‥') }}
 									</span>
 								@endisset
 							</td>
 							<td>
 								@isset($sample->library_source)
 									<span title="{{ $sample->library_source }}">
-									{{ str_limit($sample->library_source, $limit = 12, $end = '...') }}
+									{{ str_limit($sample->library_source, $limit = 12, $end = '‥') }}
 									</span>
 								@endisset
 							</td>
