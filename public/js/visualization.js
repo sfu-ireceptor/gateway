@@ -170,6 +170,10 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels)
     if (internalLabels) labelDistance = -10;
     else labelDistance = 3;
 
+    Highcharts.setOptions({
+        colors: ['#f3ece7', '#e9ccb1', '#d3c4be', '#e4dac2', '#f4eee1', '#c4bdac', '#ebcfc4', '#e8e6d9', '#999999']
+    })
+
     // Generate the chart data structure for HighChart.
     var chartData;
 

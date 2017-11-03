@@ -119,18 +119,12 @@
 		<div class="col-md-10">
 			<h1>Samples <small>Filter for and select samples to view their sequences</small></h1>
 
-			<div class="data_container_box">
-				<b>Active filters:</b>
-				<?php /*
-				@foreach ($filters as $filter)
-				<span class="data_text_box">
-					{{$filter}}
-				</span>
-				@endforeach
-				*/ ?>
-			</div>
-			<div class="data_container_box">
-				<b>Query breadth</b>:
+			<p>
+				<strong>Active filters:</strong>
+			</p>
+
+			<p>
+				<strong>{{$total_filtered_samples}} samples returned from:</strong>
 				<span class="data_text_box">
 					{{$total_repositories}} remote repositories
 				</span>
@@ -140,24 +134,8 @@
 				<span class="data_text_box">
 					{{$total_studies}} studies
 				</span>
-				<span class="data_text_box">
-					{{$total_samples}} samples
-				</span>
-				<span class="data_text_box">
-					{{number_format($total_sequences)}} sequences
-				</span>
-			</div>
-			<div class="data_container_box">
-				<b>Query result:</b>
-				<?php  				 ?>
+			</p>
 
-				<span class="data_text_box">
-					{{$total_filtered_samples}} samples
-				</span>
-				<span class="data_text_box">
-					{{number_format($total_filtered_sequences)}} sequences.
-				</span>
-			</div>
 			<div class="data_container_box">
 				<div id="sample_charts" class="charts">
 					<div class="row">
