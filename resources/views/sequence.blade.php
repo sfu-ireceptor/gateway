@@ -4,14 +4,6 @@
 
 @section('content')
 <div class="container-fluid sequence_container">
-	<div class="row">
-		<div class="col-md-12">
-			<ul class="nav nav-tabs nav-justified samples_sequences_nav">
-				<li role="presentation"><a href="/samples">Samples</a></li>
-				<li role="presentation" class="active"><a href="#">Sequences</a></li>
-			</ul>
-		</div>
-	</div>
 
 	<div class="row">
 		<div class="col-md-2">
