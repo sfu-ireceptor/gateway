@@ -28,7 +28,7 @@
 					</div>
 				</div>
 
-				<!-- filters -->
+				<!-- filters --> 
 			    <div class="filter_list">
 					@foreach ($filters_list as $name => $title)
 					    <div class="form-group">
@@ -144,9 +144,11 @@
 						@foreach ($sequence_list as $s)
 						<tr>
 							@foreach ($sequence_column_name_list as $sequence_column_name)
-								<td class="seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_sequence_columns) ? '' : 'hidden' }}">
-									{{ $s->{$sequence_column_name->name} }}
-								</td>
+									<td class="seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_sequence_columns) ? '' : 'hidden' }}">
+										@isset($s->sequence_column_name)
+											{{ $s->{$sequence_column_name->name} }}
+										@endisset
+									</td>
 							@endforeach
 							<td class="column_selector"></td>
 						</tr>
