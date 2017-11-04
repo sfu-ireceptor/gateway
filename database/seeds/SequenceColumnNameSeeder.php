@@ -13,42 +13,42 @@ class SequenceColumnNameSeeder extends Seeder
             [
               'name' => 'id',
               'title' => 'id',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'seq_id',
               'title' => 'seq_id',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'seq_name',
               'title' => 'Sequence Tag',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'project_sample_id',
               'title' => 'project_sample_id',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'sequence_id',
               'title' => 'sequence_id',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'vgene_string',
               'title' => 'V-Gene',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'vgene_family',
               'title' => 'V-Gene Family',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'vgene_gene',
               'title' => 'V-Gene Gene',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'vgene_allele',
@@ -58,17 +58,17 @@ class SequenceColumnNameSeeder extends Seeder
             [
               'name' => 'jgene_string',
               'title' => 'J-Gene',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'jgene_family',
               'title' => 'J-Gene Family',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'jgene_gene',
               'title' => 'J-Gene Gene',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'jgene_allele',
@@ -78,17 +78,17 @@ class SequenceColumnNameSeeder extends Seeder
             [
               'name' => 'dgene_string',
               'title' => 'D-Gene String',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'dgene_family',
               'title' => 'D-Gene Family',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'dgene_gene',
               'title' => 'D-Gene Gene',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'dgene_allele',
@@ -98,32 +98,32 @@ class SequenceColumnNameSeeder extends Seeder
             [
               'name' => 'functionality',
               'title' => 'Functionality',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'functionality_comment',
               'title' => 'Functionality Comment',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'orientation',
               'title' => 'Orientation',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'vgene_score',
               'title' => 'V-Gene Score',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'vgene_probability',
               'title' => 'V-Gene Probability',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'dregion_reading_frame',
               'title' => 'D Region Reading Frame',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'cdr1_length',
@@ -158,17 +158,17 @@ class SequenceColumnNameSeeder extends Seeder
             [
               'name' => 'vregion_sequence_nt',
               'title' => 'V Region NT Sequence',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'jregion_sequence_nt',
               'title' => 'J Region NT Sequence',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'dregion_sequence_nt',
               'title' => 'D Region NT Sequence',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'fr1region_sequence_nt',
@@ -203,12 +203,12 @@ class SequenceColumnNameSeeder extends Seeder
             [
               'name' => 'cdr3region_sequence_nt',
               'title' => 'CDR3 Region Sequence',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'junction_sequence_nt',
               'title' => 'Junction Sequence',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'vdjregion_sequence_nt_gapped',
@@ -278,22 +278,22 @@ class SequenceColumnNameSeeder extends Seeder
             [
               'name' => 'vdjregion_sequence_aa',
               'title' => 'VDJ Region AA Sequence',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'vjregion_sequence_aa',
               'title' => 'VJ Region AA Sequence',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'vregion_sequence_aa',
               'title' => 'V Region AA Sequence',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'jregion_sequence_aa',
               'title' => 'J Region AA Sequence',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'fr1region_sequence_aa',
@@ -328,7 +328,7 @@ class SequenceColumnNameSeeder extends Seeder
             [
               'name' => 'cdr3region_sequence_aa',
               'title' => 'CDR3 Region AA Sequence',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'junction_sequence_aa',
@@ -398,62 +398,62 @@ class SequenceColumnNameSeeder extends Seeder
             [
               'name' => 'vdjregion_start',
               'title' => 'VDJ Region Start Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'vdjregion_end',
               'title' => 'VDJ Region End Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'vjregion_start',
               'title' => 'VJ Region Start Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'vjregion_end',
               'title' => 'VJ Region End Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'djregion_start',
               'title' => 'DJ Region Start Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'djregion_end',
               'title' => 'DJ Region End Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'vregion_start',
               'title' => 'V Region Start Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'vregion_end',
               'title' => 'V Region End Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'jregion_start',
               'title' => 'J Region Start Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'jregion_end',
               'title' => 'J Region End Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'dregion_start',
               'title' => 'D Region Start Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'dregion_end',
               'title' => 'D Region End Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'fr1region_start',
@@ -518,57 +518,57 @@ class SequenceColumnNameSeeder extends Seeder
             [
               'name' => 'cdr3region_start',
               'title' => 'CDR3 Region Start Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'cdr3region_end',
               'title' => 'CDR3 Region End Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'junction_start',
               'title' => 'Junction Start Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'junction_end',
               'title' => 'Junction End Offset',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'vregion_mutation_string',
               'title' => 'V Region Mutation String',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'fr1region_mutation_string',
               'title' => 'FR1 Region Mutation String',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'fr2region_mutation_string',
               'title' => 'FR2 Region Mutation String',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'fr3region_mutation_string',
               'title' => 'FR3 Region Mutation String',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'cdr1region_mutation_string',
               'title' => 'CDR1 Region Mutation String',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'cdr2region_mutation_string',
               'title' => 'CDR2 Region Mutation String',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'cdr3region_mutation_string',
               'title' => 'CDR3 Region Mutation String',
-              'enabled' => true,
+              'enabled' => false,
             ],
             [
               'name' => 'annotation_tool',
