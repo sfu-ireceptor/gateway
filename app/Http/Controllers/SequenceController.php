@@ -53,7 +53,7 @@ class SequenceController extends Controller
         $data['bookmark_id'] = Bookmark::getIdFromURl($current_url, auth()->user()->id);
 
         // columns to display
-        $defaultSequenceColumns = [3, 65, 26, 6, 10, 64, 113];
+        $defaultSequenceColumns = [9, 13, 17, 65, 113];
         if (isset($filters['cols'])) {
             $currentSequenceColumns = explode('_', $filters['cols']);
         } else {
@@ -68,7 +68,7 @@ class SequenceController extends Controller
         $currentSequenceColumnsStr = implode('_', $currentSequenceColumns);
 
         // filters
-        $defaultFiltersListIds = [65, 26, 6, 10, 64];
+        $defaultFiltersListIds = [9, 13, 17, 65, 113];
         $filtersListIds = [];
         if (isset($filters['filters_order'])) {
             $filtersListIds = explode('_', $filters['filters_order']);
