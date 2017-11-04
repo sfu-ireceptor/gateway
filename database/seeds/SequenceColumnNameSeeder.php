@@ -51,7 +51,7 @@ class SequenceColumnNameSeeder extends Seeder
               'enabled' => false,
             ],
             [
-              'name' => 'vgene_allele',
+              'name' => 'v_call',
               'title' => 'V-Gene Allele',
               'enabled' => true,
             ],
@@ -71,7 +71,7 @@ class SequenceColumnNameSeeder extends Seeder
               'enabled' => false,
             ],
             [
-              'name' => 'jgene_allele',
+              'name' => 'j_call',
               'title' => 'J-Gene Allele',
               'enabled' => true,
             ],
@@ -91,7 +91,7 @@ class SequenceColumnNameSeeder extends Seeder
               'enabled' => false,
             ],
             [
-              'name' => 'dgene_allele',
+              'name' => 'd_call',
               'title' => 'D-Gene Allele',
               'enabled' => true,
             ],
@@ -331,7 +331,7 @@ class SequenceColumnNameSeeder extends Seeder
               'enabled' => false,
             ],
             [
-              'name' => 'junction_sequence_aa',
+              'name' => 'junction_aa',
               'title' => 'Junction AA Sequence',
               'enabled' => true,
             ],
