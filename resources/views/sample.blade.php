@@ -254,9 +254,9 @@
 								@endisset
 							</td>
 							<td>
-								@isset($sample->library_source)
-									<span title="{{ $sample->library_source }}">
-									{{ str_limit($sample->library_source, $limit = 12, $end = '‥') }}
+								@isset($sample->template_class)
+									<span title="{{ $sample->template_class }}">
+									{{ str_limit($sample->template_class, $limit = 12, $end = '‥') }}
 									</span>
 								@endisset
 							</td>
