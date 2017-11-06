@@ -41,13 +41,13 @@
 								</div>
 
 								 <div class="form-group">
-									{{ Form::label('subject_age_min', __('sp.age')) }}
+									{{ Form::label('ir_subject_age_min', __('sp.age')) }}
 									<div class="row">
 										<div class="col-md-6">
-											{{ Form::text('subject_age_min', '', array('class' => 'form-control', 'placeholder' => 'From')) }}
+											{{ Form::text('ir_subject_age_min', '', array('class' => 'form-control', 'placeholder' => 'From')) }}
 										</div>
 										<div class="col-md-6">
-											{{ Form::text('subject_age_max', '', array('class' => 'form-control', 'placeholder' => 'To')) }}
+											{{ Form::text('ir_subject_age_max', '', array('class' => 'form-control', 'placeholder' => 'To')) }}
 										</div>
 									</div>
 								</div>
