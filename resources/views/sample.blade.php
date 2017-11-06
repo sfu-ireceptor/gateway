@@ -40,7 +40,32 @@
 									{{ Form::select('ethnicity', $subject_ethnicity_list, '', array('class' => 'form-control')) }}
 								</div>
 
-								 <div class="form-group">
+							    <div class="form-group">
+									{{ Form::label('study_id', __('sp.study_id')) }}
+									{{ Form::text('study_id', '', array('class' => 'form-control')) }}
+								</div>
+
+							    <div class="form-group">
+									{{ Form::label('study_title', __('sp.study_title')) }}
+									{{ Form::text('study_title', '', array('class' => 'form-control')) }}
+								</div>
+
+							    <div class="form-group">
+									{{ Form::label('study_description', __('sp.study_description')) }}
+									{{ Form::text('study_description', '', array('class' => 'form-control')) }}
+								</div>
+
+							    <div class="form-group">
+									{{ Form::label('lab_name', __('sp.lab_name')) }}
+									{{ Form::text('lab_name', '', array('class' => 'form-control')) }}
+								</div>
+
+							    <div class="form-group">
+									{{ Form::label('organism', __('sp.organism')) }}
+									{{ Form::text('organism', '', array('class' => 'form-control')) }}
+								</div>
+
+								<div class="form-group">
 									{{ Form::label('ir_subject_age_min', __('sp.age')) }}
 									<div class="row">
 										<div class="col-md-6">
