@@ -70,6 +70,21 @@
 								</div>
 
 								<div class="form-group">
+									{{ Form::label('disease_state_sample', __('sp.disease_state_sample')) }}
+									{{ Form::text('disease_state_sample', '', array('class' => 'form-control')) }}
+								</div>
+
+								<div class="form-group">
+									{{ Form::label('cell_phenotype', __('sp.cell_phenotype')) }}
+									{{ Form::text('cell_phenotype', '', array('class' => 'form-control')) }}
+								</div>
+
+								<div class="form-group">
+									{{ Form::label('sequencing_platform', __('sp.sequencing_platform')) }}
+									{{ Form::text('sequencing_platform', '', array('class' => 'form-control')) }}
+								</div>
+
+								<div class="form-group">
 									{{ Form::label('cell_subset', __('sp.cell_subset')) }}
 									@foreach ($cell_type_list as $id => $name)
 									<div class="checkbox">
