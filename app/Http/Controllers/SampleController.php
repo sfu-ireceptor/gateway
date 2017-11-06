@@ -46,7 +46,7 @@ class SampleController extends Controller
 
         // dna type
         $dna_type_list = [];
-        foreach ($metadata['library_source'] as $v) {
+        foreach ($metadata['template_class'] as $v) {
             $dna_type_list[$v] = $v;
         }
 
