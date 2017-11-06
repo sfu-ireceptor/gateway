@@ -94,11 +94,11 @@
 								</div>
 
 								 <div class="form-group">
-									{{ Form::label('library_source', __('sp.library_source')) }}
+									{{ Form::label('template_class', __('sp.template_class')) }}
 									@foreach ($dna_type_list as $id => $name)
 									<div class="checkbox">
 										<label>
-											{{ Form::checkbox('library_source[]', $id) }}
+											{{ Form::checkbox('template_class[]', $id) }}
 											{{ $name }}
 										</label>
 									</div>
