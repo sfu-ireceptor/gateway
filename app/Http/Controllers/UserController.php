@@ -293,14 +293,16 @@ class UserController extends Controller
         $user = User::where('username', $agave_user->username)->first();
         if ($user == null) {
             $user = new User();
-
-            $user->username = $agave_user->username;
-            $user->first_name = $agave_user->first_name;
-            $user->last_name = $agave_user->last_name;
-            $user->email = $agave_user->email;
-
-            $user->save();
         }
+
+        // update user info in local DB
+        $user->username = $agave_user->username;
+        $user->first_name = $agave_user->first_name;
+        $user->last_name = $agave_user->last_name;
+        $user->email = $agave_user->email;
+
+        $user->save();
+
         // log user in
         auth()->login($user);
 
