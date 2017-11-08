@@ -164,15 +164,15 @@
 			</p>
 
 			<p>
-				<strong>{{$total_filtered_samples}} samples returned from:</strong>
+				<strong>{{ $total_filtered_samples }} samples returned from:</strong>
 				<span class="data_text_box">
-					{{$total_repositories}} remote repositories
+					{{ $total_filtered_repositories }} remote repositories
 				</span>
 				<span class="data_text_box">
-					{{$total_labs}} research labs
+					{{ $total_filtered_labs }} research labs
 				</span>
 				<span class="data_text_box">
-					{{$total_studies}} studies
+					{{ $total_filtered_studies }} studies
 				</span>
 			</p>
 
