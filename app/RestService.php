@@ -71,23 +71,22 @@ class RestService extends Model
             $study_list = [];
             $total_sequences = 0;
             foreach ($sample_list as $sample) {
-                if(isset($sample->lab_name)) {
-                    if( ! in_array($sample->lab_name, $lab_list)) {
+                if (isset($sample->lab_name)) {
+                    if (! in_array($sample->lab_name, $lab_list)) {
                         $lab_list[] = $sample->lab_name;
-                    }                    
-                }
-                elseif (isset($sample->collected_by)) {
-                    if( ! in_array($sample->collected_by, $lab_list)) {
+                    }
+                } elseif (isset($sample->collected_by)) {
+                    if (! in_array($sample->collected_by, $lab_list)) {
                         $lab_list[] = $sample->collected_by;
-                    }                    
+                    }
                 }
 
-                if( ! in_array($sample->study_title, $study_list)) {
+                if (! in_array($sample->study_title, $study_list)) {
                     $study_list[] = $sample->study_title;
                 }
 
                 if (isset($sample->ir_sequence_count)) {
-                    $total_sequences += $sample->ir_sequence_count;                    
+                    $total_sequences += $sample->ir_sequence_count;
                 }
             }
 
@@ -113,7 +112,7 @@ class RestService extends Model
         $total_filtered_sequences = 0;
 
         foreach ($data['rs_list'] as $rs_data) {
-            if($rs_data['total_samples'] > 0) {
+            if ($rs_data['total_samples'] > 0) {
                 $total_filtered_repositories++;
             }
 
