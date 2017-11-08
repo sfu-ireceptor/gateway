@@ -338,8 +338,8 @@ var graphFields = [
     ];
 */
 var graphFields = [
-        "study_type", "organism", "disease_state_sample",
-        "tissue", "cell_subset", "library_source"
+        "study_description", "organism", "disease_state_sample",
+        "tissue", "cell_subset", "template_class"
     ];
 var graphNames = [
         "Study Type", "Organism", "Sample Disease State",
