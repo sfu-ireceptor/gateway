@@ -26,47 +26,47 @@
 						<div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
 							<div class="panel-body">
 							    <div class="form-group">
-									{{ Form::label('subject_id', __('sp.subject_id')) }}
+									{{ Form::label('subject_id', __('short.subject_id')) }}
 									{{ Form::text('subject_id', '', array('class' => 'form-control')) }}
 								</div>
 
 								<div class="form-group">
-									{{ Form::label('sex', __('sp.sex')) }}
+									{{ Form::label('sex', __('short.sex')) }}
 									{{ Form::select('sex', $subject_gender_list, '', array('class' => 'form-control')) }}
 								</div>
 
 							    <div class="form-group">
-									{{ Form::label('ethnicity', __('sp.ethnicity')) }}
+									{{ Form::label('ethnicity', __('short.ethnicity')) }}
 									{{ Form::select('ethnicity', $subject_ethnicity_list, '', array('class' => 'form-control')) }}
 								</div>
 
 							    <div class="form-group">
-									{{ Form::label('study_id', __('sp.study_id')) }}
+									{{ Form::label('study_id', __('short.study_id')) }}
 									{{ Form::text('study_id', '', array('class' => 'form-control')) }}
 								</div>
 
 							    <div class="form-group">
-									{{ Form::label('study_title', __('sp.study_title')) }}
+									{{ Form::label('study_title', __('short.study_title')) }}
 									{{ Form::text('study_title', '', array('class' => 'form-control')) }}
 								</div>
 
 							    <div class="form-group">
-									{{ Form::label('study_description', __('sp.study_description')) }}
+									{{ Form::label('study_description', __('short.study_description')) }}
 									{{ Form::text('study_description', '', array('class' => 'form-control')) }}
 								</div>
 
 							    <div class="form-group">
-									{{ Form::label('lab_name', __('sp.lab_name')) }}
+									{{ Form::label('lab_name', __('short.lab_name')) }}
 									{{ Form::text('lab_name', '', array('class' => 'form-control')) }}
 								</div>
 
 							    <div class="form-group">
-									{{ Form::label('organism', __('sp.organism')) }}
+									{{ Form::label('organism', __('short.organism')) }}
 									{{ Form::text('organism', '', array('class' => 'form-control')) }}
 								</div>
 
 								<div class="form-group">
-									{{ Form::label('ir_subject_age_min', __('sp.age')) }}
+									{{ Form::label('ir_subject_age_min', __('short.age')) }}
 									<div class="row">
 										<div class="col-md-6">
 											{{ Form::text('ir_subject_age_min', '', array('class' => 'form-control', 'placeholder' => 'From')) }}
@@ -90,27 +90,27 @@
 						<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
 							<div class="panel-body">
 								<div class="form-group">
-									{{ Form::label('sample_id', __('sp.sample_id')) }}
+									{{ Form::label('sample_id', __('short.sample_id')) }}
 									{{ Form::text('sample_id', '', array('class' => 'form-control')) }}
 								</div>
 
 								<div class="form-group">
-									{{ Form::label('disease_state_sample', __('sp.disease_state_sample')) }}
+									{{ Form::label('disease_state_sample', __('short.disease_state_sample')) }}
 									{{ Form::text('disease_state_sample', '', array('class' => 'form-control')) }}
 								</div>
 
 								<div class="form-group">
-									{{ Form::label('cell_phenotype', __('sp.cell_phenotype')) }}
+									{{ Form::label('cell_phenotype', __('short.cell_phenotype')) }}
 									{{ Form::text('cell_phenotype', '', array('class' => 'form-control')) }}
 								</div>
 
 								<div class="form-group">
-									{{ Form::label('sequencing_platform', __('sp.sequencing_platform')) }}
+									{{ Form::label('sequencing_platform', __('short.sequencing_platform')) }}
 									{{ Form::text('sequencing_platform', '', array('class' => 'form-control')) }}
 								</div>
 
 								<div class="form-group">
-									{{ Form::label('cell_subset', __('sp.cell_subset')) }}
+									{{ Form::label('cell_subset', __('short.cell_subset')) }}
 									@foreach ($cell_type_list as $id => $name)
 									<div class="checkbox">
 										<label>
@@ -122,7 +122,7 @@
 								</div>
 
 							    <div class="form-group">
-									{{ Form::label('tissue', __('sp.tissue')) }}
+									{{ Form::label('tissue', __('short.tissue')) }}
 									@foreach ($sample_source_list as $id => $name)
 									<div class="checkbox">
 										<label>
@@ -134,7 +134,7 @@
 								</div>
 
 								 <div class="form-group">
-									{{ Form::label('template_class', __('sp.template_class')) }}
+									{{ Form::label('template_class', __('short.template_class')) }}
 									@foreach ($dna_type_list as $id => $name)
 									<div class="checkbox">
 										<label>
@@ -208,15 +208,15 @@
 						<tr>
 							<th>{{ Form::checkbox('select_all') }}</th>
 							<th>Repository</th>
-							<th>@lang('sp.lab_name')</th>
-							<th>@lang('sp.study_title')</th>
-							<th>@lang('sp.subject_id')</th>
+							<th>@lang('short.lab_name')</th>
+							<th>@lang('short.study_title')</th>
+							<th>@lang('short.subject_id')</th>
 							<th>Sequences</th>
-							<th>@lang('sp.sample_id')</th>
-							<th>@lang('sp.tissue')</th>
-							<th>@lang('sp.cell_subset')</th>
-							<th>@lang('sp.cell_phenotype')</th>
-							<th>@lang('sp.library_source')</th>
+							<th>@lang('short.sample_id')</th>
+							<th>@lang('short.tissue')</th>
+							<th>@lang('short.cell_subset')</th>
+							<th>@lang('short.cell_phenotype')</th>
+							<th>@lang('short.library_source')</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -330,7 +330,7 @@
 	        "tissue", "cell_subset", "template_class"
 	    ];
 	var graphNames = [
-	        "@lang('sp.study_description')", "Organism", "Sample Disease State",
+	        "@lang('short.study_description')", "Organism", "Sample Disease State",
 	        "Sample Type", "Cell Subset", "Target Substrate"
 	    ];
 	var graphDIV = "sample_chart";
