@@ -237,4 +237,17 @@
 		</div>
 	</div>
 </div>
+<script>
+var graphFields = [
+        "study_description", "organism", "disease_state_sample",
+        "tissue", "cell_subset", "template_class"
+    ];
+var graphNames = [
+        "Study Type", "Organism", "Sample Disease State",
+        "Sample Type", "Cell Subset", "Target Substrate"
+    ];
+var graphDIV = "sequence_chart";
+var graphInternalLabels = true;
+var graphData = {!! $sample_list_json !!};
+</script>
 @stop

@@ -29,10 +29,7 @@ function doSequenceCharts()
 {
     // Get the JSON and process it. We currently have no mechanism to get the 
     // filtered data to the visualization - working on it...
-    //showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels);
-    $.getJSON('samples/json', function(data) {
-        showData(data, graphFields, graphNames, graphDIV, graphInternalLabels);
-    });
+    showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels);
 }
 
 /**********************************************************

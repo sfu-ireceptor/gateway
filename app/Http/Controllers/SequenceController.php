@@ -37,6 +37,7 @@ class SequenceController extends Controller
 
         $data = [];
         $data['sequence_list'] = $sequence_data['items'];
+        $data['sample_list_json'] = json_encode($sequence_data['summary']);
         $data['rs_list'] = $rs_list;
         // $data['total_sequences'] = $sequence_data['total'];
         // $data['filters'] = $sequence_data['filters'];
