@@ -69,6 +69,11 @@
 									{{ Form::text('subject_id', '', array('class' => 'form-control')) }}
 								</div>
 
+							    <div class="form-group">
+									{{ Form::label('organism', __('short.organism')) }}
+									{{ Form::text('organism', '', array('class' => 'form-control')) }}
+								</div>
+
 								<div class="form-group">
 									{{ Form::label('sex', __('short.sex')) }}
 									{{ Form::select('sex', $subject_gender_list, '', array('class' => 'form-control')) }}
@@ -77,11 +82,6 @@
 							    <div class="form-group">
 									{{ Form::label('ethnicity', __('short.ethnicity')) }}
 									{{ Form::select('ethnicity', $subject_ethnicity_list, '', array('class' => 'form-control')) }}
-								</div>
-
-							    <div class="form-group">
-									{{ Form::label('organism', __('short.organism')) }}
-									{{ Form::text('organism', '', array('class' => 'form-control')) }}
 								</div>
 
 								<div class="form-group">
@@ -111,21 +111,6 @@
 								<div class="form-group">
 									{{ Form::label('sample_id', __('short.sample_id')) }}
 									{{ Form::text('sample_id', '', array('class' => 'form-control')) }}
-								</div>
-
-								<div class="form-group">
-									{{ Form::label('disease_state_sample', __('short.disease_state_sample')) }}
-									{{ Form::text('disease_state_sample', '', array('class' => 'form-control')) }}
-								</div>
-
-								<div class="form-group">
-									{{ Form::label('cell_phenotype', __('short.cell_phenotype')) }}
-									{{ Form::text('cell_phenotype', '', array('class' => 'form-control')) }}
-								</div>
-
-								<div class="form-group">
-									{{ Form::label('sequencing_platform', __('short.sequencing_platform')) }}
-									{{ Form::text('sequencing_platform', '', array('class' => 'form-control')) }}
 								</div>
 
 								<div class="form-group">
@@ -163,6 +148,23 @@
 									</div>
 									@endforeach
 								</div>
+
+								<div class="form-group">
+									{{ Form::label('cell_phenotype', __('short.cell_phenotype')) }}
+									{{ Form::text('cell_phenotype', '', array('class' => 'form-control')) }}
+								</div>
+
+								<div class="form-group">
+									{{ Form::label('disease_state_sample', __('short.disease_state_sample')) }}
+									{{ Form::text('disease_state_sample', '', array('class' => 'form-control')) }}
+								</div>
+
+								<div class="form-group">
+									{{ Form::label('sequencing_platform', __('short.sequencing_platform')) }}
+									{{ Form::text('sequencing_platform', '', array('class' => 'form-control')) }}
+								</div>
+
+
 							</div>
 						</div>
 					</div>
