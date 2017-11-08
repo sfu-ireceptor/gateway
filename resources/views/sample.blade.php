@@ -325,28 +325,16 @@
 </div>
 
 <script>
-/*
-// v2 names
-var graphFields = [
-        "study_type", "organism", "disease_state_sample",
-        "tissue", "cell_subset", "library_source"
-    ];
-// v1 names
-var graphFields = [
-        "project_type", "subject_species", "disease_state_name",
-        "sample_source_name", "ireceptor_cell_subset_name", "dna_type"
-    ];
-*/
-var graphFields = [
-        "study_description", "organism", "disease_state_sample",
-        "tissue", "cell_subset", "template_class"
-    ];
-var graphNames = [
-        "Study Type", "Organism", "Sample Disease State",
-        "Sample Type", "Cell Subset", "Target Substrate"
-    ];
-var graphDIV = "sample_chart";
-var graphInternalLabels = true;
-var graphData = {!! $sample_list_json !!};
+	var graphFields = [
+	        "@lang('v2.study_description')", "organism", "disease_state_sample",
+	        "tissue", "cell_subset", "template_class"
+	    ];
+	var graphNames = [
+	        "@lang('sp.study_description')", "Organism", "Sample Disease State",
+	        "Sample Type", "Cell Subset", "Target Substrate"
+	    ];
+	var graphDIV = "sample_chart";
+	var graphInternalLabels = true;
+	var graphData = {!! $sample_list_json !!};
 </script>
 @stop
