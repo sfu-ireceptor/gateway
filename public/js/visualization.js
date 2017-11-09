@@ -208,6 +208,8 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels)
                     allowPointSelect: true,
                     cursor: 'pointer',
                     dataLabels: {
+                        // Color of the labels.
+                        color: "#888888", 
                         // Do we want to display labels.
                         enabled: true,
                         /*overflow: "justify",*/
