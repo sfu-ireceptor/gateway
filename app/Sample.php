@@ -40,18 +40,18 @@ class Sample extends Model
         }
 
         // distinct values for combined sample fields (ex: project_id/project_name)
-        $t['lab_list'] = self::distinctValuesGrouped(['lab_id', 'lab_name']);
-        $t['project_list'] = self::distinctValuesGrouped(['project_id', 'project_name']);
+        $t['lab_list'] = self::distinctValuesGrouped(['ir_lab_id', 'lab_name']);
+        $t['project_list'] = self::distinctValuesGrouped(['ir_project_id', 'study_title']);
 
         // list of REST services
         $t['rest_service_list'] = RestService::findEnabled(['id', 'name'])->toArray();
 
         // stats
         $t['total_repositories'] = RestService::findEnabled()->count();
-        $t['total_labs'] = count(self::distinctValuesGrouped(['rest_service_id', 'lab_id']));
-        $t['total_projects'] = count(self::distinctValuesGrouped(['rest_service_id', 'project_id']));
+        $t['total_labs'] = count(self::distinctValuesGrouped(['rest_service_id', 'lab_name']));
+        $t['total_projects'] = count(self::distinctValuesGrouped(['rest_service_id', 'study_title']));
         $t['total_samples'] = self::count();
-        $t['total_sequences'] = self::sum('sequence_count');
+        $t['total_sequences'] = self::sum('ir_sequence_count');
 
         return $t;
     }
@@ -73,7 +73,15 @@ class Sample extends Model
 
     public static function distinctValuesGrouped($fields)
     {
-        $l = self::groupBy($fields)->get();
+        $l = self::groupBy($fields);
+
+        // exclude null values
+        foreach ($fields as $fieldName) {
+            $l = $l->whereNotNull($fieldName);
+        }
+
+        // do query
+        $l = $l->get();
         $l = $l->toArray();
 
         // remove useless '_id' key
