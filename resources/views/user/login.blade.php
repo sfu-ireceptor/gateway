@@ -14,21 +14,6 @@
 	</div>
 
 	<div class="row">
-		<div class="col-md-9">
-			<div id="landing_charts">
-				<div class="row">
-					<div class="col-md-4 chart" id="landing_chart1"></div>
-					<div class="col-md-4 chart" id="landing_chart2"></div>
-					<div class="col-md-4 chart" id="landing_chart3"></div>
-				</div>
-				<div class="row">
-					<div class="col-md-4 chart" id="landing_chart4"></div>
-					<div class="col-md-4 chart" id="landing_chart5"></div>
-					<div class="col-md-4 chart" id="landing_chart6"></div>
-				</div>
-			</div>
-		</div>
-
 
 		<div class="col-md-3 login-box">
 			<div class="panel panel-default">
@@ -43,12 +28,12 @@
 
 						<p>
 							{{ Form::label('username', 'Username') }}
-							{{ Form::text('username', '', array('class' => 'form-control')) }}
+							{{ Form::text('username', '', array('class' => 'form-control', 'placeholder' => 'e.g. \'jane_lee\'')) }}
 						</p>
 						<p>
 							{{ Form::label('password', 'Password') }}
 							{{ $errors->first("password") }}
-							{{ Form::password('password', array('class' => 'form-control')) }}
+							{{ Form::password('password', array('class' => 'form-control', 'placeholder' => 'e.g. \'sx4KL2\'')) }}
 						</p>
 						<p class="submit">
 							{{ Form::submit('Log In →', array('class' => 'btn btn-primary')) }}
@@ -91,7 +76,20 @@
 
 		</div>
 
-
+		<div class="col-md-9">
+			<div id="landing_charts">
+				<div class="row">
+					<div class="col-md-4 chart" id="landing_chart1"></div>
+					<div class="col-md-4 chart" id="landing_chart2"></div>
+					<div class="col-md-4 chart" id="landing_chart3"></div>
+				</div>
+				<div class="row">
+					<div class="col-md-4 chart" id="landing_chart4"></div>
+					<div class="col-md-4 chart" id="landing_chart5"></div>
+					<div class="col-md-4 chart" id="landing_chart6"></div>
+				</div>
+			</div>
+		</div>
 
 	</div>
 
