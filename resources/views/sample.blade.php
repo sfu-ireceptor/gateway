@@ -231,7 +231,6 @@
 							<th>Repository</th>
 							<th>@lang('short.lab_name')</th>
 							<th>@lang('short.study_title')</th>
-							<th>@lang('short.study_id')</th>
 							<th>@lang('short.study_group_description')</th>
 							<th>@lang('short.subject_id')</th>
 							<th>@lang('short.tissue')</th>
@@ -240,6 +239,7 @@
 							<th>Sequences</th>
 							<th>@lang('short.sample_id')</th>
 							<th>@lang('short.library_source')</th>
+							<th>@lang('short.study_id')</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -264,21 +264,14 @@
 							<td>
 								@if (isset($sample->sra_accession))
 									<a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study={{ $sample->sra_accession }}" title="{{ $sample->study_title }}">
-										{{ str_limit($sample->study_title, $limit = 30, $end = '‥') }}
+										{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
 									</span>
 								@elseif (isset($sample->study_title))
 									<span title="{{ $sample->study_title }}">
-									{{ str_limit($sample->study_title, $limit = 30, $end = '‥') }}
+									{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
 									</span>							
 								@endif
 							</td>
-							<td>
-								@isset($sample->study_id)
-									<span title="{{ $sample->study_id }}">
-									{{ str_limit($sample->study_id, $limit = 15, $end = '‥') }}
-									</span>
-								@endisset
-							</td>		
 							<td>
 								@isset($sample->study_group_description)
 									<span title="{{ $sample->study_group_description }}">
@@ -338,6 +331,14 @@
 									</span>
 								@endisset
 							</td>
+							<td>
+								@isset($sample->study_id)
+									<span title="{{ $sample->study_id }}">
+									{{ str_limit($sample->study_id, $limit = 15, $end = '‥') }}
+									</span>
+								@endisset
+							</td>		
+
 						</tr>
 						<?php 
 							$count = $count + 1;
