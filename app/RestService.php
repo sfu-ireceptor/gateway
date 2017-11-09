@@ -66,16 +66,67 @@ class RestService extends Model
                 $sample->rest_service_name = $rs->name;
             }
 
+            // calculate summary statistics
+            $lab_list = [];
+            $study_list = [];
+            $total_sequences = 0;
+            foreach ($sample_list as $sample) {
+                if (isset($sample->lab_name)) {
+                    if (! in_array($sample->lab_name, $lab_list)) {
+                        $lab_list[] = $sample->lab_name;
+                    }
+                } elseif (isset($sample->collected_by)) {
+                    if (! in_array($sample->collected_by, $lab_list)) {
+                        $lab_list[] = $sample->collected_by;
+                    }
+                }
+
+                if (! in_array($sample->study_title, $study_list)) {
+                    $study_list[] = $sample->study_title;
+                }
+
+                if (isset($sample->ir_sequence_count)) {
+                    $total_sequences += $sample->ir_sequence_count;
+                }
+            }
+
             // rest service data
             $rs_data = [];
             $rs_data['rs'] = $rs;
             $rs_data['total_samples'] = count($sample_list);
+            $rs_data['total_labs'] = count($lab_list);
+            $rs_data['total_studies'] = count($study_list);
+            $rs_data['total_sequences'] = $total_sequences;
             $data['rs_list'][] = $rs_data;
 
             // sample data
             $data['total'] += $rs_data['total_samples'];
             $data['items'] = array_merge($sample_list, $data['items']);
         }
+
+        // aggregate summary statistics
+        $total_filtered_repositories = 0;
+        $total_filtered_labs = 0;
+        $total_filtered_studies = 0;
+        $total_filtered_samples = 0;
+        $total_filtered_sequences = 0;
+
+        foreach ($data['rs_list'] as $rs_data) {
+            if ($rs_data['total_samples'] > 0) {
+                $total_filtered_repositories++;
+            }
+
+            $total_filtered_samples += $rs_data['total_samples'];
+            $total_filtered_labs += $rs_data['total_labs'];
+            $total_filtered_studies += $rs_data['total_studies'];
+            $total_filtered_sequences += $rs_data['total_sequences'];
+        }
+
+        $data['total_filtered_samples'] = $total_filtered_samples;
+        $data['total_filtered_repositories'] = $total_filtered_repositories;
+        $data['total_filtered_labs'] = $total_filtered_labs;
+        $data['total_filtered_studies'] = $total_filtered_studies;
+        $data['total_filtered_sequences'] = $total_filtered_sequences;
 
         return $data;
     }
@@ -85,6 +136,7 @@ class RestService extends Model
         // initialize return array
         $data = [];
         $data['items'] = [];
+        $data['summary'] = [];
         $data['rs_list'] = [];
 
         // initialize filters being used.
@@ -117,9 +169,11 @@ class RestService extends Model
             }
 
             $data['items'] = array_merge($obj->items, $data['items']);
+            $data['summary'] = array_merge($obj->summary, $data['summary']);
 
             // convert any v1 fields to v2
             $data['items'] = FieldName::convertObjectList($data['items'], 'ir_v1', 'ir_v2');
+            $data['summary'] = FieldName::convertObjectList($data['summary'], 'ir_v1', 'ir_v2');
 
             $rs_data = [];
             $rs_data['rs'] = $rs;

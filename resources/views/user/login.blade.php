@@ -14,21 +14,6 @@
 	</div>
 
 	<div class="row">
-		<div class="col-md-9">
-			<div id="landing_charts">
-				<div class="row">
-					<div class="col-md-4 chart" id="landing_chart1"></div>
-					<div class="col-md-4 chart" id="landing_chart2"></div>
-					<div class="col-md-4 chart" id="landing_chart3"></div>
-				</div>
-				<div class="row">
-					<div class="col-md-4 chart" id="landing_chart4"></div>
-					<div class="col-md-4 chart" id="landing_chart5"></div>
-					<div class="col-md-4 chart" id="landing_chart6"></div>
-				</div>
-			</div>
-		</div>
-
 
 		<div class="col-md-3 login-box">
 			<div class="panel panel-default">
@@ -43,12 +28,12 @@
 
 						<p>
 							{{ Form::label('username', 'Username') }}
-							{{ Form::text('username', '', array('class' => 'form-control')) }}
+							{{ Form::text('username', '', array('class' => 'form-control', 'placeholder' => 'e.g. \'jane_lee\'')) }}
 						</p>
 						<p>
 							{{ Form::label('password', 'Password') }}
 							{{ $errors->first("password") }}
-							{{ Form::password('password', array('class' => 'form-control')) }}
+							{{ Form::password('password', array('class' => 'form-control', 'placeholder' => 'e.g. \'sx4KL2\'')) }}
 						</p>
 						<p class="submit">
 							{{ Form::submit('Log In →', array('class' => 'btn btn-primary')) }}
@@ -91,7 +76,20 @@
 
 		</div>
 
-
+		<div class="col-md-9">
+			<div id="landing_charts">
+				<div class="row">
+					<div class="col-md-4 chart" id="landing_chart1"></div>
+					<div class="col-md-4 chart" id="landing_chart2"></div>
+					<div class="col-md-4 chart" id="landing_chart3"></div>
+				</div>
+				<div class="row">
+					<div class="col-md-4 chart" id="landing_chart4"></div>
+					<div class="col-md-4 chart" id="landing_chart5"></div>
+					<div class="col-md-4 chart" id="landing_chart6"></div>
+				</div>
+			</div>
+		</div>
 
 	</div>
 
@@ -100,7 +98,25 @@
 </div>
 
 <script>
-var data = {!! $sample_list_json !!};
+	var graphFields = [
+	        "@lang('v2.study_description')", 
+	        "@lang('v2.organism')",
+	        "@lang('v2.disease_state_sample')", 
+	        "@lang('v2.tissue')",
+	        "@lang('v2.cell_subset')", 
+	        "@lang('v2.template_class')"
+	    ];
+	var graphNames = [
+	        "@lang('short.study_description')",
+	        "@lang('short.organism')", 
+	        "@lang('short.disease_state_sample')",
+	        "@lang('short.tissue')", 
+	        "@lang('short.cell_subset')", 
+	        "@lang('short.template_class')"
+	    ];
+var graphDIV = "landing_chart";
+var graphInternalLabels = false;
+var graphData = {!! $sample_list_json !!};
 </script>
 
 @stop

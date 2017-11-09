@@ -9,10 +9,131 @@
 		<div class="col-md-12">
 			<h1>About</h1>
 			<h2>Our Mission</h2>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis molestie quam, sit amet consequat libero. Fusce eleifend lectus nec fringilla fringilla. Maecenas egestas velit leo, vel interdum risus euismod ut. Phasellus vulputate est eget suscipit volutpat. Phasellus sit amet lacus viverra lacus ultricies fermentum. Cras vel nibh at enim ultrices aliquet. Fusce hendrerit tellus ut enim auctor, vel ultricies mauris sagittis. Aenean et aliquet odio. Aenean dapibus ex et porta convallis. Maecenas ut lectus malesuada, vehicula dolor blandit, luctus neque. </p>
+			<p>iReceptor is a distributed data management system and scientific gateway for mining “Next Generation” sequence data from immune responses. The goal of the project is to: improve the design of vaccines, therapeutic antibodies and cancer immunotherapies by integrating Canadian and international data repositories of antibody and T-cell receptor gene sequences.</p>
+			<p>iReceptor provides a technology platform that will lower the barrier to immune genetics researchers who need to federate large, distributed, immune genetics data repositories in order to answer complex questions about the immune response. The focus of the iReceptor project is to leverage existing capabilities and technologies to build a new scientific platform for the immune genetics research community.</p>
+			<p>To learn more about us visit: <a href="http://www.ireceptor.org">http://www.ireceptor.org</a></p>
+			<p>To ask questions, host a data repository, or say hi, email: help@ireceptor.org</p>
 
-			<h2>Our Team</h2>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis molestie quam, sit amet consequat libero. Fusce eleifend lectus nec fringilla fringilla. Maecenas egestas velit leo, vel interdum risus euismod ut. Phasellus vulputate est eget suscipit volutpat. Phasellus sit amet lacus viverra lacus ultricies fermentum. Cras vel nibh at enim ultrices aliquet. Fusce hendrerit tellus ut enim auctor, vel ultricies mauris sagittis. Aenean et aliquet odio. Aenean dapibus ex et porta convallis. Maecenas ut lectus malesuada, vehicula dolor blandit, luctus neque. </p>
+			<h1>Our Team</h1>
+			<h2>Leadership</h2>
+				<div class="col-md-12">
+					<div class="col-md-6">
+						<div>
+							<br/><b>Principal Investigator</b>
+							<br/>Dr. Felix Breden
+							<br/>Department of Biological Sciences
+							<br/>Simon Fraser University
+						</div>
+						<div>
+							<br/><b>Technical Lead</b>
+							<br/>Dr. Brian Corrie
+							<br/>iReceptor
+							<br/>Simon Fraser University 
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div>
+							<br/><b>Principal Investigator </b>
+							<br/>Dr. Jamie Scott
+							<br/>Molecular Biology and Biochemistry 
+							<br/>Simon Fraser University
+						</div>
+						<div>
+							<br/><b>Technical Lead/Project Manager</b>
+							<br/>Dr. Richard Bruskiewich
+							<br/>STAR Informatics/Delphinai Corporation
+							<br/>Simon Fraser University
+						</div>
+					</div>
+				</div>
+
+			<h2>The Science</h2>
+
+				<div class="col-md-12">
+					<div class="col-md-6">
+						<div>
+							<br/><b>Bioinformaticist</b>
+							<br/>Nishanth Marthandan
+							<br/>Scott Lab, Department of Biological Sciences
+							<br/>Simon Fraser University 
+						</div>
+						<div>
+							<br/><b>Data Curator</b>
+							<br/>Leah Sanchez Milde
+							<br/>Department of Biological Sciences
+							<br/>Simon Fraser University 
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div>
+							<br/><b>Data Curator</b>
+							<br/>Emily Barr
+							<br/>Department of Biological Sciences
+							<br/>Simon Fraser University 
+						</div>
+					</div>
+				</div>
+			<h2>The Technology</h2>
+				<div class="col-md-12">
+					<div class="col-md-6">
+						<div>
+							<br/><b>Developer (Data Repository/Services)</b>
+							<br/>Bojan Zimonja
+							<br/>KEY, Big Data Initative 
+							<br/>Simon Fraser University
+						</div>
+						<div>
+							<br/><b>Developer (Data Repository)</b>
+							<br/>Yang Zhou
+							<br/>Department of Biological Sciences
+							<br/>Simon Fraser University 
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div>
+							<br/><b>Developer (Gateway/Services)</b>
+							<br/>Jerome Jaglale 
+							<br/>KEY, Big Data Initative
+							<br/>Simon Fraser University 
+						</div>
+						<div>
+							<br/><b>Gateway Interface Designer</b>
+							<br/>Frances Breden
+							<br/>Simon Fraser University
+						</div>
+					</div>
+				</div>
+			<h2>Collaborators</h2>
+				<div class="col-md-12">
+					<div class="col-md-6">
+						<div>
+							<br/><b>Collaborator</b>
+							<br/>Dr. Lindsay Cowell
+							<br/>Department of Clinical Science
+							<br/>University of Texas, Southwestern
+						</div>
+						<div>
+							<br/><b>Collaborator</b>
+							<br/>Dr. Robert Holt
+							<br/>Michael Smith Genome Sciences Centre
+							<br/>BC Cancer Agency
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div>
+							<br/><b>Collaborator </b>
+							<br/>Dr. Sachdev Sidhu 
+							<br/>Donelly Centre for Cellular + Biomolecular Research
+							<br/>The University of Toronto
+						</div>
+						<div>
+							<br/><b>Collaborator</b>
+							<br/>Dr. Scott Christley 
+							<br/>Computational Biology
+							<br/>University of Texas, Southwestern 
+						</div>
+					</div>
+				</div>	
 		</div>
 	</div>
 

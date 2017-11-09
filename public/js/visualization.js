@@ -29,10 +29,7 @@ function doSequenceCharts()
 {
     // Get the JSON and process it. We currently have no mechanism to get the 
     // filtered data to the visualization - working on it...
-    //showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels);
-    $.getJSON('samples/json', function(data) {
-        showData(data, graphFields, graphNames, graphDIV, graphInternalLabels);
-    });
+    showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels);
 }
 
 /**********************************************************
@@ -399,8 +396,8 @@ function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregat
         countField = "ir_sequence_count";
     }
     if (debugLevel > 0)
-        console.log("Hello\n");
-    if (debugLevel > 0)
+        console.log("irAggregateData:\n");
+    if (debugLevel > 1)
         console.log("aggregation list has " + JSON.stringify(aggregationList) + "\n");
     
     // Process each element in the data from iReceptor. 
@@ -420,11 +417,11 @@ function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregat
         {
             elementData = aggregationList[count];
         }
-        if (debugLevel > 0)
-            console.log("series = " + seriesName + ", element = " + JSON.stringify(elementData) + "\n");        
+        if (debugLevel > 1)
+            console.log("Element: series = " + seriesName + ", element = " + JSON.stringify(elementData) + "\n");        
         // Get the value of the field we are aggregating on for this element.
         var fieldValue;
-        var fieldCount;
+        var fieldCount = 0;
         fieldValue = elementData[seriesName];
 
         if (fieldValue == null) 
@@ -433,29 +430,50 @@ function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregat
             // of the data that doesn't have this field. This should be rare, but
             // it can happen if the data models are different and are missing data.
             fieldValue = "NODATA";
-            if (aggregateBySequence) fieldCount = elementData[countField];
+            if (aggregateBySequence)
+            {
+                // If the element is found, and there is a count, get it,
+                // otherwise there are no sequences for this element.
+                if (!isNaN(elementData[countField]))
+                    fieldCount = elementData[countField];
+                else
+                    fieldCount = 0;
+            }
             else fieldCount = 1;
         }
         else
         {
             // If the element is found, extract the count.
-            if (aggregateBySequence) fieldCount = elementData[countField];
+            if (aggregateBySequence)
+            {
+                // If the element is found, and there is a count, get it,
+                // otherwise there are no sequences for this element.
+                if (!isNaN(elementData[countField]))
+                    fieldCount = elementData[countField];
+                else
+                    fieldCount = 0;
+            }
             else fieldCount = 1;
         }
 
-        // Do the aggregation step.
-        if (aggregateName[fieldValue] == null)
+        // Do the aggregation step if we have a count for the field.
+        if (fieldCount > 0)
         {
-            // If we haven't seen this field before (it doesn't exist in our 
-            // aggregator data structure) then initialize the cound for this
-            // field.
-            aggregateCount[fieldValue] = fieldCount;
-            aggregateName[fieldValue] = fieldValue;
-        }
-        else
-        {
-            // If we have seen this field before, increment the count.
-            aggregateCount[fieldValue] += fieldCount;
+            // If we haven't seen this one before, do an initial assignment
+            // otherwise increment the value.
+            if (aggregateName[fieldValue] == null)
+            {
+                // If we haven't seen this field before (it doesn't exist in our 
+                // aggregator data structure) then initialize the cound for this
+                // field.
+                aggregateCount[fieldValue] = fieldCount;
+                aggregateName[fieldValue] = fieldValue;
+            }
+            else
+            {
+                // If we have seen this field before, increment the count.
+                aggregateCount[fieldValue] += fieldCount;
+            }
         }
 
         // Do some debug output if required.
@@ -463,8 +481,8 @@ function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregat
         {
             var jsonString1 = JSON.stringify(fieldValue);
             var jsonString2 = JSON.stringify(fieldCount);
-            console.log("--" + aggregateName[fieldValue] + " = " + aggregateCount[fieldValue] + "--" + "<br>");
-            console.log(jsonString1 + " " + jsonString2 + "<br>");
+            console.log("XX" + aggregateName[fieldValue] + " = " + aggregateCount[fieldValue] + "XX");
+            console.log(jsonString1 + " " + jsonString2);
         }
         count = count + 1;
     }

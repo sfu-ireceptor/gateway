@@ -8,31 +8,30 @@ class FieldNameSeeder extends CsvSeeder
     {
         $this->table = 'field_name';
         $this->filename = base_path() . '/database/seeds/csv/field_names.csv';
-        $this->offset_rows = 7;
+        $this->offset_rows = 2;
     }
 
     public function run()
     {
+        // delete existing data
         DB::table($this->table)->truncate();
 
         $this->mapping = [
-            3 => 'airr_full',
-            4 => 'airr',
-            10 => 'ir_v1',
-            11 => 'ir_v1_sql',
-            16 => 'ir_v2',
-            34 => 'ir_full',
-            35 => 'ir_short',
+            1 => 'ir_id',
+            2 => 'ir_v2',
+            3 => 'ir_short',
+            4 => 'ir_full',
+            5 => 'ir_v1',
+            6 => 'ir_v1_sql',
+            7 => 'airr',
+            8 => 'airr_full',
+            9 => 'airr_description',
+            10 => 'airr_example',
         ];
 
         parent::run();
 
-        // update "ir_id" column using, in order of preference: airr, ir_v2, ir_v1
-        DB::table($this->table)->whereNull('ir_id')->update(['ir_id' => DB::raw('ir_v2')]);
-        DB::table($this->table)->whereNull('ir_id')->update(['ir_id' => DB::raw('airr')]);
-        // DB::table($this->table)->whereNull('ir_id')->update(['ir_id' => DB::raw('ir_v1')]);
-
-        // delete empty rows
+        // delete any empty rows
         DB::table($this->table)->whereNull('ir_id')->delete();
     }
 }
