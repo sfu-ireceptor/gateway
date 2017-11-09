@@ -48,7 +48,7 @@ Route::get('computation/service/{page}', 'CanarieController@linkPage');
 
 // just for dev
 Route::get('test', 'TestController@getIndex');
-Route::get('test2', 'TestController@index2');
+Route::any('test2', 'TestController@index2');
 Route::get('email', 'TestController@email');
 
 /*
