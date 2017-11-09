@@ -185,7 +185,7 @@
 			</p>
 
 			<p>
-				<strong>{{ $total_filtered_samples }} samples returned from:</strong>
+				<strong>{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} samples) returned from:</strong>
 				<span class="data_text_box">
 					{{ $total_filtered_repositories }} remote repositories
 				</span>
