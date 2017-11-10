@@ -39,17 +39,17 @@ class RestService extends Model
         $data['filter_fields'] = [];
         // For each filter that is active, keep track of the filter field so
         // UI can display the filters that are active.
-        foreach($filters as $filter_key => $filter_value)
-        {
+        foreach ($filters as $filter_key => $filter_value) {
             // Filters are sometimes given to the API without values, so we
             // have to detect this and only display if there are values.
-            if (sizeof($filter_value)>0)
-            {
+            if (count($filter_value) > 0) {
                 // Some parameters can be arrays, handle this and conver the array
                 // to a string representation of the filter.
-                if (is_array($filter_value))
-                    $data['filter_fields'][$filter_key] = implode(", ", $filter_value);
-                else $data['filter_fields'][$filter_key] = $filter_value;
+                if (is_array($filter_value)) {
+                    $data['filter_fields'][$filter_key] = implode(', ', $filter_value);
+                } else {
+                    $data['filter_fields'][$filter_key] = $filter_value;
+                }
             }
         }
 
