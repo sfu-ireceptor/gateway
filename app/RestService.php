@@ -128,15 +128,17 @@ class RestService extends Model
         $total_filtered_studies = 0;
         $total_filtered_samples = 0;
         $total_filtered_sequences = 0;
-        $repository_names = "";
+        $repository_names = '';
 
         $count = 0;
         foreach ($data['rs_list'] as $rs_data) {
             if ($rs_data['total_samples'] > 0) {
                 $total_filtered_repositories++;
-                $separator = ", ";
-                if ($count == 0) $separator = "";
-                $count ++;
+                $separator = ', ';
+                if ($count == 0) {
+                    $separator = '';
+                }
+                $count++;
                 $repository_names = $repository_names . $separator . $rs_data['rs']->name;
             }
 
