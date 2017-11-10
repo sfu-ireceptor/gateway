@@ -128,18 +128,12 @@ class RestService extends Model
         $total_filtered_studies = 0;
         $total_filtered_samples = 0;
         $total_filtered_sequences = 0;
-        $repository_names = '';
+        $filtered_repositories = [];
 
-        $count = 0;
         foreach ($data['rs_list'] as $rs_data) {
             if ($rs_data['total_samples'] > 0) {
                 $total_filtered_repositories++;
-                $separator = ', ';
-                if ($count == 0) {
-                    $separator = '';
-                }
-                $count++;
-                $repository_names = $repository_names . $separator . $rs_data['rs']->name;
+                $filtered_repositories[] = $rs_data['rs'];
             }
 
             $total_filtered_samples += $rs_data['total_samples'];
@@ -153,7 +147,7 @@ class RestService extends Model
         $data['total_filtered_labs'] = $total_filtered_labs;
         $data['total_filtered_studies'] = $total_filtered_studies;
         $data['total_filtered_sequences'] = $total_filtered_sequences;
-        $data['repository_names'] = $repository_names;
+        $data['filtered_repositories'] = $filtered_repositories;
 
         return $data;
     }

@@ -67,20 +67,23 @@ class SampleController extends Controller
         $data['total_sequences'] = $metadata['total_sequences'];
 
         /*************************************************
-        * get filtered sample list */
+        * get filtered sample list and related statistics */
 
         $sample_data = RestService::samples($request->all(), $username);
 
         $data['sample_list'] = $sample_data['items'];
         $data['sample_list_json'] = json_encode($sample_data['items']);
 
-        $data['filter_fields'] = $sample_data['filter_fields'];
         $data['total_filtered_repositories'] = $sample_data['total_filtered_repositories'];
         $data['total_filtered_labs'] = $sample_data['total_filtered_labs'];
         $data['total_filtered_studies'] = $sample_data['total_filtered_studies'];
         $data['total_filtered_samples'] = $sample_data['total_filtered_samples'];
         $data['total_filtered_sequences'] = $sample_data['total_filtered_sequences'];
-        $data['repository_names'] = $sample_data['repository_names'];
+        
+        $filtered_repositories_names = array_map(function ($rs) { return $rs->name; }, $sample_data['filtered_repositories']);
+        $data['filtered_repositories_names'] = implode(', ', $filtered_repositories_names);
+
+        $data['filter_fields'] = $sample_data['filter_fields'];
 
         /*************************************************
         * re-populate form values */
