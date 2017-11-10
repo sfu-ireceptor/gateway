@@ -74,6 +74,7 @@ class SampleController extends Controller
         $data['sample_list'] = $sample_data['items'];
         $data['sample_list_json'] = json_encode($sample_data['items']);
 
+        $data['filter_fields'] = $sample_data['filter_fields'];
         $data['total_filtered_repositories'] = $sample_data['total_filtered_repositories'];
         $data['total_filtered_labs'] = $sample_data['total_filtered_labs'];
         $data['total_filtered_studies'] = $sample_data['total_filtered_studies'];
