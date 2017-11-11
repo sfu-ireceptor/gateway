@@ -188,7 +188,7 @@ class RestService extends Model
             } catch (\Exception $e) {
                 continue;
             }
-
+            //var_dump($obj); die();
             $data['items'] = array_merge($obj->items, $data['items']);
             $data['summary'] = array_merge($obj->summary, $data['summary']);
 
@@ -278,6 +278,8 @@ class RestService extends Model
         $defaults = [];
         $defaults['base_uri'] = $rs->url;
         $defaults['verify'] = false;    // accept self-signed SSL certificates
+        //var_dump($defaults); die();
+
         $client = new \GuzzleHttp\Client($defaults);
 
         // build request
@@ -317,18 +319,30 @@ class RestService extends Model
 
         // execute request
         try {
+            //var_dump($path); die();
             $response = $client->request('POST', $path, $options);
-        } catch (\Exception $exception) {
+        }
+        catch (\ClientException $exception) {
+            //var_dump($exception); die();
             $response = $exception->getResponse()->getBody()->getContents();
             Log::error($response);
-
+            return [];
+        }
+        catch (\Exception $exception) {
+            //var_dump($exception); die();
+            $response = $exception->getMessage();
+            Log::error($response);
             return [];
         }
 
         if ($filePath == '') {
             // return object generated from json response
+            //var_dump($response->getBody()); die();
             $json = $response->getBody();
+            //var_dump($json); die();
+
             $obj = json_decode($json, $returnArray);
+            //var_dump($obj); die();
 
             return $obj;
         }
