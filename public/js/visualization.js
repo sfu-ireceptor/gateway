@@ -12,14 +12,14 @@ $(document).ready(function()
 // blades that contain the relevant DIV (in this case landing_charts)
 function doLandingCharts()
 {
-    showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels);
+    showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels, false);
 }
 // Function to process the Landing Page charts. Data (graphData,
 // graphFields, and graphNames) is provided by the appropriate 
 // blades that contain the relevant DIV (in this case sample_charts)
 function doSampleCharts()
 {
-    showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels);
+    showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels, false);
 }
 
 // Function to process the Landing Page charts. Data (graphData,
@@ -29,7 +29,7 @@ function doSequenceCharts()
 {
     // Get the JSON and process it. We currently have no mechanism to get the 
     // filtered data to the visualization - working on it...
-    showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels);
+    showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels, true);
 }
 
 /**********************************************************
@@ -50,12 +50,11 @@ function doSequenceCharts()
 // of the graph (starting at 1). For example, if there are N graphs and htmlBase
 // is "foo" then there should be N valid html containers with the IDs "foo1",
 // "foo2" up to "fooN".
-function showData(json, graphFields, graphNames, htmlBase, internalLabels)
+function showData(json, graphFields, graphNames, htmlBase, internalLabels, sequenceAPIData)
 {
     // Initial variables. These should be provided by the gateway, but they are constants for now.
     // sequenceAPIData - Whether or not the data came from the sequence_summary API or not.
     // The summary JSON data from the /v2/samples and /v2/sequences APIs are slightly different.
-    var sequenceAPIData = false;
     var aggregateBySequence = true;
 
     // Generate the  charts for the  types of aggregated data provided. For each chart, we
@@ -291,8 +290,8 @@ function irBuildBarChart(fieldTitle, data, level)
     {
         if (debugLevel > 0)
         {
-            console.log("--" + data[d] + "--" + "<br>\n");
-            console.log("--" + data[d].name + " = " + data[d].count + "--" + "<br>");
+            console.log("--" + data[d] + "--" + "\n");
+            console.log("--" + data[d].name + " = " + data[d].count + "--" + "\n");
         }
 
 
@@ -384,23 +383,22 @@ function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregat
     var countField;
     
     // Debug: tell us the series name we are looking for.
-    if (debugLevel > 0)
-        console.log("Series name = " + seriesName + "\n");
+    if (debugLevel > 0) 
+    {
+        console.log("irAggregateData: Series name = " + seriesName + "\n");
+        console.log("irAggregateData: sequenceSummaryAPI = " + sequenceSummaryAPI + "\n");
+
+        if (debugLevel > 1)
+            console.log("irAggregateData: json Data = " + JSON.stringify(jsonData) + "\n");
+    }
     
+    aggregationList = jsonData;
     if (sequenceSummaryAPI)
-    {
-        aggregationList = jsonData.aggregation_summary;
         countField = "sequences";
-    }
     else
-    {
-        aggregationList = jsonData;
         countField = "ir_sequence_count";
-    }
-    if (debugLevel > 0)
-        console.log("irAggregateData:\n");
     if (debugLevel > 1)
-        console.log("aggregation list has " + JSON.stringify(aggregationList) + "\n");
+        console.log("irAggregateData: aggregation list has " + JSON.stringify(aggregationList) + "\n");
     
     // Process each element in the data from iReceptor. 
     var count = 0
@@ -410,14 +408,14 @@ function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregat
         if (sequenceSummaryAPI)
         {
             if (debugLevel > 0)
-                console.log(element + "<br>");
+                console.log("Element: " + element + "\n");
             elementData = aggregationList[element];
             if (debugLevel > 0)
-                console.log(elementData + "<br>");           
+                console.log("ElementData: " + elementData + "\n");           
         }
         else
         {
-            elementData = aggregationList[count];
+            elementData = aggregationList[element];
         }
         if (debugLevel > 1)
             console.log("Element: series = " + seriesName + ", element = " + JSON.stringify(elementData) + "\n");        
@@ -483,8 +481,7 @@ function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregat
         {
             var jsonString1 = JSON.stringify(fieldValue);
             var jsonString2 = JSON.stringify(fieldCount);
-            console.log("XX" + aggregateName[fieldValue] + " = " + aggregateCount[fieldValue] + "XX");
-            console.log(jsonString1 + " " + jsonString2);
+            console.log("irAggregateData: Found " + aggregateName[fieldValue] + " = " + aggregateCount[fieldValue] + "\n");
         }
         count = count + 1;
     }
@@ -497,12 +494,12 @@ function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregat
     for (element in aggregateCount)
     {
          if (debugLevel > 0)
-             console.log("**" + element + " = " + aggregateCount[element] + "**" + "<br>");
+             console.log("irAggregateData: Generating series data - " + element + " = " + aggregateCount[element] + "\n");
          seriesData[count] = {name:element,count:aggregateCount[element]};
          count = count + 1;
     }
     if (debugLevel > 0)
-        console.log("<br>");
+        console.log("\n");
     
     // Return the aggregate name/value list.
     return seriesData;
