@@ -321,17 +321,17 @@ class RestService extends Model
         try {
             //var_dump($path); die();
             $response = $client->request('POST', $path, $options);
-        }
-        catch (\ClientException $exception) {
+        } catch (\ClientException $exception) {
             //var_dump($exception); die();
             $response = $exception->getResponse()->getBody()->getContents();
             Log::error($response);
+
             return [];
-        }
-        catch (\Exception $exception) {
+        } catch (\Exception $exception) {
             //var_dump($exception); die();
             $response = $exception->getMessage();
             Log::error($response);
+
             return [];
         }
 
