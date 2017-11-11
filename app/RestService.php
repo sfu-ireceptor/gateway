@@ -283,7 +283,28 @@ class RestService extends Model
         // build request
         $options = [];
         $options['auth'] = [$rs->username, $rs->password];
-        $options['form_params'] = $params;
+
+
+        // VDJServer needs array params without brackets
+        if(str_contains($rs->url, 'vdj')) {
+            // remove null values.
+            foreach ($params as $k => $v) {
+                if ($v === null) {
+                    unset($params[$k]);
+                }
+            }
+
+            // build query string with special function which doesn't add brackets
+            $queryString = \GuzzleHttp\Psr7\build_query($params, PHP_QUERY_RFC1738);
+
+            // set request body and header manually
+            $options['body'] = $queryString;
+            $options['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
+        }
+        else {
+            // if PHP service, just let Guzzle add brackets for array params
+            $options['form_params'] = $params;
+        }
 
         if ($filePath != '') {
             $dirPath = dirname($filePath);
@@ -297,7 +318,13 @@ class RestService extends Model
         }
 
         // execute request
-        $response = $client->request('POST', $path, $options);
+        try {
+            $response = $client->request('POST', $path, $options);
+        } catch (\Exception $exception) {
+            $response = $exception->getResponse()->getBody()->getContents();
+            Log::error($response);
+            return [];
+        }
 
         if ($filePath == '') {
             // return object generated from json response
