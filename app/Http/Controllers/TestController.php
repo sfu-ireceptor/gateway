@@ -32,7 +32,8 @@ class TestController extends Controller
     {
         $data = ['project_id' => 2, 'subject_id' => 3, 'test' => 4, 'test2' => ''];
 
-        echo http_build_query($data, '', '&');die();
+        echo http_build_query($data, '', '&');
+        die();
 
         $l = SequenceColumnName::all();
         foreach ($l as $s) {
@@ -414,6 +415,5 @@ EOD;
         Log::info($request->all());
         $content = $request->getContent();
         Log::info($content);
-
     }
 }
