@@ -284,9 +284,8 @@ class RestService extends Model
         $options = [];
         $options['auth'] = [$rs->username, $rs->password];
 
-
         // VDJServer needs array params without brackets
-        if(str_contains($rs->url, 'vdj')) {
+        if (str_contains($rs->url, 'vdj')) {
             // remove null values.
             foreach ($params as $k => $v) {
                 if ($v === null) {
@@ -300,8 +299,7 @@ class RestService extends Model
             // set request body and header manually
             $options['body'] = $queryString;
             $options['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
-        }
-        else {
+        } else {
             // if PHP service, just let Guzzle add brackets for array params
             $options['form_params'] = $params;
         }
@@ -323,6 +321,7 @@ class RestService extends Model
         } catch (\Exception $exception) {
             $response = $exception->getResponse()->getBody()->getContents();
             Log::error($response);
+
             return [];
         }
 
