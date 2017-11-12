@@ -31,8 +31,8 @@ class SequenceColumnNameSeeder extends Seeder
               'enabled' => true,
             ],
             [
-              'name' => 'cdr3_length',
-              'title' => 'CDR3 Length',
+              'name' => 'junction_aa_length',
+              'title' => ' Junction Length (AA)',
               'enabled' => true,
             ],
             [
