@@ -11,6 +11,61 @@ class SequenceColumnNameSeeder extends Seeder
 
         $l = [
             [
+              'name' => 'v_call',
+              'title' => 'V-Gene Allele',
+              'enabled' => true
+            ],
+            [
+              'name' => 'j_call',
+              'title' => 'J-Gene Allele',
+              'enabled' => true,
+            ], 
+            [
+              'name' => 'd_call',
+              'title' => 'D-Gene Allele',
+              'enabled' => true,
+            ],
+            [
+              'name' => 'junction_aa',
+              'title' => 'Junction AA Sequence',
+              'enabled' => true,
+            ],
+            [
+              'name' => 'cdr3_length',
+              'title' => 'CDR3 Length',
+              'enabled' => true,
+            ],
+            [
+              'name' => 'annotation_tool',
+              'title' => 'Annotation Tool',
+              'enabled' => true,
+            ],
+            [
+              'name' => 'functional',
+               'title' => 'Functional',
+              'enabled' => true,
+            ],
+            [
+              'name' => 'rev_comp',
+               'title' => 'Reverse Complement',
+              'enabled' => true,
+            ],
+            [
+              'name' => 'v_score',
+              'title' => 'V Score',
+              'enabled' => true,
+            ],
+            [
+              'name' => 'd_score',
+              'title' => 'D Score',
+              'enabled' => true,            
+            ],
+            [
+              'name' => 'j_score',
+              'title' => 'J Score',
+              'enabled' => true,
+            ],
+            [
               'name' => 'id',
               'title' => 'id',
               'enabled' => false,
@@ -51,11 +106,6 @@ class SequenceColumnNameSeeder extends Seeder
               'enabled' => false,
             ],
             [
-              'name' => 'v_call',
-              'title' => 'V-Gene Allele',
-              'enabled' => true,
-            ],
-            [
               'name' => 'jgene_string',
               'title' => 'J-Gene',
               'enabled' => false,
@@ -71,11 +121,6 @@ class SequenceColumnNameSeeder extends Seeder
               'enabled' => false,
             ],
             [
-              'name' => 'j_call',
-              'title' => 'J-Gene Allele',
-              'enabled' => true,
-            ],
-            [
               'name' => 'dgene_string',
               'title' => 'D-Gene String',
               'enabled' => false,
@@ -89,11 +134,6 @@ class SequenceColumnNameSeeder extends Seeder
               'name' => 'dgene_gene',
               'title' => 'D-Gene Gene',
               'enabled' => false,
-            ],
-            [
-              'name' => 'd_call',
-              'title' => 'D-Gene Allele',
-              'enabled' => true,
             ],
             [
               'name' => 'functionality',
@@ -134,11 +174,6 @@ class SequenceColumnNameSeeder extends Seeder
               'name' => 'cdr2_length',
               'title' => 'CDR2 Length',
               'enabled' => false,
-            ],
-            [
-              'name' => 'cdr3_length',
-              'title' => 'CDR3 Length',
-              'enabled' => true,
             ],
             [
               'name' => 'vdjregion_sequence_nt',
@@ -329,11 +364,6 @@ class SequenceColumnNameSeeder extends Seeder
               'name' => 'cdr3region_sequence_aa',
               'title' => 'CDR3 Region AA Sequence',
               'enabled' => false,
-            ],
-            [
-              'name' => 'junction_aa',
-              'title' => 'Junction AA Sequence',
-              'enabled' => true,
             ],
             [
               'name' => 'vdjregion_sequence_aa_gapped',
@@ -570,11 +600,7 @@ class SequenceColumnNameSeeder extends Seeder
               'title' => 'CDR3 Region Mutation String',
               'enabled' => false,
             ],
-            [
-              'name' => 'annotation_tool',
-              'title' => 'Annotation Tool',
-              'enabled' => true,
-            ],
+
         ];
 
         foreach ($l as $item) {
