@@ -69,7 +69,7 @@ class SequenceController extends Controller
         $currentSequenceColumnsStr = implode('_', $currentSequenceColumns);
 
         // filters
-        $defaultFiltersListIds = [1,2,3,4,5];
+        $defaultFiltersListIds = [1, 2, 3, 4, 5];
         $filtersListIds = [];
         if (isset($filters['filters_order'])) {
             $filtersListIds = explode('_', $filters['filters_order']);

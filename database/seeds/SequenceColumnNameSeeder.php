@@ -13,13 +13,13 @@ class SequenceColumnNameSeeder extends Seeder
             [
               'name' => 'v_call',
               'title' => 'V-Gene Allele',
-              'enabled' => true
+              'enabled' => true,
             ],
             [
               'name' => 'j_call',
               'title' => 'J-Gene Allele',
               'enabled' => true,
-            ], 
+            ],
             [
               'name' => 'd_call',
               'title' => 'D-Gene Allele',
@@ -58,7 +58,7 @@ class SequenceColumnNameSeeder extends Seeder
             [
               'name' => 'd_score',
               'title' => 'D Score',
-              'enabled' => true,            
+              'enabled' => true,
             ],
             [
               'name' => 'j_score',
