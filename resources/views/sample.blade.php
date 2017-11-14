@@ -6,6 +6,8 @@
 
 <div class="container-fluid sample_container">
 
+	<h1>Samples <small>Filter for and select samples to view their sequences</small></h1>
+
 	<div class="row">
 		<div class="col-md-2 filters">
 
@@ -178,8 +180,6 @@
 		</div>
 
 		<div class="col-md-10">
-			<h1>Samples <small>Filter for and select samples to view their sequences</small></h1>
-
 			<p>
 				<strong>Active filters:</strong>
 				@foreach($filter_fields as $filter_key => $filter_value)

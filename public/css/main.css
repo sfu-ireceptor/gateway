@@ -363,7 +363,11 @@ p.workflow {
 }
 
 .filters {
-	margin-top: 45px;
+	margin-top: 0px;
+}
+
+.filters > h3 {
+	margin-top: 0px;	
 }
 
 .intro {
