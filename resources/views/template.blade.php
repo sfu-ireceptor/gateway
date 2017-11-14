@@ -96,7 +96,7 @@
 		<script src="https://code.highcharts.com/modules/drilldown.js"></script>
 		<script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
 
-		<script src="/js/main.js?v=2"></script>
+		<script src="/js/main.js?v=3"></script>
 		<script src="/js/visualization.js?v=3"></script>
 	</body>
 
