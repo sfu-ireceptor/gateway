@@ -232,7 +232,7 @@
 				<table class="table table-striped sample_list table-condensed">
 					<thead>
 						<tr>
-							<th>{{ Form::checkbox('select_all') }}</th>
+							<th>{{ Form::checkbox('select_all', '', true) }}</th>
 							<th>Repository</th>
 							<th>@lang('short.lab_name')</th>
 							<th>@lang('short.study_title')</th>
@@ -253,7 +253,7 @@
 						?>
 						@foreach ($sample_list as $sample)
 						<tr>
-							<td>{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id) }}</td>
+							<td>{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id, true) }}</td>
 							<td class="text-nowrap">
 								<span title="{{ $sample->rest_service_name }}">
 									{{ str_limit($sample->rest_service_name, $limit = 9, $end = '‥') }}
