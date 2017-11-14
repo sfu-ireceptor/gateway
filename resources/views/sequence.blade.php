@@ -5,6 +5,8 @@
 @section('content')
 <div class="container-fluid sequence_container">
 
+	<h1>Sequences <small>Filter and download sequences</small></h1>
+
 	<div class="row">
 		<div class="col-md-2">
 			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'get')) }}
