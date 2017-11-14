@@ -227,7 +227,7 @@
 					{{ Form::submit('View all samples ('.(string)($total_filtered_samples-$max_count).' more)', array('class' => 'btn btn-primary show-more-samples-button', 'disabled' => 'disabled')) }}
 				@endif
 
-				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
+				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button')) }}
 
 				<table class="table table-striped sample_list table-condensed">
 					<thead>
@@ -358,7 +358,7 @@
 				@if ($total_filtered_samples > $max_count):
 					{{ Form::submit('View all samples ('.(string)($total_filtered_samples-$max_count).' more)', array('class' => 'btn btn-primary show-more-samples-button', 'disabled' => 'disabled')) }}
 				@endif
-				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
+				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button')) }}
 
 			{{ Form::close() }}
 			@endif
