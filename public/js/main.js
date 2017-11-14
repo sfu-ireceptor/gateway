@@ -55,6 +55,12 @@ $(document).ready(function() {
 			$('.browse-seq-data-button').attr('disabled','disabled');	
 		}
 	});
+
+	// table select/unselect all rows
+	$('table input[type=checkbox].select_all_rows').change(function(){
+		var is_checked = $(this).prop("checked");
+		$('input:checkbox', $(this).parents('table')).prop('checked', is_checked);
+	});
 	
 	/**********************************************************
 	* Sequences
