@@ -178,7 +178,7 @@
 			@if (! empty($sequence_list))
 			@endif
 
-			<div class="sequences_stats">
+			<div class="data_container_box">
 				<div id="sequence_charts" class="charts">
 					<div class="row">
 						<div class="col-md-2 chart" id="sequence_chart1"></div>
@@ -197,10 +197,12 @@
 				<div class="collapse" id="sequence_column_selector">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							Sequence data columns
-							 <button type="button" class="close" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector">
-							 	<span aria-hidden="true">&times;</span>
-							 </button>
+							<h4 class="panel-title">
+								Sequence data columns
+								 <button type="button" class="close" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector">
+									<span aria-hidden="true">&times;</span>
+								 </button>
+							</h4>
 						</div>
 				  		<div class="panel-body">
 							<form class="sequence_column_selector">
