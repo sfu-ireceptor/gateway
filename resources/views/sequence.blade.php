@@ -174,9 +174,6 @@
 		</div>
 
 		<div class="col-md-10">
-			<!-- statistics box -->
-			@if (! empty($sequence_list))
-			@endif
 
 			<div class="data_container_box">
 				<div id="sequence_charts" class="charts">
