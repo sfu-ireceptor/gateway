@@ -173,7 +173,7 @@
 				</div>
 
 				<p>
-					{{ Form::submit('Apply filters', array('class' => 'btn btn-primary search_samples')) }}
+					{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 				</p>
 			    
 			{{ Form::close() }}

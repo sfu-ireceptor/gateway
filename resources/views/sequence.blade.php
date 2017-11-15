@@ -8,14 +8,17 @@
 	<h1>Sequences <small>Filter and download sequences</small></h1>
 
 	<div class="row">
-		<div class="col-md-2">
+		<div class="col-md-2 filters">
+
+			<h3>Filters</h3>
+
 			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'get')) }}
 
 				@foreach ($hidden_fields as $hf)
 					<input type="hidden" name="{{$hf['name']}}" value="{{$hf['value']}}">
 				@endforeach
 
-				<!-- template for fields added dynamically -->
+{{-- 				<!-- template for fields added dynamically -->
 				<div id="field_template" class="hidden">
 					<div class="form-group">						
 						<label for="junction_sequence_aa">CDR3 AA Sequence</label>
@@ -29,27 +32,113 @@
 						</div>
 					</div>
 				</div>
+ --}}
+				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+					<div class="panel panel-default">
+						<div class="panel-heading" role="tab" id="headingOne">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+									Filter by VDJ
+								</a>
+							</h4>
+						</div>
+						<div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+							<div class="panel-body">
+								<div class="form-group">
+									{{ Form::label('v_call', $filters_list_all['v_call']) }}
+									{{ Form::text('v_call', '', array('class' => 'form-control')) }}
+								</div>
 
-				<!-- filters --> 
-			    <div class="filter_list">
-					@foreach ($filters_list as $name => $title)
-					    <div class="form-group">
-							{{ Form::label($name, $title) }}
-							<div class="input-group">
-								{{ Form::text($name, '', array('class' => 'form-control')) }}
-								<span class="input-group-btn">
-			        				<button class="btn btn-default remove_field" type="button">
-			        				<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-			        				</button>
-			      				</span>
+								<div class="form-group">
+									{{ Form::label('j_call', $filters_list_all['j_call']) }}
+									{{ Form::text('j_call', '', array('class' => 'form-control')) }}
+								</div>
+
+								<div class="form-group">
+									{{ Form::label('d_call', $filters_list_all['d_call']) }}
+									{{ Form::text('d_call', '', array('class' => 'form-control')) }}
+								</div>
+
+{{-- 								@foreach ($filters_list_all as $name => $title)
+								    <div class="form-group">
+										{{ Form::label($name, $title) }}
+										{{ Form::text($name, '', array('class' => 'form-control')) }}
+									</div>
+								@endforeach --}}
 							</div>
 						</div>
-					@endforeach
+					</div>
+
+					<div class="panel panel-default">
+						<div class="panel-heading" role="tab" id="headingTwo">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+									Filter by Junction AA
+								</a>
+							</h4>
+						</div>
+						<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+							<div class="panel-body">
+								<div class="form-group">
+									{{ Form::label('junction_aa', $filters_list_all['junction_aa']) }}
+									{{ Form::text('junction_aa', '', array('class' => 'form-control')) }}
+								</div>
+
+								<div class="form-group">
+									{{ Form::label('junction_aa_length', $filters_list_all['junction_aa_length']) }}
+									{{ Form::text('junction_aa_length', '', array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="panel panel-default">
+						<div class="panel-heading" role="tab" id="headingThree">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+									Advanced filters
+								</a>
+							</h4>
+						</div>
+						<div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+							<div class="panel-body">
+								<div class="form-group">
+									{{ Form::label('annotation_tool', $filters_list_all['annotation_tool']) }}
+									{{ Form::text('annotation_tool', '', array('class' => 'form-control')) }}
+								</div>
+								<div class="form-group">
+									{{ Form::label('functional', $filters_list_all['functional']) }}
+									{{ Form::text('functional', '', array('class' => 'form-control')) }}
+								</div>
+								<div class="form-group">
+									{{ Form::label('rev_comp', $filters_list_all['rev_comp']) }}
+									{{ Form::text('rev_comp', '', array('class' => 'form-control')) }}
+								</div>
+								<div class="form-group">
+									{{ Form::label('v_score', $filters_list_all['v_score']) }}
+									{{ Form::text('v_score', '', array('class' => 'form-control')) }}
+								</div>
+								<div class="form-group">
+									{{ Form::label('d_score', $filters_list_all['d_score']) }}
+									{{ Form::text('d_score', '', array('class' => 'form-control')) }}
+								</div>
+								<div class="form-group">
+									{{ Form::label('j_score', $filters_list_all['j_score']) }}
+									{{ Form::text('j_score', '', array('class' => 'form-control')) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+
+{{-- 			    <div class="filter_list">
 				</div>
 
 	    		<div class="form-group add_filter">
 				    <div class="input-group">
-						{{ Form::select('add_field', $filters_list_select, '', array('class' => 'form-control add_field')) }}
+						{{ Form::select('add_field', $filters_list_all_select, '', array('class' => 'form-control add_field')) }}
 						<span class="input-group-btn">
 		       				<button class="btn btn-default add_field" type="button">
 			       				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
@@ -57,12 +146,14 @@
 		       				</button>
 		      			</span>
 					</div>
-   				</div>				
+   				</div>	 --}}			
 
 
-				<p>{{ Form::submit('Update', array('class' => 'btn btn-primary')) }}</p>
+				<p>
+					{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
+				</p>
 
-				<p>{{ Form::submit('Download as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}</p>
+				<p>{{ Form::submit('↓ Download as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}</p>
 
 				<p>
 					<a class="bookmark" href="/system/" data-uri="{{ $url }}">

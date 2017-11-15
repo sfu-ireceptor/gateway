@@ -101,6 +101,7 @@ class SequenceController extends Controller
 
         $data['filters_list'] = $filtersListDisplayed;
         $data['filters_list_select'] = $filtersListSelect;
+        $data['filters_list_all'] = array_merge($filtersListDisplayed, $filtersListSelect);
         $currentFiltersListIdsStr = implode('_', $filtersListIds);
 
         // hidden form fields
