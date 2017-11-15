@@ -25,7 +25,7 @@
 }
 
 .navbar-brand span {
-	margin-top: 6px;
+	margin-top: 10px;
 	float: right;
 	display: block;
 }
@@ -39,6 +39,20 @@
 	padding-top: 10px;
 }
 
+.navbar-default .navbar-nav > li > a {
+	font-weight: bold;
+	font-size: 14px;
+}
+
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:focus, .navbar-default .navbar-nav > .active > a:hover {
+    color: #4a90e2;
+    background-color: #c8ddf6;
+	font-weight: bold;
+}
+
+.navbar-nav > li > a {
+	
+}
 
 body {
 	font-size: 16px;
