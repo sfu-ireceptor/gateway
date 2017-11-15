@@ -394,7 +394,7 @@ function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregat
     
     aggregationList = jsonData;
     if (sequenceSummaryAPI)
-        countField = "sequences";
+        countField = "ir_filtered_sequence_count";
     else
         countField = "ir_sequence_count";
     if (debugLevel > 1)
