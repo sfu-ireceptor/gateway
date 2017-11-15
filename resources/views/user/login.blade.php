@@ -6,15 +6,16 @@
 <div class="container login_container">
 
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-md-3">
+		</div>
+		<div class="col-md-8">
 			<div class="intro">
-				<p><strong>Welcome to iReceptor!</strong> iReceptor provides access to “Next Generation” sequence data from the immune response: <span class="stats_total_sequences">millions of </span> sequences from 5 distributed curated data repositories are currently available for exploration, analysis, and download.</p> 
+				<p>A gateway to curated, distributed databases containing "Next Generation" sequence data from immune responses available for exploration, analysis, and download.</p> 
 			</div>
 		</div>
 	</div>
 
 	<div class="row">
-
 		<div class="col-md-3 login-box">
 			<div class="panel panel-default">
 				<div class="panel-body">
