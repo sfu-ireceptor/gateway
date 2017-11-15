@@ -34,23 +34,35 @@
 				</li>
 		    	@if(Auth::check())
 			    	@if(Request::is('samples*'))
-						<li role="presentation" class="active">
-							<a href="/samples">Search</a>
+						<li role="presentation" class="active search">
+							<a href="/samples">
+								Search
+								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+							</a>
 						</li>
-						<li role="presentation" class="active">
-							<a href="/samples">Samples</a>
+						<li role="presentation" class="active samples">
+							<a href="/samples">
+								Samples
+								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+							</a>
 						</li>
-						<li role="presentation" class="">
+						<li role="presentation" class="sequences">
 							<a href="/samples">Sequences</a>
 						</li>
 					@elseif(Request::is('sequences*'))
-						<li role="presentation" class="active">
-							<a href="/samples">Search</a>
+						<li role="presentation" class="active search">
+							<a href="/samples">
+								Search
+								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+							</a>
 						</li>
-						<li role="presentation" class="active">
-							<a href="/samples">Samples</a>
+						<li role="presentation" class="active samples">
+							<a href="/samples">
+								Samples
+								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+							</a>
 						</li>
-						<li role="presentation" class="active">
+						<li role="presentation" class="active sequences">
 							<a href="/samples">Sequences</a>
 						</li>
 					@else

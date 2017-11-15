@@ -50,8 +50,28 @@
 	font-weight: bold;
 }
 
-.navbar-nav > li > a {
-	
+.navbar-nav .glyphicon-chevron-right {
+	color: black;
+	margin-left: 1px;
+	right: -5px;
+	z-index: 150;
+}
+
+.navbar-nav .samples a, .navbar-nav .sequences a {
+	padding-left: 0;
+}
+
+.navbar-nav .search a {
+	padding-right: 0px;	
+}
+
+.navbar-nav .samples a {
+	padding-right: 0px;
+	padding-left: 10px;
+}
+
+.navbar-nav .sequences a {
+	padding-left: 10px;
 }
 
 body {
