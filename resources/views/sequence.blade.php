@@ -177,7 +177,11 @@
 
 			<p>
 				<strong>Active filters:</strong>
-
+				@foreach($filter_fields as $filter_key => $filter_value)
+					<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="data_text_box">
+						@lang('short.' . $filter_key)
+					</span>
+				@endforeach
 			</p>
 
 			<p>

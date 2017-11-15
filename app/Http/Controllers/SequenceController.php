@@ -47,6 +47,7 @@ class SequenceController extends Controller
         $data['total_filtered_studies'] = $sequence_data['total_filtered_studies'];
         $data['total_filtered_sequences'] = $sequence_data['total_filtered_sequences'];
         $data['filtered_repositories'] = $sequence_data['filtered_repositories'];
+        $data['filter_fields'] = $sequence_data['filter_fields'];
 
         $filtered_repositories_names = array_map(function ($rs) {
             return $rs->name;
