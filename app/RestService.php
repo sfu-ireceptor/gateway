@@ -205,42 +205,32 @@ class RestService extends Model
             $study_list = [];
             $total_sequences = 0;
             $filtered_sequences = 0;
-            foreach ($obj->summary as $sample) 
-            {
+            foreach ($obj->summary as $sample) {
                 // If there are some sequence in this sample
-                if (isset($sample->ir_filtered_sequence_count))
-                {
+                if (isset($sample->ir_filtered_sequence_count)) {
                     $filtered_sequences += $sample->ir_filtered_sequence_count;
                     // If we have a lab and we haven't seen it allready, add it
-                    if (isset($sample->lab_name))
-                    {
-                        if (! in_array($sample->lab_name, $lab_list)) 
-                        {
+                    if (isset($sample->lab_name)) {
+                        if (! in_array($sample->lab_name, $lab_list)) {
                             $lab_list[] = $sample->lab_name;
                         }
-                    } elseif (isset($sample->collected_by))
-                    {
-                        if (! in_array($sample->collected_by, $lab_list)) 
-                        {
+                    } elseif (isset($sample->collected_by)) {
+                        if (! in_array($sample->collected_by, $lab_list)) {
                             $lab_list[] = $sample->collected_by;
                         }
                     }
                     // If we have a study title and we haven't seen it allready, add it
-                    if (isset($sample->study_title))
-                    {
-                        if (! in_array($sample->study_title, $study_list)) 
-                        {
+                    if (isset($sample->study_title)) {
+                        if (! in_array($sample->study_title, $study_list)) {
                             $study_list[] = $sample->study_title;
                         }
                     }
                 }
-    
+
                 // If we have a total sequence count, add the total up.
-                if (isset($sample->ir_sequence_count)) 
-                {
+                if (isset($sample->ir_sequence_count)) {
                     $total_sequences += $sample->ir_sequence_count;
                 }
-
             }
             $rs_data['total_samples'] = count($obj->summary);
             $rs_data['total_labs'] = count($lab_list);
@@ -276,6 +266,7 @@ class RestService extends Model
         $data['total_filtered_studies'] = $total_filtered_studies;
         $data['total_filtered_sequences'] = $total_filtered_sequences;
         $data['filtered_repositories'] = $filtered_repositories;
+
         return $data;
     }
 
