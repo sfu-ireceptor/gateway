@@ -12,14 +12,14 @@ $(document).ready(function()
 // blades that contain the relevant DIV (in this case landing_charts)
 function doLandingCharts()
 {
-    showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels, false);
+    showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels);
 }
 // Function to process the Landing Page charts. Data (graphData,
 // graphFields, and graphNames) is provided by the appropriate 
 // blades that contain the relevant DIV (in this case sample_charts)
 function doSampleCharts()
 {
-    showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels, false);
+    showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels);
 }
 
 // Function to process the Landing Page charts. Data (graphData,
@@ -29,7 +29,7 @@ function doSequenceCharts()
 {
     // Get the JSON and process it. We currently have no mechanism to get the 
     // filtered data to the visualization - working on it...
-    showData(graphData, graphFields, graphNames, graphDIV, graphInternalLabels, true);
+    showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels);
 }
 
 /**********************************************************
@@ -50,7 +50,7 @@ function doSequenceCharts()
 // of the graph (starting at 1). For example, if there are N graphs and htmlBase
 // is "foo" then there should be N valid html containers with the IDs "foo1",
 // "foo2" up to "fooN".
-function showData(json, graphFields, graphNames, htmlBase, internalLabels, sequenceAPIData)
+function showData(json, graphFields, graphNames, countField, htmlBase, internalLabels)
 {
     // Initial variables. These should be provided by the gateway, but they are constants for now.
     // sequenceAPIData - Whether or not the data came from the sequence_summary API or not.
@@ -69,7 +69,7 @@ function showData(json, graphFields, graphNames, htmlBase, internalLabels, seque
     for (index in graphFields)
     {
         // Get the aggregated data for this field.
-        aggregateData = irAggregateData(graphFields[index], json, sequenceAPIData, aggregateBySequence);
+        aggregateData = irAggregateData(graphFields[index], json, countField, aggregateBySequence);
         // Build the chart data structure.
         chart = irBuildPieChart(graphNames[index], aggregateData, 3, internalLabels);
         //chart = irBuildBarChart(graphNames[index], aggregateData, 4, internalLabels);
@@ -371,7 +371,7 @@ function irBuildBarChart(fieldTitle, data, level)
 // aggregationSummary: A boolean flag that denotes whether jsonData came from
 // the /v2/sequence_summary API or not. If not, we assume the data came from the
 // /v1/samples API.
-function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregateBySequence=true)
+function irAggregateData(seriesName, jsonData, countField, aggregateBySequence=true)
 {
     // Debug level so we can debug the code...
     var debugLevel = 0;
@@ -380,43 +380,29 @@ function irAggregateData(seriesName, jsonData, sequenceSummaryAPI=true, aggregat
     var aggregateName = [];
     var aggregateCount = [];
     var aggregationData;
-    var countField;
+    //var countField;
     
     // Debug: tell us the series name we are looking for.
     if (debugLevel > 0) 
     {
         console.log("irAggregateData: Series name = " + seriesName + "\n");
-        console.log("irAggregateData: sequenceSummaryAPI = " + sequenceSummaryAPI + "\n");
-
+        console.log("irAggregateData: countField = " + countField + "\n");
         if (debugLevel > 1)
             console.log("irAggregateData: json Data = " + JSON.stringify(jsonData) + "\n");
     }
     
-    aggregationList = jsonData;
-    if (sequenceSummaryAPI)
-        countField = "ir_filtered_sequence_count";
-    else
-        countField = "ir_sequence_count";
-    if (debugLevel > 1)
-        console.log("irAggregateData: aggregation list has " + JSON.stringify(aggregationList) + "\n");
-    
     // Process each element in the data from iReceptor. 
     var count = 0
-    for (element in aggregationList)
+    for (element in jsonData)
     {
         // Get the element.
-        if (sequenceSummaryAPI)
-        {
-            if (debugLevel > 0)
-                console.log("Element: " + element + "\n");
-            elementData = aggregationList[element];
-            if (debugLevel > 0)
-                console.log("ElementData: " + elementData + "\n");           
-        }
-        else
-        {
-            elementData = aggregationList[element];
-        }
+
+        if (debugLevel > 0)
+            console.log("Element: " + element + "\n");
+        elementData = jsonData[element];
+        if (debugLevel > 0)
+            console.log("ElementData: " + elementData + "\n");           
+
         if (debugLevel > 1)
             console.log("Element: series = " + seriesName + ", element = " + JSON.stringify(elementData) + "\n");        
         // Get the value of the field we are aggregating on for this element.
