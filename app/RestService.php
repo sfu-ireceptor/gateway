@@ -160,7 +160,6 @@ class RestService extends Model
         $data['summary'] = [];
         $data['rs_list'] = [];
 
-
         // remove gateway-specific filters
         unset($filters['cols']);
         unset($filters['filters_order']);
@@ -177,8 +176,9 @@ class RestService extends Model
                 // to a string representation of the filter.
                 if (is_array($filter_value)) {
                     // We want to ignore the filters around sample in this list (we don't want to display them)
-                    if(strpos($filter_key, 'ir_project_sample_id_list_') !== false)
+                    if (strpos($filter_key, 'ir_project_sample_id_list_') !== false) {
                         $data['filtered_fields'][$filter_key] = implode(', ', $filter_value);
+                    }
                 } else {
                     $data['filter_fields'][$filter_key] = $filter_value;
                 }
