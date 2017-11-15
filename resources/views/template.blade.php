@@ -33,9 +33,31 @@
 			      	</a>
 				</li>
 		    	@if(Auth::check())
-					<li role="presentation" class="<?= Request::is('samples*') ||  Request::is('sequences*') ? 'active' : '' ?>">
-						<a href="/samples">Search</a>
-					</li>
+			    	@if(Request::is('samples*'))
+						<li role="presentation" class="active">
+							<a href="/samples">Search</a>
+						</li>
+						<li role="presentation" class="active">
+							<a href="/samples">Samples</a>
+						</li>
+						<li role="presentation" class="">
+							<a href="/samples">Sequences</a>
+						</li>
+					@elseif(Request::is('sequences*'))
+						<li role="presentation" class="active">
+							<a href="/samples">Search</a>
+						</li>
+						<li role="presentation" class="active">
+							<a href="/samples">Samples</a>
+						</li>
+						<li role="presentation" class="active">
+							<a href="/samples">Sequences</a>
+						</li>
+					@else
+						<li role="presentation">
+							<a href="/samples">Search</a>
+						</li>
+					@endif
 				@endif
 		      </ul>
 
