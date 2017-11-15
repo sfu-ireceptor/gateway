@@ -181,15 +181,15 @@
 			</p>
 
 			<p>
-				<strong>{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} samples) returned from:</strong>
+				<strong>{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:</strong>
 				<span title="{{ $filtered_repositories_names }}", class="data_text_box">
-					{{ $total_filtered_repositories }} remote repositories
+					{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}
 				</span>
 				<span class="data_text_box">
-					{{ $total_filtered_labs }} research labs
+					{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}}
 				</span>
 				<span class="data_text_box">
-					{{ $total_filtered_studies }} studies
+					{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
 				</span>
 			</p>
 
