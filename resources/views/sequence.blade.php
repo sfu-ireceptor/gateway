@@ -175,6 +175,24 @@
 
 		<div class="col-md-10">
 
+			<p>
+				<strong>Active filters:</strong>
+
+			</p>
+
+			<p>
+				<strong>{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} samples) returned from:</strong>
+				<span title="{{ $filtered_repositories_names }}", class="data_text_box">
+					{{ $total_filtered_repositories }} remote repositories
+				</span>
+				<span class="data_text_box">
+					{{ $total_filtered_labs }} research labs
+				</span>
+				<span class="data_text_box">
+					{{ $total_filtered_studies }} studies
+				</span>
+			</p>
+
 			<div class="data_container_box">
 				<div id="sequence_charts" class="charts">
 					<div class="row">

@@ -39,14 +39,19 @@ class SequenceController extends Controller
         $data['sequence_list'] = $sequence_data['items'];
         $data['sample_list_json'] = json_encode($sequence_data['summary']);
         $data['rs_list'] = $rs_list;
-        // $data['total_sequences'] = $sequence_data['total'];
-        // $data['filters'] = $sequence_data['filters'];
-        // $data['totalRepositories'] = $sequence_data['totalRepositories'];
-        // $data['totalLabs'] = $sequence_data['totalLabs'];
-        // $data['totalStudies'] = $sequence_data['totalStudies'];
-        // $data['totalSamples'] = $sequence_data['totalSamples'];
-        // $data['totalSequences'] = $sequence_data['totalSequences'];
-        // $data['nFilteredSequences'] = $sequence_data['total'];
+
+        // Pass on the summary data from the sequence_data returned.
+        $data['total_filtered_samples'] = $sequence_data['total_filtered_samples'];
+        $data['total_filtered_repositories'] = $sequence_data['total_filtered_repositories'];
+        $data['total_filtered_labs'] = $sequence_data['total_filtered_labs'];
+        $data['total_filtered_studies'] = $sequence_data['total_filtered_studies'];
+        $data['total_filtered_sequences'] = $sequence_data['total_filtered_sequences'];
+        $data['filtered_repositories'] = $sequence_data['filtered_repositories'];
+
+        $filtered_repositories_names = array_map(function ($rs) {
+            return $rs->name;
+        }, $sequence_data['filtered_repositories']);
+        $data['filtered_repositories_names'] = implode(', ', $filtered_repositories_names);
 
         // for bookmarking
         $current_url = $request->fullUrl();

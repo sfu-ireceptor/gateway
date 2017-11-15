@@ -199,9 +199,83 @@ class RestService extends Model
             $rs_data = [];
             $rs_data['rs'] = $rs;
             $rs_data['summary'] = $obj->summary;
+
+            // calculate summary statistics
+            $lab_list = [];
+            $study_list = [];
+            $total_sequences = 0;
+            $filtered_sequences = 0;
+            foreach ($obj->summary as $sample) 
+            {
+                // If there are some sequence in this sample
+                if (isset($sample->ir_filtered_sequence_count))
+                {
+                    $filtered_sequences += $sample->ir_filtered_sequence_count;
+                    // If we have a lab and we haven't seen it allready, add it
+                    if (isset($sample->lab_name))
+                    {
+                        if (! in_array($sample->lab_name, $lab_list)) 
+                        {
+                            $lab_list[] = $sample->lab_name;
+                        }
+                    } elseif (isset($sample->collected_by))
+                    {
+                        if (! in_array($sample->collected_by, $lab_list)) 
+                        {
+                            $lab_list[] = $sample->collected_by;
+                        }
+                    }
+                    // If we have a study title and we haven't seen it allready, add it
+                    if (isset($sample->study_title))
+                    {
+                        if (! in_array($sample->study_title, $study_list)) 
+                        {
+                            $study_list[] = $sample->study_title;
+                        }
+                    }
+                }
+    
+                // If we have a total sequence count, add the total up.
+                if (isset($sample->ir_sequence_count)) 
+                {
+                    $total_sequences += $sample->ir_sequence_count;
+                }
+
+            }
+            $rs_data['total_samples'] = count($obj->summary);
+            $rs_data['total_labs'] = count($lab_list);
+            $rs_data['total_studies'] = count($study_list);
+            $rs_data['total_sequences'] = $total_sequences;
+            $rs_data['filtered_sequences'] = $filtered_sequences;
             $data['rs_list'][] = $rs_data;
         }
 
+        // aggregate summary statistics
+        $total_filtered_repositories = 0;
+        $total_filtered_labs = 0;
+        $total_filtered_studies = 0;
+        $total_filtered_samples = 0;
+        $total_filtered_sequences = 0;
+        $filtered_repositories = [];
+
+        foreach ($data['rs_list'] as $rs_data) {
+            if ($rs_data['total_samples'] > 0) {
+                $total_filtered_repositories++;
+                $filtered_repositories[] = $rs_data['rs'];
+            }
+
+            $total_filtered_samples += $rs_data['total_samples'];
+            $total_filtered_labs += $rs_data['total_labs'];
+            $total_filtered_studies += $rs_data['total_studies'];
+            $total_filtered_sequences += $rs_data['filtered_sequences'];
+        }
+
+        $data['total_filtered_samples'] = $total_filtered_samples;
+        $data['total_filtered_repositories'] = $total_filtered_repositories;
+        $data['total_filtered_labs'] = $total_filtered_labs;
+        $data['total_filtered_studies'] = $total_filtered_studies;
+        $data['total_filtered_sequences'] = $total_filtered_sequences;
+        $data['filtered_repositories'] = $filtered_repositories;
         return $data;
     }
 
