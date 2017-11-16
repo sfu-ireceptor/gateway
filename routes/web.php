@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/samples', 'SampleController@index')->name('samples');
     Route::get('/samples/json', 'SampleController@json')->name('samples-json');
     Route::get('/sequences', 'SequenceController@index')->name('sequences');
+    Route::get('/sequences-quick-search', 'SequenceController@quickSearch')->name('sequences-quick-search');
 
     Route::prefix('user')->group(function () {
         Route::get('account', 'UserController@getAccount');
