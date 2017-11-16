@@ -268,7 +268,7 @@ class SequenceController extends Controller
         $hidden_fields[] = ['name' => 'filters_order', 'value' => $currentFiltersListIdsStr];
         $data['hidden_fields'] = $hidden_fields;
         $data['filters_json'] = json_encode($filters);
-      
+
         // display view
         return view('sequenceQuickSearch', $data);
 
@@ -283,5 +283,3 @@ class SequenceController extends Controller
     // </p>
     }
 }
-
-
