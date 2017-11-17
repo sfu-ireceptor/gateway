@@ -12,7 +12,7 @@
 
 			<h3>Filters</h3>
 
-			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'get')) }}
+			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post')) }}
 
 				@foreach ($hidden_fields as $hf)
 					<input type="hidden" name="{{$hf['name']}}" value="{{$hf['value']}}">

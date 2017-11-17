@@ -221,7 +221,7 @@
 
 			<div class="data_container_box">
 			@if (! empty($sample_list))
-			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'get')) }}
+			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post')) }}
 
 				<?php
 					$max_count = 1000;

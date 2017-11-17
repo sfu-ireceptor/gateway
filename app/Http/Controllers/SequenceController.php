@@ -7,13 +7,27 @@ use App\Bookmark;
 use App\RestService;
 use App\SequenceColumnName;
 use Illuminate\Http\Request;
+use App\Query;
 
 class SequenceController extends Controller
 {
+    public function postIndex(Request $request)
+    {
+        $query_id = Query::saveParams($request->except(['_token']), 'sequences');
+        return redirect('sequences?query_id=' . $query_id)->withInput();
+    }
+
     public function index(Request $request)
     {
-        $filters = $request->all();
         $username = auth()->user()->username;
+
+        $query_id = $request->input('query_id');
+        if($query_id) {
+            $filters = Query::getParams($query_id);
+        }
+        else {
+            $filters = $request->all();            
+        }
 
         // if csv
         if (isset($filters['csv'])) {
@@ -22,7 +36,7 @@ class SequenceController extends Controller
             return redirect($csvFilePath);
         }
 
-        $request->flashExcept('ir_project_sample_id_list');   // keep submitted form values
+        // $request->flashExcept('ir_project_sample_id_list');   // keep submitted form values
 
         // sequence list
         $sequence_data = RestService::sequences_summary($filters, $username);
