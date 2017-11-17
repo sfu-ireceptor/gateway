@@ -148,28 +148,34 @@
 					</div>
    				</div>	 --}}			
 
+   				<div class="button_container">
+					<p>
+						<a href="{{ $no_filters_url }}" class="btn btn-default">
+							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							<span class="text">Clear filters</span>
+						</a>
+						{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
+					</p>
 
-				<p>
-					{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
-				</p>
+					<p>{{ Form::submit('↓ Download as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}</p>
 
-				<p>{{ Form::submit('↓ Download as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}</p>
+					<p>
+						<a class="bookmark" href="/system/" data-uri="{{ $url }}">
+							@if ($bookmark_id)
+								<button type="button" class="btn btn-success" aria-label="Bookmark" data-id="{{ $bookmark_id }}">
+								  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+								  <span class="text">Bookmarked</span>
+								</button>
+							@else
+								<button type="button" class="btn btn-default" aria-label="Bookmark">
+								  <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
+								  <span class="text">Bookmark</span>
+								</button>
+							@endif
+						</a>
+					</p>
+   				</div>
 
-				<p>
-					<a class="bookmark" href="/system/" data-uri="{{ $url }}">
-						@if ($bookmark_id)
-							<button type="button" class="btn btn-success" aria-label="Bookmark" data-id="{{ $bookmark_id }}">
-							  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-							  <span class="text">Bookmarked</span>
-							</button>
-						@else
-							<button type="button" class="btn btn-default" aria-label="Bookmark">
-							  <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-							  <span class="text">Bookmark</span>
-							</button>
-						@endif
-					</a>
-				</p>
 			{{ Form::close() }}				
 		</div>
 

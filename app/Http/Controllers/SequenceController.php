@@ -125,6 +125,15 @@ class SequenceController extends Controller
         $data['hidden_fields'] = $hidden_fields;
         $data['filters_json'] = json_encode($filters);
 
+        // build URL without sequence filters but keeping samples selection
+        $sequence_filters = [];
+        $sequence_column_name_list = SequenceColumnName::findEnabled();
+        foreach ($sequence_column_name_list as $scn) {
+            $sequence_filters[] = $scn['name'];
+        }
+        $filters_without_sequence_filters = array_except($filters, $sequence_filters);
+        $data['no_filters_url'] = '/sequences?' . http_build_query($filters_without_sequence_filters);
+
         // for analysis app
         $amazingHistogramGeneratorColorList = [];
         $amazingHistogramGeneratorColorList['1_0_0'] = 'Red';
