@@ -11,17 +11,19 @@ class Query extends Model
 
     public static function saveParams($params, $page)
     {
-    	$t = [];
-    	$t['params'] = json_encode($params);
-    	$t['page'] = $page;
+        $t = [];
+        $t['params'] = json_encode($params);
+        $t['page'] = $page;
 
-    	$q = static::create($t);
+        $q = static::create($t);
+
         return $q->id;
     }
 
     public static function getParams($id)
     {
-    	$q = static::find($id);
-    	return json_decode($q->params, true);
+        $q = static::find($id);
+
+        return json_decode($q->params, true);
     }
 }
