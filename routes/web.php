@@ -59,6 +59,7 @@ Route::get('email', 'TestController@email');
 
 Route::middleware('auth')->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::post('/samples', 'SampleController@postIndex')->name('samples-post');
     Route::get('/samples', 'SampleController@index')->name('samples');
     Route::get('/samples/json', 'SampleController@json')->name('samples-json');
     Route::get('/sequences', 'SequenceController@index')->name('sequences');

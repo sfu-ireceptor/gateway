@@ -4,9 +4,16 @@ namespace App\Http\Controllers;
 
 use App\RestService;
 use Illuminate\Http\Request;
+use App\Query;
 
 class SampleController extends Controller
 {
+    public function postIndex(Request $request)
+    {
+        $query_id = Query::saveParams($request->except(['_token']), 'samples');
+        return redirect('samples?query_id=' . $query_id)->withInput();
+    }
+
     public function index(Request $request)
     {
         $username = auth()->user()->username;
@@ -69,7 +76,14 @@ class SampleController extends Controller
         /*************************************************
         * get filtered sample list and related statistics */
 
-        $sample_data = RestService::samples($request->all(), $username);
+        $query_id = $request->input('query_id');
+        if($query_id) {
+            $params = Query::getParams($query_id);
+        }
+        else {
+            $params = $request->all();            
+        }
+        $sample_data = RestService::samples($params, $username);
 
         $data['sample_list'] = $sample_data['items'];
         $data['sample_list_json'] = json_encode($sample_data['items']);
@@ -86,10 +100,6 @@ class SampleController extends Controller
         $data['filtered_repositories_names'] = implode(', ', $filtered_repositories_names);
 
         $data['filter_fields'] = $sample_data['filter_fields'];
-
-        /*************************************************
-        * re-populate form values */
-        $request->flash();
 
         return view('sample', $data);
     }

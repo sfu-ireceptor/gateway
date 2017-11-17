@@ -13,7 +13,7 @@
 
 			<h3>Filters</h3>
 
-			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'get', 'class' => 'sample_search')) }}
+			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'post', 'class' => 'sample_search')) }}
 				<input type="hidden" name="project_id_list" />
 
 				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
