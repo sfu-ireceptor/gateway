@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Query;
 use App\System;
 use App\Bookmark;
 use App\RestService;
 use App\SequenceColumnName;
 use Illuminate\Http\Request;
-use App\Query;
 
 class SequenceController extends Controller
 {
     public function postIndex(Request $request)
     {
         $query_id = Query::saveParams($request->except(['_token']), 'sequences');
+
         return redirect('sequences?query_id=' . $query_id)->withInput();
     }
 
@@ -22,11 +23,10 @@ class SequenceController extends Controller
         $username = auth()->user()->username;
 
         $query_id = $request->input('query_id');
-        if($query_id) {
+        if ($query_id) {
             $filters = Query::getParams($query_id);
-        }
-        else {
-            $filters = $request->all();            
+        } else {
+            $filters = $request->all();
         }
 
         // if csv

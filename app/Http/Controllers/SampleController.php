@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Query;
 use App\RestService;
 use Illuminate\Http\Request;
-use App\Query;
 
 class SampleController extends Controller
 {
     public function postIndex(Request $request)
     {
         $query_id = Query::saveParams($request->except(['_token']), 'samples');
+
         return redirect('samples?query_id=' . $query_id)->withInput();
     }
 
@@ -77,11 +78,10 @@ class SampleController extends Controller
         * get filtered sample list and related statistics */
 
         $query_id = $request->input('query_id');
-        if($query_id) {
+        if ($query_id) {
             $params = Query::getParams($query_id);
-        }
-        else {
-            $params = $request->all();            
+        } else {
+            $params = $request->all();
         }
         $sample_data = RestService::samples($params, $username);
 

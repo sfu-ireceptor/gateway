@@ -404,7 +404,7 @@ class RestService extends Model
         try {
             Log::info('Start node query ' . $rs->url . $path . ' with POST params:');
             Log::info($params);
-            
+
             $response = $client->request('POST', $path, $options);
             Log::info('End query - success');
         } catch (\ClientException $exception) {
