@@ -369,15 +369,15 @@ class RestService extends Model
         $options = [];
         $options['auth'] = [$rs->username, $rs->password];
 
+        // remove null values.
+        foreach ($params as $k => $v) {
+            if ($v === null) {
+                unset($params[$k]);
+            }
+        }
+
         // VDJServer needs array params without brackets
         if (str_contains($rs->url, 'vdj')) {
-            // remove null values.
-            foreach ($params as $k => $v) {
-                if ($v === null) {
-                    unset($params[$k]);
-                }
-            }
-
             // build query string with special function which doesn't add brackets
             $queryString = \GuzzleHttp\Psr7\build_query($params, PHP_QUERY_RFC1738);
 
@@ -402,8 +402,11 @@ class RestService extends Model
 
         // execute request
         try {
-            //var_dump($path); die();
+            Log::info('Start node query ' . $rs->url . $path . ' with POST params:');
+            Log::info($params);
+            
             $response = $client->request('POST', $path, $options);
+            Log::info('End query - success');
         } catch (\ClientException $exception) {
             //var_dump($exception); die();
             $response = $exception->getResponse()->getBody()->getContents();
