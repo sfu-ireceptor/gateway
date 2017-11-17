@@ -18,21 +18,6 @@
 					<input type="hidden" name="{{$hf['name']}}" value="{{$hf['value']}}">
 				@endforeach
 
-{{-- 				<!-- template for fields added dynamically -->
-				<div id="field_template" class="hidden">
-					<div class="form-group">						
-						<label for="junction_sequence_aa">CDR3 AA Sequence</label>
-						<div class="input-group">
-							<input type="text" id="junction_sequence_aa" value="" name="junction_sequence_aa" class="form-control">
-							<span class="input-group-btn">
-				    			<button type="button" class="btn btn-default remove_field">
-				      				<span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
-				    			</button>
-				      		</span>
-						</div>
-					</div>
-				</div>
- --}}
 				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 					<div class="panel panel-default">
 						<div class="panel-heading" role="tab" id="headingOne">
@@ -59,12 +44,6 @@
 									{{ Form::text('d_call', '', array('class' => 'form-control')) }}
 								</div>
 
-{{-- 								@foreach ($filters_list_all as $name => $title)
-								    <div class="form-group">
-										{{ Form::label($name, $title) }}
-										{{ Form::text($name, '', array('class' => 'form-control')) }}
-									</div>
-								@endforeach --}}
 							</div>
 						</div>
 					</div>
@@ -130,23 +109,7 @@
 						</div>
 					</div>
 
-				</div>
-
-
-{{-- 			    <div class="filter_list">
-				</div>
-
-	    		<div class="form-group add_filter">
-				    <div class="input-group">
-						{{ Form::select('add_field', $filters_list_all_select, '', array('class' => 'form-control add_field')) }}
-						<span class="input-group-btn">
-		       				<button class="btn btn-default add_field" type="button">
-			       				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-		    	   				Add filter
-		       				</button>
-		      			</span>
-					</div>
-   				</div>	 --}}			
+				</div>		
 
    				<div class="button_container">
 					<p>
