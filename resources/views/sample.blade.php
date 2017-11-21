@@ -247,7 +247,7 @@
 							<th>@lang('short.cell_phenotype')</th>
 							<th>Sequences</th>
 							<th>@lang('short.sample_id')</th>
-							<th>@lang('short.library_source')</th>
+							<th>@lang('short.template_class')</th>
 							<th>@lang('short.study_id')</th>
 						</tr>
 					</thead>
