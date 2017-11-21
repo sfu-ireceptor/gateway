@@ -102,9 +102,7 @@ class RestService extends Model
                     if (! in_array($sample->lab_name, $lab_list)) {
                         $lab_list[] = $sample->lab_name;
                         $lab_sample_count[$sample->lab_name] = $sample->ir_sequence_count;
-                    } 
-                    else
-                    {
+                    } else {
                         $lab_sample_count[$sample->lab_name] += $sample->ir_sequence_count;
                     }
                 } elseif (isset($sample->collected_by)) {
@@ -123,34 +121,33 @@ class RestService extends Model
             }
 
             $study_tree = [];
-            foreach ($sample_list as $sample)
-            {
+            foreach ($sample_list as $sample) {
                 // Handle the case where a sample doesn't have a lab_name.
-                if (isset($sample->lab_name))
+                if (isset($sample->lab_name)) {
                     $lab = $sample->lab_name;
-                else $lab = 'UNKNOWN';
+                } else {
+                    $lab = 'UNKNOWN';
+                }
 
                 // If we don't have this lab already, create it.
-                if (!isset($study_tree[$lab]))
-                {
+                if (! isset($study_tree[$lab])) {
                     $lab_data['name'] = $lab;
                     $lab_data['studies'] = [];
-                    if (isset($lab_sample_count[$lab]))
+                    if (isset($lab_sample_count[$lab])) {
                         $lab_data['total_sequences'] = $lab_sample_count[$lab];
-                    else $lab_data['total_sequences'] = 0;
+                    } else {
+                        $lab_data['total_sequences'] = 0;
+                    }
                     $study_tree[$lab] = $lab_data;
-                } 
-
+                }
 
                 // Check to see if the study exists in the lab, and if not, create it.
                 //$lab_data = $study_tree[$lab];
                 // If the study doesn't exist in this lab's studies then create it.
-                if (!in_array($sample->study_title, $study_tree[$lab]['studies']))
-                {
+                if (! in_array($sample->study_title, $study_tree[$lab]['studies'])) {
                     $study_tree[$lab]['studies'][] = $sample->study_title;
                 }
                 //$study_tree[$lab] = $lab_data;
-
             }
 
             // rest service data
