@@ -82,6 +82,14 @@ class RestService extends Model
             foreach ($sample_list as $sample) {
                 $sample->rest_service_id = $rs->id;
                 $sample->rest_service_name = $rs->name;
+
+                if (isset($sample->study_id)) {
+                    if (preg_match('/PRJ/', $sample->study_id)) {
+                        $sample->study_url = 'https://www.ncbi.nlm.nih.gov/bioproject/?term=' . $sample->study_id;
+                    } elseif (preg_match('/SRP/', $sample->study_id)) {
+                        $sample->study_url = 'https://www.ncbi.nlm.nih.gov/Traces/sra/?study=' . $sample->study_id;
+                    }
+                }
             }
 
             // calculate summary statistics
