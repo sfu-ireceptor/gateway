@@ -25,8 +25,13 @@ class SequenceController extends Controller
         $query_id = $request->input('query_id');
         if ($query_id) {
             $filters = Query::getParams($query_id);
+            if (! $request->session()->has('_old_input')) {
+                $request->session()->put('_old_input', $filters);
+            }
+
         } else {
             $filters = $request->all();
+            $request->session()->forget('_old_input');
         }
 
         // if csv
