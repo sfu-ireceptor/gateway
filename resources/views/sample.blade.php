@@ -249,6 +249,7 @@
 							<th>@lang('short.sample_id')</th>
 							<th>@lang('short.template_class')</th>
 							<th>@lang('short.study_id')</th>
+							<th>@lang('short.pub_ids')</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -271,15 +272,34 @@
 								@endif
 							</td>
 							<td>
-								@if (isset($sample->sra_accession))
-									<a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study={{ $sample->sra_accession }}" title="{{ $sample->study_title }}">
+								<?php
+									unset($bioproject);
+									if (isset($sample->study_id) )
+									{
+										if( preg_match("/PRJ/", $sample->study_id))
+										{
+											$url = "https://www.ncbi.nlm.nih.gov/bioproject/?term=" . $sample->study_id;
+										}
+										elseif (preg_match("/SRP/", $sample->study_id))
+										{
+											$url = "https://www.ncbi.nlm.nih.gov/Traces/sra/?study=" . $sample->study_id;
+										}
+									}
+								?>
+								@isset($url)
+									@isset($sample->study_title)
+										<a href="{{$url}}"
+										title="{{ $sample->study_title }}">
 										{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
-									</span>
-								@elseif (isset($sample->study_title))
-									<span title="{{ $sample->study_title }}">
-									{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
-									</span>							
-								@endif
+										</a>
+									@endisset
+								@else
+									@isset($sample->study_title)
+										<span title="{{ $sample->study_title }}">
+										{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
+										</span>							
+									@endisset
+								@endisset
 							</td>
 							<td>
 								@isset($sample->study_group_description)
@@ -347,7 +367,13 @@
 									</span>
 								@endisset
 							</td>		
-
+							<td>
+								@isset($sample->pub_ids)
+									<span title="{{ $sample->pub_ids }}">
+									{{ str_limit($sample->pub_ids, $limit = 15, $end = '‥') }}
+									</span>
+								@endisset
+							</td>	
 						</tr>
 						<?php 
 							$count = $count + 1;
