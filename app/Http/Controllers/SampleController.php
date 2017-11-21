@@ -80,7 +80,7 @@ class SampleController extends Controller
         $query_id = $request->input('query_id');
         if ($query_id) {
             $params = Query::getParams($query_id);
-            if ( ! $request->session()->has('_old_input')) {
+            if (! $request->session()->has('_old_input')) {
                 $request->session()->put('_old_input', $params);
             }
         } else {
