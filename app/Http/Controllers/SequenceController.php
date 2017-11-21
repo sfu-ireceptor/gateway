@@ -28,7 +28,6 @@ class SequenceController extends Controller
             if (! $request->session()->has('_old_input')) {
                 $request->session()->put('_old_input', $filters);
             }
-
         } else {
             $filters = $request->all();
             $request->session()->forget('_old_input');
