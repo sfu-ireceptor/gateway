@@ -180,21 +180,50 @@ class SequenceController extends Controller
     public function quickSearch(Request $request)
     {
         $username = auth()->user()->username;
+
+
+        /*************************************************
+        * prepare form data */
+
+        // get data
+        $metadata = RestService::metadata($username);
+
+        // cell type
+        $cell_type_list = [];
+        foreach ($metadata['cell_subset'] as $v) {
+            $cell_type_list[$v] = $v;
+        }
+
+
+        // data
+        $data = [];
+        $data['cell_type_list'] = $cell_type_list;
+
+        /*************************************************
+        * get filtered sequence data and related statistics */
+
         $filters = $request->all();
 
-        // !! just for quick testing
-        $filters['cell_subset'] = ['B cell'];
-        $filters['junction_aa'] = 'CAHRRVGSSSDWNGGDYDFW';
+        // // !! just for quick testing
+        // $filters['cell_subset'] = ['B cell'];
+        // $filters['junction_aa'] = 'CAHRRVGSSSDWNGGDYDFW';
 
         $sample_filters = [];
-        $sample_filters['cell_subset'] = $filters['cell_subset'];
+        if(isset($filters['cell_subset'])) {
+            $sample_filters['cell_subset'] = $filters['cell_subset'];
+        }
+        if(isset($filters['organism'])) {
+            $sample_filters['organism'] = $filters['organism'];
+        }
+
         // $sample_filters['organism'] = $filters['organism'];
 
         $sequence_filters = [];
-        $sequence_filters['junction_aa'] = $filters['junction_aa'];
-
+        if(isset($filters['junction_aa'])) {
+            $sequence_filters['junction_aa'] = $filters['junction_aa'];
+        }
         $sequence_data = RestService::search($sample_filters, $sequence_filters, $username);
-        dd($sequence_data);
+        // dd($sequence_data);
 
         // summary for each REST service
         $rs_list = $sequence_data['rs_list'];
@@ -203,7 +232,6 @@ class SequenceController extends Controller
             // var_dump($summary);die();
         }
 
-        $data = [];
         $data['sequence_list'] = $sequence_data['items'];
         $data['sample_list_json'] = json_encode($sequence_data['summary']);
         $data['rs_list'] = $rs_list;

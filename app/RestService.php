@@ -368,11 +368,11 @@ class RestService extends Model
             $sample_id_filters['ir_project_sample_id_list_' . $sample->rest_service_id][] = $sample->ir_project_sample_id;
         }
 
-        // get sequences
+        // get sequences summary
         $sequence_filters = array_merge($sequence_filters, $sample_id_filters);
         $sequence_data = self::sequences_summary($sequence_filters, $username);
-        dd($sequence_data);
-        return $sample_data;
+
+        return $sequence_data;
     }
 
     public static function postRequest($rs, $path, $params, $filePath = '', $returnArray = false)
