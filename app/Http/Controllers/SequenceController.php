@@ -313,15 +313,5 @@ class SequenceController extends Controller
 
         // display view
         return view('sequenceQuickSearch', $data);
-
-        // for later: display current project/sample names
-    // <p>
-    //     @foreach ($sample_list as $sample)
-    //         <strong>{{ $sample->project_name }}</strong>
-    //         -
-    //         <strong>{{ $sample->sample_name }}</strong>
-    //         <br />
-    //     @endforeach
-    // </p>
     }
 }
