@@ -179,21 +179,22 @@ class SequenceController extends Controller
 
     public function quickSearch(Request $request)
     {
-        $filters = $request->all();
         $username = auth()->user()->username;
+        $filters = $request->all();
 
-        // if csv
-        if (isset($filters['csv'])) {
-            $csvFilePath = RestService::sequencesCSV($filters, $username);
+        // !! just for quick testing
+        $filters['cell_subset'] = ['B cell'];
+        $filters['junction_aa'] = 'CAHRRVGSSSDWNGGDYDFW';
 
-            return redirect($csvFilePath);
-        }
+        $sample_filters = [];
+        $sample_filters['cell_subset'] = $filters['cell_subset'];
+        // $sample_filters['organism'] = $filters['organism'];
 
-        $request->flashExcept('ir_project_sample_id_list');   // keep submitted form values
+        $sequence_filters = [];
+        $sequence_filters['junction_aa'] = $filters['junction_aa'];
 
-        // sequence list
-        $sequence_data = RestService::sequences_summary($filters, $username);
-        // var_dump($sequence_data);die();
+        $sequence_data = RestService::search($sample_filters, $sequence_filters, $username);
+        dd($sequence_data);
 
         // summary for each REST service
         $rs_list = $sequence_data['rs_list'];

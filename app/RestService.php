@@ -356,6 +356,21 @@ class RestService extends Model
         return $zipFilePath;
     }
 
+    public static function search($sample_filters, $sequence_filters, $username)
+    {
+        $sample_data = self::samples($sample_filters, $username);
+        $sample_list = $sample_data['items'];
+
+        $sample_id_filters = [];
+        foreach ($sample_list as $sample) {
+            $sample_id_filters['ir_project_sample_id_list_' . $sample->rest_service_id][] = $sample->ir_project_sample_id;
+        }
+
+        $sequence_data = self::sequences_summary($sequence_filters, $username);
+        dd($sequence_data);
+        return $sample_data;
+    }
+
     public static function postRequest($rs, $path, $params, $filePath = '', $returnArray = false)
     {
         $defaults = [];
