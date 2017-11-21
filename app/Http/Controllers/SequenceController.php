@@ -181,7 +181,6 @@ class SequenceController extends Controller
     {
         $username = auth()->user()->username;
 
-
         /*************************************************
         * prepare form data */
 
@@ -193,7 +192,6 @@ class SequenceController extends Controller
         foreach ($metadata['cell_subset'] as $v) {
             $cell_type_list[$v] = $v;
         }
-
 
         // data
         $data = [];
@@ -209,17 +207,17 @@ class SequenceController extends Controller
         // $filters['junction_aa'] = 'CAHRRVGSSSDWNGGDYDFW';
 
         $sample_filters = [];
-        if(isset($filters['cell_subset'])) {
+        if (isset($filters['cell_subset'])) {
             $sample_filters['cell_subset'] = $filters['cell_subset'];
         }
-        if(isset($filters['organism'])) {
+        if (isset($filters['organism'])) {
             $sample_filters['organism'] = $filters['organism'];
         }
 
         // $sample_filters['organism'] = $filters['organism'];
 
         $sequence_filters = [];
-        if(isset($filters['junction_aa'])) {
+        if (isset($filters['junction_aa'])) {
             $sequence_filters['junction_aa'] = $filters['junction_aa'];
         }
         $sequence_data = RestService::search($sample_filters, $sequence_filters, $username);
