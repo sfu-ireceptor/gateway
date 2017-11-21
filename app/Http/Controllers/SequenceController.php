@@ -307,15 +307,7 @@ class SequenceController extends Controller
         // hidden form fields
         $hidden_fields = [];
 
-        foreach ($filters as $p => $v) {
-            if (starts_with($p, 'ir_project_sample_id_list_')) {
-                foreach ($v as $sample_id) {
-                    $hidden_fields[] = ['name' => $p . '[]', 'value' => $sample_id];
-                }
-            }
-        }
         $hidden_fields[] = ['name' => 'cols', 'value' => $currentSequenceColumnsStr];
-        $hidden_fields[] = ['name' => 'filters_order', 'value' => $currentFiltersListIdsStr];
         $data['hidden_fields'] = $hidden_fields;
         $data['filters_json'] = json_encode($filters);
 
