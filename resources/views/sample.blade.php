@@ -222,15 +222,6 @@
 			<div class="data_container_box">
 			@if (! empty($sample_list))
 			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post')) }}
-
-				<?php
-					$max_count = 1000;
-				?>
-
-				@if ($total_filtered_samples > $max_count)
-					{{ Form::submit('View all samples ('.(string)($total_filtered_samples-$max_count).' more)', array('class' => 'btn btn-primary show-more-samples-button', 'disabled' => 'disabled')) }}
-				@endif
-
 				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button')) }}
 
 				<table class="table table-striped sample_list table-condensed">
@@ -253,9 +244,6 @@
 						</tr>
 					</thead>
 					<tbody>
-						<?php
-							$count = 0;
-						?>
 						@foreach ($sample_list as $sample)
 						<tr>
 							<td>{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id, true) }}</td>
@@ -272,23 +260,9 @@
 								@endif
 							</td>
 							<td>
-								<?php
-									unset($bioproject);
-									if (isset($sample->study_id) )
-									{
-										if( preg_match("/PRJ/", $sample->study_id))
-										{
-											$url = "https://www.ncbi.nlm.nih.gov/bioproject/?term=" . $sample->study_id;
-										}
-										elseif (preg_match("/SRP/", $sample->study_id))
-										{
-											$url = "https://www.ncbi.nlm.nih.gov/Traces/sra/?study=" . $sample->study_id;
-										}
-									}
-								?>
 								@isset($sample->study_title)
-									@isset($url)
-										<a href="{{$url}}" title="{{ $sample->study_title }}">
+									@isset($sample->study_url)
+										<a href="{{$sample->study_url}}" title="{{ $sample->study_title }}">
 											{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
 										</a>
 									@else
@@ -372,19 +346,11 @@
 								@endisset
 							</td>	
 						</tr>
-						<?php 
-							$count = $count + 1;
-							if ($count >= $max_count) break;
-						?>
 						@endforeach
 					</tbody>
 				</table>
 
 				<input type="hidden" name="project_id_list" />
-				
-				@if ($total_filtered_samples > $max_count):
-					{{ Form::submit('View all samples ('.(string)($total_filtered_samples-$max_count).' more)', array('class' => 'btn btn-primary show-more-samples-button', 'disabled' => 'disabled')) }}
-				@endif
 				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button')) }}
 
 			{{ Form::close() }}

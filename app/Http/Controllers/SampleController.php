@@ -85,7 +85,22 @@ class SampleController extends Controller
         }
         $sample_data = RestService::samples($params, $username);
 
-        $data['sample_list'] = $sample_data['items'];
+        $sample_list = $sample_data['items'];
+        foreach ($sample_list as $sample) {
+            if (isset($sample->study_id) )
+            {
+                if( preg_match("/PRJ/", $sample->study_id))
+                {
+                    $sample->study_url = "https://www.ncbi.nlm.nih.gov/bioproject/?term=" . $sample->study_id;
+                }
+                elseif (preg_match("/SRP/", $sample->study_id))
+                {
+                    $sample->study_url = "https://www.ncbi.nlm.nih.gov/Traces/sra/?study=" . $sample->study_id;
+                }               
+            }
+        }
+
+        $data['sample_list'] = $sample_list;
         $data['sample_list_json'] = json_encode($sample_data['items']);
 
         $data['total_filtered_repositories'] = $sample_data['total_filtered_repositories'];
