@@ -61,21 +61,39 @@
 					<p>
 						{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 					</p>
-				</div>
+
+					<p>{{ Form::submit('↓ Download as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}</p>
+
+					<p>
+						<a class="bookmark" href="/system/" data-uri="{{ $url }}">
+							@if ($bookmark_id)
+								<button type="button" class="btn btn-success" aria-label="Bookmark" data-id="{{ $bookmark_id }}">
+								  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+								  <span class="text">Bookmarked</span>
+								</button>
+							@else
+								<button type="button" class="btn btn-default" aria-label="Bookmark">
+								  <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
+								  <span class="text">Bookmark</span>
+								</button>
+							@endif
+						</a>
+					</p>
+   				</div>
 
 			{{ Form::close() }}				
 		</div>
 
 		<div class="col-md-10">
 
-			<p>
+{{-- 			<p>
 				<strong>Active filters:</strong>
 				@foreach($filter_fields as $filter_key => $filter_value)
 					<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="data_text_box">
 						@lang('short.' . $filter_key)
 					</span>
 				@endforeach
-			</p>
+			</p> --}}
 
 			<p>
 				<strong>{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:</strong>
