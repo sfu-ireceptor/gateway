@@ -286,17 +286,14 @@
 										}
 									}
 								?>
-								@isset($url)
-									@isset($sample->study_title)
-										<a href="{{$url}}"
-										title="{{ $sample->study_title }}">
-										{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
+								@isset($sample->study_title)
+									@isset($url)
+										<a href="{{$url}}" title="{{ $sample->study_title }}">
+											{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
 										</a>
-									@endisset
-								@else
-									@isset($sample->study_title)
+									@else
 										<span title="{{ $sample->study_title }}">
-										{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
+											{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
 										</span>							
 									@endisset
 								@endisset
