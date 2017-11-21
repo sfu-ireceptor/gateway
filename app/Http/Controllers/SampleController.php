@@ -87,16 +87,12 @@ class SampleController extends Controller
 
         $sample_list = $sample_data['items'];
         foreach ($sample_list as $sample) {
-            if (isset($sample->study_id) )
-            {
-                if( preg_match("/PRJ/", $sample->study_id))
-                {
-                    $sample->study_url = "https://www.ncbi.nlm.nih.gov/bioproject/?term=" . $sample->study_id;
+            if (isset($sample->study_id)) {
+                if (preg_match('/PRJ/', $sample->study_id)) {
+                    $sample->study_url = 'https://www.ncbi.nlm.nih.gov/bioproject/?term=' . $sample->study_id;
+                } elseif (preg_match('/SRP/', $sample->study_id)) {
+                    $sample->study_url = 'https://www.ncbi.nlm.nih.gov/Traces/sra/?study=' . $sample->study_id;
                 }
-                elseif (preg_match("/SRP/", $sample->study_id))
-                {
-                    $sample->study_url = "https://www.ncbi.nlm.nih.gov/Traces/sra/?study=" . $sample->study_id;
-                }               
             }
         }
 
