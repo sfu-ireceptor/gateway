@@ -94,12 +94,18 @@ class RestService extends Model
 
             // calculate summary statistics
             $lab_list = [];
+            $lab_sample_count = [];
             $study_list = [];
             $total_sequences = 0;
             foreach ($sample_list as $sample) {
                 if (isset($sample->lab_name)) {
                     if (! in_array($sample->lab_name, $lab_list)) {
                         $lab_list[] = $sample->lab_name;
+                        $lab_sample_count[$sample->lab_name] = $sample->ir_sequence_count;
+                    } 
+                    else
+                    {
+                        $lab_sample_count[$sample->lab_name] += $sample->ir_sequence_count;
                     }
                 } elseif (isset($sample->collected_by)) {
                     if (! in_array($sample->collected_by, $lab_list)) {
@@ -116,9 +122,41 @@ class RestService extends Model
                 }
             }
 
+            $study_tree = [];
+            foreach ($sample_list as $sample)
+            {
+                // Handle the case where a sample doesn't have a lab_name.
+                if (isset($sample->lab_name))
+                    $lab = $sample->lab_name;
+                else $lab = 'UNKNOWN';
+
+                // If we don't have this lab already, create it.
+                if (!isset($study_tree[$lab]))
+                {
+                    $lab_data['name'] = $lab;
+                    $lab_data['studies'] = [];
+                    if (isset($lab_sample_count[$lab]))
+                        $lab_data['total_sequences'] = $lab_sample_count[$lab];
+                    else $lab_data['total_sequences'] = 0;
+                    $study_tree[$lab] = $lab_data;
+                } 
+
+
+                // Check to see if the study exists in the lab, and if not, create it.
+                //$lab_data = $study_tree[$lab];
+                // If the study doesn't exist in this lab's studies then create it.
+                if (!in_array($sample->study_title, $study_tree[$lab]['studies']))
+                {
+                    $study_tree[$lab]['studies'][] = $sample->study_title;
+                }
+                //$study_tree[$lab] = $lab_data;
+
+            }
+
             // rest service data
             $rs_data = [];
             $rs_data['rs'] = $rs;
+            $rs_data['study_tree'] = $study_tree;
             $rs_data['total_samples'] = count($sample_list);
             $rs_data['total_labs'] = count($lab_list);
             $rs_data['total_studies'] = count($study_list);

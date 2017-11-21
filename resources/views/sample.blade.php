@@ -184,29 +184,32 @@
 		</div>
 
 		<div class="col-md-10">
-			<p>
-				<strong>Active filters:</strong>
-				@foreach($filter_fields as $filter_key => $filter_value)
-					<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="data_text_box">
-						@lang('short.' . $filter_key)
-					</span>
-				@endforeach
-			</p>
-
-			<p>
-				<strong>{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:</strong>
-				<span title="{{ $filtered_repositories_names }}", class="data_text_box">
-					{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}
-				</span>
-				<span class="data_text_box">
-					{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}}
-				</span>
-				<span class="data_text_box">
-					{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
-				</span>
-			</p>
-
 			<div class="data_container_box">
+				<p>
+					<strong>Summary Search Statisics</strong>
+				</p>
+				<p>
+					Active filters:
+					@foreach($filter_fields as $filter_key => $filter_value)
+						<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="data_text_box">
+							@lang('short.' . $filter_key)
+						</span>
+					@endforeach
+				</p>
+
+				<p>
+					{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:
+					<span title="{{ $filtered_repositories_names }}", class="data_text_box">
+						{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}
+					</span>
+					<span class="data_text_box">
+						{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}}
+					</span>
+					<span class="data_text_box">
+						{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
+					</span>
+				</p>
+
 				<div id="sample_charts" class="charts">
 					<div class="row">
 						<div class="col-md-2 chart" id="sample_chart1"></div>
@@ -218,11 +221,42 @@
 					</div>
 				</div>
 			</div>
-
 			<div class="data_container_box">
+					<fieldset class="first">
+						<b>Repositories</b>
+						<div id="rest_service_list">
+							<ul>
+								@foreach ($rest_service_list as $rs_data)
+							     <li>
+							     	{{ $rs_data['rs']->name }} ({{ number_format($rs_data['total_sequences']) }} sequences)
+								    <ul>
+							 			@foreach ($rs_data['study_tree'] as $lab)
+										<li>
+											Lab: {{ $lab['name'] }} ({{ number_format($lab['total_sequences']) }} sequences)
+										    <ul>
+							 					@foreach ($lab['studies'] as $study)
+							 						<li>
+													Study: {{ $study }}
+													</li>
+												@endforeach
+									 		</ul>
+										</li>
+								 		@endforeach
+							 		</ul>
+							     </li>
+								@endforeach
+							</ul>
+						</div>
+					</fieldset>
+			</div>
+			<div class="data_container_box">
+
 			@if (! empty($sample_list))
-			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post')) }}
-				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button')) }}
+				<p>
+					<strong>Samples</strong>
+					{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post')) }}
+					{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button')) }}
+				</p>
 
 				<table class="table table-striped sample_list table-condensed">
 					<thead>
