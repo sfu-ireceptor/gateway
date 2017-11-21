@@ -368,6 +368,7 @@ class RestService extends Model
 
         $sequence_data = self::sequences_summary($sequence_filters, $username);
         dd($sequence_data);
+
         return $sample_data;
     }
 
