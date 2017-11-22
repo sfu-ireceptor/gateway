@@ -156,7 +156,9 @@ class RestService extends Model
                 } else {
                     if (! in_array($sample->study_title, $study_tree[$lab]['studies'])) {
                         $new_study_data['study_title'] = $sample->study_title;
-                        if (isset($sample->study_url)) $new_study_data['study_url'] = $sample->study_url;
+                        if (isset($sample->study_url)) {
+                            $new_study_data['study_url'] = $sample->study_url;
+                        }
                         if (isset($study_sequence_count[$sample->study_title])) {
                             $new_study_data['total_sequences'] = $study_sequence_count[$sample->study_title];
                         } else {
