@@ -240,19 +240,24 @@
 										    <ul>
 							 					@foreach ($lab['studies'] as $study)
 							 						<li>
+							 						<span>
 													Study:
-													@isset($study['study_url'])
+													@if (isset($study['study_url']))
 														<a href="{{$study['study_url']}}" title="{{ $study['study_title'] }}" target="_blank">
 													@else
 														<span title="{{ $study['study_title'] }}">
-													@endisset
-														{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
-													@isset($study['study_url'])
+													@endif
+
+													{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
+
+													@if (isset($study['study_url']))
 														(NCBI)</a>
 													@else
 														</span>
-													@endisset
+													@endif
+
 													({{ number_format($study['total_sequences']) }} sequences)
+													</span>
 													</li>
 												@endforeach
 									 		</ul>
