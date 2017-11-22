@@ -241,9 +241,18 @@
 							 					@foreach ($lab['studies'] as $study)
 							 						<li>
 													Study:
-													<span title="{{ $study['study_title'] }}">
-													{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
-													</span> 
+													@isset($study['study_url'])
+														<a href="{{$study['study_url']}}" title="{{ $study['study_title'] }}" target="_blank">
+													@else
+														<span title="{{ $study['study_title'] }}">
+													@endisset
+														{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
+														{{ $study['study_url'] }}
+													@isset($study['study_url'])
+														</a>
+													@else
+														</span>
+													@endisset
 													({{ number_format($study['total_sequences']) }} sequences)
 													</li>
 												@endforeach
@@ -304,7 +313,7 @@
 							<td>
 								@isset($sample->study_title)
 									@isset($sample->study_url)
-										<a href="{{$sample->study_url}}" title="{{ $sample->study_title }}">
+										<a href="{{$sample->study_url}}" title="{{ $sample->study_title }}" target="_blank">
 											{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
 										</a>
 									@else
