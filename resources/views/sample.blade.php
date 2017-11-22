@@ -186,7 +186,7 @@
 		<div class="col-md-10">
 			<div class="data_container_box">
 				<p>
-					<strong>Aggregate Search Statisics</strong>
+					<strong>Aggregate Search Statistics</strong>
 				</p>
 				<p>
 					Active filters:
