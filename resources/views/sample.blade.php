@@ -186,7 +186,7 @@
 		<div class="col-md-10">
 			<div class="data_container_box">
 				<p>
-					<strong>Summary Search Statisics</strong>
+					<strong>Aggregate Search Statisics</strong>
 				</p>
 				<p>
 					Active filters:
@@ -232,11 +232,19 @@
 								    <ul>
 							 			@foreach ($rs_data['study_tree'] as $lab)
 										<li>
-											Lab: {{ $lab['name'] }} ({{ number_format($lab['total_sequences']) }} sequences)
+											Lab:
+											<span title="{{ $lab['name'] }}">
+											{{ str_limit($lab['name'], $limit = 64, $end = '‥') }}
+											</span> 
+											({{ number_format($lab['total_sequences']) }} sequences)
 										    <ul>
 							 					@foreach ($lab['studies'] as $study)
 							 						<li>
-													Study: {{ $study }}
+													Study:
+													<span title="{{ $study['study_title'] }}">
+													{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
+													</span> 
+													({{ number_format($study['total_sequences']) }} sequences)
 													</li>
 												@endforeach
 									 		</ul>
