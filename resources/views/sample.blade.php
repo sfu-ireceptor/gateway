@@ -248,7 +248,7 @@
 													@endisset
 														{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
 													@isset($study['study_url'])
-														</a>
+														(NCBI)</a>
 													@else
 														</span>
 													@endisset

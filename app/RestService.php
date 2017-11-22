@@ -88,6 +88,9 @@ class RestService extends Model
                         $sample->study_url = 'https://www.ncbi.nlm.nih.gov/bioproject/?term=' . $sample->study_id;
                     } elseif (preg_match('/SRP/', $sample->study_id)) {
                         $sample->study_url = 'https://www.ncbi.nlm.nih.gov/Traces/sra/?study=' . $sample->study_id;
+                    } else
+                    {
+                        unset($sample->study_url);
                     }
                 }
             }
@@ -158,6 +161,9 @@ class RestService extends Model
                         $new_study_data['study_title'] = $sample->study_title;
                         if (isset($sample->study_url)) {
                             $new_study_data['study_url'] = $sample->study_url;
+                        }
+                        else {
+                            unset($new_study_data['study_url']);
                         }
                         if (isset($study_sequence_count[$sample->study_title])) {
                             $new_study_data['total_sequences'] = $study_sequence_count[$sample->study_title];
