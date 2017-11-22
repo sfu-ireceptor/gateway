@@ -270,17 +270,16 @@
 						</div>
 					</fieldset>
 			</div>
-			<div class="data_container_box">
 
 			@if (! empty($sample_list))
-				<p>
-					<strong>Samples</strong>
-					{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post')) }}
-					{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button')) }}
+			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form')) }}
+				<h3 class="pull-left">Individual Samples</h3>
+				<p class="pull-right">
+					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button')) }}
 				</p>
-
+				
 				<table class="table table-striped sample_list table-condensed">
-					<thead>
+					<thead> 
 						<tr>
 							<th>{{ Form::checkbox('select_all_rows', '', true, ['title' => 'Select all / Unselect all', 'class' => 'select_all_rows']) }}</th>
 							<th>Repository</th>
@@ -410,7 +409,6 @@
 
 			{{ Form::close() }}
 			@endif
-			</div>
 
 		</div>
 	</div>

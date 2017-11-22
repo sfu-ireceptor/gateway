@@ -264,6 +264,14 @@ form .error {
 	margin-bottom: 80px;
 }
 
+.sample_form {
+	margin-top: 30px;
+}
+
+.sample_form h3 {
+	margin-top: 6px;
+}
+
 .sample_list .label {
 	font-size: 95%;
 	font-weight: normal;
