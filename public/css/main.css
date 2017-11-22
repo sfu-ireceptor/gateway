@@ -410,6 +410,17 @@ p.workflow {
 	margin-left: -120px;
 }
 */
+
+#accordion .panel-heading a:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\2212";
+    float: right;
+    color: gray;
+}
+#accordion .panel-heading a.collapsed:after {
+    content: "\002b";
+}
+
 /* @group footer */
 
 footer {
