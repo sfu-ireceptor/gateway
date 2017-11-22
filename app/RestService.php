@@ -94,16 +94,25 @@ class RestService extends Model
 
             // calculate summary statistics
             $lab_list = [];
-            $lab_sample_count = [];
+            $lab_sequence_count = [];
+            $study_sequence_count = [];
             $study_list = [];
             $total_sequences = 0;
             foreach ($sample_list as $sample) {
                 if (isset($sample->lab_name)) {
                     if (! in_array($sample->lab_name, $lab_list)) {
                         $lab_list[] = $sample->lab_name;
+<<<<<<< Updated upstream
                         $lab_sample_count[$sample->lab_name] = $sample->ir_sequence_count;
                     } else {
                         $lab_sample_count[$sample->lab_name] += $sample->ir_sequence_count;
+=======
+                        $lab_sequence_count[$sample->lab_name] = $sample->ir_sequence_count;
+                    } 
+                    else
+                    {
+                        $lab_sequence_count[$sample->lab_name] += $sample->ir_sequence_count;
+>>>>>>> Stashed changes
                     }
                 } elseif (isset($sample->collected_by)) {
                     if (! in_array($sample->collected_by, $lab_list)) {
@@ -111,8 +120,14 @@ class RestService extends Model
                     }
                 }
 
-                if (! in_array($sample->study_title, $study_list)) {
+                if (! in_array($sample->study_title, $study_list))
+                {
                     $study_list[] = $sample->study_title;
+                    $study_sequence_count[$sample->study_title] = $sample->ir_sequence_count;
+                }
+                else
+                {
+                    $study_sequence_count[$sample->study_title] += $sample->ir_sequence_count;
                 }
 
                 if (isset($sample->ir_sequence_count)) {
@@ -132,6 +147,7 @@ class RestService extends Model
                 // If we don't have this lab already, create it.
                 if (! isset($study_tree[$lab])) {
                     $lab_data['name'] = $lab;
+<<<<<<< Updated upstream
                     $lab_data['studies'] = [];
                     if (isset($lab_sample_count[$lab])) {
                         $lab_data['total_sequences'] = $lab_sample_count[$lab];
@@ -148,6 +164,34 @@ class RestService extends Model
                     $study_tree[$lab]['studies'][] = $sample->study_title;
                 }
                 //$study_tree[$lab] = $lab_data;
+=======
+                    if (isset($lab_sequence_count[$lab]))
+                        $lab_data['total_sequences'] = $lab_sequence_count[$lab];
+                    else $lab_data['total_sequences'] = 0;
+                    $study_tree[$lab] = $lab_data;
+                } 
+
+                // Check to see if the study exists in the lab, and if not, create it.
+                if (!isset($study_tree[$lab]['studies']))
+                {
+                    $new_study_data['study_title'] = $sample->study_title;
+                    if (isset($study_sequence_count[$sample->study_title]))
+                        $new_study_data['total_sequences'] = $study_sequence_count[$sample->study_title];
+                    else $new_study_data['total_sequences'] = 0;
+                    $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
+                }
+                else
+                {
+                    if (!in_array($sample->study_title, $study_tree[$lab]['studies']))
+                    {
+                        $new_study_data['study_title'] = $sample->study_title;
+                        if (isset($study_sequence_count[$sample->study_title]))
+                            $new_study_data['total_sequences'] = $study_sequence_count[$sample->study_title];
+                        else $new_study_data['total_sequences'] = 0;
+                        $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
+                    }
+                }
+>>>>>>> Stashed changes
             }
 
             // rest service data
@@ -164,6 +208,7 @@ class RestService extends Model
             $data['total'] += $rs_data['total_samples'];
             $data['items'] = array_merge($sample_list, $data['items']);
         }
+        //var_dump($data['rs_list']); die();
 
         // aggregate summary statistics
         $total_filtered_repositories = 0;
