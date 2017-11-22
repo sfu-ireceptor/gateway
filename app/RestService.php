@@ -102,17 +102,9 @@ class RestService extends Model
                 if (isset($sample->lab_name)) {
                     if (! in_array($sample->lab_name, $lab_list)) {
                         $lab_list[] = $sample->lab_name;
-<<<<<<< Updated upstream
-                        $lab_sample_count[$sample->lab_name] = $sample->ir_sequence_count;
-                    } else {
-                        $lab_sample_count[$sample->lab_name] += $sample->ir_sequence_count;
-=======
                         $lab_sequence_count[$sample->lab_name] = $sample->ir_sequence_count;
-                    } 
-                    else
-                    {
+                    } else {
                         $lab_sequence_count[$sample->lab_name] += $sample->ir_sequence_count;
->>>>>>> Stashed changes
                     }
                 } elseif (isset($sample->collected_by)) {
                     if (! in_array($sample->collected_by, $lab_list)) {
@@ -147,24 +139,6 @@ class RestService extends Model
                 // If we don't have this lab already, create it.
                 if (! isset($study_tree[$lab])) {
                     $lab_data['name'] = $lab;
-<<<<<<< Updated upstream
-                    $lab_data['studies'] = [];
-                    if (isset($lab_sample_count[$lab])) {
-                        $lab_data['total_sequences'] = $lab_sample_count[$lab];
-                    } else {
-                        $lab_data['total_sequences'] = 0;
-                    }
-                    $study_tree[$lab] = $lab_data;
-                }
-
-                // Check to see if the study exists in the lab, and if not, create it.
-                //$lab_data = $study_tree[$lab];
-                // If the study doesn't exist in this lab's studies then create it.
-                if (! in_array($sample->study_title, $study_tree[$lab]['studies'])) {
-                    $study_tree[$lab]['studies'][] = $sample->study_title;
-                }
-                //$study_tree[$lab] = $lab_data;
-=======
                     if (isset($lab_sequence_count[$lab]))
                         $lab_data['total_sequences'] = $lab_sequence_count[$lab];
                     else $lab_data['total_sequences'] = 0;
@@ -191,7 +165,6 @@ class RestService extends Model
                         $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
                     }
                 }
->>>>>>> Stashed changes
             }
 
             // rest service data
