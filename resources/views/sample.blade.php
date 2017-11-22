@@ -247,7 +247,6 @@
 														<span title="{{ $study['study_title'] }}">
 													@endisset
 														{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
-														{{ $study['study_url'] }}
 													@isset($study['study_url'])
 														</a>
 													@else
