@@ -192,8 +192,8 @@
 <script>
 	var graphFields = [
 	        "@lang('v2.study_description')", 
-	        "@lang('v2.ir_subject_id')",
-	        "@lang('v2.ir_sample_id')",
+	        "@lang('v2.subject_id')",
+	        "@lang('v2.sample_id')",
 	        "@lang('v2.disease_state_sample')", 
 	        "@lang('v2.tissue')",
 	        "@lang('v2.cell_subset')"
