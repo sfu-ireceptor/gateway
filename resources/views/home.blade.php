@@ -30,7 +30,7 @@
 		</div>
 		<div class="col-md-3 side_search_links">
 			<p class="quick_search_link">
-				<a class="btn btn-default btn-lg" role="button" href="/sequences-quick-search">Quick CDR3 Search →</a>
+				<a class="btn btn-default btn-lg" role="button" href="/sequences-quick-search">Junction Search →</a>
 			</p>
 			<p>Search for sequences by CDR3 sequence</p>
 		</div>
