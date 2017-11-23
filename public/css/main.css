@@ -526,7 +526,7 @@ footer a:hover {
 
 
 .login_container {
-	padding-top: 20px;
+	padding-top: 50px;
 }
 
 .login_container #landing_charts {
@@ -550,10 +550,18 @@ footer a:hover {
 	font-size: 14px;
 }
 
-.login-logo-text {
+.login-logo {
+	margin-top: 1px;
+}
+
+.login-logo span {
 	font-size: 36px;
 	font-style: bold;
+}
 
+.login-logo img {
+	display: inline-block;
+	margin-top: -20px;
 }
 
 .jumbotron p {

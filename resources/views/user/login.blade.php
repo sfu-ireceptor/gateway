@@ -6,10 +6,9 @@
 <div class="container login_container">
 
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-3 login-logo">
 			<img src="/images/logos/ireceptor_logo.png" height=64>
-			<span class="login-logo-text">iReceptor</span>
-
+			<span>iReceptor</span>
 		</div>
 		<div class="col-md-9">
 			<div class="intro">
