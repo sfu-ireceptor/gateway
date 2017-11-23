@@ -101,9 +101,9 @@
 
 	<div class="row">
 		<div class="col-md-9">
-			<h3>
+			<h4>
 			About iReceptor
-			</h3>
+			</h4>
 			<p>
 			iReceptor is a distributed data management system and scientific gateway for mining “Next Generation”sequence data from immune responses. The goal of the project is to: improve the design of vaccines, therapeutic antibodies and cancer immunotherapies by integrating Canadian and international data repositories of antibody and T-cell receptor gene sequences.
 			</p>
@@ -112,9 +112,9 @@
 			</p>
 		</div>
 		<div class="col-md-3">
-			<h3>
+			<h4>
 			Contact/Resources
-			</h3>
+			</h4>
 			<p>
 				To ask question or get involved, email: support@ireceptor.org
 			</p>
