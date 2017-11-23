@@ -101,9 +101,11 @@ class RestService extends Model
             $study_list = [];
             $total_sequences = 0;
             foreach ($sample_list as $sample) {
-                if (isset($sample->ir_sequence_count))
+                if (isset($sample->ir_sequence_count)) {
                     $sequence_count = $sample->ir_sequence_count;
-                else $sequence_count = 0;
+                } else {
+                    $sequence_count = 0;
+                }
 
                 if (isset($sample->lab_name)) {
                     if (! in_array($sample->lab_name, $lab_list)) {
