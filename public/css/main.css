@@ -550,6 +550,12 @@ footer a:hover {
 	font-size: 14px;
 }
 
+.login-logo-text {
+	font-size: 36px;
+	font-style: bold;
+
+}
+
 .jumbotron p {
 	font-size: 21px;
 }
