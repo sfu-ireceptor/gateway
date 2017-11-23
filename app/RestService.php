@@ -281,10 +281,6 @@ class RestService extends Model
             $data['items'] = array_merge($obj->items, $data['items']);
             $data['summary'] = array_merge($obj->summary, $data['summary']);
 
-            // convert any v1 fields to v2
-            $data['items'] = FieldName::convertObjectList($data['items'], 'ir_v1', 'ir_v2');
-            $data['summary'] = FieldName::convertObjectList($data['summary'], 'ir_v1', 'ir_v2');
-
             $rs_data = [];
             $rs_data['rs'] = $rs;
             $rs_data['summary'] = $obj->summary;
