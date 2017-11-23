@@ -101,12 +101,16 @@ class RestService extends Model
             $study_list = [];
             $total_sequences = 0;
             foreach ($sample_list as $sample) {
+                if (isset($sample->ir_sequence_count))
+                    $sequence_count = $sample->ir_sequence_count;
+                else $sequence_count = 0;
+
                 if (isset($sample->lab_name)) {
                     if (! in_array($sample->lab_name, $lab_list)) {
                         $lab_list[] = $sample->lab_name;
-                        $lab_sequence_count[$sample->lab_name] = $sample->ir_sequence_count;
+                        $lab_sequence_count[$sample->lab_name] = $sequence_count;
                     } else {
-                        $lab_sequence_count[$sample->lab_name] += $sample->ir_sequence_count;
+                        $lab_sequence_count[$sample->lab_name] += $sequence_count;
                     }
                 } elseif (isset($sample->collected_by)) {
                     if (! in_array($sample->collected_by, $lab_list)) {
@@ -116,14 +120,12 @@ class RestService extends Model
 
                 if (! in_array($sample->study_title, $study_list)) {
                     $study_list[] = $sample->study_title;
-                    $study_sequence_count[$sample->study_title] = $sample->ir_sequence_count;
+                    $study_sequence_count[$sample->study_title] = $sequence_count;
                 } else {
-                    $study_sequence_count[$sample->study_title] += $sample->ir_sequence_count;
+                    $study_sequence_count[$sample->study_title] += $sequence_count;
                 }
 
-                if (isset($sample->ir_sequence_count)) {
-                    $total_sequences += $sample->ir_sequence_count;
-                }
+                $total_sequences += $sequence_count;
             }
 
             $study_tree = [];
