@@ -6,19 +6,21 @@
 
 <div class="container-fluid sample_container">
 
+	<h1>Samples <small>Filter for and select samples to view their sequences</small></h1>
+
 	<div class="row">
 		<div class="col-md-2 filters">
 
 			<h3>Filters</h3>
 
-			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'get', 'class' => 'sample_search')) }}
+			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'post', 'class' => 'sample_search')) }}
 				<input type="hidden" name="project_id_list" />
 
 				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 					<div class="panel panel-default">
 						<div class="panel-heading" role="tab" id="headingOne">
 							<h4 class="panel-title">
-								<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+								<a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
 									Filter by study
 								</a>
 							</h4>
@@ -57,7 +59,7 @@
 					<div class="panel panel-default">
 						<div class="panel-heading" role="tab" id="headingTwo">
 							<h4 class="panel-title">
-								<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+								<a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
 									Filter by subject
 								</a>
 							</h4>
@@ -170,34 +172,44 @@
 					</div>
 				</div>
 
-				<p>
-					{{ Form::submit('Apply filters', array('class' => 'btn btn-primary search_samples')) }}
+				<p class="button_container">
+					<a href="/samples" class="btn btn-default">
+						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+						<span class="text">Clear filters</span>
+					</a>
+					{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 				</p>
 			    
 			{{ Form::close() }}
 		</div>
 
 		<div class="col-md-10">
-			<h1>Samples <small>Filter for and select samples to view their sequences</small></h1>
-
-			<p>
-				<strong>Active filters:</strong>
-			</p>
-
-			<p>
-				<strong>{{ $total_filtered_samples }} samples returned from:</strong>
-				<span class="data_text_box">
-					{{ $total_filtered_repositories }} remote repositories
-				</span>
-				<span class="data_text_box">
-					{{ $total_filtered_labs }} research labs
-				</span>
-				<span class="data_text_box">
-					{{ $total_filtered_studies }} studies
-				</span>
-			</p>
-
 			<div class="data_container_box">
+				<p>
+					<strong>Aggregate Search Statistics</strong>
+				</p>
+				<p>
+					Active filters:
+					@foreach($filter_fields as $filter_key => $filter_value)
+						<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="data_text_box">
+							@lang('short.' . $filter_key)
+						</span>
+					@endforeach
+				</p>
+
+				<p>
+					{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:
+					<span title="{{ $filtered_repositories_names }}", class="data_text_box">
+						{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}
+					</span>
+					<span class="data_text_box">
+						{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}}
+					</span>
+					<span class="data_text_box">
+						{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
+					</span>
+				</p>
+
 				<div id="sample_charts" class="charts">
 					<div class="row">
 						<div class="col-md-2 chart" id="sample_chart1"></div>
@@ -209,46 +221,86 @@
 					</div>
 				</div>
 			</div>
-
 			<div class="data_container_box">
+					<fieldset class="first">
+						<b>Repositories</b>
+						<div id="rest_service_list">
+							<ul>
+								@foreach ($rest_service_list as $rs_data)
+							     <li>
+							     	{{ $rs_data['rs']->name }} ({{ number_format($rs_data['total_sequences']) }} sequences)
+								    <ul>
+							 			@foreach ($rs_data['study_tree'] as $lab)
+										<li>
+											Lab:
+											<span title="{{ $lab['name'] }}">
+											{{ str_limit($lab['name'], $limit = 64, $end = '‥') }}
+											</span> 
+											({{ number_format($lab['total_sequences']) }} sequences)
+										    <ul>
+							 					@foreach ($lab['studies'] as $study)
+							 						<li>
+							 						<span>
+													Study:
+													@if (isset($study['study_url']))
+														<a href="{{$study['study_url']}}" title="{{ $study['study_title'] }}" target="_blank">
+													@else
+														<span title="{{ $study['study_title'] }}">
+													@endif
+
+													{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
+
+													@if (isset($study['study_url']))
+														(NCBI)</a>
+													@else
+														</span>
+													@endif
+
+													({{ number_format($study['total_sequences']) }} sequences)
+													</span>
+													</li>
+												@endforeach
+									 		</ul>
+										</li>
+								 		@endforeach
+							 		</ul>
+							     </li>
+								@endforeach
+							</ul>
+						</div>
+					</fieldset>
+			</div>
+
 			@if (! empty($sample_list))
-			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'get')) }}
-
-				<?php
-					$max_count = 1000;
-				?>
-
-				@if ($total_filtered_samples > $max_count)
-					{{ Form::submit('View all samples ('.(string)($total_filtered_samples-$max_count).' more)', array('class' => 'btn btn-primary show-more-samples-button', 'disabled' => 'disabled')) }}
-				@endif
-
-				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
-
+			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form')) }}
+				<h3 class="pull-left">Individual Samples</h3>
+				<p class="pull-right">
+					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button')) }}
+				</p>
+				
 				<table class="table table-striped sample_list table-condensed">
-					<thead>
+					<thead> 
 						<tr>
-							<th>{{ Form::checkbox('select_all') }}</th>
+							<th>{{ Form::checkbox('select_all_rows', '', true, ['title' => 'Select all / Unselect all', 'class' => 'select_all_rows']) }}</th>
 							<th>Repository</th>
 							<th>@lang('short.lab_name')</th>
 							<th>@lang('short.study_title')</th>
-							<th>@lang('short.study_id')</th>
 							<th>@lang('short.study_group_description')</th>
 							<th>@lang('short.subject_id')</th>
-							<th>Sequences</th>
-							<th>@lang('short.sample_id')</th>
 							<th>@lang('short.tissue')</th>
 							<th>@lang('short.cell_subset')</th>
 							<th>@lang('short.cell_phenotype')</th>
-							<th>@lang('short.library_source')</th>
+							<th>Sequences</th>
+							<th>@lang('short.sample_id')</th>
+							<th>@lang('short.template_class')</th>
+							<th>@lang('short.study_id')</th>
+							<th>@lang('short.pub_ids')</th>
 						</tr>
 					</thead>
 					<tbody>
-						<?php
-							$count = 0;
-						?>
 						@foreach ($sample_list as $sample)
 						<tr>
-							<td>{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id) }}</td>
+							<td>{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id, true) }}</td>
 							<td class="text-nowrap">
 								<span title="{{ $sample->rest_service_name }}">
 									{{ str_limit($sample->rest_service_name, $limit = 9, $end = '‥') }}
@@ -262,23 +314,18 @@
 								@endif
 							</td>
 							<td>
-								@if (isset($sample->sra_accession))
-									<a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study={{ $sample->sra_accession }}" title="{{ $sample->study_title }}">
-										{{ str_limit($sample->study_title, $limit = 30, $end = '‥') }}
-									</span>
-								@elseif (isset($sample->study_title))
-									<span title="{{ $sample->study_title }}">
-									{{ str_limit($sample->study_title, $limit = 30, $end = '‥') }}
-									</span>							
-								@endif
-							</td>
-							<td>
-								@isset($sample->study_id)
-									<span title="{{ $sample->study_id }}">
-									{{ str_limit($sample->study_id, $limit = 15, $end = '‥') }}
-									</span>
+								@isset($sample->study_title)
+									@isset($sample->study_url)
+										<a href="{{$sample->study_url}}" title="{{ $sample->study_title }}" target="_blank">
+											{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
+										</a>
+									@else
+										<span title="{{ $sample->study_title }}">
+											{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
+										</span>							
+									@endisset
 								@endisset
-							</td>		
+							</td>
 							<td>
 								@isset($sample->study_group_description)
 									<span title="{{ $sample->study_group_description }}">
@@ -293,23 +340,7 @@
 									</span>
 								@endisset
 							</td>							
-						
-							<td>
-								@isset($sample->ir_sequence_count)
-									@if ($sample->ir_sequence_count > 0)
-										<a href="sequences?ir_project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}">
-											<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
-										</a>
-									@endif
-								@endisset
-							</td>
-							<td>
-								@isset($sample->sample_id)
-									<span title="{{ $sample->sample_id }}">
-									{{ str_limit($sample->sample_id, $limit = 12, $end = '') }}
-									</span>
-								@endisset
-							</td>	
+
 							<td>
 								@isset($sample->tissue)
 									<span title="{{ $sample->tissue }}">
@@ -330,6 +361,23 @@
 									</span>
 								@endisset
 							</td>
+						
+							<td>
+								@isset($sample->ir_sequence_count)
+									@if ($sample->ir_sequence_count > 0)
+										<a href="sequences?ir_project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}">
+											<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
+										</a>
+									@endif
+								@endisset
+							</td>
+							<td>
+								@isset($sample->sample_id)
+									<span title="{{ $sample->sample_id }}">
+									{{ str_limit($sample->sample_id, $limit = 12, $end = '') }}
+									</span>
+								@endisset
+							</td>	
 							<td>
 								@isset($sample->template_class)
 									<span title="{{ $sample->template_class }}">
@@ -337,25 +385,30 @@
 									</span>
 								@endisset
 							</td>
+							<td>
+								@isset($sample->study_id)
+									<span title="{{ $sample->study_id }}">
+									{{ str_limit($sample->study_id, $limit = 15, $end = '‥') }}
+									</span>
+								@endisset
+							</td>		
+							<td>
+								@isset($sample->pub_ids)
+									<span title="{{ $sample->pub_ids }}">
+									{{ str_limit($sample->pub_ids, $limit = 15, $end = '‥') }}
+									</span>
+								@endisset
+							</td>	
 						</tr>
-						<?php 
-							$count = $count + 1;
-							if ($count >= $max_count) break;
-						?>
 						@endforeach
 					</tbody>
 				</table>
 
 				<input type="hidden" name="project_id_list" />
-				
-				@if ($total_filtered_samples > $max_count):
-					{{ Form::submit('View all samples ('.(string)($total_filtered_samples-$max_count).' more)', array('class' => 'btn btn-primary show-more-samples-button', 'disabled' => 'disabled')) }}
-				@endif
-				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
+				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button')) }}
 
 			{{ Form::close() }}
 			@endif
-			</div>
 
 		</div>
 	</div>
@@ -380,6 +433,7 @@
 	    ];
 	var graphDIV = "sample_chart";
 	var graphInternalLabels = true;
+	var graphCountField = "ir_sequence_count";
 	var graphData = {!! $sample_list_json !!};
 </script>
 @stop

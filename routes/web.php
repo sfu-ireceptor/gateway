@@ -59,9 +59,12 @@ Route::get('email', 'TestController@email');
 
 Route::middleware('auth')->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::post('/samples', 'SampleController@postIndex')->name('samples-post');
     Route::get('/samples', 'SampleController@index')->name('samples');
     Route::get('/samples/json', 'SampleController@json')->name('samples-json');
+    Route::post('/sequences', 'SequenceController@postIndex')->name('sequences-post');
     Route::get('/sequences', 'SequenceController@index')->name('sequences');
+    Route::get('/sequences-quick-search', 'SequenceController@quickSearch')->name('sequences-quick-search');
 
     Route::prefix('user')->group(function () {
         Route::get('account', 'UserController@getAccount');

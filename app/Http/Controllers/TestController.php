@@ -30,6 +30,11 @@ class TestController extends Controller
 
     public function getIndex()
     {
+        $data = ['project_id' => 2, 'subject_id' => 3, 'test' => 4, 'test2' => ''];
+
+        echo http_build_query($data, '', '&');
+        die();
+
         $l = SequenceColumnName::all();
         foreach ($l as $s) {
             $name = $s['name'];
@@ -401,12 +406,14 @@ EOD;
 
     public function index2(Request $request)
     {
-        Log::info('ok!');
-        echo $request->header('Content-Type') . "\n";
-        echo $request->header('User-Agent') . "\n";
-        echo $request->method() . "\n";
-        var_dump($request->header()) . "\n";
-        var_dump($request->file()) . "\n";
-        var_dump($request->all());
+        // Log::info('ok!');
+        Log::info($request->header('Content-Type'));
+        Log::info($request->header('User-Agent'));
+        Log::info($request->method());
+        Log::info($request->header());
+        Log::info($request->file());
+        Log::info($request->all());
+        $content = $request->getContent();
+        Log::info($content);
     }
 }

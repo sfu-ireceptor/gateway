@@ -2,11 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Query;
 use App\RestService;
 use Illuminate\Http\Request;
 
 class SampleController extends Controller
 {
+    public function postIndex(Request $request)
+    {
+        $query_id = Query::saveParams($request->except(['_token']), 'samples');
+
+        return redirect('samples?query_id=' . $query_id)->withInput();
+    }
+
     public function index(Request $request)
     {
         $username = auth()->user()->username;
@@ -67,11 +75,22 @@ class SampleController extends Controller
         $data['total_sequences'] = $metadata['total_sequences'];
 
         /*************************************************
-        * get filtered sample list */
+        * get filtered sample list and related statistics */
 
-        $sample_data = RestService::samples($request->all(), $username);
+        $query_id = $request->input('query_id');
+        if ($query_id) {
+            $params = Query::getParams($query_id);
+            if (! $request->session()->has('_old_input')) {
+                $request->session()->put('_old_input', $params);
+            }
+        } else {
+            $params = $request->all();
+            $request->session()->forget('_old_input');
+        }
+        $sample_data = RestService::samples($params, $username);
 
         $data['sample_list'] = $sample_data['items'];
+        $data['rest_service_list'] = $sample_data['rs_list'];
         $data['sample_list_json'] = json_encode($sample_data['items']);
 
         $data['total_filtered_repositories'] = $sample_data['total_filtered_repositories'];
@@ -80,9 +99,12 @@ class SampleController extends Controller
         $data['total_filtered_samples'] = $sample_data['total_filtered_samples'];
         $data['total_filtered_sequences'] = $sample_data['total_filtered_sequences'];
 
-        /*************************************************
-        * re-populate form values */
-        $request->flash();
+        $filtered_repositories_names = array_map(function ($rs) {
+            return $rs->name;
+        }, $sample_data['filtered_repositories']);
+        $data['filtered_repositories_names'] = implode(', ', $filtered_repositories_names);
+
+        $data['filter_fields'] = $sample_data['filter_fields'];
 
         return view('sample', $data);
     }
