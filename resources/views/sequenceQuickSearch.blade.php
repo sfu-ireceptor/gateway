@@ -41,6 +41,11 @@
 						</div>
 						<div id="collapseThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
 							<div class="panel-body">
+							    <div class="form-group">
+									{{ Form::label('organism', __('short.organism')) }}
+									{{ Form::text('organism', '', array('class' => 'form-control')) }}
+								</div>
+
 								<div class="form-group">
 									{{ Form::label('cell_subset', __('short.cell_subset')) }}
 									@foreach ($cell_type_list as $id => $name)
