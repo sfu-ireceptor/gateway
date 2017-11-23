@@ -433,6 +433,7 @@
 	    ];
 	var graphDIV = "sample_chart";
 	var graphInternalLabels = true;
+	var graphLabelLength = 10;
 	var graphCountField = "ir_sequence_count";
 	var graphData = {!! $sample_list_json !!};
 </script>

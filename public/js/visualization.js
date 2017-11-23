@@ -12,14 +12,14 @@ $(document).ready(function()
 // blades that contain the relevant DIV (in this case landing_charts)
 function doLandingCharts()
 {
-    showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels);
+    showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels, graphLabelLength);
 }
 // Function to process the Landing Page charts. Data (graphData,
 // graphFields, and graphNames) is provided by the appropriate 
 // blades that contain the relevant DIV (in this case sample_charts)
 function doSampleCharts()
 {
-    showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels);
+    showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels, graphLabelLength);
 }
 
 // Function to process the Landing Page charts. Data (graphData,
@@ -29,7 +29,7 @@ function doSequenceCharts()
 {
     // Get the JSON and process it. We currently have no mechanism to get the 
     // filtered data to the visualization - working on it...
-    showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels);
+    showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels, graphLabelLength);
 }
 
 /**********************************************************
@@ -50,7 +50,7 @@ function doSequenceCharts()
 // of the graph (starting at 1). For example, if there are N graphs and htmlBase
 // is "foo" then there should be N valid html containers with the IDs "foo1",
 // "foo2" up to "fooN".
-function showData(json, graphFields, graphNames, countField, htmlBase, internalLabels)
+function showData(json, graphFields, graphNames, countField, htmlBase, internalLabels, truncateLabels=10)
 {
     // Initial variables. These should be provided by the gateway, but they are constants for now.
     // sequenceAPIData - Whether or not the data came from the sequence_summary API or not.
@@ -71,7 +71,7 @@ function showData(json, graphFields, graphNames, countField, htmlBase, internalL
         // Get the aggregated data for this field.
         aggregateData = irAggregateData(graphFields[index], json, countField, aggregateBySequence);
         // Build the chart data structure.
-        chart = irBuildPieChart(graphNames[index], aggregateData, 3, internalLabels);
+        chart = irBuildPieChart(graphNames[index], aggregateData, 3, internalLabels, truncateLabels);
         //chart = irBuildBarChart(graphNames[index], aggregateData, 4, internalLabels);
         // Generate the container ID to use, we expect containers numberd at 1.
         containerID = htmlBase + String(containerNumber);
@@ -105,7 +105,7 @@ function bubbleSort(a, b)
 }
 
 // Build a chart for the iReceptor aggregation data using HighCharts.
-function irBuildPieChart(fieldTitle, data, level, internalLabels)
+function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels=10)
 {
     // Debug level for when developing...
     var debugLevel = 0;
@@ -224,9 +224,9 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels)
                         // long names as it makes the graph ugly).
                         formatter: function()
                         {
-                            //var newname = this.point.name.substring(0,20);
+                            var newname = this.point.name.substring(0,truncateLabels);
                             //var newname = this.point.name.replace(/ /,"</br>");
-                            var newname = this.point.name;
+                            //var newname = this.point.name;
 
                             return(newname);
                         },
