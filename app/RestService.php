@@ -277,6 +277,13 @@ class RestService extends Model
             } catch (\Exception $e) {
                 continue;
             }
+
+            if (! isset($obj->items) || ! isset($obj->summary)) {
+                // Something has gone horribly wrong with the service, so we
+                // continue as if we received an execption as above
+                continue;
+            }
+
             //var_dump($obj); die();
             $data['items'] = array_merge($obj->items, $data['items']);
             $data['summary'] = array_merge($obj->summary, $data['summary']);
