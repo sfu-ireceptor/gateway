@@ -123,8 +123,8 @@ if (! function_exists('human_number')) {
 
             $n = $x_array[0];
             $x_display = $n;
-            if($num > 1000000) {
-                $n2 = (int) $x_array[1][0] !== 0 ? '.' . $x_array[1][0] : '';                
+            if ($num > 1000000) {
+                $n2 = (int) $x_array[1][0] !== 0 ? '.' . $x_array[1][0] : '';
                 $x_display .= $n2;
             }
             $x_display .= ' ';
