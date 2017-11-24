@@ -34,11 +34,16 @@
 				      	</a>
 					</li>
 			    	@if(Request::is('samples*'))
-						<li role="presentation" class="active search">
-							<a href="/samples">
+						<li role="presentation" class="dropdown active search">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 								Search
+								<span class="caret"></span>
 								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 							</a>
+							<ul class="dropdown-menu" role="menu">
+							  <li><a href="/sequences-quick-search">Junction Search</a></li>
+							  <li><a href="/samples">Advanced Search</a></li>
+							</ul>
 						</li>
 						<li role="presentation" class="active samples">
 							<a href="/samples">
@@ -50,11 +55,16 @@
 							<a href="/samples">Sequences</a>
 						</li>
 					@elseif(Request::is('sequences*'))
-						<li role="presentation" class="active search">
-							<a href="/samples">
+						<li role="presentation" class="dropdown active search">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 								Search
+								<span class="caret"></span>
 								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 							</a>
+							<ul class="dropdown-menu" role="menu">
+							  <li><a href="/sequences-quick-search">Junction Search</a></li>
+							  <li><a href="/samples">Advanced Search</a></li>
+							</ul>
 						</li>
 						<li role="presentation" class="active samples">
 							<a href="/samples">
@@ -66,8 +76,12 @@
 							<a href="/samples">Sequences</a>
 						</li>
 					@else
-						<li role="presentation">
-							<a href="/samples">Search</a>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Search<span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+							  <li><a href="/sequences-quick-search">Junction Search</a></li>
+							  <li><a href="/samples">Advanced Search</a></li>
+							</ul>
 						</li>
 					@endif
 			      </ul>
