@@ -6,7 +6,7 @@
 <div class="container login_container">
 
 	<div class="row">
-		<div class="col-md-3 login-logo">
+		<div class="col-md-3 login_logo">
 			<img src="/images/logos/ireceptor_logo.png" height=64>
 			<span>iReceptor</span>
 		</div>
@@ -17,7 +17,7 @@
 		</div>
 	</div>
 
-	<div class="row">
+	<div class="row login_main">
 		<div class="col-md-3 login-box">
 			<div class="panel panel-default">
 				<div class="panel-body">
@@ -80,6 +80,8 @@
 		</div>
 
 		<div class="col-md-9">
+			<p class="intro">iReceptor currently contains <strong>{{ human_number($total_sequences) }} sequences</strong>  and  <strong>{{ $total_samples }} samples</strong>.</p>
+
 			<div id="landing_charts">
 				<div class="row">
 					<div class="col-md-4 chart" id="landing_chart1"></div>

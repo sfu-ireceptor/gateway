@@ -24,6 +24,16 @@ class UserController extends Controller
         $data = [];
         $data['sample_list_json'] = json_encode($sample_list);
 
+        /******************************************************
+        * get repository global statistics (unfiltered data) */
+
+        $metadata = RestService::metadata($username);
+        $data['total_repositories'] = $metadata['total_repositories'];
+        $data['total_labs'] = $metadata['total_labs'];
+        $data['total_studies'] = $metadata['total_projects'];
+        $data['total_samples'] = $metadata['total_samples'];
+        $data['total_sequences'] = $metadata['total_sequences'];
+
         return view('user/login', $data);
     }
 
