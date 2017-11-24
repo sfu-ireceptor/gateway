@@ -122,8 +122,11 @@ if (! function_exists('human_number')) {
             $x_parts = ['thousand', 'million', 'billion', 'trillion'];
 
             $n = $x_array[0];
-            $n2 = (int) $x_array[1][0] !== 0 ? '.' . $x_array[1][0] : '';
-            $x_display = $n . $n2;
+            $x_display = $n;
+            if($num > 1000000) {
+                $n2 = (int) $x_array[1][0] !== 0 ? '.' . $x_array[1][0] : '';                
+                $x_display .= $n2;
+            }
             $x_display .= ' ';
 
             $x_display .= $x_parts[$x_count_parts - 1];
