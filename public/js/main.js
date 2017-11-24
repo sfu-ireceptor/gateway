@@ -25,17 +25,7 @@ $(document).ready(function() {
 	**********************************************************/
 
 	// jstree: rest services -> labs -> projects tree
-	$('#rest_service_list').on('ready.jstree', function (e, data) {
-	    //data.instance.get_node(data.selected[i]).text);
-		$('span.sra').each(function(){
-			var sra = $(this).text();
-			var url = 'https://www.ncbi.nlm.nih.gov/sra/?term=' + sra;
-			//$(this).replaceWith('<a href="' . url . '">SRA</a>');
-			//console.log($(this).text());
-		});
-  	}).jstree({
-  		"plugins" : ["checkbox"]
-	});
+	$('#rest_service_list').jstree();
 
 	$('form.sample_search').submit(function(){
 		var projectIdList = $('#rest_service_list').jstree("get_bottom_checked");

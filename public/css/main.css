@@ -358,6 +358,29 @@ p.workflow {
     background-position: -32px -4px;
 }
 
+#rest_service_list em {
+	margin-left: 5px;
+	color: gray;
+}
+
+#rest_service_list .rs_node {
+	margin-bottom: 10px;
+}
+
+#rest_service_list .node_name {
+	font-weight: bold;
+	font-size: 20px;
+}
+
+#rest_service_list .lab_node {
+	margin-top: 5px;
+}
+
+#rest_service_list .lab_name {
+	font-weight: bold;
+	margin-top: 10px;
+}
+
 #summary_charts {
 	
 }
@@ -566,5 +589,9 @@ footer a:hover {
 
 .jumbotron p {
 	font-size: 21px;
+}
+
+.modal-dialog {
+	width: 980px;
 }
 }
