@@ -111,20 +111,22 @@ if (! function_exists('convert_arrays_keys')) {
 // ex: 1706325 -> 1.7 million
 if (! function_exists('human_number')) {
     // from https://stackoverflow.com/a/36365553/91225
-    function human_number($num) {
+    function human_number($num)
+    {
         $x = round($num);
         $x_number_format = number_format($x);
         $x_array = explode(',', $x_number_format);
         $x_count_parts = count($x_array) - 1;
 
-        $x_parts = array('thousand', 'million', 'billion', 'trillion');
+        $x_parts = ['thousand', 'million', 'billion', 'trillion'];
 
         $n = $x_array[0];
-        $n2 = (int)$x_array[1][0] !== 0 ? '.' . $x_array[1][0] : '';
+        $n2 = (int) $x_array[1][0] !== 0 ? '.' . $x_array[1][0] : '';
         $x_display = $n . $n2;
         $x_display .= ' ';
 
         $x_display .= $x_parts[$x_count_parts - 1];
+
         return $x_display;
     }
 }
