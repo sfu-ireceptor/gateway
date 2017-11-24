@@ -182,6 +182,7 @@
 	    ];
 var graphDIV = "landing_chart";
 var graphInternalLabels = false;
+var graphLabelLength = 10;
 var graphCountField = "ir_sequence_count";
 var graphData = {!! $sample_list_json !!};
 </script>
