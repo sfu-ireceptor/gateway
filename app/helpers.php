@@ -114,7 +114,7 @@ if (! function_exists('human_number')) {
     function human_number($num)
     {
         $x = round($num);
-        if($x != NULL) {
+        if ($x != null) {
             $x_number_format = number_format($x);
             $x_array = explode(',', $x_number_format);
             $x_count_parts = count($x_array) - 1;
@@ -128,9 +128,8 @@ if (! function_exists('human_number')) {
 
             $x_display .= $x_parts[$x_count_parts - 1];
 
-            return $x_display;            
-        }
-        else {
+            return $x_display;
+        } else {
             return $num;
         }
     }
