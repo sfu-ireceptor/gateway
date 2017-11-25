@@ -23,7 +23,6 @@ class SequenceController extends Controller
         $username = auth()->user()->username;
         $data = [];
 
-
         $query_id = $request->input('query_id');
         if ($query_id) {
             $filters = Query::getParams($query_id);
