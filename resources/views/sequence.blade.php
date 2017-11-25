@@ -113,10 +113,12 @@
 
    				<div class="button_container">
 					<p>
-						<a href="{{ $no_filters_url }}" class="btn btn-default">
-							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-							<span class="text">Clear filters</span>
-						</a>
+						@isset($no_filters_query_id)
+							<a href="/sequences?query_id={{ $no_filters_query_id }}" class="btn btn-default">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+								<span class="text">Clear filters</span>
+							</a>
+						@endisset
 						{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 					</p>
 
