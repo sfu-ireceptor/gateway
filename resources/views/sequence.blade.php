@@ -31,7 +31,7 @@
 							<div class="panel-body">
 								<div class="form-group">
 									{{ Form::label('v_call', $filters_list_all['v_call']) }}
-									{{ Form::text('v_call', '', array('class' => 'form-control')) }}
+									{{ Form::text('v_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Prefix search. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">

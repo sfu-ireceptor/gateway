@@ -161,6 +161,9 @@ $(document).ready(function() {
     	updateFiltersOrderField();
     });
 
+    // tooltips
+    $('[data-toggle="tooltip"]').tooltip();
+
 	/**********************************************************
 	* Systems
 	**********************************************************/
