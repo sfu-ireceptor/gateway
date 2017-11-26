@@ -422,8 +422,9 @@
 				</table>
 
 				<input type="hidden" name="project_id_list" />
-				{{ Form::submit('Browse sequences from selected samples', array('class' => 'btn btn-primary browse-seq-data-button')) }}
-
+				<p class="pull-right">
+				{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button')) }}
+				</p>
 			{{ Form::close() }}
 			@endif
 
