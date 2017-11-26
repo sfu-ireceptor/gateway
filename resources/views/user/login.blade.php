@@ -102,6 +102,7 @@
 
 	<div class="row">
 		<div class="col-md-9">
+		<div class="login_about_box">
 			<h4>
 			About iReceptor
 			</h4>
@@ -112,7 +113,10 @@
 			iReceptor provides a technology platform that will lower the barrier to immune genetics researchers who need to federate large, distributed, immune genetics data repositories in order to answer complex questions about the immune response. The focus of the iReceptor project is to leverage existing capabilities and technologies to build a new scientific platform for the immune genetics research community.
 			</p>
 		</div>
+		</div>
 		<div class="col-md-3">
+		<div class="login_about_box">
+
 			<h4>
 			Contact/Resources
 			</h4>
@@ -126,6 +130,7 @@
 				To learn more about the Adaptive Immune Response Repertoire (AIRR) Community, visit the
 				<a href="http://www.airr-community.org" target="_blank">AIRR website</a>
 			</p>
+		</div>
 		</div>
 	</div>
 	<div class="data_container_box">
