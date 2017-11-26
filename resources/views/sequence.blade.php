@@ -31,17 +31,17 @@
 							<div class="panel-body">
 								<div class="form-group">
 									{{ Form::label('v_call', $filters_list_all['v_call']) }}
-									{{ Form::text('v_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Prefix search. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
+									{{ Form::text('v_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'String prefix search (matches from the first character). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">
 									{{ Form::label('j_call', $filters_list_all['j_call']) }}
-									{{ Form::text('j_call', '', array('class' => 'form-control')) }}
+									{{ Form::text('j_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'String prefix search (matches from the first character). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">
 									{{ Form::label('d_call', $filters_list_all['d_call']) }}
-									{{ Form::text('d_call', '', array('class' => 'form-control')) }}
+									{{ Form::text('d_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'String prefix search (matches from the first character). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 							</div>
@@ -60,12 +60,12 @@
 							<div class="panel-body">
 								<div class="form-group">
 									{{ Form::label('junction_aa', $filters_list_all['junction_aa']) }}
-									{{ Form::text('junction_aa', '', array('class' => 'form-control')) }}
+									{{ Form::text('junction_aa', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">
 									{{ Form::label('junction_aa_length', $filters_list_all['junction_aa_length']) }}
-									{{ Form::text('junction_aa_length', '', array('class' => 'form-control')) }}
+									{{ Form::text('junction_aa_length', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact value match. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 							</div>
 						</div>
