@@ -69,7 +69,7 @@ class RestService extends Model
                 // get sample data from service
                 $sample_list = self::postRequest($rs, $uri, $filters);
                 //var_dump($uri); var_dump($filters); var_dump($rs); var_dump($sample_list); die();
-                
+
                 // convert sample data to v2 (if necessary)
                 if ($rs->version != 2) {
                     $sample_list = FieldName::convertObjectList($sample_list, 'ir_v' . $rs->version, 'ir_v2');
