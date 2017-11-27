@@ -21,6 +21,7 @@ class SequenceController extends Controller
     public function index(Request $request)
     {
         $username = auth()->user()->username;
+        $data = [];
 
         $query_id = $request->input('query_id');
         if ($query_id) {
@@ -28,6 +29,15 @@ class SequenceController extends Controller
             if (! $request->session()->has('_old_input')) {
                 $request->session()->put('_old_input', $filters);
             }
+
+            // generate query_id for "Clear Filters" button
+            $no_filters_params = [];
+            foreach ($filters as $name => $value) {
+                if (starts_with($name, 'ir_project_sample_id_list_')) {
+                    $no_filters_params[$name] = $value;
+                }
+            }
+            $data['no_filters_query_id'] = Query::saveParams($no_filters_params, 'sequences');
         } else {
             $filters = $request->all();
             $request->session()->forget('_old_input');
@@ -53,7 +63,6 @@ class SequenceController extends Controller
             // var_dump($summary);die();
         }
 
-        $data = [];
         $data['sequence_list'] = $sequence_data['items'];
         $data['sample_list_json'] = json_encode($sequence_data['summary']);
         $data['rs_list'] = $rs_list;

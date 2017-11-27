@@ -31,17 +31,17 @@
 							<div class="panel-body">
 								<div class="form-group">
 									{{ Form::label('v_call', $filters_list_all['v_call']) }}
-									{{ Form::text('v_call', '', array('class' => 'form-control')) }}
+									{{ Form::text('v_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'String prefix search (matches from the first character). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">
 									{{ Form::label('j_call', $filters_list_all['j_call']) }}
-									{{ Form::text('j_call', '', array('class' => 'form-control')) }}
+									{{ Form::text('j_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'String prefix search (matches from the first character). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">
 									{{ Form::label('d_call', $filters_list_all['d_call']) }}
-									{{ Form::text('d_call', '', array('class' => 'form-control')) }}
+									{{ Form::text('d_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'String prefix search (matches from the first character). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 							</div>
@@ -60,12 +60,12 @@
 							<div class="panel-body">
 								<div class="form-group">
 									{{ Form::label('junction_aa', $filters_list_all['junction_aa']) }}
-									{{ Form::text('junction_aa', '', array('class' => 'form-control')) }}
+									{{ Form::text('junction_aa', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">
 									{{ Form::label('junction_aa_length', $filters_list_all['junction_aa_length']) }}
-									{{ Form::text('junction_aa_length', '', array('class' => 'form-control')) }}
+									{{ Form::text('junction_aa_length', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact value match. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 							</div>
 						</div>
@@ -113,10 +113,12 @@
 
    				<div class="button_container">
 					<p>
-						<a href="{{ $no_filters_url }}" class="btn btn-default">
-							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-							<span class="text">Clear filters</span>
-						</a>
+						@isset($no_filters_query_id)
+							<a href="/sequences?query_id={{ $no_filters_query_id }}" class="btn btn-default">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+								<span class="text">Clear filters</span>
+							</a>
+						@endisset
 						{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 					</p>
 
@@ -339,6 +341,7 @@
 	    ];
 var graphDIV = "sequence_chart";
 var graphInternalLabels = true;
+var graphLabelLength = 10;
 var graphCountField = "ir_filtered_sequence_count";
 var graphData = {!! $sample_list_json !!};
 </script>

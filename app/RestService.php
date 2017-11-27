@@ -68,6 +68,7 @@ class RestService extends Model
 
                 // get sample data from service
                 $sample_list = self::postRequest($rs, $uri, $filters);
+                //var_dump($uri); var_dump($filters); var_dump($rs); var_dump($sample_list); die();
 
                 // convert sample data to v2 (if necessary)
                 if ($rs->version != 2) {
@@ -277,13 +278,16 @@ class RestService extends Model
             } catch (\Exception $e) {
                 continue;
             }
+
+            if (! isset($obj->items) || ! isset($obj->summary)) {
+                // Something has gone horribly wrong with the service, so we
+                // continue as if we received an execption as above
+                continue;
+            }
+
             //var_dump($obj); die();
             $data['items'] = array_merge($obj->items, $data['items']);
             $data['summary'] = array_merge($obj->summary, $data['summary']);
-
-            // convert any v1 fields to v2
-            $data['items'] = FieldName::convertObjectList($data['items'], 'ir_v1', 'ir_v2');
-            $data['summary'] = FieldName::convertObjectList($data['summary'], 'ir_v1', 'ir_v2');
 
             $rs_data = [];
             $rs_data['rs'] = $rs;

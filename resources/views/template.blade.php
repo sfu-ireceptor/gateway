@@ -22,23 +22,28 @@
 	</head>
 
 	<body>
-		<nav class="navbar navbar-default" role="navigation">
-		  <div class="container-fluid">
-		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-		      <ul class="nav navbar-nav">
-				<li role="presentation" class="<?= Request::is('home*') ? 'active' : '' ?>">
-			      	<a class="navbar-brand" href="/" class="active">
-						<img src="/images/logos/ireceptor_logo.png">
-			      		<span>iReceptor</span>
-			      	</a>
-				</li>
-		    	@if(Auth::check())
+    	@if(Auth::check())
+			<nav class="navbar navbar-default" role="navigation">
+			  <div class="container-fluid">
+			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			      <ul class="nav navbar-nav">
+					<li role="presentation" class="<?= Request::is('home*') ? 'active' : '' ?>">
+				      	<a class="navbar-brand" href="/" class="active">
+							<img src="/images/logos/ireceptor_logo.png">
+				      		<span>iReceptor</span>
+				      	</a>
+					</li>
 			    	@if(Request::is('samples*'))
-						<li role="presentation" class="active search">
-							<a href="/samples">
+						<li role="presentation" class="dropdown active search">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 								Search
+								<span class="caret"></span>
 								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 							</a>
+							<ul class="dropdown-menu" role="menu">
+							  <li><a href="/sequences-quick-search">Junction Search</a></li>
+							  <li><a href="/samples">Advanced Search</a></li>
+							</ul>
 						</li>
 						<li role="presentation" class="active samples">
 							<a href="/samples">
@@ -50,11 +55,16 @@
 							<a href="/samples">Sequences</a>
 						</li>
 					@elseif(Request::is('sequences*'))
-						<li role="presentation" class="active search">
-							<a href="/samples">
+						<li role="presentation" class="dropdown active search">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 								Search
+								<span class="caret"></span>
 								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 							</a>
+							<ul class="dropdown-menu" role="menu">
+							  <li><a href="/sequences-quick-search">Junction Search</a></li>
+							  <li><a href="/samples">Advanced Search</a></li>
+							</ul>
 						</li>
 						<li role="presentation" class="active samples">
 							<a href="/samples">
@@ -66,42 +76,47 @@
 							<a href="/samples">Sequences</a>
 						</li>
 					@else
-						<li role="presentation">
-							<a href="/samples">Search</a>
-						</li>
-					@endif
-				@endif
-		      </ul>
-
-		      <ul class="nav navbar-nav navbar-right">
-		    	@if(Auth::check())
-			    	@if(Auth::user()->isAdmin())		    	
 						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">admin<span class="caret"></span></a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Search<span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
-							  <li><a href="/admin/users">Users</a></li>
-							  <li><a href="/admin/databases">Databases</a></li>
-							  <li><a href="/admin/queues">Queues</a></li>
-							  <li><a href="/admin/field-names">Field names</a></li>
-							  <li><a href="/canarie">CANARIE</a></li>
+							  <li><a href="/sequences-quick-search">Junction Search</a></li>
+							  <li><a href="/samples">Advanced Search</a></li>
 							</ul>
 						</li>
 					@endif
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->username }}<span class="caret"></span></a>
-						<ul class="dropdown-menu" role="menu">
-							<li><a href="/user/account">My account</a></li>
-							<li><a href="/bookmarks">Bookmarks</a></li>
-							<li><a href="/jobs">Jobs</a></li>
-							<li><a href="/systems">Systems</a></li>
-							<li><a href="/logout">Log Out</a></li>
-						</ul>
-					</li>
-				@endif
-		      </ul>
-		    </div><!-- /.navbar-collapse -->
-		  </div><!-- /.container-fluid -->
-		</nav>
+			      </ul>
+
+			      <ul class="nav navbar-nav navbar-right">
+			    	@if(Auth::check())
+				    	@if(Auth::user()->isAdmin())		    	
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">admin<span class="caret"></span></a>
+								<ul class="dropdown-menu" role="menu">
+								  <li><a href="/admin/users">Users</a></li>
+								  <li><a href="/admin/databases">Databases</a></li>
+								  <li><a href="/admin/queues">Queues</a></li>
+								  <li><a href="/admin/field-names">Field names</a></li>
+								  <li><a href="/canarie">CANARIE</a></li>
+								</ul>
+							</li>
+						@endif
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->username }}<span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="/user/account">My account</a></li>
+								<li><a href="/bookmarks">Bookmarks</a></li>
+								<li><a href="/jobs">Jobs</a></li>
+								<li><a href="/systems">Systems</a></li>
+								<li><a href="/logout">Log Out</a></li>
+							</ul>
+						</li>
+					@endif
+			      </ul>
+			    </div><!-- /.navbar-collapse -->
+			  </div><!-- /.container-fluid -->
+			</nav>
+		@endif
+
 
 		@yield('content')
 

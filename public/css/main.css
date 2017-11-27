@@ -163,6 +163,8 @@ fieldset {
 	font-style: normal;
 }
 
+
+
 .data_text_box {
 	list-style-type: none;
 	background-color: #eaeaea;
@@ -358,6 +360,29 @@ p.workflow {
     background-position: -32px -4px;
 }
 
+#rest_service_list em {
+	margin-left: 5px;
+	color: gray;
+}
+
+#rest_service_list .rs_node {
+	margin-bottom: 10px;
+}
+
+#rest_service_list .node_name {
+	font-weight: bold;
+	font-size: 20px;
+}
+
+#rest_service_list .lab_node {
+	margin-top: 5px;
+}
+
+#rest_service_list .lab_name {
+	font-weight: bold;
+	margin-top: 10px;
+}
+
 #summary_charts {
 	
 }
@@ -526,15 +551,11 @@ footer a:hover {
 
 
 .login_container {
-	padding-top: 20px;
+	padding-top: 50px;
 }
 
 .login_container #landing_charts {
 	margin-top: 20px;
-}
-
-.login-box .panel {
-	margin-top: 36px;
 }
 
 .login-box .panel-body {
@@ -550,13 +571,33 @@ footer a:hover {
 	font-size: 14px;
 }
 
-.login-logo-text {
+.login_logo {
+	margin-top: 1px;
+}
+
+.login_logo span {
 	font-size: 36px;
 	font-style: bold;
+}
 
+.login_logo img {
+	display: inline-block;
+	margin-top: -20px;
+}
+
+.login_main {
+	margin-top: 30px;
+}
+
+.login_about_box {
+	font-size:14px;
 }
 
 .jumbotron p {
 	font-size: 21px;
+}
+
+.modal-dialog {
+	width: 980px;
 }
 }
