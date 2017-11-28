@@ -151,29 +151,38 @@
 				<strong>Aggregate Search Statistics</strong>
 			</p>
 			<p>
-				Active filters:
+				Active {{ str_plural('filter', count($filter_fields))}}:
 				@foreach($filter_fields as $filter_key => $filter_value)
-					<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="data_text_box">
+					<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
 						@lang('short.' . $filter_key)
 					</span>
 				@endforeach
+				@if (empty($filter_fields))
+					<em>none</em>
+				@endif					
 			</p>
 
-			<p>
-				{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:
-				<span title="{{ $filtered_repositories_names }}", class="data_text_box">
-					{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}
-				</span>
-				<span class="data_text_box">
-					{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}}
-				</span>
-				<span class="data_text_box">
-					{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
-				</span>
-				<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#myModal">
-					  Show All
-				</button>
-			</p>
+			@if (empty($sequence_list))
+				<p>0 sequences returned.</p>
+			@endif
+
+			@if (! empty($sequence_list))
+				<p>
+					{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:
+					<span title="{{ $filtered_repositories_names }}", class="data_text_box">
+						{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}
+					</span>
+					<span class="data_text_box">
+						{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}}
+					</span>
+					<span class="data_text_box">
+						{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
+					</span>
+					<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#myModal">
+						  Show All
+					</button>
+				</p>
+
 				<!-- Modal -->
 				<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 				  <div class="modal-dialog" role="document">
@@ -186,75 +195,81 @@
 				        	{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
 				        </h4>
 				      </div>
-				      <div class="modal-body">
-				        
-				        <div id="rest_service_list">
-							<ul>
-								@foreach ($rs_list as $rs_data)
-							     <li  class="rs_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-home"}'>
-							     	<span class="node_name">{{ $rs_data['rs']->name }}</span>
-							     	<em>{{ human_number($rs_data['total_sequences']) }} sequences</em>
-								    <ul>
-							 			@foreach ($rs_data['study_tree'] as $lab)
-										<li class="lab_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-education"}'>
-											<span title="{{ $lab['name'] }}" class="lab_name">
-												Lab:
-												@isset($lab['name'])
-												{{ str_limit($lab['name'], $limit = 64, $end = '‥') }}
+					  <div class="modal-body">
+					        <div id="rest_service_list">
+								<ul>
+									@foreach ($rs_list as $rs_data)
+								     <li  class="rs_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-home"}'>
+								     	<span class="node_name">{{ $rs_data['rs']->name }}</span>
+								     	<em>{{ human_number($rs_data['total_sequences']) }} sequences</em>
+									    <ul>
+								 			@foreach ($rs_data['study_tree'] as $lab)
+											<li class="lab_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-education"}'>
+												<span title="{{ $lab['name'] }}" class="lab_name">
+													Lab:
+													@isset($lab['name'])
+													{{ str_limit($lab['name'], $limit = 64, $end = '‥') }}
+													@endisset
+												</span>
+												@isset($lab['total_sequences'])
+													<em>{{ ($lab['total_sequences']) }} sequences</em>
 												@endisset
-											</span>
-											@isset($lab['total_sequences'])
-												<em>{{ ($lab['total_sequences']) }} sequences</em>
-											@endisset
-										    <ul>
-										    	@isset($lab['studies'])
-							 					@foreach ($lab['studies'] as $study)
-							 						<li data-jstree='{"icon":"glyphicon glyphicon-book", "disabled":true}'>
-							 							<span>
-															Study:
-															@if (isset($study['study_url']))
-																<a href="{{ $study['study_url'] }}" title="{{ $study['study_title'] }}" target="_blank">
-																	{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }} (NCBI)
-																</a>
-															@else
-																<span title="{{ $study['study_title'] }}">
-																	{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
-																</span>
-															@endif
+											    <ul>
+											    	@isset($lab['studies'])
+								 					@foreach ($lab['studies'] as $study)
+								 						<li data-jstree='{"icon":"glyphicon glyphicon-book", "disabled":true}'>
+								 							<span>
+																Study:
+																@if (isset($study['study_url']))
+																	<a href="{{ $study['study_url'] }}" title="{{ $study['study_title'] }}" target="_blank">
+																		{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }} (NCBI)
+																	</a>
+																@else
+																	<span title="{{ $study['study_title'] }}">
+																		{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
+																	</span>
+																@endif
 
-															 <em>{{ ($study['total_sequences']) }} sequences</em>
-														</span>
-													</li>
-												@endforeach
-												@endisset
-									 		</ul>
-										</li>
-								 		@endforeach
-							 		</ul>
-							     </li>
-								@endforeach
-							</ul>
-						</div>
-				      </div>
-				      <div class="modal-footer">
-				        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				      </div>
-				    </div>
-				  </div>
-				</div>
-
-				<div id="sequence_charts" class="charts">
-					<div class="row">
-						<div class="col-md-2 chart" id="sequence_chart1"></div>
-						<div class="col-md-2 chart" id="sequence_chart2"></div>
-						<div class="col-md-2 chart" id="sequence_chart3"></div>
-						<div class="col-md-2 chart" id="sequence_chart4"></div>
-						<div class="col-md-2 chart" id="sequence_chart5"></div>
-						<div class="col-md-2 chart" id="sequence_chart6"></div>
+																 <em>{{ ($study['total_sequences']) }} sequences</em>
+															</span>
+														</li>
+													@endforeach
+													@endisset
+										 		</ul>
+											</li>
+									 		@endforeach
+								 		</ul>
+								     </li>
+									@endforeach
+								</ul>
+							</div>
+					      </div>
+					      <div class="modal-footer">
+					        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					      </div>
+					    </div>
+					  </div>
 					</div>
-				</div>
+
+					<div id="sequence_charts" class="charts">
+						<div class="row">
+							<div class="col-md-2 chart" id="sequence_chart1"></div>
+							<div class="col-md-2 chart" id="sequence_chart2"></div>
+							<div class="col-md-2 chart" id="sequence_chart3"></div>
+							<div class="col-md-2 chart" id="sequence_chart4"></div>
+							<div class="col-md-2 chart" id="sequence_chart5"></div>
+							<div class="col-md-2 chart" id="sequence_chart6"></div>
+						</div>
+					</div>
+				@endif
 			</div>
 
+			@if (empty($sequence_list))
+				<div class="no_results">
+					<h2>No Results</h2>
+					<p>Remove a filter or <a href="/sequences?query_id={{ $no_filters_query_id }}">remove all filters</a> to return results.</p>
+				</div>
+			@endif
 
 			@if (! empty($sequence_list))
 				<!-- sequence data column selector -->
