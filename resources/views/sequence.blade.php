@@ -146,8 +146,12 @@
 
 		<div class="col-md-10">
 
+			<div class="data_container_box">
 			<p>
-				<strong>Active filters:</strong>
+				<strong>Aggregate Search Statistics</strong>
+			</p>
+			<p>
+				Active filters:
 				@foreach($filter_fields as $filter_key => $filter_value)
 					<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="data_text_box">
 						@lang('short.' . $filter_key)
@@ -156,7 +160,7 @@
 			</p>
 
 			<p>
-				<strong>{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:</strong>
+				{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:
 				<span title="{{ $filtered_repositories_names }}", class="data_text_box">
 					{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}
 				</span>
@@ -200,9 +204,6 @@
 												@endisset
 											</span>
 											@isset($lab['total_sequences'])
-												<em>{{ $lab['total_sequences'] }} sequences</em>
-											@endisset
-											@isset($lab['total_sequences'])
 												<em>{{ ($lab['total_sequences']) }} sequences</em>
 											@endisset
 										    <ul>
@@ -242,7 +243,6 @@
 				  </div>
 				</div>
 
-			<div class="data_container_box">
 				<div id="sequence_charts" class="charts">
 					<div class="row">
 						<div class="col-md-2 chart" id="sequence_chart1"></div>
