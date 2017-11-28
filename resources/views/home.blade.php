@@ -30,9 +30,9 @@
 		</div>
 		<div class="col-md-3 side_search_links">
 			<p class="quick_search_link">
-				<a class="btn btn-default btn-lg" role="button" href="/sequences-quick-search">Junction Search →</a>
+				<a class="btn btn-primary btn-lg" role="button" href="/sequences-quick-search">Sequence Search →</a>
 			</p>
-			<p>Search for sequences by CDR3 sequence</p>
+			<p>Find interesting sequences and sequence annotations by searching for sequence features (Junction, V/D/J Gene)</p>
 		</div>
 	</div>
 	<div class="row">
@@ -47,9 +47,9 @@
 		</div>
 		<div class="col-md-3 side_search_links">
 			<p class="adv_search_link">	
-				<a  class="btn btn-default btn-lg" role="button" href="/samples">Advanced Search →</a>
+				<a  class="btn btn-primary btn-lg" role="button" href="/samples">Metadata Search →</a>
 			</p>
-			<p>Search for sequences via samples</p>
+			<p>Find interesting sequences and sequence annotations by exploring study, subject, and sample metadata</p>
 		</div>
 	</div>
 	<div class="data_container_box">
