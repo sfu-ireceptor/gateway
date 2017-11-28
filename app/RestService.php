@@ -531,7 +531,7 @@ class RestService extends Model
         }
 
         // VDJServer needs array params without brackets
-        if (str_contains($rs->url, 'vdj') || str_contains($rs->url, '206.12.99.227:8080')) {
+        if (str_contains($rs->url, 'vdj') || str_contains($rs->url, '206.12.99.176:8080')) {
             // build query string with special function which doesn't add brackets
             $queryString = \GuzzleHttp\Psr7\build_query($params, PHP_QUERY_RFC1738);
 
