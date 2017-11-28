@@ -90,7 +90,10 @@
 		</div>
 
 		<div class="col-md-10">
-
+			<div class="data_container_box">
+				<p>
+					<strong>Aggregate Search Statistics</strong>
+				</p>
 {{-- 			<p>
 				<strong>Active filters:</strong>
 				@foreach($filter_fields as $filter_key => $filter_value)
@@ -101,7 +104,7 @@
 			</p> --}}
 
 			<p>
-				<strong>{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:</strong>
+				{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:
 				<span title="{{ $filtered_repositories_names }}", class="data_text_box">
 					{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}
 				</span>
@@ -113,7 +116,6 @@
 				</span>
 			</p>
 
-			<div class="data_container_box">
 				<div id="sequence_charts" class="charts">
 					<div class="row">
 						<div class="col-md-2 chart" id="sequence_chart1"></div>
