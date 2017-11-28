@@ -187,6 +187,10 @@ fieldset {
 	margin-bottom: 5px;
 }
 
+.data_container_box span.label {
+	margin-right: 3px;
+}
+
 .samples_stats {
 	list-style-type: none;
 	padding-top: 0;
@@ -457,6 +461,14 @@ p.workflow {
 }
 #accordion .panel-heading a.collapsed:after {
     content: "\002b";
+}
+
+.no_results {
+	margin-top: 20px;
+}
+
+.no_results h4 {
+	font-size: 24px;
 }
 
 /* @group footer */
