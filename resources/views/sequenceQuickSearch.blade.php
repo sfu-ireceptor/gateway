@@ -24,7 +24,7 @@
 						<div class="panel-body">
 							<div class="form-group">
 								{{ Form::label('junction_aa', $filters_list_all['junction_aa']) }}
-								{{ Form::text('junction_aa', '', array('class' => 'form-control')) }}
+								{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4')) }}
 							</div>
 						</div>
 					</div>
