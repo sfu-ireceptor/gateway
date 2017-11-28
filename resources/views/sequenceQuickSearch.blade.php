@@ -94,40 +94,56 @@
 				<p>
 					<strong>Aggregate Search Statistics</strong>
 				</p>
-{{-- 			<p>
-				<strong>Active filters:</strong>
-				@foreach($filter_fields as $filter_key => $filter_value)
-					<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="data_text_box">
-						@lang('short.' . $filter_key)
-					</span>
-				@endforeach
-			</p> --}}
 
-			<p>
-				{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:
-				<span title="{{ $filtered_repositories_names }}", class="data_text_box">
-					{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}
-				</span>
-				<span class="data_text_box">
-					{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}}
-				</span>
-				<span class="data_text_box">
-					{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
-				</span>
-			</p>
+				<p>
+					Active {{ str_plural('filter', count($filter_fields))}}:
+					@foreach($filter_fields as $filter_key => $filter_value)
+						<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
+							@lang('short.' . $filter_key)
+						</span>
+					@endforeach
+					@if (empty($filter_fields))
+						<em>none</em>
+					@endif					
+				</p>
 
-				<div id="sequence_charts" class="charts">
-					<div class="row">
-						<div class="col-md-2 chart" id="sequence_chart1"></div>
-						<div class="col-md-2 chart" id="sequence_chart2"></div>
-						<div class="col-md-2 chart" id="sequence_chart3"></div>
-						<div class="col-md-2 chart" id="sequence_chart4"></div>
-						<div class="col-md-2 chart" id="sequence_chart5"></div>
-						<div class="col-md-2 chart" id="sequence_chart6"></div>
+				@if (empty($sequence_list))
+					<p>0 sequences returned.</p>
+				@endif
+
+				@if (! empty($sequence_list))
+					<p>
+						{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:
+						<span title="{{ $filtered_repositories_names }}", class="data_text_box">
+							{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}
+						</span>
+						<span class="data_text_box">
+							{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}}
+						</span>
+						<span class="data_text_box">
+							{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
+						</span>
+					</p>
+
+					<div id="sequence_charts" class="charts">
+						<div class="row">
+							<div class="col-md-2 chart" id="sequence_chart1"></div>
+							<div class="col-md-2 chart" id="sequence_chart2"></div>
+							<div class="col-md-2 chart" id="sequence_chart3"></div>
+							<div class="col-md-2 chart" id="sequence_chart4"></div>
+							<div class="col-md-2 chart" id="sequence_chart5"></div>
+							<div class="col-md-2 chart" id="sequence_chart6"></div>
+						</div>
 					</div>
-				</div>
+				@endif
 			</div>
 
+			@if (empty($sequence_list))
+				<div class="no_results">
+					<h2>No Results</h2>
+					<p>Remove some filters to return results.</p>
+				</div>
+			@endif
 
 			@if (! empty($sequence_list))
 				<!-- sequence data column selector -->
