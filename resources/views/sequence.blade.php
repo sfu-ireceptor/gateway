@@ -267,7 +267,13 @@
 			@if (empty($sequence_list))
 				<div class="no_results">
 					<h2>No Results</h2>
-					<p>Remove a filter or <a href="/sequences?query_id={{ $no_filters_query_id }}">remove all filters</a> to return results.</p>
+					<p>
+						Remove a filter
+						@isset($no_filters_query_id)
+							or <a href="/sequences?query_id={{ $no_filters_query_id }}">remove all filters</a>
+						@endisset
+						to return results.
+					</p>
 				</div>
 			@endif
 
