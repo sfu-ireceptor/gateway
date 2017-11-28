@@ -295,7 +295,11 @@ class RestService extends Model
 
             // calculate summary statistics
             $lab_list = [];
+            $lab_sequence_count = [];
+
             $study_list = [];
+            $study_sequence_count = [];
+
             $total_sequences = 0;
             $filtered_sequences = 0;
             foreach ($obj->summary as $sample) {
@@ -306,7 +310,10 @@ class RestService extends Model
                     if (isset($sample->lab_name)) {
                         if (! in_array($sample->lab_name, $lab_list)) {
                             $lab_list[] = $sample->lab_name;
-                        }
+                            $lab_sequence_count[$sample->lab_name] = $sample->ir_filtered_sequence_count;
+                        } else {
+                            $lab_sequence_count[$sample->lab_name] += $sample->ir_filtered_sequence_count;
+                        }                        
                     } elseif (isset($sample->collected_by)) {
                         if (! in_array($sample->collected_by, $lab_list)) {
                             $lab_list[] = $sample->collected_by;
@@ -316,7 +323,10 @@ class RestService extends Model
                     if (isset($sample->study_title)) {
                         if (! in_array($sample->study_title, $study_list)) {
                             $study_list[] = $sample->study_title;
-                        }
+                            $study_sequence_count[$sample->study_title] = $sample->ir_filtered_sequence_count;
+                        } else {
+                            $study_sequence_count[$sample->study_title] += $sample->ir_filtered_sequence_count;
+                        }                   
                     }
                 }
 
@@ -325,11 +335,61 @@ class RestService extends Model
                     $total_sequences += $sample->ir_sequence_count;
                 }
             }
+
+            $study_tree = [];
+            foreach ($obj->summary as $sample) {
+                // Handle the case where a sample doesn't have a lab_name.
+                if (isset($sample->lab_name)) {
+                    $lab = $sample->lab_name;
+                } else {
+                    $lab = 'UNKNOWN';
+                }
+
+                // If we don't have this lab already, create it.
+                if (! isset($study_tree[$lab])) {
+                    $lab_data['name'] = $lab;
+                    if (isset($lab_sequence_count[$lab])) {
+                        $lab_data['total_sequences'] = $lab_sequence_count[$lab];
+                    } else {
+                        $lab_data['total_sequences'] = 0;
+                    }
+                    $study_tree[$lab] = $lab_data;
+                }
+
+                // Check to see if the study exists in the lab, and if not, create it.
+                if (! isset($study_tree[$lab]['studies'])) {
+                    $new_study_data['study_title'] = $sample->study_title;
+                    if (isset($study_sequence_count[$sample->study_title])) {
+                        $new_study_data['total_sequences'] = $study_sequence_count[$sample->study_title];
+                    } else {
+                        $new_study_data['total_sequences'] = 0;
+                    }
+                    $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
+                } else {
+                    if (! in_array($sample->study_title, $study_tree[$lab]['studies'])) {
+                        $new_study_data['study_title'] = $sample->study_title;
+                        if (isset($sample->study_url)) {
+                            $new_study_data['study_url'] = $sample->study_url;
+                        } else {
+                            unset($new_study_data['study_url']);
+                        }
+                        if (isset($study_sequence_count[$sample->study_title])) {
+                            $new_study_data['total_sequences'] = $study_sequence_count[$sample->study_title];
+                        } else {
+                            $new_study_data['total_sequences'] = 0;
+                        }
+                        $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
+                    }
+                }
+            }
+            //var_dump($study_tree); die();
             $rs_data['total_samples'] = count($obj->summary);
             $rs_data['total_labs'] = count($lab_list);
             $rs_data['total_studies'] = count($study_list);
             $rs_data['total_sequences'] = $total_sequences;
             $rs_data['filtered_sequences'] = $filtered_sequences;
+            $rs_data['study_tree'] = $study_tree;
+
             $data['rs_list'][] = $rs_data;
         }
 
