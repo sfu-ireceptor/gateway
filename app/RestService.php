@@ -313,7 +313,7 @@ class RestService extends Model
                             $lab_sequence_count[$sample->lab_name] = $sample->ir_filtered_sequence_count;
                         } else {
                             $lab_sequence_count[$sample->lab_name] += $sample->ir_filtered_sequence_count;
-                        }                        
+                        }
                     } elseif (isset($sample->collected_by)) {
                         if (! in_array($sample->collected_by, $lab_list)) {
                             $lab_list[] = $sample->collected_by;
@@ -326,7 +326,7 @@ class RestService extends Model
                             $study_sequence_count[$sample->study_title] = $sample->ir_filtered_sequence_count;
                         } else {
                             $study_sequence_count[$sample->study_title] += $sample->ir_filtered_sequence_count;
-                        }                   
+                        }
                     }
                 }
 
