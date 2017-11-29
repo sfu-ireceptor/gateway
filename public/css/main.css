@@ -483,12 +483,7 @@ p.workflow {
 	background-color: white;
 	border: 1px solid gray;
 	padding: 50px 100px 35px;
-	opacity: 1;
 	display: none;
-	filter:blur(0px);
-	pointer-events: default;
-	cursor: default;
-
 }
 
 .loading_message .cancel {
