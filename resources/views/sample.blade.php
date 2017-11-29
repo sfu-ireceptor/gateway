@@ -217,7 +217,7 @@
 							{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
 						</span>
 						<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#myModal">
-						  Show All
+						  Details
 						</button>
 					</p>
 
