@@ -1,11 +1,11 @@
 @extends('template')
 
-@section('title', 'Browse sequences')
+@section('title', 'Sequence Search')
 
 @section('content')
 <div class="container-fluid sequence_container">
 
-	<h1>Sequences <small>Filter and download sequences</small></h1>
+	<h1>Sequence Search <small>Filter by sequence and sequence annotation feature</small></h1>
 
 	<div class="row">
 		<div class="col-md-2 filters">

@@ -1,11 +1,11 @@
 @extends('template')
 
-@section('title', 'Quick Junction Search')
+@section('title', 'Sequence Quick Search')
 
 @section('content')
 <div class="container-fluid sequence_container">
 
-	<h1>Junction Search <small>Quickly filter by junction and download sequences</small></h1>
+	<h1>Sequence Quick Search <small>Filter by sequence and sequence annotation features (e.g. Junction)</small></h1>
 
 	<div class="row">
 		<div class="col-md-2 filters">
