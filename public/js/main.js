@@ -164,6 +164,15 @@ $(document).ready(function() {
     // tooltips
     $('[data-toggle="tooltip"]').tooltip();
 
+    // loading message
+    $('.loading').click(function(){
+    	$('.loading_contents').addClass('disabled');
+    });
+
+    $(window).bind("pageshow", function(event) {
+    	$('.loading_contents').removeClass('disabled');
+	});
+
 	/**********************************************************
 	* Systems
 	**********************************************************/

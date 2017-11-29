@@ -3,7 +3,7 @@
 @section('title', 'Sequence Search')
 
 @section('content')
-<div class="container-fluid sequence_container">
+<div class="container-fluid sequence_container loading_contents">
 
 	<h1>Sequence Search <small>Filter by sequence and sequence annotation feature</small></h1>
 
@@ -119,7 +119,7 @@
 								<span class="text">Clear filters</span>
 							</a>
 						@endisset
-						{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
+						{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
 					</p>
 
 					<p>{{ Form::submit('↓ Download as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}</p>
