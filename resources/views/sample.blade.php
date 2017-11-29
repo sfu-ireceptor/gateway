@@ -1,12 +1,12 @@
 @extends('template')
 
-@section('title', 'Search samples')
+@section('title', 'Metadata Search')
 
 @section('content')
 
 <div class="container-fluid sample_container">
 
-	<h1>Samples <small>Filter for and select samples to view their sequences</small></h1>
+	<h1>Metadata Search <small>Filter by study/subject/sample and choose samples to analyse relevant sequence data</small></h1>
 
 	<div class="row">
 		<div class="col-md-2 filters">
