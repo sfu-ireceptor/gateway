@@ -12,7 +12,7 @@
 		<!-- css -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 		<link href="/css/jstree/default/style.min.css" rel="stylesheet" />
-		<link href="/css/main.css?v=2" rel="stylesheet">
+		<link href="/css/main.css?v=3" rel="stylesheet">
 
 		<!-- IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -145,7 +145,7 @@
 		<script src="https://code.highcharts.com/modules/drilldown.js"></script>
 		<script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
 
-		<script src="/js/main.js?v=3"></script>
+		<script src="/js/main.js?v=4"></script>
 		<script src="/js/visualization.js?v=4"></script>
 	</body>
 

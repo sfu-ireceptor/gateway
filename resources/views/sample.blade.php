@@ -8,7 +8,7 @@
 
 	<h1>Metadata Search <small>Filter by study/subject/sample and choose samples to analyse relevant sequence data</small></h1>
 
-	<div class="row">
+	<div class="row loading_contents">
 		<div class="col-md-2 filters">
 
 			<h3>Filters</h3>
@@ -177,7 +177,7 @@
 						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 						<span class="text">Clear filters</span>
 					</a>
-					{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
+					{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
 				</p>
 			    
 			{{ Form::close() }}
@@ -308,7 +308,7 @@
 			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form')) }}
 				<h3 class="pull-left">Individual Samples</h3>
 				<p class="pull-right">
-					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button')) }}
+					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button loading')) }}
 				</p>
 				
 				<table class="table table-striped sample_list table-condensed">
@@ -439,7 +439,7 @@
 
 				<input type="hidden" name="project_id_list" />
 				<p class="pull-right">
-				{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button')) }}
+				{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button loading')) }}
 				</p>
 			{{ Form::close() }}
 			@endif

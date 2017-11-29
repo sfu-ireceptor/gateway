@@ -7,7 +7,7 @@
 
 	<h1>Sequence Quick Search <small>Filter by sequence and sequence annotation features (e.g. Junction)</small></h1>
 
-	<div class="row">
+	<div class="row loading_contents">
 		<div class="col-md-2 filters">
 
 			<h3>Filters</h3>
@@ -64,7 +64,7 @@
 
    				<div class="button_container">
 					<p>
-						{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
+						{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
 					</p>
 
 					<p>{{ Form::submit('↓ Download as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}</p>

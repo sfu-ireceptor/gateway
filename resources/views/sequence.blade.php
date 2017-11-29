@@ -3,11 +3,11 @@
 @section('title', 'Sequence Search')
 
 @section('content')
-<div class="container-fluid sequence_container loading_contents">
+<div class="container-fluid sequence_container">
 
 	<h1>Sequence Search <small>Filter by sequence and sequence annotation feature</small></h1>
 
-	<div class="row">
+	<div class="row loading_contents">
 		<div class="col-md-2 filters">
 
 			<h3>Filters</h3>
@@ -116,7 +116,7 @@
 						@isset($no_filters_query_id)
 							<a href="/sequences?query_id={{ $no_filters_query_id }}" class="btn btn-default">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-								<span class="text">Clear filters</span>
+								<span class="text loading">Clear filters</span>
 							</a>
 						@endisset
 						{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
