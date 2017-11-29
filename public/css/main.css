@@ -471,6 +471,30 @@ p.workflow {
 	font-size: 24px;
 }
 
+.loading_contents {
+	position: relative;
+}
+
+.loading_message {
+	position: absolute;
+	left: 332px;
+	top: 154px;
+	z-index: 500;
+	background-color: white;
+	border: 1px solid gray;
+	padding: 50px 100px 35px;
+	opacity: 1;
+	display: none;
+	filter:blur(0px);
+	pointer-events: default;
+	cursor: default;
+
+}
+
+.loading_message .cancel {
+	margin-top: 20px;
+}
+
 .disabled {
 	opacity: 0.5;
 	filter:blur(1px);

@@ -167,10 +167,23 @@ $(document).ready(function() {
     // loading message
     $('.loading').click(function(){
     	$('.loading_contents').addClass('disabled');
+    	$('.loading_message').show();
     });
 
     $(window).bind("pageshow", function(event) {
     	$('.loading_contents').removeClass('disabled');
+    	$('.loading_message').hide();
+	});
+
+    $('.loading').click(function(){
+    	$('.loading_contents').addClass('disabled');
+    	$('.loading_message').show();
+    });
+
+	$('.loading_message a.cancel').click(function(){
+		window.stop();
+    	$('.loading_contents').removeClass('disabled');
+    	$('.loading_message').hide();
 	});
 
 	/**********************************************************
