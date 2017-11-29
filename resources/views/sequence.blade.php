@@ -201,7 +201,7 @@
 									@foreach ($rs_list as $rs_data)
 								     <li  class="rs_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-home"}'>
 								     	<span class="node_name">{{ $rs_data['rs']->name }}</span>
-								     	<em>{{ ($rs_data['filtered_sequences']) }} sequences</em>
+								     	<em>{{ human_number($rs_data['filtered_sequences']) }} sequences</em>
 									    <ul>
 								 			@foreach ($rs_data['study_tree'] as $lab)
 											<li class="lab_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-education"}'>
@@ -212,7 +212,7 @@
 													@endisset
 												</span>
 												@isset($lab['total_sequences'])
-													<em>{{ ($lab['total_sequences']) }} sequences</em>
+													<em>{{ human_number($lab['total_sequences']) }} sequences</em>
 												@endisset
 											    <ul>
 											    	@isset($lab['studies'])
@@ -230,7 +230,7 @@
 																	</span>
 																@endif
 
-																 <em>{{ ($study['total_sequences']) }} sequences</em>
+																 <em>{{ human_number($study['total_sequences']) }} sequences</em>
 															</span>
 														</li>
 													@endforeach
