@@ -16,6 +16,7 @@ class HomeController extends Controller
         $sample_list = $sample_data['items'];
 
         $data['sample_list_json'] = json_encode($sample_list);
+        $data['rest_service_list'] = $sample_data['rs_list'];
 
         return view('home', $data);
     }
