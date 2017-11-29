@@ -471,6 +471,12 @@ p.workflow {
 	font-size: 24px;
 }
 
+.disabled {
+	opacity: 0.5;
+	filter:blur(1px);
+	pointer-events: none;
+}
+
 /* @group footer */
 
 footer {
