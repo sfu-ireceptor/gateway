@@ -97,7 +97,7 @@
 		</div>
 
 	</div>
-	<div class="data_container_box">
+	<div class="login_fold_box">
 	</div>
 
 	<div class="row">
@@ -121,19 +121,19 @@
 			Contact/Resources
 			</h4>
 			<p>
-				To ask question or get involved, email: support@ireceptor.org
+				To ask question or get involved, email: support@ireceptor.org.
 			</p>
 			<p>
 				To learn more about iReceptor visit the <a href="http://www.ireceptor.org" target="_blank">iReceptor website</a>.
 			</p>
 			<p>
 				To learn more about the Adaptive Immune Response Repertoire (AIRR) Community, visit the
-				<a href="http://www.airr-community.org" target="_blank">AIRR website</a>
+				<a href="http://www.airr-community.org" target="_blank">AIRR website</a>.
 			</p>
 		</div>
 		</div>
 	</div>
-	<div class="data_container_box">
+	<div class="login_fold_box">
 	</div>
 
 	<div class="row">

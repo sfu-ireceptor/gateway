@@ -605,6 +605,21 @@ footer a:hover {
 	font-size:14px;
 }
 
+.login_fold_box {
+	list-style-type: none;
+	background-color: #f8f8f8;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 0px;
+	padding-right: 0px;
+	border-radius: 6px;
+	border: 1px solid #e7e7e7;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 60px;
+	margin-bottom: 60px;
+}
+
 .jumbotron p {
 	font-size: 21px;
 }
