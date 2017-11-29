@@ -128,8 +128,7 @@ if (! function_exists('human_number')) {
             }
 
             // Catch the case where the number is less that 1000
-            if ($x_count_parts > 0) 
-            {
+            if ($x_count_parts > 0) {
                 $x_display .= ' ';
                 $x_display .= $x_parts[$x_count_parts - 1];
             }
