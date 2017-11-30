@@ -303,6 +303,15 @@ class RestService extends Model
             $total_sequences = 0;
             $filtered_sequences = 0;
             foreach ($obj->summary as $sample) {
+                if (isset($sample->study_id)) {
+                    if (preg_match('/PRJ/', $sample->study_id)) {
+                        $sample->study_url = 'https://www.ncbi.nlm.nih.gov/bioproject/?term=' . $sample->study_id;
+                    } elseif (preg_match('/SRP/', $sample->study_id)) {
+                        $sample->study_url = 'https://www.ncbi.nlm.nih.gov/Traces/sra/?study=' . $sample->study_id;
+                    } else {
+                        unset($sample->study_url);
+                    }
+                }
                 // If there are some sequence in this sample
                 if (isset($sample->ir_filtered_sequence_count)) {
                     $filtered_sequences += $sample->ir_filtered_sequence_count;
