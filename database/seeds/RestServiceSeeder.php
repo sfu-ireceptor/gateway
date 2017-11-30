@@ -10,7 +10,7 @@ class RestServiceSeeder extends Seeder
         $l = [
                 [
                     'url' => 'https://ipa.ireceptor.org/',
-                    'name' => 'iReceptor Public Archive',
+                    'name' => 'iReceptor Public Archive (SQL)',
                     'username' => '',
                     'password' => '',
                     'version' => 2,
@@ -24,14 +24,14 @@ class RestServiceSeeder extends Seeder
                 ],
                 [
                     'url' => 'https://206.12.99.171/',
-                    'name' => 'MongoDB iReceptor Public Archive',
+                    'name' => 'iReceptor Public Archive (MongoDB)',
                     'username' => '',
                     'password' => '',
                     'version' => 2,
                 ],
                 [
                     'url' => 'http://206.12.99.176:8080/',
-                    'name' => 'Turnkey iReceptor Public Archive',
+                    'name' => 'iReceptor Public Archive (Turnkey)',
                     'username' => '',
                     'password' => '',
                     'version' => 2,
