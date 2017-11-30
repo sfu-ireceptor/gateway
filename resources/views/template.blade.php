@@ -41,13 +41,13 @@
 								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu">
-							  <li><a href="/sequences-quick-search">Junction Search</a></li>
-							  <li><a href="/samples">Advanced Search</a></li>
+							  <li><a href="/sequences-quick-search">Sequence Search</a></li>
+							  <li><a href="/samples">Metadata Search</a></li>
 							</ul>
 						</li>
 						<li role="presentation" class="active samples">
 							<a href="/samples">
-								Samples
+								Metadata
 								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 							</a>
 						</li>
@@ -62,13 +62,13 @@
 								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu">
-							  <li><a href="/sequences-quick-search">Junction Search</a></li>
-							  <li><a href="/samples">Advanced Search</a></li>
+							  <li><a href="/sequences-quick-search">Sequence Search</a></li>
+							  <li><a href="/samples">Metadata Search</a></li>
 							</ul>
 						</li>
 						<li role="presentation" class="active samples">
 							<a href="/samples">
-								Samples
+								Metadata
 								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 							</a>
 						</li>
@@ -79,8 +79,8 @@
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Search<span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
-							  <li><a href="/sequences-quick-search">Junction Search</a></li>
-							  <li><a href="/samples">Advanced Search</a></li>
+							  <li><a href="/sequences-quick-search">Sequence Search</a></li>
+							  <li><a href="/samples">Metadata Search</a></li>
 							</ul>
 						</li>
 					@endif
