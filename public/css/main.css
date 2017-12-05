@@ -1,5 +1,11 @@
 /* @override http://ireceptor_gateway.dev/css/main.css */
 
+body {
+	font-size: 16px;
+}
+
+/* @group top nav */
+
 .navbar-default {
 	margin-bottom: 20px;
 }
@@ -74,18 +80,9 @@
 	padding-left: 10px;
 }
 
-body {
-	font-size: 16px;
-}
+/* @end */
 
-.jumbotron {
-	margin-top: 10px;
-	padding-top: 10px;
-}
-
-.jumbotron p {
-	font-size: 16px;
-}
+/* @group tags */
 
 h1 {
 	margin-bottom: 15px;
@@ -102,9 +99,19 @@ h1 small {
 	color: gray;
 }
 
+h2 {
+	margin-top: 30px;
+}
+
 pre.wrap {
 	white-space: pre-wrap;
 }
+
+em.dateRelative {
+	color: gray;
+}
+
+/* @end */
 
 /* @group table */
 
@@ -130,14 +137,6 @@ table.sample_list td, table.sample_list th {
 }
 
 /* @end */
-
-em.dateRelative {
-	color: gray;
-}
-
-h2 {
-	margin-top: 30px;
-}
 
 /* @group forms */
 
@@ -447,11 +446,6 @@ p.workflow {
 .adv_search_link {
 	margin-top: 45px;
 }
-/*
-.side_search_links {
-	margin-left: -120px;
-}
-*/
 
 #accordion .panel-heading a:after {
     font-family: 'Glyphicons Halflings';
@@ -580,13 +574,7 @@ footer a:hover {
 }
 /* @end */
 
-
-@media (min-width: 992px) {
-	
-.jumbotron {
-	padding-top: 28px;
-}
-
+/* @group login page */
 
 .login_container {
 	padding-top: 50px;
@@ -646,11 +634,8 @@ footer a:hover {
 	margin-bottom: 60px;
 }
 
-.jumbotron p {
-	font-size: 21px;
-}
-
 .modal-dialog {
 	width: 980px;
 }
-}
+
+/* @end */
