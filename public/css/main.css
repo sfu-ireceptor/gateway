@@ -175,37 +175,21 @@ table.sample_list td, table.sample_list th {
 	margin-top: 0px;	
 }
 
-
-
 /* @end */
 
 /* @group top navigation */
 
-.navbar-default {
-	margin-bottom: 20px;
+.navbar-default .navbar-nav > li > a.navbar-brand {
+	padding-top: 10px;
 }
 
-.navbar-header {
-	width: 170px;
-}
-
-.navbar-brand {
-	padding-top: 0px;
-	font-size: 24px;
-}
-
-.navbar-default .navbar-brand {
-    color: #333;
-}
-
-.navbar-brand img {
-	width: 32px;
-	height: 32px;
+a.navbar-brand img {
 	display: inline-block;
+	width: 32px;
 	margin-right: 7px;
 }
 
-.navbar-brand span {
+a.navbar-brand span {
 	margin-top: 10px;
 	float: right;
 	display: block;
@@ -214,18 +198,14 @@ table.sample_list td, table.sample_list th {
 .navbar-default .navbar-nav > li > a {
 	padding-top: 19px;
 	padding-bottom: 11px;
-}
-
-.navbar-default .navbar-nav > li > a.navbar-brand {
-	padding-top: 10px;
-}
-
-.navbar-default .navbar-nav > li > a {
 	font-weight: bold;
 	font-size: 14px;
 }
 
-.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:focus, .navbar-default .navbar-nav > .active > a:hover {
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:focus,
+.navbar-default .navbar-nav > .active > a:hover
+{
     color: #4a90e2;
     background-color: #c8ddf6;
 	font-weight: bold;
