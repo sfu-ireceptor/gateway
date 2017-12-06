@@ -27,7 +27,7 @@
 			  <div class="container-fluid">
 			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			      <ul class="nav navbar-nav">
-					<li role="presentation" class="<?= Request::is('home*') ? 'active' : '' ?>">
+					<li role="presentation">
 				      	<a class="navbar-brand" href="/" class="active">
 							<img src="/images/logos/ireceptor_logo.png">
 				      		<span>iReceptor</span>
@@ -38,7 +38,6 @@
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 								Search
 								<span class="caret"></span>
-								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu">
 							  <li><a href="/sequences-quick-search">Sequence Search</a></li>
@@ -48,7 +47,6 @@
 						<li role="presentation" class="active samples">
 							<a href="/samples">
 								Metadata
-								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 							</a>
 						</li>
 						<li role="presentation" class="sequences">
@@ -59,7 +57,6 @@
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 								Search
 								<span class="caret"></span>
-								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu">
 							  <li><a href="/sequences-quick-search">Sequence Search</a></li>
@@ -69,7 +66,6 @@
 						<li role="presentation" class="active samples">
 							<a href="/samples">
 								Metadata
-								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 							</a>
 						</li>
 						<li role="presentation" class="active sequences">

@@ -208,31 +208,18 @@ a.navbar-brand span {
 {
     color: #4a90e2;
     background-color: #c8ddf6;
-	font-weight: bold;
-}
-
-.navbar-nav .glyphicon-chevron-right {
-	color: black;
-	margin-left: 1px;
-	right: -5px;
-	z-index: 150;
 }
 
 .navbar-nav .samples a, .navbar-nav .sequences a {
-	padding-left: 0;
 }
 
 .navbar-nav .search a {
-	padding-right: 0px;	
 }
 
 .navbar-nav .samples a {
-	padding-right: 0px;
-	padding-left: 10px;
 }
 
 .navbar-nav .sequences a {
-	padding-left: 10px;
 }
 
 /* @end */
@@ -241,7 +228,6 @@ a.navbar-brand span {
 
 footer {
 	position: relative;
-	/* display: block; */
 	margin-top: 20px;
 }
 
