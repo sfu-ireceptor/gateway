@@ -179,8 +179,14 @@ table.sample_list td, table.sample_list th {
 
 /* @group top navigation */
 
+.navbar {
+	min-height: 44px;
+}
+
 .navbar-default .navbar-nav > li > a.navbar-brand {
-	padding-top: 10px;
+	height: 42px;
+	padding-top: 5px;
+	padding-left: 5px;
 }
 
 a.navbar-brand img {
@@ -190,7 +196,7 @@ a.navbar-brand img {
 }
 
 a.navbar-brand span {
-	margin-top: 8px;
+	margin-top: 7px;
 	float: right;
 	display: block;
 	font-size: 22px;
@@ -198,8 +204,8 @@ a.navbar-brand span {
 }
 
 .navbar-default .navbar-nav > li > a {
-	padding-top: 20px;
-	padding-bottom: 14px;
+	padding-top: 13px;
+	padding-bottom: 9px;
 	font-size: 14px;
 }
 
