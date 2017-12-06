@@ -227,13 +227,13 @@ a.navbar-brand span {
 }
 
 .navbar-nav .samples a {
-	padding-left: 63px;
+	padding-left: 53px;
 	padding-right: 10px;
 }
 
 .navbar-nav .sequences a {
-	padding-left: 63px;
-	padding-right: 40px;
+	padding-left: 53px;
+	padding-right: 30px;
 }
 
 .navbar-nav .search > a::after,
@@ -242,12 +242,12 @@ a.navbar-brand span {
   display: block; 
   width: 0; 
   height: 0;
-  border-top: 27px solid transparent; 
-  border-bottom: 27px solid transparent;
-  border-left: 40px solid #c8ddf6;
+  border-top: 22px solid transparent; 
+  border-bottom: 22px solid transparent;
+  border-left: 35px solid #c8ddf6;
   position: absolute;
   top: 100%;
-  margin-top: -53px; 
+  margin-top: -44px; 
   left: 100%;
   z-index: 2;
 }
@@ -258,12 +258,12 @@ a.navbar-brand span {
   display: block; 
   width: 0; 
   height: 0;
-  border-top: 27px solid transparent;       
-  border-bottom: 27px solid transparent;
-  border-left: 40px solid white;
+  border-top: 22px solid transparent;       
+  border-bottom: 22px solid transparent;
+  border-left: 35px solid white;
   position: absolute;
   top: 100%;
-  margin-top: -53px; 
+  margin-top: -44px; 
   margin-left: 3px;
   left: 100%;
   z-index: 1; 
