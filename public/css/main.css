@@ -222,7 +222,7 @@ a.navbar-brand span {
 	padding-left: 20px;
 }
 
-.navbar-nav .search a {
+.navbar-nav .search > a {
 	color: #898989;
 }
 
@@ -234,7 +234,8 @@ a.navbar-brand span {
 .navbar-nav .samples.active a, .navbar-nav .sequences.active a {
 }
 
-.navbar-nav .samples a.active, .navbar-nav .sequences a.active {
+.navbar-nav .samples a.active,
+.navbar-nav .sequences a.active {
 	color: black;
 	font-weight: bold;	
 }
