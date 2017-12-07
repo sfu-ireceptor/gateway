@@ -45,7 +45,7 @@
 							</ul>
 						</li>
 						<li role="presentation" class="active samples">
-							<a href="/samples">
+							<a href="/samples" class="active">
 								Metadata
 							</a>
 						</li>
@@ -69,7 +69,7 @@
 							</a>
 						</li>
 						<li role="presentation" class="active sequences">
-							<a href="/samples">Sequences</a>
+							<a href="/samples" class="active">Sequences</a>
 						</li>
 					@else
 						<li class="dropdown">

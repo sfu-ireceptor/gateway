@@ -212,7 +212,6 @@ a.navbar-brand span {
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:focus,
 .navbar-default .navbar-nav > .active > a:hover {
-    color: #4a90e2;
     background-color: #c8ddf6;
 }
 
@@ -224,11 +223,20 @@ a.navbar-brand span {
 }
 
 .navbar-nav .search a {
+	color: #898989;
 }
 
 .navbar-nav .samples a {
 	padding-left: 53px;
 	padding-right: 10px;
+}
+
+.navbar-nav .samples.active a, .navbar-nav .sequences.active a {
+}
+
+.navbar-nav .samples a.active, .navbar-nav .sequences a.active {
+	color: black;
+	font-weight: bold;	
 }
 
 .navbar-nav .sequences a {
