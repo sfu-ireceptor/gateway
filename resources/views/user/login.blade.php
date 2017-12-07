@@ -80,7 +80,14 @@
 		</div>
 
 		<div class="col-md-9">
-			<p class="intro">iReceptor currently contains <strong>{{ human_number($total_sequences) }} sequences</strong>  and  <strong>{{ $total_samples }} samples</strong>.</p>
+			<p class="intro">
+				iReceptor currently contains
+				<strong>{{ human_number($total_sequences) }} sequences</strong>  and
+				<strong>{{ $total_samples }} samples</strong> from
+				{{ $total_labs }} research labs and
+				{{ $total_projects }} studies.
+			</p>
+
 
 			<div id="landing_charts">
 				<div class="row">

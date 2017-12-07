@@ -8,17 +8,14 @@
 	<div class="row">
 		<div class="col-md-12">
 			<p class="intro">
-				iReceptor provides access to
-				{{ number_format($total_sequences) }} sequences from
-				{{ $total_repositories }} remote repositories,
-				{{ $total_labs }} research labs,
-				{{ $total_projects }} studies, and
-				{{ $total_samples }} samples.
-				<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#myModal">
-					Details
-				</button>
+				iReceptor currently contains
+				<strong>{{ human_number($total_sequences) }} sequences</strong>  and
+				<strong>{{ $total_samples }} samples</strong> from
+				<a href="#" data-toggle="modal" data-target="#myModal">
+					{{ $total_labs }} research labs and
+					{{ $total_projects }} studies.
+				</a>
 			</p>
-
 		</div>
 	</div>
 	<!-- Modal -->

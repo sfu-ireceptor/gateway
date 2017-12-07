@@ -21,7 +21,7 @@ class UserController extends Controller
         $sample_data = RestService::samples(['ajax' => true], $username);
         $sample_list = $sample_data['items'];
 
-        $data = [];
+        $data = RestService::metadata($username);
         $data['sample_list_json'] = json_encode($sample_list);
 
         /******************************************************
