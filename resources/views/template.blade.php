@@ -33,7 +33,21 @@
 				      		<span>iReceptor</span>
 				      	</a>
 					</li>
-			    	@if(Request::is('samples*'))
+			    	@if(Request::is('sequences-quick-search*'))
+			    		<li role="presentation" class="dropdown active search">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								Search
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+							  <li><a href="/sequences-quick-search">Sequence Search</a></li>
+							  <li><a href="/samples">Metadata Search</a></li>
+							</ul>
+						</li>
+						<li role="presentation" class="active sequences">
+							<a href="/samples" class="active">Sequences</a>
+						</li>
+			    	@elseif(Request::is('samples*'))
 						<li role="presentation" class="dropdown active search">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 								Search
