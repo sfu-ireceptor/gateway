@@ -212,7 +212,7 @@ a.navbar-brand span {
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:focus,
 .navbar-default .navbar-nav > .active > a:hover {
-    background-color: #c8ddf6;
+    background-color: #e7e7e7;
 }
 
 .navbar-nav .search a,
@@ -253,7 +253,7 @@ a.navbar-brand span {
   height: 0;
   border-top: 22px solid transparent; 
   border-bottom: 22px solid transparent;
-  border-left: 35px solid #c8ddf6;
+  border-left: 35px solid #e7e7e7;
   position: absolute;
   top: 100%;
   margin-top: -44px; 
