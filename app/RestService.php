@@ -67,7 +67,8 @@ class RestService extends Model
                 }
 
                 // get sample data from service
-                $sample_list = self::postRequest($rs, $uri, $filters);
+                $response = self::postRequest($rs, $uri, $filters);
+                $sample_list = $response['data'];
                 //var_dump($uri); var_dump($filters); var_dump($rs); var_dump($sample_list); die();
 
                 // convert sample data to v2 (if necessary)
@@ -231,6 +232,7 @@ class RestService extends Model
         $data['items'] = [];
         $data['summary'] = [];
         $data['rs_list'] = [];
+        $data['rs_list_no_response'] = [];
 
         // remove gateway-specific filters
         unset($filters['cols']);
@@ -273,19 +275,27 @@ class RestService extends Model
                 continue;
             }
 
-            try {
-                $obj = self::postRequest($rs, 'v2/sequences_summary', $filters);
-            } catch (\Exception $e) {
+            $response = self::postRequest($rs, 'v2/sequences_summary', $filters);
+            $obj = $response['data'];
+
+            // check response format
+            if($response['status'] == 'error') {
+                $rs_list_no_response[] = $rs;
+                continue;
+            }
+            else if (! isset($obj->items)) {
+                Log::error('No "items" element in JSON response:');
+                Log::error($obj);
+                $rs_list_no_response[] = $rs;
+                continue;
+            }
+            else if (! isset($obj->summary)) {
+                Log::error('No "summary" element in JSON response.');
+                Log::error($obj);
+                $rs_list_no_response[] = $rs;
                 continue;
             }
 
-            if (! isset($obj->items) || ! isset($obj->summary)) {
-                // Something has gone horribly wrong with the service, so we
-                // continue as if we received an execption as above
-                continue;
-            }
-
-            //var_dump($obj); die();
             $data['items'] = array_merge($obj->items, $data['items']);
             $data['summary'] = array_merge($obj->summary, $data['summary']);
 
@@ -473,13 +483,7 @@ class RestService extends Model
             Log::info('doing req to RS with params:');
             Log::info($filters);
 
-            try {
-                self::postRequest($rs, 'sequences', $filters, $systemFilePath);
-            } catch (\Exception $e) {
-                $message = $e->getMessage();
-                Log::error($message);
-                continue;
-            }
+            self::postRequest($rs, 'sequences', $filters, $systemFilePath);
 
             $csv_header_written = true;
         }
@@ -524,8 +528,7 @@ class RestService extends Model
         $defaults = [];
         $defaults['base_uri'] = $rs->url;
         $defaults['verify'] = false;    // accept self-signed SSL certificates
-        //var_dump($defaults); die();
-
+        // $defaults['timeout'] = 3;
         $client = new \GuzzleHttp\Client($defaults);
 
         // build request
@@ -563,6 +566,10 @@ class RestService extends Model
             Log::info('Guzzle: saving to ' . $filePath);
         }
 
+        $t = [];
+        $t['status'] = 'success';
+        $t['data'] = [];
+
         // execute request
         try {
             Log::info('Start node query ' . $rs->url . $path . ' with POST params:');
@@ -571,29 +578,28 @@ class RestService extends Model
             $response = $client->request('POST', $path, $options);
             Log::info('End query - success');
         } catch (\ClientException $exception) {
-            //var_dump($exception); die();
             $response = $exception->getResponse()->getBody()->getContents();
             Log::error($response);
 
-            return [];
+            $t['status'] = 'error';
+            $t['error_message'] = $response;
+            return $t;
         } catch (\Exception $exception) {
-            //var_dump($exception); die();
             $response = $exception->getMessage();
             Log::error($response);
 
-            return [];
+            $t['status'] = 'error';
+            $t['error_message'] = $response;
+            return $t;
         }
 
         if ($filePath == '') {
             // return object generated from json response
-            //var_dump($response->getBody()); die();
             $json = $response->getBody();
-            //var_dump($json); die();
-
             $obj = json_decode($json, $returnArray);
             // dd($obj);
-
-            return $obj;
+            $t['data'] = $obj;
+            return $t;
         }
     }
 }
