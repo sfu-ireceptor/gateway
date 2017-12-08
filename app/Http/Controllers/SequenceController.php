@@ -248,7 +248,7 @@ class SequenceController extends Controller
         $data['sample_list_json'] = json_encode($sequence_data['summary']);
         $data['rs_list'] = $rs_list;
         $data['rs_list_no_response'] = $sequence_data['rs_list_no_response'];
-        
+
         // Pass on the summary data from the sequence_data returned.
         $data['total_filtered_samples'] = $sequence_data['total_filtered_samples'];
         $data['total_filtered_repositories'] = $sequence_data['total_filtered_repositories'];

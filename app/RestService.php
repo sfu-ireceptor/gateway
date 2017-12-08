@@ -278,17 +278,15 @@ class RestService extends Model
             $obj = $response['data'];
 
             // check response format
-            if($response['status'] == 'error') {
+            if ($response['status'] == 'error') {
                 $data['rs_list_no_response'][] = $rs;
                 continue;
-            }
-            else if (! isset($obj->items)) {
+            } elseif (! isset($obj->items)) {
                 Log::error('No "items" element in JSON response:');
                 Log::error($obj);
                 $data['rs_list_no_response'][] = $rs;
                 continue;
-            }
-            else if (! isset($obj->summary)) {
+            } elseif (! isset($obj->summary)) {
                 Log::error('No "summary" element in JSON response.');
                 Log::error($obj);
                 $data['rs_list_no_response'][] = $rs;
@@ -582,6 +580,7 @@ class RestService extends Model
 
             $t['status'] = 'error';
             $t['error_message'] = $response;
+
             return $t;
         } catch (\Exception $exception) {
             $response = $exception->getMessage();
@@ -589,6 +588,7 @@ class RestService extends Model
 
             $t['status'] = 'error';
             $t['error_message'] = $response;
+
             return $t;
         }
 
@@ -598,6 +598,7 @@ class RestService extends Model
             $obj = json_decode($json, $returnArray);
             // dd($obj);
             $t['data'] = $obj;
+
             return $t;
         }
     }
