@@ -214,6 +214,18 @@
 				</div>
 			@endif
 
+			@if ( ! empty($rs_list_no_response))
+				<div class="alert alert-warning" role="alert">
+					<p>Sorry, data is incomplete. No response from:</p>
+					<ul>
+						@foreach ($rs_list_no_response as $rs)
+							<li>{{ $rs->name }}</li>
+						@endforeach
+					</ul>
+					<p>Try again later.</p>
+				</div>
+			@endif
+
 			@if (! empty($sequence_list))
 				<!-- sequence data column selector -->
 				<div class="collapse" id="sequence_column_selector">

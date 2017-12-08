@@ -193,7 +193,6 @@ class RestService extends Model
             $data['total'] += $rs_data['total_samples'];
             $data['items'] = array_merge($sample_list, $data['items']);
         }
-        //var_dump($data['rs_list']); die();
 
         // aggregate summary statistics
         $total_filtered_repositories = 0;
@@ -280,19 +279,19 @@ class RestService extends Model
 
             // check response format
             if($response['status'] == 'error') {
-                $rs_list_no_response[] = $rs;
+                $data['rs_list_no_response'][] = $rs;
                 continue;
             }
             else if (! isset($obj->items)) {
                 Log::error('No "items" element in JSON response:');
                 Log::error($obj);
-                $rs_list_no_response[] = $rs;
+                $data['rs_list_no_response'][] = $rs;
                 continue;
             }
             else if (! isset($obj->summary)) {
                 Log::error('No "summary" element in JSON response.');
                 Log::error($obj);
-                $rs_list_no_response[] = $rs;
+                $data['rs_list_no_response'][] = $rs;
                 continue;
             }
 
@@ -528,7 +527,7 @@ class RestService extends Model
         $defaults = [];
         $defaults['base_uri'] = $rs->url;
         $defaults['verify'] = false;    // accept self-signed SSL certificates
-        // $defaults['timeout'] = 3;
+        $defaults['timeout'] = 3;
         $client = new \GuzzleHttp\Client($defaults);
 
         // build request
