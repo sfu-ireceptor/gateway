@@ -11,6 +11,11 @@ use Illuminate\Http\Request;
 
 class SequenceController extends Controller
 {
+    public function __construct()
+    {
+        set_time_limit(40);
+    }
+
     public function postIndex(Request $request)
     {
         $query_id = Query::saveParams($request->except(['_token']), 'sequences');
