@@ -33,7 +33,7 @@
 						<th class="text-nowrap">Name</th>
 						<th class="text-nowrap">Email</th>
 						<th class="text-nowrap">Username</th>
-{{-- 						<th class="text-nowrap">Last Login</th> --}}
+						<th class="text-nowrap">Last Login</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -57,10 +57,10 @@
 							<td>{{ $t->username }}
 
 							</td>
-{{-- 							<td class="text-muted text-nowrap">
+							<td class="text-muted text-nowrap">
 								{{ $t->updated_at ? Carbon\Carbon::parse($t->updated_at)->format('M d, Y') : '' }}
 							</td>
- --}}							
+							
 						</tr>
 					@endforeach
 				</tbody>
