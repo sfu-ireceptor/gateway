@@ -13,7 +13,7 @@ class SequenceController extends Controller
 {
     public function __construct()
     {
-        set_time_limit(40);
+        set_time_limit(180);
     }
 
     public function postIndex(Request $request)
