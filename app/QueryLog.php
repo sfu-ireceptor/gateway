@@ -16,7 +16,9 @@ class QueryLog extends Model
     {
         $t = [];
 
-        $now = new Carbon('now');
+        $now = Carbon::now();
+        $now = new \MongoDB\BSON\UTCDateTime($now->timestamp * 1000);
+
         $t['start_time'] = $now;
         
         $t['level'] = 'gateway';
@@ -52,12 +54,15 @@ class QueryLog extends Model
     {
     	$ql = self::find($query_log_id);
 
-        $now = new Carbon('now');
-    	$ql->end_time = $now;
+        $now = Carbon::now();
+        $now_mongo = new \MongoDB\BSON\UTCDateTime($now->timestamp * 1000);
+    	$ql->end_time = $now_mongo;
+
+    	$start_time = Carbon::instance($ql->start_time->toDateTime());
+    	$duration = $start_time->diffInSeconds($now);
+    	$ql->duration = $duration;
 
     	$ql->status = $status;
-
-    	// duration
 
     	$ql->save();
     }

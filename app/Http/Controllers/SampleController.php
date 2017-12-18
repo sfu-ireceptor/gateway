@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Query;
 use App\RestService;
 use Illuminate\Http\Request;
+use App\QueryLog;
 
 class SampleController extends Controller
 {
@@ -17,6 +18,8 @@ class SampleController extends Controller
 
     public function index(Request $request)
     {
+        $query_log_id = QueryLog::start_gateway_query($request);
+
         $username = auth()->user()->username;
 
         /*************************************************
@@ -106,6 +109,7 @@ class SampleController extends Controller
 
         $data['filter_fields'] = $sample_data['filter_fields'];
 
+        QueryLog::end_gateway_query($query_log_id, 'done');
         return view('sample', $data);
     }
 
