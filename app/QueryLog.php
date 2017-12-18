@@ -27,7 +27,7 @@ class QueryLog extends Model
         $t['url'] = $url;
         
         $params = $request->all();
-        $t['params'] = $params;
+        $t['params'] = $request->query();
 
 		if(str_contains($url, '/samples'))
 		{
