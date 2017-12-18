@@ -11,7 +11,6 @@ class QueryLog extends Model
     protected $collection = 'queries';
     protected $guarded = [];
 
-    // cache samples from REST services
     public static function start_gateway_query($request)
     {
         $t = [];
@@ -44,13 +43,12 @@ class QueryLog extends Model
         $t['type'] = $type;
 
         $t['status'] = 'running';
-        $t['message'] = '';
 
         $ql = self::create($t);
         return $ql->id;
     }
 
-    public static function end_gateway_query($query_log_id, $status)
+    public static function end_gateway_query($query_log_id, $status = 'done', $message = NULL)
     {
     	$ql = self::find($query_log_id);
 
@@ -63,6 +61,7 @@ class QueryLog extends Model
     	$ql->duration = $duration;
 
     	$ql->status = $status;
+        $ql->message = $message;
 
     	$ql->save();
     }
