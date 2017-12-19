@@ -6,6 +6,7 @@ use ZipArchive;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
+use App\QueryLog;
 
 class RestService extends Model
 {
@@ -571,13 +572,17 @@ class RestService extends Model
         try {
             Log::info('Start node query ' . $rs->url . $path . ' with POST params:');
             Log::info($params);
+            $query_log_id = QueryLog::start_rest_service_query($rs, $path, $params, $filePath);
 
             $response = $client->request('POST', $path, $options);
+
+            QueryLog::end_rest_service_query($query_log_id);
             Log::info('End query - success');
         } catch (\ClientException $exception) {
             $response = $exception->getResponse()->getBody()->getContents();
             Log::error($response);
-
+            QueryLog::end_rest_service_query($query_log_id, 'error', $response);
+            
             $t['status'] = 'error';
             $t['error_message'] = $response;
 
@@ -585,6 +590,7 @@ class RestService extends Model
         } catch (\Exception $exception) {
             $response = $exception->getMessage();
             Log::error($response);
+            QueryLog::end_rest_service_query($query_log_id, 'error', $response);
 
             $t['status'] = 'error';
             $t['error_message'] = $response;

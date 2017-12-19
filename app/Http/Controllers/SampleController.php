@@ -87,6 +87,8 @@ class SampleController extends Controller
             $params = $request->all();
             $request->session()->forget('_old_input');
         }
+
+        $params['ir_query_log_id'] = $request->get('query_log_id');
         $sample_data = RestService::samples($params, $username);
 
         $data['sample_list'] = $sample_data['items'];

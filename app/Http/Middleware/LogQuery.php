@@ -18,6 +18,7 @@ class LogQuery
     {
         $query_log_id = QueryLog::start_gateway_query($request);
 
+        $request->attributes->set('query_log_id', $query_log_id);
         $response = $next($request);
 
         if (empty($response->exception)) {
