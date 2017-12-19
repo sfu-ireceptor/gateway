@@ -61,7 +61,7 @@ class QueryLog extends Model
         $ql->save();
     }
 
-    public static function start_rest_service_query($rs, $path, $params, $filePath)
+    public static function start_rest_service_query($gw_query_log_id, $rs, $path, $params, $filePath)
     {
         $t = [];
 
@@ -88,10 +88,7 @@ class QueryLog extends Model
 
         $t['status'] = 'running';
 
-        if(isset($params['ir_query_log_id']))
-        {
-            $t['parent_id'] = $params['ir_query_log_id'];
-        }
+        $t['parent_id'] = $gw_query_log_id;
 
         $t['rest_service_id'] = $rs->id;
 

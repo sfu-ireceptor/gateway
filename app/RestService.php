@@ -27,7 +27,7 @@ class RestService extends Model
         return Sample::metadata();
     }
 
-    public static function samples($filters, $username)
+    public static function samples($filters, $username, $query_log_id)
     {
         // initialize return array
         $data = [];
@@ -40,9 +40,6 @@ class RestService extends Model
         // For each filter that is active, keep track of the filter field so
         // UI can display the filters that are active.
         foreach ($filters as $filter_key => $filter_value) {
-                if($filter_key == 'ir_query_log_id') {
-                    continue;
-                } 
             // Filters are sometimes given to the API without values, so we
             // have to detect this and only display if there are values.
             if (count($filter_value) > 0) {
@@ -70,7 +67,7 @@ class RestService extends Model
                 }
 
                 // get sample data from service
-                $response = self::postRequest($rs, $uri, $filters);
+                $response = self::postRequest($rs, $uri, $filters, $query_log_id);
                 $sample_list = $response['data'];
                 //var_dump($uri); var_dump($filters); var_dump($rs); var_dump($sample_list); die();
 
@@ -277,7 +274,7 @@ class RestService extends Model
                 continue;
             }
 
-            $response = self::postRequest($rs, 'v2/sequences_summary', $filters);
+            $response = self::postRequest($rs, 'v2/sequences_summary', $filters, $query_log_id);
             $obj = $response['data'];
 
             // check response format
@@ -483,7 +480,7 @@ class RestService extends Model
             Log::info('doing req to RS with params:');
             Log::info($filters);
 
-            self::postRequest($rs, 'sequences', $filters, $systemFilePath);
+            self::postRequest($rs, 'sequences', $filters, $query_log_id, $systemFilePath);
 
             $csv_header_written = true;
         }
@@ -523,7 +520,7 @@ class RestService extends Model
         return $sequence_data;
     }
 
-    public static function postRequest($rs, $path, $params, $filePath = '', $returnArray = false)
+    public static function postRequest($rs, $path, $params, $gw_query_log_id, $filePath = '', $returnArray = false)
     {
         $defaults = [];
         $defaults['base_uri'] = $rs->url;
@@ -574,7 +571,7 @@ class RestService extends Model
         try {
             Log::info('Start node query ' . $rs->url . $path . ' with POST params:');
             Log::info($params);
-            $query_log_id = QueryLog::start_rest_service_query($rs, $path, $params, $filePath);
+            $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rs, $path, $params, $filePath);
 
             $response = $client->request('POST', $path, $options);
 

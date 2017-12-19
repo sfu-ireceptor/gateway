@@ -88,8 +88,8 @@ class SampleController extends Controller
             $request->session()->forget('_old_input');
         }
 
-        $params['ir_query_log_id'] = $request->get('query_log_id');
-        $sample_data = RestService::samples($params, $username);
+        $query_log_id = $request->get('query_log_id');
+        $sample_data = RestService::samples($params, $username, $query_log_id);
 
         $data['sample_list'] = $sample_data['items'];
         $data['rest_service_list'] = $sample_data['rs_list'];
@@ -117,7 +117,8 @@ class SampleController extends Controller
         $params = $request->all();
         $params['ajax'] = true;
 
-        $sample_data = RestService::samples($params, 'titi');
+        $query_log_id = $request->get('query_log_id');
+        $sample_data = RestService::samples($params, $query_log_id);
         $sample_list = $sample_data['items'];
 
         return json_encode($sample_list);
