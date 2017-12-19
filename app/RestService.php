@@ -6,7 +6,6 @@ use ZipArchive;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
-use App\QueryLog;
 
 class RestService extends Model
 {
@@ -582,7 +581,7 @@ class RestService extends Model
             $response = $exception->getResponse()->getBody()->getContents();
             Log::error($response);
             QueryLog::end_rest_service_query($query_log_id, 'error', $response);
-            
+
             $t['status'] = 'error';
             $t['error_message'] = $response;
 
