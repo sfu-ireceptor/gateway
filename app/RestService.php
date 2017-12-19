@@ -224,7 +224,7 @@ class RestService extends Model
         return $data;
     }
 
-    public static function sequences_summary($filters, $username)
+    public static function sequences_summary($filters, $username, $query_log_id)
     {
         // initialize return array
         $data = [];
@@ -439,7 +439,7 @@ class RestService extends Model
         return $data;
     }
 
-    public static function sequencesCSV($filters, $username)
+    public static function sequencesCSV($filters, $username, $query_log_id)
     {
         // directory
         $time_str = date('Y-m-d_G-i-s', time());
@@ -501,10 +501,10 @@ class RestService extends Model
         return $zipFilePath;
     }
 
-    public static function search($sample_filters, $sequence_filters, $username)
+    public static function search($sample_filters, $sequence_filters, $username, $query_log_id)
     {
         // get samples
-        $sample_data = self::samples($sample_filters, $username);
+        $sample_data = self::samples($sample_filters, $username, $query_log_id);
         $sample_list = $sample_data['items'];
 
         // get samples ids
@@ -515,7 +515,7 @@ class RestService extends Model
 
         // get sequences summary
         $sequence_filters = array_merge($sequence_filters, $sample_id_filters);
-        $sequence_data = self::sequences_summary($sequence_filters, $username);
+        $sequence_data = self::sequences_summary($sequence_filters, $username, $query_log_id);
 
         return $sequence_data;
     }

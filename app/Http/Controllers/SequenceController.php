@@ -26,6 +26,8 @@ class SequenceController extends Controller
     public function index(Request $request)
     {
         $username = auth()->user()->username;
+        $query_log_id = $request->get('query_log_id');
+
         $data = [];
 
         $query_id = $request->input('query_id');
@@ -50,7 +52,7 @@ class SequenceController extends Controller
 
         // if csv
         if (isset($filters['csv'])) {
-            $csvFilePath = RestService::sequencesCSV($filters, $username);
+            $csvFilePath = RestService::sequencesCSV($filters, $username, $query_log_id);
 
             return redirect($csvFilePath);
         }
@@ -58,7 +60,7 @@ class SequenceController extends Controller
         // $request->flashExcept('ir_project_sample_id_list');   // keep submitted form values
 
         // sequence list
-        $sequence_data = RestService::sequences_summary($filters, $username);
+        $sequence_data = RestService::sequences_summary($filters, $username, $query_log_id);
         // var_dump($sequence_data);die();
 
         // summary for each REST service
@@ -239,7 +241,7 @@ class SequenceController extends Controller
         if (isset($filters['junction_aa'])) {
             $sequence_filters['junction_aa'] = $filters['junction_aa'];
         }
-        $sequence_data = RestService::search($sample_filters, $sequence_filters, $username);
+        $sequence_data = RestService::search($sample_filters, $sequence_filters, $username, $query_log_id);
         // dd($sequence_data);
 
         // summary for each REST service
