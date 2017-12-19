@@ -40,6 +40,9 @@ class RestService extends Model
         // For each filter that is active, keep track of the filter field so
         // UI can display the filters that are active.
         foreach ($filters as $filter_key => $filter_value) {
+                if($filter_key == 'ir_query_log_id') {
+                    continue;
+                } 
             // Filters are sometimes given to the API without values, so we
             // have to detect this and only display if there are values.
             if (count($filter_value) > 0) {

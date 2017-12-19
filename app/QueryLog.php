@@ -88,7 +88,11 @@ class QueryLog extends Model
 
         $t['status'] = 'running';
 
-        $t['parent_id'] = $params['ir_query_log_id'];
+        if(isset($params['ir_query_log_id']))
+        {
+            $t['parent_id'] = $params['ir_query_log_id'];
+        }
+
         $t['rest_service_id'] = $rs->id;
 
         $ql = self::create($t);
