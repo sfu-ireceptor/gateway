@@ -140,11 +140,11 @@ if (! function_exists('human_number')) {
     }
 }
 
-
 // convert to human-friendly time duration
 // ex: 65 -> 1min 5s
 if (! function_exists('secondsToTime')) {
-    function secondsToTime($inputSeconds) {
+    function secondsToTime($inputSeconds)
+    {
         $secondsInAMinute = 60;
         $secondsInAnHour = 60 * $secondsInAMinute;
         $secondsInADay = 24 * $secondsInAnHour;
@@ -167,15 +167,15 @@ if (! function_exists('secondsToTime')) {
         // Format and return
         $timeParts = [];
         $sections = [
-            'day' => (int)$days,
-            'h' => (int)$hours,
-            'min' => (int)$minutes,
-            's' => (int)$seconds,
+            'day' => (int) $days,
+            'h' => (int) $hours,
+            'min' => (int) $minutes,
+            's' => (int) $seconds,
         ];
 
-        foreach ($sections as $name => $value){
-            if ($value > 0){
-                $timeParts[] = $value. ''.$name;
+        foreach ($sections as $name => $value) {
+            if ($value > 0) {
+                $timeParts[] = $value . '' . $name;
             }
         }
 
