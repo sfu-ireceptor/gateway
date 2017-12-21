@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use App\QueryLog;
 
 class AdminController extends Controller
 {
@@ -220,6 +221,7 @@ class AdminController extends Controller
     public function queries()
     {
         $data = [];
+        $data['query_log_list'] = QueryLog::find_gateway_queries();
 
         return view('queries', $data);
     }
