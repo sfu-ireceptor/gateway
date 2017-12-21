@@ -241,6 +241,8 @@ class SequenceController extends Controller
         if (isset($filters['junction_aa'])) {
             $sequence_filters['junction_aa'] = $filters['junction_aa'];
         }
+
+        $query_log_id = $request->get('query_log_id');
         $sequence_data = RestService::search($sample_filters, $sequence_filters, $username, $query_log_id);
         // dd($sequence_data);
 

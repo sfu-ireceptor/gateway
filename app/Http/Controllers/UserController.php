@@ -15,10 +15,11 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function getLogin()
+    public function getLogin(Request $request)
     {
         $username = 'titi';
-        $sample_data = RestService::samples(['ajax' => true], $username);
+        $query_log_id = $request->get('query_log_id');
+        $sample_data = RestService::samples(['ajax' => true], $username, $query_log_id);
         $sample_list = $sample_data['items'];
 
         $data = RestService::metadata($username);
