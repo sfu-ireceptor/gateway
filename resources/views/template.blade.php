@@ -102,9 +102,12 @@
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">admin<span class="caret"></span></a>
 								<ul class="dropdown-menu" role="menu">
-								  <li><a href="/admin/users">Users</a></li>
 								  <li><a href="/admin/databases">Databases</a></li>
+								  <li><a href="/admin/users">Users</a></li>
+								  <li><a href="/admin/queries">User queries</a></li>
+								  <li role="separator" class="divider"></li>
 								  <li><a href="/admin/queues">Queues</a></li>
+								  <li role="separator" class="divider"></li>
 								  <li><a href="/admin/field-names">Field names</a></li>
 								  <li><a href="/canarie">CANARIE</a></li>
 								</ul>
@@ -114,9 +117,11 @@
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->username }}<span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
 								<li><a href="/user/account">My account</a></li>
+								  <li role="separator" class="divider"></li>
 								<li><a href="/bookmarks">Bookmarks</a></li>
 								<li><a href="/jobs">Jobs</a></li>
 								<li><a href="/systems">Systems</a></li>
+								  <li role="separator" class="divider"></li>
 								<li><a href="/logout">Log Out</a></li>
 							</ul>
 						</li>

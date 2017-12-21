@@ -113,6 +113,7 @@ Route::middleware('auth')->group(function () {
         Route::get('delete-user/{username}', 'AdminController@getDeleteUser');
         Route::get('samples/update-cache', 'AdminController@getUpdateSampleCache');
         Route::get('field-names', 'AdminController@getFieldNames');
+        Route::get('queries', 'AdminController@queries');
     });
 });
 

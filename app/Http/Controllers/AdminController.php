@@ -216,4 +216,11 @@ class AdminController extends Controller
 
         return view('fieldNames', $data);
     }
+
+    public function queries()
+    {
+        $data = [];
+
+        return view('queries', $data);
+    }
 }
