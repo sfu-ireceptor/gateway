@@ -9,10 +9,10 @@ class QueryLog extends Model
 {
     protected $connection = 'mongodb'; // https://github.com/jenssegers/laravel-mongodb
     protected $collection = 'queries';
-    
+
     protected $guarded = [];
     protected $dates = ['start_time', 'end_time'];
- 
+
     public static function start_gateway_query($request)
     {
         $t = [];
@@ -121,6 +121,7 @@ class QueryLog extends Model
     public static function find_gateway_queries()
     {
         $l = static::where('level', '=', 'gateway')->orderBy('start_time', 'desc')->get();
+
         return $l;
     }
 }
