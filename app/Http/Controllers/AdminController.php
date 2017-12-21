@@ -6,13 +6,13 @@ use App\User;
 use App\Agave;
 use App\Sample;
 use App\LocalJob;
+use App\QueryLog;
 use App\FieldName;
 use App\RestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use App\QueryLog;
 
 class AdminController extends Controller
 {
