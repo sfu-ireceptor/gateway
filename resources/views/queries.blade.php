@@ -16,7 +16,7 @@
 						<th>URL</th>
 						<th>Status</th>
 						<th>Duration</th>
-						
+						<th>User</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -26,6 +26,7 @@
 							<td><a href="{{ $t->url }}">{{ $t->url }}</a></td>
 							<td>{{ $t->status }}</td>
 							<td>{{ $t->duration <= 5 ? '' : secondsToTime($t->duration) }}</td>
+							<td>{{ $t->username }}</td>
 						</tr>
 					@endforeach
 				</tbody>

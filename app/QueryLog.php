@@ -39,6 +39,7 @@ class QueryLog extends Model
         $t['type'] = $type;
 
         $t['status'] = 'running';
+        $t['username'] = auth()->user()->username;
 
         $ql = self::create($t);
 
