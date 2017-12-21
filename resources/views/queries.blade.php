@@ -12,17 +12,20 @@
 			<table class="table table-bordered table-striped">
 				<thead>
 					<tr>
-						<th>Start Time</th>
-						<th>End Time</th>
-						<th></th>
-						<th></th>
+						<th>Start</th>
+						<th>URL</th>
+						<th>Status</th>
+						<th>Duration</th>
+						
 					</tr>
 				</thead>
 				<tbody>
 					@foreach ($query_log_list as $t)
 						<tr>
-							<td>{{ Carbon\Carbon::parse($t->start_time)->format('M j H:i:s') }}</td>
-							<td>{{ Carbon\Carbon::parse($t->end_time)->format('M j H:i:s') }}</td>
+							<td>{{ human_date_time($t->start_time) }}</td>
+							<td><a href="{{ $t->url }}">{{ $t->url }}</a></td>
+							<td>{{ $t->status }}</td>
+							<td>{{ $t->duration <= 5 ? '' : secondsToTime($t->duration) }}</td>
 						</tr>
 					@endforeach
 				</tbody>

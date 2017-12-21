@@ -24,7 +24,7 @@ class QueryLog extends Model
 
         $t['level'] = 'gateway';
 
-        $url = '/' . $request->path();
+        $url = $request->fullUrl();
         $t['url'] = $url;
 
         $t['params'] = $request->query();
@@ -53,7 +53,7 @@ class QueryLog extends Model
         $now_mongo = new \MongoDB\BSON\UTCDateTime($now->timestamp * 1000);
         $ql->end_time = $now_mongo;
 
-        $start_time = Carbon::instance($ql->start_time->toDateTime());
+        $start_time = Carbon::instance($ql->start_time);
         $duration = $start_time->diffInSeconds($now);
         $ql->duration = $duration;
 
@@ -107,7 +107,7 @@ class QueryLog extends Model
         $now_mongo = new \MongoDB\BSON\UTCDateTime($now->timestamp * 1000);
         $ql->end_time = $now_mongo;
 
-        $start_time = Carbon::instance($ql->start_time->toDateTime());
+        $start_time = Carbon::instance($ql->start_time);
         $duration = $start_time->diffInSeconds($now);
         $ql->duration = $duration;
 
