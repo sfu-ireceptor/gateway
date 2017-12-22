@@ -14,7 +14,6 @@
 					<tr>
 						<th>Start</th>
 						<th>URL</th>
-						<th>Status</th>
 						<th>Duration</th>
 						<th>User</th>
 					</tr>
@@ -22,10 +21,21 @@
 				<tbody>
 					@foreach ($query_log_list as $t)
 						<tr>
-							<td>{{ human_date_time($t->start_time) }}</td>
-							<td><a href="{{ $t->url }}">{{ $t->url }}</a></td>
-							<td>{{ $t->status }}</td>
-							<td>{{ $t->duration <= 5 ? '' : secondsToTime($t->duration) }}</td>
+							<td class="text-nowrap">{{ human_date_time($t->start_time) }}</td>
+							<td>
+								<a href="{{ $t->url }} title="{{ $t->url }}">{{ str_limit($t->url, $limit = 64, $end = '‥') }}</a>
+							</td>
+							<td class="{{ $t->status == 'running' ? 'warning' : ''}}{{ $t->status == 'error' ? 'danger' : ''}}" title='{{ $t->message }}'>
+								@if ($t->status == 'done')
+									{{ $t->duration <= 5 ? '' : secondsToTime($t->duration) }}
+								@elseif ($t->status == 'running')
+									{{ $t->status }}
+									({{ secondsToTime($t->start_time->diffInSeconds(Carbon\Carbon::now())) }})
+								@else
+									{{ $t->status }}
+									{{ $t->duration <= 5 ? '' : secondsToTime($t->duration) }}
+								@endif
+							</td>
 							<td>{{ $t->username }}</td>
 						</tr>
 					@endforeach
