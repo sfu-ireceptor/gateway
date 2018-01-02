@@ -18,10 +18,35 @@
 		<tbody>
 			<tr>
 				<td class="text-nowrap">
-					<a href="/admin/queries/{{ $q->id }}">{{ human_date_time($q->start_time) }}</a>
+					{{ human_date_time($q->start_time) }}
 				</td>
 				<td>
 					<a href="{{ $q->url }} title="{{ $q->url }}">{{ str_limit($q->url, $limit = 64, $end = '‥') }}</a>
+
+					@if(isset($q->params) && ! empty($q->params))
+						<!-- Button trigger modal -->
+						<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#myModal_{{ $q->id }}">
+						  Filters
+						</button>
+
+						<!-- Modal -->
+						<div class="modal fade" id="myModal_{{ $q->id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+						  <div class="modal-dialog" role="document">
+						    <div class="modal-content">
+						      <div class="modal-header">
+						        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						        <h4 class="modal-title" id="myModalLabel">Filters for {{ $q->url }}</h4>
+						      </div>
+						      <div class="modal-body">
+						      	<pre>{{ json_encode($q->params, JSON_PRETTY_PRINT) }}</pre>
+						      </div>
+						      <div class="modal-footer">
+						        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						      </div>
+						    </div>
+						  </div>
+						</div>
+					@endif
 				</td>
 				<td class="{{ $q->status == 'running' ? 'warning' : ''}}{{ $q->status == 'error' ? 'danger' : ''}}" title='{{ $q->message }}'>
 					@if ($q->status == 'done')
@@ -51,7 +76,6 @@
 						<th>Start</th>
 						<th>URL</th>
 						<th>Duration</th>
-						<th></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -68,7 +92,7 @@
 								<a href="{{ $q->url }} title="{{ $q->url }}">{{ str_limit($q->url, $limit = 64, $end = '‥') }}</a>
 								
 								<!-- Button trigger modal -->
-								<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#myModal_{{ $q->id }}">
+								<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#myModal_{{ $q->id }}">
 								  POST parameters
 								</button>
 
@@ -101,9 +125,6 @@
 									{{ $q->status }}
 									{{ $q->duration <= 5 ? '' : secondsToTime($q->duration) }}
 								@endif
-							</td>
-							<td>
-								
 							</td>
 						</tr>
 					@endforeach
