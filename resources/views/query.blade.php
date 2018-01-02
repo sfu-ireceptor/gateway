@@ -1,10 +1,10 @@
 @extends('template')
 
-@section('title', 'User Queries')
+@section('title', 'Query ' . $id)
 
 @section('content')
 <div class="container">
-	<h1>User Queries</h1>
+	<h1>Query {{ $id }}</h1>
 
 	<div class="row">
 		<div class="col-md-12">
@@ -19,7 +19,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach ($query_log_list as $t)
+{{-- 					@foreach ($query_log_list as $t)
 						<tr>
 							<td class="text-nowrap">
 								<a href="/admin/queries/{{ $t->id }}">{{ human_date_time($t->start_time) }}</a>
@@ -41,7 +41,7 @@
 							<td>{{ $t->username }}</td>
 						</tr>
 					@endforeach
-				</tbody>
+				</tbody> --}}
 			</table>
 
 		</div>

@@ -225,4 +225,13 @@ class AdminController extends Controller
 
         return view('queries', $data);
     }
+
+    public function query($id)
+    {
+        $data = [];
+        $data['id'] = $id;
+        // $data['query_log_list'] = QueryLog::find_gateway_queries();
+
+        return view('query', $data);
+    }
 }

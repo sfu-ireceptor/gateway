@@ -167,7 +167,7 @@ if (! function_exists('secondsToTime')) {
         // Format and return
         $timeParts = [];
         $sections = [
-            'day' => (int) $days,
+            ' days' => (int) $days,
             'h' => (int) $hours,
             'min' => (int) $minutes,
             's' => (int) $seconds,
