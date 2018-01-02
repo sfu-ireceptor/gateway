@@ -1,10 +1,45 @@
 @extends('template')
 
-@section('title', 'Query ' . $id)
+@section('title', 'Query ' . $query_id)
 
 @section('content')
 <div class="container">
-	<h1>Query {{ $id }}</h1>
+	<h1>Query {{ $query_id }}</h1>
+
+	<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Start</th>
+				<th>URL</th>
+				<th>Duration</th>
+				<th>User</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td class="text-nowrap">
+					<a href="/admin/queries/{{ $q->id }}">{{ human_date_time($q->start_time) }}</a>
+				</td>
+				<td>
+					<a href="{{ $q->url }} title="{{ $q->url }}">{{ str_limit($q->url, $limit = 64, $end = '‥') }}</a>
+				</td>
+				<td class="{{ $q->status == 'running' ? 'warning' : ''}}{{ $q->status == 'error' ? 'danger' : ''}}" title='{{ $q->message }}'>
+					@if ($q->status == 'done')
+						{{ $q->duration <= 5 ? '' : secondsToTime($q->duration) }}
+					@elseif ($q->status == 'running')
+						{{ $q->status }}
+						({{ secondsToTime($q->start_time->diffInSeconds(Carbon\Carbon::now())) }})
+					@else
+						{{ $q->status }}
+						{{ $q->duration <= 5 ? '' : secondsToTime($q->duration) }}
+					@endif
+				</td>
+				<td>{{ $q->username }}</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h3>Service queries</h3>
 
 	<div class="row">
 		<div class="col-md-12">
@@ -12,36 +47,40 @@
 			<table class="table table-bordered table-striped">
 				<thead>
 					<tr>
+						<th>Service</th>
 						<th>Start</th>
 						<th>URL</th>
 						<th>Duration</th>
-						<th>User</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
-{{-- 					@foreach ($query_log_list as $t)
+					@foreach ($node_queries as $q)
 						<tr>
 							<td class="text-nowrap">
-								<a href="/admin/queries/{{ $t->id }}">{{ human_date_time($t->start_time) }}</a>
+								{{ $q->rest_service_name}}
+							</td>
+							<td class="text-nowrap">
+								<a href="/admin/queries/{{ $q->id }}">{{ human_date_time($q->start_time) }}</a>
 							</td>
 							<td>
-								<a href="{{ $t->url }} title="{{ $t->url }}">{{ str_limit($t->url, $limit = 64, $end = '‥') }}</a>
+								<a href="{{ $q->url }} title="{{ $q->url }}">{{ str_limit($q->url, $limit = 64, $end = '‥') }}</a>
 							</td>
-							<td class="{{ $t->status == 'running' ? 'warning' : ''}}{{ $t->status == 'error' ? 'danger' : ''}}" title='{{ $t->message }}'>
-								@if ($t->status == 'done')
-									{{ $t->duration <= 5 ? '' : secondsToTime($t->duration) }}
-								@elseif ($t->status == 'running')
-									{{ $t->status }}
-									({{ secondsToTime($t->start_time->diffInSeconds(Carbon\Carbon::now())) }})
+							<td class="{{ $q->status == 'running' ? 'warning' : ''}}{{ $q->status == 'error' ? 'danger' : ''}}" title='{{ $q->message }}'>
+								@if ($q->status == 'done')
+									{{ $q->duration <= 5 ? '' : secondsToTime($q->duration) }}
+								@elseif ($q->status == 'running')
+									{{ $q->status }}
+									({{ secondsToTime($q->start_time->diffInSeconds(Carbon\Carbon::now())) }})
 								@else
-									{{ $t->status }}
-									{{ $t->duration <= 5 ? '' : secondsToTime($t->duration) }}
+									{{ $q->status }}
+									{{ $q->duration <= 5 ? '' : secondsToTime($q->duration) }}
 								@endif
 							</td>
-							<td>{{ $t->username }}</td>
+							<td></td>
 						</tr>
 					@endforeach
-				</tbody> --}}
+				</tbody>
 			</table>
 
 		</div>

@@ -221,7 +221,7 @@ class AdminController extends Controller
     public function queries()
     {
         $data = [];
-        $data['query_log_list'] = QueryLog::find_gateway_queries();
+        $data['queries'] = QueryLog::find_gateway_queries();
 
         return view('queries', $data);
     }
@@ -229,8 +229,9 @@ class AdminController extends Controller
     public function query($id)
     {
         $data = [];
-        $data['id'] = $id;
-        // $data['query_log_list'] = QueryLog::find_gateway_queries();
+        $data['query_id'] = $id;
+        $data['q'] = QueryLog::find($id);
+        $data['node_queries'] = QueryLog::find_node_queries($id);
 
         return view('query', $data);
     }

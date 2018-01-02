@@ -19,26 +19,26 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach ($query_log_list as $t)
+					@foreach ($queries as $q)
 						<tr>
 							<td class="text-nowrap">
-								<a href="/admin/queries/{{ $t->id }}">{{ human_date_time($t->start_time) }}</a>
+								<a href="/admin/queries/{{ $q->id }}">{{ human_date_time($q->start_time) }}</a>
 							</td>
 							<td>
-								<a href="{{ $t->url }} title="{{ $t->url }}">{{ str_limit($t->url, $limit = 64, $end = '‥') }}</a>
+								<a href="{{ $q->url }} title="{{ $q->url }}">{{ str_limit($q->url, $limit = 64, $end = '‥') }}</a>
 							</td>
-							<td class="{{ $t->status == 'running' ? 'warning' : ''}}{{ $t->status == 'error' ? 'danger' : ''}}" title='{{ $t->message }}'>
-								@if ($t->status == 'done')
-									{{ $t->duration <= 5 ? '' : secondsToTime($t->duration) }}
-								@elseif ($t->status == 'running')
-									{{ $t->status }}
-									({{ secondsToTime($t->start_time->diffInSeconds(Carbon\Carbon::now())) }})
+							<td class="{{ $q->status == 'running' ? 'warning' : ''}}{{ $q->status == 'error' ? 'danger' : ''}}" title='{{ $q->message }}'>
+								@if ($q->status == 'done')
+									{{ $q->duration <= 5 ? '' : secondsToTime($q->duration) }}
+								@elseif ($q->status == 'running')
+									{{ $q->status }}
+									({{ secondsToTime($q->start_time->diffInSeconds(Carbon\Carbon::now())) }})
 								@else
-									{{ $t->status }}
-									{{ $t->duration <= 5 ? '' : secondsToTime($t->duration) }}
+									{{ $q->status }}
+									{{ $q->duration <= 5 ? '' : secondsToTime($q->duration) }}
 								@endif
 							</td>
-							<td>{{ $t->username }}</td>
+							<td>{{ $q->username }}</td>
 						</tr>
 					@endforeach
 				</tbody>

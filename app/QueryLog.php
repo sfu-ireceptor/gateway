@@ -94,6 +94,7 @@ class QueryLog extends Model
         $t['parent_id'] = $gw_query_log_id;
 
         $t['rest_service_id'] = $rs->id;
+        $t['rest_service_name'] = $rs->name;
 
         $ql = self::create($t);
 
@@ -121,6 +122,13 @@ class QueryLog extends Model
     public static function find_gateway_queries()
     {
         $l = static::where('level', '=', 'gateway')->orderBy('start_time', 'desc')->get();
+
+        return $l;
+    }
+
+    public static function find_node_queries($id)
+    {
+        $l = static::where('parent_id', '=', $id)->orderBy('start_time', 'desc')->get();
 
         return $l;
     }
