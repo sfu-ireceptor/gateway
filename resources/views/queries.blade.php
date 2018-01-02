@@ -25,7 +25,7 @@
 								<a href="/admin/queries/{{ $q->id }}">{{ human_date_time($q->start_time) }}</a>
 							</td>
 							<td>
-								<a href="{{ $q->url }} title="{{ $q->url }}">{{ str_limit($q->url, $limit = 64, $end = '‥') }}</a>
+								<a href="{{ $q->url }}" title="{{ $q->url }}">{{ str_limit($q->url, $limit = 64, $end = '‥') }}</a>
 							</td>
 							<td class="{{ $q->status == 'running' ? 'warning' : ''}}{{ $q->status == 'error' ? 'danger' : ''}}" title='{{ $q->message }}'>
 								@if ($q->status == 'done')

@@ -64,7 +64,32 @@
 								<a href="/admin/queries/{{ $q->id }}">{{ human_date_time($q->start_time) }}</a>
 							</td>
 							<td>
+
 								<a href="{{ $q->url }} title="{{ $q->url }}">{{ str_limit($q->url, $limit = 64, $end = '‥') }}</a>
+								
+								<!-- Button trigger modal -->
+								<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#myModal_{{ $q->id }}">
+								  POST parameters
+								</button>
+
+								<!-- Modal -->
+								<div class="modal fade" id="myModal_{{ $q->id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+								  <div class="modal-dialog" role="document">
+								    <div class="modal-content">
+								      <div class="modal-header">
+								        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								        <h4 class="modal-title" id="myModalLabel">POST parameters ({{ $q->url }} on {{ $q->rest_service_name}})</h4>
+								      </div>
+								      <div class="modal-body">
+								      	<pre>{{ json_encode($q->params, JSON_PRETTY_PRINT) }}</pre>
+								      </div>
+								      <div class="modal-footer">
+								        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								      </div>
+								    </div>
+								  </div>
+								</div>
+
 							</td>
 							<td class="{{ $q->status == 'running' ? 'warning' : ''}}{{ $q->status == 'error' ? 'danger' : ''}}" title='{{ $q->message }}'>
 								@if ($q->status == 'done')
@@ -77,7 +102,9 @@
 									{{ $q->duration <= 5 ? '' : secondsToTime($q->duration) }}
 								@endif
 							</td>
-							<td></td>
+							<td>
+								
+							</td>
 						</tr>
 					@endforeach
 				</tbody>
