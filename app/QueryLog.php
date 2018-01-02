@@ -4,7 +4,6 @@ namespace App;
 
 use Carbon\Carbon;
 use Jenssegers\Mongodb\Eloquent\Model;
-use App\Query;
 
 class QueryLog extends Model
 {
@@ -29,7 +28,7 @@ class QueryLog extends Model
         $t['url'] = $url;
 
         $t['params'] = $request->query();
-        if(isset($t['params']['query_id'])) {
+        if (isset($t['params']['query_id'])) {
             $params = Query::getParams($t['params']['query_id']);
             $t['params'] = $params;
         }
