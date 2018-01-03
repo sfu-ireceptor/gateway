@@ -89,7 +89,7 @@
 							</td>
 							<td>
 
-								<a href="{{ $q->url }} title="{{ $q->url }}">{{ str_limit($q->url, $limit = 64, $end = '‥') }}</a>
+								{{ str_limit($q->url, $limit = 84, $end = '‥') }}
 								
 								<!-- Button trigger modal -->
 								<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#myModal_{{ $q->id }}">
