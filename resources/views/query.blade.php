@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container">
-	<h1>Query {{ $query_id }}</h1>
+	<h1>User Query</h1>
 
 	<table class="table table-bordered table-striped">
 		<thead>
@@ -13,6 +13,7 @@
 				<th>URL</th>
 				<th>Duration</th>
 				<th>User</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -21,7 +22,7 @@
 					{{ human_date_time($q->start_time) }}
 				</td>
 				<td>
-					<a href="{{ $q->url }} title="{{ $q->url }}">{{ str_limit($q->url, $limit = 64, $end = '‥') }}</a>
+					{{ str_limit($q->url, $limit = 64, $end = '‥') }}
 
 					@if(isset($q->params) && ! empty($q->params))
 						<!-- Button trigger modal -->
@@ -60,6 +61,7 @@
 					@endif
 				</td>
 				<td>{{ $q->username }}</td>
+				<td><a href="{{ $q->url }}" title="{{ $q->url }}">Go to this page</a></td>
 			</tr>
 		</tbody>
 	</table>

@@ -175,6 +175,10 @@ table.sample_list td, table.sample_list th {
 	margin-top: 0px;	
 }
 
+.minor {
+	color: gray;
+}
+
 /* @end */
 
 /* @group top navigation */

@@ -7,9 +7,9 @@
 	<h1>User Queries</h1>
 
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-md-9">
 
-			<table class="table table-bordered table-striped">
+			<table class="table table-bordered table-striped table-condensed">
 				<thead>
 					<tr>
 						<th>Start</th>
@@ -22,10 +22,12 @@
 					@foreach ($queries as $q)
 						<tr>
 							<td class="text-nowrap">
-								{{ human_date_time($q->start_time) }}
+								<span class="minor">{{ human_date_time($q->start_time, 'D') }}</span>
+								{{ human_date_time($q->start_time, 'M j') }}
+								<span class="minor">{{ human_date_time($q->start_time, 'H:i') }}</span>
 							</td>
 							<td>
-								<a href="{{ $q->url }}" title="{{ $q->url }}">{{ str_limit($q->url, $limit = 64, $end = '‥') }}</a>
+								<a href="/admin/queries/{{ $q->id }}" title="{{ $q->url }}">{{ str_limit($q->url, $limit = 40, $end = '‥') }}</a>
 
 								@if(isset($q->params) && ! empty($q->params))
 									<!-- Button trigger modal -->
@@ -51,9 +53,7 @@
 									  </div>
 									</div>
 								@endif
-
-								<a href="/admin/queries/{{ $q->id }}" class="btn btn-primary btn-xs">Details</a>
-
+							
 							</td>
 							<td class="{{ $q->status == 'running' ? 'warning' : ''}}{{ $q->status == 'error' ? 'danger' : ''}}" title='{{ $q->message }}'>
 								@if ($q->status == 'done')
@@ -72,9 +72,14 @@
 				</tbody>
 			</table>
 
+		</div>
+		<div class="col-md-3">
+			<h2>Notes</h2>
+
 			@if(! $all)
-				<p>Note: only the queries done over the last 7 days are shown. <a href="/admin/queries/all">See all queries</a>.	</p>
+				<p>Only the queries done over the last 7 days are shown. <a href="/admin/queries/all">See all queries</a>.	</p>
 			@endif
+
 		</div>
 	</div>
 </div>
