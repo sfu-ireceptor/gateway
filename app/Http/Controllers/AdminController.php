@@ -218,13 +218,20 @@ class AdminController extends Controller
         return view('fieldNames', $data);
     }
 
-    public function queries()
+    public function queries($all = false)
     {
         $data = [];
-        $data['queries'] = QueryLog::find_gateway_queries();
+        $data['all'] = $all;
+        $data['queries'] = QueryLog::find_gateway_queries($all);
 
         return view('queries', $data);
     }
+
+    public function allQueries()
+    {
+        return $this->queries(true);
+    }
+
 
     public function query($id)
     {

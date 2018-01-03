@@ -72,6 +72,9 @@
 				</tbody>
 			</table>
 
+			@if(! $all)
+				<p>Note: only the queries done over the last 7 days are shown. <a href="/admin/queries/all">See all queries</a>.	</p>
+			@endif
 		</div>
 	</div>
 </div>

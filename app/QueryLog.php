@@ -123,9 +123,14 @@ class QueryLog extends Model
         $ql->save();
     }
 
-    public static function find_gateway_queries()
+    public static function find_gateway_queries($all)
     {
-        $l = static::where('level', '=', 'gateway')->orderBy('start_time', 'desc')->get();
+        if($all) {
+            $l = static::where('level', '=', 'gateway')->orderBy('start_time', 'desc')->get();
+        }
+        else {
+            $l = static::where('level', '=', 'gateway')->where('start_time', '>', new \DateTime('-7 days'))->orderBy('start_time', 'desc')->get();
+        }
 
         return $l;
     }
