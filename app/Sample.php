@@ -14,7 +14,7 @@ class Sample extends Model
     public static function cache($username)
     {
         // get data
-        $sample_data = RestService::samples([], $username, NULL);
+        $sample_data = RestService::samples([], $username, null);
         $sample_list = $sample_data['items'];
 
         // delete any previously cached data
