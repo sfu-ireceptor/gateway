@@ -232,7 +232,6 @@ class AdminController extends Controller
         return $this->queries(true);
     }
 
-
     public function query($id)
     {
         $data = [];
