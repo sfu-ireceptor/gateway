@@ -85,7 +85,7 @@
 								{{ $q->rest_service_name}}
 							</td>
 							<td class="text-nowrap">
-								<a href="/admin/queries/{{ $q->id }}">{{ human_date_time($q->start_time) }}</a>
+								{{ human_date_time($q->start_time) }}
 							</td>
 							<td>
 
