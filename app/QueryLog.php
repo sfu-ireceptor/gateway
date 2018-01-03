@@ -30,6 +30,13 @@ class QueryLog extends Model
         $t['params'] = $request->query();
         if (isset($t['params']['query_id'])) {
             $params = Query::getParams($t['params']['query_id']);
+
+            // remove null values.
+            foreach ($params as $k => $v) {
+                if ($v === null) {
+                    unset($params[$k]);
+                }
+            }
             $t['params'] = $params;
         }
 
