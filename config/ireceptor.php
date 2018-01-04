@@ -8,7 +8,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Maximum time the gateway will wait for a request to a service
-    | Ex: /sequence_summary query to VDJServer 
+    | Ex: /sequence_summary query to VDJServer
     |
     */
 
@@ -20,7 +20,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Maximum time the gateway will take to handle a user request
-    | Ex: loading a sequence page 
+    | Ex: loading a sequence page
     |
     */
 
