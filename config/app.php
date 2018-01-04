@@ -247,13 +247,12 @@ return [
 
     'deploy_secret' => env('APP_DEPLOY_SECRET'),
 
-
     /*
     |--------------------------------------------------------------------------
     | iReceptor
     |--------------------------------------------------------------------------
     |
-    | App options specific to iReceptor 
+    | App options specific to iReceptor
     |
     */
 
