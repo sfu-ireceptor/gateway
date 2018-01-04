@@ -247,4 +247,17 @@ return [
 
     'deploy_secret' => env('APP_DEPLOY_SECRET'),
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | iReceptor
+    |--------------------------------------------------------------------------
+    |
+    | App options specific to iReceptor 
+    |
+    */
+
+    'service_request_timeout' => env('APP_IRECEPTOR_SERVICE_REQUEST_TIMEOUT', 45),
+    'gateway_request_timeout' => env('APP_IRECEPTOR_GATEWAY_REQUEST_TIMEOUT', 45),
+
 ];

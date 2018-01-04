@@ -525,7 +525,7 @@ class RestService extends Model
         $defaults = [];
         $defaults['base_uri'] = $rs->url;
         $defaults['verify'] = false;    // accept self-signed SSL certificates
-        $defaults['timeout'] = 45;
+        $defaults['timeout'] = config('ireceptor.service_request_timeout');
         $client = new \GuzzleHttp\Client($defaults);
 
         // build request

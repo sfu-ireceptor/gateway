@@ -13,7 +13,8 @@ class SequenceController extends Controller
 {
     public function __construct()
     {
-        set_time_limit(180);
+        $timeout = config('ireceptor.gateway_request_timeout');
+        set_time_limit($timeout);
     }
 
     public function postIndex(Request $request)
