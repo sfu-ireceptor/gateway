@@ -80,6 +80,13 @@
 				<p>Only the queries done over the last 7 days are shown. <a href="/admin/queries/all">See all queries</a>.	</p>
 			@endif
 
+			<p>
+				Gateway timeout: <strong>{{ $gateway_request_timeout }} sec</strong> (maximum time a page will take to load).
+			</p>
+			<p>
+				Service timeout: <strong>{{ $service_request_timeout }} sec</strong> (maximum time the gateway will wait for a service to return a response)
+			</p>
+			<p>Timeout values can be changed in the <code>.env</code> file.</p>
 		</div>
 	</div>
 </div>

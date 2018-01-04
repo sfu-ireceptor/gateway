@@ -224,6 +224,9 @@ class AdminController extends Controller
         $data['all'] = $all;
         $data['queries'] = QueryLog::find_gateway_queries($all);
 
+        $data['service_request_timeout'] = config('ireceptor.service_request_timeout');
+        $data['gateway_request_timeout'] = config('ireceptor.gateway_request_timeout');
+
         return view('queries', $data);
     }
 
