@@ -592,7 +592,7 @@ class RestService extends Model
 
             return $t;
         }
-        
+
         QueryLog::end_rest_service_query($query_log_id);
         Log::info('End query - success');
 
