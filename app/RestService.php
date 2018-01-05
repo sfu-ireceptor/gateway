@@ -568,15 +568,11 @@ class RestService extends Model
         $t['data'] = [];
 
         // execute request
+        Log::info('Start node query ' . $rs->url . $path . ' with POST params:');
+        Log::info($params);
+        $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rs, $path, $params, $filePath);
         try {
-            Log::info('Start node query ' . $rs->url . $path . ' with POST params:');
-            Log::info($params);
-            $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rs, $path, $params, $filePath);
-
             $response = $client->request('POST', $path, $options);
-
-            QueryLog::end_rest_service_query($query_log_id);
-            Log::info('End query - success');
         } catch (\ClientException $exception) {
             $response = $exception->getResponse()->getBody()->getContents();
             Log::error($response);
@@ -596,6 +592,9 @@ class RestService extends Model
 
             return $t;
         }
+        
+        QueryLog::end_rest_service_query($query_log_id);
+        Log::info('End query - success');
 
         if ($filePath == '') {
             // return object generated from json response
