@@ -87,7 +87,7 @@
 								{{ $q->rest_service_name}}
 							</td>
 							<td class="text-nowrap">
-								{{ human_date_time($q->start_time) }}
+								{{ human_date_time($q->start_time, 'H:i:s') }}
 							</td>
 							<td>
 
