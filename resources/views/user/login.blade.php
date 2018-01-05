@@ -12,13 +12,27 @@
 		</div>
 		<div class="col-md-9">
 			<div class="intro">
-				<p>A gateway to curated, distributed databases containing "Next Generation" sequence data from immune responses available for exploration, analysis, and download.</p> 
+				<p>A gateway to curated, distributed databases containing "Next Generation" sequence data from immune responses available for exploration, analysis, and download.</p>
 			</div>
 		</div>
 	</div>
 
 	<div class="row login_main">
+
 		<div class="col-md-3 login-box">
+
+			<div class="panel panel-warning">
+				<div class="panel-heading">
+					<h3 class="panel-title">Beta version</h3>
+				</div>
+				<div class="panel-body">
+					<p class="small">
+						We are still working on performance, fine-tuning the interface and adding new data.<br>
+						Full release: February 2018. 
+					</p>
+				</div>
+			</div>
+
 			<div class="panel panel-default">
 				<div class="panel-body">
 					{{ Form::open(array('role' => 'form')) }}
