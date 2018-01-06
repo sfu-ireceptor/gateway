@@ -6,6 +6,8 @@ use ZipArchive;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
+use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
 
 class RestService extends Model
 {
@@ -571,39 +573,69 @@ class RestService extends Model
         Log::info('Start node query ' . $rs->url . $path . ' with POST params:');
         Log::info($params);
         $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rs, $path, $params, $filePath);
-        try {
-            $response = $client->request('POST', $path, $options);
-        } catch (\ClientException $exception) {
-            $response = $exception->getResponse()->getBody()->getContents();
-            Log::error($response);
-            QueryLog::end_rest_service_query($query_log_id, 'error', $response);
 
-            $t['status'] = 'error';
-            $t['error_message'] = $response;
+        $promise = $client->requestAsync('POST', $path, $options)->then(
+                        function (ResponseInterface $response) use ($query_log_id, $filePath, $returnArray, $t) {
+                            QueryLog::end_rest_service_query($query_log_id);
+                            Log::info('End query - success');
 
-            return $t;
-        } catch (\Exception $exception) {
-            $response = $exception->getMessage();
-            Log::error($response);
-            QueryLog::end_rest_service_query($query_log_id, 'error', $response);
+                            if ($filePath == '') {
+                                // return object generated from json response
+                                $json = $response->getBody();
+                                $obj = json_decode($json, $returnArray);
+                                $t['data'] = $obj;
 
-            $t['status'] = 'error';
-            $t['error_message'] = $response;
+                                return $t;
+                            }
+                        },
+                        function (RequestException $exception) use ($query_log_id, $t) {
+                            $response = $exception->getMessage();
+                            Log::error($response);
+                            QueryLog::end_rest_service_query($query_log_id, 'error', $response);
 
-            return $t;
-        }
+                            $t['status'] = 'error';
+                            $t['error_message'] = $response;
 
-        QueryLog::end_rest_service_query($query_log_id);
-        Log::info('End query - success');
+                            return $t;
+                        }
+                    );
+        
+        $t = $promise->wait();
+        return $t;
 
-        if ($filePath == '') {
-            // return object generated from json response
-            $json = $response->getBody();
-            $obj = json_decode($json, $returnArray);
-            // dd($obj);
-            $t['data'] = $obj;
+        // try {
+        //     $response = $client->request('POST', $path, $options);
+        // } catch (\ClientException $exception) {
+        //     $response = $exception->getResponse()->getBody()->getContents();
+        //     Log::error($response);
+        //     QueryLog::end_rest_service_query($query_log_id, 'error', $response);
 
-            return $t;
-        }
+        //     $t['status'] = 'error';
+        //     $t['error_message'] = $response;
+
+        //     return $t;
+        // } catch (\Exception $exception) {
+        //     $response = $exception->getMessage();
+        //     Log::error($response);
+        //     QueryLog::end_rest_service_query($query_log_id, 'error', $response);
+
+        //     $t['status'] = 'error';
+        //     $t['error_message'] = $response;
+
+        //     return $t;
+        // }
+
+        // QueryLog::end_rest_service_query($query_log_id);
+        // Log::info('End query - success');
+
+        // if ($filePath == '') {
+        //     // return object generated from json response
+        //     $json = $response->getBody();
+        //     $obj = json_decode($json, $returnArray);
+        //     // dd($obj);
+        //     $t['data'] = $obj;
+
+        //     return $t;
+        // }
     }
 }
