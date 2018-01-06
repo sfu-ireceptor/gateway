@@ -8,6 +8,7 @@ use App\Sample;
 use App\FieldName;
 use Carbon\Carbon;
 use App\RestService;
+use GuzzleHttp\Client;
 use App\SequenceColumnName;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -16,10 +17,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Exception\RequestException;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class TestController extends Controller
 {
@@ -34,7 +34,7 @@ class TestController extends Controller
     public function getIndex()
     {
         $client = new Client();
-        $v = "o";
+        $v = 'o';
 
         $p1 = $client->getAsync('http://loripsum.net/api')->then(
             function (ResponseInterface $res) use ($v) {
@@ -42,7 +42,8 @@ class TestController extends Controller
                 $v = 'x';
                 echo $res->getStatusCode() . "\n";
                 echo $res->getBody();
-                return "jjjjjjjj";
+
+                return 'jjjjjjjj';
             }, function (RequestException $e) {
                 echo $e->getMessage() . "\n";
                 echo $e->getRequest()->getMethod();
@@ -60,12 +61,10 @@ class TestController extends Controller
             }
         );
 
-        echo "aaA";
+        echo 'aaA';
         echo $p1->wait();
         $p2->wait();
-        echo "bb";
-
-
+        echo 'bb';
 
 //         // $data = ['project_id' => 2, 'subject_id' => 3, 'test' => 4, 'test2' => ''];
 

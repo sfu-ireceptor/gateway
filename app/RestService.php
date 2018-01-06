@@ -6,8 +6,8 @@ use ZipArchive;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
-use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Exception\RequestException;
 
 class RestService extends Model
 {
@@ -599,8 +599,9 @@ class RestService extends Model
                             return $t;
                         }
                     );
-        
+
         $t = $promise->wait();
+
         return $t;
 
         // try {
