@@ -83,7 +83,6 @@ class RestService extends Model
             $response_list[] = $t;
         }
 
-
         // dd($response_list);
 
         foreach ($response_list as $t) {
@@ -278,7 +277,7 @@ class RestService extends Model
         // add username to filters
         $filters['username'] = $username;
         $filters['ir_username'] = $username;
-        
+
         $rs_promise_list = [];
         foreach (self::findEnabled() as $rs) {
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
