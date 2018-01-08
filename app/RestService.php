@@ -59,28 +59,43 @@ class RestService extends Model
         $filters['ir_username'] = $username;
 
         // get samples from each service
+        $rs_promise_list = [];
         foreach (self::findEnabled() as $rs) {
-            try {
-                $uri = 'samples';
+            $uri = 'samples';
 
-                // add version prefix if not v1
-                if ($rs->version > 1) {
-                    $uri = 'v' . $rs->version . '/' . $uri;
-                }
+            // add version prefix if not v1
+            if ($rs->version > 1) {
+                $uri = 'v' . $rs->version . '/' . $uri;
+            }
 
-                // get sample data from service
-                $response = self::postRequest($rs, $uri, $filters, $query_log_id);
-                $sample_list = $response['data'];
-                //var_dump($uri); var_dump($filters); var_dump($rs); var_dump($sample_list); die();
+            // get sample data from service
+            $t = [];
+            $t['rs'] = $rs;
+            $t['promise'] = self::postRequest($rs, $uri, $filters, $query_log_id);
+            $rs_promise_list[] = $t;
+        }
 
-                // convert sample data to v2 (if necessary)
-                if ($rs->version != 2) {
-                    $sample_list = FieldName::convertObjectList($sample_list, 'ir_v' . $rs->version, 'ir_v2');
-                }
-            } catch (\Exception $e) {
-                $message = $e->getMessage();
-                Log::error($message);
-                continue;
+        // dd($promise_list);
+
+        $response_list = [];
+        foreach ($rs_promise_list as $t) {
+            $t['response'] = $t['promise']->wait();
+            $response_list[] = $t;
+        }
+
+
+        // dd($response_list);
+
+        foreach ($response_list as $t) {
+            $rs = $t['rs'];
+            $response = $t['response'];
+
+            $sample_list = $response['data'];
+            //var_dump($uri); var_dump($filters); var_dump($rs); var_dump($sample_list); die();
+
+            // convert sample data to v2 (if necessary)
+            if ($rs->version != 2) {
+                $sample_list = FieldName::convertObjectList($sample_list, 'ir_v' . $rs->version, 'ir_v2');
             }
 
             foreach ($sample_list as $sample) {
@@ -263,7 +278,8 @@ class RestService extends Model
         // add username to filters
         $filters['username'] = $username;
         $filters['ir_username'] = $username;
-
+        
+        $rs_promise_list = [];
         foreach (self::findEnabled() as $rs) {
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             if (array_key_exists($sample_id_list_key, $filters) && ! empty($filters[$sample_id_list_key])) {
@@ -276,7 +292,22 @@ class RestService extends Model
                 continue;
             }
 
-            $response = self::postRequest($rs, 'v2/sequences_summary', $filters, $query_log_id);
+            $t = [];
+            $t['rs'] = $rs;
+            $t['promise'] = self::postRequest($rs, 'v2/sequences_summary', $filters, $query_log_id);
+            $rs_promise_list[] = $t;
+        }
+
+        $response_list = [];
+        foreach ($rs_promise_list as $t) {
+            $t['response'] = $t['promise']->wait();
+            $response_list[] = $t;
+        }
+
+        foreach ($response_list as $t) {
+            $rs = $t['rs'];
+            $response = $t['response'];
+
             $obj = $response['data'];
 
             // check response format
@@ -600,43 +631,6 @@ class RestService extends Model
                         }
                     );
 
-        $t = $promise->wait();
-
-        return $t;
-
-        // try {
-        //     $response = $client->request('POST', $path, $options);
-        // } catch (\ClientException $exception) {
-        //     $response = $exception->getResponse()->getBody()->getContents();
-        //     Log::error($response);
-        //     QueryLog::end_rest_service_query($query_log_id, 'error', $response);
-
-        //     $t['status'] = 'error';
-        //     $t['error_message'] = $response;
-
-        //     return $t;
-        // } catch (\Exception $exception) {
-        //     $response = $exception->getMessage();
-        //     Log::error($response);
-        //     QueryLog::end_rest_service_query($query_log_id, 'error', $response);
-
-        //     $t['status'] = 'error';
-        //     $t['error_message'] = $response;
-
-        //     return $t;
-        // }
-
-        // QueryLog::end_rest_service_query($query_log_id);
-        // Log::info('End query - success');
-
-        // if ($filePath == '') {
-        //     // return object generated from json response
-        //     $json = $response->getBody();
-        //     $obj = json_decode($json, $returnArray);
-        //     // dd($obj);
-        //     $t['data'] = $obj;
-
-        //     return $t;
-        // }
+        return $promise;
     }
 }
