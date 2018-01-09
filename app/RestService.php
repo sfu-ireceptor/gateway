@@ -20,7 +20,6 @@ class RestService extends Model
     public static function findEnabled($fieldList = null)
     {
         $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get($fieldList);
-
         return $l;
     }
 
@@ -68,29 +67,26 @@ class RestService extends Model
                 $uri = 'v' . $rs->version . '/' . $uri;
             }
 
-            // get sample data from service
+            // start samples request to service
             $t = [];
             $t['rs'] = $rs;
             $t['promise'] = self::postRequest($rs, $uri, $filters, $query_log_id);
             $rs_promise_list[] = $t;
         }
 
-        // dd($promise_list);
-
+        // wait for all requests to finish
         $response_list = [];
         foreach ($rs_promise_list as $t) {
             $t['response'] = $t['promise']->wait();
             $response_list[] = $t;
         }
 
-        // dd($response_list);
-
+        // process returned data
         foreach ($response_list as $t) {
             $rs = $t['rs'];
             $response = $t['response'];
 
             $sample_list = $response['data'];
-            //var_dump($uri); var_dump($filters); var_dump($rs); var_dump($sample_list); die();
 
             // convert sample data to v2 (if necessary)
             if ($rs->version != 2) {
@@ -291,18 +287,21 @@ class RestService extends Model
                 continue;
             }
 
+            // start sequence request to service
             $t = [];
             $t['rs'] = $rs;
             $t['promise'] = self::postRequest($rs, 'v2/sequences_summary', $filters, $query_log_id);
             $rs_promise_list[] = $t;
         }
 
+        // wait for all requests to finish
         $response_list = [];
         foreach ($rs_promise_list as $t) {
             $t['response'] = $t['promise']->wait();
             $response_list[] = $t;
         }
 
+        // process returned data
         foreach ($response_list as $t) {
             $rs = $t['rs'];
             $response = $t['response'];
@@ -430,7 +429,6 @@ class RestService extends Model
                     }
                 }
             }
-            //var_dump($study_tree); die();
             $rs_data['total_samples'] = count($obj->summary);
             $rs_data['total_labs'] = count($lab_list);
             $rs_data['total_studies'] = count($study_list);
@@ -552,6 +550,7 @@ class RestService extends Model
         return $sequence_data;
     }
 
+    // send POST request to a given service
     public static function postRequest($rs, $path, $params, $gw_query_log_id, $filePath = '', $returnArray = false)
     {
         $defaults = [];
@@ -600,7 +599,7 @@ class RestService extends Model
         $t['data'] = [];
 
         // execute request
-        Log::info('Start node query ' . $rs->url . $path . ' with POST params:');
+        Log::info('Start node query: ' . $rs->url . $path . '. with POST params:');
         Log::info($params);
         $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rs, $path, $params, $filePath);
 
