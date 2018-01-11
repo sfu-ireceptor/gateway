@@ -472,9 +472,11 @@ class RestService extends Model
 
     public static function sequencesCSV($filters, $username, $query_log_id)
     {
-        $storage_folder = storage_path() . '/app/public/';
+        // allow more time than usual for this request 
+        set_time_limit(config('ireceptor.gateway_file_request_timeout'));          
 
         // create receiving folder
+        $storage_folder = storage_path() . '/app/public/';
         $time_str = date('Y-m-d_Hi', time());
         $folder_name = 'ir_' . $time_str . '_' . uniqid();
         $folder_path = $storage_folder . $folder_name;
@@ -566,7 +568,13 @@ class RestService extends Model
         $defaults = [];
         $defaults['base_uri'] = $rs->url;
         $defaults['verify'] = false;    // accept self-signed SSL certificates
-        $defaults['timeout'] = config('ireceptor.service_request_timeout');
+        if($file_path = '') {
+            $defaults['timeout'] = config('ireceptor.service_request_timeout');
+        }
+        else {
+            $defaults['timeout'] = config('ireceptor.service_file_request_timeout');
+        }
+
         $client = new \GuzzleHttp\Client($defaults);
 
         // build request
