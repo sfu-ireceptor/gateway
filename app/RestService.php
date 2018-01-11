@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
 use Psr\Http\Message\ResponseInterface;
-use GuzzleHttp\Exception\RequestException;
 
 class RestService extends Model
 {
@@ -20,6 +19,7 @@ class RestService extends Model
     public static function findEnabled($fieldList = null)
     {
         $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get($fieldList);
+
         return $l;
     }
 
@@ -500,7 +500,7 @@ class RestService extends Model
             }
 
             $file_path = $folder_path . '/' . $rs->id . '.csv';
-            
+
             // start request to service
             $t = [];
             $t['rs'] = $rs;
@@ -618,9 +618,9 @@ class RestService extends Model
                                 $t['data'] = $obj;
 
                                 return $t;
-                            }
-                            else {
+                            } else {
                                 $t['file_path'] = $file_path;
+
                                 return $t;
                             }
                         },
