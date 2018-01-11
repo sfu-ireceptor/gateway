@@ -38,9 +38,9 @@ class TestController extends Controller
         echo storage_path();
         die();
 
-$client = new \GuzzleHttp\Client();
+        $client = new \GuzzleHttp\Client();
 
-$promise1 = $client->getAsync('http://loripsum.net/api')->then(
+        $promise1 = $client->getAsync('http://loripsum.net/api')->then(
     function ($response) {
         return $response->getBody();
     }, function ($exception) {
@@ -48,7 +48,7 @@ $promise1 = $client->getAsync('http://loripsum.net/api')->then(
     }
 );
 
-$promise2 = $client->getAsync('http://loripsum.net/api')->then(
+        $promise2 = $client->getAsync('http://loripsum.net/api')->then(
     function ($response) {
         return $response->getBody();
     }, function ($exception) {
@@ -56,13 +56,11 @@ $promise2 = $client->getAsync('http://loripsum.net/api')->then(
     }
 );
 
-$response1 = $promise1->wait();
-$response2 = $promise2->wait();
+        $response1 = $promise1->wait();
+        $response2 = $promise2->wait();
 
-echo $response1;
-echo $response2;
-
-
+        echo $response1;
+        echo $response2;
 
         // $client = new Client();
         // $v = 'o';
