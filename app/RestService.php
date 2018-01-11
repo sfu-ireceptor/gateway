@@ -6,8 +6,8 @@ use ZipArchive;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
-use Psr\Http\Message\ResponseInterface;
 use Illuminate\Support\Facades\Storage;
+use Psr\Http\Message\ResponseInterface;
 
 class RestService extends Model
 {
@@ -472,8 +472,8 @@ class RestService extends Model
 
     public static function sequencesCSV($filters, $username, $query_log_id)
     {
-        // allow more time than usual for this request 
-        set_time_limit(config('ireceptor.gateway_file_request_timeout'));          
+        // allow more time than usual for this request
+        set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
         // create receiving folder
         $storage_folder = storage_path() . '/app/public/';
@@ -524,7 +524,7 @@ class RestService extends Model
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::CREATE);
         foreach ($response_list as $t) {
-            $file_path = $t['response']['file_path'];            
+            $file_path = $t['response']['file_path'];
             $zip->addFile($file_path, basename($file_path));
         }
 
@@ -532,7 +532,7 @@ class RestService extends Model
 
         // delete CSV files
         foreach ($response_list as $t) {
-            $file_path = $t['response']['file_path']; 
+            $file_path = $t['response']['file_path'];
             File::delete($file_path);
         }
 
@@ -540,6 +540,7 @@ class RestService extends Model
         rmdir($folder_path);
 
         $zipPublicPath = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
+
         return $zipPublicPath;
     }
 
@@ -568,10 +569,9 @@ class RestService extends Model
         $defaults = [];
         $defaults['base_uri'] = $rs->url;
         $defaults['verify'] = false;    // accept self-signed SSL certificates
-        if($file_path = '') {
+        if ($file_path = '') {
             $defaults['timeout'] = config('ireceptor.service_request_timeout');
-        }
-        else {
+        } else {
             $defaults['timeout'] = config('ireceptor.service_file_request_timeout');
         }
 
