@@ -20,5 +20,8 @@ php artisan migrate --force
 # seed tables
 php artisan db:seed --force
 
+# create symbolic link from public/storage to storage/app/public 
+php artisan -q storage:link
+
 # stop maintenance mode
 php artisan up

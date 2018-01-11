@@ -471,64 +471,68 @@ class RestService extends Model
 
     public static function sequencesCSV($filters, $username, $query_log_id)
     {
-        // directory
-        $time_str = date('Y-m-d_G-i-s', time());
-        $directory_path = $time_str . '_' . uniqid();
-        $old = umask(0);
-        File::makeDirectory(public_path() . '/data/' . $directory_path, 0777, true, true);
-        umask($old);
+        $storage_folder = storage_path() . '/app/public/';
 
-        // file
-        $filePath = '/data/' . $directory_path . '/data.csv';
-        $systemFilePath = public_path() . $filePath;
+        // create receiving folder
+        $time_str = date('Y-m-d_Hi', time());
+        $folder_name = 'ir_' . $time_str . '_' . uniqid();
+        $folder_path = $storage_folder . $folder_name;
+        File::makeDirectory($folder_path, 0777, true, true);
 
         // add username to filters
         $filters['output'] = 'csv';
         $filters['username'] = $username;
+        $filters['ir_username'] = $username;
 
         // get csv data and write it to file
-        $csv_header_written = false;
+        $rs_promise_list = [];
         foreach (self::findEnabled() as $rs) {
-            Log::info('RS: ' . $rs->id);
-
-            $filters['csv_header'] = false;
-            if (! $csv_header_written) {
-                $filters['csv_header'] = true;
-            }
-
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             if (array_key_exists($sample_id_list_key, $filters) && ! empty($filters[$sample_id_list_key])) {
                 // remove REST service id
                 // ir_project_sample_id_list_2 -> ir_project_sample_id_list
                 unset($filters['ir_project_sample_id_list']);
                 $filters['ir_project_sample_id_list'] = $filters[$sample_id_list_key];
+                unset($filters[$sample_id_list_key]);
             } else {
                 // if no sample id for this REST service, don't query it.
                 continue;
             }
 
-            Log::info('doing req to RS with params:');
-            Log::info($filters);
-
-            self::postRequest($rs, 'sequences', $filters, $query_log_id, $systemFilePath);
-
-            $csv_header_written = true;
+            $file_path = $folder_path . '/' . $rs->id . '.csv';
+            
+            // start request to service
+            $t = [];
+            $t['rs'] = $rs;
+            $t['promise'] = self::postRequest($rs, 'sequences', $filters, $query_log_id, $file_path);
+            $rs_promise_list[] = $t;
         }
 
-        // zip file
-        $zipSystemFilePath = $systemFilePath . '.zip';
+        // wait for all requests to finish
+        $response_list = [];
+        foreach ($rs_promise_list as $t) {
+            $t['response'] = $t['promise']->wait();
+            $response_list[] = $t;
+        }
+
+        // zip files
+        $zipPath = $folder_path . '.zip';
         $zip = new ZipArchive();
-        $zip->open($zipSystemFilePath, ZipArchive::CREATE);
-        $zip->addFile($systemFilePath, 'data.csv');
+        $zip->open($zipPath, ZipArchive::CREATE);
+
+        foreach ($response_list as $t) {
+            $file_path = $t['response']['file_path'];
+            $zip->addFile($file_path, basename($file_path));
+        }
+
         $zip->close();
-        $zipFilePath = $filePath . '.zip';
+        $zipPublicPath = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
+        Log::info('$zipPublicPath=' . $zipPublicPath);
 
         // delete original file
-        File::delete($systemFilePath);
+        // File::delete($systemFilePath);
 
-        Log::info('$zipFilePath=' . $zipFilePath);
-
-        return $zipFilePath;
+        return $zipPublicPath;
     }
 
     public static function search($sample_filters, $sequence_filters, $username, $query_log_id)
@@ -551,7 +555,7 @@ class RestService extends Model
     }
 
     // send POST request to a given service
-    public static function postRequest($rs, $path, $params, $gw_query_log_id, $filePath = '', $returnArray = false)
+    public static function postRequest($rs, $path, $params, $gw_query_log_id, $file_path = '', $returnArray = false)
     {
         $defaults = [];
         $defaults['base_uri'] = $rs->url;
@@ -583,15 +587,15 @@ class RestService extends Model
             $options['form_params'] = $params;
         }
 
-        if ($filePath != '') {
-            $dirPath = dirname($filePath);
+        if ($file_path != '') {
+            $dirPath = dirname($file_path);
             if (! is_dir($dirPath)) {
                 Log::info('Creating directory ' . $dirPath);
                 mkdir($dirPath, 0755, true);
             }
 
-            $options['sink'] = fopen($filePath, 'a');
-            Log::info('Guzzle: saving to ' . $filePath);
+            $options['sink'] = fopen($file_path, 'a');
+            Log::info('Guzzle: saving to ' . $file_path);
         }
 
         $t = [];
@@ -601,14 +605,13 @@ class RestService extends Model
         // execute request
         Log::info('Start node query: ' . $rs->url . $path . '. with POST params:');
         Log::info($params);
-        $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rs, $path, $params, $filePath);
+        $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rs, $path, $params, $file_path);
 
         $promise = $client->requestAsync('POST', $path, $options)->then(
-                        function (ResponseInterface $response) use ($query_log_id, $filePath, $returnArray, $t) {
+                        function (ResponseInterface $response) use ($query_log_id, $file_path, $returnArray, $t) {
                             QueryLog::end_rest_service_query($query_log_id);
-                            Log::info('End query - success');
 
-                            if ($filePath == '') {
+                            if ($file_path == '') {
                                 // return object generated from json response
                                 $json = $response->getBody();
                                 $obj = json_decode($json, $returnArray);
@@ -616,8 +619,12 @@ class RestService extends Model
 
                                 return $t;
                             }
+                            else {
+                                $t['file_path'] = $file_path;
+                                return $t;
+                            }
                         },
-                        function (RequestException $exception) use ($query_log_id, $t) {
+                        function ($exception) use ($query_log_id, $t) {
                             $response = $exception->getMessage();
                             Log::error($response);
                             QueryLog::end_rest_service_query($query_log_id, 'error', $response);
