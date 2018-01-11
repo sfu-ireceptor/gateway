@@ -515,22 +515,26 @@ class RestService extends Model
             $response_list[] = $t;
         }
 
-        // zip files
+        // zip CSV files
         $zipPath = $folder_path . '.zip';
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::CREATE);
-
         foreach ($response_list as $t) {
-            $file_path = $t['response']['file_path'];
+            $file_path = $t['response']['file_path'];            
             $zip->addFile($file_path, basename($file_path));
         }
 
         $zip->close();
+
+        // delete CSV files
+        foreach ($response_list as $t) {
+            $file_path = $t['response']['file_path']; 
+            File::delete($file_path);
+        }
+
         $zipPublicPath = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
         Log::info('$zipPublicPath=' . $zipPublicPath);
 
-        // delete original file
-        // File::delete($systemFilePath);
 
         return $zipPublicPath;
     }
