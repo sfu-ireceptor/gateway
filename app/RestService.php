@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
 use Psr\Http\Message\ResponseInterface;
+use Illuminate\Support\Facades\Storage;
 
 class RestService extends Model
 {
@@ -517,6 +518,7 @@ class RestService extends Model
 
         // zip CSV files
         $zipPath = $folder_path . '.zip';
+        Log::info('zipping to ' . $zipPath);
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::CREATE);
         foreach ($response_list as $t) {
@@ -532,10 +534,10 @@ class RestService extends Model
             File::delete($file_path);
         }
 
+        // delete folder
+        rmdir($folder_path);
+
         $zipPublicPath = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
-        Log::info('$zipPublicPath=' . $zipPublicPath);
-
-
         return $zipPublicPath;
     }
 
