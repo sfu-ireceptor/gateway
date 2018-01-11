@@ -8,7 +8,6 @@ use App\Sample;
 use App\FieldName;
 use Carbon\Carbon;
 use App\RestService;
-use GuzzleHttp\Client;
 use App\SequenceColumnName;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -17,8 +16,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Process\Process;
-use Psr\Http\Message\ResponseInterface;
-use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class TestController extends Controller
@@ -33,38 +30,72 @@ class TestController extends Controller
 
     public function getIndex()
     {
-        $client = new Client();
-        $v = 'o';
+        // echo base_path();
+        $s = '/var/www/ireceptor_gateway/storage/app/public/2018-01-10_20-56-11_5a567debd178f/3.csv';
+        echo str_after($s, storage_path('app/public'));
+        die();
 
-        $p1 = $client->getAsync('http://loripsum.net/api')->then(
-            function (ResponseInterface $res) use ($v) {
-                echo $v . '01';
-                $v = 'x';
-                echo $res->getStatusCode() . "\n";
-                echo $res->getBody();
+        echo storage_path();
+        die();
 
-                return 'jjjjjjjj';
-            }, function (RequestException $e) {
-                echo $e->getMessage() . "\n";
-                echo $e->getRequest()->getMethod();
-            }
-        );
+$client = new \GuzzleHttp\Client();
 
-        $p2 = $client->getAsync('http://loripsum.net/api')->then(
-            function (ResponseInterface $res) use ($v) {
-                echo $v . '02';
-                $v = 'y';
-                echo $res->getStatusCode() . "\n";
-            }, function (RequestException $e) {
-                echo $e->getMessage() . "\n";
-                echo $e->getRequest()->getMethod();
-            }
-        );
+$promise1 = $client->getAsync('http://loripsum.net/api')->then(
+    function ($response) {
+        return $response->getBody();
+    }, function ($exception) {
+        return $exception->getMessage();
+    }
+);
 
-        echo 'aaA';
-        echo $p1->wait();
-        $p2->wait();
-        echo 'bb';
+$promise2 = $client->getAsync('http://loripsum.net/api')->then(
+    function ($response) {
+        return $response->getBody();
+    }, function ($exception) {
+        return $exception->getMessage();
+    }
+);
+
+$response1 = $promise1->wait();
+$response2 = $promise2->wait();
+
+echo $response1;
+echo $response2;
+
+
+
+        // $client = new Client();
+        // $v = 'o';
+
+        // $p1 = $client->getAsync('http://loripsum.net/api')->then(
+        //     function (ResponseInterface $res) use ($v) {
+        //         echo $v . '01';
+        //         $v = 'x';
+        //         echo $res->getStatusCode() . "\n";
+        //         echo $res->getBody();
+
+        //         return 'jjjjjjjj';
+        //     }, function (RequestException $e) {
+        //         echo $e->getMessage() . "\n";
+        //         echo $e->getRequest()->getMethod();
+        //     }
+        // );
+
+        // $p2 = $client->getAsync('http://loripsum.net/api')->then(
+        //     function (ResponseInterface $res) use ($v) {
+        //         echo $v . '02';
+        //         $v = 'y';
+        //         echo $res->getStatusCode() . "\n";
+        //     }, function (RequestException $e) {
+        //         echo $e->getMessage() . "\n";
+        //         echo $e->getRequest()->getMethod();
+        //     }
+        // );
+
+        // echo 'aaA';
+        // echo $p1->wait();
+        // $p2->wait();
+        // echo 'bb';
 
 //         // $data = ['project_id' => 2, 'subject_id' => 3, 'test' => 4, 'test2' => ''];
 
