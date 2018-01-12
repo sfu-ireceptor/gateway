@@ -42,7 +42,7 @@ class QueryLog extends Model
             $t['params'] = $params;
         }
 
-        if(isset($t['params']['csv'])) {
+        if (isset($t['params']['csv'])) {
             $t['file'] = 'csv';
         }
 
@@ -100,7 +100,7 @@ class QueryLog extends Model
 
         $t['params'] = $params;
 
-        if(isset($params['output'])){
+        if (isset($params['output'])) {
             $t['file'] = $params['output'];
         }
 
