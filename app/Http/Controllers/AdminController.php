@@ -226,6 +226,8 @@ class AdminController extends Controller
 
         $data['service_request_timeout'] = config('ireceptor.service_request_timeout');
         $data['gateway_request_timeout'] = config('ireceptor.gateway_request_timeout');
+        $data['service_file_request_timeout'] = config('ireceptor.service_file_request_timeout');
+        $data['gateway_file_request_timeout'] = config('ireceptor.gateway_file_request_timeout');
 
         return view('queries', $data);
     }
