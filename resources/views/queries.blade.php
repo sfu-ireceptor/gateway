@@ -7,7 +7,7 @@
 	<h1>User Queries</h1>
 
 	<div class="row">
-		<div class="col-md-9">
+		<div class="col-md-10">
 
 			<table class="table table-bordered table-striped table-condensed">
 				<thead>
@@ -15,6 +15,7 @@
 						<th>Start</th>
 						<th>URL</th>
 						<th>Type</th>
+						<th>Result Size</th>
 						<th>Duration</th>
 						<th>User</th>
 					</tr>
@@ -62,6 +63,13 @@
 									({{ $q->file }})
 								@endisset
 							</td>
+							<td>
+								@if ($q->file)
+									{{ human_filesize($q->result_size) }}
+								@else
+									{{ $q->result_size }}
+								@endif								
+							</td>
 							<td class="{{ $q->status == 'running' ? 'warning' : ''}}{{ $q->status == 'error' ? 'danger' : ''}}" title='{{ $q->message }}'>
 								@if ($q->status == 'done')
 									{{ $q->duration <= 5 ? '' : secondsToTime($q->duration) }}
@@ -80,7 +88,7 @@
 			</table>
 
 		</div>
-		<div class="col-md-3">
+		<div class="col-md-2 small">
 			<h2>Notes</h2>
 
 			@if(! $all)
@@ -95,8 +103,8 @@
 
 			<h3>Service timeouts</h3>
 			<p>
-				Waiting for some JSON: <strong>{{ $service_request_timeout }} sec</strong><br>
-				Waiting for a file: <strong>{{ $service_file_request_timeout }} sec</strong>
+				JSON request: <strong>{{ $service_request_timeout }} sec</strong><br>
+				File request: <strong>{{ $service_file_request_timeout }} sec</strong>
 			</p>
 		</div>
 	</div>

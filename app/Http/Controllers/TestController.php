@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Illuminate\Support\Facades\Storage;
 
 class TestController extends Controller
 {
@@ -30,6 +31,9 @@ class TestController extends Controller
 
     public function getIndex()
     {
+        echo human_filesize(filesize('/var/www/ireceptor_gateway/storage/app/public/ir_2018-01-12_0004_5a57fb8312b90.zip'));
+        die();
+
         // echo base_path();
         $s = '/var/www/ireceptor_gateway/storage/app/public/2018-01-10_20-56-11_5a567debd178f/3.csv';
         echo str_after($s, storage_path('app/public'));

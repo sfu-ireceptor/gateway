@@ -91,6 +91,11 @@ class SampleController extends Controller
         $query_log_id = $request->get('query_log_id');
         $sample_data = RestService::samples($params, $username, $query_log_id);
 
+        // log result
+        $query_log = QueryLog::find($query_log_id);
+        $query_log->result_size = $sample_data['total_filtered_samples'];
+        $query_log->save();
+
         $data['sample_list'] = $sample_data['items'];
         $data['rest_service_list'] = $sample_data['rs_list'];
         $data['sample_list_json'] = json_encode($sample_data['items']);

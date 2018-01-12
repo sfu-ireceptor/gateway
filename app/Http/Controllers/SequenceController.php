@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Query;
+use App\QueryLog;
 use App\System;
 use App\Bookmark;
 use App\RestService;
@@ -53,7 +54,13 @@ class SequenceController extends Controller
 
         // if csv
         if (isset($filters['csv'])) {
-            $csvFilePath = RestService::sequencesCSV($filters, $username, $query_log_id);
+            $t = RestService::sequencesCSV($filters, $username, $query_log_id);
+            $csvFilePath = $t['public_path'];
+
+            // log result
+            $query_log = QueryLog::find($query_log_id);
+            $query_log->result_size = $t['size'];
+            $query_log->save();
 
             return redirect($csvFilePath);
         }
@@ -62,13 +69,16 @@ class SequenceController extends Controller
 
         // sequence list
         $sequence_data = RestService::sequences_summary($filters, $username, $query_log_id);
-        // var_dump($sequence_data);die();
+        
+        // log result
+        $query_log = QueryLog::find($query_log_id);
+        $query_log->result_size = $sequence_data['total_filtered_sequences'];
+        $query_log->save();
 
         // summary for each REST service
         $rs_list = $sequence_data['rs_list'];
         foreach ($rs_list as $rs) {
             $summary = $rs['summary'];
-            // var_dump($summary);die();
         }
 
         $data['sequence_list'] = $sequence_data['items'];

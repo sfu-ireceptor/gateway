@@ -182,3 +182,13 @@ if (! function_exists('secondsToTime')) {
         return implode(' ', $timeParts);
     }
 }
+
+if (! function_exists('human_filesize')) {
+    function human_filesize($bytes, $decimals = 1) {
+        if($bytes == null)
+            return '';
+        $sz = 'BKMGTP';
+        $factor = floor((strlen($bytes) - 1) / 3);
+        return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
+    }
+}

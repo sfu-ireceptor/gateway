@@ -541,7 +541,11 @@ class RestService extends Model
 
         $zipPublicPath = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
 
-        return $zipPublicPath;
+        $t = [];
+        $t['size'] = filesize($zipPath);
+        $t['system_path'] = $zipPath;
+        $t['public_path'] = $zipPublicPath;
+        return $t;
     }
 
     public static function search($sample_filters, $sequence_filters, $username, $query_log_id)
