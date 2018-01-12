@@ -641,7 +641,7 @@ class RestService extends Model
                                 QueryLog::end_rest_service_query($query_log_id, filesize($file_path));
 
                                 $t['file_path'] = $file_path;
-                                
+
                                 return $t;
                             }
                         },
