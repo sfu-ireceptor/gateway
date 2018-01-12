@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Query;
 use App\RestService;
 use Illuminate\Http\Request;
+use App\QueryLog;
 
 class SampleController extends Controller
 {
