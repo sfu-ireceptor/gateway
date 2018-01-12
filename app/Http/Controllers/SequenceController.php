@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Query;
-use App\QueryLog;
 use App\System;
 use App\Bookmark;
+use App\QueryLog;
 use App\RestService;
 use App\SequenceColumnName;
 use Illuminate\Http\Request;
@@ -69,7 +69,7 @@ class SequenceController extends Controller
 
         // sequence list
         $sequence_data = RestService::sequences_summary($filters, $username, $query_log_id);
-        
+
         // log result
         $query_log = QueryLog::find($query_log_id);
         $query_log->result_size = $sequence_data['total_filtered_sequences'];

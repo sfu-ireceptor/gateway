@@ -545,6 +545,7 @@ class RestService extends Model
         $t['size'] = filesize($zipPath);
         $t['system_path'] = $zipPath;
         $t['public_path'] = $zipPublicPath;
+
         return $t;
     }
 
