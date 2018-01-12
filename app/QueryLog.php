@@ -125,7 +125,7 @@ class QueryLog extends Model
         return $ql->id;
     }
 
-    public static function end_rest_service_query($query_log_id, $status = 'done', $message = null)
+    public static function end_rest_service_query($query_log_id, $result_size = '', $status = 'done', $message = null)
     {
         $ql = self::find($query_log_id);
 
@@ -139,6 +139,8 @@ class QueryLog extends Model
 
         $ql->status = $status;
         $ql->message = $message;
+
+        $ql->result_size = $result_size;
 
         $ql->save();
     }

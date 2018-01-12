@@ -628,9 +628,9 @@ class RestService extends Model
 
         $promise = $client->requestAsync('POST', $path, $options)->then(
                         function (ResponseInterface $response) use ($query_log_id, $file_path, $returnArray, $t) {
-                            QueryLog::end_rest_service_query($query_log_id);
-
                             if ($file_path == '') {
+                                QueryLog::end_rest_service_query($query_log_id);
+
                                 // return object generated from json response
                                 $json = $response->getBody();
                                 $obj = json_decode($json, $returnArray);
@@ -638,15 +638,17 @@ class RestService extends Model
 
                                 return $t;
                             } else {
-                                $t['file_path'] = $file_path;
+                                QueryLog::end_rest_service_query($query_log_id, filesize($file_path));
 
+                                $t['file_path'] = $file_path;
+                                
                                 return $t;
                             }
                         },
                         function ($exception) use ($query_log_id, $t) {
                             $response = $exception->getMessage();
                             Log::error($response);
-                            QueryLog::end_rest_service_query($query_log_id, 'error', $response);
+                            QueryLog::end_rest_service_query($query_log_id, '', $result_size, 'error', $response);
 
                             $t['status'] = 'error';
                             $t['error_message'] = $response;

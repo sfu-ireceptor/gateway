@@ -136,6 +136,7 @@
 							<td>
 								@if ($q->file)
 									{{ $q->file }}
+									{{ human_filesize($q->result_size) }}
 								@else
 								    JSON
 								@endif
