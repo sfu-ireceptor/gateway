@@ -246,8 +246,6 @@ class SequenceController extends Controller
             $sample_filters['organism'] = $filters['organism'];
         }
 
-        // $sample_filters['organism'] = $filters['organism'];
-
         $sequence_filters = [];
         if (isset($filters['junction_aa'])) {
             $sequence_filters['junction_aa'] = $filters['junction_aa'];
@@ -255,13 +253,16 @@ class SequenceController extends Controller
 
         $query_log_id = $request->get('query_log_id');
         $sequence_data = RestService::search($sample_filters, $sequence_filters, $username, $query_log_id);
-        // dd($sequence_data);
+
+        // log result
+        $query_log = QueryLog::find($query_log_id);
+        $query_log->result_size = $sequence_data['total_filtered_sequences'];
+        $query_log->save();
 
         // summary for each REST service
         $rs_list = $sequence_data['rs_list'];
         foreach ($rs_list as $rs) {
             $summary = $rs['summary'];
-            // var_dump($summary);die();
         }
 
         $data['sequence_list'] = $sequence_data['items'];
