@@ -11,6 +11,7 @@
 			<tr>
 				<th>Start</th>
 				<th>URL</th>
+				<th>Type</th>
 				<th>Duration</th>
 				<th>User</th>
 				<th></th>
@@ -49,6 +50,12 @@
 						</div>
 					@endif
 				</td>
+				<td>
+					{{ $q->type }}
+					@isset($q->file)
+						({{ $q->file }})
+					@endisset
+				</td>
 				<td class="{{ $q->status == 'running' ? 'warning' : ''}}{{ $q->status == 'error' ? 'danger' : ''}}" title='{{ $q->message }}'>
 					@if ($q->status == 'done')
 						{{ $q->duration <= 5 ? '' : secondsToTime($q->duration) }}
@@ -77,6 +84,7 @@
 						<th>Service</th>
 						<th>Start</th>
 						<th>URL</th>
+						<th>Returns</th>
 						<th>Duration</th>
 					</tr>
 				</thead>
@@ -116,6 +124,13 @@
 								  </div>
 								</div>
 
+							</td>
+							<td>
+								@if ($q->file)
+									{{ $q->file }}
+								@else
+								    JSON
+								@endif
 							</td>
 							<td class="{{ $q->status == 'running' ? 'warning' : ''}}{{ $q->status == 'error' ? 'danger' : ''}}" title='{{ $q->message }}'>
 								@if ($q->status == 'done')

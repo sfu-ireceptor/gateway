@@ -42,8 +42,14 @@ class QueryLog extends Model
             $t['params'] = $params;
         }
 
+        if(isset($t['params']['csv'])) {
+            $t['file'] = 'csv';
+        }
+
         if (str_contains($url, '/samples')) {
             $type = 'sample';
+        } elseif (str_contains($url, '/sequences-quick-search')) {
+            $type = 'combined';
         } elseif (str_contains($url, '/sequences')) {
             $type = 'sequence';
         } else {
@@ -93,6 +99,10 @@ class QueryLog extends Model
         $t['url'] = $url;
 
         $t['params'] = $params;
+
+        if(isset($params['output'])){
+            $t['file'] = $params['output'];
+        }
 
         if (str_contains($url, '/samples')) {
             $type = 'sample';
@@ -146,7 +156,7 @@ class QueryLog extends Model
 
     public static function find_node_queries($id)
     {
-        $l = static::where('parent_id', '=', $id)->orderBy('start_time', 'desc')->get();
+        $l = static::where('parent_id', '=', $id)->orderBy('_id', 'desc')->get();
 
         return $l;
     }

@@ -14,6 +14,7 @@
 					<tr>
 						<th>Start</th>
 						<th>URL</th>
+						<th>Type</th>
 						<th>Duration</th>
 						<th>User</th>
 					</tr>
@@ -54,6 +55,12 @@
 									</div>
 								@endif
 							
+							</td>
+							<td class="text-nowrap">
+								{{ $q->type }}
+								@isset($q->file)
+									({{ $q->file }})
+								@endisset
 							</td>
 							<td class="{{ $q->status == 'running' ? 'warning' : ''}}{{ $q->status == 'error' ? 'danger' : ''}}" title='{{ $q->message }}'>
 								@if ($q->status == 'done')
