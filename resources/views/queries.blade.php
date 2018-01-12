@@ -3,7 +3,7 @@
 @section('title', 'User Queries')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
 	<h1>User Queries</h1>
 
 	<div class="row">
@@ -29,7 +29,7 @@
 								<span class="minor">{{ human_date_time($q->start_time, 'H:i') }}</span>
 							</td>
 							<td>
-								<a href="/admin/queries/{{ $q->id }}" title="{{ $q->url }}">{{ str_limit($q->url, $limit = 50, $end = '‥') }}</a>
+								<a href="/admin/queries/{{ $q->id }}" title="{{ $q->url }}">{{ str_limit($q->url, $limit = 60, $end = '‥') }}</a>
 
 								@if(isset($q->params) && ! empty($q->params))
 									<!-- Button trigger modal -->
@@ -88,7 +88,7 @@
 			</table>
 
 		</div>
-		<div class="col-md-2 small">
+		<div class="col-md-2">
 			<h2>Notes</h2>
 
 			@if(! $all)
