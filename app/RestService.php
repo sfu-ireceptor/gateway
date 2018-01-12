@@ -569,7 +569,7 @@ class RestService extends Model
         $defaults = [];
         $defaults['base_uri'] = $rs->url;
         $defaults['verify'] = false;    // accept self-signed SSL certificates
-        if ($file_path = '') {
+        if ($file_path == '') {
             $defaults['timeout'] = config('ireceptor.service_request_timeout');
         } else {
             $defaults['timeout'] = config('ireceptor.service_file_request_timeout');

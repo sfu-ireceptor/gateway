@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use Jenssegers\Mongodb\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class QueryLog extends Model
 {
@@ -15,6 +16,7 @@ class QueryLog extends Model
 
     public static function start_gateway_query($request)
     {
+        Log::debug('start gateway query');
         $t = [];
 
         $now = Carbon::now();
@@ -73,6 +75,7 @@ class QueryLog extends Model
         $ql->message = $message;
 
         $ql->save();
+        Log::debug('end gateway query');
     }
 
     public static function start_rest_service_query($gw_query_log_id, $rs, $path, $params, $filePath)
