@@ -3,8 +3,8 @@
 namespace App;
 
 use Carbon\Carbon;
-use Jenssegers\Mongodb\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Jenssegers\Mongodb\Eloquent\Model;
 
 class QueryLog extends Model
 {
