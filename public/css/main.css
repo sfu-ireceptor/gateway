@@ -609,7 +609,7 @@ form.sequence_column_selector {
 }
 
 .loading_message {
-	position: absolute;
+	position: fixed;
 	left: 332px;
 	top: 154px;
 	z-index: 500;
