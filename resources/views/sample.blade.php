@@ -264,7 +264,9 @@
 																	</span>
 																@endif
 
-																 <em>{{ human_number($study['total_sequences']) }} sequences</em>
+																@if ($study['total_sequences']) > 0)
+																	<em>{{ human_number($study['total_sequences']) }} sequences</em>
+																@endif
 															</span>
 														</li>
 													@endforeach
