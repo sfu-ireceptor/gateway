@@ -76,15 +76,15 @@ class SequenceController extends Controller
         $query_log->save();
 
         // summary for each REST service
-        $rs_list = $sequence_data['rs_list'];
-        foreach ($rs_list as $rs) {
+        $rest_service_list = $sequence_data['rs_list'];
+        foreach ($rest_service_list as $rs) {
             $summary = $rs['summary'];
         }
 
         $data['sequence_list'] = $sequence_data['items'];
         $data['sample_list_json'] = json_encode($sequence_data['summary']);
-        $data['rs_list'] = $rs_list;
-        $data['rs_list_no_response'] = $sequence_data['rs_list_no_response'];
+        $data['rest_service_list'] = $rest_service_list;
+        $data['rest_service_list_no_response'] = $sequence_data['rs_list_no_response'];
 
         // Pass on the summary data from the sequence_data returned.
         $data['total_filtered_samples'] = $sequence_data['total_filtered_samples'];
@@ -260,14 +260,14 @@ class SequenceController extends Controller
         $query_log->save();
 
         // summary for each REST service
-        $rs_list = $sequence_data['rs_list'];
-        foreach ($rs_list as $rs) {
+        $rest_service_list = $sequence_data['rs_list'];
+        foreach ($rest_service_list as $rs) {
             $summary = $rs['summary'];
         }
 
         $data['sequence_list'] = $sequence_data['items'];
         $data['sample_list_json'] = json_encode($sequence_data['summary']);
-        $data['rs_list'] = $rs_list;
+        $data['rest_service_list'] = $rest_service_list;
         $data['rs_list_no_response'] = $sequence_data['rs_list_no_response'];
 
         // Pass on the summary data from the sequence_data returned.

@@ -147,11 +147,11 @@
 
 		<div class="col-md-10">
 
-			@if ( ! empty($rs_list_no_response))
+			@if ( ! empty($rest_service_list_no_response))
 				<div class="alert alert-warning" role="alert">
 					<p>Sorry, data is incomplete. No response from:</p>
 					<ul>
-						@foreach ($rs_list_no_response as $rs)
+						@foreach ($rest_service_list_no_response as $rs)
 							<li>{{ $rs->name }}</li>
 						@endforeach
 					</ul>
@@ -196,72 +196,8 @@
 						</button>
 					</p>
 
-					<!-- Modal -->
-					<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-				  		<div class="modal-dialog" role="document">
-					    	<div class="modal-content">
-					      		<div class="modal-header">
-					        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							        <h4 class="modal-title" id="myModalLabel">
-							        	{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},
-							        	{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}},
-							        	{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
-							        </h4>
-					      		</div>
-						  		<div class="modal-body">
-						        	<div id="rest_service_list">
-										<ul>
-											@foreach ($rs_list as $rs_data)
-											    <li  class="rs_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-home"}'>
-											     	<span class="node_name">{{ $rs_data['rs']->name }}</span>
-											     	<em>{{ human_number($rs_data['filtered_sequences']) }} sequences</em>
-												    <ul>
-											 			@foreach ($rs_data['study_tree'] as $lab)
-															<li class="lab_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-education"}'>
-																<span title="{{ $lab['name'] }}" class="lab_name">
-																	Lab:
-																	@isset($lab['name'])
-																	{{ str_limit($lab['name'], $limit = 64, $end = '‥') }}
-																	@endisset
-																</span>
-																@isset($lab['total_sequences'])
-																	<em>{{ human_number($lab['total_sequences']) }} sequences</em>
-																@endisset
-															    <ul>
-															    	@isset($lab['studies'])
-													 					@foreach ($lab['studies'] as $study)
-													 						<li data-jstree='{"icon":"glyphicon glyphicon-book", "disabled":true}'>
-													 							<span>
-																					Study:
-																					@if (isset($study['study_url']))
-																						<a href="{{ $study['study_url'] }}" title="{{ $study['study_title'] }}" target="_blank">
-																							{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }} (NCBI)
-																						</a>
-																					@else
-																						<span title="{{ $study['study_title'] }}">
-																							{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
-																						</span>
-																					@endif
-																					 <em>{{ human_number($study['total_sequences']) }} sequences</em>
-																				</span>
-																			</li>
-																		@endforeach
-																	@endisset
-														 		</ul>
-															</li>
-												 		@endforeach
-											 		</ul>
-											    </li>
-											@endforeach
-										</ul>
-									</div>
-						      	</div>
-						      	<div class="modal-footer">
-						        	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						      	</div>
-						    </div>
-					  	</div>
-					</div>
+					<!-- repos/labs/studies popup -->
+					@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
 
 					<div id="sequence_charts" class="charts">
 						<div class="row">
