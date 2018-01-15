@@ -202,7 +202,7 @@ if (! function_exists('url_path')) {
         $t = parse_url($url);
 
         $s = $t['path'];
-        if(isset($t['query'])) {
+        if (isset($t['query'])) {
             $s .= '?' . $t['query'];
         }
 
