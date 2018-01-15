@@ -31,6 +31,26 @@ class TestController extends Controller
 
     public function getIndex()
     {
+        // echo config('app.url');die();
+        $s = 'https://gw.dev/sequences?query_id=1064';
+
+        // echo str_after($s, config('app.url'));
+        // die();
+
+        echo url_path($s);die();
+
+        // $t = parse_url($s);
+
+        // $s2 = $t['path'];
+        // if(isset($t['query'])) {
+        //     $s2 .= '?' . $t['query']
+        // }
+        // if
+        // $s2 = implode('?', [$t['path'], $t['query']]);
+        //     echo $s2;die();
+        // dd($t);
+        // die();
+
         echo human_filesize(filesize('/var/www/ireceptor_gateway/storage/app/public/ir_2018-01-12_0004_5a57fb8312b90.zip'));
         die();
 

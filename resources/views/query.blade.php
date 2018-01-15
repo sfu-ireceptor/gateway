@@ -24,7 +24,7 @@
 					{{ human_date_time($q->start_time) }}
 				</td>
 				<td>
-					{{ str_limit($q->url, $limit = 64, $end = '‥') }}
+					{{ str_limit(url_path($q->url), $limit = 64, $end = '‥') }}
 
 					@if(isset($q->params) && ! empty($q->params))
 						<!-- Button trigger modal -->

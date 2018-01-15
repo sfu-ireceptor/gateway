@@ -29,7 +29,7 @@
 								<span class="minor">{{ human_date_time($q->start_time, 'H:i') }}</span>
 							</td>
 							<td>
-								<a href="/admin/queries/{{ $q->id }}" title="{{ $q->url }}">{{ str_limit($q->url, $limit = 70, $end = '‥') }}</a>
+								<a href="/admin/queries/{{ $q->id }}" title="{{ $q->url }}">{{ str_limit(url_path($q->url), $limit = 70, $end = '‥') }}</a>
 
 								@if(isset($q->params) && ! empty($q->params))
 									<!-- Button trigger modal -->

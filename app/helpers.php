@@ -195,3 +195,17 @@ if (! function_exists('human_filesize')) {
         return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
     }
 }
+
+if (! function_exists('url_path')) {
+    function url_path($url)
+    {
+        $t = parse_url($url);
+
+        $s = $t['path'];
+        if(isset($t['query'])) {
+            $s .= '?' . $t['query'];
+        }
+
+        return $s;
+    }
+}
