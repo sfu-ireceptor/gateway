@@ -648,7 +648,7 @@ class RestService extends Model
                         function ($exception) use ($query_log_id, $t) {
                             $response = $exception->getMessage();
                             Log::error($response);
-                            QueryLog::end_rest_service_query($query_log_id, '', $result_size, 'error', $response);
+                            QueryLog::end_rest_service_query($query_log_id, '', '', 'error', $response);
 
                             $t['status'] = 'error';
                             $t['error_message'] = $response;
