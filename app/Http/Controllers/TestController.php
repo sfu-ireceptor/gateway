@@ -37,7 +37,8 @@ class TestController extends Controller
         // echo str_after($s, config('app.url'));
         // die();
 
-        echo url_path($s);die();
+        echo url_path($s);
+        die();
 
         // $t = parse_url($s);
 
