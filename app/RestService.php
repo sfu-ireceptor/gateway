@@ -524,8 +524,10 @@ class RestService extends Model
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::CREATE);
         foreach ($response_list as $t) {
-            $file_path = $t['response']['file_path'];
-            $zip->addFile($file_path, basename($file_path));
+            if(isset($t['response']['file_path'])) {
+                $file_path = $t['response']['file_path'];
+                $zip->addFile($file_path, basename($file_path));                
+            }
         }
 
         $zip->close();
