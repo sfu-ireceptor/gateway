@@ -226,6 +226,8 @@
 			@endif
 
 			@if (! empty($sequence_list))
+				<h3 class="pull-left">Individual Sequences <small>{{ count($sequence_list) }} of {{number_format($total_filtered_sequences)}}</small></h3>
+
 				<!-- sequence data column selector -->
 				<div class="collapse" id="sequence_column_selector">
 					<div class="panel panel-default">
