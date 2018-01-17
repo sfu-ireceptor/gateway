@@ -159,7 +159,7 @@ form .error {
 }
 
 .filters .panel-body {
-	padding: 8px 10px;
+	padding: 8px 10px 5px;
 }
 
 .filters label {
@@ -168,6 +168,20 @@ form .error {
 
 .filters .form-group {
 	margin-bottom: 10px;
+}
+
+.filters .panel-group .btn {
+	padding: 7px 10px 8px 15px;
+}
+
+.filters .panel-group .button_container {
+	text-align: right;
+	margin-top: 15px;
+	margin-bottom: 5px;
+}
+
+.filters .panel-group {
+	margin-bottom: 5px;
 }
 
 /* @end */

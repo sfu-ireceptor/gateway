@@ -53,6 +53,9 @@
 									{{ Form::text('lab_name', '', array('class' => 'form-control')) }}
 								</div>
 
+								<p class="button_container">
+									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
+								</p>
 							</div>
 						</div>
 					</div>
@@ -97,6 +100,11 @@
 										</div>
 									</div>
 								</div>
+
+								<p class="button_container">
+									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
+								</p>
+
 							</div>
 						</div>
 					</div>
@@ -166,19 +174,23 @@
 									{{ Form::text('sequencing_platform', '', array('class' => 'form-control')) }}
 								</div>
 
+								<p class="button_container">
+									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
+								</p>
 
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<p class="button_container">
-					<a href="/samples" class="btn btn-default">
-						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-						<span class="text">Clear filters</span>
-					</a>
-					{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
-				</p>
+				@if ( ! empty($filter_fields))
+					<p class="button_container">
+						<a href="/samples" class="btn btn-default">
+							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							<span class="text">Clear filters</span>
+						</a>
+					</p>
+				@endif	
 			    
 			{{ Form::close() }}
 		</div>
