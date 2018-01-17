@@ -184,29 +184,31 @@
 		</div>
 
 		<div class="col-md-10">
-			<div class="data_container_box">
-				<p>
-					<strong>Aggregate Search Statistics</strong>
-				</p>
-				<p>
-					Active {{ str_plural('filter', count($filter_fields))}}:
+
+			<!-- Active filters -->
+			@if ( ! empty($filter_fields))
+				<p class="active_filters">
+					<strong>Active {{ str_plural('filter', count($filter_fields))}}</strong>:
 					@foreach($filter_fields as $filter_key => $filter_value)
 						<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
 							@lang('short.' . $filter_key)
 						</span>
 					@endforeach
-					@if (empty($filter_fields))
-						<em>none</em>
-					@endif					
 				</p>
-
+			@endif	
+		
+			<!-- Statistics -->
+			<h3>Statistics</h3>
+			<div class="statistics">
 				@if (empty($sample_list))
 					<p>0 sequences returned.</p>
-				@endif
-
-				@if (! empty($sample_list))
+				@else (! empty($sample_list))
 					<p>
-						{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:
+						<strong>
+							{{number_format($total_filtered_sequences)}} sequences
+							({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}})
+						</strong>
+						returned from:
 						<span title="{{ $filtered_repositories_names }}", class="data_text_box">
 							{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}
 						</span>
@@ -217,11 +219,11 @@
 							{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
 						</span>
 						<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#myModal">
-						  Details
+						 	Details
 						</button>
 					</p>
 
-					<!-- repos/labs/studies popup -->
+					<!-- repos/labs/studies details popup -->
 					@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
 
 					<div id="sample_charts" class="charts">
@@ -233,8 +235,8 @@
 							<div class="col-md-2 chart" id="sample_chart5"></div>
 							<div class="col-md-2 chart" id="sample_chart6"></div>
 						</div>
-					</div>
-				@endif
+					</div>				
+				@endif								
 			</div>
 
 			@if (empty($sample_list))
