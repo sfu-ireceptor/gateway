@@ -230,6 +230,15 @@ table.sample_list td, table.sample_list th {
 	color: gray;
 }
 
+.sh1 {
+	font-size: 14px;	
+	font-weight: 400;
+	line-height: 1;
+	color: #777;
+	margin-top: -27px;
+	margin-bottom: 27px;
+}
+
 /* @end */
 
 /* @group top navigation */

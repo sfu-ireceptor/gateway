@@ -6,7 +6,8 @@
 
 <div class="container-fluid sample_container">
 
-	<h1>Metadata Search <small>Filter by study/subject/sample and choose samples to analyse relevant sequence data</small></h1>
+	<h1>Metadata Search</h1>
+	<p class="sh1">Filter by study/subject/sample and choose samples to analyze relevant sequence data</p>
 
 	<div class="row loading_contents">
 		<div class="col-md-2 filters">
