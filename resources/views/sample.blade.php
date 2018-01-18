@@ -183,15 +183,6 @@
 						</div>
 					</div>
 				</div>
-
-				@if ( ! empty($filter_fields))
-					<p class="button_container">
-						<a href="/samples" class="btn btn-default">
-							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-							<span class="text">Clear filters</span>
-						</a>
-					</p>
-				@endif	
 			    
 			{{ Form::close() }}
 		</div>
@@ -200,18 +191,22 @@
 
 			<!-- Active filters -->
 			@if ( ! empty($filter_fields))
-				<p class="active_filters">
-					<strong>Active {{ str_plural('filter', count($filter_fields))}}</strong>:
+				<div class="active_filters">
+					<h3>Active filters</h3>
 					@foreach($filter_fields as $filter_key => $filter_value)
 						<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
 							@lang('short.' . $filter_key)
 						</span>
 					@endforeach
-				</p>
+					<a href="/samples" class="btn btn-xs btn-default remove_filters">
+						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+						<span class="text">Remove filters</span>
+					</a>
+				</div>
 			@endif	
 		
 			<!-- Statistics -->
-			<h3 class="first">Statistics</h3>
+			<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
 			<div class="statistics">
 				@if (empty($sample_list))
 					<p>0 sequences returned.</p>

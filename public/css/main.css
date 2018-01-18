@@ -84,7 +84,12 @@ fieldset {
 }
 
 .active_filters {
-	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
+.active_filters h3 {
+	margin-top: 0px;
+	margin-bottom: 7px;
 }
 .active_filters span.label {
 	margin-right: 3px;
@@ -591,6 +596,10 @@ form.sequence_column_selector {
 /* @end */
 
 /* @group components */
+
+.remove_filters {
+	margin-left: 10px;
+}
 
 /* @group rest service list */
 
