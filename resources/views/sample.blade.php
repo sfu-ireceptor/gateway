@@ -12,7 +12,7 @@
 	<div class="row loading_contents">
 		<div class="col-md-2 filters">
 
-			<h3>Filters</h3>
+			<h3 class="first">Filters</h3>
 
 			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'post', 'class' => 'sample_search')) }}
 				<input type="hidden" name="project_id_list" />
@@ -211,7 +211,7 @@
 			@endif	
 		
 			<!-- Statistics -->
-			<h3>Statistics</h3>
+			<h3 class="first">Statistics</h3>
 			<div class="statistics">
 				@if (empty($sample_list))
 					<p>0 sequences returned.</p>
