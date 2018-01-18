@@ -256,15 +256,16 @@
 
 			@if (! empty($sample_list))
 			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form')) }}
-				<h3 class="pull-left">Individual Samples</h3>
-				<p class="pull-right">
+{{-- 				<p class="pull-right">
 					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button loading')) }}
 				</p>
+ --}}				<h3 class="">Individual Samples</h3>
 				
-				<table class="table table-striped sample_list table-condensed">
+				<div class="">
+				<table class="table table-striped sample_list table-condensed much_data table-bordered">
 					<thead> 
 						<tr>
-							<th>{{ Form::checkbox('select_all_rows', '', true, ['title' => 'Select all / Unselect all', 'class' => 'select_all_rows']) }}</th>
+							<th class="checkbox_cell">{{ Form::checkbox('select_all_rows', '', true, ['title' => 'Select all / Unselect all', 'class' => 'select_all_rows']) }}</th>
 							<th>Repository</th>
 							<th>@lang('short.lab_name')</th>
 							<th>@lang('short.study_title')</th>
@@ -283,7 +284,7 @@
 					<tbody>
 						@foreach ($sample_list as $sample)
 						<tr>
-							<td>{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id, true) }}</td>
+							<td class="checkbox_cell">{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id, true) }}</td>
 							<td class="text-nowrap">
 								<span title="{{ $sample->rest_service_name }}">
 									{{ str_limit($sample->rest_service_name, $limit = 9, $end = '‥') }}
@@ -386,6 +387,7 @@
 						@endforeach
 					</tbody>
 				</table>
+				</div>
 
 				<input type="hidden" name="project_id_list" />
 				<p class="pull-right">

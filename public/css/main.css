@@ -35,6 +35,7 @@ h2 {
 
 h3 {
 	font-size: 20px;
+	margin-bottom: 5px;
 }
 
 h3.first {
@@ -101,6 +102,7 @@ fieldset {
 	border-radius: 6px;
 	border: 1px solid #e7e7e7;
 	margin-bottom: 5px;
+	overflow: visible;
 }
 
 
@@ -206,6 +208,10 @@ form .error {
 
 /* @group tables */
 
+table {
+	font-size: 14px;
+}
+
 table.system_list > tbody > tr.selected > td {
 	background-color: #fcf8e3;
 }
@@ -225,6 +231,52 @@ table.jobs .status {
 
 table.sample_list td, table.sample_list th {
 	white-space: nowrap;
+}
+
+table.much_data {
+	border-collapse:separate;
+	border-radius: 6px;
+	border: 1px solid #e7e7e7;
+	margin-right: 5px;
+}
+
+table.much_data thead th:first-child, table.much_data tbody td:first-child {
+	padding-left: 10px;
+}
+
+table.much_data > tbody > tr > td,
+table.much_data > tbody > tr > th,
+table.much_data > tfoot > tr > td,
+table.much_data > tfoot > tr > th,
+table.much_data > thead > tr > td,
+table.much_data > thead > tr > th {
+    padding: 3px;
+}
+
+table.much_data > thead > tr > th {
+	padding-top: 5px;
+	border-bottom-width: 1px;
+}
+
+.table-bordered > tbody > tr > td, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > td, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+	border-bottom-style: none;
+	border-left-style: none;
+}
+
+table.much_data > thead > tr > th.checkbox_cell,
+table.much_data > tbody > tr > td.checkbox_cell {
+	padding-right: 10px;
+}
+
+
+table.much_data > thead > tr > th.checkbox_cell {
+	padding: 0 0 0 7px;
+}
+
+
+table.much_data > thead > tr > th.checkbox_cell input[type="checkbox"] {
+	width: 20px;
+	height: 20px;
 }
 
 /* @end */
