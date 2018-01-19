@@ -103,6 +103,7 @@ fieldset {
 	border: 1px solid #e7e7e7;
 	margin-bottom: 5px;
 	overflow: visible;
+	font-size: 14px;
 }
 
 
@@ -588,6 +589,11 @@ footer a:hover {
 	font-size: 95%;
 	font-weight: normal;
 	font-style: normal;
+}
+
+.browse_sequences {
+	margin-top: -3px;
+	margin-left: 10px;
 }
 
 /* @end */

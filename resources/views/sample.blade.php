@@ -256,10 +256,12 @@
 
 			@if (! empty($sample_list))
 			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form')) }}
-{{-- 				<p class="pull-right">
-					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button loading')) }}
-				</p>
- --}}				<h3 class="">Individual Samples</h3>
+				<span class="pull-right">
+					
+				</span>
+				<h3 class="">Individual Samples
+					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-sm btn-primary browse_sequences loading')) }}
+				</h3>
 				
 				<div class="">
 				<table class="table table-striped sample_list table-condensed much_data table-bordered">
@@ -391,7 +393,7 @@
 
 				<input type="hidden" name="project_id_list" />
 				<p class="pull-right">
-				{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button loading')) }}
+				{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-sm btn-primary browse-seq-data-button loading')) }}
 				</p>
 			{{ Form::close() }}
 			@endif
