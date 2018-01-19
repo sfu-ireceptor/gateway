@@ -23,14 +23,14 @@ class RestServiceSeeder extends Seeder
                     'version' => 2,
                 ],
                 [
-                    'url' => 'https://206.12.99.171/',
+                    'url' => 'https://ipa2.ireceptor.org/',
                     'name' => 'iReceptor Public Archive (MongoDB)',
                     'username' => '',
                     'password' => '',
                     'version' => 2,
                 ],
                 [
-                    'url' => 'https://ipa2.ireceptor.org/',
+                    'url' => 'https://ipa3.ireceptor.org/',
                     'name' => 'iReceptor Public Archive (MongoDB)',
                     'username' => '',
                     'password' => '',
