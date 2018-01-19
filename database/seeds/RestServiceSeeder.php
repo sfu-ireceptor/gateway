@@ -35,7 +35,7 @@ class RestServiceSeeder extends Seeder
                     'username' => '',
                     'password' => '',
                     'version' => 2,
-                ],   ],
+                ],
                 [
                     'url' => 'http://206.12.99.176:8080/',
                     'name' => 'iReceptor Public Archive (Turnkey)',
