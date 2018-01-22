@@ -267,7 +267,7 @@
 				<table class="table table-striped sample_list table-condensed much_data table-bordered">
 					<thead> 
 						<tr>
-							<th class="checkbox_cell">{{ Form::checkbox('select_all_rows', '', true, ['title' => 'Select all / Unselect all', 'class' => 'select_all_rows']) }}</th>
+							<th class="checkbox_cell"></th>
 							<th>Repository</th>
 							<th>@lang('short.lab_name')</th>
 							<th>@lang('short.study_title')</th>

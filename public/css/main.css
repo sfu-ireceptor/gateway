@@ -264,20 +264,8 @@ table.much_data > thead > tr > th {
 	border-left-style: none;
 }
 
-table.much_data > thead > tr > th.checkbox_cell,
 table.much_data > tbody > tr > td.checkbox_cell {
 	padding-right: 10px;
-}
-
-
-table.much_data > thead > tr > th.checkbox_cell {
-	padding: 0 0 0 7px;
-}
-
-
-table.much_data > thead > tr > th.checkbox_cell input[type="checkbox"] {
-	width: 20px;
-	height: 20px;
 }
 
 /* @end */
