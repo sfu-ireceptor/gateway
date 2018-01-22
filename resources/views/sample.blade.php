@@ -261,7 +261,7 @@
 				</span>
 				<h3>Individual Samples</h3>
 				<p class="table_info">
-					200 samples selected
+					<span class="nb_selected_samples">{{ count($sample_list) }}</span> samples selected
 					<a class="unselect_all_samples" href="#">Unselect All</a>
 					<a class="select_all_samples" href="#">Select All</a>
 					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse_sequences loading')) }}

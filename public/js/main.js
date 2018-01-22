@@ -23,6 +23,16 @@ $(document).ready(function() {
 	/**********************************************************
 	* Samples
 	**********************************************************/
+	function update_sample_selection_text(){
+		var n = $('table.sample_list tbody input[type=checkbox]:checked').length;
+		$('span.nb_selected_samples').text(n);
+	}
+
+	update_sample_selection_text();
+
+	$('table.sample_list tbody input[type=checkbox]').change(function(){
+		update_sample_selection_text();
+	});
 
 	// jstree: rest services -> labs -> projects tree
 	$('#rest_service_list').jstree();
@@ -36,17 +46,22 @@ $(document).ready(function() {
 		return true;
 	});
 
+
 	// table select/unselect all rows
 	$('a.select_all_samples').click(function(){
 		$('input:checkbox', $('table.sample_list tbody')).prop('checked', true);
 		$(this).hide();
 		$('a.unselect_all_samples').show();
+		update_sample_selection_text();
+		return false;
 	});
 
 	$('a.unselect_all_samples').click(function(){
 		$('input:checkbox', $('table.sample_list tbody')).prop('checked', false);
 		$(this).hide();
 		$('a.select_all_samples').show();
+		update_sample_selection_text();
+		return false;
 	});
 
 	// enable/disable "browse seq data" button
