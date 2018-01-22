@@ -584,6 +584,18 @@ footer a:hover {
 	margin-left: 10px;
 }
 
+a.unselect_all_samples, a.select_all_samples {
+	
+}
+
+a.unselect_all_samples {
+	
+}
+
+a.select_all_samples {
+	display: none;
+}
+
 /* @end */
 
 /* @group sequences page */

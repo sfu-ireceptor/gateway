@@ -37,9 +37,16 @@ $(document).ready(function() {
 	});
 
 	// table select/unselect all rows
-	$('table input[type=checkbox].select_all_rows').change(function(){
-		var is_checked = $(this).prop("checked");
-		$('input:checkbox', $(this).parents('table')).prop('checked', is_checked);
+	$('a.select_all_samples').click(function(){
+		$('input:checkbox', $('table.sample_list tbody')).prop('checked', true);
+		$(this).hide();
+		$('a.unselect_all_samples').show();
+	});
+
+	$('a.unselect_all_samples').click(function(){
+		$('input:checkbox', $('table.sample_list tbody')).prop('checked', false);
+		$(this).hide();
+		$('a.select_all_samples').show();
 	});
 
 	// enable/disable "browse seq data" button

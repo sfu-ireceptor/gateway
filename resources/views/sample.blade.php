@@ -260,6 +260,8 @@
 					
 				</span>
 				<h3 class="">Individual Samples
+					<a class="unselect_all_samples" href="#">Unselect All</a>
+					<a class="select_all_samples" href="#">Select All</a>
 					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-sm btn-primary browse_sequences loading')) }}
 				</h3>
 				
