@@ -42,6 +42,8 @@ h3.first {
 	margin-top: 0px;	
 }
 
+
+
 pre.wrap {
 	white-space: pre-wrap;
 }
@@ -580,20 +582,28 @@ footer a:hover {
 }
 
 .browse_sequences {
-	margin-top: -3px;
-	margin-left: 10px;
+	margin-top: -20px;
+	float: right;
 }
 
-a.unselect_all_samples, a.select_all_samples {
-	
+a.unselect_all_samples:hover, a.select_all_samples:hover {
+	text-decoration: none;
 }
 
-a.unselect_all_samples {
-	
-}
 
 a.select_all_samples {
 	display: none;
+}
+
+.table_info {
+	font-size: 12px;
+	margin-bottom: 5px;
+	font-weight: bold;
+}
+
+.table_info a {
+	font-weight: normal;
+	font-style: normal;
 }
 
 /* @end */

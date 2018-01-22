@@ -259,13 +259,14 @@
 				<span class="pull-right">
 					
 				</span>
-				<h3 class="">Individual Samples
+				<h3>Individual Samples</h3>
+				<p class="table_info">
+					200 samples selected
 					<a class="unselect_all_samples" href="#">Unselect All</a>
 					<a class="select_all_samples" href="#">Select All</a>
-					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-sm btn-primary browse_sequences loading')) }}
-				</h3>
+					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse_sequences loading')) }}
+				</p>
 				
-				<div class="">
 				<table class="table table-striped sample_list table-condensed much_data table-bordered">
 					<thead> 
 						<tr>
@@ -391,7 +392,6 @@
 						@endforeach
 					</tbody>
 				</table>
-				</div>
 
 				<input type="hidden" name="project_id_list" />
 				<p class="pull-right">
