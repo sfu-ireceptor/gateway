@@ -5,13 +5,13 @@
 @section('content')
 <div class="container-fluid sequence_container">
 
-	<h1>Sequence Search <small>Filter by sequence and sequence annotation feature</small></h1>
+	<h1>Sequence Search</h1>
+	<p class="sh1">Filter by sequence and sequence annotation feature</p>
 
-	<div class="row loading_contents">
-		
+	<div class="row loading_contents">		
 		<div class="col-md-2 filters">
 
-			<h3>Filters</h3>
+			<h3 class="first">Filters</h3>
 
 			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post')) }}
 
