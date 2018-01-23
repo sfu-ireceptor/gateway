@@ -210,7 +210,7 @@
 			<div class="statistics">
 				@if (empty($sample_list))
 					<p>0 sequences returned.</p>
-				@else (! empty($sample_list))
+				@else
 					<p>
 						<strong>
 							{{number_format($total_filtered_sequences)}} sequences

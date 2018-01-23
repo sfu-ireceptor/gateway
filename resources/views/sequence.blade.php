@@ -45,6 +45,10 @@
 									{{ Form::text('d_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'String prefix search (matches from the first character). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
+								<p class="button_container">
+									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
+								</p>
+
 							</div>
 						</div>
 					</div>
@@ -68,6 +72,11 @@
 									{{ Form::label('junction_aa_length', $filters_list_all['junction_aa_length']) }}
 									{{ Form::text('junction_aa_length', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact value match. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
+
+								<p class="button_container">
+									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
+								</p>
+
 							</div>
 						</div>
 					</div>
@@ -106,6 +115,9 @@
 									{{ Form::label('j_score', $filters_list_all['j_score']) }}
 									{{ Form::text('j_score', '', array('class' => 'form-control')) }}
 								</div>
+								<p class="button_container">
+									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
+								</p>
 							</div>
 						</div>
 					</div>
@@ -113,15 +125,6 @@
 				</div>		
 
    				<div class="button_container">
-					<p>
-						@isset($no_filters_query_id)
-							<a href="/sequences?query_id={{ $no_filters_query_id }}" class="btn btn-default">
-								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-								<span class="text loading">Clear filters</span>
-							</a>
-						@endisset
-						{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
-					</p>
 
 					<p>{{ Form::submit('↓ Download as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}</p>
 
@@ -158,30 +161,37 @@
 					<p>Try again later.</p>
 				</div>
 			@endif
-			
-			<div class="data_container_box">
-				<p>
-					<strong>Aggregate Search Statistics</strong>
-				</p>
-				<p>
-					Active {{ str_plural('filter', count($filter_fields))}}:
+
+			<!-- Active filters -->
+			@if ( ! empty($filter_fields))
+				<div class="active_filters">
+					<h3>Active filters</h3>
 					@foreach($filter_fields as $filter_key => $filter_value)
 						<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
 							@lang('short.' . $filter_key)
 						</span>
 					@endforeach
-					@if (empty($filter_fields))
-						<em>none</em>
-					@endif					
-				</p>
+					@isset($no_filters_query_id)
+						<a href="/sequences?query_id={{ $no_filters_query_id }}" class="btn btn-xs btn-default remove_filters">
+							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							<span class="text">Remove filters</span>
+						</a>
+					@endisset
+				</div>
+			@endif	
 
+			<!-- Statistics -->
+			<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
+			<div class="statistics">
 				@if (empty($sequence_list))
 					<p>0 sequences returned.</p>
-				@endif
-
-				@if (! empty($sequence_list))
+				@else
 					<p>
-						{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:
+						<strong>
+							{{number_format($total_filtered_sequences)}} sequences
+							({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}})
+						</strong>
+						returned from:
 						<span title="{{ $filtered_repositories_names }}", class="data_text_box">
 							{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}
 						</span>
@@ -192,11 +202,11 @@
 							{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
 						</span>
 						<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#myModal">
-							  Details
+						 	Details
 						</button>
 					</p>
 
-					<!-- repos/labs/studies popup -->
+					<!-- repos/labs/studies details popup -->
 					@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
 
 					<div id="sequence_charts" class="charts">
@@ -208,8 +218,8 @@
 							<div class="col-md-2 chart" id="sequence_chart5"></div>
 							<div class="col-md-2 chart" id="sequence_chart6"></div>
 						</div>
-					</div>
-				@endif
+					</div>				
+				@endif								
 			</div>
 
 			@if (empty($sequence_list))
@@ -225,6 +235,7 @@
 				</div>
 			@endif
 
+			
 			@if (! empty($sequence_list))
 				<h3 class="pull-left">Individual Sequences <small>{{ count($sequence_list) }} of {{number_format($total_filtered_sequences)}}</small></h3>
 
