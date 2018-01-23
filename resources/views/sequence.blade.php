@@ -150,6 +150,7 @@
 
 		<div class="col-md-10">
 
+			<!-- Services which didn't respond -->
 			@if ( ! empty($rest_service_list_no_response))
 				<div class="alert alert-warning" role="alert">
 					<p>Sorry, data is incomplete. No response from:</p>
@@ -180,12 +181,22 @@
 				</div>
 			@endif	
 
-			<!-- Statistics -->
-			<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
-			<div class="statistics">
-				@if (empty($sequence_list))
-					<p>0 sequences returned.</p>
-				@else
+			@if (empty($sequence_list))
+				<!-- No results -->
+				<div class="no_results">
+					<h2>No Results</h2>
+					<p>
+						Remove a filter
+						@isset($no_filters_query_id)
+							or <a href="/sequences?query_id={{ $no_filters_query_id }}">remove all filters</a>
+						@endisset
+						to return results.
+					</p>
+				</div>
+			@else
+				<!-- Statistics -->
+				<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
+				<div class="statistics">
 					<p>
 						<strong>
 							{{number_format($total_filtered_sequences)}} sequences
@@ -218,20 +229,7 @@
 							<div class="col-md-2 chart" id="sequence_chart5"></div>
 							<div class="col-md-2 chart" id="sequence_chart6"></div>
 						</div>
-					</div>				
-				@endif								
-			</div>
-
-			@if (empty($sequence_list))
-				<div class="no_results">
-					<h2>No Results</h2>
-					<p>
-						Remove a filter
-						@isset($no_filters_query_id)
-							or <a href="/sequences?query_id={{ $no_filters_query_id }}">remove all filters</a>
-						@endisset
-						to return results.
-					</p>
+					</div>										
 				</div>
 			@endif
 

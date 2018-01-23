@@ -205,12 +205,16 @@
 				</div>
 			@endif	
 		
-			<!-- Statistics -->
-			<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
-			<div class="statistics">
-				@if (empty($sample_list))
-					<p>0 sequences returned.</p>
-				@else
+
+			@if (empty($sample_list))
+				<div class="no_results">
+					<h2>No Results</h2>
+					<p>Remove a filter or <a href="/samples">remove all filters</a> to return results.</p>
+				</div>
+			@else
+				<!-- Statistics -->
+				<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
+				<div class="statistics">
 					<p>
 						<strong>
 							{{number_format($total_filtered_sequences)}} sequences
@@ -243,16 +247,10 @@
 							<div class="col-md-2 chart" id="sample_chart5"></div>
 							<div class="col-md-2 chart" id="sample_chart6"></div>
 						</div>
-					</div>				
-				@endif								
-			</div>
-
-			@if (empty($sample_list))
-				<div class="no_results">
-					<h2>No Results</h2>
-					<p>Remove a filter or <a href="/samples">remove all filters</a> to return results.</p>
+					</div>								
 				</div>
 			@endif
+
 
 			@if (! empty($sample_list))
 			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form')) }}
