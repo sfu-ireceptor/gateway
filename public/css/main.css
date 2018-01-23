@@ -614,6 +614,10 @@ a.select_all_samples {
 	min-height: 200px;
 }
 
+.sequence_count {
+	font-size: 12px;
+}
+
 /* @group sequence column selector */
 
 .sequence_column_selector .checkbox {

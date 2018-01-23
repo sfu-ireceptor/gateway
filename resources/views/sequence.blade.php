@@ -235,7 +235,7 @@
 
 			
 			@if (! empty($sequence_list))
-				<h3 class="pull-left">Individual Sequences <small>{{ count($sequence_list) }} of {{number_format($total_filtered_sequences)}}</small></h3>
+				<h3 class="pull-left">Individual Sequences <small class="sequence_count">{{ count($sequence_list) }} of {{number_format($total_filtered_sequences)}}</small></h3>
 
 				<!-- sequence data column selector -->
 				<div class="collapse" id="sequence_column_selector">
@@ -264,7 +264,7 @@
 				</div>
 
 				<!-- sequence data -->
-				<table class="table table-striped  table-condensed">
+				<table class="table table-striped table-condensed much_data table-bordered">
 					<thead>
 						<tr>
 							@foreach ($sequence_column_name_list as $sequence_column_name)
