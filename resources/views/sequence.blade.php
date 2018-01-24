@@ -8,6 +8,7 @@
 	<h1>Sequence Search</h1>
 	<p class="sh1">Filter by sequence and sequence annotation feature</p>
 
+
 	<div class="row loading_contents">		
 		<div class="col-md-2 filters">
 
@@ -126,22 +127,6 @@
 
    				<div class="button_container">
 					<p>{{ Form::submit('↓ Download as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}</p>
-
-					<p>
-						<a class="bookmark" href="/system/" data-uri="{{ $url }}">
-							@if ($bookmark_id)
-								<button type="button" class="btn btn-success" aria-label="Bookmark" data-id="{{ $bookmark_id }}">
-								  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-								  <span class="text">Bookmarked</span>
-								</button>
-							@else
-								<button type="button" class="btn btn-default" aria-label="Bookmark">
-								  <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-								  <span class="text">Bookmark</span>
-								</button>
-							@endif
-						</a>
-					</p>
    				</div>
 
 			{{ Form::close() }}				
@@ -166,17 +151,34 @@
 			@if ( ! empty($filter_fields))
 				<div class="active_filters">
 					<h3>Active filters</h3>
+
 					@foreach($filter_fields as $filter_key => $filter_value)
 						<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
 							@lang('short.' . $filter_key)
 						</span>
 					@endforeach
+
 					@isset($no_filters_query_id)
 						<a href="/sequences?query_id={{ $no_filters_query_id }}" class="btn btn-xs btn-default remove_filters">
 							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 							<span class="text">Remove filters</span>
 						</a>
 					@endisset
+					
+					<a class="bookmark" href="/system/" data-uri="{{ $url }}">
+						@if ($bookmark_id)
+							<button type="button" class="btn btn-success btn-xs" aria-label="Bookmark" data-id="{{ $bookmark_id }}">
+							  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+							  <span class="text">Bookmarked</span>
+							</button>
+						@else
+							<button type="button" class="btn btn-default btn-xs" aria-label="Bookmark">
+							  <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
+							  <span class="text">Bookmark this search</span>
+							</button>
+						@endif
+					</a>
+
 				</div>
 			@endif	
 

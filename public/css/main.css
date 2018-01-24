@@ -295,6 +295,10 @@ table.much_data > tbody > tr > td.checkbox_cell {
 	color: gray;
 }
 
+.remove_filters {
+	margin-left: 5px;
+}
+
 /* @end */
 
 /* @group top navigation */
@@ -687,10 +691,6 @@ form.sequence_column_selector {
 /* @end */
 
 /* @group components */
-
-.remove_filters {
-	margin-left: 10px;
-}
 
 /* @group rest service list */
 

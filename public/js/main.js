@@ -113,7 +113,7 @@ $(document).ready(function() {
 					button.removeClass('btn-success');
 					button.addClass('btn-default');
 
-					text.text('Bookmark');
+					text.text('Bookmark this search');
 					button.prop('disabled', false);
 				});
 		}
