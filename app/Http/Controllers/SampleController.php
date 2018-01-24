@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Query;
+use App\Bookmark;
 use App\QueryLog;
 use App\RestService;
 use Illuminate\Http\Request;
-use App\Bookmark;
 
 class SampleController extends Controller
 {
@@ -119,7 +119,6 @@ class SampleController extends Controller
         $current_url = $request->fullUrl();
         $data['url'] = $current_url;
         $data['bookmark_id'] = Bookmark::getIdFromURl($current_url, auth()->user()->id);
-
 
         return view('sample', $data);
     }
