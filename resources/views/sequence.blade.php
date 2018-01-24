@@ -15,11 +15,13 @@
 
 			<h3 class="first">Filters</h3>
 
-			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post')) }}
+			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sequence_search')) }}
 
 				@foreach ($hidden_fields as $hf)
 					<input type="hidden" name="{{$hf['name']}}" value="{{$hf['value']}}">
 				@endforeach
+
+				<input type="hidden" name="sample_query_id" value="{{ $sample_query_id }}" />
 
 				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 					<div class="panel panel-default">
@@ -125,10 +127,6 @@
 					</div>
 
 				</div>		
-
-   				<div class="button_container">
-					<p>{{ Form::submit('↓ Download as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}</p>
-   				</div>
 
 			{{ Form::close() }}				
 		</div>
@@ -237,7 +235,17 @@
 
 			
 			@if (! empty($sequence_list))
-				<h3>Individual Sequences <small class="sequence_count">{{ count($sequence_list) }} of {{number_format($total_filtered_sequences)}}</small></h3>
+				<a href="#" class="btn btn-xs btn-default pull-right download_sequences">
+					<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+					<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
+				</a>
+
+				<h3>
+					Individual Sequences
+					<small class="sequence_count">
+						{{ count($sequence_list) }} of {{number_format($total_filtered_sequences)}}
+					</small>
+				</h3>
 
 				<!-- sequence data column selector -->
 				<div class="collapse" id="sequence_column_selector">

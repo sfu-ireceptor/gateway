@@ -269,9 +269,7 @@
 
 			@if (! empty($sample_list))
 			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form')) }}
-				<span class="pull-right">
-					
-				</span>
+			
 				<h3>Individual Samples</h3>
 				<p class="table_info">
 					<span class="nb_selected_samples">{{ count($sample_list) }}</span> samples selected

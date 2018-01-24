@@ -635,6 +635,11 @@ a.select_all_samples {
 	font-size: 12px;
 }
 
+a.download_sequences {
+	margin-top: 17px;
+	margin-right: 2px;
+}
+
 /* @group sequence column selector */
 
 .sequence_column_selector .checkbox {
