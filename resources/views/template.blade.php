@@ -59,12 +59,12 @@
 							</ul>
 						</li>
 						<li role="presentation" class="active samples">
-							<a href="/samples" class="active">
+							<a href="/samples" class="active inactive">
 								Metadata
 							</a>
 						</li>
 						<li role="presentation" class="sequences">
-							<a href="/samples">Sequences</a>
+							<a class="inactive" href="#">Sequences</a>
 						</li>
 					@elseif(Request::is('sequences*'))
 						<li role="presentation" class="dropdown active search">
@@ -83,7 +83,7 @@
 							</a>
 						</li>
 						<li role="presentation" class="active sequences">
-							<a href="/samples" class="active">Sequences</a>
+							<a href="/samples" class="active inactive">Sequences</a>
 						</li>
 					@else
 						<li class="dropdown">

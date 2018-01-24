@@ -295,6 +295,11 @@ table.much_data > tbody > tr > td.checkbox_cell {
 	color: gray;
 }
 
+a.inactive {
+   pointer-events: none;
+   cursor: default;
+}
+
 .remove_filters {
 	margin-left: 5px;
 }
