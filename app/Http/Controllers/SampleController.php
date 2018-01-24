@@ -76,7 +76,6 @@ class SampleController extends Controller
         $data['total_samples'] = $metadata['total_samples'];
         $data['total_sequences'] = $metadata['total_sequences'];
 
-
         /*************************************************
         * retrieve filters */
 
