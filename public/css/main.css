@@ -257,8 +257,9 @@ table.much_data > thead > tr > th {
 }
 
 table.much_data > thead > tr > th {
-	padding-top: 5px;
+	padding-top: 3px;
 	border-bottom-width: 1px;
+	padding-left: 5px;
 }
 
 .table-bordered > tbody > tr > td, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > td, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
@@ -266,8 +267,15 @@ table.much_data > thead > tr > th {
 	border-left-style: none;
 }
 
+table.much_data > thead > tr > th.checkbox_cell {
+	padding-top: 3px;
+	padding-left: 5px;
+	width: 34px;
+}
+
 table.much_data > tbody > tr > td.checkbox_cell {
 	padding-right: 10px;
+	width: 34px;
 }
 
 /* @end */
@@ -626,23 +634,34 @@ a.select_all_samples {
 
 #sequence_column_selector {
 	margin-top: 10px;
-}
-
-.table > thead > tr > th.column_selector, .table > tbody > tr > td.column_selector {
-	width: 25px;
-	padding-left: 0;
-	padding-right: 0;
+	margin-bottom: 10px;
+	font-size: 14px;
 }
 
 form.sequence_column_selector {
-	-webkit-column-count: 6; /* Chrome, Safari, Opera */
-    -moz-column-count: 6; /* Firefox */
-    column-count: 6;
+	-webkit-column-count: 7; /* Chrome, Safari, Opera */
+    -moz-column-count: 7; /* Firefox */
+    column-count: 7;
 	margin-bottom: 0;
 }
 
 #sequence_column_selector .panel {
 	margin-bottom: 0;
+}
+
+#sequence_column_selector .panel-heading {
+	padding: 5px 10px;
+}
+
+#sequence_column_selector .panel-heading button {
+	margin-top: -3px;
+}
+
+#sequence_column_selector .panel-heading .panel-title {
+	font-size: 14px;	
+}
+
+#sequence_column_selector .panel-body {
 }
 
 .analysis_apps_tabpanel .nav-tabs {

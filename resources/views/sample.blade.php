@@ -268,7 +268,11 @@
 				<table class="table table-striped sample_list table-condensed much_data table-bordered">
 					<thead> 
 						<tr>
-							<th class="checkbox_cell"></th>
+							<th class="checkbox_cell">
+{{-- 								<button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
+								  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+								</button> --}}
+							</th>
 							<th>Repository</th>
 							<th>@lang('short.lab_name')</th>
 							<th>@lang('short.study_title')</th>

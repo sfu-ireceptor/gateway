@@ -125,7 +125,6 @@
 				</div>		
 
    				<div class="button_container">
-
 					<p>{{ Form::submit('↓ Download as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}</p>
 
 					<p>
@@ -235,18 +234,16 @@
 
 			
 			@if (! empty($sequence_list))
-				<h3 class="pull-left">Individual Sequences <small class="sequence_count">{{ count($sequence_list) }} of {{number_format($total_filtered_sequences)}}</small></h3>
+				<h3>Individual Sequences <small class="sequence_count">{{ count($sequence_list) }} of {{number_format($total_filtered_sequences)}}</small></h3>
 
 				<!-- sequence data column selector -->
 				<div class="collapse" id="sequence_column_selector">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<h4 class="panel-title">
-								Sequence data columns
-								 <button type="button" class="close" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector">
-									<span aria-hidden="true">&times;</span>
-								 </button>
-							</h4>
+							<button class="btn btn-default btn-xs pull-right" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector">
+					  			Done
+							</button>
+							<h4 class="panel-title">Edit Individual Sequences Columns</h4>
 						</div>
 				  		<div class="panel-body">
 							<form class="sequence_column_selector">
@@ -267,21 +264,22 @@
 				<table class="table table-striped table-condensed much_data table-bordered">
 					<thead>
 						<tr>
+							<th class="checkbox_cell">
+								<a class="btn btn-default btn-xs" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector" title="Edit Columns">
+								  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+								</a>
+							</th>
 							@foreach ($sequence_column_name_list as $sequence_column_name)
 								<th class="text-nowrap seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_sequence_columns) ? '' : 'hidden' }}">
 									{{ $sequence_column_name->title }}
 								</th>
 							@endforeach
-							<th class="column_selector">
-								<a class="btn btn-default btn-xs" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector">
-					  				edit..
-								</a>
-							</th>
 						</tr>
 					</thead>
 					<tbody>
 						@foreach ($sequence_list as $s)
 						<tr>
+							<td></td>
 							@foreach ($sequence_column_name_list as $sequence_column_name)
 									<td class="seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_sequence_columns) ? '' : 'hidden' }}">
 										@isset($s->{$sequence_column_name->name})
@@ -289,7 +287,6 @@
 										@endisset
 									</td>
 							@endforeach
-							<td class="column_selector"></td>
 						</tr>
 						@endforeach
 					</tbody>
