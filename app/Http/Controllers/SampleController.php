@@ -6,6 +6,7 @@ use App\Query;
 use App\QueryLog;
 use App\RestService;
 use Illuminate\Http\Request;
+use App\Bookmark;
 
 class SampleController extends Controller
 {
@@ -113,6 +114,12 @@ class SampleController extends Controller
         $data['filtered_repositories_names'] = implode(', ', $filtered_repositories_names);
 
         $data['filter_fields'] = $sample_data['filter_fields'];
+
+        // for bookmarking
+        $current_url = $request->fullUrl();
+        $data['url'] = $current_url;
+        $data['bookmark_id'] = Bookmark::getIdFromURl($current_url, auth()->user()->id);
+
 
         return view('sample', $data);
     }
