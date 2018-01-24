@@ -45,7 +45,7 @@
 							</ul>
 						</li>
 						<li role="presentation" class="active sequences">
-							<a href="/samples" class="active">Sequences</a>
+							<a href="/samples" class="active inactive">Sequences</a>
 						</li>
 			    	@elseif(Request::is('samples*'))
 						<li role="presentation" class="dropdown active search">
@@ -59,12 +59,12 @@
 							</ul>
 						</li>
 						<li role="presentation" class="active samples">
-							<a href="/samples" class="active inactive">
+							<a href="#" class="active inactive">
 								Metadata
 							</a>
 						</li>
 						<li role="presentation" class="sequences">
-							<a class="inactive" href="#">Sequences</a>
+							<a href="#" class="inactive">Sequences</a>
 						</li>
 					@elseif(Request::is('sequences*'))
 						<li role="presentation" class="dropdown active search">
@@ -78,12 +78,12 @@
 							</ul>
 						</li>
 						<li role="presentation" class="active samples">
-							<a href="/samples">
+							<a href="/samples?query_id=@yield('sample_query_id', '')">
 								Metadata
 							</a>
 						</li>
 						<li role="presentation" class="active sequences">
-							<a href="/samples" class="active inactive">Sequences</a>
+							<a href="#" class="active inactive">Sequences</a>
 						</li>
 					@else
 						<li class="dropdown">

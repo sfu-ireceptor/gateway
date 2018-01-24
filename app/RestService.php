@@ -249,6 +249,7 @@ class RestService extends Model
         // remove gateway-specific filters
         unset($filters['cols']);
         unset($filters['filters_order']);
+        unset($filters['sample_query_id']);
 
         // Trakc the list of filters being used
         $data['filter_fields'] = [];

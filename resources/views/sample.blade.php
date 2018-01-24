@@ -371,7 +371,7 @@
 							<td>
 								@isset($sample->ir_sequence_count)
 									@if ($sample->ir_sequence_count > 0)
-										<a href="sequences?ir_project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}">
+										<a href="sequences?ir_project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}&amp;sample_query_id={{ $sample_query_id }}">
 											<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
 										</a>
 									@endif
@@ -411,6 +411,7 @@
 				</table>
 
 				<input type="hidden" name="project_id_list" />
+				<input type="hidden" name="sample_query_id" value="{{ $sample_query_id }}" />
 				<p class="pull-right">
 				{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-sm btn-primary browse-seq-data-button loading')) }}
 				</p>

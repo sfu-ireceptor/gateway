@@ -9,6 +9,7 @@ use App\QueryLog;
 use App\RestService;
 use App\SequenceColumnName;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SequenceController extends Controller
 {
@@ -31,7 +32,6 @@ class SequenceController extends Controller
         $query_log_id = $request->get('query_log_id');
 
         $data = [];
-
         $query_id = $request->input('query_id');
         if ($query_id) {
             $filters = Query::getParams($query_id);
@@ -51,6 +51,8 @@ class SequenceController extends Controller
             $filters = $request->all();
             $request->session()->forget('_old_input');
         }
+
+        $data['sample_query_id'] = $filters['sample_query_id'];
 
         // if csv
         if (isset($filters['csv'])) {

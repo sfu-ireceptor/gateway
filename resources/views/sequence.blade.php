@@ -1,6 +1,7 @@
 @extends('template')
 
 @section('title', 'Sequence Search')
+@section('sample_query_id', $sample_query_id)
 
 @section('content')
 <div class="container-fluid sequence_container">
@@ -164,7 +165,7 @@
 							<span class="text">Remove filters</span>
 						</a>
 					@endisset
-					
+
 					<a class="bookmark" href="/system/" data-uri="{{ $url }}">
 						@if ($bookmark_id)
 							<button type="button" class="btn btn-success btn-xs" aria-label="Bookmark" data-id="{{ $bookmark_id }}">

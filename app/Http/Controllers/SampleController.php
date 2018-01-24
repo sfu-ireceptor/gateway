@@ -76,8 +76,9 @@ class SampleController extends Controller
         $data['total_samples'] = $metadata['total_samples'];
         $data['total_sequences'] = $metadata['total_sequences'];
 
+
         /*************************************************
-        * get filtered sample list and related statistics */
+        * retrieve filters */
 
         $query_id = $request->input('query_id');
         if ($query_id) {
@@ -88,7 +89,12 @@ class SampleController extends Controller
         } else {
             $params = $request->all();
             $request->session()->forget('_old_input');
+            $query_id = '';
         }
+        $data['sample_query_id'] = $query_id;
+
+        /*************************************************
+        * get filtered sample list and related statistics */
 
         $query_log_id = $request->get('query_log_id');
         $sample_data = RestService::samples($params, $username, $query_log_id);
