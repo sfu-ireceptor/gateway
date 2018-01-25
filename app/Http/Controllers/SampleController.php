@@ -134,7 +134,7 @@ class SampleController extends Controller
 
         // keep filters panels open
         $open_filter_panel_list = [];
-        if(isset($params['open_filter_panel_list'])) {
+        if (isset($params['open_filter_panel_list'])) {
             $open_filter_panel_list = $params['open_filter_panel_list'];
         }
         $data['open_filter_panel_list'] = $open_filter_panel_list;
