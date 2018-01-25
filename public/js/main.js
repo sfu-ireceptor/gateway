@@ -25,7 +25,7 @@ $(document).ready(function() {
 	**********************************************************/
 
 	// save filters panels state when submitting form
-	$('form.sample_search').submit(function(){
+	$('form.sample_search, form.sequence_search').submit(function(){
 		var filters_form = $(this);
 
 		$('.panel-collapse', $(this)).each(function(i){

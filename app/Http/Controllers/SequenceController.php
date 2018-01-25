@@ -134,6 +134,13 @@ class SequenceController extends Controller
         $filtersListDisplayed = [];
         $filtersListSelect = [];
 
+        // keep filters panels open
+        $open_filter_panel_list = [];
+        if(isset($filters['open_filter_panel_list'])) {
+            $open_filter_panel_list = $filters['open_filter_panel_list'];
+        }
+        $data['open_filter_panel_list'] = $open_filter_panel_list;        
+
         $sequenceColumnNameList = SequenceColumnName::findEnabled();
 
         // create array for select field
