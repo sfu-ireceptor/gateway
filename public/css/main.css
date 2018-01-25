@@ -726,16 +726,16 @@ form.sequence_column_selector {
 
 a.provenance, a.provenance:hover {
 	border: 1px solid orange;
-	padding: 3px 0;
+	padding: 2px 0 3px;
 	text-decoration: none;
 	border-radius: 6px;
 	margin-left: 5px;
+	color: orange;
 }
 
 .provenance span {
 	margin-left: 10px;
 	margin-right: 10px;
-	color: orange;
 	font-weight: bold;
 }
 
