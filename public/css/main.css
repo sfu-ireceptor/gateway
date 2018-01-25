@@ -52,6 +52,22 @@ em.dateRelative {
 	color: gray;
 }
 
+a {
+	text-decoration: underline;
+}
+
+a.btn {
+	text-decoration: none;
+}
+
+.panel-title a {
+	text-decoration: none;
+}
+
+a.action {
+	text-decoration: none;
+}
+
 /* @end */
 
 /* @group forms */
@@ -310,6 +326,10 @@ a.inactive {
 
 .navbar {
 	min-height: 44px;
+}
+
+.navbar a {
+	text-decoration: none;
 }
 
 .navbar-default .navbar-nav > li > a.navbar-brand {
@@ -603,7 +623,7 @@ footer a:hover {
 	float: right;
 }
 
-a.unselect_all_samples:hover, a.select_all_samples:hover {
+a.unselect_all_samples, a.select_all_samples, a.unselect_all_samples:hover, a.select_all_samples:hover {
 	text-decoration: none;
 }
 
@@ -703,6 +723,21 @@ form.sequence_column_selector {
 /* @group components */
 
 /* @group rest service list */
+
+a.provenance, a.provenance:hover {
+	border: 1px solid orange;
+	padding: 3px 0;
+	text-decoration: none;
+	border-radius: 6px;
+	margin-left: 5px;
+}
+
+.provenance span {
+	margin-left: 10px;
+	margin-right: 10px;
+	color: orange;
+	font-weight: bold;
+}
 
 #rest_service_list em {
 	margin-left: 5px;

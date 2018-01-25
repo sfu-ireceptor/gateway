@@ -249,19 +249,12 @@
 							{{number_format($total_filtered_sequences)}} sequences
 							({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}})
 						</strong>
-						returned from:
-						<span title="{{ $filtered_repositories_names }}", class="data_text_box">
-							{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}
-						</span>
-						<span class="data_text_box">
-							{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}}
-						</span>
-						<span class="data_text_box">
-							{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
-						</span>
-						<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#myModal">
-						 	Details
-						</button>
+						returned from
+						<a class="provenance" href="#" data-toggle="modal" data-target="#myModal">
+							<span>{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}</span>
+							<span>{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}}</span>
+							<span>{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}</span>
+						</a>
 					</p>
 
 					<!-- repos/labs/studies details popup -->
