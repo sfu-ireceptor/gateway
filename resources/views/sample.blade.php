@@ -77,7 +77,14 @@
 
 							    <div class="form-group">
 									{{ Form::label('organism', __('short.organism')) }}
-									{{ Form::text('organism', '', array('class' => 'form-control')) }}
+									@foreach ($subject_organism_list as $id => $name)
+									<div class="checkbox">
+										<label>
+										{{ Form::checkbox('organism[]', $id) }}
+										{{ $name }}
+										</label>
+									</div>
+									@endforeach
 								</div>
 
 								<div class="form-group">
@@ -87,7 +94,14 @@
 
 							    <div class="form-group">
 									{{ Form::label('ethnicity', __('short.ethnicity')) }}
-									{{ Form::select('ethnicity', $subject_ethnicity_list, '', array('class' => 'form-control')) }}
+									@foreach ($subject_ethnicity_list as $id => $name)
+									<div class="checkbox">
+										<label>
+										{{ Form::checkbox('ethnicity[]', $id) }}
+										{{ $name }}
+										</label>
+									</div>
+									@endforeach
 								</div>
 
 								<div class="form-group">
@@ -269,7 +283,7 @@
 
 			@if (! empty($sample_list))
 			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form')) }}
-			
+
 				<h3>Individual Samples</h3>
 				<p class="table_info">
 					<span class="nb_selected_samples">{{ count($sample_list) }}</span> samples selected

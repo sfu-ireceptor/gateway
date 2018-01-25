@@ -34,9 +34,14 @@ class SampleController extends Controller
             $subject_gender_list[$v] = $v;
         }
 
+        // organism
+        $subject_organism_list = [];
+        foreach ($metadata['organism'] as $v) {
+            $subject_organism_list[$v] = $v;
+        }
+
         // ethnicity
         $subject_ethnicity_list = [];
-        $subject_ethnicity_list[''] = '';
         foreach ($metadata['ethnicity'] as $v) {
             $subject_ethnicity_list[$v] = $v;
         }
@@ -63,6 +68,7 @@ class SampleController extends Controller
         $data = [];
         $data['subject_gender_list'] = $subject_gender_list;
         $data['subject_ethnicity_list'] = $subject_ethnicity_list;
+        $data['subject_organism_list'] = $subject_organism_list;
         $data['cell_type_list'] = $cell_type_list;
         $data['sample_source_list'] = $sample_source_list;
         $data['dna_type_list'] = $dna_type_list;

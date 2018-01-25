@@ -34,7 +34,7 @@ class Sample extends Model
         $t = [];
 
         // distinct values for simple sample fields
-        $fields = ['study_group_description', 'template_class', 'ethnicity', 'tissue', 'sex', 'cell_subset'];
+        $fields = ['study_group_description', 'template_class', 'ethnicity', 'tissue', 'sex', 'cell_subset', 'organism'];
         foreach ($fields as $field) {
             $t[$field] = self::distinctValues($field);
         }
