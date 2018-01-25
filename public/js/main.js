@@ -23,6 +23,22 @@ $(document).ready(function() {
 	/**********************************************************
 	* Samples
 	**********************************************************/
+
+	// save filters panels state when submitting form
+	$('form.sample_search').submit(function(){
+		var filters_form = $(this);
+
+		$('.panel-collapse', $(this)).each(function(i){
+			if($(this).hasClass('in')) {
+				var input = $('<input>').attr('type', 'hidden').attr('name', 'open_filter_panel_list[]').val(i);
+		        filters_form.append($(input));
+			}
+		});
+
+		return true;
+	});
+
+	// update number of selected samples
 	function update_sample_selection_text(){
 		var n = $('table.sample_list tbody input[type=checkbox]:checked').length;
 		$('span.nb_selected_samples').text(n);
@@ -36,16 +52,6 @@ $(document).ready(function() {
 
 	// jstree: rest services -> labs -> projects tree
 	$('#rest_service_list').jstree();
-
-	$('form.sample_search').submit(function(){
-		var projectIdList = $('#rest_service_list').jstree("get_bottom_checked");
-		var projectIdListStr = projectIdList.join(",");
-		
-		//console.log(projectIdList);
-		$('input[name=project_id_list]', $(this)).val(projectIdListStr);
-		return true;
-	});
-
 
 	// table select/unselect all rows
 	$('a.select_all_samples').click(function(){
@@ -210,7 +216,7 @@ $(document).ready(function() {
 
 	// csv download
 	$('a.download_sequences').click(function() {
-		var input = $("<input>").attr("type", "hidden").attr("name", 'csv').val('Download as CSV');
+		var input = $('<input>').attr('type', 'hidden').attr('name', 'csv').val('Download as CSV');
         $('form.sequence_search').append($(input));
 		$('form.sequence_search').submit();
 		return false;

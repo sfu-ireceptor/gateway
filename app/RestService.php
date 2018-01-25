@@ -31,6 +31,9 @@ class RestService extends Model
 
     public static function samples($filters, $username, $query_log_id)
     {
+        // remove gateway-specific filters
+        unset($filters['open_filter_panel_list']);
+
         // initialize return array
         $data = [];
         $data['items'] = [];
@@ -250,6 +253,7 @@ class RestService extends Model
         unset($filters['cols']);
         unset($filters['filters_order']);
         unset($filters['sample_query_id']);
+        unset($filters['open_filter_panel_list']);
 
         // Trakc the list of filters being used
         $data['filter_fields'] = [];

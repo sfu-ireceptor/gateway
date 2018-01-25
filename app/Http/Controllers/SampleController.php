@@ -96,6 +96,7 @@ class SampleController extends Controller
             $request->session()->forget('_old_input');
             $query_id = '';
         }
+
         $data['sample_query_id'] = $query_id;
 
         /*************************************************
@@ -130,6 +131,13 @@ class SampleController extends Controller
         $current_url = $request->fullUrl();
         $data['url'] = $current_url;
         $data['bookmark_id'] = Bookmark::getIdFromURl($current_url, auth()->user()->id);
+
+        // keep filters panels open
+        $open_filter_panel_list = [];
+        if(isset($params['open_filter_panel_list'])) {
+            $open_filter_panel_list = $params['open_filter_panel_list'];
+        }
+        $data['open_filter_panel_list'] = $open_filter_panel_list;
 
         return view('sample', $data);
     }
