@@ -144,7 +144,7 @@
 							({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}})
 						</strong>
 						returned from
-						<a class="provenance" href="#" data-toggle="modal" data-target="#myModal">
+						<a href="#" class="btn btn-xs btn-default provenance" data-toggle="modal" data-target="#myModal">
 							<span>{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}</span>
 							<span>{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}}</span>
 							<span>{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}</span>

@@ -724,19 +724,21 @@ form.sequence_column_selector {
 
 /* @group rest service list */
 
-a.provenance, a.provenance:hover {
-	border: 1px solid orange;
-	padding: 2px 0 3px;
-	text-decoration: none;
-	border-radius: 6px;
-	margin-left: 5px;
-	color: orange;
+.provenance {
+	margin-top: -1px;
 }
 
 .provenance span {
-	margin-left: 10px;
-	margin-right: 10px;
-	font-weight: bold;
+	margin-left: 7px;
+	margin-right: 7px;
+}
+
+.provenance span:first-child {
+	margin-left: 2px;
+}
+
+.provenance span:last-child {
+	margin-right: 3px;
 }
 
 #rest_service_list em {
