@@ -5,14 +5,15 @@
 @section('content')
 <div class="container-fluid sequence_container">
 
-	<h1>Sequence Quick Search <small>Filter by sequence and sequence annotation features (e.g. Junction)</small></h1>
+	<h1>Sequence Quick Search</h1>
+	<p class="sh1">Filter by sequence and sequence annotation features (e.g. Junction)</p>
 
 	<div class="row loading_contents">
 		<div class="col-md-2 filters">
 
-			<h3>Filters</h3>
+			<h3 class="first">Filters</h3>
 
-			{{ Form::open(array('url' => 'sequences-quick-search', 'role' => 'form', 'method' => 'get')) }}
+			{{ Form::open(array('url' => 'sequences-quick-search', 'role' => 'form', 'method' => 'get', 'class' => 'sequence_search')) }}
 
 				@foreach ($hidden_fields as $hf)
 					<input type="hidden" name="{{$hf['name']}}" value="{{$hf['value']}}">
@@ -66,31 +67,14 @@
 					<p>
 						{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
 					</p>
-
-					<p>{{ Form::submit('↓ Download as CSV', array('class' => 'btn btn-primary', 'name' => 'csv')) }}</p>
-
-					<p>
-						<a class="bookmark" href="/system/" data-uri="{{ $url }}">
-							@if ($bookmark_id)
-								<button type="button" class="btn btn-success" aria-label="Bookmark" data-id="{{ $bookmark_id }}">
-								  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-								  <span class="text">Bookmarked</span>
-								</button>
-							@else
-								<button type="button" class="btn btn-default" aria-label="Bookmark">
-								  <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-								  <span class="text">Bookmark</span>
-								</button>
-							@endif
-						</a>
-					</p>
    				</div>
 
 			{{ Form::close() }}				
 		</div>
 
 		<div class="col-md-10">
-			
+
+			<!-- Services which didn't respond -->
 			@if ( ! empty($rest_service_list_no_response))
 				<div class="alert alert-warning" role="alert">
 					<p>Sorry, data is incomplete. No response from:</p>
@@ -103,45 +87,71 @@
 				</div>
 			@endif
 
-			<div class="data_container_box">
-				<p>
-					<strong>Aggregate Search Statistics</strong>
-				</p>
+			<!-- Active filters -->
+			@if ( ! empty($filter_fields))
+				<div class="active_filters">
+					<h3>Active filters</h3>
 
-				<p>
-					Active {{ str_plural('filter', count($filter_fields))}}:
 					@foreach($filter_fields as $filter_key => $filter_value)
 						<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
 							@lang('short.' . $filter_key)
 						</span>
 					@endforeach
-					@if (empty($filter_fields))
-						<em>none</em>
-					@endif					
-				</p>
 
-				@if (empty($sequence_list))
-					<p>0 sequences returned.</p>
-				@endif
+{{-- 					@isset($no_filters_query_id)
+						<a href="/sequences?query_id={{ $no_filters_query_id }}" class="btn btn-xs btn-default remove_filters">
+							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							<span class="text">Remove filters</span>
+						</a>
+					@endisset --}}
 
-				@if (! empty($sequence_list))
+					<a class="bookmark" href="/system/" data-uri="{{ $url }}">
+						@if ($bookmark_id)
+							<button type="button" class="btn btn-success btn-xs" aria-label="Bookmark" data-id="{{ $bookmark_id }}">
+							  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+							  <span class="text">Bookmarked</span>
+							</button>
+						@else
+							<button type="button" class="btn btn-default btn-xs" aria-label="Bookmark">
+							  <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
+							  <span class="text">Bookmark this search</span>
+							</button>
+						@endif
+					</a>
+
+				</div>
+			@endif	
+
+			@if (empty($sequence_list))
+				<!-- No results -->
+				<div class="no_results">
+					<h2>No Results</h2>
 					<p>
-						{{number_format($total_filtered_sequences)}} sequences ({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}) returned from:
-						<span title="{{ $filtered_repositories_names }}", class="data_text_box">
-							{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}
-						</span>
-						<span class="data_text_box">
-							{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}}
-						</span>
-						<span class="data_text_box">
-							{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
-						</span>
-						<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#myModal">
-							  Details
-						</button>
+						Remove a filter
+						@isset($no_filters_query_id)
+							or <a href="/sequences?query_id={{ $no_filters_query_id }}">remove all filters</a>
+						@endisset
+						to return results.
 					</p>
-
-					<!-- repos/labs/studies popup -->
+				</div>
+			@else
+				<!-- Statistics -->
+				<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
+				<div class="statistics">
+					<p>
+						<strong>
+							{{number_format($total_filtered_sequences)}} sequences
+							({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}})
+						</strong>
+						returned from
+						<a class="provenance" href="#" data-toggle="modal" data-target="#myModal">
+							<span>{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}}</span>
+							<span>{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}}</span>
+							<span>{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}</span>
+						</a>
+					</p>
+					
+					<!-- repos/labs/studies details popup -->
 					@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
 
 					<div id="sequence_charts" class="charts">
@@ -153,30 +163,32 @@
 							<div class="col-md-2 chart" id="sequence_chart5"></div>
 							<div class="col-md-2 chart" id="sequence_chart6"></div>
 						</div>
-					</div>
-				@endif
-			</div>
-
-			@if (empty($sequence_list))
-				<div class="no_results">
-					<h2>No Results</h2>
-					<p>Remove some filters to return results.</p>
+					</div>										
 				</div>
 			@endif
 
+
 			@if (! empty($sequence_list))
-				<h3 class="pull-left">Individual Sequences <small>{{ count($sequence_list) }} of {{number_format($total_filtered_sequences)}}</small></h3>
+				<a href="#" class="btn btn-xs btn-default pull-right download_sequences">
+					<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+					<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
+				</a>
+
+				<h3>
+					Individual Sequences
+					<small class="sequence_count">
+						{{ count($sequence_list) }} of {{number_format($total_filtered_sequences)}}
+					</small>
+				</h3>
 
 				<!-- sequence data column selector -->
 				<div class="collapse" id="sequence_column_selector">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<h4 class="panel-title">
-								Sequence data columns
-								 <button type="button" class="close" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector">
-									<span aria-hidden="true">&times;</span>
-								 </button>
-							</h4>
+							<button class="btn btn-default btn-xs pull-right" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector">
+					  			Done
+							</button>
+							<h4 class="panel-title">Edit Individual Sequences Columns</h4>
 						</div>
 				  		<div class="panel-body">
 							<form class="sequence_column_selector">
@@ -194,24 +206,25 @@
 				</div>
 
 				<!-- sequence data -->
-				<table class="table table-striped table-condensed">
+				<table class="table table-striped table-condensed much_data table-bordered">
 					<thead>
 						<tr>
+							<th class="checkbox_cell">
+								<a class="btn btn-default btn-xs" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector" title="Edit Columns">
+								  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+								</a>
+							</th>
 							@foreach ($sequence_column_name_list as $sequence_column_name)
 								<th class="text-nowrap seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_sequence_columns) ? '' : 'hidden' }}">
 									{{ $sequence_column_name->title }}
 								</th>
 							@endforeach
-							<th class="column_selector">
-								<a class="btn btn-default btn-xs" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector">
-					  				edit..
-								</a>
-							</th>
 						</tr>
 					</thead>
 					<tbody>
 						@foreach ($sequence_list as $s)
 						<tr>
+							<td></td>
 							@foreach ($sequence_column_name_list as $sequence_column_name)
 									<td class="seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_sequence_columns) ? '' : 'hidden' }}">
 										@isset($s->{$sequence_column_name->name})
@@ -219,12 +232,12 @@
 										@endisset
 									</td>
 							@endforeach
-							<td class="column_selector"></td>
 						</tr>
 						@endforeach
 					</tbody>
 				</table>
 			@endif
+
 		</div>
 	</div>
 </div>

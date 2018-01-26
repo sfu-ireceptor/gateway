@@ -9,7 +9,6 @@
 	<h1>Sequence Search</h1>
 	<p class="sh1">Filter by sequence and sequence annotation feature</p>
 
-
 	<div class="row loading_contents">		
 		<div class="col-md-2 filters">
 
