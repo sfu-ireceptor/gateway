@@ -793,6 +793,15 @@ a.provenance, a.provenance:hover {
 	display: none;
 }
 
+.chart_label {
+	font-weight: bold;
+}
+
+.chart_label_nodata {
+	font-style: italic;
+	font-weight: normal;
+}
+
 /* @end */
 
 /* @group no results message */

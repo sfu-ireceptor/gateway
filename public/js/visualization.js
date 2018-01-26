@@ -166,8 +166,26 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels
     if (internalLabels) labelDistance = -10;
     else labelDistance = 3;
 
+    // default settings
+    var colors = ['#7cb5ec', '#f4a45a', '#4a4a4a', '#6bc287', '#4941b7', '#9b9b9b', '#ebcfc4', '#e8e6d9', '#999999'];
+    var class_name = 'chart_label';
+
+    // if no values, don't display a chart
+    if(data.length == 1 && data[0]['name'] == 'No data') {
+        colors = ['transparent'];
+        truncateLabels = 15;
+        labelDistance = -58;
+        class_name = 'chart_label_nodata';
+    }
+    // if only 1 value, use a muted color for the chart
+    else if(data.length == 1) {
+        colors = ['#D2D2D2'];
+        truncateLabels = 15;
+        labelDistance = -58;
+    }
+
     Highcharts.setOptions({
-        colors: ['#7cb5ec', '#f4a45a', '#4a4a4a', '#6bc287', '#4941b7', '#9b9b9b', '#ebcfc4', '#e8e6d9', '#999999']
+        colors: colors
     })
 
     // Generate the chart data structure for HighChart.
@@ -207,6 +225,7 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels
                     allowPointSelect: true,
                     cursor: 'pointer',
                     dataLabels: {
+                        className: class_name,
                         // Color of the labels.
                         color: "#888888", 
                         // Do we want to display labels.
@@ -239,7 +258,10 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels
                         // label to the pie.
                         distance: labelDistance,
                         // We want to use HTML in case we want a line break in a label.
-                        //useHTML: true
+                        //useHTML: true,
+                        style:{
+                            fontWeight: null,
+                        },
                         
                     }
                     //showInLegend: false
@@ -415,7 +437,7 @@ function irAggregateData(seriesName, jsonData, countField, aggregateBySequence=t
             // If it doesn't exist in this element, then keep track of the count 
             // of the data that doesn't have this field. This should be rare, but
             // it can happen if the data models are different and are missing data.
-            fieldValue = "NODATA";
+            fieldValue = "No data";
             if (aggregateBySequence)
             {
                 // If the element is found, and there is a count, get it,
