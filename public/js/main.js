@@ -79,6 +79,13 @@ $(document).ready(function() {
 			$('.browse-seq-data-button').attr('disabled','disabled');	
 		}
 	});
+
+	// make table sortable
+	$('table.sample_list').DataTable({
+    	paging: false,
+    	searching: false,
+    	info: false,
+	});
 	
 	/**********************************************************
 	* Sequences
