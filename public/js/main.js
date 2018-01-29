@@ -85,6 +85,13 @@ $(document).ready(function() {
     	paging: false,
     	searching: false,
     	info: false,
+    	order: [[ 5, 'asc' ]],
+    	columnDefs: [
+						{
+							'orderable': false,
+							'targets': 0
+						}
+					],
 	});
 	
 	/**********************************************************

@@ -12,6 +12,7 @@
 		<!-- css -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 		<link href="/css/jstree/default/style.min.css" rel="stylesheet" />
+		<link href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.css" rel="stylesheet" type="text/css">
 		<link href="/css/main.css?v=5" rel="stylesheet">
 
 		<!-- IE8 support of HTML5 elements and media queries -->
