@@ -42,9 +42,17 @@
 						</div>
 						<div id="collapseThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
 							<div class="panel-body">
+
 							    <div class="form-group">
 									{{ Form::label('organism', __('short.organism')) }}
-									{{ Form::text('organism', '', array('class' => 'form-control')) }}
+									@foreach ($subject_organism_list as $id => $name)
+									<div class="checkbox">
+										<label>
+										{{ Form::checkbox('organism[]', $id) }}
+										{{ $name }}
+										</label>
+									</div>
+									@endforeach
 								</div>
 
 								<div class="form-group">

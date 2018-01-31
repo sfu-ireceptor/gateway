@@ -234,9 +234,16 @@ class SequenceController extends Controller
             $cell_type_list[$v] = $v;
         }
 
+        // organism
+        $subject_organism_list = [];
+        foreach ($metadata['organism'] as $v) {
+            $subject_organism_list[$v] = $v;
+        }
+
         // data
         $data = [];
         $data['cell_type_list'] = $cell_type_list;
+        $data['subject_organism_list'] = $subject_organism_list;
 
         /*************************************************
         * get filtered sequence data and related statistics */
