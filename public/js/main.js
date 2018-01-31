@@ -24,19 +24,13 @@ $(document).ready(function() {
 	* Samples
 	**********************************************************/
 
-	// save filters panels state when submitting form
-	$('form.sample_search, form.sequence_search').submit(function(){
-		var filters_form = $(this);
-
-		$('.panel-collapse', $(this)).each(function(i){
-			if($(this).hasClass('in')) {
-				var input = $('<input>').attr('type', 'hidden').attr('name', 'open_filter_panel_list[]').val(i);
-		        filters_form.append($(input));
-			}
-		});
-
-		return true;
-	});
+	// multiselect
+	$('.multiselect-ui').multiselect({
+        includeSelectAllOption: false,
+        buttonWidth: '100%',
+        enableHTML: true,
+        nonSelectedText: '&nbsp;',
+    });
 
 	// update number of selected samples
 	function update_sample_selection_text(){
@@ -48,6 +42,20 @@ $(document).ready(function() {
 
 	$('table.sample_list tbody input[type=checkbox]').change(function(){
 		update_sample_selection_text();
+	});
+
+	// make table sortable
+	$('table.sample_list').DataTable({
+    	paging: false,
+    	searching: false,
+    	info: false,
+    	order: [[ 5, 'asc' ]],
+    	columnDefs: [
+						{
+							'orderable': false,
+							'targets': 0
+						}
+					],
 	});
 
 	// jstree: rest services -> labs -> projects tree
@@ -79,21 +87,21 @@ $(document).ready(function() {
 			$('.browse-seq-data-button').attr('disabled','disabled');	
 		}
 	});
-
-	// make table sortable
-	$('table.sample_list').DataTable({
-    	paging: false,
-    	searching: false,
-    	info: false,
-    	order: [[ 5, 'asc' ]],
-    	columnDefs: [
-						{
-							'orderable': false,
-							'targets': 0
-						}
-					],
-	});
 	
+	// save filters panels state when submitting form
+	$('form.sample_search, form.sequence_search').submit(function(){
+		var filters_form = $(this);
+
+		$('.panel-collapse', $(this)).each(function(i){
+			if($(this).hasClass('in')) {
+				var input = $('<input>').attr('type', 'hidden').attr('name', 'open_filter_panel_list[]').val(i);
+		        filters_form.append($(input));
+			}
+		});
+
+		return true;
+	});
+
 	/**********************************************************
 	* Sequences
 	**********************************************************/

@@ -875,6 +875,30 @@ form.sequence_column_selector {
 
 /* @end */
 
+/* @group multiselect */
+
+button.multiselect,
+.filters .panel-group button.multiselect {
+	text-align: left;
+	position: relative;
+	padding: 4px 21px 4px 10px;
+}
+
+button.multiselect span {
+	margin-right: 15px;
+}
+
+button.multiselect b {
+	position: absolute;
+	top: 14px;
+	right: 10px;
+}
+
+button.multiselect a {
+	text-decoration: none;
+}
+
+/* @end */
 
 
 /* @end */

@@ -140,14 +140,7 @@
 
 								<div class="form-group">
 									{{ Form::label('cell_subset', __('short.cell_subset')) }}
-									@foreach ($cell_type_list as $id => $name)
-									<div class="checkbox">
-										<label>
-										{{ Form::checkbox('cell_subset[]', $id) }}
-										{{ $name }}
-										</label>
-									</div>
-									@endforeach
+								    {{ Form::select('cell_subset[]', $cell_type_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 							    <div class="form-group">
