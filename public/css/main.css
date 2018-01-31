@@ -894,7 +894,7 @@ button.multiselect b {
 	right: 10px;
 }
 
-button.multiselect a {
+.multiselect-container a {
 	text-decoration: none;
 }
 

@@ -145,14 +145,7 @@
 
 							    <div class="form-group">
 									{{ Form::label('tissue', __('short.tissue')) }}
-									@foreach ($sample_source_list as $id => $name)
-									<div class="checkbox">
-										<label>
-										{{ Form::checkbox('tissue[]', $id) }}
-										{{ $name }}
-										</label>
-									</div>
-									@endforeach
+								    {{ Form::select('tissue[]', $sample_source_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 								 <div class="form-group">

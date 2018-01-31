@@ -30,6 +30,7 @@ $(document).ready(function() {
         buttonWidth: '100%',
         enableHTML: true,
         nonSelectedText: '&nbsp;',
+        numberDisplayed: 1,
     });
 
 	// update number of selected samples
