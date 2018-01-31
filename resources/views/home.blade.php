@@ -23,7 +23,7 @@
 	@include('rest_service_list')
 	
 	<div class="row">
-		<div class="col-md-9">
+		<div class="col-md-7">
 			<div id="landing_charts">
 				<div class="row">
 					<div class="col-md-4 chart" id="landing_chart1"></div>
@@ -32,15 +32,15 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-md-3 side_search_links">
-			<p class="quick_search_link">
-				<a class="btn btn-primary btn-lg" role="button" href="/sequences-quick-search">Sequence Search →</a>
+		<div class="col-md-5 side_search_links">
+			<p class="adv_search_link">	
+				<a  class="btn btn-primary btn-lg" role="button" href="/samples">Metadata Search →</a>
 			</p>
-			<p>Find interesting sequences and sequence annotations by searching for sequence features (Junction, V/D/J Gene)</p>
+			<p>Find interesting sequences and sequence annotations by exploring study, subject, and sample metadata</p>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-9">
+		<div class="col-md-7">
 			<div id="landing_charts">	
 				<div class="row">
 					<div class="col-md-4 chart" id="landing_chart4"></div>
@@ -49,11 +49,76 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-md-3 side_search_links">
-			<p class="adv_search_link">	
-				<a  class="btn btn-primary btn-lg" role="button" href="/samples">Metadata Search →</a>
+		<div class="col-md-5 side_search_links">
+			<p class="quick_search_link">
+				<a class="btn btn-primary btn-lg" role="button" href="/sequences-quick-search">Sequence Search →</a>
 			</p>
-			<p>Find interesting sequences and sequence annotations by exploring study, subject, and sample metadata</p>
+
+			<p>Find interesting sequences and sequence annotations by searching for sequence features (Junction, V/D/J Gene)</p>
+
+			{{ Form::open(array('url' => 'sequences-quick-search', 'role' => 'form', 'method' => 'get', 'class' => 'sequence_search')) }}
+					
+				<div class="panel panel-default">
+					<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+						<div class="panel-body">
+							<div class="form-group">
+								{{ Form::label('junction_aa', $filters_list_all['junction_aa']) }}
+								{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4')) }}
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+					<div class="panel panel-default">
+						<div class="panel-heading" role="tab" id="headingThree">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+									Sample level filters
+								</a>
+							</h4>
+						</div>
+						<div id="collapseThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
+							<div class="panel-body">
+
+							    <div class="form-group">
+									{{ Form::label('organism', __('short.organism')) }}
+									@foreach ($subject_organism_list as $id => $name)
+									<div class="checkbox">
+										<label>
+										{{ Form::checkbox('organism[]', $id) }}
+										{{ $name }}
+										</label>
+									</div>
+									@endforeach
+								</div>
+
+								<div class="form-group">
+									{{ Form::label('cell_subset', __('short.cell_subset')) }}
+									@foreach ($cell_type_list as $id => $name)
+									<div class="checkbox">
+										<label>
+										{{ Form::checkbox('cell_subset[]', $id) }}
+										{{ $name }}
+										</label>
+									</div>
+									@endforeach
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+   				<div class="button_container">
+					<p>
+						{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
+					</p>
+   				</div>
+
+			{{ Form::close() }}			
+
+
+
 		</div>
 	</div>
 	<div class="login_fold_box">
