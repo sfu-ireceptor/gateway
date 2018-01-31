@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\RestService;
-use Illuminate\Http\Request;
 use App\SequenceColumnName;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -37,7 +36,7 @@ class HomeController extends Controller
             $subject_organism_list[$v] = $v;
         }
         $data['subject_organism_list'] = $subject_organism_list;
-                
+
         // get fields names
         $sequenceColumnNameList = SequenceColumnName::findEnabled();
         $filters_list_all = [];
@@ -45,7 +44,7 @@ class HomeController extends Controller
             $name = $s['name'];
             $title = $s['title'];
             $filters_list_all[$name] = $title;
-        }        
+        }
         $data['filters_list_all'] = $filters_list_all;
 
         return view('home', $data);
