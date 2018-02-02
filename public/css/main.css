@@ -1,7 +1,7 @@
 /* @group tags */
 
 body {
-	font-size: 16px;
+	font-size: 14px;
 }
 
 h1 {
@@ -325,11 +325,6 @@ table.dataTable thead .sorting_desc_disabled {
 
 /* @group classes */
 
-.intro {
-	font-size: 18px;
-	margin-bottom: 20px;
-}
-
 .filters {
 	margin-top: 0px;
 }
@@ -542,11 +537,16 @@ footer a:hover {
 /* @group login page */
 
 .login_container {
-	padding-top: 50px;
+	padding-top: 0px;
+	margin-top: 5px;
 }
 
 .login_container #landing_charts {
 	margin-top: 20px;
+}
+
+.login-box {
+	margin-top: 54px;
 }
 
 .login-box .panel-body {
@@ -563,21 +563,49 @@ footer a:hover {
 }
 
 .login_logo {
-	margin-top: 1px;
+	margin-top: 38px;
+	padding-left: 12px;
 }
 
 .login_logo span {
-	font-size: 36px;
-	font-style: bold;
+	font-size: 33px;
 }
 
 .login_logo img {
 	display: inline-block;
-	margin-top: -20px;
+	margin-top: -27px;
+	margin-left: 16px;
+	width: 48px;
+	height: 48px;
+	margin-right: 0;
+}
+
+.intro {
+	margin-bottom: 20px;
+	margin-top: 10px;
+	background-color: transparent;
+	border-radius: 6px;
+	font: 24px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;
+	padding: 0 60px 0 20px;
+	font-weight: 200;
+}
+
+.intro2 {
+	margin-bottom: 20px;
+	margin-top: 5px;
+	background-color: #eee;
+	border-radius: 6px;
+	padding: 10px 60px 15px 20px;
+	font-size: 16px;
+	line-height: 1.5;
+}
+
+.intro2 p {
+	margin-bottom: 0;
 }
 
 .login_main {
-	margin-top: 30px;
+	margin-top: 0px;
 }
 
 .login_about_box {
@@ -609,6 +637,15 @@ footer a:hover {
 	margin-left: 6px;
 	position: relative;
 	top: -1px;	
+}
+
+.beta_version .panel-body {
+	padding-top: 5px;
+}
+
+.beta_version .panel-body p {
+	margin-bottom: 6px;
+	font-size: 12px;
 }
 
 /* @end */

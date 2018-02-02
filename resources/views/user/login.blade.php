@@ -6,118 +6,88 @@
 <div class="container login_container">
 
 	<div class="row">
-		<div class="col-md-3 login_logo">
-			<img src="/images/logos/ireceptor_logo.png" height=64>
-			<span>iReceptor</span>
+		<div class="col-md-3">
+
+			<div class="login_logo">
+				<img src="/images/logos/ireceptor_logo.png">
+				<span>iReceptor</span>
+			</div>
+
+			<div class="login-box">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						{{ Form::open(array('role' => 'form')) }}
+							<div class="text-danger">
+								{{ $errors->first() }}
+								@if ($errors->first())
+									<p><a class="forgot" href="/user/forgot-password">Forgot your username or password?</a></p>
+								@endif
+							</div>
+
+							<p>
+								{{ Form::label('username', 'Username') }}
+								{{ Form::text('username', '', array('class' => 'form-control', 'placeholder' => 'e.g. \'jane_lee\'')) }}
+							</p>
+							<p>
+								{{ Form::label('password', 'Password') }}
+								{{ $errors->first("password") }}
+								{{ Form::password('password', array('class' => 'form-control', 'placeholder' => 'e.g. \'sx4KL2\'')) }}
+							</p>
+							<p class="submit">
+								{{ Form::submit('Log In →', array('class' => 'btn btn-primary')) }}
+							</p>					
+						{{ Form::close() }}
+						<p>Researchers can apply for an account by emailing <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
+					</div>
+				</div>
+
+				<div class="panel panel-warning beta_version">
+					<div class="panel-heading">
+						<h3 class="panel-title">Beta version</h3>
+					</div>
+					<div class="panel-body">
+						<p>We are still working on performance, fine-tuning the interface and adding new data.</p>
+						<p>Full release: February 2018.</p>
+					</div>
+				</div>
+			</div>
+
 		</div>
+
 		<div class="col-md-9">
 			<div class="intro">
-				<p>A gateway to curated, distributed databases containing "Next Generation" sequence data from immune responses available for exploration, analysis, and download.</p>
+				<p>
+					A <strong>gateway</strong>
+					to curated, distributed databases<br>
+					containing "Next Generation" sequence data from immune responses<br>
+					available for exploration, analysis, and download.
+				</p>
+			</div>
+			<div class="intro2">
+				<p>
+					<strong>{{ human_number($total_sequences) }} sequences</strong> and
+					<strong>{{ $total_samples }} samples</strong> are currently available,<br>
+					from
+					{{ $total_labs }} research {{ str_plural('lab', $total_labs)}} and
+					{{ $total_projects }} {{ str_plural('study', $total_projects)}}.
+				</p>
+				<div id="landing_charts">
+					<div class="row">
+						<div class="col-md-4 chart" id="landing_chart1"></div>
+						<div class="col-md-4 chart" id="landing_chart2"></div>
+						<div class="col-md-4 chart" id="landing_chart3"></div>
+					</div>
+					<div class="row">
+						<div class="col-md-4 chart" id="landing_chart4"></div>
+						<div class="col-md-4 chart" id="landing_chart5"></div>
+						<div class="col-md-4 chart" id="landing_chart6"></div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="row login_main">
 
-		<div class="col-md-3 login-box">
-
-			<div class="panel panel-warning">
-				<div class="panel-heading">
-					<h3 class="panel-title">Beta version</h3>
-				</div>
-				<div class="panel-body">
-					<p class="small">
-						We are still working on performance, fine-tuning the interface and adding new data.<br>
-						Full release: February 2018. 
-					</p>
-				</div>
-			</div>
-
-			<div class="panel panel-default">
-				<div class="panel-body">
-					{{ Form::open(array('role' => 'form')) }}
-						<div class="text-danger">
-							{{ $errors->first() }}
-							@if ($errors->first())
-								<p><a class="forgot" href="/user/forgot-password">Forgot your username or password?</a></p>
-							@endif
-						</div>
-
-						<p>
-							{{ Form::label('username', 'Username') }}
-							{{ Form::text('username', '', array('class' => 'form-control', 'placeholder' => 'e.g. \'jane_lee\'')) }}
-						</p>
-						<p>
-							{{ Form::label('password', 'Password') }}
-							{{ $errors->first("password") }}
-							{{ Form::password('password', array('class' => 'form-control', 'placeholder' => 'e.g. \'sx4KL2\'')) }}
-						</p>
-						<p class="submit">
-							{{ Form::submit('Log In →', array('class' => 'btn btn-primary')) }}
-						</p>					
-					{{ Form::close() }}
-					<p>Researchers can apply for an account by sending an email to <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
-				</div>
-			</div>
-
-{{-- 			<div class="panel panel-default">
-				<div class="panel-heading">
-				 	<h3 class="panel-title">Need an account?</h3>
-				</div>
-				<div class="panel-body">
-					{{ Form::open(array('role' => 'form')) }}
-					    <div class="text-danger">
-					    	{{ $errors->first() }}
-					    </div>
-
-						<p>
-							{{ Form::label('username', 'Last Name') }}
-							{{ Form::text('username', '', array('class' => 'form-control')) }}
-						</p>
-						<p>
-							{{ Form::label('username', 'First Name') }}
-							{{ Form::text('username', '', array('class' => 'form-control')) }}
-						</p>
-
-						<p>
-							{{ Form::label('username', 'Email') }}
-							{{ Form::text('username', '', array('class' => 'form-control')) }}
-						</p>
-						<p class="submit">
-							{{ Form::submit('Request an account', array('class' => 'btn btn-primary')) }}
-						</p>					
-					{{ Form::close() }}
-				</div>
-			</div> --}}
-
-
-		</div>
-
-		<div class="col-md-9">
-			<p class="intro">
-				iReceptor currently contains
-				<strong>{{ human_number($total_sequences) }} sequences</strong>  and
-				<strong>{{ $total_samples }} samples</strong> from
-				{{ $total_labs }} research labs and
-				{{ $total_projects }} studies.
-			</p>
-
-
-			<div id="landing_charts">
-				<div class="row">
-					<div class="col-md-4 chart" id="landing_chart1"></div>
-					<div class="col-md-4 chart" id="landing_chart2"></div>
-					<div class="col-md-4 chart" id="landing_chart3"></div>
-				</div>
-				<div class="row">
-					<div class="col-md-4 chart" id="landing_chart4"></div>
-					<div class="col-md-4 chart" id="landing_chart5"></div>
-					<div class="col-md-4 chart" id="landing_chart6"></div>
-				</div>
-			</div>
-		</div>
-
-	</div>
 	<div class="login_fold_box">
 	</div>
 
