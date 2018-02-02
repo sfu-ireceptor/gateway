@@ -37,7 +37,7 @@
 								{{ Form::submit('Log In →', array('class' => 'btn btn-primary')) }}
 							</p>					
 						{{ Form::close() }}
-						<p>Researchers can apply for an account by emailing <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
+						<p>Apply for an account by emailing <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
 					</div>
 				</div>
 
