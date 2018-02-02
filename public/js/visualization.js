@@ -169,6 +169,7 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels
     // default settings
     var colors = ['#7cb5ec', '#f4a45a', '#4a4a4a', '#6bc287', '#4941b7', '#9b9b9b', '#ebcfc4', '#e8e6d9', '#999999'];
     var class_name = 'chart_label';
+    var n = data.length;
 
     // if no values, don't display a chart
     if(data.length == 1 && data[0]['name'] == 'No data') {
@@ -176,6 +177,7 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels
         truncateLabels = 15;
         labelDistance = -58;
         class_name = 'chart_label_nodata';
+        n = 0;
     }
     // if only 1 value, use a muted color for the chart
     else if(data.length == 1) {
@@ -187,6 +189,9 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels
     Highcharts.setOptions({
         colors: colors
     })
+
+    // display number of items
+    var fieldTitleWithNumber = n + ' ' + pluralize(fieldTitle.toUpperCase(), n);
 
     // Generate the chart data structure for HighChart.
     var chartData;
@@ -207,7 +212,7 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels
                 type: "pie"
             },
             title: {
-                text: fieldTitle, 
+                text: fieldTitleWithNumber, 
                 floating: false,
                 margin: 0,
                 style: {"font-size": "12px","font-weight":"bold"}
