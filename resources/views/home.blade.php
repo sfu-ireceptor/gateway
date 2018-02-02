@@ -6,121 +6,89 @@
 <div class="container home_container">
 
 	<div class="row">
-		<div class="col-md-12">
-			<p class="intro">
-				iReceptor currently contains
-				<strong>{{ human_number($total_sequences) }} sequences</strong>  and
-				<strong>{{ $total_samples }} samples</strong> from
-				<a href="#" data-toggle="modal" data-target="#myModal">
-					{{ $total_labs }} research labs and
-					{{ $total_projects }} studies.
-				</a>
-			</p>
-		</div>
-	</div>
 
-	<!-- repos/labs/studies popup -->
-	@include('rest_service_list')
-	
-	<div class="row">
-		<div class="col-md-7">
-			<div id="landing_charts">
-				<div class="row">
-					<div class="col-md-4 chart" id="landing_chart1"></div>
-					<div class="col-md-4 chart" id="landing_chart2"></div>
-					<div class="col-md-4 chart" id="landing_chart3"></div>
+		<div class="col-md-8">
+			<div class="intro_home">
+				<p>
+					<strong>{{ human_number($total_sequences) }} sequences</strong> and
+					<strong>{{ $total_samples }} samples</strong> are currently available,<br>
+					from
+					<a href="#" data-toggle="modal" data-target="#myModal">
+						{{ $total_labs }} research {{ str_plural('lab', $total_labs)}} and
+						{{ $total_projects }} {{ str_plural('study', $total_projects)}}.
+					</a>
+					<!-- repos/labs/studies popup -->
+					@include('rest_service_list')
+				</p>
+
+				<div id="landing_charts">
+					<div class="row">
+						<div class="col-md-4 chart" id="landing_chart1"></div>
+						<div class="col-md-4 chart" id="landing_chart2"></div>
+						<div class="col-md-4 chart" id="landing_chart3"></div>
+					</div>
+					<div class="row">
+						<div class="col-md-4 chart" id="landing_chart4"></div>
+						<div class="col-md-4 chart" id="landing_chart5"></div>
+						<div class="col-md-4 chart" id="landing_chart6"></div>
+					</div>
 				</div>
 			</div>
 		</div>
-		<div class="col-md-5 side_search_links">
+
+		<div class="col-md-4 side_search_links">
 			<p class="adv_search_link">	
 				<a  class="btn btn-primary btn-lg" role="button" href="/samples">Metadata Search →</a>
 			</p>
+
 			<p>Find interesting sequences and sequence annotations by exploring study, subject, and sample metadata</p>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-7">
-			<div id="landing_charts">	
-				<div class="row">
-					<div class="col-md-4 chart" id="landing_chart4"></div>
-					<div class="col-md-4 chart" id="landing_chart5"></div>
-					<div class="col-md-4 chart" id="landing_chart6"></div>
+
+			<div class="panel panel-default sequence_search_container">
+				<div class="panel-heading">
+					<h3 class="panel-title">Sequence Search</h3>
+				</div>
+				<div class="panel-body filters sequence_search">
+					{{ Form::open(array('url' => 'sequences-quick-search', 'role' => 'form', 'method' => 'get', 'class' => 'sequence_search')) }}
+							
+						<p>Find interesting sequences and sequence annotations by searching for sequence features (Junction, V/D/J Gene)</p>
+	
+						<div class="row">
+							<div class="col-md-7">
+								<div class="form-group">
+									{{ Form::label('junction_aa', $filters_list_all['junction_aa']) }}
+									{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4')) }}
+								</div>
+							</div>
+							<div class="col-md-5">
+								<div class="form-group">
+									{{ Form::label('cell_subset', __('short.cell_subset')) }}
+								    {{ Form::select('cell_subset[]', $cell_type_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+								</div>
+							</div>							
+						</div>
+
+						<div class="row">
+							<div class="col-md-5">
+							    <div class="form-group">
+									{{ Form::label('organism', __('short.organism')) }}
+						    		{{ Form::select('organism[]', $subject_organism_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+								</div>
+							</div>
+							<div class="col-md-7">
+								<div class="button_container">
+									<p>
+										{{ Form::submit('Search →', array('class' => 'btn btn-primary search_samples loading')) }}
+									</p>
+								</div>
+							</div>
+						</div>
+
+					{{ Form::close() }}		
 				</div>
 			</div>
 		</div>
-		<div class="col-md-5 side_search_links">
-			<p class="quick_search_link">
-				<a class="btn btn-primary btn-lg" role="button" href="/sequences-quick-search">Sequence Search →</a>
-			</p>
-
-			<p>Find interesting sequences and sequence annotations by searching for sequence features (Junction, V/D/J Gene)</p>
-
-			{{ Form::open(array('url' => 'sequences-quick-search', 'role' => 'form', 'method' => 'get', 'class' => 'sequence_search')) }}
-					
-				<div class="panel panel-default">
-					<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-						<div class="panel-body">
-							<div class="form-group">
-								{{ Form::label('junction_aa', $filters_list_all['junction_aa']) }}
-								{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4')) }}
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-					<div class="panel panel-default">
-						<div class="panel-heading" role="tab" id="headingThree">
-							<h4 class="panel-title">
-								<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-									Sample level filters
-								</a>
-							</h4>
-						</div>
-						<div id="collapseThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
-							<div class="panel-body">
-
-							    <div class="form-group">
-									{{ Form::label('organism', __('short.organism')) }}
-									@foreach ($subject_organism_list as $id => $name)
-									<div class="checkbox">
-										<label>
-										{{ Form::checkbox('organism[]', $id) }}
-										{{ $name }}
-										</label>
-									</div>
-									@endforeach
-								</div>
-
-								<div class="form-group">
-									{{ Form::label('cell_subset', __('short.cell_subset')) }}
-									@foreach ($cell_type_list as $id => $name)
-									<div class="checkbox">
-										<label>
-										{{ Form::checkbox('cell_subset[]', $id) }}
-										{{ $name }}
-										</label>
-									</div>
-									@endforeach
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-   				<div class="button_container">
-					<p>
-						{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
-					</p>
-   				</div>
-
-			{{ Form::close() }}			
-
-
-
-		</div>
 	</div>
+	
 	<div class="login_fold_box">
 	</div>
 
@@ -193,6 +161,7 @@
 </div>
 
 <script>
+
 	var graphFields = [
 	        "@lang('v2.study_description')", 
 	        "@lang('v2.organism')",
@@ -201,6 +170,7 @@
 	        "@lang('v2.cell_subset')", 
 	        "@lang('v2.template_class')"
 	    ];
+	
 	var graphNames = [
 	        "@lang('short.study_description')",
 	        "@lang('short.organism')", 
@@ -209,13 +179,13 @@
 	        "@lang('short.cell_subset')", 
 	        "@lang('short.template_class')"
 	    ];
-var graphDIV = "landing_chart";
-var graphInternalLabels = false;
-var graphLabelLength = 10;
-var graphCountField = "ir_sequence_count";
-var graphData = {!! $sample_list_json !!};
+	
+	var graphDIV = "landing_chart";
+	var graphInternalLabels = false;
+	var graphLabelLength = 10;
+	var graphCountField = "ir_sequence_count";
+	var graphData = {!! $sample_list_json !!};
+
 </script>
 
 @stop
-
-	

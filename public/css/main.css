@@ -546,7 +546,7 @@ footer a:hover {
 }
 
 .login-box {
-	margin-top: 54px;
+	margin-top: 63px;
 }
 
 .login-box .panel-body {
@@ -592,7 +592,7 @@ footer a:hover {
 
 .intro2 {
 	margin-bottom: 20px;
-	margin-top: 5px;
+	margin-top: 30px;
 	background-color: #eee;
 	border-radius: 6px;
 	padding: 10px 60px 15px 20px;
@@ -656,12 +656,47 @@ footer a:hover {
 	padding-top: 20px;
 }
 
+.intro_home {
+	margin-bottom: 20px;
+	background-color: #eee;
+	border-radius: 6px;
+	padding: 10px 60px 15px 20px;
+	font-size: 16px;
+	line-height: 1.5;
+}
+
+.intro_home p {
+	margin-bottom: 0;
+}
+
 .quick_search_link {
 	margin-top: 55px;
 }
 
 .adv_search_link {
-	margin-top: 45px;
+	margin-bottom: 5px;
+
+}
+
+.adv_search_link a {
+	width: 358px;	
+}
+
+.sequence_search_container {
+	margin-top: 73px;
+}
+
+.sequence_search {
+	padding-bottom: 10px;
+}
+
+.sequence_search input[type=submit] {
+	margin-top: 18px;
+	width: 150px;
+}
+
+.sequence_search form {
+	margin-bottom: 0;
 }
 
 /* @end */

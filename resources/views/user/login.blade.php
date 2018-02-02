@@ -160,6 +160,7 @@
 </div>
 
 <script>
+	
 	var graphFields = [
 	        "@lang('v2.study_description')", 
 	        "@lang('v2.organism')",
@@ -168,6 +169,7 @@
 	        "@lang('v2.cell_subset')", 
 	        "@lang('v2.template_class')"
 	    ];
+	
 	var graphNames = [
 	        "@lang('short.study_description')",
 	        "@lang('short.organism')", 
@@ -176,11 +178,13 @@
 	        "@lang('short.cell_subset')", 
 	        "@lang('short.template_class')"
 	    ];
-var graphDIV = "landing_chart";
-var graphInternalLabels = false;
-var graphLabelLength = 10;
-var graphCountField = "ir_sequence_count";
-var graphData = {!! $sample_list_json !!};
+	
+	var graphDIV = "landing_chart";
+	var graphInternalLabels = false;
+	var graphLabelLength = 10;
+	var graphCountField = "ir_sequence_count";
+	var graphData = {!! $sample_list_json !!};
+
 </script>
 
 @stop
