@@ -141,15 +141,16 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-md-12">
-						<p class="text-right">
-							<a href="/about">About iReceptor</a>
-						</p>
+						@section('footer')
+							<p class="text-right">
+								<a href="/about">About iReceptor</a>
+							</p>
+				        @show
 					</div>
 				</div>
 			</div>
 		</div>
 		</footer>
-
 
 		<!-- javascript -->
 		<script src="/js/jquery.min.js"></script>

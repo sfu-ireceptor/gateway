@@ -1,7 +1,7 @@
 @extends('template')
 
 @section('title', 'Log In')
- 
+
 @section('content')
 <div class="container login_container">
 
@@ -86,11 +86,40 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<script>
+	
+	var graphFields = [
+	        "@lang('v2.study_description')", 
+	        "@lang('v2.organism')",
+	        "@lang('v2.disease_state_sample')", 
+	        "@lang('v2.tissue')",
+	        "@lang('v2.cell_subset')", 
+	        "@lang('v2.template_class')"
+	    ];
+	
+	var graphNames = [
+	        "@lang('short.study_description')",
+	        "@lang('short.organism')", 
+	        "@lang('short.disease_state_sample')",
+	        "@lang('short.tissue')", 
+	        "@lang('short.cell_subset')", 
+	        "@lang('short.template_class')"
+	    ];
+	
+	var graphDIV = "landing_chart";
+	var graphInternalLabels = false;
+	var graphLabelLength = 10;
+	var graphCountField = "ir_sequence_count";
+	var graphData = {!! $sample_list_json !!};
+
+</script>
+
+@endsection
 
 
-	<div class="login_fold_box">
-	</div>
-
+@section('footer')
 	<div class="row">
 		<div class="col-md-9">
 		<div class="login_about_box">
@@ -124,8 +153,6 @@
 		</div>
 		</div>
 	</div>
-	<div class="login_fold_box">
-	</div>
 
 	<div class="row">
 		<div class="col-md-4">
@@ -155,36 +182,6 @@
 				<img src="/images/logos/agave.png">
 			</a>
 		</div>
+	</div>    
+@endsection
 
-	</div>
-</div>
-
-<script>
-	
-	var graphFields = [
-	        "@lang('v2.study_description')", 
-	        "@lang('v2.organism')",
-	        "@lang('v2.disease_state_sample')", 
-	        "@lang('v2.tissue')",
-	        "@lang('v2.cell_subset')", 
-	        "@lang('v2.template_class')"
-	    ];
-	
-	var graphNames = [
-	        "@lang('short.study_description')",
-	        "@lang('short.organism')", 
-	        "@lang('short.disease_state_sample')",
-	        "@lang('short.tissue')", 
-	        "@lang('short.cell_subset')", 
-	        "@lang('short.template_class')"
-	    ];
-	
-	var graphDIV = "landing_chart";
-	var graphInternalLabels = false;
-	var graphLabelLength = 10;
-	var graphCountField = "ir_sequence_count";
-	var graphData = {!! $sample_list_json !!};
-
-</script>
-
-@stop
