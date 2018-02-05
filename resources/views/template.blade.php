@@ -142,7 +142,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						@section('footer')
-							<p class="text-right">
+							<p class="text-right mini_footer">
 								<a href="/about">About iReceptor</a>
 							</p>
 				        @show

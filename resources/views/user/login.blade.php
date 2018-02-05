@@ -121,40 +121,34 @@
 
 @section('footer')
 	<div class="row">
-		<div class="col-md-9">
-		<div class="login_about_box">
-			<h4>
-			About iReceptor
-			</h4>
-			<p>
-			iReceptor is a distributed data management system and scientific gateway for mining “Next Generation”sequence data from immune responses. The goal of the project is to: improve the design of vaccines, therapeutic antibodies and cancer immunotherapies by integrating Canadian and international data repositories of antibody and T-cell receptor gene sequences.
-			</p>
-			<p>
-			iReceptor provides a technology platform that will lower the barrier to immune genetics researchers who need to federate large, distributed, immune genetics data repositories in order to answer complex questions about the immune response. The focus of the iReceptor project is to leverage existing capabilities and technologies to build a new scientific platform for the immune genetics research community.
-			</p>
+		<div class="col-md-6">
+			<div class="login_about_box">
+				<h3>About iReceptor</h3>
+				<p>
+					iReceptor is a distributed data management system and scientific gateway for mining “Next Generation”sequence data from immune responses. The goal of the project is to: improve the design of vaccines, therapeutic antibodies and cancer immunotherapies by integrating Canadian and international data repositories of antibody and T-cell receptor gene sequences.
+				</p>
+				<p>
+					iReceptor provides a technology platform that will lower the barrier to immune genetics researchers who need to federate large, distributed, immune genetics data repositories in order to answer complex questions about the immune response. The focus of the iReceptor project is to leverage existing capabilities and technologies to build a new scientific platform for the immune genetics research community.
+				</p>
+				<p>
+					For more information, see the <a href="http://www.ireceptor.org" target="_blank">iReceptor public website</a>.
+				</p>
+			</div>
 		</div>
-		</div>
+		<div class="col-md-2"></div>
 		<div class="col-md-3">
 		<div class="login_about_box">
+			<h3>Contact</h3>
+			<p>
+				To ask questions or get involved, email:<br>
+				<a href="mailto:support@ireceptor.org">support@ireceptor.org</a>
+			</p>
 
-			<h4>
-			Contact/Resources
-			</h4>
-			<p>
-				To ask question or get involved, email: support@ireceptor.org.
-			</p>
-			<p>
-				To learn more about iReceptor visit the <a href="http://www.ireceptor.org" target="_blank">iReceptor website</a>.
-			</p>
-			<p>
-				To learn more about the Adaptive Immune Response Repertoire (AIRR) Community, visit the
-				<a href="http://www.airr-community.org" target="_blank">AIRR website</a>.
-			</p>
 		</div>
 		</div>
 	</div>
 
-	<div class="row">
+	<div class="row credits">
 		<div class="col-md-4">
 			<h4>Funded by</h4>
 			<a href="http://www.innovation.ca" class="cfi">
@@ -182,6 +176,7 @@
 				<img src="/images/logos/agave.png">
 			</a>
 		</div>
-	</div>    
+	</div>
+
 @endsection
 
