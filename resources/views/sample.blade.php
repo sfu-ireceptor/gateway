@@ -298,7 +298,13 @@
 					<tbody>
 						@foreach ($sample_list as $sample)
 						<tr>
-							<td class="checkbox_cell">{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id, true) }}</td>
+							<td class="checkbox_cell">
+								@isset($sample->ir_sequence_count)
+									@if ($sample->ir_sequence_count > 0)
+										{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id, true) }}
+									@endif
+								@endisset
+							</td>
 							<td class="text-nowrap">
 								<span title="{{ $sample->rest_service_name }}">
 									{{ str_limit($sample->rest_service_name, $limit = 9, $end = '‥') }}
