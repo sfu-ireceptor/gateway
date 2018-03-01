@@ -52,7 +52,11 @@ class SequenceController extends Controller
             $request->session()->forget('_old_input');
         }
 
-        $data['sample_query_id'] = $filters['sample_query_id'];
+
+        $data['sample_query_id'] = '';
+        if(isset($filters['sample_query_id'])) {
+            $data['sample_query_id'] = $filters['sample_query_id'];
+        }
 
         // if csv
         if (isset($filters['csv'])) {
