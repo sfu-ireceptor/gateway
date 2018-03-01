@@ -47,7 +47,7 @@
 					</div>
 					<div class="panel-body">
 						<p>We are still working on performance, fine-tuning the interface and adding new data.</p>
-						<p>Full release: February 2018.</p>
+						<p>Full release: March 2018.</p>
 					</div>
 				</div>
 			</div>
