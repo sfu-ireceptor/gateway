@@ -106,10 +106,9 @@
 						</span>
 					@endforeach
 
-{{-- 					@isset($no_filters_query_id)
-						<a href="/sequences?query_id={{ $no_filters_query_id }}" class="btn btn-xs btn-default remove_filters">
-							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-							<span class="text">Remove filters</span>
+{{-- 				@isset($no_filters_query_id)
+						<a href="/sequences?query_id={{ $no_filters_query_id }}" class="remove_filters">
+							Remove filters
 						</a>
 					@endisset --}}
 

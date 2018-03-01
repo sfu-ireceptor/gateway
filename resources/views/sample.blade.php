@@ -198,9 +198,8 @@
 							@lang('short.' . $filter_key)
 						</span>
 					@endforeach
-					<a href="/samples" class="btn btn-xs btn-default remove_filters">
-						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-						<span class="text">Remove filters</span>
+					<a href="/samples" class="remove_filters">
+						Remove filters
 					</a>
 
 					<a class="bookmark" href="/system/" data-uri="{{ $url }}">
