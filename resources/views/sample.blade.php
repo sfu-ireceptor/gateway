@@ -355,7 +355,7 @@
 							<td>
 								@isset($sample->ir_sequence_count)
 									@if ($sample->ir_sequence_count > 0)
-										<a href="sequences?ir_project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}&amp;sample_query_id={{ $sample_query_id }}">
+										<a href="sequences?ir_project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
 											<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
 										</a>
 									@endif
