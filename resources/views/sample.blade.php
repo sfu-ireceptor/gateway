@@ -285,10 +285,10 @@
 							<th>@lang('short.study_title')</th>
 							<th>@lang('short.study_group_description')</th>
 							<th>@lang('short.subject_id')</th>
+							<th>Sequences</th>
 							<th>@lang('short.tissue')</th>
 							<th>@lang('short.cell_subset')</th>
 							<th>@lang('short.cell_phenotype')</th>
-							<th>Sequences</th>
 							<th>@lang('short.sample_id')</th>
 							<th>@lang('short.template_class')</th>
 							<th>@lang('short.study_id')</th>
@@ -344,7 +344,15 @@
 									</span>
 								@endisset
 							</td>							
-
+							<td>
+								@isset($sample->ir_sequence_count)
+									@if ($sample->ir_sequence_count > 0)
+										<a href="sequences?ir_project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
+											<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
+										</a>
+									@endif
+								@endisset
+							</td>
 							<td>
 								@isset($sample->tissue)
 									<span title="{{ $sample->tissue }}">
@@ -364,17 +372,7 @@
 									{{ str_limit($sample->cell_phenotype, $limit = 12, $end = '‥') }}
 									</span>
 								@endisset
-							</td>
-						
-							<td>
-								@isset($sample->ir_sequence_count)
-									@if ($sample->ir_sequence_count > 0)
-										<a href="sequences?ir_project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}&amp;sample_query_id={{ $sample_query_id }}">
-											<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
-										</a>
-									@endif
-								@endisset
-							</td>
+							</td>						
 							<td>
 								@isset($sample->sample_id)
 									<span title="{{ $sample->sample_id }}">
