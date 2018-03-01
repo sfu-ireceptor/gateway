@@ -266,6 +266,7 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels
                         //useHTML: true,
                         style:{
                             fontWeight: null,
+                            textOutline: '2px contrast',
                         },
                         
                     }
