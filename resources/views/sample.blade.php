@@ -227,7 +227,7 @@
 				</div>
 			@else
 				<!-- Statistics -->
-				<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
+				<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Search results statistics</h3>
 				<div class="statistics">
 					<p>
 						<strong>
