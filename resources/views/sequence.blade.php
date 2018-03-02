@@ -226,7 +226,7 @@
 
 			
 			@if (! empty($sequence_list))
-				<a href="#" class="btn btn-xs btn-default pull-right download_sequences">
+				<a href="#" class="btn btn-primary pull-right download_sequences">
 					<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 					<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
 				</a>
