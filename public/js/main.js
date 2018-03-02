@@ -37,6 +37,14 @@ $(document).ready(function() {
 	function update_sample_selection_text(){
 		var n = $('table.sample_list tbody input[type=checkbox]:checked').length;
 		$('span.nb_selected_samples').text(n);
+
+		// enable/disable "browse seq data" button
+		if($('table.sample_list tbody input[type=checkbox]:checked').length > 0) {
+			$('.browse-seq-data-button').removeAttr('disabled');
+		}
+		else {
+			$('.browse-seq-data-button').attr('disabled','disabled');
+		}
 	}
 
 	update_sample_selection_text();
@@ -77,16 +85,6 @@ $(document).ready(function() {
 		$('a.select_all_samples').show();
 		update_sample_selection_text();
 		return false;
-	});
-
-	// enable/disable "browse seq data" button
-	$('table.sample_list input[type=checkbox]').change(function(){
-		if($('table.sample_list tbody input[type=checkbox]:checked').length > 0) {
-			$('.browse-seq-data-button').removeAttr('disabled');
-		}
-		else {
-			$('.browse-seq-data-button').attr('disabled','disabled');	
-		}
 	});
 	
 	// save filters panels state when submitting form

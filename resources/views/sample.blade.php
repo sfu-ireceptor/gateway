@@ -268,7 +268,7 @@
 					<span class="nb_selected_samples">{{ count($sample_list) }}</span> samples selected
 					<a class="unselect_all_samples" href="#">Unselect All</a>
 					<a class="select_all_samples" href="#">Select All</a>
-					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse_sequences loading')) }}
+					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse_sequences loading browse-seq-data-button')) }}
 				</p>
 				
 				<table class="table table-striped sample_list table-condensed much_data table-bordered">
