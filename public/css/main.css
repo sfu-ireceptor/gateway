@@ -855,7 +855,7 @@ form.sequence_column_selector {
     font-family: 'Glyphicons Halflings';
     content: "\2212";
     float: right;
-    color: gray;
+    color: #337ab7;
 }
 #accordion .panel-heading a.collapsed:after {
     content: "\002b";
