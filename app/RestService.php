@@ -572,6 +572,11 @@ class RestService extends Model
         $sequence_filters = array_merge($sequence_filters, $sample_id_filters);
         $sequence_data = self::sequences_summary($sequence_filters, $username, $query_log_id);
 
+        // add samples filters to sequence filters for UI display
+        $sample_filter_fields = $sample_data['filter_fields'];
+        $sequence_filter_fields = $sequence_data['filter_fields'];
+        $sequence_data['filter_fields'] = array_merge($sequence_filter_fields, $sample_filter_fields);
+
         return $sequence_data;
     }
 
