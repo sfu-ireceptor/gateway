@@ -25,7 +25,7 @@
 						<div class="panel-body">
 							<div class="form-group">
 								{{ Form::label('junction_aa', $filters_list_all['junction_aa']) }}
-								{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4')) }}
+								{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided, minimum of 4 AA required). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 							</div>
 						</div>
 					</div>
