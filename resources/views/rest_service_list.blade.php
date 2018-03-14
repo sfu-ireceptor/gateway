@@ -45,7 +45,7 @@
 																		{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
 																	</span>
 																@endif
-																@if ($study['total_sequences']) > 0)
+																@if ($study['total_sequences'] > 0)
 																	<em>{{ human_number($study['total_sequences']) }} sequences</em>
 																@endif
 															</span>
