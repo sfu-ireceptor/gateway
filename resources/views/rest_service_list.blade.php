@@ -23,9 +23,11 @@
 										<li class="lab_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-education"}'>
 											<span title="{{ $lab['name'] }}" class="lab_name">
 												Lab:
-												@isset($lab['name'])
-												{{ str_limit($lab['name'], $limit = 64, $end = '‥') }}
-												@endisset
+												@if(isset($lab['name']) && $lab['name'] != '')
+													{{ str_limit($lab['name'], $limit = 64, $end = '‥') }}
+												@else
+													<em>unknown</em>
+												@endif
 											</span>
 											@if(isset($lab['total_sequences']) && $lab['total_sequences'] > 0)
 												<em>{{ human_number($lab['total_sequences']) }} sequences</em>

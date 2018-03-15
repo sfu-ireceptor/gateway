@@ -395,7 +395,7 @@ class RestService extends Model
                 if (isset($sample->lab_name)) {
                     $lab = $sample->lab_name;
                 } else {
-                    $lab = 'UNKNOWN';
+                    $lab = '';
                 }
 
                 // If we don't have this lab already, create it.
