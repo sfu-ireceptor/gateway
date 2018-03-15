@@ -347,6 +347,7 @@ class RestService extends Model
             $total_sequences = 0;
             $filtered_sequences = 0;
             foreach ($obj->summary as $sample) {
+                // generate study URL
                 if (isset($sample->study_id)) {
                     if (preg_match('/PRJ/', $sample->study_id)) {
                         $sample->study_url = 'https://www.ncbi.nlm.nih.gov/bioproject/?term=' . $sample->study_id;
@@ -356,10 +357,10 @@ class RestService extends Model
                         unset($sample->study_url);
                     }
                 }
-                // If there are some sequence in this sample
+                // If there are some sequences in this sample
                 if (isset($sample->ir_filtered_sequence_count)) {
                     $filtered_sequences += $sample->ir_filtered_sequence_count;
-                    // If we have a lab and we haven't seen it allready, add it
+                    // If we have a lab and we haven't seen it already, add it
                     if (isset($sample->lab_name)) {
                         if (! in_array($sample->lab_name, $lab_list)) {
                             $lab_list[] = $sample->lab_name;
@@ -385,13 +386,13 @@ class RestService extends Model
 
                 // If we have a total sequence count, add the total up.
                 if (isset($sample->ir_sequence_count)) {
-                    $total_sequences += $sample->ir_sequence_count;
+                    $total_sequences += $sample->ir_filtered_sequence_count;
                 }
             }
 
             $study_tree = [];
             foreach ($obj->summary as $sample) {
-                // Handle the case where a sample doesn't have a lab_name.
+                // if a sample doesn't have a lab_name.
                 if (isset($sample->lab_name)) {
                     $lab = $sample->lab_name;
                 } else {
