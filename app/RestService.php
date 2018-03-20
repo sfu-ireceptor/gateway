@@ -584,20 +584,26 @@ class RestService extends Model
     // send POST request to a given service
     public static function postRequest($rs, $path, $params, $gw_query_log_id, $file_path = '', $returnArray = false)
     {
-        $defaults = [];
-        $defaults['base_uri'] = $rs->url;
-        $defaults['verify'] = false;    // accept self-signed SSL certificates
-        if ($file_path == '') {
-            $defaults['timeout'] = config('ireceptor.service_request_timeout');
-        } else {
-            $defaults['timeout'] = config('ireceptor.service_file_request_timeout');
-        }
+        $username = $rs->username;
+        $password = $rs->password;
+        $path = $rs->url . $path;
+        $rest_service_id = $rs->id;
+        $rest_service_name = $rs->name;
 
+        // create Guzzle client
+        $defaults = [];
+        $defaults['verify'] = false;    // accept self-signed SSL certificates
         $client = new \GuzzleHttp\Client($defaults);
 
-        // build request
+        // create array of request options
         $options = [];
-        $options['auth'] = [$rs->username, $rs->password];
+        $options['auth'] = [$username, $password];
+
+        if ($file_path == '') {
+            $options['timeout'] = config('ireceptor.service_request_timeout');
+        } else {
+            $options['timeout'] = config('ireceptor.service_file_request_timeout');
+        }
 
         // remove null values.
         foreach ($params as $k => $v) {
@@ -607,7 +613,7 @@ class RestService extends Model
         }
 
         // VDJServer needs array params without brackets
-        if (str_contains($rs->url, 'vdj') || str_contains($rs->url, '206.12.99.176:8080')) {
+        if (str_contains($path, 'vdj') || str_contains($path, '206.12.99.176:8080')) {
             // build query string with special function which doesn't add brackets
             $queryString = \GuzzleHttp\Psr7\build_query($params, PHP_QUERY_RFC1738);
 
@@ -635,9 +641,9 @@ class RestService extends Model
         $t['data'] = [];
 
         // execute request
-        Log::info('Start node query: ' . $rs->url . $path . '. with POST params:');
+        Log::info('Start node query: ' . $path . '. with POST params:');
         Log::info($params);
-        $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rs, $path, $params, $file_path);
+        $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rest_service_id, $rest_service_name, $path, $params, $file_path);
 
         $promise = $client->requestAsync('POST', $path, $options)->then(
                         function (ResponseInterface $response) use ($query_log_id, $file_path, $returnArray, $t) {
