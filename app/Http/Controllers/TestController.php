@@ -31,61 +31,133 @@ class TestController extends Controller
 
     public function getIndex()
     {
-        // echo config('app.url');die();
-        $s = 'https://gw.dev/sequences?query_id=1064';
 
-        // echo str_after($s, config('app.url'));
-        // die();
+        // // Initialize the Client
+        // $client = new \GuzzleHttp\Client(['base_uri' => 'http://gw.local/test2']);
 
-        echo url_path($s);
-        die();
-
-        // $t = parse_url($s);
-
-        // $s2 = $t['path'];
-        // if(isset($t['query'])) {
-        //     $s2 .= '?' . $t['query']
+        // $projects = ['aa', 'bb'];
+        // $requests = [];
+        // foreach ($projects as $project) {
+        //     $requests[] = new \GuzzleHttp\Psr7\Request('GET', '');
         // }
-        // if
-        // $s2 = implode('?', [$t['path'], $t['query']]);
-        //     echo $s2;die();
-        // dd($t);
+
+        // // Perform the actual requests
+        // $responses = \GuzzleHttp\Pool::batch($client, $requests, ['concurrency' => 5]);
+
+        // foreach ($responses as $response) {
+        //     var_dump($response);
+        // }
+
         // die();
 
-        echo human_filesize(filesize('/var/www/ireceptor_gateway/storage/app/public/ir_2018-01-12_0004_5a57fb8312b90.zip'));
-        die();
+        $client = new \GuzzleHttp\Client(['timeout' => 20]);
 
-        // echo base_path();
-        $s = '/var/www/ireceptor_gateway/storage/app/public/2018-01-10_20-56-11_5a567debd178f/3.csv';
-        echo str_after($s, storage_path('app/public'));
-        die();
+        $iterator = function () use ($client) {
+            $index = 0;
+            while (true) {
+                if ($index === 2) {
+                    break;
+                }
+                $index++;
 
-        echo storage_path();
-        die();
+                $wait = $index + 2;
+                $url = 'http://gw.local/wait/' . $wait;
+                // $request = new \GuzzleHttp\Request('GET', $url, []);
 
-        $client = new \GuzzleHttp\Client();
+                Log::info('starting query to $url');
 
-        $promise1 = $client->getAsync('http://loripsum.net/api')->then(
-    function ($response) {
-        return $response->getBody();
-    }, function ($exception) {
-        return $exception->getMessage();
-    }
-);
+                yield $client
+                    ->requestAsync('GET', $url, [])
+                    ->then(function ($response) {
+                        Log::info('query is done.');
+                        echo $response->getBody();
+                        return [$response];
+                    });
+            }
+        };
 
-        $promise2 = $client->getAsync('http://loripsum.net/api')->then(
-    function ($response) {
-        return $response->getBody();
-    }, function ($exception) {
-        return $exception->getMessage();
-    }
-);
+        // $promise = \GuzzleHttp\Promise\each_limit(
+        //     $iterator(),
+        //     10,  // concurrency,
+        //     function ($result, $index) {
+        //         /** @var GuzzleHttp\Psr7\Request $request */
+        //         // list($request, $response) = $result;
+        //         // echo (string)$request->getUri() . 'request completed ' . PHP_EOL;
+        //         Log::info('query is done 2.');
+        //          echo $result[0]->getBody();
+        //         // var_dump($result);
+        //         // var_dump($index);
+        //     },
+        //     function ($result, $index) {
+        //         /** @var GuzzleHttp\Psr7\Request $request */
+        //         // list($request, $response) = $result;
+        //         // echo (string)$request->getUri() . 'request completed ' . PHP_EOL;
+        //         Log::info('query is done 3.');
+        //     }
+        // );
 
-        $response1 = $promise1->wait();
-        $response2 = $promise2->wait();
+        $promise = \GuzzleHttp\Promise\each_limit(
+            $iterator(),
+            10 // concurrency
+        );
+        $promise->wait();
+        echo "all done";
 
-        echo $response1;
-        echo $response2;
+//         // echo config('app.url');die();
+//         $s = 'https://gw.dev/sequences?query_id=1064';
+
+//         // echo str_after($s, config('app.url'));
+//         // die();
+
+//         echo url_path($s);
+//         die();
+
+//         // $t = parse_url($s);
+
+//         // $s2 = $t['path'];
+//         // if(isset($t['query'])) {
+//         //     $s2 .= '?' . $t['query']
+//         // }
+//         // if
+//         // $s2 = implode('?', [$t['path'], $t['query']]);
+//         //     echo $s2;die();
+//         // dd($t);
+//         // die();
+
+//         echo human_filesize(filesize('/var/www/ireceptor_gateway/storage/app/public/ir_2018-01-12_0004_5a57fb8312b90.zip'));
+//         die();
+
+//         // echo base_path();
+//         $s = '/var/www/ireceptor_gateway/storage/app/public/2018-01-10_20-56-11_5a567debd178f/3.csv';
+//         echo str_after($s, storage_path('app/public'));
+//         die();
+
+//         echo storage_path();
+//         die();
+
+//         $client = new \GuzzleHttp\Client();
+
+//         $promise1 = $client->getAsync('http://loripsum.net/api')->then(
+//     function ($response) {
+//         return $response->getBody();
+//     }, function ($exception) {
+//         return $exception->getMessage();
+//     }
+// );
+
+//         $promise2 = $client->getAsync('http://loripsum.net/api')->then(
+//     function ($response) {
+//         return $response->getBody();
+//     }, function ($exception) {
+//         return $exception->getMessage();
+//     }
+// );
+
+//         $response1 = $promise1->wait();
+//         $response2 = $promise2->wait();
+
+//         echo $response1;
+//         echo $response2;
 
         // $client = new Client();
         // $v = 'o';
@@ -496,14 +568,22 @@ class TestController extends Controller
 
     public function index2(Request $request)
     {
-        // Log::info('ok!');
-        Log::info($request->header('Content-Type'));
-        Log::info($request->header('User-Agent'));
-        Log::info($request->method());
-        Log::info($request->header());
-        Log::info($request->file());
-        Log::info($request->all());
-        $content = $request->getContent();
-        Log::info($content);
+        sleep(2);
+        echo "aa";
+        // // Log::info('ok!');
+        // Log::info($request->header('Content-Type'));
+        // Log::info($request->header('User-Agent'));
+        // Log::info($request->method());
+        // Log::info($request->header());
+        // Log::info($request->file());
+        // Log::info($request->all());
+        // $content = $request->getContent();
+        // Log::info($content);
+    }
+
+    public function wait($seconds)
+    {
+        sleep($seconds);
+        echo "I waited $seconds sec!";
     }
 }
