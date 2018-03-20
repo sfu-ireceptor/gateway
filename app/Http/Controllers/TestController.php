@@ -71,6 +71,7 @@ class TestController extends Controller
                     ->then(function ($response) {
                         Log::info('query is done.');
                         echo $response->getBody();
+
                         return [$response];
                     });
             }
@@ -101,7 +102,7 @@ class TestController extends Controller
             10 // concurrency
         );
         $promise->wait();
-        echo "all done";
+        echo 'all done';
 
 //         // echo config('app.url');die();
 //         $s = 'https://gw.dev/sequences?query_id=1064';
@@ -569,7 +570,7 @@ class TestController extends Controller
     public function index2(Request $request)
     {
         sleep(2);
-        echo "aa";
+        echo 'aa';
         // // Log::info('ok!');
         // Log::info($request->header('Content-Type'));
         // Log::info($request->header('User-Agent'));
