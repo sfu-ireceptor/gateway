@@ -130,9 +130,9 @@ class QueryLog extends Model
 
     public static function end_rest_service_query($query_log_id, $result_size = '', $status = 'done', $message = null)
     {
-        Log::debug('Finished node query: ' . $query_log_id. ' with status: ' . $status);
-        if($message != null) {
-            Log::debug($message);            
+        Log::debug('Finished node query: ' . $query_log_id . ' with status: ' . $status);
+        if ($message != null) {
+            Log::debug($message);
         }
 
         $ql = self::find($query_log_id);
