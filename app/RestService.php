@@ -615,7 +615,7 @@ class RestService extends Model
                     }
                 }
 
-                // VDJServer needs array params without brackets
+                // For VDJServer, send array parameters without brackets. Ex: p1=a&p1=b
                 if (str_contains($url, 'vdj') || str_contains($url, '206.12.99.176:8080')) {
                     // build query string with special function which doesn't add brackets
                     $queryString = \GuzzleHttp\Psr7\build_query($params, PHP_QUERY_RFC1738);
@@ -624,7 +624,7 @@ class RestService extends Model
                     $options['body'] = $queryString;
                     $options['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
                 } else {
-                    // if PHP service, just let Guzzle add brackets for array params
+                    // For PHP services, use Guzzle default behaviour. Ex: p1[]=a&p1[]=b
                     $options['form_params'] = $params;
                 }
 
@@ -686,11 +686,13 @@ class RestService extends Model
         $response_list = [];
         $promise = \GuzzleHttp\Promise\each_limit(
             $iterator(),
-            15, // maximum number of queries that can be done at the same time
+            15, // set maximum number of requests that can be done at the same time
             function ($response, $i) use (&$response_list) {
                 $response_list[$i] = $response;
             }
         );
+
+        // wait for all requests to finish
         $promise->wait();
 
         return $response_list;
