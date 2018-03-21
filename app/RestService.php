@@ -645,9 +645,6 @@ class RestService extends Model
                 $t['rs'] = $rs;
 
                 // execute request
-                Log::info('Start node query: ' . $url . '. with POST params:');
-                Log::info($params);
-
                 $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rs->id, $rs->name, $url, $params, $file_path);
 
                 yield $client
