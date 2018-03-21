@@ -71,7 +71,9 @@ class TestController extends Controller
                     ->then(function ($response) {
                         Log::info('query is done.');
                         // echo $response->getBody();
+                        echo $response->getBody();
                         return ['aa', 'bb'];
+                        // return [$response];
                     });
             }
         };
@@ -118,6 +120,7 @@ class TestController extends Controller
 
 
         $promise->wait();
+
         var_dump($results);
         echo "all done";
 
@@ -587,7 +590,7 @@ class TestController extends Controller
     public function index2(Request $request)
     {
         sleep(2);
-        echo "aa";
+        echo 'aa';
         // // Log::info('ok!');
         // Log::info($request->header('Content-Type'));
         // Log::info($request->header('User-Agent'));
