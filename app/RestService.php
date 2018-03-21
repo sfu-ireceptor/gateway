@@ -278,8 +278,11 @@ class RestService extends Model
         $filters['username'] = $username;
         $filters['ir_username'] = $username;
 
-        $rs_promise_list = [];
+        // prepare request parameters for each service
+        $request_params = [];
         foreach (self::findEnabled() as $rs) {
+            $t = [];
+
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             if (array_key_exists($sample_id_list_key, $filters) && ! empty($filters[$sample_id_list_key])) {
                 // remove REST service id
@@ -291,25 +294,21 @@ class RestService extends Model
                 continue;
             }
 
-            // start sequence request to service
-            $t = [];
+            $uri = 'v2/sequences_summary';
             $t['rs'] = $rs;
-            $t['promise'] = self::postRequest($rs, 'v2/sequences_summary', $filters, $query_log_id);
-            $rs_promise_list[] = $t;
+            $t['url'] = $rs->url . $uri;
+            $t['params'] = $filters;
+            $t['gw_query_log_id'] = $query_log_id;
+
+            $request_params[] = $t;
         }
 
-        // wait for all requests to finish
-        $response_list = [];
-        foreach ($rs_promise_list as $t) {
-            $t['response'] = $t['promise']->wait();
-            $response_list[] = $t;
-        }
+        // do requests
+        $response_list = self::doRequests($request_params);
 
         // process returned data
-        foreach ($response_list as $t) {
-            $rs = $t['rs'];
-            $response = $t['response'];
-
+        foreach ($response_list as $response) {
+            $rs = $response['rs'];
             $obj = $response['data'];
 
             // check response format
