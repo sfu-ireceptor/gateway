@@ -72,6 +72,7 @@ class TestController extends Controller
                         Log::info('query is done.');
                         // echo $response->getBody();
                         echo $response->getBody();
+
                         return ['aa', 'bb'];
                         // return [$response];
                     });
@@ -110,19 +111,17 @@ class TestController extends Controller
         $promise = \GuzzleHttp\Promise\each_limit(
             $iterator(),
             10, // concurrency
-            function($result, $index) use (&$results) {
+            function ($result, $index) use (&$results) {
                 $results[$index] = $result;
             }
         );
 
         // $promise = Promise\each_limit($promiseGenerator(), 2, function($value, $idx) use (&$result) {$result[$idx] = $value;});
 
-
-
         $promise->wait();
 
         var_dump($results);
-        echo "all done";
+        echo 'all done';
 
 //         // echo config('app.url');die();
 //         $s = 'https://gw.dev/sequences?query_id=1064';
