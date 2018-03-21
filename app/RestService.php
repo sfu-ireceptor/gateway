@@ -78,11 +78,6 @@ class RestService extends Model
             $t['params'] = $filters;
             $t['gw_query_log_id'] = $query_log_id;
 
-            $t['username'] = $rs->username;
-            $t['password'] = $rs->password;
-            $t['rest_service_id'] = $rs->id;
-            $t['rest_service_name'] = $rs->name;
-
             $request_params[] = $t;
         }
 
@@ -600,16 +595,12 @@ class RestService extends Model
                 $params = array_get($t, 'params', []);
                 $file_path = array_get($t, 'file_path', '');
                 $returnArray = array_get($t, 'returnArray', false);
-                $username = array_get($t, 'username', '');
-                $password = array_get($t, 'password', '');
                 $gw_query_log_id = array_get($t, 'gw_query_log_id', '');
-                $rest_service_id = array_get($t, 'rest_service_id', '');
-                $rest_service_name = array_get($t, 'rest_service_name', '');
-                $rest_service = array_get($t, 'rs');
+                $rs = array_get($t, 'rs');
 
                 // build Guzzle request params array
                 $options = [];
-                $options['auth'] = [$username, $password];
+                $options['auth'] = [$rs->username, $rs->password];
 
                 if ($file_path == '') {
                     $options['timeout'] = config('ireceptor.service_request_timeout');
@@ -651,13 +642,13 @@ class RestService extends Model
                 $t = [];
                 $t['status'] = 'success';
                 $t['data'] = [];
-                $t['rs'] = $rest_service;
+                $t['rs'] = $rs;
 
                 // execute request
                 Log::info('Start node query: ' . $url . '. with POST params:');
                 Log::info($params);
 
-                $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rest_service_id, $rest_service_name, $url, $params, $file_path);
+                $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rs->id, $rs->name, $url, $params, $file_path);
 
                 yield $client
                     ->requestAsync('POST', $url, $options)
