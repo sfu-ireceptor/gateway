@@ -61,9 +61,11 @@ class RestService extends Model
         $filters['username'] = $username;
         $filters['ir_username'] = $username;
 
-        // get samples from each service
-        $rs_promise_list = [];
+        // prepare request parameters for each service
+        $request_params = [];
         foreach (self::findEnabled() as $rs) {
+            $t = [];
+
             $uri = 'samples';
 
             // add version prefix if not v1
@@ -71,24 +73,25 @@ class RestService extends Model
                 $uri = 'v' . $rs->version . '/' . $uri;
             }
 
-            // start samples request to service
-            $t = [];
             $t['rs'] = $rs;
-            $t['promise'] = self::postRequest($rs, $uri, $filters, $query_log_id);
-            $rs_promise_list[] = $t;
+            $t['url'] = $rs->url . $uri;
+            $t['params'] = $filters;
+            $t['gw_query_log_id'] = $query_log_id;
+
+            $t['username'] = $rs->username;
+            $t['password'] = $rs->password;
+            $t['rest_service_id'] = $rs->id;
+            $t['rest_service_name'] = $rs->name;
+                            
+            $request_params[] = $t;
         }
 
-        // wait for all requests to finish
-        $response_list = [];
-        foreach ($rs_promise_list as $t) {
-            $t['response'] = $t['promise']->wait();
-            $response_list[] = $t;
-        }
+        // do requests
+        $response_list = self::doRequests($request_params);
 
         // process returned data
-        foreach ($response_list as $t) {
-            $rs = $t['rs'];
-            $response = $t['response'];
+        foreach ($response_list as $response) {
+            $rs = $response['rs'];
 
             $sample_list = $response['data'];
 
@@ -581,71 +584,84 @@ class RestService extends Model
         return $sequence_data;
     }
 
-    // send POST request to a given service
-    public static function postRequest($rs, $path, $params, $gw_query_log_id, $file_path = '', $returnArray = false)
+    // do requests (in parallel)
+    public static function doRequests($request_params)
     {
-        $username = $rs->username;
-        $password = $rs->password;
-        $path = $rs->url . $path;
-        $rest_service_id = $rs->id;
-        $rest_service_name = $rs->name;
-
         // create Guzzle client
         $defaults = [];
         $defaults['verify'] = false;    // accept self-signed SSL certificates
         $client = new \GuzzleHttp\Client($defaults);
 
-        // create array of request options
-        $options = [];
-        $options['auth'] = [$username, $password];
+        // prepare requests
+        $iterator = function () use ($client, $request_params) {
+            foreach ($request_params as $t) {
+                // get request params values
+                $url = array_get($t, 'url', []);
+                $params = array_get($t, 'params', []);
+                $file_path = array_get($t, 'file_path', '');
+                $returnArray = array_get($t, 'returnArray', false);
+                $username = array_get($t, 'username', '');
+                $password = array_get($t, 'password', '');
+                $gw_query_log_id = array_get($t, 'gw_query_log_id', '');
+                $rest_service_id = array_get($t, 'rest_service_id', '');
+                $rest_service_name = array_get($t, 'rest_service_name', '');
+                $rest_service = array_get($t, 'rs');
 
-        if ($file_path == '') {
-            $options['timeout'] = config('ireceptor.service_request_timeout');
-        } else {
-            $options['timeout'] = config('ireceptor.service_file_request_timeout');
-        }
+                // build Guzzle request params array 
+                $options = [];
+                $options['auth'] = [$username, $password];
 
-        // remove null values.
-        foreach ($params as $k => $v) {
-            if ($v === null) {
-                unset($params[$k]);
-            }
-        }
+                if ($file_path == '') {
+                    $options['timeout'] = config('ireceptor.service_request_timeout');
+                } else {
+                    $options['timeout'] = config('ireceptor.service_file_request_timeout');
+                }
 
-        // VDJServer needs array params without brackets
-        if (str_contains($path, 'vdj') || str_contains($path, '206.12.99.176:8080')) {
-            // build query string with special function which doesn't add brackets
-            $queryString = \GuzzleHttp\Psr7\build_query($params, PHP_QUERY_RFC1738);
+                // remove null values.
+                foreach ($params as $k => $v) {
+                    if ($v === null) {
+                        unset($params[$k]);
+                    }
+                }
 
-            // set request body and header manually
-            $options['body'] = $queryString;
-            $options['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
-        } else {
-            // if PHP service, just let Guzzle add brackets for array params
-            $options['form_params'] = $params;
-        }
+                // VDJServer needs array params without brackets
+                if (str_contains($url, 'vdj') || str_contains($url, '206.12.99.176:8080')) {
+                    // build query string with special function which doesn't add brackets
+                    $queryString = \GuzzleHttp\Psr7\build_query($params, PHP_QUERY_RFC1738);
 
-        if ($file_path != '') {
-            $dirPath = dirname($file_path);
-            if (! is_dir($dirPath)) {
-                Log::info('Creating directory ' . $dirPath);
-                mkdir($dirPath, 0755, true);
-            }
+                    // set request body and header manually
+                    $options['body'] = $queryString;
+                    $options['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
+                } else {
+                    // if PHP service, just let Guzzle add brackets for array params
+                    $options['form_params'] = $params;
+                }
 
-            $options['sink'] = fopen($file_path, 'a');
-            Log::info('Guzzle: saving to ' . $file_path);
-        }
+                if ($file_path != '') {
+                    $dirPath = dirname($file_path);
+                    if (! is_dir($dirPath)) {
+                        Log::info('Creating directory ' . $dirPath);
+                        mkdir($dirPath, 0755, true);
+                    }
 
-        $t = [];
-        $t['status'] = 'success';
-        $t['data'] = [];
+                    $options['sink'] = fopen($file_path, 'a');
+                    Log::info('Guzzle: saving to ' . $file_path);
+                }
 
-        // execute request
-        Log::info('Start node query: ' . $path . '. with POST params:');
-        Log::info($params);
-        $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rest_service_id, $rest_service_name, $path, $params, $file_path);
+                $t = [];
+                $t['status'] = 'success';
+                $t['data'] = [];
+                $t['rs'] = $rest_service;
 
-        $promise = $client->requestAsync('POST', $path, $options)->then(
+                // execute request
+                Log::info('Start node query: ' . $url . '. with POST params:');
+                Log::info($params);
+        
+                $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rest_service_id, $rest_service_name, $url, $params, $file_path);
+
+                yield $client
+                    ->requestAsync('POST', $url, $options)
+                    ->then(
                         function (ResponseInterface $response) use ($query_log_id, $file_path, $returnArray, $t) {
                             if ($file_path == '') {
                                 QueryLog::end_rest_service_query($query_log_id);
@@ -675,7 +691,20 @@ class RestService extends Model
                             return $t;
                         }
                     );
+            }
+        };  
 
-        return $promise;
+        // send requests
+        $response_list = [];
+        $promise = \GuzzleHttp\Promise\each_limit(
+            $iterator(),
+            15, // maximum number of queries that can be done at the same time 
+            function($response, $i) use (&$response_list) {
+                $response_list[$i] = $response;
+            }
+        );
+        $promise->wait();
+        
+        return $response_list;
     }
 }

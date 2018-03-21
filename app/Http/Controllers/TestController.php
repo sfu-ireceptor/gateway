@@ -70,8 +70,8 @@ class TestController extends Controller
                     ->requestAsync('GET', $url, [])
                     ->then(function ($response) {
                         Log::info('query is done.');
-                        echo $response->getBody();
-                        return [$response];
+                        // echo $response->getBody();
+                        return ['aa', 'bb'];
                     });
             }
         };
@@ -96,11 +96,29 @@ class TestController extends Controller
         //     }
         // );
 
+        // $promise = \GuzzleHttp\Promise\each_limit(
+        //     $iterator(),
+        //     10, // concurrency
+        //     function($result, $index) {
+        //         // dd($result);
+        //     }
+        // );
+
+        $results = [];
         $promise = \GuzzleHttp\Promise\each_limit(
             $iterator(),
-            10 // concurrency
+            10, // concurrency
+            function($result, $index) use (&$results) {
+                $results[$index] = $result;
+            }
         );
+
+        // $promise = Promise\each_limit($promiseGenerator(), 2, function($value, $idx) use (&$result) {$result[$idx] = $value;});
+
+
+
         $promise->wait();
+        var_dump($results);
         echo "all done";
 
 //         // echo config('app.url');die();
