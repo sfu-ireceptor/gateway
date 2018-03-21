@@ -82,7 +82,7 @@ class RestService extends Model
             $t['password'] = $rs->password;
             $t['rest_service_id'] = $rs->id;
             $t['rest_service_name'] = $rs->name;
-                            
+
             $request_params[] = $t;
         }
 
@@ -607,7 +607,7 @@ class RestService extends Model
                 $rest_service_name = array_get($t, 'rest_service_name', '');
                 $rest_service = array_get($t, 'rs');
 
-                // build Guzzle request params array 
+                // build Guzzle request params array
                 $options = [];
                 $options['auth'] = [$username, $password];
 
@@ -656,7 +656,7 @@ class RestService extends Model
                 // execute request
                 Log::info('Start node query: ' . $url . '. with POST params:');
                 Log::info($params);
-        
+
                 $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rest_service_id, $rest_service_name, $url, $params, $file_path);
 
                 yield $client
@@ -692,19 +692,19 @@ class RestService extends Model
                         }
                     );
             }
-        };  
+        };
 
         // send requests
         $response_list = [];
         $promise = \GuzzleHttp\Promise\each_limit(
             $iterator(),
-            15, // maximum number of queries that can be done at the same time 
-            function($response, $i) use (&$response_list) {
+            15, // maximum number of queries that can be done at the same time
+            function ($response, $i) use (&$response_list) {
                 $response_list[$i] = $response;
             }
         );
         $promise->wait();
-        
+
         return $response_list;
     }
 }
