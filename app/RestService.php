@@ -489,7 +489,7 @@ class RestService extends Model
         $filters['output'] = 'csv';
         $filters['username'] = $username;
         $filters['ir_username'] = $username;
-   
+
         // prepare request parameters for each service
         $request_params = [];
         foreach (self::findEnabled() as $rs) {
