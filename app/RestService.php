@@ -489,15 +489,14 @@ class RestService extends Model
         $filters['output'] = 'csv';
         $filters['username'] = $username;
         $filters['ir_username'] = $username;
-
-        // get csv data and write it to file
-        $rs_promise_list = [];
+   
+        // prepare request parameters for each service
+        $request_params = [];
         foreach (self::findEnabled() as $rs) {
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             if (array_key_exists($sample_id_list_key, $filters) && ! empty($filters[$sample_id_list_key])) {
                 // remove REST service id
                 // ir_project_sample_id_list_2 -> ir_project_sample_id_list
-                unset($filters['ir_project_sample_id_list']);
                 $filters['ir_project_sample_id_list'] = $filters[$sample_id_list_key];
                 unset($filters[$sample_id_list_key]);
             } else {
@@ -505,43 +504,39 @@ class RestService extends Model
                 continue;
             }
 
-            $file_path = $folder_path . '/' . $rs->id . '.csv';
-
-            // start request to service
             $t = [];
+            $t['url'] = $rs->url . 'sequences';
+            $t['params'] = $filters;
+            $t['file_path'] = $folder_path . '/' . $rs->id . '.csv';
+            $t['gw_query_log_id'] = $query_log_id;
             $t['rs'] = $rs;
-            $t['promise'] = self::postRequest($rs, 'sequences', $filters, $query_log_id, $file_path);
-            $rs_promise_list[] = $t;
+
+            $request_params[] = $t;
         }
 
-        // wait for all requests to finish
-        $response_list = [];
-        foreach ($rs_promise_list as $t) {
-            $t['response'] = $t['promise']->wait();
-            $response_list[] = $t;
-        }
+        // do requests, write csv data to files
+        $response_list = self::doRequests($request_params);
 
-        // zip CSV files
+        // zip files
         $zipPath = $folder_path . '.zip';
         Log::info('zipping to ' . $zipPath);
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::CREATE);
-        foreach ($response_list as $t) {
-            if (isset($t['response']['file_path'])) {
-                $file_path = $t['response']['file_path'];
+        foreach ($response_list as $response) {
+            if (isset($response['file_path'])) {
+                $file_path = $response['file_path'];
                 $zip->addFile($file_path, basename($file_path));
             }
         }
-
         $zip->close();
 
-        // delete CSV files
-        foreach ($response_list as $t) {
-            $file_path = $t['response']['file_path'];
+        // delete files
+        foreach ($response_list as $response) {
+            $file_path = $response['file_path'];
             File::delete($file_path);
         }
 
-        // delete folder
+        // delete containing folder
         rmdir($folder_path);
 
         $zipPublicPath = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
