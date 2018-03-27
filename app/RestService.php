@@ -293,9 +293,9 @@ class RestService extends Model
                 // if no sample id for this REST service, don't query it.
                 continue;
             }
-            
+
             $uri = 'v2/sequences_summary';
-            
+
             $t['rs'] = $rs;
             $t['url'] = $rs->url . $uri;
             $t['params'] = $filters;
