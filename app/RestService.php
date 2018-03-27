@@ -293,8 +293,9 @@ class RestService extends Model
                 // if no sample id for this REST service, don't query it.
                 continue;
             }
-
+            
             $uri = 'v2/sequences_summary';
+            
             $t['rs'] = $rs;
             $t['url'] = $rs->url . $uri;
             $t['params'] = $filters;
@@ -504,12 +505,14 @@ class RestService extends Model
                 continue;
             }
 
+            $uri = 'v2/sequences_data';
+
             $t = [];
-            $t['url'] = $rs->url . 'sequences';
+            $t['rs'] = $rs;
+            $t['url'] = $rs->url . $uri;
             $t['params'] = $filters;
             $t['file_path'] = $folder_path . '/' . $rs->id . '.csv';
             $t['gw_query_log_id'] = $query_log_id;
-            $t['rs'] = $rs;
 
             $request_params[] = $t;
         }
