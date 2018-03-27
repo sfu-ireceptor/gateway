@@ -235,9 +235,9 @@ $(document).ready(function() {
     	$('.loading_message').hide();
 	});
 
-	// csv download
+	// tsv download
 	$('a.download_sequences').click(function() {
-		var input = $('<input>').attr('type', 'hidden').attr('name', 'csv').val('Download as CSV');
+		var input = $('<input>').attr('type', 'hidden').attr('name', 'tsv').val('Download as TSV');
         $('form.sequence_search').append($(input));
 		$('form.sequence_search').submit();
 		return false;

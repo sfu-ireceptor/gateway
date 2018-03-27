@@ -57,17 +57,17 @@ class SequenceController extends Controller
             $data['sample_query_id'] = $filters['sample_query_id'];
         }
 
-        // if csv
-        if (isset($filters['csv'])) {
-            $t = RestService::sequencesCSV($filters, $username, $query_log_id);
-            $csvFilePath = $t['public_path'];
+        // if tsv
+        if (isset($filters['tsv'])) {
+            $t = RestService::sequencesTSV($filters, $username, $query_log_id);
+            $tsvFilePath = $t['public_path'];
 
             // log result
             $query_log = QueryLog::find($query_log_id);
             $query_log->result_size = $t['size'];
             $query_log->save();
 
-            return redirect($csvFilePath);
+            return redirect($tsvFilePath);
         }
 
         // $request->flashExcept('ir_project_sample_id_list');   // keep submitted form values

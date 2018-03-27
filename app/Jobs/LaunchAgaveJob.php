@@ -62,8 +62,8 @@ class LaunchAgaveJob implements ShouldQueue
             $job->updateStatus('FEDERATING DATA');
             Log::info('$f[filters_json]' . $this->f['filters_json']);
             $filters = json_decode($this->f['filters_json'], true);
-            $csvFilePath = RestService::sequencesCSV($filters, $this->gw_username);
-            $folder = dirname($csvFilePath);
+            $dataFilePath = RestService::sequencesTSV($filters, $this->gw_username);
+            $folder = dirname($dataFilePath);
             $folder = str_replace('/data/', '', $folder);
 
             Log::info('folder=' . $folder);

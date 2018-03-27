@@ -293,9 +293,9 @@ class RestService extends Model
                 // if no sample id for this REST service, don't query it.
                 continue;
             }
-            
+
             $uri = 'v2/sequences_summary';
-            
+
             $t['rs'] = $rs;
             $t['url'] = $rs->url . $uri;
             $t['params'] = $filters;
@@ -474,7 +474,7 @@ class RestService extends Model
         return $data;
     }
 
-    public static function sequencesCSV($filters, $username, $query_log_id)
+    public static function sequencesTSV($filters, $username, $query_log_id)
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
@@ -487,7 +487,7 @@ class RestService extends Model
         File::makeDirectory($folder_path, 0777, true, true);
 
         // add username to filters
-        $filters['output'] = 'csv';
+        $filters['output'] = 'tsv';
         $filters['username'] = $username;
         $filters['ir_username'] = $username;
 
@@ -511,13 +511,13 @@ class RestService extends Model
             $t['rs'] = $rs;
             $t['url'] = $rs->url . $uri;
             $t['params'] = $filters;
-            $t['file_path'] = $folder_path . '/' . $rs->id . '.csv';
+            $t['file_path'] = $folder_path . '/' . $rs->id . '.tsv';
             $t['gw_query_log_id'] = $query_log_id;
 
             $request_params[] = $t;
         }
 
-        // do requests, write csv data to files
+        // do requests, write tsv data to files
         $response_list = self::doRequests($request_params);
 
         // zip files
