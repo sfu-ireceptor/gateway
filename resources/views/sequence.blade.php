@@ -150,6 +150,12 @@
 				<div class="active_filters">
 					<h3>Active filters</h3>
 
+					@foreach($sample_filter_fields as $filter_key => $filter_value)
+						<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
+							@lang('short.' . $filter_key)
+						</span>
+					@endforeach
+
 					@foreach($filter_fields as $filter_key => $filter_value)
 						<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
 							@lang('short.' . $filter_key)

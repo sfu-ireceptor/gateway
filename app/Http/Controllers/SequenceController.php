@@ -56,8 +56,23 @@ class SequenceController extends Controller
         if (isset($filters['sample_query_id'])) {
             $sample_query_id = $filters['sample_query_id'];
             $data['sample_query_id'] = $sample_query_id;
+
+            // sample filters for display
             $sample_filters = Query::getParams($sample_query_id);
-            // dd($sample_filters);
+
+            $sample_filter_fields = [];
+            foreach ($sample_filters as $k => $v) {
+                if ($v) {
+                    if (is_array($v)) {
+                        $sample_filter_fields[$k] = implode(', ', $v);
+                    } else {
+                        $sample_filter_fields[$k] = $v;
+                    }
+                }
+            }
+            // remove gateway-specific params
+            unset($sample_filter_fields['open_filter_panel_list']);
+            $data['sample_filter_fields'] = $sample_filter_fields;
         }
 
         // if tsv
