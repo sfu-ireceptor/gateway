@@ -125,7 +125,20 @@ class SampleController extends Controller
         }, $sample_data['filtered_repositories']);
         $data['filtered_repositories_names'] = implode(', ', $filtered_repositories_names);
 
-        $data['filter_fields'] = $sample_data['filter_fields'];
+        // create copy of filters for display
+        $filter_fields = [];
+        foreach ($params as $k => $v) {
+            if ($v) {
+                if (is_array($v)) {
+                    $filter_fields[$k] = implode(', ', $v);
+                } else {
+                    $filter_fields[$k] = $v;
+                }
+            }
+        }
+        // remove gateway-specific params
+        unset($filter_fields['open_filter_panel_list']);
+        $data['filter_fields'] = $filter_fields;
 
         // for bookmarking
         $current_url = $request->fullUrl();
