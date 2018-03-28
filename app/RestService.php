@@ -236,27 +236,6 @@ class RestService extends Model
         unset($filters['sample_query_id']);
         unset($filters['open_filter_panel_list']);
 
-        // Trakc the list of filters being used
-        $data['filter_fields'] = [];
-        // For each filter that is active, keep track of the filter field so
-        // UI can display the filters that are active.
-        foreach ($filters as $filter_key => $filter_value) {
-            // Filters are sometimes given to the API without values, so we
-            // have to detect this and only display if there are values.
-            if (count($filter_value) > 0) {
-                // Some parameters can be arrays, handle this and conver the array
-                // to a string representation of the filter.
-                if (is_array($filter_value)) {
-                    // We want to ignore the filters around sample in this list (we don't want to display them)
-                    if (strpos($filter_key, 'ir_project_sample_id_list_') !== false) {
-                        $data['filtered_fields'][$filter_key] = implode(', ', $filter_value);
-                    }
-                } else {
-                    $data['filter_fields'][$filter_key] = $filter_value;
-                }
-            }
-        }
-
         // add username to filters
         $filters['username'] = $username;
         $filters['ir_username'] = $username;

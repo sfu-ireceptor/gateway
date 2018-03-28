@@ -54,7 +54,10 @@ class SequenceController extends Controller
 
         $data['sample_query_id'] = '';
         if (isset($filters['sample_query_id'])) {
-            $data['sample_query_id'] = $filters['sample_query_id'];
+            $sample_query_id = $filters['sample_query_id'];
+            $data['sample_query_id'] = $sample_query_id;
+            $sample_filters = Query::getParams($sample_query_id);
+            // dd($sample_filters);
         }
 
         // if tsv
@@ -98,7 +101,6 @@ class SequenceController extends Controller
         $data['total_filtered_studies'] = $sequence_data['total_filtered_studies'];
         $data['total_filtered_sequences'] = $sequence_data['total_filtered_sequences'];
         $data['filtered_repositories'] = $sequence_data['filtered_repositories'];
-        $data['filter_fields'] = $sequence_data['filter_fields'];
 
         $filtered_repositories_names = array_map(function ($rs) {
             return $rs->name;
@@ -191,6 +193,27 @@ class SequenceController extends Controller
         }
         $filters_without_sequence_filters = array_except($filters, $sequence_filters);
         $data['no_filters_url'] = '/sequences?' . http_build_query($filters_without_sequence_filters);
+
+        // create copy of filters for display
+        $filter_fields = [];
+        foreach ($filters as $k => $v) {
+            if ($v) {
+                if (is_array($v)) {
+                    // don't show sample id filters
+                    if ( ! starts_with($k, 'ir_project_sample_id_list_')) {
+                        $filter_fields[$k] = implode(', ', $v);
+                    }
+                } else {
+                    $filter_fields[$k] = $v;
+                }
+            }
+        }
+        // remove gateway-specific filters
+        unset($filter_fields['cols']);
+        unset($filter_fields['filters_order']);
+        unset($filter_fields['sample_query_id']);
+        unset($filter_fields['open_filter_panel_list']);
+        $data['filter_fields'] = $filter_fields;
 
         // for analysis app
         $amazingHistogramGeneratorColorList = [];
