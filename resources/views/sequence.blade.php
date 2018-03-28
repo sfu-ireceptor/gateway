@@ -146,27 +146,40 @@
 			@endif
 
 			<!-- Active filters -->
-			@if ( ! empty($filter_fields))
+			@if ( ! empty($filter_fields) || ! empty($sample_filter_fields))
 				<div class="active_filters">
 					<h3>Active filters</h3>
 
-					@foreach($sample_filter_fields as $filter_key => $filter_value)
-						<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
-							@lang('short.' . $filter_key)
-						</span>
-					@endforeach
+					@if ( ! empty($sample_filter_fields))
+						Metadata filters:
+						@foreach($sample_filter_fields as $filter_key => $filter_value)
+							<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
+								@lang('short.' . $filter_key)
+							</span>
+						@endforeach
+						@isset($sample_query_id)
+							<a href="/samples?query_id=@yield('sample_query_id', '')"class="remove_filters">
+								Go back to metadata search
+							</a>
+						@endisset						
+						<br>
+					@endif
 
-					@foreach($filter_fields as $filter_key => $filter_value)
-						<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
-							@lang('short.' . $filter_key)
-						</span>
-					@endforeach
+					@if ( ! empty($filter_fields))
+						Sequence filters:
+						@foreach($filter_fields as $filter_key => $filter_value)
+							<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
+								@lang('short.' . $filter_key)
+							</span>
+						@endforeach
 
-					@isset($no_filters_query_id)
-						<a href="/sequences?query_id={{ $no_filters_query_id }}" class="remove_filters">
-							Remove filters
-						</a>
-					@endisset
+						@isset($no_filters_query_id)
+							<a href="/sequences?query_id={{ $no_filters_query_id }}" class="remove_filters">
+								Remove sequence filters
+							</a>
+						@endisset						
+					@endif
+
 
 					<a class="bookmark" href="/system/" data-uri="{{ $url }}">
 						@if ($bookmark_id)
