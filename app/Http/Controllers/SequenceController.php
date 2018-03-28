@@ -215,7 +215,7 @@ class SequenceController extends Controller
             if ($v) {
                 if (is_array($v)) {
                     // don't show sample id filters
-                    if ( ! starts_with($k, 'ir_project_sample_id_list_')) {
+                    if (! starts_with($k, 'ir_project_sample_id_list_')) {
                         $filter_fields[$k] = implode(', ', $v);
                     }
                 } else {
@@ -409,7 +409,7 @@ class SequenceController extends Controller
             if ($v) {
                 if (is_array($v)) {
                     // don't show sample id filters
-                    if ( ! starts_with($k, 'ir_project_sample_id_list_')) {
+                    if (! starts_with($k, 'ir_project_sample_id_list_')) {
                         $filter_fields[$k] = implode(', ', $v);
                     }
                 } else {
