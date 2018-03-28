@@ -319,7 +319,6 @@ class SequenceController extends Controller
         $data['total_filtered_studies'] = $sequence_data['total_filtered_studies'];
         $data['total_filtered_sequences'] = $sequence_data['total_filtered_sequences'];
         $data['filtered_repositories'] = $sequence_data['filtered_repositories'];
-        $data['filter_fields'] = $sequence_data['filter_fields'];
 
         $filtered_repositories_names = array_map(function ($rs) {
             return $rs->name;
@@ -388,6 +387,27 @@ class SequenceController extends Controller
         $hidden_fields[] = ['name' => 'cols', 'value' => $currentSequenceColumnsStr];
         $data['hidden_fields'] = $hidden_fields;
         $data['filters_json'] = json_encode($filters);
+
+        // create copy of current filters for display
+        $filter_fields = [];
+        foreach ($filters as $k => $v) {
+            if ($v) {
+                if (is_array($v)) {
+                    // don't show sample id filters
+                    if ( ! starts_with($k, 'ir_project_sample_id_list_')) {
+                        $filter_fields[$k] = implode(', ', $v);
+                    }
+                } else {
+                    $filter_fields[$k] = $v;
+                }
+            }
+        }
+        // remove gateway-specific filters
+        unset($filter_fields['cols']);
+        unset($filter_fields['filters_order']);
+        unset($filter_fields['sample_query_id']);
+        unset($filter_fields['open_filter_panel_list']);
+        $data['filter_fields'] = $filter_fields;
 
         // display view
         return view('sequenceQuickSearch', $data);
