@@ -826,6 +826,97 @@ form.sequence_column_selector {
 
 /* @group components */
 
+/* @group js-tree */
+
+
+.jstree-anchor-simple {
+  display: inline-block;
+  white-space: nowrap;
+  padding: 0 4px 0 1px;
+  margin: 0;
+  vertical-align: top;
+}
+.jstree-anchor-simple:focus {
+  outline: 0;
+}
+.jstree-anchor-simple,
+.jstree-anchor-simple:link,
+.jstree-anchor-simple:visited,
+.jstree-anchor-simple:hover,
+.jstree-anchor-simple:active {
+  text-decoration: none;
+}
+.jstree-anchor-simple > .jstree-themeicon {
+  margin-right: 2px;
+}
+.jstree-no-icons .jstree-themeicon,
+.jstree-anchor-simple > .jstree-themeicon-hidden {
+  display: none;
+}
+.jstree-rtl .jstree-anchor-simple {
+  padding: 0 1px 0 4px;
+}
+.jstree-rtl .jstree-anchor-simple > .jstree-themeicon {
+  margin-left: 2px;
+  margin-right: 0;
+}
+.jstree-wholerow-ul .jstree-anchor-simple,
+.jstree-wholerow-ul .jstree-icon {
+  position: relative;
+}
+.jstree-default .jstree-anchor-simple,
+.jstree-default .jstree-wholerow {
+  transition: background-color 0.15s, box-shadow 0.15s;
+}
+.jstree-default .jstree-no-icons .jstree-anchor-simple > .jstree-themeicon {
+  display: none;
+}
+.jstree-default .jstree-anchor-simple {
+  line-height: 24px;
+  height: 24px;
+}
+.jstree-default .jstree-anchor-simple > .jstree-undetermined {
+  background-position: -196px -4px;
+}
+.jstree-default .jstree-anchor-simple > .jstree-undetermined:hover {
+  background-position: -196px -36px;
+}
+.jstree-default-small .jstree-anchor-simple {
+  line-height: 18px;
+  height: 18px;
+}
+.jstree-default-small .jstree-anchor-simple > .jstree-undetermined {
+  background-position: -199px -7px;
+}
+.jstree-default-small .jstree-anchor-simple > .jstree-undetermined:hover {
+  background-position: -199px -39px;
+}
+.jstree-default-large .jstree-anchor-simple {
+  line-height: 32px;
+  height: 32px;
+}
+.jstree-default-large .jstree-anchor-simple > .jstree-undetermined {
+  background-position: -192px 0px;
+}
+.jstree-default-large .jstree-anchor-simple > .jstree-undetermined:hover {
+  background-position: -192px -32px;
+}
+  .jstree-default-responsive .jstree-anchor-simple {
+    line-height: 40px;
+    height: 40px;
+  }
+  .jstree-default-responsive .jstree-anchor-simple > .jstree-undetermined,
+  .jstree-default-responsive .jstree-anchor-simple > .jstree-undetermined:hover {
+    background-position: 0 -120px;
+  }
+  .jstree-default-responsive .jstree-anchor-simple {
+    font-weight: bold;
+    font-size: 1.1em;
+    text-shadow: 1px 1px white;
+  }
+
+/* @end */
+
 /* @group rest service list */
 
 #rest_service_list em {

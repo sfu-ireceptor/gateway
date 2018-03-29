@@ -68,7 +68,11 @@ $(document).ready(function() {
 	});
 
 	// jstree: rest services -> labs -> projects tree
-	$('#rest_service_list').jstree();
+	$('#rest_service_list').on('ready.jstree', function (e, data) {
+			// hack to make links work
+			// (otherwise the links default behaviour is overrided by jstree)
+	   		$('.jstree-anchor').addClass('jstree-anchor-simple').removeClass('jstree-anchor');
+  	}).jstree();
 
 	// table select/unselect all rows
 	$('a.select_all_samples').click(function(){
