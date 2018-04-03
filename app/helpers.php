@@ -186,7 +186,7 @@ if (! function_exists('secondsToTime')) {
 if (! function_exists('human_filesize')) {
     function human_filesize($bytes, $decimals = 1)
     {
-        if ( ! is_numeric($bytes)) {
+        if (! is_numeric($bytes)) {
             $bytes = filesize($bytes);
         }
 
