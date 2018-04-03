@@ -474,7 +474,7 @@ class RestService extends Model
             $t['rs'] = $rs;
             $t['url'] = $rs->url . $uri;
             $t['params'] = $filters;
-            $t['file_path'] = $folder_path . '/' . $rs->id . '.tsv';
+            $t['file_path'] = $folder_path . '/' . str_slug($rs->name) . '.tsv';
             $t['gw_query_log_id'] = $query_log_id;
 
             $request_params[] = $t;
@@ -483,10 +483,54 @@ class RestService extends Model
         // do requests, write tsv data to files
         $response_list = self::doRequests($request_params);
 
+        // get stats about files
+        $file_stats = [];
+        foreach ($response_list as $response) {
+            if (isset($response['file_path'])) {
+                $t = [];
+                $file_path = $response['file_path'];
+                $t['name'] = basename($file_path);
+                $t['size'] = human_filesize($file_path);
+                Log::debug('$file_path=' . $file_path);
+                Log::debug('$size=' . human_filesize($file_path));
+
+
+                // count number of lines
+                $n = 0;
+                $f = fopen($file_path, "r");
+                while(!feof($f)){
+                  $line = fgets($f);
+                  $n++;
+                }
+                fclose($f);
+                $t['nb_sequences'] = $n - 2; // remove headers line and last empty line
+                $file_stats[] = $t;
+            }
+        }
+
         // add info.txt
+        $s = '';
+        $s .= '* Summary *' . "\n";
+
+        $nb_sequences_total = 0;
+        foreach ($file_stats as $t) {
+            $nb_sequences_total += $t['nb_sequences'];
+        }
+        $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";        
+
+        foreach ($file_stats as $t) {
+            $s.= $t['name'] . ': ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
+        }
+        $s .= "\n";
+        
+        $s .= '* Filters *' . "\n";
+        $s .= "\n";
+        
+        $s .= '* Source *' . "\n";
+        $s .= $url . "\n";
         $date_str_human = date('M j, Y', $now);
         $time_str_human = date('H:i T', $now);
-        $s = 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human;
+        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "\n";
 
         $info_file_path = $folder_path . '/info.txt';
         file_put_contents($info_file_path, $s);

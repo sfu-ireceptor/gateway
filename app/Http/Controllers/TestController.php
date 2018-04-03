@@ -33,6 +33,14 @@ class TestController extends Controller
 
     public function getIndex()
     {
+        echo human_filesize('/var/www/ireceptor_gateway/storage/app/public/ir_2018-04-03_2239_5ac402badc061/scott-lab.tsv');  
+
+        die();
+
+        foreach (RestService::all() as $rs) {
+            echo str_slug($rs->name) . ' - ';
+        }
+        die();
 
         // create receiving folder
         $storage_folder = storage_path() . '/app/public/';
