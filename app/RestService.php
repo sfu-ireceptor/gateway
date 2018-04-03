@@ -523,7 +523,32 @@ class RestService extends Model
         }
         $s .= "\n";
         
-        $s .= '* Filters *' . "\n";
+        $s .= '* Filters *' . "\n";        
+        unset($filters['ir_project_sample_id_list']);  
+        unset($filters['cols']);
+        unset($filters['filters_order']);
+        unset($filters['sample_query_id']);
+        unset($filters['open_filter_panel_list']);
+        unset($filters['username']);
+        unset($filters['ir_username']);
+        unset($filters['output']);
+        unset($filters['tsv']);
+        foreach ($filters as $k => $v) {
+            if ($v === null) {
+                unset($filters[$k]);
+            }
+        }
+        if(count($filters) == 0) {
+            $s .= 'None' . "\n";                        
+        }
+        Log::debug('Nb filters=' . count($filters));
+        Log::debug($filters);
+        foreach ($filters as $k => $v) {
+            if(is_array($v)) {
+                $v = implode(" or ", $v);
+            }
+            $s .= $k . '=' . $v . "\n";            
+        }
         $s .= "\n";
         
         $s .= '* Source *' . "\n";
