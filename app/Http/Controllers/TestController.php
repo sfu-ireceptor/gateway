@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Process\Process;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use ZipArchive;
+use Illuminate\Support\Facades\File;
 
 class TestController extends Controller
 {
@@ -31,6 +33,25 @@ class TestController extends Controller
 
     public function getIndex()
     {
+
+        // create receiving folder
+        $storage_folder = storage_path() . '/app/public/';
+        $now = time();
+        $time_str = date('Y-m-d_Hi', $now);
+        $folder_name = 'ir_' . $time_str . '_' . uniqid();
+        $folder_path = $storage_folder . $folder_name;
+        File::makeDirectory($folder_path, 0777, true, true);
+
+
+        $date_str_human = date('M j, Y', $now);
+        $time_str_human = date('H:i T', $now);
+        $s = 'Downloaded by toto on ' . $date_str_human . ' at ' . $time_str_human;
+        echo $s;
+
+        $file = $folder_path . '/info.txt';
+        // file_put_contents($file, "test");
+
+        die();
 
         // // Initialize the Client
         // $client = new \GuzzleHttp\Client(['base_uri' => 'http://gw.local/test2']);

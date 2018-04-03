@@ -436,14 +436,15 @@ class RestService extends Model
         return $data;
     }
 
-    public static function sequencesTSV($filters, $username, $query_log_id)
+    public static function sequencesTSV($filters, $username, $query_log_id, $url)
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
         // create receiving folder
         $storage_folder = storage_path() . '/app/public/';
-        $time_str = date('Y-m-d_Hi', time());
+        $now = time();
+        $time_str = date('Y-m-d_Hi', $now);
         $folder_name = 'ir_' . $time_str . '_' . uniqid();
         $folder_path = $storage_folder . $folder_name;
         File::makeDirectory($folder_path, 0777, true, true);
@@ -482,6 +483,14 @@ class RestService extends Model
         // do requests, write tsv data to files
         $response_list = self::doRequests($request_params);
 
+        // add info.txt
+        $date_str_human = date('M j, Y', $now);
+        $time_str_human = date('H:i T', $now);
+        $s = 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human;
+
+        $info_file_path = $folder_path . '/info.txt';
+        file_put_contents($info_file_path, $s);
+
         // zip files
         $zipPath = $folder_path . '.zip';
         Log::info('zipping to ' . $zipPath);
@@ -493,6 +502,7 @@ class RestService extends Model
                 $zip->addFile($file_path, basename($file_path));
             }
         }
+        $zip->addFile($info_file_path, basename($info_file_path));
         $zip->close();
 
         // delete files
@@ -500,6 +510,7 @@ class RestService extends Model
             $file_path = $response['file_path'];
             File::delete($file_path);
         }
+        File::delete($info_file_path);
 
         // delete containing folder
         rmdir($folder_path);

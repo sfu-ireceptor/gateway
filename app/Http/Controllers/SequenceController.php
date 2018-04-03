@@ -77,7 +77,7 @@ class SequenceController extends Controller
 
         // if tsv
         if (isset($filters['tsv'])) {
-            $t = RestService::sequencesTSV($filters, $username, $query_log_id);
+            $t = RestService::sequencesTSV($filters, $username, $query_log_id, $request->fullUrl());
             $tsvFilePath = $t['public_path'];
 
             // log result
