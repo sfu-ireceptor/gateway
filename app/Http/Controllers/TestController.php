@@ -13,13 +13,12 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Process\Process;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use ZipArchive;
-use Illuminate\Support\Facades\File;
 
 class TestController extends Controller
 {
@@ -33,7 +32,7 @@ class TestController extends Controller
 
     public function getIndex()
     {
-        echo human_filesize('/var/www/ireceptor_gateway/storage/app/public/ir_2018-04-03_2239_5ac402badc061/scott-lab.tsv');  
+        echo human_filesize('/var/www/ireceptor_gateway/storage/app/public/ir_2018-04-03_2239_5ac402badc061/scott-lab.tsv');
 
         die();
 
@@ -49,7 +48,6 @@ class TestController extends Controller
         $folder_name = 'ir_' . $time_str . '_' . uniqid();
         $folder_path = $storage_folder . $folder_name;
         File::makeDirectory($folder_path, 0777, true, true);
-
 
         $date_str_human = date('M j, Y', $now);
         $time_str_human = date('H:i T', $now);

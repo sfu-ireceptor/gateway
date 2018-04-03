@@ -494,13 +494,12 @@ class RestService extends Model
                 Log::debug('$file_path=' . $file_path);
                 Log::debug('$size=' . human_filesize($file_path));
 
-
                 // count number of lines
                 $n = 0;
-                $f = fopen($file_path, "r");
-                while(!feof($f)){
-                  $line = fgets($f);
-                  $n++;
+                $f = fopen($file_path, 'r');
+                while (! feof($f)) {
+                    $line = fgets($f);
+                    $n++;
                 }
                 fclose($f);
                 $t['nb_sequences'] = $n - 2; // remove headers line and last empty line
@@ -516,15 +515,15 @@ class RestService extends Model
         foreach ($file_stats as $t) {
             $nb_sequences_total += $t['nb_sequences'];
         }
-        $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";        
+        $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
 
         foreach ($file_stats as $t) {
-            $s.= $t['name'] . ': ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
+            $s .= $t['name'] . ': ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
         }
         $s .= "\n";
-        
-        $s .= '* Filters *' . "\n";        
-        unset($filters['ir_project_sample_id_list']);  
+
+        $s .= '* Filters *' . "\n";
+        unset($filters['ir_project_sample_id_list']);
         unset($filters['cols']);
         unset($filters['filters_order']);
         unset($filters['sample_query_id']);
@@ -538,19 +537,19 @@ class RestService extends Model
                 unset($filters[$k]);
             }
         }
-        if(count($filters) == 0) {
-            $s .= 'None' . "\n";                        
+        if (count($filters) == 0) {
+            $s .= 'None' . "\n";
         }
         Log::debug('Nb filters=' . count($filters));
         Log::debug($filters);
         foreach ($filters as $k => $v) {
-            if(is_array($v)) {
-                $v = implode(" or ", $v);
+            if (is_array($v)) {
+                $v = implode(' or ', $v);
             }
-            $s .= $k . '=' . $v . "\n";            
+            $s .= $k . '=' . $v . "\n";
         }
         $s .= "\n";
-        
+
         $s .= '* Source *' . "\n";
         $s .= $url . "\n";
         $date_str_human = date('M j, Y', $now);
