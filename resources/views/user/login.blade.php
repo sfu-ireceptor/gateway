@@ -7,7 +7,7 @@
 
 	<div class="row">
 		<div class="col-md-3">
-
+			
 			<div class="login_logo">
 				<img src="/images/logos/ireceptor_logo.png">
 				<span>iReceptor</span>
@@ -47,7 +47,7 @@
 					</div>
 					<div class="panel-body">
 						<p>We are still working on performance, fine-tuning the interface and adding new data.</p>
-						<p>Full release: March 2018.</p>
+						<p>Full release: End of April 2018.</p>
 					</div>
 				</div>
 			</div>
