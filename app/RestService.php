@@ -491,8 +491,6 @@ class RestService extends Model
                 $file_path = $response['file_path'];
                 $t['name'] = basename($file_path);
                 $t['size'] = human_filesize($file_path);
-                Log::debug('$file_path=' . $file_path);
-                Log::debug('$size=' . human_filesize($file_path));
 
                 // count number of lines
                 $n = 0;
@@ -537,16 +535,17 @@ class RestService extends Model
                 unset($filters[$k]);
             }
         }
+
+        Log::debug($filters);
         if (count($filters) == 0) {
             $s .= 'None' . "\n";
         }
-        Log::debug('Nb filters=' . count($filters));
-        Log::debug($filters);
         foreach ($filters as $k => $v) {
             if (is_array($v)) {
                 $v = implode(' or ', $v);
             }
-            $s .= $k . '=' . $v . "\n";
+            // use human-friendly filter name
+            $s .= __('short.' . $k) . ': ' . $v . "\n";
         }
         $s .= "\n";
 
