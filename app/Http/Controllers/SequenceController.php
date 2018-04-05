@@ -53,6 +53,7 @@ class SequenceController extends Controller
         }
 
         $data['sample_query_id'] = '';
+        $sample_filter_fields = [];
         if (isset($filters['sample_query_id'])) {
             $sample_query_id = $filters['sample_query_id'];
             $data['sample_query_id'] = $sample_query_id;
@@ -72,12 +73,12 @@ class SequenceController extends Controller
             }
             // remove gateway-specific params
             unset($sample_filter_fields['open_filter_panel_list']);
-            $data['sample_filter_fields'] = $sample_filter_fields;
         }
+        $data['sample_filter_fields'] = $sample_filter_fields;
 
         // if tsv
         if (isset($filters['tsv'])) {
-            $t = RestService::sequencesTSV($filters, $username, $query_log_id, $request->fullUrl());
+            $t = RestService::sequencesTSV($filters, $username, $query_log_id, $request->fullUrl(), $sample_filter_fields);
             $tsvFilePath = $t['public_path'];
 
             // log result

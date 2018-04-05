@@ -436,7 +436,7 @@ class RestService extends Model
         return $data;
     }
 
-    public static function sequencesTSV($filters, $username, $query_log_id, $url)
+    public static function sequencesTSV($filters, $username, $query_log_id, $url, $sample_filters = [])
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
@@ -520,7 +520,21 @@ class RestService extends Model
         }
         $s .= "\n";
 
-        $s .= '* Filters *' . "\n";
+        $s .= '* Metadata filters *' . "\n";
+        Log::debug($sample_filters);
+        if (count($sample_filters) == 0) {
+            $s .= 'None' . "\n";
+        }
+        foreach ($sample_filters as $k => $v) {
+            if (is_array($v)) {
+                $v = implode(' or ', $v);
+            }
+            // use human-friendly filter name
+            $s .= __('short.' . $k) . ': ' . $v . "\n";
+        }
+        $s .= "\n";
+
+        $s .= '* Sequence filters *' . "\n";
         unset($filters['ir_project_sample_id_list']);
         unset($filters['cols']);
         unset($filters['filters_order']);
