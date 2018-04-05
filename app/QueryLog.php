@@ -42,8 +42,8 @@ class QueryLog extends Model
             $t['params'] = $params;
         }
 
-        if (isset($t['params']['csv'])) {
-            $t['file'] = 'csv';
+        if (isset($t['params']['tsv'])) {
+            $t['file'] = 'tsv';
         }
 
         if (str_contains($url, '/samples')) {
