@@ -160,16 +160,20 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels
         }
     }
     if (level < keys.length)
-        seriesData[level] = {name:'Other',y:otherSequences,drilldown:'OtherDetails'};
+        seriesData[level] = {name:'Other', y:otherSequences, drilldown:'OtherDetails'};
 
     // Set up the label display
     if (internalLabels) labelDistance = -10;
     else labelDistance = 3;
 
     // default settings
-    var colors = ['#7cb5ec', '#f4a45a', '#4a4a4a', '#6bc287', '#4941b7', '#9b9b9b', '#ebcfc4', '#e8e6d9', '#999999'];
+    var colors = ['#7cb5ec', '#f4a45a', '#6bc287', '#9e7bc4', '#c47b87', '#fb9f89', '#e6e0a1', '#ebcfc4', '#e8e6d9', '#999999'];
     var class_name = 'chart_label';
     var n = data.length;
+
+    // make sure that the smaller slice is black
+    var black_level = Math.min(level, (n-1));
+    colors[black_level] = '#4a4a4a';
 
     // if no values, don't display a chart
     if(data.length == 1 && data[0]['name'] == 'No data') {
