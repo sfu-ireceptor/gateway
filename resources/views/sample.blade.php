@@ -31,29 +31,31 @@
 
 							    <div class="form-group">
 									{{ Form::label('study_id', __('short.study_id')) }}
-									<a role="button" class="" data-container="body" data-toggle="popover_form_field" data-placement="right" title="{{ __('short.study_id') }}" data-content="{{ __('desc.study_id') }} <br> Example: {{ __('ex.study_id') }}" data-trigger="hover" tabindex="0">
-										<span class="glyphicon glyphicon-question-sign"></span>
-									</a>
+									@include('help', ['id' => 'study_id'])
 									{{ Form::text('study_id', '', array('class' => 'form-control')) }}
 								</div>
 
 							    <div class="form-group">
 									{{ Form::label('study_title', __('short.study_title')) }}
+									@include('help', ['id' => 'study_title'])
 									{{ Form::text('study_title', '', array('class' => 'form-control')) }}
 								</div>
 
 							    <div class="form-group">
 									{{ Form::label('study_description', __('short.study_description')) }}
+									@include('help', ['id' => 'study_description'])
 									{{ Form::text('study_description', '', array('class' => 'form-control')) }}
 								</div>
 
 							    <div class="form-group">
 									{{ Form::label('study_group_description', __('short.study_group_description')) }}
+									@include('help', ['id' => 'study_group_description'])
 									{{ Form::text('study_group_description', '', array('class' => 'form-control')) }}
 								</div>
 
 							    <div class="form-group">
 									{{ Form::label('lab_name', __('short.lab_name')) }}
+									@include('help', ['id' => 'lab_name'])
 									{{ Form::text('lab_name', '', array('class' => 'form-control')) }}
 								</div>
 
@@ -75,11 +77,13 @@
 							<div class="panel-body">
 							    <div class="form-group">
 									{{ Form::label('subject_id', __('short.subject_id')) }}
+									@include('help', ['id' => 'subject_id'])
 									{{ Form::text('subject_id', '', array('class' => 'form-control')) }}
 								</div>
 
 							    <div class="form-group">
 									{{ Form::label('organism', __('short.organism')) }}
+									@include('help', ['id' => 'organism'])
 									@foreach ($subject_organism_list as $id => $name)
 									<div class="checkbox">
 										<label>
@@ -92,11 +96,13 @@
 
 								<div class="form-group">
 									{{ Form::label('sex', __('short.sex')) }}
+									@include('help', ['id' => 'sex'])
 									{{ Form::select('sex', $subject_gender_list, '', array('class' => 'form-control')) }}
 								</div>
 
 							    <div class="form-group">
 									{{ Form::label('ethnicity', __('short.ethnicity')) }}
+									@include('help', ['id' => 'ethnicity'])
 									@foreach ($subject_ethnicity_list as $id => $name)
 									<div class="checkbox">
 										<label>
@@ -109,6 +115,7 @@
 
 								<div class="form-group">
 									{{ Form::label('ir_subject_age_min', __('short.age')) }}
+									@include('help', ['id' => 'age'])
 									<div class="row">
 										<div class="col-md-6">
 											{{ Form::text('ir_subject_age_min', '', array('class' => 'form-control', 'placeholder' => 'From')) }}
@@ -138,21 +145,25 @@
 							<div class="panel-body">
 								<div class="form-group">
 									{{ Form::label('sample_id', __('short.sample_id')) }}
+									@include('help', ['id' => 'sample_id'])
 									{{ Form::text('sample_id', '', array('class' => 'form-control')) }}
 								</div>
 
 								<div class="form-group">
 									{{ Form::label('cell_subset', __('short.cell_subset')) }}
+									@include('help', ['id' => 'cell_subset'])
 								    {{ Form::select('cell_subset[]', $cell_type_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 							    <div class="form-group">
 									{{ Form::label('tissue', __('short.tissue')) }}
+									@include('help', ['id' => 'tissue'])
 								    {{ Form::select('tissue[]', $sample_source_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 								 <div class="form-group">
 									{{ Form::label('template_class', __('short.template_class')) }}
+									@include('help', ['id' => 'template_class'])
 									@foreach ($dna_type_list as $id => $name)
 									<div class="checkbox">
 										<label>
@@ -165,16 +176,19 @@
 
 								<div class="form-group">
 									{{ Form::label('cell_phenotype', __('short.cell_phenotype')) }}
+									@include('help', ['id' => 'cell_phenotype'])
 									{{ Form::text('cell_phenotype', '', array('class' => 'form-control')) }}
 								</div>
 
 								<div class="form-group">
 									{{ Form::label('disease_state_sample', __('short.disease_state_sample')) }}
+									@include('help', ['id' => 'disease_state_sample'])
 									{{ Form::text('disease_state_sample', '', array('class' => 'form-control')) }}
 								</div>
 
 								<div class="form-group">
 									{{ Form::label('sequencing_platform', __('short.sequencing_platform')) }}
+									@include('help', ['id' => 'sequencing_platform'])
 									{{ Form::text('sequencing_platform', '', array('class' => 'form-control')) }}
 								</div>
 
