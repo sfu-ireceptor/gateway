@@ -33,6 +33,11 @@ $(document).ready(function() {
         numberDisplayed: 1,
     });
 
+	// help text for form fields
+	$('[data-toggle="popover_form_field"]').popover({
+  		html: true
+	});
+
 	// update number of selected samples
 	function update_sample_selection_text(){
 		var n = $('table.sample_list tbody input[type=checkbox]:checked').length;

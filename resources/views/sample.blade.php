@@ -31,6 +31,9 @@
 
 							    <div class="form-group">
 									{{ Form::label('study_id', __('short.study_id')) }}
+									<a role="button" class="" data-container="body" data-toggle="popover_form_field" data-placement="right" title="{{ __('short.study_id') }}" data-content="{{ __('desc.study_id') }} <br> Example: {{ __('ex.study_id') }}" data-trigger="hover" tabindex="0">
+										<span class="glyphicon glyphicon-question-sign"></span>
+									</a>
 									{{ Form::text('study_id', '', array('class' => 'form-control')) }}
 								</div>
 
