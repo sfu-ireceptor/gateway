@@ -450,9 +450,11 @@ class RestService extends Model
         File::makeDirectory($folder_path, 0777, true, true);
 
         // add username to filters
-        $filters['output'] = 'tsv';
         $filters['username'] = $username;
         $filters['ir_username'] = $username;
+
+        $filters['output'] = 'tsv';
+        $filters['ir_data_format'] = 'airr';
 
         // prepare request parameters for each service
         $request_params = [];
@@ -542,6 +544,7 @@ class RestService extends Model
         unset($filters['open_filter_panel_list']);
         unset($filters['username']);
         unset($filters['ir_username']);
+        unset($filters['ir_data_format']);
         unset($filters['output']);
         unset($filters['tsv']);
         foreach ($filters as $k => $v) {
