@@ -77,11 +77,25 @@ class QueryLog extends Model
         $duration = $start_time->diffInSeconds($now);
         $ql->duration = $duration;
 
-        $ql->status = $status;
-        $ql->message = $message;
+        // update gw query status only if there is a gw error (more important than service error)
+        // or no service error (in which case the status will be set to 'done')
+        if ($status != 'done' || $ql->status == 'running') {
+            $ql->status = $status;
+            $ql->message = $message;            
+        }
 
         $ql->save();
         Log::debug('end gateway query');
+    }
+
+    public static function set_gateway_query_status($query_log_id, $status = 'done', $message = null) {
+        $ql = self::find($query_log_id);
+
+        $ql->status = $status;
+        $ql->message = $message;
+
+        $ql->save();        
+        Log::debug('set gateway query to ' . $status);
     }
 
     public static function start_rest_service_query($gw_query_log_id, $rest_service_id, $rest_service_name, $path, $params, $filePath)
@@ -95,7 +109,7 @@ class QueryLog extends Model
 
         $t['level'] = 'rest_service';
 
-        $url = '/' . $path;
+        $url = $path;
         $t['url'] = $url;
 
         $t['params'] = $params;

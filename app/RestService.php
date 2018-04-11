@@ -69,6 +69,12 @@ class RestService extends Model
 
         // process returned data
         foreach ($response_list as $response) {
+
+            if ($response['status'] == 'error') {
+                QueryLog::set_gateway_query_status($query_log_id, 'service_error', $response['error_message']);
+                continue;
+            }
+
             $rs = $response['rs'];
 
             $sample_list = $response['data'];
@@ -277,15 +283,20 @@ class RestService extends Model
             // check response format
             if ($response['status'] == 'error') {
                 $data['rs_list_no_response'][] = $rs;
+                QueryLog::set_gateway_query_status($query_log_id, 'service_error', $response['error_message']);
                 continue;
             } elseif (! isset($obj->items)) {
-                Log::error('No "items" element in JSON response:');
+                $errror_message = 'No "items" element in JSON response';
+                Log::error($errror_message);
                 Log::error($obj);
+                QueryLog::set_gateway_query_status($query_log_id, 'service_error', $errror_message);
                 $data['rs_list_no_response'][] = $rs;
                 continue;
             } elseif (! isset($obj->summary)) {
-                Log::error('No "summary" element in JSON response.');
+                $errror_message = 'No "summary" element in JSON response';
+                Log::error($errror_message);
                 Log::error($obj);
+                QueryLog::set_gateway_query_status($query_log_id, 'service_error', $errror_message);
                 $data['rs_list_no_response'][] = $rs;
                 continue;
             }
