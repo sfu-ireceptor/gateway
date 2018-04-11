@@ -81,20 +81,21 @@ class QueryLog extends Model
         // or no service error (in which case the status will be set to 'done')
         if ($status != 'done' || $ql->status == 'running') {
             $ql->status = $status;
-            $ql->message = $message;            
+            $ql->message = $message;
         }
 
         $ql->save();
         Log::debug('end gateway query');
     }
 
-    public static function set_gateway_query_status($query_log_id, $status = 'done', $message = null) {
+    public static function set_gateway_query_status($query_log_id, $status = 'done', $message = null)
+    {
         $ql = self::find($query_log_id);
 
         $ql->status = $status;
         $ql->message = $message;
 
-        $ql->save();        
+        $ql->save();
         Log::debug('set gateway query to ' . $status);
     }
 

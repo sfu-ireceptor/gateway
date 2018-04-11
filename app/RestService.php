@@ -69,7 +69,6 @@ class RestService extends Model
 
         // process returned data
         foreach ($response_list as $response) {
-
             if ($response['status'] == 'error') {
                 QueryLog::set_gateway_query_status($query_log_id, 'service_error', $response['error_message']);
                 continue;
