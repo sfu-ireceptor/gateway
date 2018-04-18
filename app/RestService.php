@@ -26,11 +26,14 @@ class RestService extends Model
 
     public static function metadata($username)
     {
+        // get cached data
         return Sample::metadata();
     }
 
     public static function samples($filters, $username, $query_log_id)
     {
+        $base_uri = 'samples';
+
         // remove gateway-only filters
         unset($filters['open_filter_panel_list']);
 
@@ -49,15 +52,8 @@ class RestService extends Model
         foreach (self::findEnabled() as $rs) {
             $t = [];
 
-            $uri = 'samples';
-
-            // add version prefix if not v1
-            if ($rs->version > 1) {
-                $uri = 'v' . $rs->version . '/' . $uri;
-            }
-
             $t['rs'] = $rs;
-            $t['url'] = $rs->url . $uri;
+            $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;;
             $t['params'] = $filters;
             $t['gw_query_log_id'] = $query_log_id;
 
