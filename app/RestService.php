@@ -41,12 +41,6 @@ class RestService extends Model
         $filters['username'] = $username;
         $filters['ir_username'] = $username;
 
-        // initialize return array
-        $data = [];
-        $data['items'] = [];
-        $data['rs_list'] = [];
-        $data['total'] = 0;
-
         // prepare request parameters for each service
         $request_params = [];
         foreach (self::findEnabled() as $rs) {
@@ -63,6 +57,12 @@ class RestService extends Model
         // do requests
         $response_list = self::doRequests($request_params);
 
+        // initialize return array
+        $data = [];
+        $data['items'] = [];
+        $data['rs_list'] = [];
+        $data['total'] = 0;
+
         // process returned data
         foreach ($response_list as $response) {
             if ($response['status'] == 'error') {
@@ -71,13 +71,7 @@ class RestService extends Model
             }
 
             $rs = $response['rs'];
-
             $sample_list = $response['data'];
-
-            // convert sample data to v2 (if necessary)
-            if ($rs->version != 2) {
-                $sample_list = FieldName::convertObjectList($sample_list, 'ir_v' . $rs->version, 'ir_v2');
-            }
 
             foreach ($sample_list as $sample) {
                 $sample->rest_service_id = $rs->id;
