@@ -47,7 +47,7 @@ class RestService extends Model
             $t = [];
 
             $t['rs'] = $rs;
-            $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;;
+            $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;
             $t['params'] = $filters;
             $t['gw_query_log_id'] = $query_log_id;
 
