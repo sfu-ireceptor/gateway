@@ -30,7 +30,7 @@ class RestService extends Model
         return Sample::metadata();
     }
 
-    public static function samples($filters, $username, $query_log_id)
+    public static function samples($filters, $username, $query_log_id = null)
     {
         $base_uri = 'samples';
 
@@ -66,7 +66,9 @@ class RestService extends Model
         // process returned data
         foreach ($response_list as $response) {
             if ($response['status'] == 'error') {
-                QueryLog::set_gateway_query_status($query_log_id, 'service_error', $response['error_message']);
+                if ($query_log_id != null) {
+                    QueryLog::set_gateway_query_status($query_log_id, 'service_error', $response['error_message']);
+                }
                 continue;
             }
 
