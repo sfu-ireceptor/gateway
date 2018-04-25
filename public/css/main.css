@@ -756,7 +756,8 @@ a.select_all_samples {
 }
 
 .sequence_count {
-	font-size: 12px;
+	font-size: 15px;
+	margin-left: 3px;
 }
 
 a.download_sequences {
