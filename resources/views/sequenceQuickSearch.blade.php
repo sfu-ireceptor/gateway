@@ -45,14 +45,8 @@
 
 							    <div class="form-group">
 									{{ Form::label('organism', __('short.organism')) }}
-									@foreach ($subject_organism_list as $id => $name)
-									<div class="checkbox">
-										<label>
-										{{ Form::checkbox('organism[]', $id) }}
-										{{ $name }}
-										</label>
-									</div>
-									@endforeach
+									@include('help', ['id' => 'organism'])
+									{{ Form::text('organism', '', array('class' => 'form-control')) }}
 								</div>
 
 								<div class="form-group">
