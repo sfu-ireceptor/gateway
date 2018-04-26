@@ -185,7 +185,7 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels
     }
     // if only 1 value, use a muted color for the chart
     else if(data.length == 1) {
-        colors = ['transparent'];
+        colors = ['#e4e4e4'];
         truncateLabels = 15;
         labelDistance = -58;
     }
