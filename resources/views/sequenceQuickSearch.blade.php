@@ -114,12 +114,12 @@
 
 					<a class="bookmark" href="/system/" data-uri="{{ $url }}">
 						@if ($bookmark_id)
-							<button type="button" class="btn btn-success btn-xs" aria-label="Bookmark" data-id="{{ $bookmark_id }}">
+							<button type="button" class="btn btn-success" aria-label="Bookmark" data-id="{{ $bookmark_id }}">
 							  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
 							  <span class="text">Bookmarked</span>
 							</button>
 						@else
-							<button type="button" class="btn btn-default btn-xs" aria-label="Bookmark">
+							<button type="button" class="btn btn-primary" aria-label="Bookmark">
 							  <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
 							  <span class="text">Bookmark this search</span>
 							</button>
