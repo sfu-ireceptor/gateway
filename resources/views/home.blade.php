@@ -50,7 +50,7 @@
 				<div class="panel-body filters sequence_search">
 					{{ Form::open(array('url' => 'sequences-quick-search', 'role' => 'form', 'method' => 'get', 'class' => 'sequence_search')) }}
 							
-						<p>Find interesting sequences and sequence annotations by searching for sequence features (Junction, V/D/J Gene)</p>
+						<p>Find interesting sequences and sequence annotations by searching for Junction AA sequences.</p>
 	
 						<div class="row">
 							<div class="col-md-7">
