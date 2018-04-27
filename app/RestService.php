@@ -485,11 +485,11 @@ class RestService extends Model
         }
 
         // do requests, write tsv data to files
-        Log::debug("Do TSV requests...");
+        Log::debug('Do TSV requests...');
         $response_list = self::doRequests($request_params);
 
         // get stats about files
-        Log::debug("Get TSV files stats");
+        Log::debug('Get TSV files stats');
         $file_stats = [];
         foreach ($response_list as $response) {
             if (isset($response['file_path'])) {
@@ -503,7 +503,7 @@ class RestService extends Model
                 $f = fopen($file_path, 'r');
                 while (! feof($f)) {
                     $line = fgets($f);
-                    if( ! empty(trim($line))) {
+                    if (! empty(trim($line))) {
                         $n++;
                     }
                 }
@@ -649,6 +649,7 @@ class RestService extends Model
 
         // get sequences summary
         $sequence_filters = array_merge($sequence_filters, $sample_id_filters);
+
         return self::sequencesTSV($sequence_filters, $username, $query_log_id, $url, $sample_filters);
     }
 

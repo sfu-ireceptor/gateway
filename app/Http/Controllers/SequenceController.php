@@ -324,7 +324,6 @@ class SequenceController extends Controller
             return redirect($tsvFilePath);
         }
 
-
         $sequence_data = RestService::search($sample_filters, $sequence_filters, $username, $query_log_id);
 
         // log result
