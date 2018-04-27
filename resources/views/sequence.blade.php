@@ -35,16 +35,19 @@
 							<div class="panel-body">
 								<div class="form-group">
 									{{ Form::label('v_call', $filters_list_all['v_call']) }}
+									@include('help', ['id' => 'v_call'])
 									{{ Form::text('v_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'String prefix search (matches from the first character). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">
 									{{ Form::label('j_call', $filters_list_all['j_call']) }}
+									@include('help', ['id' => 'j_call'])
 									{{ Form::text('j_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'String prefix search (matches from the first character). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">
 									{{ Form::label('d_call', $filters_list_all['d_call']) }}
+									@include('help', ['id' => 'd_call'])
 									{{ Form::text('d_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'String prefix search (matches from the first character). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
@@ -68,6 +71,7 @@
 							<div class="panel-body">
 								<div class="form-group">
 									{{ Form::label('junction_aa', $filters_list_all['junction_aa']) }}
+									@include('help', ['id' => 'junction_aa'])
 									{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided, minimum of 4 AA required). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 

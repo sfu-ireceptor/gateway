@@ -56,12 +56,14 @@
 							<div class="col-md-7">
 								<div class="form-group">
 									{{ Form::label('junction_aa', $filters_list_all['junction_aa']) }}
+									@include('help', ['id' => 'junction_aa'])
 									{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4')) }}
 								</div>
 							</div>
 							<div class="col-md-5">
 								<div class="form-group">
 									{{ Form::label('cell_subset', __('short.cell_subset')) }}
+									@include('help', ['id' => 'cell_subset'])
 								    {{ Form::select('cell_subset[]', $cell_type_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 							</div>							
