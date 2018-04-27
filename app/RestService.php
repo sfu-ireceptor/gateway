@@ -485,9 +485,11 @@ class RestService extends Model
         }
 
         // do requests, write tsv data to files
+        Log::debug("Do TSV requests...");
         $response_list = self::doRequests($request_params);
 
         // get stats about files
+        Log::debug("Get TSV files stats");
         $file_stats = [];
         foreach ($response_list as $response) {
             if (isset($response['file_path'])) {
@@ -501,10 +503,12 @@ class RestService extends Model
                 $f = fopen($file_path, 'r');
                 while (! feof($f)) {
                     $line = fgets($f);
-                    $n++;
+                    if( ! empty(trim($line))) {
+                        $n++;
+                    }
                 }
                 fclose($f);
-                $t['nb_sequences'] = $n - 2; // remove headers line and last empty line
+                $t['nb_sequences'] = $n - 1; // remove count of headers line
                 $file_stats[] = $t;
             }
         }
@@ -579,7 +583,7 @@ class RestService extends Model
 
         // zip files
         $zipPath = $folder_path . '.zip';
-        Log::info('zipping to ' . $zipPath);
+        Log::info('Zip files to ' . $zipPath);
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::CREATE);
         foreach ($response_list as $response) {
@@ -592,6 +596,7 @@ class RestService extends Model
         $zip->close();
 
         // delete files
+        Log::debug('Delete downloaded files...');
         foreach ($response_list as $response) {
             $file_path = $response['file_path'];
             File::delete($file_path);
@@ -628,6 +633,23 @@ class RestService extends Model
         $sequence_data = self::sequences_summary($sequence_filters, $username, $query_log_id);
 
         return $sequence_data;
+    }
+
+    public static function searchTSV($sample_filters, $sequence_filters, $username, $query_log_id, $url)
+    {
+        // get samples
+        $sample_data = self::samples($sample_filters, $username, $query_log_id);
+        $sample_list = $sample_data['items'];
+
+        // get samples ids
+        $sample_id_filters = [];
+        foreach ($sample_list as $sample) {
+            $sample_id_filters['ir_project_sample_id_list_' . $sample->rest_service_id][] = $sample->ir_project_sample_id;
+        }
+
+        // get sequences summary
+        $sequence_filters = array_merge($sequence_filters, $sample_id_filters);
+        return self::sequencesTSV($sequence_filters, $username, $query_log_id, $url, $sample_filters);
     }
 
     // do requests (in parallel)
