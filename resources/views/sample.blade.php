@@ -14,7 +14,7 @@
 
 			<h3 class="first">Filters</h3>
 
-			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'post', 'class' => 'sample_search')) }}
+			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'post', 'class' => 'sample_search show_loading_message')) }}
 				<input type="hidden" name="project_id_list" />
 
 				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -60,7 +60,7 @@
 								</div>
 
 								<p class="button_container">
-									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
+									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 								</p>
 							</div>
 						</div>
@@ -120,7 +120,7 @@
 								</div>
 
 								<p class="button_container">
-									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
+									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 								</p>
 
 							</div>
@@ -186,7 +186,7 @@
 								</div>
 
 								<p class="button_container">
-									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
+									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 								</p>
 
 							</div>
@@ -271,14 +271,14 @@
 
 
 			@if (! empty($sample_list))
-			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form')) }}
+			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form show_loading_message')) }}
 
 				<h3>Individual Samples</h3>
 				<p class="table_info">
 					<span class="nb_selected_samples">{{ count($sample_list) }}</span> samples selected
 					<a class="unselect_all_samples" href="#">Unselect All</a>
 					<a class="select_all_samples" href="#">Select All</a>
-					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse_sequences loading browse-seq-data-button')) }}
+					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse_sequences browse-seq-data-button')) }}
 				</p>
 				
 				<table class="table table-striped sample_list table-condensed much_data table-bordered">
@@ -418,7 +418,7 @@
 				<input type="hidden" name="project_id_list" />
 				<input type="hidden" name="sample_query_id" value="{{ $sample_query_id }}" />
 				<p class="pull-right">
-				{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button loading')) }}
+				{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button')) }}
 				</p>
 			{{ Form::close() }}
 			@endif

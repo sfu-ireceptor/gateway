@@ -114,6 +114,24 @@ $(document).ready(function() {
 	* Sequences
 	**********************************************************/
 
+	$('form.sequence_search').submit(function(event){
+		var nb_fields = 0;
+
+		// get number of not empty text fields
+		nb_fields = $('input[type=text]', $(this)).filter(function () {
+    		return $.trim($(this).val()).length !== 0
+		}).length;
+
+		if(nb_fields > 1) {
+			if (! confirm('Multi-fields queries are currently very slow and might fail. Do you want to proceed?')) {
+				event.stopImmediatePropagation();
+				return false;
+			}
+		}
+
+		return true;
+	});
+
 	// bookmarking
 	$('a.bookmark').click(function(){
 		var button = $('button', $(this));
@@ -222,26 +240,28 @@ $(document).ready(function() {
     // tooltips
     $('[data-toggle="tooltip"]').tooltip();
 
-    // loading message
-    $('.loading').click(function(){
-    	$('.loading_contents').addClass('disabled');
-    	$('.loading_message').show();
-    });
 
-    $(window).bind("pageshow", function(event) {
+    function show_loading_message() {
+    	$('.loading_contents').addClass('disabled');
+		$('.loading_message').show();    	
+    }
+
+    function hide_loading_message() {
     	$('.loading_contents').removeClass('disabled');
-    	$('.loading_message').hide();
+    	$('.loading_message').hide();  	
+    }
+
+	$('form.show_loading_message').submit(function(){
+		show_loading_message();
 	});
 
-    $('.loading').click(function(){
-    	$('.loading_contents').addClass('disabled');
-    	$('.loading_message').show();
-    });
+    $(window).bind("pageshow", function(event) {
+		hide_loading_message();
+	});
 
 	$('.loading_message a.cancel').click(function(){
 		window.stop();
-    	$('.loading_contents').removeClass('disabled');
-    	$('.loading_message').hide();
+		hide_loading_message();
 	});
 
 	// tsv download

@@ -14,7 +14,7 @@
 
 			<h3 class="first">Filters</h3>
 
-			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sequence_search')) }}
+			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sequence_search show_loading_message')) }}
 
 				@foreach ($hidden_fields as $hf)
 					<input type="hidden" name="{{$hf['name']}}" value="{{$hf['value']}}">
@@ -52,7 +52,7 @@
 								</div>
 
 								<p class="button_container">
-									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
+									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 								</p>
 
 							</div>
@@ -81,7 +81,7 @@
 								</div>
 
 								<p class="button_container">
-									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
+									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 								</p>
 
 							</div>
@@ -123,7 +123,7 @@
 									{{ Form::text('j_score', '', array('class' => 'form-control')) }}
 								</div>
 								<p class="button_container">
-									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples loading')) }}
+									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 								</p>
 							</div>
 						</div>
