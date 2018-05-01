@@ -302,6 +302,7 @@
 							<th>@lang('short.template_class')</th>
 							<th>@lang('short.study_id')</th>
 							<th>@lang('short.pub_ids')</th>
+							<th>@lang('short.sequencing_platform')</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -410,6 +411,13 @@
 									</span>
 								@endisset
 							</td>	
+							<td>
+								@isset($sample->sequencing_platform)
+									<span title="{{ $sample->sequencing_platform }}">
+									{{ str_limit($sample->sequencing_platform, $limit = 20, $end = '‥') }}
+									</span>
+								@endisset
+							</td>
 						</tr>
 						@endforeach
 					</tbody>
