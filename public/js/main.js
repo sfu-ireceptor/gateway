@@ -245,7 +245,6 @@ $(document).ready(function() {
     function show_reloading_message() {
     	$('.reloading_contents').contents().hide();
     	$('.reloading_contents').append($('.reloading_message'));
-    	// $('.reloading_contents').addClass('disabled');
 		$('.reloading_message').show();    	
     }
 
@@ -283,7 +282,7 @@ $(document).ready(function() {
 
 	$('form.show_loading_message').submit(function(){
 		show_loading_message();
-		return false;
+		// return false;
 	});
 
     $(window).bind("pageshow", function(event) {
