@@ -243,13 +243,13 @@ $(document).ready(function() {
 
     // reloading message
     function show_reloading_message() {
-    	$('.reloading_contents').contents().hide();
-    	$('.reloading_contents').append($('.reloading_message'));
+    	$('.reloading_contents').after($('.reloading_message'));
+    	$('.reloading_contents').hide();
 		$('.reloading_message').show();    	
     }
 
     function hide_reloading_message() {
-    	$('.reloading_contents').contents().show();
+    	$('.reloading_contents').show();
     	$('form input[type=submit]').removeAttr('disabled');
     	$('.reloading_message').hide();  	
     }

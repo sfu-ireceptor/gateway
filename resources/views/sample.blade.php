@@ -197,240 +197,241 @@
 			{{ Form::close() }}
 		</div>
 
-		<div class="col-md-10 reloading_contents">
-
-			<!-- Active filters -->
-			@if ( ! empty($filter_fields))
-				<div class="active_filters">
-					<h3>Active filters</h3>
-					@foreach($filter_fields as $filter_key => $filter_value)
-						<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
-							@lang('short.' . $filter_key)
-						</span>
-					@endforeach
-					<a href="/samples" class="remove_filters">
-						Remove filters
-					</a>
-
-					<a class="bookmark" href="/system/" data-uri="{{ $url }}">
-						@if ($bookmark_id)
-							<button type="button" class="btn btn-success" aria-label="Bookmark" data-id="{{ $bookmark_id }}">
-							  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-							  <span class="text">Bookmarked</span>
-							</button>
-						@else
-							<button type="button" class="btn btn-primary" aria-label="Bookmark">
-							  <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-							  <span class="text">Bookmark this search</span>
-							</button>
-						@endif
-					</a>
-
-				</div>
-			@endif	
-		
-
-			@if (empty($sample_list))
-				<div class="no_results">
-					<h2>No Results</h2>
-					<p>Remove a filter or <a href="/samples">remove all filters</a> to return results.</p>
-				</div>
-			@else
-				<!-- Statistics -->
-				<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Search results statistics</h3>
-				<div class="statistics">
-					<p>
-						<strong>
-							{{number_format($total_filtered_sequences)}} sequences
-							({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}})
-						</strong>
-						returned from
-
-						<a href="#" data-toggle="modal" data-target="#myModal">
-							{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},
-							{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}},
-							{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
-						</a>
-					</p>
-
-					<!-- repos/labs/studies details popup -->
-					@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
-
-					<div id="sample_charts" class="charts">
-						<div class="row">
-							<div class="col-md-2 chart" id="sample_chart1"></div>
-							<div class="col-md-2 chart" id="sample_chart2"></div>
-							<div class="col-md-2 chart" id="sample_chart3"></div>
-							<div class="col-md-2 chart" id="sample_chart4"></div>
-							<div class="col-md-2 chart" id="sample_chart5"></div>
-							<div class="col-md-2 chart" id="sample_chart6"></div>
-						</div>
-					</div>								
-				</div>
-			@endif
-
-
-			@if (! empty($sample_list))
-			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form show_loading_message')) }}
-
-				<h3>Individual Samples</h3>
-				<p class="table_info">
-					<span class="nb_selected_samples">{{ count($sample_list) }}</span> samples selected
-					<a class="unselect_all_samples" href="#">Unselect All</a>
-					<a class="select_all_samples" href="#">Select All</a>
-					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse_sequences browse-seq-data-button')) }}
-				</p>
-				
-				<table class="table table-striped sample_list table-condensed much_data table-bordered">
-					<thead> 
-						<tr>
-							<th class="checkbox_cell">
-{{-- 								<button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
-								  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-								</button> --}}
-							</th>
-							<th>Repository</th>
-							<th>@lang('short.lab_name')</th>
-							<th>@lang('short.study_title')</th>
-							<th>@lang('short.study_group_description')</th>
-							<th>@lang('short.subject_id')</th>
-							<th>Sequences</th>
-							<th>@lang('short.tissue')</th>
-							<th>@lang('short.cell_subset')</th>
-							<th>@lang('short.cell_phenotype')</th>
-							<th>@lang('short.sample_id')</th>
-							<th>@lang('short.template_class')</th>
-							<th>@lang('short.study_id')</th>
-							<th>@lang('short.pub_ids')</th>
-							<th>@lang('short.sequencing_platform')</th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach ($sample_list as $sample)
-						<tr>
-							<td class="checkbox_cell">
-								@isset($sample->ir_sequence_count)
-									@if ($sample->ir_sequence_count > 0)
-										{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id, true) }}
-									@endif
-								@endisset
-							</td>
-							<td class="text-nowrap">
-								<span title="{{ $sample->rest_service_name }}">
-									{{ str_limit($sample->rest_service_name, $limit = 9, $end = '‥') }}
-								</span>
-							</td>
-							<td class="text-nowrap">
-								@isset($sample->lab_name)
-									<span title="{{ $sample->lab_name }}">
-									{{ str_limit($sample->lab_name, $limit = 10, $end = '‥') }}
-									</span>
-								@endif
-							</td>
-							<td>
-								@isset($sample->study_title)
-									@isset($sample->study_url)
-										<a href="{{$sample->study_url}}" title="{{ $sample->study_title }}" target="_blank">
-											{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
-										</a>
-									@else
-										<span title="{{ $sample->study_title }}">
-											{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
-										</span>							
-									@endisset
-								@endisset
-							</td>
-							<td>
-								@isset($sample->study_group_description)
-									<span title="{{ $sample->study_group_description }}">
-									{{ str_limit($sample->study_group_description, $limit = 15, $end = '‥') }}
-									</span>
-								@endisset
-							</td>	
-							<td>
-								@isset($sample->subject_id)
-									<span title="{{ $sample->subject_id }}">
-									{{ str_limit($sample->subject_id, $limit = 15, $end = '‥') }}
-									</span>
-								@endisset
-							</td>							
-							<td>
-								@isset($sample->ir_sequence_count)
-									@if ($sample->ir_sequence_count > 0)
-										<a href="sequences?ir_project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
-											<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
-										</a>
-									@endif
-								@endisset
-							</td>
-							<td>
-								@isset($sample->tissue)
-									<span title="{{ $sample->tissue }}">
-									{{ str_limit($sample->tissue, $limit = 12, $end = '‥') }}
-									</span>
-								@endisset
-							</td>
-							<td>
-								@isset($sample->cell_subset)
-									<span title="{{ $sample->cell_subset }}">
-									{{ str_limit($sample->cell_subset, $limit = 12, $end = '‥') }}
-									</span>
-								@endisset
-							<td>
-								@isset($sample->cell_phenotype)
-									<span title="{{ $sample->cell_phenotype }}">
-									{{ str_limit($sample->cell_phenotype, $limit = 12, $end = '‥') }}
-									</span>
-								@endisset
-							</td>						
-							<td>
-								@isset($sample->sample_id)
-									<span title="{{ $sample->sample_id }}">
-									{{ str_limit($sample->sample_id, $limit = 12, $end = '') }}
-									</span>
-								@endisset
-							</td>	
-							<td>
-								@isset($sample->template_class)
-									<span title="{{ $sample->template_class }}">
-									{{ str_limit($sample->template_class, $limit = 12, $end = '‥') }}
-									</span>
-								@endisset
-							</td>
-							<td>
-								@isset($sample->study_id)
-									<span title="{{ $sample->study_id }}">
-									{{ str_limit($sample->study_id, $limit = 15, $end = '‥') }}
-									</span>
-								@endisset
-							</td>		
-							<td>
-								@isset($sample->pub_ids)
-									<span title="{{ $sample->pub_ids }}">
-									{{ str_limit($sample->pub_ids, $limit = 15, $end = '‥') }}
-									</span>
-								@endisset
-							</td>	
-							<td>
-								@isset($sample->sequencing_platform)
-									<span title="{{ $sample->sequencing_platform }}">
-									{{ str_limit($sample->sequencing_platform, $limit = 20, $end = '‥') }}
-									</span>
-								@endisset
-							</td>
-						</tr>
+		<div class="col-md-10">
+			<div class="reloading_contents">
+				<!-- Active filters -->
+				@if ( ! empty($filter_fields))
+					<div class="active_filters">
+						<h3>Active filters</h3>
+						@foreach($filter_fields as $filter_key => $filter_value)
+							<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
+								@lang('short.' . $filter_key)
+							</span>
 						@endforeach
-					</tbody>
-				</table>
+						<a href="/samples" class="remove_filters">
+							Remove filters
+						</a>
 
-				<input type="hidden" name="project_id_list" />
-				<input type="hidden" name="sample_query_id" value="{{ $sample_query_id }}" />
-				<p class="pull-right">
-				{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button')) }}
-				</p>
-			{{ Form::close() }}
-			@endif
+						<a class="bookmark" href="/system/" data-uri="{{ $url }}">
+							@if ($bookmark_id)
+								<button type="button" class="btn btn-success" aria-label="Bookmark" data-id="{{ $bookmark_id }}">
+								  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+								  <span class="text">Bookmarked</span>
+								</button>
+							@else
+								<button type="button" class="btn btn-primary" aria-label="Bookmark">
+								  <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
+								  <span class="text">Bookmark this search</span>
+								</button>
+							@endif
+						</a>
 
+					</div>
+				@endif	
+			
+
+				@if (empty($sample_list))
+					<div class="no_results">
+						<h2>No Results</h2>
+						<p>Remove a filter or <a href="/samples">remove all filters</a> to return results.</p>
+					</div>
+				@else
+					<!-- Statistics -->
+					<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Search results statistics</h3>
+					<div class="statistics">
+						<p>
+							<strong>
+								{{number_format($total_filtered_sequences)}} sequences
+								({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}})
+							</strong>
+							returned from
+
+							<a href="#" data-toggle="modal" data-target="#myModal">
+								{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},
+								{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}},
+								{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
+							</a>
+						</p>
+
+						<!-- repos/labs/studies details popup -->
+						@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
+
+						<div id="sample_charts" class="charts">
+							<div class="row">
+								<div class="col-md-2 chart" id="sample_chart1"></div>
+								<div class="col-md-2 chart" id="sample_chart2"></div>
+								<div class="col-md-2 chart" id="sample_chart3"></div>
+								<div class="col-md-2 chart" id="sample_chart4"></div>
+								<div class="col-md-2 chart" id="sample_chart5"></div>
+								<div class="col-md-2 chart" id="sample_chart6"></div>
+							</div>
+						</div>								
+					</div>
+				@endif
+
+
+				@if (! empty($sample_list))
+				{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form show_loading_message')) }}
+
+					<h3>Individual Samples</h3>
+					<p class="table_info">
+						<span class="nb_selected_samples">{{ count($sample_list) }}</span> samples selected
+						<a class="unselect_all_samples" href="#">Unselect All</a>
+						<a class="select_all_samples" href="#">Select All</a>
+						{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse_sequences browse-seq-data-button')) }}
+					</p>
+					
+					<table class="table table-striped sample_list table-condensed much_data table-bordered">
+						<thead> 
+							<tr>
+								<th class="checkbox_cell">
+	{{-- 								<button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
+									  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+									</button> --}}
+								</th>
+								<th>Repository</th>
+								<th>@lang('short.lab_name')</th>
+								<th>@lang('short.study_title')</th>
+								<th>@lang('short.study_group_description')</th>
+								<th>@lang('short.subject_id')</th>
+								<th>Sequences</th>
+								<th>@lang('short.tissue')</th>
+								<th>@lang('short.cell_subset')</th>
+								<th>@lang('short.cell_phenotype')</th>
+								<th>@lang('short.sample_id')</th>
+								<th>@lang('short.template_class')</th>
+								<th>@lang('short.study_id')</th>
+								<th>@lang('short.pub_ids')</th>
+								<th>@lang('short.sequencing_platform')</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach ($sample_list as $sample)
+							<tr>
+								<td class="checkbox_cell">
+									@isset($sample->ir_sequence_count)
+										@if ($sample->ir_sequence_count > 0)
+											{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id, true) }}
+										@endif
+									@endisset
+								</td>
+								<td class="text-nowrap">
+									<span title="{{ $sample->rest_service_name }}">
+										{{ str_limit($sample->rest_service_name, $limit = 9, $end = '‥') }}
+									</span>
+								</td>
+								<td class="text-nowrap">
+									@isset($sample->lab_name)
+										<span title="{{ $sample->lab_name }}">
+										{{ str_limit($sample->lab_name, $limit = 10, $end = '‥') }}
+										</span>
+									@endif
+								</td>
+								<td>
+									@isset($sample->study_title)
+										@isset($sample->study_url)
+											<a href="{{$sample->study_url}}" title="{{ $sample->study_title }}" target="_blank">
+												{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
+											</a>
+										@else
+											<span title="{{ $sample->study_title }}">
+												{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
+											</span>							
+										@endisset
+									@endisset
+								</td>
+								<td>
+									@isset($sample->study_group_description)
+										<span title="{{ $sample->study_group_description }}">
+										{{ str_limit($sample->study_group_description, $limit = 15, $end = '‥') }}
+										</span>
+									@endisset
+								</td>	
+								<td>
+									@isset($sample->subject_id)
+										<span title="{{ $sample->subject_id }}">
+										{{ str_limit($sample->subject_id, $limit = 15, $end = '‥') }}
+										</span>
+									@endisset
+								</td>							
+								<td>
+									@isset($sample->ir_sequence_count)
+										@if ($sample->ir_sequence_count > 0)
+											<a href="sequences?ir_project_sample_id_list_{{ $sample->rest_service_id }}[]={{ $sample->ir_project_sample_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
+												<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
+											</a>
+										@endif
+									@endisset
+								</td>
+								<td>
+									@isset($sample->tissue)
+										<span title="{{ $sample->tissue }}">
+										{{ str_limit($sample->tissue, $limit = 12, $end = '‥') }}
+										</span>
+									@endisset
+								</td>
+								<td>
+									@isset($sample->cell_subset)
+										<span title="{{ $sample->cell_subset }}">
+										{{ str_limit($sample->cell_subset, $limit = 12, $end = '‥') }}
+										</span>
+									@endisset
+								<td>
+									@isset($sample->cell_phenotype)
+										<span title="{{ $sample->cell_phenotype }}">
+										{{ str_limit($sample->cell_phenotype, $limit = 12, $end = '‥') }}
+										</span>
+									@endisset
+								</td>						
+								<td>
+									@isset($sample->sample_id)
+										<span title="{{ $sample->sample_id }}">
+										{{ str_limit($sample->sample_id, $limit = 12, $end = '') }}
+										</span>
+									@endisset
+								</td>	
+								<td>
+									@isset($sample->template_class)
+										<span title="{{ $sample->template_class }}">
+										{{ str_limit($sample->template_class, $limit = 12, $end = '‥') }}
+										</span>
+									@endisset
+								</td>
+								<td>
+									@isset($sample->study_id)
+										<span title="{{ $sample->study_id }}">
+										{{ str_limit($sample->study_id, $limit = 15, $end = '‥') }}
+										</span>
+									@endisset
+								</td>		
+								<td>
+									@isset($sample->pub_ids)
+										<span title="{{ $sample->pub_ids }}">
+										{{ str_limit($sample->pub_ids, $limit = 15, $end = '‥') }}
+										</span>
+									@endisset
+								</td>	
+								<td>
+									@isset($sample->sequencing_platform)
+										<span title="{{ $sample->sequencing_platform }}">
+										{{ str_limit($sample->sequencing_platform, $limit = 20, $end = '‥') }}
+										</span>
+									@endisset
+								</td>
+							</tr>
+							@endforeach
+						</tbody>
+					</table>
+
+					<input type="hidden" name="project_id_list" />
+					<input type="hidden" name="sample_query_id" value="{{ $sample_query_id }}" />
+					<p class="pull-right">
+					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button')) }}
+					</p>
+				{{ Form::close() }}
+				@endif
+
+			</div>
 		</div>
 	</div>
 </div>

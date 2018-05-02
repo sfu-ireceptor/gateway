@@ -9,7 +9,7 @@
 	<h1>Sequence Search</h1>
 	<p class="sh1">Filter by sequence and sequence annotation feature</p>
 
-	<div class="row loading_contents">		
+	<div class="row">		
 		<div class="col-md-2 filters">
 
 			<h3 class="first">Filters</h3>
@@ -134,269 +134,272 @@
 			{{ Form::close() }}				
 		</div>
 
-		<div class="col-md-10 reloading_contents">
+		<div class="col-md-10">
+			<div class="reloading_contents">
 
-			<!-- Services which didn't respond -->
-			@if ( ! empty($rest_service_list_no_response))
-				<div class="alert alert-warning" role="alert">
-					<p>Sorry, data is incomplete. No response from:</p>
-					<ul>
-						@foreach ($rest_service_list_no_response as $rs)
-							<li>{{ $rs->name }}</li>
-						@endforeach
-					</ul>
-					<p>Try again later.</p>
-				</div>
-			@endif
-
-			<!-- Active filters -->
-			@if ( ! empty($filter_fields) || ! empty($sample_filter_fields))
-				<div class="active_filters">
-					<h3>Active filters</h3>
-
-					@if ( ! empty($sample_filter_fields))
-						Metadata filters:
-						@foreach($sample_filter_fields as $filter_key => $filter_value)
-							<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
-								@lang('short.' . $filter_key)
-							</span>
-						@endforeach
-						@isset($sample_query_id)
-							<a href="/samples?query_id=@yield('sample_query_id', '')"class="remove_filters">
-								Go back to metadata search
-							</a>
-						@endisset						
-						<br>
-					@endif
-
-					@if ( ! empty($filter_fields))
-						Sequence filters:
-						@foreach($filter_fields as $filter_key => $filter_value)
-							<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
-								@lang('short.' . $filter_key)
-							</span>
-						@endforeach
-
-						@isset($no_filters_query_id)
-							<a href="/sequences?query_id={{ $no_filters_query_id }}" class="remove_filters">
-								Remove sequence filters
-							</a>
-						@endisset						
-					@endif
-
-
-					<a class="bookmark" href="/system/" data-uri="{{ $url }}">
-						@if ($bookmark_id)
-							<button type="button" class="btn btn-success" aria-label="Bookmark" data-id="{{ $bookmark_id }}">
-							  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-							  <span class="text">Bookmarked</span>
-							</button>
-						@else
-							<button type="button" class="btn btn-primary" aria-label="Bookmark">
-							  <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-							  <span class="text">Bookmark this search</span>
-							</button>
-						@endif
-					</a>
-
-				</div>
-			@endif	
-
-			@if (empty($sequence_list))
-				<!-- No results -->
-				<div class="no_results">
-					<h2>No Results</h2>
-					<p>
-						Remove a filter
-						@isset($no_filters_query_id)
-							or <a href="/sequences?query_id={{ $no_filters_query_id }}">remove all filters</a>
-						@endisset
-						to return results.
-					</p>
-				</div>
-			@else
-				<!-- Statistics -->
-				<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Search results statistics</h3>
-				<div class="statistics">
-					<p>
-						<strong>
-							{{number_format($total_filtered_sequences)}} sequences
-							({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}})
-						</strong>
-						returned from
-						<a href="#" data-toggle="modal" data-target="#myModal">
-							{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},
-							{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}},
-							{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
-						</a>
-					</p>
-					
-					<!-- repos/labs/studies details popup -->
-					@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
-
-					<div id="sequence_charts" class="charts">
-						<div class="row">
-							<div class="col-md-2 chart" id="sequence_chart1"></div>
-							<div class="col-md-2 chart" id="sequence_chart2"></div>
-							<div class="col-md-2 chart" id="sequence_chart3"></div>
-							<div class="col-md-2 chart" id="sequence_chart4"></div>
-							<div class="col-md-2 chart" id="sequence_chart5"></div>
-							<div class="col-md-2 chart" id="sequence_chart6"></div>
-						</div>
-					</div>										
-				</div>
-			@endif
-
-			
-			@if (! empty($sequence_list))
-				<a href="#" class="btn btn-primary pull-right download_sequences">
-					<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-					<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
-				</a>
-
-				<h3>
-					Individual Sequences
-					<small class="sequence_count">
-						1-{{ count($sequence_list) }} of {{number_format($total_filtered_sequences)}}
-					</small>
-				</h3>
-
-				<!-- sequence data column selector -->
-				<div class="collapse" id="sequence_column_selector">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<button class="btn btn-primary btn-xs pull-right" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector">
-					  			Done
-							</button>
-							<h4 class="panel-title">Edit Individual Sequences Columns</h4>
-						</div>
-				  		<div class="panel-body">
-							<form class="sequence_column_selector">
-								@foreach ($sequence_column_name_list as $sequence_column_name)
-									<div class="checkbox">
-										<label>
-											<input name="sequence_columns" class="{{ $sequence_column_name->name }}" data-id="{{ $sequence_column_name->id }}" type="checkbox" value="{{'seq_col_' . $sequence_column_name->id}}" {{ in_array($sequence_column_name->id, $current_sequence_columns) ? 'checked="checked"' : '' }} />
-											{{ $sequence_column_name->title }}
-										</label>
-									</div>		
-								@endforeach
-							</form>
-				  		</div>
-					</div>
-				</div>
-
-				<!-- sequence data -->
-				<table class="table table-striped table-condensed much_data table-bordered">
-					<thead>
-						<tr>
-							<th class="checkbox_cell">
-								<a class="btn btn-primary btn-xs" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector" title="Edit Columns">
-								  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-								</a>
-							</th>
-							@foreach ($sequence_column_name_list as $sequence_column_name)
-								<th class="text-nowrap seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_sequence_columns) ? '' : 'hidden' }}">
-									{{ $sequence_column_name->title }}
-								</th>
+				<!-- Services which didn't respond -->
+				@if ( ! empty($rest_service_list_no_response))
+					<div class="alert alert-warning" role="alert">
+						<p>Sorry, data is incomplete. No response from:</p>
+						<ul>
+							@foreach ($rest_service_list_no_response as $rs)
+								<li>{{ $rs->name }}</li>
 							@endforeach
-						</tr>
-					</thead>
-					<tbody>
-						@foreach ($sequence_list as $s)
-						<tr>
-							<td></td>
-							@foreach ($sequence_column_name_list as $sequence_column_name)
-									<td class="seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_sequence_columns) ? '' : 'hidden' }}">
-										@isset($s->{$sequence_column_name->name})
-											{{ $s->{$sequence_column_name->name} }}
-										@endisset
-									</td>
-							@endforeach
-						</tr>
-						@endforeach
-					</tbody>
-				</table>
-
-{{-- 				<!-- apps -->
-				<h2>Analysis Apps</h2>
-
-				@if (isset($system))
-
-					<div role="tabpanel" class="analysis_apps_tabpanel">
-						<!-- Tab links -->
-						<ul class="nav nav-tabs" role="tablist">
-							<li role="presentation" class="active"><a href="#app1" aria-controls="app1" role="tab" data-toggle="tab">Standard Histogram Generator</a></li>
-							<li role="presentation"><a href="#app2" aria-controls="app2" role="tab" data-toggle="tab">Amazing Historgram Generator</a></li>
-							<li role="presentation"><a href="#app3" aria-controls="app3" role="tab" data-toggle="tab">Nishanth 01</a></li>
 						</ul>
+						<p>Try again later.</p>
+					</div>
+				@endif
 
-						<!-- Tab panes -->
-						<div class="tab-content">
+				<!-- Active filters -->
+				@if ( ! empty($filter_fields) || ! empty($sample_filter_fields))
+					<div class="active_filters">
+						<h3>Active filters</h3>
 
-							<div role="tabpanel" class="tab-pane active" id="app1">
-				    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-									{{ Form::hidden('filters_json', $filters_json) }}
-									{{ Form::hidden('data_url', $url) }}
-									{{ Form::hidden('app_id', 1) }}
+						@if ( ! empty($sample_filter_fields))
+							Metadata filters:
+							@foreach($sample_filter_fields as $filter_key => $filter_value)
+								<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
+									@lang('short.' . $filter_key)
+								</span>
+							@endforeach
+							@isset($sample_query_id)
+								<a href="/samples?query_id=@yield('sample_query_id', '')"class="remove_filters">
+									Go back to metadata search
+								</a>
+							@endisset						
+							<br>
+						@endif
 
-								    <div class="row">
-								    	<div class="col-md-3">
-										    <div class="form-group">
-												{{ Form::label('var', 'Variable') }}
-												{{ Form::select('var', $var_list, '', array('class' => 'form-control')) }}
-											</div>
-										</div>
-									</div>
+						@if ( ! empty($filter_fields))
+							Sequence filters:
+							@foreach($filter_fields as $filter_key => $filter_value)
+								<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
+									@lang('short.' . $filter_key)
+								</span>
+							@endforeach
 
-									{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
-								{{ Form::close() }}
-							</div>
-							
-							<div role="tabpanel" class="tab-pane" id="app2">
-				    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-									{{ Form::hidden('filters_json', $filters_json) }}
-									{{ Form::hidden('data_url', $url) }}
-									{{ Form::hidden('app_id', 2) }}
+							@isset($no_filters_query_id)
+								<a href="/sequences?query_id={{ $no_filters_query_id }}" class="remove_filters">
+									Remove sequence filters
+								</a>
+							@endisset						
+						@endif
 
-								    <div class="row">
-								    	<div class="col-md-3">
-										    <div class="form-group">
-												{{ Form::label('var', 'Variable') }}
-												{{ Form::select('var', $var_list, '', array('class' => 'form-control')) }}
-											</div>
-										</div>
-								    	<div class="col-md-3">
-										    <div class="form-group">
-												{{ Form::label('var', 'Color') }}
-												{{ Form::select('color', $amazingHistogramGeneratorColorList, '', array('class' => 'form-control')) }}
-											</div>
-										</div>
-									</div>
 
-									{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
-								{{ Form::close() }}
-							</div>
+						<a class="bookmark" href="/system/" data-uri="{{ $url }}">
+							@if ($bookmark_id)
+								<button type="button" class="btn btn-success" aria-label="Bookmark" data-id="{{ $bookmark_id }}">
+								  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+								  <span class="text">Bookmarked</span>
+								</button>
+							@else
+								<button type="button" class="btn btn-primary" aria-label="Bookmark">
+								  <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
+								  <span class="text">Bookmark this search</span>
+								</button>
+							@endif
+						</a>
 
-							<div role="tabpanel" class="tab-pane" id="app3">
-				    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-									{{ Form::hidden('filters_json', $filters_json) }}
-									{{ Form::hidden('data_url', $url) }}
-									{{ Form::hidden('app_id', 3) }}
+					</div>
+				@endif	
 
-									{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
-								{{ Form::close() }}
-							</div>
-
-						</div>
+				@if (empty($sequence_list))
+					<!-- No results -->
+					<div class="no_results">
+						<h2>No Results</h2>
+						<p>
+							Remove a filter
+							@isset($no_filters_query_id)
+								or <a href="/sequences?query_id={{ $no_filters_query_id }}">remove all filters</a>
+							@endisset
+							to return results.
+						</p>
 					</div>
 				@else
-					<p>
-						<a href="systems">Add a system</a> to be able to use analysis apps.
-					</p>
-				@endif --}}
-			@endif
+					<!-- Statistics -->
+					<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Search results statistics</h3>
+					<div class="statistics">
+						<p>
+							<strong>
+								{{number_format($total_filtered_sequences)}} sequences
+								({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}})
+							</strong>
+							returned from
+							<a href="#" data-toggle="modal" data-target="#myModal">
+								{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},
+								{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}},
+								{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
+							</a>
+						</p>
+						
+						<!-- repos/labs/studies details popup -->
+						@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
+
+						<div id="sequence_charts" class="charts">
+							<div class="row">
+								<div class="col-md-2 chart" id="sequence_chart1"></div>
+								<div class="col-md-2 chart" id="sequence_chart2"></div>
+								<div class="col-md-2 chart" id="sequence_chart3"></div>
+								<div class="col-md-2 chart" id="sequence_chart4"></div>
+								<div class="col-md-2 chart" id="sequence_chart5"></div>
+								<div class="col-md-2 chart" id="sequence_chart6"></div>
+							</div>
+						</div>										
+					</div>
+				@endif
+
+				
+				@if (! empty($sequence_list))
+					<a href="#" class="btn btn-primary pull-right download_sequences">
+						<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+						<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
+					</a>
+
+					<h3>
+						Individual Sequences
+						<small class="sequence_count">
+							1-{{ count($sequence_list) }} of {{number_format($total_filtered_sequences)}}
+						</small>
+					</h3>
+
+					<!-- sequence data column selector -->
+					<div class="collapse" id="sequence_column_selector">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<button class="btn btn-primary btn-xs pull-right" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector">
+						  			Done
+								</button>
+								<h4 class="panel-title">Edit Individual Sequences Columns</h4>
+							</div>
+					  		<div class="panel-body">
+								<form class="sequence_column_selector">
+									@foreach ($sequence_column_name_list as $sequence_column_name)
+										<div class="checkbox">
+											<label>
+												<input name="sequence_columns" class="{{ $sequence_column_name->name }}" data-id="{{ $sequence_column_name->id }}" type="checkbox" value="{{'seq_col_' . $sequence_column_name->id}}" {{ in_array($sequence_column_name->id, $current_sequence_columns) ? 'checked="checked"' : '' }} />
+												{{ $sequence_column_name->title }}
+											</label>
+										</div>		
+									@endforeach
+								</form>
+					  		</div>
+						</div>
+					</div>
+
+					<!-- sequence data -->
+					<table class="table table-striped table-condensed much_data table-bordered">
+						<thead>
+							<tr>
+								<th class="checkbox_cell">
+									<a class="btn btn-primary btn-xs" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector" title="Edit Columns">
+									  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+									</a>
+								</th>
+								@foreach ($sequence_column_name_list as $sequence_column_name)
+									<th class="text-nowrap seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_sequence_columns) ? '' : 'hidden' }}">
+										{{ $sequence_column_name->title }}
+									</th>
+								@endforeach
+							</tr>
+						</thead>
+						<tbody>
+							@foreach ($sequence_list as $s)
+							<tr>
+								<td></td>
+								@foreach ($sequence_column_name_list as $sequence_column_name)
+										<td class="seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_sequence_columns) ? '' : 'hidden' }}">
+											@isset($s->{$sequence_column_name->name})
+												{{ $s->{$sequence_column_name->name} }}
+											@endisset
+										</td>
+								@endforeach
+							</tr>
+							@endforeach
+						</tbody>
+					</table>
+
+	{{-- 				<!-- apps -->
+					<h2>Analysis Apps</h2>
+
+					@if (isset($system))
+
+						<div role="tabpanel" class="analysis_apps_tabpanel">
+							<!-- Tab links -->
+							<ul class="nav nav-tabs" role="tablist">
+								<li role="presentation" class="active"><a href="#app1" aria-controls="app1" role="tab" data-toggle="tab">Standard Histogram Generator</a></li>
+								<li role="presentation"><a href="#app2" aria-controls="app2" role="tab" data-toggle="tab">Amazing Historgram Generator</a></li>
+								<li role="presentation"><a href="#app3" aria-controls="app3" role="tab" data-toggle="tab">Nishanth 01</a></li>
+							</ul>
+
+							<!-- Tab panes -->
+							<div class="tab-content">
+
+								<div role="tabpanel" class="tab-pane active" id="app1">
+					    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
+										{{ Form::hidden('filters_json', $filters_json) }}
+										{{ Form::hidden('data_url', $url) }}
+										{{ Form::hidden('app_id', 1) }}
+
+									    <div class="row">
+									    	<div class="col-md-3">
+											    <div class="form-group">
+													{{ Form::label('var', 'Variable') }}
+													{{ Form::select('var', $var_list, '', array('class' => 'form-control')) }}
+												</div>
+											</div>
+										</div>
+
+										{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
+									{{ Form::close() }}
+								</div>
+								
+								<div role="tabpanel" class="tab-pane" id="app2">
+					    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
+										{{ Form::hidden('filters_json', $filters_json) }}
+										{{ Form::hidden('data_url', $url) }}
+										{{ Form::hidden('app_id', 2) }}
+
+									    <div class="row">
+									    	<div class="col-md-3">
+											    <div class="form-group">
+													{{ Form::label('var', 'Variable') }}
+													{{ Form::select('var', $var_list, '', array('class' => 'form-control')) }}
+												</div>
+											</div>
+									    	<div class="col-md-3">
+											    <div class="form-group">
+													{{ Form::label('var', 'Color') }}
+													{{ Form::select('color', $amazingHistogramGeneratorColorList, '', array('class' => 'form-control')) }}
+												</div>
+											</div>
+										</div>
+
+										{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
+									{{ Form::close() }}
+								</div>
+
+								<div role="tabpanel" class="tab-pane" id="app3">
+					    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
+										{{ Form::hidden('filters_json', $filters_json) }}
+										{{ Form::hidden('data_url', $url) }}
+										{{ Form::hidden('app_id', 3) }}
+
+										{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
+									{{ Form::close() }}
+								</div>
+
+							</div>
+						</div>
+					@else
+						<p>
+							<a href="systems">Add a system</a> to be able to use analysis apps.
+						</p>
+					@endif --}}
+				@endif
+			<div>
 		</div>
 	</div>
+</div>
 </div>
 
 @include('reloadingMessage')
