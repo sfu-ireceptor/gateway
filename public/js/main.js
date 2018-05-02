@@ -241,6 +241,35 @@ $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
 
 
+    // reloading message
+    function show_reloading_message() {
+    	$('.reloading_contents').contents().hide();
+    	$('.reloading_contents').append($('.reloading_message'));
+    	// $('.reloading_contents').addClass('disabled');
+		$('.reloading_message').show();    	
+    }
+
+    function hide_reloading_message() {
+    	$('.reloading_contents').contents().show();
+    	// $('.reloading_contents').removeClass('disabled');
+    	$('.reloading_message').hide();  	
+    }
+
+	$('form.show_reloading_message').submit(function(){
+		show_reloading_message();
+		return false;
+	});
+
+    $(window).bind("pageshow", function(event) {
+		hide_reloading_message();
+	});
+
+	$('.reloading_message a.cancel').click(function(){
+		window.stop();
+		hide_reloading_message();
+	});
+
+    // loading overlay
     function show_loading_message() {
     	$('.loading_contents').addClass('disabled');
 		$('.loading_message').show();    	
@@ -253,6 +282,7 @@ $(document).ready(function() {
 
 	$('form.show_loading_message').submit(function(){
 		show_loading_message();
+		return false;
 	});
 
     $(window).bind("pageshow", function(event) {

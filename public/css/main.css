@@ -1006,7 +1006,7 @@ form.sequence_column_selector {
 .loading_message {
 	position: fixed;
 	left: 332px;
-	top: 154px;
+	top: 138px;
 	z-index: 500;
 	background-color: white;
 	border: 1px solid gray;
@@ -1016,6 +1016,40 @@ form.sequence_column_selector {
 
 .loading_message .cancel {
 	margin-top: 20px;
+}
+
+.reloading_message {
+	display: none;
+	background-color: #f8f8f8;
+	border-radius: 6px;
+	border: 1px solid #e7e7e7;
+	margin-bottom: 5px;
+	overflow: visible;
+	font-size: 14px;
+	margin-top: 26px;
+	padding: 40px 0 25px 50px;
+}
+
+.reloading_message h3 {
+	margin-top: 5px;
+}
+
+.reloading_message .cancel {
+	margin-top: 20px;
+}
+
+.loader {
+    border: 16px solid #777; /* Light grey */
+    border-top: 16px solid #f0ad4e; /* color */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 8s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .disabled {

@@ -9,12 +9,12 @@
 	<h1>Metadata Search</h1>
 	<p class="sh1">Filter by study/subject/sample and choose samples to analyze relevant sequence data</p>
 
-	<div class="row loading_contents">
+	<div class="row">
 		<div class="col-md-2 filters">
 
 			<h3 class="first">Filters</h3>
 
-			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'post', 'class' => 'sample_search show_loading_message')) }}
+			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'post', 'class' => 'sample_search show_reloading_message')) }}
 				<input type="hidden" name="project_id_list" />
 
 				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -197,7 +197,7 @@
 			{{ Form::close() }}
 		</div>
 
-		<div class="col-md-10">
+		<div class="col-md-10 reloading_contents">
 
 			<!-- Active filters -->
 			@if ( ! empty($filter_fields))
@@ -435,6 +435,7 @@
 	</div>
 </div>
 
+@include('reloadingMessage')
 @include('loadingMessage')
 
 <script>
