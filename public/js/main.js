@@ -251,13 +251,14 @@ $(document).ready(function() {
 
     function hide_reloading_message() {
     	$('.reloading_contents').contents().show();
-    	// $('.reloading_contents').removeClass('disabled');
+    	$('form input[type=submit]').removeAttr('disabled');
     	$('.reloading_message').hide();  	
     }
 
 	$('form.show_reloading_message').submit(function(){
+		$('input[type=submit]', $(this)).attr('disabled','disabled');
 		show_reloading_message();
-		return false;
+		// return false;
 	});
 
     $(window).bind("pageshow", function(event) {
@@ -277,7 +278,7 @@ $(document).ready(function() {
 
     function hide_loading_message() {
     	$('.loading_contents').removeClass('disabled');
-    	$('.loading_message').hide();  	
+    	$('.loading_message').hide();
     }
 
 	$('form.show_loading_message').submit(function(){
