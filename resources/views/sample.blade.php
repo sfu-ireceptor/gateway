@@ -311,7 +311,7 @@
 								<td class="checkbox_cell">
 									@isset($sample->ir_sequence_count)
 										@if ($sample->ir_sequence_count > 0)
-											{{ Form::checkbox('ir_project_sample_id_list_' . $sample->rest_service_id . '[]', $sample->ir_project_sample_id, true) }}
+											<input type="checkbox" name="{{ 'ir_project_sample_id_list_' . $sample->rest_service_id . '[]' }}" value="{{ $sample->ir_project_sample_id }}" checked="checked"/>
 										@endif
 									@endisset
 								</td>
