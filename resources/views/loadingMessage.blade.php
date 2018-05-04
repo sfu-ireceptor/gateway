@@ -8,3 +8,6 @@
 		</a>
 	</p>
 </div>
+
+<div class="loading_message_background">
+</div>

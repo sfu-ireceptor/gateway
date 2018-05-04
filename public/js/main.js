@@ -272,12 +272,14 @@ $(document).ready(function() {
     // loading overlay
     function show_loading_message() {
     	$('.loading_contents').addClass('disabled');
-		$('.loading_message').show();    	
+		$('.loading_message').show();
+		$('.loading_message_background').show();
     }
 
     function hide_loading_message() {
     	$('.loading_contents').removeClass('disabled');
     	$('.loading_message').hide();
+		$('.loading_message_background').hide();
     }
 
 	$('form.show_loading_message').submit(function(){

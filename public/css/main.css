@@ -1005,17 +1005,32 @@ form.sequence_column_selector {
 
 .loading_message {
 	position: fixed;
-	left: 332px;
-	top: 138px;
-	z-index: 500;
+	left: 50%;
+	top: 50%;
 	background-color: white;
 	border: 1px solid gray;
 	padding: 50px 100px 35px;
 	display: none;
+	z-index: 9999;
+	margin-left: -251px;
+	margin-top: -127px;
 }
 
 .loading_message .cancel {
 	margin-top: 20px;
+}
+
+.loading_message_background {
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	content: " ";
+	position: fixed;
+	background: rgba(255,255,255,.8);
+	opacity: 1;
+	z-index: 999;
+	display: block;
 }
 
 .reloading_message {
