@@ -38,13 +38,27 @@ $(document).ready(function() {
   		html: true
 	});
 
-	// update number of selected samples
-	function update_sample_selection_text(){
+	// update UI elements related to the current sample selection
+	function update_sample_selection_info(){
 		var n = $('table.sample_list tbody input[type=checkbox]:checked').length;
+		var total = $('table.sample_list tbody tr').length;
+
+		// update "5 samples selected" text
 		$('span.nb_selected_samples').text(n);
 
+		// update "Select All" link
+		if (n == 0) {
+			$('a.unselect_all_samples').hide();
+			$('a.select_all_samples').show();
+		}
+
+		if (n == total) {
+			$('a.select_all_samples').hide();
+			$('a.unselect_all_samples').show();
+		}
+
 		// enable/disable "browse seq data" button
-		if($('table.sample_list tbody input[type=checkbox]:checked').length > 0) {
+		if(n > 0) {
 			$('.browse-seq-data-button').removeAttr('disabled');
 		}
 		else {
@@ -52,10 +66,10 @@ $(document).ready(function() {
 		}
 	}
 
-	update_sample_selection_text();
+	update_sample_selection_info();
 
 	$('table.sample_list tbody input[type=checkbox]').change(function(){
-		update_sample_selection_text();
+		update_sample_selection_info();
 	});
 
 	// make table sortable
@@ -84,7 +98,7 @@ $(document).ready(function() {
 		$('input:checkbox', $('table.sample_list tbody')).prop('checked', true);
 		$(this).hide();
 		$('a.unselect_all_samples').show();
-		update_sample_selection_text();
+		update_sample_selection_info();
 		return false;
 	});
 
@@ -92,7 +106,7 @@ $(document).ready(function() {
 		$('input:checkbox', $('table.sample_list tbody')).prop('checked', false);
 		$(this).hide();
 		$('a.select_all_samples').show();
-		update_sample_selection_text();
+		update_sample_selection_info();
 		return false;
 	});
 	
