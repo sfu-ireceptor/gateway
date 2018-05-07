@@ -44,8 +44,7 @@ class SequenceController extends Controller
             foreach ($filters as $name => $value) {
                 if (starts_with($name, 'ir_project_sample_id_list_')) {
                     $no_filters_params[$name] = $value;
-                }
-                else if ($name == 'sample_query_id') {
+                } elseif ($name == 'sample_query_id') {
                     $no_filters_params[$name] = $value;
                 }
             }
