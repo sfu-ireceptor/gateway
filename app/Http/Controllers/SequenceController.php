@@ -45,6 +45,9 @@ class SequenceController extends Controller
                 if (starts_with($name, 'ir_project_sample_id_list_')) {
                     $no_filters_params[$name] = $value;
                 }
+                else if ($name == 'sample_query_id') {
+                    $no_filters_params[$name] = $value;
+                }
             }
             $data['no_filters_query_id'] = Query::saveParams($no_filters_params, 'sequences');
         } else {
