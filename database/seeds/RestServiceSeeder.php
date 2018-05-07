@@ -16,7 +16,7 @@ class RestServiceSeeder extends Seeder
                     'version' => 2,
                 ],
                 [
-                    'url' => 'https://vdj-staging.tacc.utexas.edu/ireceptor/',
+                    'url' => 'https://vdjserver.org/ireceptor/',
                     'name' => 'VDJServer',
                     'username' => '',
                     'password' => '',
