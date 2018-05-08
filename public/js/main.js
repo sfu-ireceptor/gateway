@@ -311,14 +311,6 @@ $(document).ready(function() {
 		hide_loading_message();
 	});
 
-	// tsv download
-	$('a.download_sequences').click(function() {
-		var input = $('<input>').attr('type', 'hidden').attr('name', 'tsv').val('Download as TSV');
-        $('form.sequence_search').append($(input));
-		$('form.sequence_search').submit();
-		return false;
-	});
-
 	/**********************************************************
 	* Systems
 	**********************************************************/

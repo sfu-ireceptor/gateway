@@ -49,6 +49,8 @@ class SequenceController extends Controller
                 }
             }
             $data['no_filters_query_id'] = Query::saveParams($no_filters_params, 'sequences');
+
+            $data['query_id'] = $query_id;
         } else {
             $filters = $request->all();
             $request->session()->forget('_old_input');
@@ -443,5 +445,48 @@ class SequenceController extends Controller
 
         // display view
         return view('sequenceQuickSearch', $data);
+    }
+
+    public function download(Request $request)
+    {
+        $username = auth()->user()->username;
+        $query_log_id = $request->get('query_log_id');
+
+        $query_id = $request->input('query_id');
+        if ($query_id) {
+            $filters = Query::getParams($query_id);
+        } else {
+            $filters = $request->all();
+        }
+
+        $sample_filter_fields = [];
+        if (isset($filters['sample_query_id'])) {
+            $sample_query_id = $filters['sample_query_id'];
+
+            // sample filters
+            $sample_filters = Query::getParams($sample_query_id);
+            $sample_filter_fields = [];
+            foreach ($sample_filters as $k => $v) {
+                if ($v) {
+                    if (is_array($v)) {
+                        $sample_filter_fields[$k] = implode(', ', $v);
+                    } else {
+                        $sample_filter_fields[$k] = $v;
+                    }
+                }
+            }
+            // remove gateway-specific params
+            unset($sample_filter_fields['open_filter_panel_list']);
+        }
+
+        $t = RestService::sequencesTSV($filters, $username, $query_log_id, $request->fullUrl(), $sample_filter_fields);
+        $tsvFilePath = $t['public_path'];
+
+        // log result
+        $query_log = QueryLog::find($query_log_id);
+        $query_log->result_size = $t['size'];
+        $query_log->save();
+
+        return redirect($tsvFilePath);        
     }
 }
