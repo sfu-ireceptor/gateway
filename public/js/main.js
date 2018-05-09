@@ -272,7 +272,6 @@ $(document).ready(function() {
 	$('form.show_reloading_message').submit(function(){
 		$('input[type=submit]', $(this)).attr('disabled','disabled');
 		show_reloading_message();
-		// return false;
 	});
 
     $(window).bind("pageshow", function(event) {
@@ -299,7 +298,6 @@ $(document).ready(function() {
 
 	$('form.show_loading_message').submit(function(){
 		show_loading_message();
-		// return false;
 	});
 
     $(window).bind("pageshow", function(event) {
@@ -309,6 +307,21 @@ $(document).ready(function() {
 	$('.loading_message a.cancel').click(function(){
 		window.stop();
 		hide_loading_message();
+	});
+
+
+	$('.generate_file_asynchronously').click(function(){
+		var url = $(this).attr('href');
+
+		show_loading_message();
+
+		console.log('url=' + url);
+		$.get(url, function(file_url) {
+			hide_loading_message();
+			window.location.href = file_url;
+		});
+
+		return false;
 	});
 
 	/**********************************************************
