@@ -487,6 +487,6 @@ class SequenceController extends Controller
         $query_log->result_size = $t['size'];
         $query_log->save();
 
-        return url($tsvFilePath);        
+        return url($tsvFilePath);
     }
 }
