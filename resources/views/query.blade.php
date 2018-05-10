@@ -61,7 +61,7 @@
 					@if ($q->file)
 						{{ human_filesize($q->result_size) }}
 					@else
-						{{ $q->result_size }}
+						{{ number_format($q->result_size) }}
 					@endif								
 				</td>
 				<td class="{{ $q->status == 'running' ? 'warning' : ''}}{{ $q->status == 'error' ? 'danger' : ''}}" title='{{ $q->message }}'>

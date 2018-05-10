@@ -67,12 +67,12 @@
 								@if ($q->file)
 									{{ human_filesize($q->result_size) }}
 								@else
-									{{ $q->result_size }}
+									{{ number_format($q->result_size) }}
 								@endif								
 							</td>
 							<td class="{{ $q->status == 'running' ? 'warning' : ''}}{{ $q->status == 'error' ? 'danger' : ''}}{{ $q->status == 'service_error' ? 'danger' : ''}}" title='{{ $q->message }}'>
 								@if ($q->status == 'done')
-									{{ $q->duration <= 5 ? '' : secondsToTime($q->duration) }}
+									<span class="{{ $q->duration <= 5 ? 'minor2' : ''}}">{{ secondsToTime($q->duration) }}</span>
 								@elseif ($q->status == 'running')
 									{{ $q->status }}
 									({{ secondsToTime($q->start_time->diffInSeconds(Carbon\Carbon::now())) }})
@@ -81,7 +81,7 @@
 									(with service error)
 								@else
 									{{ $q->status }}
-									{{ $q->duration <= 5 ? '' : secondsToTime($q->duration) }}
+									<span class="{{ $q->duration <= 5 ? 'minor2' : ''}}">{{ secondsToTime($q->duration) }}</span>
 								@endif
 							</td>
 							<td>{{ $q->username }}</td>
