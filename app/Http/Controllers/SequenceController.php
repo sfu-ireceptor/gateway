@@ -480,11 +480,10 @@ class SequenceController extends Controller
         $query_log->result_size = $t['size'];
         $query_log->save();
 
-        if($request->ajax()){
+        if ($request->ajax()) {
             return url($tsvFilePath);
-        }
-        else {
+        } else {
             redirect($tsvFilePath);
-        }        
+        }
     }
 }
