@@ -42,14 +42,13 @@ class QueryLog extends Model
             $t['params'] = $params;
         }
 
-        if (isset($t['params']['tsv'])) {
-            $t['file'] = 'tsv';
-        }
-
         if (str_contains($url, '/samples')) {
             $type = 'sample';
         } elseif (str_contains($url, '/sequences-quick-search')) {
             $type = 'combined';
+        } elseif (str_contains($url, '/sequences-download')) {
+            $type = 'sequence';
+            $t['file'] = 'tsv';
         } elseif (str_contains($url, '/sequences')) {
             $type = 'sequence';
         } else {
