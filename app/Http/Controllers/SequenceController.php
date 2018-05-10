@@ -315,18 +315,11 @@ class SequenceController extends Controller
 
         $query_log_id = $request->get('query_log_id');
 
-        // if tsv
-        if (isset($filters['tsv'])) {
-            $t = RestService::searchTSV($sample_filters, $sequence_filters, $username, $query_log_id, $request->fullUrl());
-            $tsvFilePath = $t['public_path'];
-
-            // log result
-            $query_log = QueryLog::find($query_log_id);
-            $query_log->result_size = $t['size'];
-            $query_log->save();
-
-            return redirect($tsvFilePath);
-        }
+        // generate query id for download link
+        $sample_id_list = RestService::search_samples($sample_filters, $username, $query_log_id);
+        $download_filters = array_merge($sequence_filters, $sample_id_list);
+        $query_id = Query::saveParams($download_filters, 'sequences');
+        $data['query_id'] = $query_id;
 
         $sequence_data = RestService::search($sample_filters, $sequence_filters, $username, $query_log_id);
 
