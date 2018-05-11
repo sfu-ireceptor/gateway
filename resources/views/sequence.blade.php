@@ -247,13 +247,19 @@
 						</div>										
 					</div>
 				@endif
-
 				
 				@if (! empty($sequence_list))
-					<a href="/sequences-download?query_id={{ $query_id }}" class="btn btn-primary pull-right download_sequences generate_file_asynchronously">
-						<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-						<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
-					</a>
+					@if ($total_filtered_sequences > config('ireceptor.sequences_download_limit'))
+						<a href="/sequences-download?query_id={{ $query_id }}" class="btn btn-primary pull-right download_sequences generate_file_asynchronously" disabled="disabled" role="button" data-container="body" data-toggle="tooltip" data-placement="top" title="Downloads of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future." data-trigger="hover" tabindex="0">
+							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
+						</a>
+					@else
+						<a href="/sequences-download?query_id={{ $query_id }}" class="btn btn-primary pull-right download_sequences generate_file_asynchronously">
+							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
+						</a>
+					@endif
 
 					<h3>
 						Individual Sequences

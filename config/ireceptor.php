@@ -28,4 +28,16 @@ return [
     'gateway_request_timeout' => env('IRECEPTOR_GATEWAY_REQUEST_TIMEOUT', 180),
     'gateway_file_request_timeout' => env('IRECEPTOR_GATEWAY_FILE_REQUEST_TIMEOUT', 4800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Sequences download limit
+    |--------------------------------------------------------------------------
+    |
+    | Maximum number of sequences that can be downloaded at once
+    | Ex: 30000
+    |
+    */
+
+   'sequences_download_limit' => env('IRECEPTOR_SEQUENCES_DOWNLOAD_LIMIT', 30000),
+
 ];
