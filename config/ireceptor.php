@@ -38,6 +38,6 @@ return [
     |
     */
 
-   'sequences_download_limit' => env('IRECEPTOR_SEQUENCES_DOWNLOAD_LIMIT', 30000),
+   'sequences_download_limit' => env('IRECEPTOR_SEQUENCES_DOWNLOAD_LIMIT', 500000),
 
 ];
