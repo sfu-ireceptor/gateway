@@ -68,6 +68,7 @@
 					<strong>{{ human_number($total_sequences) }} sequences</strong> and
 					<strong>{{ $total_samples }} samples</strong> are currently available,<br>
 					from
+					{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}},
 					{{ $total_labs }} research {{ str_plural('lab', $total_labs)}} and
 					{{ $total_projects }} {{ str_plural('study', $total_projects)}}.
 				</p>
