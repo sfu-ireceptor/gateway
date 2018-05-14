@@ -650,19 +650,19 @@ class RestService extends Model
 
     public static function sanitize_filters($filters)
     {
-        if(isset($filters['v_call'])) {
+        if (isset($filters['v_call'])) {
             $filters['v_call'] = strtoupper($filters['v_call']);
         }
 
-        if(isset($filters['j_call'])) {
+        if (isset($filters['j_call'])) {
             $filters['j_call'] = strtoupper($filters['j_call']);
         }
 
-        if(isset($filters['d_call'])) {
+        if (isset($filters['d_call'])) {
             $filters['d_call'] = strtoupper($filters['d_call']);
         }
 
-        if(isset($filters['junction_aa'])) {
+        if (isset($filters['junction_aa'])) {
             $filters['junction_aa'] = strtoupper($filters['junction_aa']);
         }
 
