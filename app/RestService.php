@@ -220,6 +220,8 @@ class RestService extends Model
 
     public static function sequences_summary($filters, $username, $query_log_id)
     {
+        $filters = self::sanitize_filters($filters);
+
         // initialize return array
         $data = [];
         $data['items'] = [];
@@ -443,6 +445,8 @@ class RestService extends Model
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
+        $filters = self::sanitize_filters($filters);
+
         // create receiving folder
         $storage_folder = storage_path() . '/app/public/';
         $now = time();
@@ -633,6 +637,8 @@ class RestService extends Model
 
     public static function search($sample_filters, $sequence_filters, $username, $query_log_id)
     {
+        $filters = self::sanitize_filters($filters);
+
         $sample_id_filters = self::search_samples($sample_filters, $username, $query_log_id);
 
         // get sequences summary
@@ -640,6 +646,27 @@ class RestService extends Model
         $sequence_data = self::sequences_summary($sequence_filters, $username, $query_log_id);
 
         return $sequence_data;
+    }
+
+    public static function sanitize_filters($filters)
+    {
+        if(isset($filters['v_call'])) {
+            $filters['v_call'] = strtoupper($filters['v_call']);
+        }
+
+        if(isset($filters['j_call'])) {
+            $filters['j_call'] = strtoupper($filters['j_call']);
+        }
+
+        if(isset($filters['d_call'])) {
+            $filters['d_call'] = strtoupper($filters['d_call']);
+        }
+
+        if(isset($filters['junction_aa'])) {
+            $filters['junction_aa'] = strtoupper($filters['junction_aa']);
+        }
+
+        return $filters;
     }
 
     // do requests (in parallel)
