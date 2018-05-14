@@ -138,7 +138,7 @@ $(document).ready(function() {
 		}).length;
 
 		if(nb_fields > 1) {
-			if (! confirm('Multi-fields queries are currently very slow and might fail. Do you want to proceed?')) {
+			if (! confirm('This may take a while (up to 2 min) and return incomplete data (but you will be notified) because using multiple sequence filters on a significant amount of data can be computationally expensive and time out on some of the remote repositories.')) {
 				event.stopImmediatePropagation();
 				return false;
 			}
