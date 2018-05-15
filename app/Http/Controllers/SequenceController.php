@@ -40,9 +40,14 @@ class SequenceController extends Controller
         $functional_list['true'] = 'Yes';
         $functional_list['false'] = 'No';
 
+        // annotation_tool
+        $annotation_tool = [];
+        $annotation_tool['xyz'] = 'XYZ';
+        
         // view data
         $data = [];
         $data['functional_list'] = $functional_list;
+        $data['annotation_tool'] = $annotation_tool;
 
         $query_id = $request->input('query_id');
         if ($query_id) {
