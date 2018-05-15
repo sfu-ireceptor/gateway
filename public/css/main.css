@@ -473,6 +473,7 @@ a.navbar-brand span {
 footer {
 	position: relative;
 	margin-top: 20px;
+	box-shadow: 0 50vh 0 50vh #f8f8f8;
 }
 
 mini_footer a {
