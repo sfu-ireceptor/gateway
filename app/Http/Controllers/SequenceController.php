@@ -71,6 +71,7 @@ class SequenceController extends Controller
             $data['query_id'] = $query_id;
         } else {
             $query_id = Query::saveParams($request->except(['_token']), 'sequences');
+
             return redirect('sequences?query_id=' . $query_id)->withInput();
         }
 
