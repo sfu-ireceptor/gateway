@@ -31,7 +31,6 @@ class SequenceController extends Controller
         $username = auth()->user()->username;
         $query_log_id = $request->get('query_log_id');
 
-
         /*************************************************
         * prepare form data */
 
@@ -40,7 +39,6 @@ class SequenceController extends Controller
         $functional_list[''] = 'All';
         $functional_list['true'] = 'Yes';
         $functional_list['false'] = 'No';
-
 
         // view data
         $data = [];
