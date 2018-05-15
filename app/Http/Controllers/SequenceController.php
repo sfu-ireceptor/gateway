@@ -42,7 +42,8 @@ class SequenceController extends Controller
 
         // annotation_tool
         $annotation_tool = [];
-        $annotation_tool['xyz'] = 'XYZ';
+        $annotation_tool['MiXCR'] = 'MiXCR';
+        $annotation_tool['V-Quest'] = 'V-Quest';
         
         // view data
         $data = [];
