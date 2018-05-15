@@ -31,7 +31,21 @@ class SequenceController extends Controller
         $username = auth()->user()->username;
         $query_log_id = $request->get('query_log_id');
 
+
+        /*************************************************
+        * prepare form data */
+
+        // functional
+        $functional_list = [];
+        $functional_list[''] = 'All';
+        $functional_list['true'] = 'Yes';
+        $functional_list['false'] = 'No';
+
+
+        // view data
         $data = [];
+        $data['functional_list'] = $functional_list;
+
         $query_id = $request->input('query_id');
         if ($query_id) {
             $filters = Query::getParams($query_id);

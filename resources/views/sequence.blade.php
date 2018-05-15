@@ -104,7 +104,7 @@
 								</div>
 								<div class="form-group">
 									{{ Form::label('functional', $filters_list_all['functional']) }}
-									{{ Form::text('functional', '', array('class' => 'form-control')) }}
+									{{ Form::select('functional', $functional_list, '', array('class' => 'form-control')) }}
 								</div>
 								<div class="form-group">
 									{{ Form::label('rev_comp', $filters_list_all['rev_comp']) }}
