@@ -133,7 +133,7 @@ $(document).ready(function() {
 		var nb_fields = 0;
 
 		// get number of not empty text fields
-		nb_fields = $('input[type=text]', $(this)).filter(function () {
+		nb_fields = $('input[type=text], select', $(this)).filter(function () {
     		return $.trim($(this).val()).length !== 0
 		}).length;
 
