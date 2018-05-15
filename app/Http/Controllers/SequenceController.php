@@ -70,8 +70,8 @@ class SequenceController extends Controller
 
             $data['query_id'] = $query_id;
         } else {
-            $filters = $request->all();
-            $request->session()->forget('_old_input');
+            $query_id = Query::saveParams($request->except(['_token']), 'sequences');
+            return redirect('sequences?query_id=' . $query_id)->withInput();
         }
 
         $data['sample_query_id'] = '';
