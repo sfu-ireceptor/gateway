@@ -43,7 +43,7 @@ class SequenceController extends Controller
         // annotation_tool
         $annotation_tool = [];
         $annotation_tool['xyz'] = 'XYZ';
-        
+
         // view data
         $data = [];
         $data['functional_list'] = $functional_list;
