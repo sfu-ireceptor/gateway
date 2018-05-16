@@ -339,6 +339,7 @@ table.dataTable thead .sorting_desc_disabled {
 
 .minor2 {
 	color: white;
+	opacity: 0;
 }
 
 .minor2:hover {

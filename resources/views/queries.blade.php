@@ -77,7 +77,7 @@
 									{{ $q->status }}
 									({{ secondsToTime($q->start_time->diffInSeconds(Carbon\Carbon::now())) }})
 								@elseif ($q->status == 'service_error')
-									{{ secondsToTime($q->start_time->diffInSeconds(Carbon\Carbon::now())) }}
+									<span class="{{ $q->duration <= 5 ? 'minor2' : ''}}">{{ secondsToTime($q->duration) }}</span>
 									(with service error)
 								@else
 									{{ $q->status }}
