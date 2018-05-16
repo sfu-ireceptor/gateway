@@ -11,10 +11,10 @@ class Sample extends Model
     protected $guarded = [];
 
     // cache samples from REST services
-    public static function cache($username)
+    public static function cache()
     {
         // get data
-        $sample_data = RestService::samples([], $username, null);
+        $sample_data = RestService::samples([], 'titi', null);  // use Jérôme's username (titi) for now
         $sample_list = $sample_data['items'];
 
         // delete any previously cached data
@@ -26,6 +26,12 @@ class Sample extends Model
         }
 
         return count($sample_list);
+    }
+
+    // return cached samples
+    public static function cached()
+    {
+        return self::all();
     }
 
     // return metadata by querying cached samples

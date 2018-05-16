@@ -203,7 +203,7 @@ class AdminController extends Controller
     public function getUpdateSampleCache()
     {
         $username = auth()->user()->username;
-        $n = Sample::cache($username);
+        $n = Sample::cache();
 
         $message = "$n samples have been retrieved and cached.";
 

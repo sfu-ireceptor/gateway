@@ -24,10 +24,15 @@ class RestService extends Model
         return $l;
     }
 
-    public static function metadata($username)
+    public static function metadata()
     {
-        // get cached data
+        // get metatada from cached samples
         return Sample::metadata();
+    }
+
+    public static function public_samples()
+    {
+        return Sample::cached();
     }
 
     public static function samples($filters, $username, $query_log_id = null)
