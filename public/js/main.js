@@ -29,7 +29,7 @@ $(document).ready(function() {
         includeSelectAllOption: false,
         buttonWidth: '100%',
         enableHTML: true,
-        nonSelectedText: '&nbsp;',
+        nonSelectedText: 'Any',
         numberDisplayed: 1,
     });
 
