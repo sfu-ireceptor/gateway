@@ -301,6 +301,7 @@ class SequenceController extends Controller
 
         // organism
         $subject_organism_list = [];
+        $subject_organism_list[''] = '';
         foreach ($metadata['organism'] as $v) {
             $subject_organism_list[$v] = $v;
         }

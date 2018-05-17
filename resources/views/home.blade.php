@@ -73,9 +73,9 @@
 						<div class="row">
 							<div class="col-md-5">
 							    <div class="form-group">
-							    	{{ Form::label('organism', __('short.organism')) }}
+									{{ Form::label('organism', __('short.organism')) }}
 									@include('help', ['id' => 'organism'])
-									{{ Form::text('organism', '', array('class' => 'form-control')) }}
+									{{ Form::select('organism', $subject_organism_list, '', array('class' => 'form-control')) }}
 								</div>
 							</div>
 							<div class="col-md-7">

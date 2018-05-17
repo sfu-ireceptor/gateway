@@ -84,7 +84,7 @@
 							    <div class="form-group">
 									{{ Form::label('organism', __('short.organism')) }}
 									@include('help', ['id' => 'organism'])
-									{{ Form::text('organism', '', array('class' => 'form-control')) }}
+									{{ Form::select('organism', $subject_organism_list, '', array('class' => 'form-control')) }}
 								</div>
 
 								<div class="form-group">
