@@ -642,12 +642,12 @@ class RestService extends Model
 
     public static function search($sample_filters, $sequence_filters, $username, $query_log_id)
     {
-        $filters = self::sanitize_filters($filters);
-
+        $sample_filters = self::sanitize_filters($sample_filters);
         $sample_id_filters = self::search_samples($sample_filters, $username, $query_log_id);
 
         // get sequences summary
         $sequence_filters = array_merge($sequence_filters, $sample_id_filters);
+        $sequence_filters = self::sanitize_filters($sequence_filters);
         $sequence_data = self::sequences_summary($sequence_filters, $username, $query_log_id);
 
         return $sequence_data;
