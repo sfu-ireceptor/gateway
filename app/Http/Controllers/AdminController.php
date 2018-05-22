@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Agave;
+use App\News;
 use App\Sample;
 use App\LocalJob;
 use App\QueryLog;
@@ -47,6 +48,15 @@ class AdminController extends Controller
         $rs = RestService::find($id);
         $rs->enabled = $enabled;
         $rs->save();
+    }
+
+    public function getNews()
+    {
+        $data = [];
+        $data['news_list'] = News::all();
+        $data['notification'] = session()->get('notification');
+
+        return view('news', $data);
     }
 
     public function getUsers()

@@ -107,6 +107,7 @@ Route::middleware('auth')->group(function () {
         Route::get('queues', 'AdminController@getQueues');
         Route::get('databases', 'AdminController@getDatabases');
         Route::post('update-database', 'AdminController@postUpdateDatabase');
+        Route::get('news', 'AdminController@getNews');
         Route::get('users', 'AdminController@getUsers');
         Route::get('add-user', 'AdminController@getAddUser');
         Route::post('add-user', 'AdminController@postAddUser');

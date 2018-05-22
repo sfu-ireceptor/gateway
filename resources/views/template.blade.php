@@ -104,6 +104,7 @@
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">admin<span class="caret"></span></a>
 								<ul class="dropdown-menu" role="menu">
 								  <li><a href="/admin/databases">Databases</a></li>
+								  <li><a href="/admin/news">News</a></li>
 								  <li><a href="/admin/users">Users</a></li>
 								  <li><a href="/admin/queries">User queries</a></li>
 								  <li role="separator" class="divider"></li>
