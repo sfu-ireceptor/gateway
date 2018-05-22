@@ -319,6 +319,11 @@ $(document).ready(function() {
 		$.get(url, function(file_url) {
 			hide_loading_message();
 			window.location.href = file_url;
+		})
+		.fail(function(jqXHR, status, message) {
+			console.log(status + ': ' + message);
+			hide_loading_message();
+			alert('Sorry, there was a problem with the download. Try again later or contact us at support@ireceptor.org.');
 		});
 
 		return false;
