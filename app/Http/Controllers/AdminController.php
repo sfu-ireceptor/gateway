@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\News;
 use App\User;
 use App\Agave;
-use App\News;
 use App\Sample;
 use App\LocalJob;
 use App\QueryLog;
@@ -88,7 +88,7 @@ class AdminController extends Controller
 
         $n = new News;
         $n->message = $message;
-        
+
         $n->save();
 
         return redirect('admin/news')->with('notification', 'The news has been successfully created.');
