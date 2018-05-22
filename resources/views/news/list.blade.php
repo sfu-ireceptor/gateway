@@ -13,6 +13,15 @@
 	</div>
 	@endif
 
+	<p>
+		<a href="/admin/add-news">
+			<button type="button" class="btn btn-default" aria-label="Edit">
+				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+				Add
+			</button>
+		</a>
+	</p>
+
 	<div class="row">
 		<div class="col-md-12">
 
@@ -32,7 +41,7 @@
 					@endforeach
 				</tbody>
 			</table>
-			
+
 		</div>
 	</div>
 </div>

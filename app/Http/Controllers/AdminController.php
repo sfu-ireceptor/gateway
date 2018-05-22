@@ -56,7 +56,42 @@ class AdminController extends Controller
         $data['news_list'] = News::all();
         $data['notification'] = session()->get('notification');
 
-        return view('news', $data);
+        return view('news/list', $data);
+    }
+
+    public function getAddNews()
+    {
+        $data = [];
+
+        return view('news/add', $data);
+    }
+
+    public function postAddNews(Request $request)
+    {
+        // validate form
+        $rules = [
+            'message' => 'required',
+        ];
+
+        $messages = [
+            'required' => 'This field is required.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
+            $request->flash();
+
+            return redirect('admin/add-news')->withErrors($validator);
+        }
+
+        $message = $request->get('message');
+
+        $n = new News;
+        $n->message = $message;
+        
+        $n->save();
+
+        return redirect('admin/news')->with('notification', 'The news has been successfully created.');
     }
 
     public function getUsers()
