@@ -137,6 +137,7 @@ class AdminController extends Controller
     {
         $n = News::find($id);
         $n->delete();
+
         return redirect('admin/users')->with('notification', 'News was successfully deleted.');
     }
 
