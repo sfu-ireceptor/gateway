@@ -21,7 +21,7 @@
 			{{ Form::open(array('url' => 'admin/add-news', 'role' => 'form')) }}
 
 			    <div class="form-group {{ $errors->first('message') ? 'has-error' : ''}}">
-					{{ Form::label('message', 'Message') }} <span class="error">{{ $errors->first('message') }}</span>
+					{{ Form::label('message', 'Message (HTML)') }} <span class="error">{{ $errors->first('message') }}</span>
 					{{ Form::textarea('message', '', array('class' => 'form-control', 'placeholder' => '')) }}
 				</div>
 

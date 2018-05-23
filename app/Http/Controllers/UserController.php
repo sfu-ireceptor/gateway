@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Agave;
+use App\News;
 use Carbon\Carbon;
 use App\RestService;
 use Illuminate\Support\Str;
@@ -28,6 +29,8 @@ class UserController extends Controller
         $data['total_studies'] = $metadata['total_projects'];
         $data['total_samples'] = $metadata['total_samples'];
         $data['total_sequences'] = $metadata['total_sequences'];
+
+        $data['news'] = News::orderBy('created_at', 'desc')->first();
 
         return view('user/login', $data);
     }
