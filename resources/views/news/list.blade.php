@@ -23,7 +23,7 @@
 	</p>
 
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-md-6">
 
 			<table class="table table-bordered table-striped news_list">
 				<thead>
@@ -39,7 +39,7 @@
 						<tr>
 							<td class="text-nowrap">{{ Carbon\Carbon::parse($n->created_at)->format('M d, Y') }}</td>	
 							<td>
-								{{ $n->message }}
+								{!! $n->message !!}
 							</td>
 							<td>
 								<a href="/admin/edit-news/{{ $n->id }}">
