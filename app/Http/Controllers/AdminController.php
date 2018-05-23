@@ -53,7 +53,7 @@ class AdminController extends Controller
     public function getNews()
     {
         $data = [];
-        $data['news_list'] = News::all();
+        $data['news_list'] = News::orderBy('created_at', 'desc')->get();
         $data['notification'] = session()->get('notification');
 
         return view('news/list', $data);
@@ -92,6 +92,45 @@ class AdminController extends Controller
         $n->save();
 
         return redirect('admin/news')->with('notification', 'The news has been successfully created.');
+    }
+
+    public function getEditNews($id)
+    {
+        $news = News::find($id);
+
+        $data = [];
+        $data['n'] = $news;
+
+        return view('news/edit', $data);
+    }
+
+    public function postEditNews(Request $request)
+    {
+        // validate form
+        $rules = [
+            'message' => 'required',
+        ];
+
+        $messages = [
+            'required' => 'This field is required.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
+            $request->flash();
+            $username = $request->get('id');
+
+            return redirect('admin/edit-news/' . $id)->withErrors($validator);
+        }
+
+        $id = $request->get('id');
+        $message = $request->get('message');
+
+        $n = News::find($id);
+        $n->message = $message;
+        $n->save();
+
+        return redirect('admin/news')->with('notification', 'Modifications were successfully saved.');
     }
 
     public function getUsers()

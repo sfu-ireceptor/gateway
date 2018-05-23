@@ -28,15 +28,23 @@
 			<table class="table table-bordered table-striped news_list">
 				<thead>
 					<tr>
-						<th>Date</th>
-						<th>Message</th>
+						<th class="text-nowrap">Date</th>
+						<th class="text-nowrap">Message</th>
+						<th class="text-nowrap"></th>
 					</tr>
 				</thead>
 				<tbody>
 					@foreach ($news_list as $n)
 						<tr>
-							<td>{{ $n->created_at }}</td>	
-							<td>{{ $n->message }}</td>	
+							<td class="text-nowrap">{{ Carbon\Carbon::parse($n->created_at)->format('M d, Y') }}</td>	
+							<td>
+								{{ $n->message }}
+							</td>
+							<td>
+								<a href="/admin/edit-news/{{ $n->id }}">
+									Edit
+								</a>
+							</td>	
 						</tr>
 					@endforeach
 				</tbody>
