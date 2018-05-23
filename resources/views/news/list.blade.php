@@ -31,6 +31,7 @@
 						<th class="text-nowrap">Date</th>
 						<th class="text-nowrap">Message</th>
 						<th class="text-nowrap"></th>
+						<th class="text-nowrap"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -42,7 +43,18 @@
 							</td>
 							<td>
 								<a href="/admin/edit-news/{{ $n->id }}">
-									Edit
+									<button type="button" class="btn btn-default" aria-label="Edit">
+										<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+										Edit
+									</button>
+								</a>
+							</td>	
+							<td>
+								<a href="/admin/delete-news/{{ $n->id }}">
+									<button type="button" class="btn btn-default" aria-label="Edit">
+										<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+										Delete
+									</button>
 								</a>
 							</td>	
 						</tr>

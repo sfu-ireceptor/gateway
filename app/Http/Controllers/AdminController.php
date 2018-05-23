@@ -133,6 +133,13 @@ class AdminController extends Controller
         return redirect('admin/news')->with('notification', 'Modifications were successfully saved.');
     }
 
+    public function getDeleteNews($id)
+    {
+        $n = News::find($id);
+        $n->delete();
+        return redirect('admin/users')->with('notification', 'News was successfully deleted.');
+    }
+
     public function getUsers()
     {
         // retrieve users from Agave

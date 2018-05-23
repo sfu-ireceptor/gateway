@@ -112,6 +112,7 @@ Route::middleware('auth')->group(function () {
         Route::post('add-news', 'AdminController@postAddNews');
         Route::get('edit-news/{id}', 'AdminController@getEditNews');
         Route::post('edit-news', 'AdminController@postEditNews');
+        Route::get('delete-news/{id}', 'AdminController@getDeleteNews');
         Route::get('users', 'AdminController@getUsers');
         Route::get('add-user', 'AdminController@getAddUser');
         Route::post('add-user', 'AdminController@postAddUser');
