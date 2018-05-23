@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container">
-	<h1>News</h1>
+	<h1>News <small>The most recent one is shown on the login page.</small></h1>
 
 	@if (isset($notification))
 	<div class="alert alert-warning alert-dismissible" role="alert">
@@ -21,6 +21,7 @@
 			</button>
 		</a>
 	</p>
+
 
 	<div class="row">
 		<div class="col-md-6">

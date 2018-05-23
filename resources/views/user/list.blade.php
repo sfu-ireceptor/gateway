@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container">
-	<h1>Users</h1>
+	<h1>Users <small>via Agave</small></h1>
 
 	@if (isset($notification))
 	<div class="alert alert-warning alert-dismissible" role="alert">

@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container-fluid">
-	<h1>User Queries</h1>
+	<h1>User Queries <small>From metadata and sequences pages</small></h1>
 
 	<div class="row">
 		<div class="col-md-10">
