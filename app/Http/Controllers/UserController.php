@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\News;
 use App\User;
 use App\Agave;
-use App\News;
 use Carbon\Carbon;
 use App\RestService;
 use Illuminate\Support\Str;
