@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\News;
 use App\User;
 use App\Agave;
 use App\Sample;
@@ -47,6 +48,97 @@ class AdminController extends Controller
         $rs = RestService::find($id);
         $rs->enabled = $enabled;
         $rs->save();
+    }
+
+    public function getNews()
+    {
+        $data = [];
+        $data['news_list'] = News::orderBy('created_at', 'desc')->get();
+        $data['notification'] = session()->get('notification');
+
+        return view('news/list', $data);
+    }
+
+    public function getAddNews()
+    {
+        $data = [];
+
+        return view('news/add', $data);
+    }
+
+    public function postAddNews(Request $request)
+    {
+        // validate form
+        $rules = [
+            'message' => 'required',
+        ];
+
+        $messages = [
+            'required' => 'This field is required.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
+            $request->flash();
+
+            return redirect('admin/add-news')->withErrors($validator);
+        }
+
+        $message = $request->get('message');
+
+        $n = new News;
+        $n->message = $message;
+
+        $n->save();
+
+        return redirect('admin/news')->with('notification', 'The news has been successfully created.');
+    }
+
+    public function getEditNews($id)
+    {
+        $news = News::find($id);
+
+        $data = [];
+        $data['n'] = $news;
+
+        return view('news/edit', $data);
+    }
+
+    public function postEditNews(Request $request)
+    {
+        // validate form
+        $rules = [
+            'message' => 'required',
+        ];
+
+        $messages = [
+            'required' => 'This field is required.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
+            $request->flash();
+            $username = $request->get('id');
+
+            return redirect('admin/edit-news/' . $id)->withErrors($validator);
+        }
+
+        $id = $request->get('id');
+        $message = $request->get('message');
+
+        $n = News::find($id);
+        $n->message = $message;
+        $n->save();
+
+        return redirect('admin/news')->with('notification', 'Modifications were successfully saved.');
+    }
+
+    public function getDeleteNews($id)
+    {
+        $n = News::find($id);
+        $n->delete();
+
+        return redirect('admin/users')->with('notification', 'News was successfully deleted.');
     }
 
     public function getUsers()

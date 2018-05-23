@@ -107,6 +107,12 @@ Route::middleware('auth')->group(function () {
         Route::get('queues', 'AdminController@getQueues');
         Route::get('databases', 'AdminController@getDatabases');
         Route::post('update-database', 'AdminController@postUpdateDatabase');
+        Route::get('news', 'AdminController@getNews');
+        Route::get('add-news', 'AdminController@getAddNews');
+        Route::post('add-news', 'AdminController@postAddNews');
+        Route::get('edit-news/{id}', 'AdminController@getEditNews');
+        Route::post('edit-news', 'AdminController@postEditNews');
+        Route::get('delete-news/{id}', 'AdminController@getDeleteNews');
         Route::get('users', 'AdminController@getUsers');
         Route::get('add-user', 'AdminController@getAddUser');
         Route::post('add-user', 'AdminController@postAddUser');

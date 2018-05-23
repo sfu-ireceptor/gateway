@@ -41,15 +41,16 @@
 					</div>
 				</div>
 
-				<div class="panel panel-warning beta_version">
-					<div class="panel-heading">
-						<h3 class="panel-title">Beta version</h3>
+				@isset($news)
+					<div class="panel panel-warning beta_version">
+						<div class="panel-heading">
+							<h3 class="panel-title">What's New</h3>
+						</div>
+						<div class="panel-body">
+							{!! $news->message !!}
+						</div>
 					</div>
-					<div class="panel-body">
-						<p>We are still working on performance, fine-tuning the interface and adding new data.</p>
-						<p>Next release: end of May 2018 (new user interface).</p>
-					</div>
-				</div>
+				@endisset
 			</div>
 
 		</div>
