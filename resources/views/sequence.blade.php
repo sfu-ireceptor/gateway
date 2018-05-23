@@ -100,7 +100,7 @@
 							<div class="panel-body">
 								<div class="form-group">
 									{{ Form::label('annotation_tool', $filters_list_all['annotation_tool']) }}
-									{{ Form::select('annotation_tool[]', $annotation_tool, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+									{{ Form::select('annotation_tool', $annotation_tool_list, '', array('class' => 'form-control')) }}
 								</div>
 								<div class="form-group">
 									{{ Form::label('functional', $filters_list_all['functional']) }}

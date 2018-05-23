@@ -41,14 +41,15 @@ class SequenceController extends Controller
         $functional_list['false'] = 'No';
 
         // annotation_tool
-        $annotation_tool = [];
-        $annotation_tool['MiXCR'] = 'MiXCR';
-        $annotation_tool['V-Quest'] = 'V-Quest';
+        $annotation_tool_list = [];
+        $annotation_tool_list[''] = 'Any';
+        $annotation_tool_list['MiXCR'] = 'MiXCR';
+        $annotation_tool_list['V-Quest'] = 'V-Quest';
 
         // view data
         $data = [];
         $data['functional_list'] = $functional_list;
-        $data['annotation_tool'] = $annotation_tool;
+        $data['annotation_tool_list'] = $annotation_tool_list;
 
         $query_id = $request->input('query_id');
         if ($query_id) {
