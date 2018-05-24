@@ -330,7 +330,7 @@ class SequenceController extends Controller
             // if (! $request->session()->has('_old_input')) {
             //     $request->session()->put('_old_input', $filters);
             // }
-            
+
             $data['query_id'] = $query_id;
         } else {
             // redirect old-style URLs
