@@ -129,7 +129,7 @@ $(document).ready(function() {
 	* Sequences
 	**********************************************************/
 
-	$('form.sequence_search').submit(function(event){
+	$('form.standard_sequence_search').submit(function(event){
 		var nb_fields = 0;
 
 		// get number of not empty text fields

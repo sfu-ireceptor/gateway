@@ -14,7 +14,7 @@
 
 			<h3 class="first">Filters</h3>
 
-			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sequence_search show_reloading_message')) }}
+			{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sequence_search standard_sequence_search show_reloading_message')) }}
 
 				@foreach ($hidden_fields as $hf)
 					<input type="hidden" name="{{$hf['name']}}" value="{{$hf['value']}}">

@@ -166,7 +166,7 @@
 		<script src="/js/bootstrap-multiselect.js"></script>
 		<script src="/js/pluralize.js"></script>
 
-		<script src="/js/main.js?v=20"></script>
+		<script src="/js/main.js?v=21"></script>
 		<script src="/js/visualization.js?v=13"></script>
 	</body>
 
