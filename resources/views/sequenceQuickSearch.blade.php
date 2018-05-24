@@ -102,11 +102,9 @@
 							</span>
 						@endforeach
 
-	{{-- 				@isset($no_filters_query_id)
-							<a href="/sequences?query_id={{ $no_filters_query_id }}" class="remove_filters">
-								Remove filters
-							</a>
-						@endisset --}}
+						<a href="/sequences-quick-search" class="remove_filters">
+							Remove filters
+						</a>
 
 						<a class="bookmark" href="/system/" data-uri="{{ $url }}">
 							@if ($bookmark_id)

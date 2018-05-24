@@ -54,9 +54,9 @@ class SequenceController extends Controller
         $query_id = $request->input('query_id');
         if ($query_id) {
             $filters = Query::getParams($query_id);
-            if (! $request->session()->has('_old_input')) {
-                $request->session()->put('_old_input', $filters);
-            }
+            // if (! $request->session()->has('_old_input')) {
+            //     $request->session()->put('_old_input', $filters);
+            // }
 
             // generate query_id for "Clear Filters" button
             $no_filters_params = [];
@@ -327,21 +327,10 @@ class SequenceController extends Controller
         $query_id = $request->input('query_id');
         if ($query_id) {
             $filters = Query::getParams($query_id);
-            if (! $request->session()->has('_old_input')) {
-                $request->session()->put('_old_input', $filters);
-            }
-
-            // // generate query_id for "Clear Filters" button
-            // $no_filters_params = [];
-            // foreach ($filters as $name => $value) {
-            //     if (starts_with($name, 'ir_project_sample_id_list_')) {
-            //         $no_filters_params[$name] = $value;
-            //     } elseif ($name == 'sample_query_id') {
-            //         $no_filters_params[$name] = $value;
-            //     }
+            // if (! $request->session()->has('_old_input')) {
+            //     $request->session()->put('_old_input', $filters);
             // }
-            // $data['no_filters_query_id'] = Query::saveParams($no_filters_params, 'sequences');
-
+            
             $data['query_id'] = $query_id;
         } else {
             // redirect old-style URLs
