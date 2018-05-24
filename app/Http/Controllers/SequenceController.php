@@ -284,6 +284,14 @@ class SequenceController extends Controller
     // </p>
     }
 
+    public function postQuickSearch(Request $request)
+    {
+        $query_id = Query::saveParams($request->except(['_token']), 'sequences');
+        Log::debug('Saving quickSearch params to query id ' . $query_id);
+
+        return redirect('sequences-quick-search?query_id=' . $query_id)->withInput();
+    }
+
     public function quickSearch(Request $request)
     {
         $username = auth()->user()->username;
@@ -315,9 +323,35 @@ class SequenceController extends Controller
         /*************************************************
         * get filtered sequence data and related statistics */
 
-        $filters = $request->all();
+        $filters = [];
+        $query_id = $request->input('query_id');
+        if ($query_id) {
+            $filters = Query::getParams($query_id);
+            if (! $request->session()->has('_old_input')) {
+                $request->session()->put('_old_input', $filters);
+            }
 
-        // // !! just for quick testing
+            // // generate query_id for "Clear Filters" button
+            // $no_filters_params = [];
+            // foreach ($filters as $name => $value) {
+            //     if (starts_with($name, 'ir_project_sample_id_list_')) {
+            //         $no_filters_params[$name] = $value;
+            //     } elseif ($name == 'sample_query_id') {
+            //         $no_filters_params[$name] = $value;
+            //     }
+            // }
+            // $data['no_filters_query_id'] = Query::saveParams($no_filters_params, 'sequences');
+
+            $data['query_id'] = $query_id;
+        } else {
+            // redirect old-style URLs
+            if(! empty($request->all())) {
+                $query_id = Query::saveParams($request->except(['_token']), 'sequences');
+                return redirect('sequences-quick-search?query_id=' . $query_id)->withInput();
+            }
+        }
+
+        // // for quick testing
         // $filters['cell_subset'] = ['B cell'];
         // $filters['junction_aa'] = 'CAHRRVGSSSDWNGGDYDFW';
 

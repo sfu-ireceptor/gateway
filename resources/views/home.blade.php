@@ -49,7 +49,7 @@
 					<h3 class="panel-title">Sequence Search</h3>
 				</div>
 				<div class="panel-body filters sequence_search">
-					{{ Form::open(array('url' => 'sequences-quick-search', 'role' => 'form', 'method' => 'get', 'class' => 'sequence_search show_loading_message')) }}
+					{{ Form::open(array('url' => 'sequences-quick-search', 'role' => 'form', 'method' => 'post', 'class' => 'sequence_search show_loading_message')) }}
 							
 						<p>Find interesting sequences and sequence annotations by searching for Junction AA sequences.</p>
 	

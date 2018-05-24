@@ -66,6 +66,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/sequences', 'SequenceController@postIndex')->name('sequences-post');
     Route::get('/sequences', 'SequenceController@index')->name('sequences')->middleware('log_query');
     Route::get('/sequences-quick-search', 'SequenceController@quickSearch')->name('sequences-quick-search')->middleware('log_query');
+    Route::post('/sequences-quick-search', 'SequenceController@postQuickSearch')->name('sequences-quick-search-post');
     Route::get('/sequences-download', 'SequenceController@download')->name('sequences-download')->middleware('log_query');
 
     Route::prefix('user')->group(function () {
