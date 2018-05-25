@@ -327,12 +327,14 @@ class SequenceController extends Controller
         $query_id = $request->input('query_id');
         if ($query_id) {
             $filters = Query::getParams($query_id);
-            // if (! $request->session()->has('_old_input')) {
-            //     $request->session()->put('_old_input', $filters);
-            // }
+            if (! $request->session()->has('_old_input')) {
+                $request->session()->put('_old_input', $filters);
+            }
 
             $data['query_id'] = $query_id;
         } else {
+            $request->session()->forget('_old_input');
+            
             // redirect old-style URLs
             if (! empty($request->all())) {
                 $query_id = Query::saveParams($request->except(['_token']), 'sequences');
