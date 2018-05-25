@@ -363,6 +363,11 @@ class SequenceController extends Controller
         // generate query id for download link
         $sample_id_list = RestService::search_samples($sample_filters, $username, $query_log_id);
         $download_filters = array_merge($sequence_filters, $sample_id_list);
+
+        // add sample_query_id to keep track of sample filters for info file
+        $sample_query_id = Query::saveParams($sample_filters, 'samples');
+        $download_filters['sample_query_id'] = $sample_query_id;
+
         $query_id = Query::saveParams($download_filters, 'sequences');
         $data['query_id'] = $query_id;
 
