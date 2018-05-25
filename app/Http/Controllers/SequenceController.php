@@ -334,7 +334,7 @@ class SequenceController extends Controller
             $data['query_id'] = $query_id;
         } else {
             $request->session()->forget('_old_input');
-            
+
             // redirect old-style URLs
             if (! empty($request->all())) {
                 $query_id = Query::saveParams($request->except(['_token']), 'sequences');
