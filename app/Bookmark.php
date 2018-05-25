@@ -48,7 +48,7 @@ class Bookmark extends Model
 
     public static function getIdFromURl($url, $user_id)
     {
-        $b = static::where('user_id', 1)->where('url', $url)->first();
+        $b = static::where('user_id', $user_id)->where('url', $url)->first();
         if ($b != null) {
             return $b->id;
         }
