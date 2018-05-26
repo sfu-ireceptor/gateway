@@ -36,7 +36,7 @@ class SequenceController extends Controller
 
         // functional
         $functional_list = [];
-        $functional_list[''] = 'All';
+        $functional_list[''] = 'Any';
         $functional_list['true'] = 'Yes';
         $functional_list['false'] = 'No';
 
@@ -310,7 +310,7 @@ class SequenceController extends Controller
 
         // organism
         $subject_organism_list = [];
-        $subject_organism_list[''] = '';
+        $subject_organism_list[''] = 'Any';
         foreach ($metadata['organism'] as $v) {
             $subject_organism_list[$v] = $v;
         }

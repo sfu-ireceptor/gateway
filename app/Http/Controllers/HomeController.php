@@ -32,11 +32,14 @@ class HomeController extends Controller
 
         // organism
         $subject_organism_list = [];
-        $subject_organism_list[''] = '';
+        $subject_organism_list[''] = 'Any';
         foreach ($metadata['organism'] as $v) {
             $subject_organism_list[$v] = $v;
         }
         $data['subject_organism_list'] = $subject_organism_list;
+
+        // clear any lingering form data
+        $request->session()->forget('_old_input');
 
         // get fields names
         $sequenceColumnNameList = SequenceColumnName::findEnabled();
