@@ -106,7 +106,7 @@
 									{{ Form::label('functional', $filters_list_all['functional']) }}
 									{{ Form::select('functional', $functional_list, '', array('class' => 'form-control')) }}
 								</div>
-								<div class="form-group">
+							{{-- 	<div class="form-group">
 									{{ Form::label('rev_comp', $filters_list_all['rev_comp']) }}
 									{{ Form::text('rev_comp', '', array('class' => 'form-control')) }}
 								</div>
@@ -121,7 +121,7 @@
 								<div class="form-group">
 									{{ Form::label('j_score', $filters_list_all['j_score']) }}
 									{{ Form::text('j_score', '', array('class' => 'form-control')) }}
-								</div>
+								</div> --}}
 								<p class="button_container">
 									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 								</p>
