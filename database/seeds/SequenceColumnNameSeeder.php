@@ -12,22 +12,22 @@ class SequenceColumnNameSeeder extends Seeder
         $l = [
             [
               'name' => 'v_call',
-              'title' => 'V-Gene Allele',
+              'title' => 'V-Gene',
               'enabled' => true,
             ],
             [
               'name' => 'j_call',
-              'title' => 'J-Gene Allele',
+              'title' => 'J-Gene',
               'enabled' => true,
             ],
             [
               'name' => 'd_call',
-              'title' => 'D-Gene Allele',
+              'title' => 'D-Gene',
               'enabled' => true,
             ],
             [
               'name' => 'junction_aa',
-              'title' => 'Junction AA Sequence',
+              'title' => 'Junction Sequence (AA)',
               'enabled' => true,
             ],
             [
