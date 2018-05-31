@@ -30,8 +30,7 @@
 			      <ul class="nav navbar-nav">
 					<li role="presentation">
 				      	<a class="navbar-brand" href="/" class="active">
-							<img src="/images/logos/ireceptor_logo.png">
-				      		<span>iReceptor</span>
+							<img src="/images/logos/ireceptor.png">
 				      	</a>
 					</li>
 			    	@if(Request::is('sequences-quick-search*'))
