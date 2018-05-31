@@ -49,7 +49,7 @@ class SequenceController extends Controller
         // view data
         $data = [];
         $data['functional_list'] = $functional_list;
-        $data['annotation_tool_list'] = $annotation_tool_list;
+        $data['ir_annotation_tool_list'] = $annotation_tool_list;
 
         $query_id = $request->input('query_id');
         if ($query_id) {

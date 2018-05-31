@@ -36,7 +36,7 @@ class SequenceColumnNameSeeder extends Seeder
               'enabled' => true,
             ],
             [
-              'name' => 'annotation_tool',
+              'name' => 'ir_annotation_tool',
               'title' => 'Annotation Tool',
               'enabled' => true,
             ],

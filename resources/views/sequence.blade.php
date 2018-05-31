@@ -99,8 +99,8 @@
 						<div id="collapseThree" class="panel-collapse collapse {{ in_array('2', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingThree">
 							<div class="panel-body">
 								<div class="form-group">
-									{{ Form::label('annotation_tool', $filters_list_all['annotation_tool']) }}
-									{{ Form::select('annotation_tool', $annotation_tool_list, '', array('class' => 'form-control')) }}
+									{{ Form::label('ir_annotation_tool', $filters_list_all['ir_annotation_tool']) }}
+									{{ Form::select('ir_annotation_tool', $ir_annotation_tool_list, '', array('class' => 'form-control')) }}
 								</div>
 								<div class="form-group">
 									{{ Form::label('functional', $filters_list_all['functional']) }}
