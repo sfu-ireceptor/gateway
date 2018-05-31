@@ -9,8 +9,7 @@
 		<div class="col-md-3">
 			
 			<div class="login_logo">
-				<img src="/images/logos/ireceptor_logo.png">
-				<span>iReceptor</span>
+				<img src="/images/logos/ireceptor_big.png">
 			</div>
 
 			<div class="login-box">

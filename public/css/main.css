@@ -571,7 +571,7 @@ footer a:hover {
 
 .login_logo {
 	margin-top: 38px;
-	padding-left: 12px;
+	padding-left: 0px;
 }
 
 .login_logo span {
@@ -580,11 +580,10 @@ footer a:hover {
 
 .login_logo img {
 	display: inline-block;
-	margin-top: -27px;
-	margin-left: 16px;
-	width: 48px;
-	height: 48px;
+	margin-top: -18px;
+	margin-left: 6px;
 	margin-right: 0;
+	width: 250px;
 }
 
 .intro {
