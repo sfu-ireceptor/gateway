@@ -57,10 +57,10 @@
 		<div class="col-md-9">
 			<div class="intro">
 				<p>
-					A <strong>gateway</strong>
-					to curated, distributed databases<br>
-					containing "Next Generation" sequence data from immune responses<br>
-					available for exploration, analysis, and download.
+					A <strong>science gateway</strong>
+					to independant repositories of<br>
+					“Next Generation” sequence data from immune responses,<br>
+					enabling unified exploration, analysis and download.
 				</p>
 			</div>
 			<div class="intro2">
