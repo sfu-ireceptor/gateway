@@ -36,19 +36,19 @@
 								<div class="form-group">
 									{{ Form::label('v_call', $filters_list_all['v_call']) }}
 									@include('help', ['id' => 'v_call'])
-									{{ Form::text('v_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'String prefix search (matches from the first character). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
+									{{ Form::text('v_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">
 									{{ Form::label('j_call', $filters_list_all['j_call']) }}
 									@include('help', ['id' => 'j_call'])
-									{{ Form::text('j_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'String prefix search (matches from the first character). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
+									{{ Form::text('j_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">
 									{{ Form::label('d_call', $filters_list_all['d_call']) }}
 									@include('help', ['id' => 'd_call'])
-									{{ Form::text('d_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'String prefix search (matches from the first character). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
+									{{ Form::text('d_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<p class="button_container">
