@@ -56,6 +56,10 @@ a {
 	text-decoration: underline;
 }
 
+a[role=button] {
+	text-decoration: none;
+}
+
 a.btn {
 	text-decoration: none;
 }
