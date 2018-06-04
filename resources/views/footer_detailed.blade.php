@@ -3,11 +3,15 @@
 		<div class="login_about_box">
 			<h3>About iReceptor</h3>
 			<p>
-				iReceptor is a distributed data management system and scientific gateway for mining “Next Generation” sequence data from immune responses. The goal of the project is to: improve the design of vaccines, therapeutic antibodies and cancer immunotherapies by integrating Canadian and international data repositories of antibody and T-cell receptor gene sequences.
+				The
+				<a href="http://airr.irmacs.sfu.ca/">Adaptive Immune Receptor Repertoire (AIRR) Community</a>
+				develops standards on how to study and share immune research data derived from Next Generation Sequencing (NGS) of antibody (Ab)/B-cell and T-cell receptor (TcR) repertoires.
 			</p>
+
 			<p>
-				iReceptor provides a technology platform that will lower the barrier to immune genetics researchers who need to federate large, distributed, immune genetics data repositories in order to answer complex questions about the immune response. The focus of the iReceptor project is to leverage existing capabilities and technologies to build a new scientific platform for the immune genetics research community.
+				iReceptor, by working closely with the AIRR community, enables queries across independent AIRR data repositories from multiple projects, labs and institutions. The goal is to help immune genetics researchers answer complex questions about the immune system in order to improve the design of vaccines, therapeutic antibodies and cancer immunotherapies.
 			</p>
+
 			<p>
 				For more information, see the <a href="http://www.ireceptor.org" target="_blank">iReceptor public website</a>.
 			</p>

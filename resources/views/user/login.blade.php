@@ -58,7 +58,7 @@
 			<div class="intro">
 				<p>
 					A <strong>science gateway</strong>
-					to independant repositories of<br>
+					to independent repositories of<br>
 					“Next Generation” sequence data from immune responses,<br>
 					enabling unified exploration, analysis and download.
 				</p>
