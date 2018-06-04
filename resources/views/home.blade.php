@@ -55,7 +55,7 @@
 	
 						<div class="row">
 							<div class="col-md-7">
-								<div class="form-group">
+								<div class="form-group junction_aa">
 									{{ Form::label('junction_aa', $filters_list_all['junction_aa']) }}
 									@include('help', ['id' => 'junction_aa'])
 									{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4')) }}
