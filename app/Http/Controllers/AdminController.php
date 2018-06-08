@@ -148,10 +148,12 @@ class AdminController extends Controller
         $token = auth()->user()->password;
         $l = $agave->getUsers($token);
 
-        // sort by creation date desc
-        usort($l, function ($a, $b) {
-            return strcmp($b->create_time, $a->create_time);
-        });
+        // dd($l);
+
+        // // sort by creation date desc
+        // usort($l, function ($a, $b) {
+        //     return strcmp($b->create_time, $a->create_time);
+        // });
 
         // fetch complementary user information from our local database
         $db_users = [];
