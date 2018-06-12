@@ -154,17 +154,10 @@
 								    {{ Form::select('tissue[]', $sample_source_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
-								 <div class="form-group">
+							    <div class="form-group">
 									{{ Form::label('template_class', __('short.template_class')) }}
 									@include('help', ['id' => 'template_class'])
-									@foreach ($dna_type_list as $id => $name)
-									<div class="checkbox">
-										<label>
-											{{ Form::checkbox('template_class[]', $id) }}
-											{{ $name }}
-										</label>
-									</div>
-									@endforeach
+								    {{ Form::select('template_class[]', $dna_type_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 								<div class="form-group">
