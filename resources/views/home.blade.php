@@ -46,7 +46,7 @@
 
 			<div class="panel panel-default sequence_search_container">
 				<div class="panel-heading">
-					<h3 class="panel-title">Sequence Search</h3>
+					<h3 class="panel-title">Sequence Quick Search</h3>
 				</div>
 				<div class="panel-body filters sequence_search">
 					{{ Form::open(array('url' => 'sequences-quick-search', 'role' => 'form', 'method' => 'post', 'class' => 'sequence_search show_loading_message')) }}
