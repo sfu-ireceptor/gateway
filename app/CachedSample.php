@@ -14,7 +14,7 @@ class CachedSample extends Model
     public static function cache()
     {
         // get data
-        $sample_data = RestService::samples([], 'titi', null);  // use Jérôme's username (titi) for now
+        $sample_data = Sample::find([], 'titi');  // use Jérôme's username (titi) for now
         $sample_list = $sample_data['items'];
 
         // delete any previously cached data

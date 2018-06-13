@@ -24,18 +24,11 @@ class RestService extends Model
         return $l;
     }
 
-    public static function samples($filters, $username, $query_log_id = null)
+    public static function samples($filters)
     {
         $base_uri = 'samples';
 
-        // remove gateway-only filters
-        unset($filters['open_filter_panel_list']);
-
-        // add required service filters
-        $filters['username'] = $username;
-        $filters['ir_username'] = $username;
-
-        // prepare request parameters for each service
+        // prepare parameters for each service
         $request_params = [];
         foreach (self::findEnabled() as $rs) {
             $t = [];
@@ -43,7 +36,6 @@ class RestService extends Model
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;
             $t['params'] = $filters;
-            $t['gw_query_log_id'] = $query_log_id;
 
             $request_params[] = $t;
         }
@@ -53,7 +45,7 @@ class RestService extends Model
 
         return $response_list;
     }
-    
+
     public static function sequences_summary($filters, $username, $query_log_id)
     {
         $filters = self::sanitize_filters($filters);

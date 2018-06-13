@@ -14,17 +14,22 @@ class Sample
         return CachedSample::metadata();
     }
 
-    public static function find($filters, $username, $query_log_id = null)
+    public static function find($filters, $username, $gw_query_log_id = null)
     {
-        $response_list = RestService::samples($filters, $username, $query_log_id);
+        // remove gateway-only filters
+        unset($filters['open_filter_panel_list']);
 
-        // if there was an error, update status of gateway query
+        // add required service filters
+        $filters['username'] = $username;
+        $filters['ir_username'] = $username;
+
+        // do requests
+        $response_list = RestService::samples($filters);
+
+        // if error, update gateway query status accordingly
         foreach ($response_list as $response) {
-            if ($response['status'] == 'error') {
-                $gw_query_log_id = $response['gw_query_log_id'];
-                if ($gw_query_log_id != null) {
-                    QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
-                }
+            if ($response['status'] == 'error' && $gw_query_log_id != null) {
+                QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
             }
         }
 
