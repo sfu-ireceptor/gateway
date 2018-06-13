@@ -13,4 +13,9 @@ class Sample
     {
         return CachedSample::metadata();
     }
+
+    public static function find($filters, $username, $query_log_id = null)
+    {
+        return RestService::samples($filters, $username, $query_log_id);
+    }
 }

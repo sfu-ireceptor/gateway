@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\RestService;
+use App\Sample;
 use App\SequenceColumnName;
 use Illuminate\Http\Request;
 
@@ -12,12 +13,12 @@ class HomeController extends Controller
     {
         // get count of available data (sequences, samples)
         $username = auth()->user()->username;
-        $metadata = RestService::metadata($username);
+        $metadata = Sample::metadata($username);
         $data = $metadata;
 
         // get data for graphs and repositories/labs/studies popup
         $query_log_id = $request->get('query_log_id');
-        $sample_data = RestService::samples(['ajax' => true], $username, $query_log_id);
+        $sample_data = Sample::find(['ajax' => true], $username, $query_log_id);
         $sample_list = $sample_data['items'];
 
         $data['sample_list_json'] = json_encode($sample_list);

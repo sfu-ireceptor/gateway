@@ -18,12 +18,12 @@ class UserController extends Controller
 {
     public function getLogin(Request $request)
     {
-        $data = RestService::metadata();
+        $data = Sample::metadata();
 
         $sample_list = Sample::public_samples();
         $data['sample_list_json'] = json_encode($sample_list);
 
-        $metadata = RestService::metadata();
+        $metadata = Sample::metadata();
         $data['total_repositories'] = $metadata['total_repositories'];
         $data['total_labs'] = $metadata['total_labs'];
         $data['total_studies'] = $metadata['total_projects'];

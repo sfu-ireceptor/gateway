@@ -300,7 +300,7 @@ class SequenceController extends Controller
         * prepare form data */
 
         // get data
-        $metadata = RestService::metadata($username);
+        $metadata = Sample::metadata($username);
 
         // cell type
         $cell_type_list = [];

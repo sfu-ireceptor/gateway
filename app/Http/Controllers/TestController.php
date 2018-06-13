@@ -271,7 +271,7 @@ class TestController extends Controller
 //         // // SampleField::init();
 //         // // die();
 
-//         // $metadata = RestService::metadata('titi');
+//         // $metadata = Sample::metadata('titi');
 
 //         // var_dump($metadata);
 //         // die();
@@ -285,7 +285,7 @@ class TestController extends Controller
 //         // RestService::cacheSamples('titi');
 //         // die();
 
-//         // $metadata_data = RestService::metadata2('titi');
+//         // $metadata_data = Sample::metadata2('titi');
 //         // var_dump($metadata_data);
 //         // die();
 
