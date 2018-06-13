@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Query;
+use App\Sample;
 use App\Bookmark;
 use App\QueryLog;
-use App\RestService;
 use Illuminate\Http\Request;
-use App\Sample;
 
 class SampleController extends Controller
 {
