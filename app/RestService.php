@@ -62,41 +62,27 @@ class RestService extends Model
         // do requests
         $response_list = self::doRequests($request_params);
 
-        // for each service response
+        // if there was an error, update status of gateway query
         foreach ($response_list as $response) {
-            // if error, update gateway query status and skip
             if ($response['status'] == 'error') {
                 $gw_query_log_id = $response['gw_query_log_id'];
                 if ($gw_query_log_id != null) {
                     QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
                 }
-                continue;
-            }
-
-            // add rest service id and name to each sample
-            $rs = $response['rs'];
-            $sample_list = $response['data'];
-            foreach ($sample_list as $sample) {
-                $sample->rest_service_id = $rs->id;
-                $sample->rest_service_name = $rs->name;
             }
         }
 
-        // initialize return array
-        $data = [];
-        $data['items'] = [];
-        $data['rs_list'] = [];
-        $data['total'] = 0;
-
+        // tweak responses
         foreach ($response_list as $response) {
             $rs = $response['rs'];
             $sample_list = $response['data'];
 
-            // modify some fields
             foreach ($sample_list as $sample) {
+                // add rest service id/name
                 $sample->rest_service_id = $rs->id;
                 $sample->rest_service_name = $rs->name;
 
+                // add study URL
                 if (isset($sample->study_id)) {
                     if (preg_match('/PRJ/', $sample->study_id)) {
                         $sample->study_url = 'https://www.ncbi.nlm.nih.gov/bioproject/?term=' . $sample->study_id;
@@ -107,6 +93,23 @@ class RestService extends Model
                     }
                 }
             }
+        }
+
+        return self::samples_stats($response_list);
+        
+    }
+
+    public static function samples_stats($response_list)
+    {
+        // initialize return array
+        $data = [];
+        $data['items'] = [];
+        $data['rs_list'] = [];
+        $data['total'] = 0;
+
+        foreach ($response_list as $response) {
+            $rs = $response['rs'];
+            $sample_list = $response['data'];
 
             // calculate summary statistics
             $lab_list = [];
