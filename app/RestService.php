@@ -62,7 +62,6 @@ class RestService extends Model
         // do requests
         $response_list = self::doRequests($request_params);
 
-
         // for each service response
         foreach ($response_list as $response) {
             // if error, update gateway query status and skip
@@ -83,17 +82,15 @@ class RestService extends Model
             }
         }
 
-
         // initialize return array
         $data = [];
         $data['items'] = [];
         $data['rs_list'] = [];
         $data['total'] = 0;
-        
+
         foreach ($response_list as $response) {
             $rs = $response['rs'];
             $sample_list = $response['data'];
-
 
             // modify some fields
             foreach ($sample_list as $sample) {
