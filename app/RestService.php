@@ -62,24 +62,40 @@ class RestService extends Model
         // do requests
         $response_list = self::doRequests($request_params);
 
+
+        // for each service response
+        foreach ($response_list as $response) {
+            // if error, update gateway query status and skip
+            if ($response['status'] == 'error') {
+                $gw_query_log_id = $response['gw_query_log_id'];
+                if ($gw_query_log_id != null) {
+                    QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
+                }
+                continue;
+            }
+
+            // add rest service id and name to each sample
+            $rs = $response['rs'];
+            $sample_list = $response['data'];
+            foreach ($sample_list as $sample) {
+                $sample->rest_service_id = $rs->id;
+                $sample->rest_service_name = $rs->name;
+            }
+        }
+
+
         // initialize return array
         $data = [];
         $data['items'] = [];
         $data['rs_list'] = [];
         $data['total'] = 0;
-
-        // process returned data
+        
         foreach ($response_list as $response) {
-            if ($response['status'] == 'error') {
-                if ($query_log_id != null) {
-                    QueryLog::set_gateway_query_status($query_log_id, 'service_error', $response['error_message']);
-                }
-                continue;
-            }
-
             $rs = $response['rs'];
             $sample_list = $response['data'];
 
+
+            // modify some fields
             foreach ($sample_list as $sample) {
                 $sample->rest_service_id = $rs->id;
                 $sample->rest_service_name = $rs->name;
@@ -763,13 +779,14 @@ class RestService extends Model
                                 return $t;
                             }
                         },
-                        function ($exception) use ($query_log_id, $t) {
+                        function ($exception) use ($gw_query_log_id, $query_log_id, $t) {
                             $response = $exception->getMessage();
                             Log::error($response);
                             QueryLog::end_rest_service_query($query_log_id, '', 'error', $response);
 
                             $t['status'] = 'error';
                             $t['error_message'] = $response;
+                            $t['gw_query_log_id'] = $gw_query_log_id;
 
                             return $t;
                         }
