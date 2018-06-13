@@ -514,9 +514,9 @@ class RestService extends Model
         Log::debug('Get TSV files stats');
         $file_stats = [];
         foreach ($response_list as $response) {
-            if (isset($response['file_path'])) {
+            if (isset($response['data']['file_path'])) {
                 $t = [];
-                $file_path = $response['file_path'];
+                $file_path = $response['data']['file_path'];
                 $t['name'] = basename($file_path);
                 $t['size'] = human_filesize($file_path);
 
@@ -620,7 +620,7 @@ class RestService extends Model
         // delete files
         Log::debug('Delete downloaded files...');
         foreach ($response_list as $response) {
-            $file_path = $response['file_path'];
+            $file_path = $response['data']['file_path'];
             File::delete($file_path);
         }
         File::delete($info_file_path);
@@ -748,9 +748,9 @@ class RestService extends Model
                 }
 
                 $t = [];
+                $t['rs'] = $rs;
                 $t['status'] = 'success';
                 $t['data'] = [];
-                $t['rs'] = $rs;
 
                 // execute request
                 $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rs->id, $rs->name, $url, $params, $file_path);
@@ -771,7 +771,7 @@ class RestService extends Model
                             } else {
                                 QueryLog::end_rest_service_query($query_log_id, filesize($file_path));
 
-                                $t['file_path'] = $file_path;
+                                $t['data']['file_path'] = $file_path;
 
                                 return $t;
                             }
