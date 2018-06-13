@@ -6,7 +6,6 @@ use App\News;
 use App\User;
 use App\Agave;
 use Carbon\Carbon;
-use App\RestService;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

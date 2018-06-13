@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\RestService;
 use App\Sample;
 use App\SequenceColumnName;
 use Illuminate\Http\Request;
