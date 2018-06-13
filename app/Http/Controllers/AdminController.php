@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\News;
 use App\User;
 use App\Agave;
-use App\Sample;
+use App\CachedSample;
 use App\LocalJob;
 use App\QueryLog;
 use App\FieldName;
@@ -297,7 +297,7 @@ class AdminController extends Controller
     public function getUpdateSampleCache()
     {
         $username = auth()->user()->username;
-        $n = Sample::cache();
+        $n = CachedSample::cache();
 
         $message = "$n samples have been retrieved and cached.";
 
