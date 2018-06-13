@@ -20,7 +20,7 @@ class UserController extends Controller
     {
         $data = RestService::metadata();
 
-        $sample_list = RestService::public_samples();
+        $sample_list = Sample::public_samples();
         $data['sample_list_json'] = json_encode($sample_list);
 
         $metadata = RestService::metadata();
