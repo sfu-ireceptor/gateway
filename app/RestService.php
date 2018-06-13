@@ -96,7 +96,6 @@ class RestService extends Model
         }
 
         return self::samples_stats($response_list);
-        
     }
 
     public static function samples_stats($response_list)
