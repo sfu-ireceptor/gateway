@@ -103,7 +103,7 @@ class SequenceController extends Controller
 
         // if tsv
         if (isset($filters['tsv'])) {
-            $t = RestService::sequencesTSV($filters, $username, $query_log_id, $request->fullUrl(), $sample_filter_fields);
+            $t = Sequence::sequencesTSV($filters, $username, $query_log_id, $request->fullUrl(), $sample_filter_fields);
             $tsvFilePath = $t['public_path'];
 
             // log result
@@ -525,7 +525,7 @@ class SequenceController extends Controller
             unset($sample_filter_fields['open_filter_panel_list']);
         }
 
-        $t = RestService::sequencesTSV($filters, $username, $query_log_id, $request->fullUrl(), $sample_filter_fields);
+        $t = Sequence::sequencesTSV($filters, $username, $query_log_id, $request->fullUrl(), $sample_filter_fields);
         $tsvFilePath = $t['public_path'];
 
         // log result

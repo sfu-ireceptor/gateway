@@ -204,6 +204,11 @@ class Sequence
     {
     }
 
+    public static function sequencesTSV($filters, $username, $gw_query_log_id = null, $url, $sample_filters = [])
+    {
+    	return RestService::sequencesTSV($filters, $username, $gw_query_log_id, $url, $sample_filters);
+    }
+
     public static function clean_filters($filters)
     {
         if (isset($filters['v_call'])) {
