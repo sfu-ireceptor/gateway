@@ -17,13 +17,15 @@ class RestService extends Model
         'url', 'name', 'username', 'password', 'enabled', 'version',
     ];
 
-    public static function findEnabled($field_list = null)
+    // return list of enabled services 
+    public static function findEnabled($filters = null)
     {
-        $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get($field_list);
+        $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get($filters);
 
         return $l;
     }
 
+    // send "/samples" request to all enabled services
     public static function samples($filters)
     {
         $base_uri = 'samples';
@@ -46,21 +48,9 @@ class RestService extends Model
         return $response_list;
     }
 
+    // send "/sequences_summary" request to all enabled services
     public static function sequences_summary($filters, $username, $query_log_id)
     {
-        $filters = self::sanitize_filters($filters);
-
-        // remove gateway-specific filters
-        unset($filters['cols']);
-        unset($filters['filters_order']);
-        unset($filters['sample_query_id']);
-        unset($filters['open_filter_panel_list']);
-
-        // add username to filters
-        $filters['username'] = $username;
-        $filters['ir_username'] = $username;
-
-
         // prepare request parameters for each service
         $request_params = [];
         foreach (self::findEnabled() as $rs) {

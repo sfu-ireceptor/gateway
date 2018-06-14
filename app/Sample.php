@@ -16,7 +16,7 @@ class Sample
 
     public static function find($filters, $username, $gw_query_log_id = null)
     {
-        // remove gateway-only filters
+        // remove gateway-specific filters
         unset($filters['open_filter_panel_list']);
 
         // add required service filters

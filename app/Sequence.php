@@ -6,6 +6,18 @@ class Sequence
 {
     public static function summary($filters, $username, $gw_query_log_id = null)
     {
+	    $filters = self::clean_filters($filters);
+
+        // remove gateway-specific filters
+        unset($filters['cols']);
+        unset($filters['filters_order']);
+        unset($filters['sample_query_id']);
+        unset($filters['open_filter_panel_list']);
+
+        // add required service filters
+        $filters['username'] = $username;
+        $filters['ir_username'] = $username;
+
         // do requests
         $response_list = RestService::sequences_summary($filters, $username, $gw_query_log_id);
 
