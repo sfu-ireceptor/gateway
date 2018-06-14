@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Query;
 use App\System;
+use App\Sequence;
 use App\Bookmark;
 use App\QueryLog;
 use App\RestService;
@@ -116,7 +117,7 @@ class SequenceController extends Controller
         // $request->flashExcept('ir_project_sample_id_list');   // keep submitted form values
 
         // sequence list
-        $sequence_data = RestService::sequences_summary($filters, $username, $query_log_id);
+        $sequence_data = Sequence::summary($filters, $username, $query_log_id);
 
         // log result
         $query_log = QueryLog::find($query_log_id);
