@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Query;
 use App\System;
-use App\Sequence;
 use App\Bookmark;
 use App\QueryLog;
+use App\Sequence;
 use App\RestService;
 use App\SequenceColumnName;
 use Illuminate\Http\Request;
