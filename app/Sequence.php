@@ -19,7 +19,7 @@ class Sequence
         $filters['ir_username'] = $username;
 
         // do requests
-        $response_list = RestService::sequences_summary($filters, $username, $gw_query_log_id);
+        $response_list = RestService::sequences_summary($filters);
 
     	// initialize return array
         $data = [];
@@ -36,20 +36,20 @@ class Sequence
             // check response format
             if ($response['status'] == 'error') {
                 $data['rs_list_no_response'][] = $rs;
-                QueryLog::set_gateway_query_status($query_log_id, 'service_error', $response['error_message']);
+                QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
                 continue;
             } elseif (! isset($obj->items)) {
                 $errror_message = 'No "items" element in JSON response';
                 Log::error($errror_message);
                 Log::error($obj);
-                QueryLog::set_gateway_query_status($query_log_id, 'service_error', $errror_message);
+                QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $errror_message);
                 $data['rs_list_no_response'][] = $rs;
                 continue;
             } elseif (! isset($obj->summary)) {
                 $errror_message = 'No "summary" element in JSON response';
                 Log::error($errror_message);
                 Log::error($obj);
-                QueryLog::set_gateway_query_status($query_log_id, 'service_error', $errror_message);
+                QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $errror_message);
                 $data['rs_list_no_response'][] = $rs;
                 continue;
             }

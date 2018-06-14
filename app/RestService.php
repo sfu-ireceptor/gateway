@@ -49,7 +49,7 @@ class RestService extends Model
     }
 
     // send "/sequences_summary" request to all enabled services
-    public static function sequences_summary($filters, $username, $query_log_id)
+    public static function sequences_summary($filters)
     {
         // prepare request parameters for each service
         $request_params = [];
@@ -72,7 +72,6 @@ class RestService extends Model
             $t['rs'] = $rs;
             $t['url'] = $rs->url . $uri;
             $t['params'] = $filters;
-            $t['gw_query_log_id'] = $query_log_id;
 
             $request_params[] = $t;
         }
