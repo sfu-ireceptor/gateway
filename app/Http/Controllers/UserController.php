@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\News;
 use App\User;
 use App\Agave;
+use App\Sample;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
