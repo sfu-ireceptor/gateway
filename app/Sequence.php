@@ -5,14 +5,13 @@ namespace App;
 use ZipArchive;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class Sequence
 {
     public static function summary($filters, $username, $gw_query_log_id = null)
     {
-	    $filters = self::clean_filters($filters);
+        $filters = self::clean_filters($filters);
 
         // remove gateway-specific filters
         unset($filters['cols']);
@@ -27,7 +26,7 @@ class Sequence
         // do requests
         $response_list = RestService::sequences_summary($filters);
 
-    	// initialize return array
+        // initialize return array
         $data = [];
         $data['items'] = [];
         $data['summary'] = [];
@@ -208,12 +207,11 @@ class Sequence
 
     public static function stats($response_list)
     {
-
     }
 
-    public static function sequencesTSV($filters, $username, $gw_query_log_id = null, $url, $sample_filters = [])
+    public static function sequencesTSV($filters, $username, $gw_query_log_id, $url, $sample_filters = [])
     {
-    	// allow more time than usual for this request
+        // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
         $filters = self::clean_filters($filters);
@@ -233,7 +231,7 @@ class Sequence
         $filters['output'] = 'tsv';
         $filters['ir_data_format'] = 'airr';
 
-    	$response_list = RestService::sequencesTSV($filters, $username, $gw_query_log_id, $url, $folder_path, $sample_filters);
+        $response_list = RestService::sequencesTSV($filters, $username, $gw_query_log_id, $url, $folder_path, $sample_filters);
 
         // get stats about files
         Log::debug('Get TSV files stats');
