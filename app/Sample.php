@@ -97,6 +97,10 @@ class Sample
                     }
                 }
 
+                if( ! isset($sample->study_title)) {
+                    $sample->study_title = '';
+                }
+
                 if (! in_array($sample->study_title, $study_list)) {
                     $study_list[] = $sample->study_title;
                     $study_sequence_count[$sample->study_title] = $sequence_count;

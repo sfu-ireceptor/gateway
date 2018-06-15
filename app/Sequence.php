@@ -231,7 +231,7 @@ class Sequence
         $filters['output'] = 'tsv';
         $filters['ir_data_format'] = 'airr';
 
-        $response_list = RestService::sequencesTSV($filters, $username, $gw_query_log_id, $url, $folder_path, $sample_filters);
+        $response_list = RestService::sequences_data($filters, $username, $gw_query_log_id, $url, $folder_path, $sample_filters);
 
         // get stats about files
         Log::debug('Get TSV files stats');

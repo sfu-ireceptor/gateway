@@ -79,7 +79,8 @@ class RestService extends Model
         return $response_list;
     }
 
-    public static function sequencesTSV($filters, $username, $query_log_id, $url, $folder_path, $sample_filters = [])
+    // send "/sequences_data" request to all enabled services
+    public static function sequences_data($filters, $username, $query_log_id, $url, $folder_path, $sample_filters = [])
     {
         $now = time();
 
