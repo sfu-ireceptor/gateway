@@ -304,6 +304,11 @@ class Sequence
         unset($filters['ir_data_format']);
         unset($filters['output']);
         unset($filters['tsv']);
+        foreach (RestService::findEnabled() as $rs) {
+            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+            unset($filters[$sample_id_list_key]);
+        }
+
         foreach ($filters as $k => $v) {
             if ($v === null) {
                 unset($filters[$k]);
