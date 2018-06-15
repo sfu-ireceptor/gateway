@@ -24,7 +24,7 @@ class Sample
         $sample_id_list = [];
         foreach ($sample_list as $sample) {
             $sample_id_list['ir_project_sample_id_list_' . $sample->rest_service_id][] = $sample->ir_project_sample_id;
-        } 
+        }
 
         return $sample_id_list;
     }
@@ -108,7 +108,7 @@ class Sample
                     }
                 }
 
-                if( ! isset($sample->study_title)) {
+                if (! isset($sample->study_title)) {
                     $sample->study_title = '';
                 }
 

@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Query;
+use App\Sample;
 use App\System;
 use App\Bookmark;
 use App\QueryLog;
-use App\Sample;
 use App\Sequence;
-use App\RestService;
 use App\SequenceColumnName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
