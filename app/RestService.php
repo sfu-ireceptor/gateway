@@ -80,7 +80,8 @@ class RestService extends Model
     }
 
     // send "/sequences_data" request to all enabled services
-    public static function sequences_data($filters, $username, $query_log_id, $url, $folder_path, $sample_filters = [])
+    // save returned files in $folder_path
+    public static function sequences_data($filters, $folder_path)
     {
         $now = time();
 
@@ -105,7 +106,6 @@ class RestService extends Model
             $t['url'] = $rs->url . $uri;
             $t['params'] = $filters;
             $t['file_path'] = $folder_path . '/' . str_slug($rs->name) . '.tsv';
-            $t['gw_query_log_id'] = $query_log_id;
 
             $request_params[] = $t;
         }

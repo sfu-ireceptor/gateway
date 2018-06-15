@@ -231,7 +231,7 @@ class Sequence
         $filters['output'] = 'tsv';
         $filters['ir_data_format'] = 'airr';
 
-        $response_list = RestService::sequences_data($filters, $username, $gw_query_log_id, $url, $folder_path, $sample_filters);
+        $response_list = RestService::sequences_data($filters, $folder_path);
 
         // get stats about files
         Log::debug('Get TSV files stats');
@@ -332,8 +332,9 @@ class Sequence
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::CREATE);
         foreach ($response_list as $response) {
-            if (isset($response['file_path'])) {
-                $file_path = $response['file_path'];
+            if (isset($response['data']['file_path'])) {
+                $file_path = $response['data']['file_path'];
+                Log::debug('Adding to ZIP: ' . $file_path);
                 $zip->addFile($file_path, basename($file_path));
             }
         }
