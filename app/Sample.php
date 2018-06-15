@@ -34,12 +34,8 @@ class Sample
         // remove gateway-specific filters
         unset($filters['open_filter_panel_list']);
 
-        // add required service filters
-        $filters['username'] = $username;
-        $filters['ir_username'] = $username;
-
         // do requests
-        $response_list = RestService::samples($filters);
+        $response_list = RestService::samples($filters, $username);
 
         // if error, update gateway query status accordingly
         foreach ($response_list as $response) {

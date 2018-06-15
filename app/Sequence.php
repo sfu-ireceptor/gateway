@@ -33,12 +33,8 @@ class Sequence
         unset($filters['sample_query_id']);
         unset($filters['open_filter_panel_list']);
 
-        // add required service filters
-        $filters['username'] = $username;
-        $filters['ir_username'] = $username;
-
         // do requests
-        $response_list = RestService::sequences_summary($filters);
+        $response_list = RestService::sequences_summary($filters, $username);
 
         // initialize return array
         $data = [];
@@ -238,14 +234,10 @@ class Sequence
         $folder_path = $storage_folder . $folder_name;
         File::makeDirectory($folder_path, 0777, true, true);
 
-        // add username to filters
-        $filters['username'] = $username;
-        $filters['ir_username'] = $username;
-
         $filters['output'] = 'tsv';
         $filters['ir_data_format'] = 'airr';
 
-        $response_list = RestService::sequences_data($filters, $folder_path);
+        $response_list = RestService::sequences_data($filters, $folder_path, $username);
 
         // get stats about files
         Log::debug('Get TSV files stats');

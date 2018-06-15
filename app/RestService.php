@@ -23,9 +23,13 @@ class RestService extends Model
     }
 
     // send "/samples" request to all enabled services
-    public static function samples($filters)
+    public static function samples($filters, $username = '')
     {
         $base_uri = 'samples';
+
+        // add username to filters
+        $filters['username'] = $username;
+        $filters['ir_username'] = $username;
 
         // prepare parameters for each service
         $request_params = [];
@@ -46,8 +50,14 @@ class RestService extends Model
     }
 
     // send "/sequences_summary" request to all enabled services
-    public static function sequences_summary($filters)
+    public static function sequences_summary($filters, $username = '')
     {
+        $base_uri = 'sequences_summary';
+
+        // add username to filters
+        $filters['username'] = $username;
+        $filters['ir_username'] = $username;
+
         // prepare request parameters for each service
         $request_params = [];
         foreach (self::findEnabled() as $rs) {
@@ -64,10 +74,8 @@ class RestService extends Model
                 continue;
             }
 
-            $uri = 'v2/sequences_summary';
-
             $t['rs'] = $rs;
-            $t['url'] = $rs->url . $uri;
+            $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;
             $t['params'] = $filters;
 
             $request_params[] = $t;
@@ -81,9 +89,15 @@ class RestService extends Model
 
     // send "/sequences_data" request to all enabled services
     // save returned files in $folder_path
-    public static function sequences_data($filters, $folder_path)
+    public static function sequences_data($filters, $folder_path, $username = '')
     {
+        $base_uri = 'sequences_data';
+
         $now = time();
+
+        // add username to filters
+        $filters['username'] = $username;
+        $filters['ir_username'] = $username;
 
         // prepare request parameters for each service
         $request_params = [];
@@ -99,11 +113,9 @@ class RestService extends Model
                 continue;
             }
 
-            $uri = 'v2/sequences_data';
-
             $t = [];
             $t['rs'] = $rs;
-            $t['url'] = $rs->url . $uri;
+            $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;
             $t['params'] = $filters;
             $t['file_path'] = $folder_path . '/' . str_slug($rs->name) . '.tsv';
 
@@ -115,27 +127,6 @@ class RestService extends Model
         $response_list = self::doRequests($request_params);
 
         return $response_list;
-    }
-
-    public static function sanitize_filters($filters)
-    {
-        if (isset($filters['v_call'])) {
-            $filters['v_call'] = strtoupper($filters['v_call']);
-        }
-
-        if (isset($filters['j_call'])) {
-            $filters['j_call'] = strtoupper($filters['j_call']);
-        }
-
-        if (isset($filters['d_call'])) {
-            $filters['d_call'] = strtoupper($filters['d_call']);
-        }
-
-        if (isset($filters['junction_aa'])) {
-            $filters['junction_aa'] = strtoupper($filters['junction_aa']);
-        }
-
-        return $filters;
     }
 
     // do requests (in parallel)
