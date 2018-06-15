@@ -6,6 +6,7 @@ use App\Query;
 use App\System;
 use App\Bookmark;
 use App\QueryLog;
+use App\Sample;
 use App\Sequence;
 use App\RestService;
 use App\SequenceColumnName;
@@ -364,7 +365,7 @@ class SequenceController extends Controller
         $query_log_id = $request->get('query_log_id');
 
         // generate query id for download link
-        $sample_id_list = RestService::search_samples($sample_filters, $username, $query_log_id);
+        $sample_id_list = Sample::find_sample_id_list($sample_filters, $username, $query_log_id);
         $download_filters = array_merge($sequence_filters, $sample_id_list);
 
         // add sample_query_id to keep track of sample filters for info file
@@ -374,7 +375,7 @@ class SequenceController extends Controller
         $query_id = Query::saveParams($download_filters, 'sequences');
         $data['query_id'] = $query_id;
 
-        $sequence_data = RestService::search($sample_filters, $sequence_filters, $username, $query_log_id);
+        $sequence_data = Sequence::full_search($sample_filters, $sequence_filters, $username, $query_log_id);
 
         // log result
         $query_log = QueryLog::find($query_log_id);

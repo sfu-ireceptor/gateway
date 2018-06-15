@@ -9,6 +9,20 @@ use Illuminate\Support\Facades\Storage;
 
 class Sequence
 {
+    // combined search taking both sample and sequence filters
+    // ([sample filters] -> (sample query) => [sample id list]) + [sequence filters] -> (sequence_summary query)  
+    public static function full_search($sample_filters, $sequence_filters, $username, $query_log_id)
+    {
+        $sample_id_filters = Sample::find_sample_id_list($sample_filters, $username, $query_log_id);
+
+        // get sequences summary
+        $sequence_filters = array_merge($sequence_filters, $sample_id_filters);
+        $sequence_filters = self::clean_filters($sequence_filters);
+        $sequence_data = self::summary($sequence_filters, $username, $query_log_id);
+
+        return $sequence_data;
+    }
+
     public static function summary($filters, $username, $gw_query_log_id = null)
     {
         $filters = self::clean_filters($filters);

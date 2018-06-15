@@ -14,6 +14,21 @@ class Sample
         return CachedSample::metadata();
     }
 
+    public static function find_sample_id_list($filters, $username, $gw_query_log_id = null)
+    {
+        // get samples
+        $sample_data = self::find($filters, $username, $gw_query_log_id);
+        $sample_list = $sample_data['items'];
+
+        // generate list of sample ids
+        $sample_id_list = [];
+        foreach ($sample_list as $sample) {
+            $sample_id_list['ir_project_sample_id_list_' . $sample->rest_service_id][] = $sample->ir_project_sample_id;
+        } 
+
+        return $sample_id_list;
+    }
+
     public static function find($filters, $username, $gw_query_log_id = null)
     {
         // remove gateway-specific filters
