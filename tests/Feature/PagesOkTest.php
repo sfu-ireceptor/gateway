@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class PagesOkTest extends TestCase
 {
@@ -33,5 +32,4 @@ class PagesOkTest extends TestCase
         $u = factory(\App\User::class)->make();
         // $this->actingAs($u)->followingRedirects()->get('/sequences')->assertSuccessful();
     }
-
 }
