@@ -1,0 +1,13 @@
+# to be copied into .git/hooks
+
+echo "Running tests..."
+./vendor/bin/phpunit
+
+if [ $? -eq 0 ]
+then
+	echo "Success"
+	exit 0
+fi
+
+echo "Tests failed"
+exit 1
