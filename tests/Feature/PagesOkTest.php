@@ -11,6 +11,7 @@ class PagesOkTest extends TestCase
     | Public
     |--------------------------------------------------------------------------
     */
+
     /** @test */
     public function login()
     {
@@ -34,6 +35,7 @@ class PagesOkTest extends TestCase
     | Require authentication
     |--------------------------------------------------------------------------
     */
+
     /** @test */
     public function home()
     {
@@ -69,7 +71,7 @@ class PagesOkTest extends TestCase
         $this->actingAs($u)->get('/bookmarks')->assertOk();
     }
 
-        /** @test */
+    /** @test */
     public function systems()
     {
         $u = factory(\App\User::class)->make();
