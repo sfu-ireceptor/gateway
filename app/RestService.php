@@ -224,7 +224,7 @@ class RestService extends Model
 
                             $t['status'] = 'error';
                             $t['error_message'] = $response;
-                            
+
                             return $t;
                         }
                     );
