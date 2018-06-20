@@ -237,14 +237,14 @@ class Sequence
                 $data['rs_list_no_response'][] = $rs;
                 QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
                 continue;
-            } elseif (!isset($obj->items)) {
+            } elseif (! isset($obj->items)) {
                 $errror_message = 'No "items" element in JSON response';
                 Log::error($errror_message);
                 Log::error($obj);
                 QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $errror_message);
                 $data['rs_list_no_response'][] = $rs;
                 continue;
-            } elseif (!isset($obj->summary)) {
+            } elseif (! isset($obj->summary)) {
                 $errror_message = 'No "summary" element in JSON response';
                 Log::error($errror_message);
                 Log::error($obj);
@@ -263,7 +263,7 @@ class Sequence
 
         // aggregate summary statistics
         $data = self::aggregate_stats($data);
-        
+
         return $data;
     }
 
@@ -282,7 +282,6 @@ class Sequence
         $total_sequences = 0;
         $filtered_sequences = 0;
         foreach ($obj->summary as $sample) {
-
             $sample = Sample::generate_study_url($sample);
 
             // If there are some sequences in this sample
@@ -290,20 +289,20 @@ class Sequence
                 $filtered_sequences += $sample->ir_filtered_sequence_count;
                 // If we have a lab and we haven't seen it already, add it
                 if (isset($sample->lab_name)) {
-                    if (!in_array($sample->lab_name, $lab_list)) {
+                    if (! in_array($sample->lab_name, $lab_list)) {
                         $lab_list[] = $sample->lab_name;
                         $lab_sequence_count[$sample->lab_name] = $sample->ir_filtered_sequence_count;
                     } else {
                         $lab_sequence_count[$sample->lab_name] += $sample->ir_filtered_sequence_count;
                     }
                 } elseif (isset($sample->collected_by)) {
-                    if (!in_array($sample->collected_by, $lab_list)) {
+                    if (! in_array($sample->collected_by, $lab_list)) {
                         $lab_list[] = $sample->collected_by;
                     }
                 }
                 // If we have a study title and we haven't seen it allready, add it
                 if (isset($sample->study_title)) {
-                    if (!in_array($sample->study_title, $study_list)) {
+                    if (! in_array($sample->study_title, $study_list)) {
                         $study_list[] = $sample->study_title;
                         $study_sequence_count[$sample->study_title] = $sample->ir_filtered_sequence_count;
                     } else {
@@ -331,7 +330,7 @@ class Sequence
             }
 
             // If we don't have this lab already, create it.
-            if (!isset($study_tree[$lab])) {
+            if (! isset($study_tree[$lab])) {
                 $lab_data['name'] = $lab;
                 if (isset($lab_sequence_count[$lab])) {
                     $lab_data['total_sequences'] = $lab_sequence_count[$lab];
@@ -342,7 +341,7 @@ class Sequence
             }
 
             // Check to see if the study exists in the lab, and if not, create it.
-            if (!isset($study_tree[$lab]['studies'])) {
+            if (! isset($study_tree[$lab]['studies'])) {
                 $new_study_data['study_title'] = $sample->study_title;
                 if (isset($study_sequence_count[$sample->study_title])) {
                     $new_study_data['total_sequences'] = $study_sequence_count[$sample->study_title];
@@ -351,7 +350,7 @@ class Sequence
                 }
                 $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
             } else {
-                if (!in_array($sample->study_title, $study_tree[$lab]['studies'])) {
+                if (! in_array($sample->study_title, $study_tree[$lab]['studies'])) {
                     $new_study_data['study_title'] = $sample->study_title;
                     if (isset($sample->study_url)) {
                         $new_study_data['study_url'] = $sample->study_url;
@@ -373,7 +372,6 @@ class Sequence
         $rs_data['total_sequences'] = $total_sequences;
         $rs_data['filtered_sequences'] = $filtered_sequences;
         $rs_data['study_tree'] = $study_tree;
-
 
         return $rs_data;
     }
