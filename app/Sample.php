@@ -14,10 +14,10 @@ class Sample
         return CachedSample::metadata();
     }
 
-    public static function find_sample_id_list($filters, $username, $gw_query_log_id = null)
+    public static function find_sample_id_list($filters, $username)
     {
         // get samples
-        $sample_data = self::find($filters, $username, $gw_query_log_id);
+        $sample_data = self::find($filters, $username);
         $sample_list = $sample_data['items'];
 
         // generate list of sample ids
@@ -29,7 +29,7 @@ class Sample
         return $sample_id_list;
     }
 
-    public static function find($filters, $username, $gw_query_log_id = null)
+    public static function find($filters, $username)
     {
         // remove gateway-specific filters
         unset($filters['open_filter_panel_list']);
@@ -39,6 +39,7 @@ class Sample
 
         // if error, update gateway query status accordingly
         foreach ($response_list as $response) {
+            $gw_query_log_id = request()->get('query_log_id');
             if ($response['status'] == 'error' && $gw_query_log_id != null) {
                 QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
             }

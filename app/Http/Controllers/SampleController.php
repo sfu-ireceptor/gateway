@@ -103,10 +103,10 @@ class SampleController extends Controller
         /*************************************************
         * get filtered sample list and related statistics */
 
-        $query_log_id = $request->get('query_log_id');
-        $sample_data = Sample::find($params, $username, $query_log_id);
+        $sample_data = Sample::find($params, $username);
 
         // log result
+        $query_log_id = $request->get('query_log_id');
         $query_log = QueryLog::find($query_log_id);
         $query_log->result_size = $sample_data['total_filtered_samples'];
         $query_log->save();
@@ -162,8 +162,7 @@ class SampleController extends Controller
         $params = $request->all();
         $params['ajax'] = true;
 
-        $query_log_id = $request->get('query_log_id');
-        $sample_data = Sample::find($params, $query_log_id);
+        $sample_data = Sample::find($params);
         $sample_list = $sample_data['items'];
 
         return json_encode($sample_list);

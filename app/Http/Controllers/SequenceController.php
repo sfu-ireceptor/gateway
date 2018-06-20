@@ -30,7 +30,6 @@ class SequenceController extends Controller
     public function index(Request $request)
     {
         $username = auth()->user()->username;
-        $query_log_id = $request->get('query_log_id');
 
         /*************************************************
         * prepare form data */
@@ -103,10 +102,11 @@ class SequenceController extends Controller
 
         // if tsv
         if (isset($filters['tsv'])) {
-            $t = Sequence::sequencesTSV($filters, $username, $query_log_id, $request->fullUrl(), $sample_filter_fields);
+            $t = Sequence::sequencesTSV($filters, $username, $request->fullUrl(), $sample_filter_fields);
             $tsvFilePath = $t['public_path'];
 
             // log result
+            $query_log_id = $request->get('query_log_id');
             $query_log = QueryLog::find($query_log_id);
             $query_log->result_size = $t['size'];
             $query_log->save();
@@ -117,9 +117,10 @@ class SequenceController extends Controller
         // $request->flashExcept('ir_project_sample_id_list');   // keep submitted form values
 
         // sequence list
-        $sequence_data = Sequence::summary($filters, $username, $query_log_id);
+        $sequence_data = Sequence::summary($filters, $username);
 
         // log result
+        $query_log_id = $request->get('query_log_id');
         $query_log = QueryLog::find($query_log_id);
         $query_log->result_size = $sequence_data['total_filtered_sequences'];
         $query_log->save();
@@ -361,10 +362,8 @@ class SequenceController extends Controller
             $sequence_filters['junction_aa'] = $filters['junction_aa'];
         }
 
-        $query_log_id = $request->get('query_log_id');
-
         // generate query id for download link
-        $sample_id_list = Sample::find_sample_id_list($sample_filters, $username, $query_log_id);
+        $sample_id_list = Sample::find_sample_id_list($sample_filters, $username);
         $download_filters = array_merge($sequence_filters, $sample_id_list);
 
         // add sample_query_id to keep track of sample filters for info file
@@ -374,9 +373,10 @@ class SequenceController extends Controller
         $query_id = Query::saveParams($download_filters, 'sequences');
         $data['query_id'] = $query_id;
 
-        $sequence_data = Sequence::full_search($sample_filters, $sequence_filters, $username, $query_log_id);
+        $sequence_data = Sequence::full_search($sample_filters, $sequence_filters, $username);
 
         // log result
+        $query_log_id = $request->get('query_log_id');
         $query_log = QueryLog::find($query_log_id);
         $query_log->result_size = $sequence_data['total_filtered_sequences'];
         $query_log->save();
@@ -496,7 +496,6 @@ class SequenceController extends Controller
     public function download(Request $request)
     {
         $username = auth()->user()->username;
-        $query_log_id = $request->get('query_log_id');
 
         $query_id = $request->input('query_id');
         if ($query_id) {
@@ -525,10 +524,11 @@ class SequenceController extends Controller
             unset($sample_filter_fields['open_filter_panel_list']);
         }
 
-        $t = Sequence::sequencesTSV($filters, $username, $query_log_id, $request->fullUrl(), $sample_filter_fields);
+        $t = Sequence::sequencesTSV($filters, $username, $request->fullUrl(), $sample_filter_fields);
         $tsvFilePath = $t['public_path'];
 
         // log result
+        $query_log_id = $request->get('query_log_id');
         $query_log = QueryLog::find($query_log_id);
         $query_log->result_size = $t['size'];
         $query_log->save();

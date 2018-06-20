@@ -98,7 +98,7 @@ class QueryLog extends Model
         Log::debug('set gateway query to ' . $status);
     }
 
-    public static function start_rest_service_query($gw_query_log_id, $rest_service_id, $rest_service_name, $path, $params, $filePath)
+    public static function start_rest_service_query($rest_service_id, $rest_service_name, $path, $params, $filePath)
     {
         $t = [];
 
@@ -129,7 +129,7 @@ class QueryLog extends Model
 
         $t['status'] = 'running';
 
-        $t['parent_id'] = $gw_query_log_id;
+        $t['parent_id'] = request()->get('query_log_id');
 
         $t['rest_service_id'] = $rest_service_id;
         $t['rest_service_name'] = $rest_service_name;

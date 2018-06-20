@@ -11,19 +11,19 @@ class Sequence
 {
     // combined search taking both sample and sequence filters
     // ([sample filters] -> (sample query) => [sample id list]) + [sequence filters] -> (sequence_summary query)
-    public static function full_search($sample_filters, $sequence_filters, $username, $query_log_id)
+    public static function full_search($sample_filters, $sequence_filters, $username)
     {
-        $sample_id_filters = Sample::find_sample_id_list($sample_filters, $username, $query_log_id);
+        $sample_id_filters = Sample::find_sample_id_list($sample_filters, $username);
 
         // get sequences summary
         $sequence_filters = array_merge($sequence_filters, $sample_id_filters);
         $sequence_filters = self::clean_filters($sequence_filters);
-        $sequence_data = self::summary($sequence_filters, $username, $query_log_id);
+        $sequence_data = self::summary($sequence_filters, $username);
 
         return $sequence_data;
     }
 
-    public static function summary($filters, $username, $gw_query_log_id = null)
+    public static function summary($filters, $username)
     {
         $filters = self::clean_filters($filters);
 
@@ -49,6 +49,7 @@ class Sequence
             $obj = $response['data'];
 
             // check response format
+            $gw_query_log_id = request()->get('query_log_id');
             if ($response['status'] == 'error') {
                 $data['rs_list_no_response'][] = $rs;
                 QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
@@ -219,7 +220,7 @@ class Sequence
     {
     }
 
-    public static function sequencesTSV($filters, $username, $gw_query_log_id, $url, $sample_filters = [])
+    public static function sequencesTSV($filters, $username, $url, $sample_filters = [])
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));

@@ -145,7 +145,6 @@ class RestService extends Model
                 $params = array_get($t, 'params', []);
                 $file_path = array_get($t, 'file_path', '');
                 $returnArray = array_get($t, 'returnArray', false);
-                $gw_query_log_id = array_get($t, 'gw_query_log_id', '');
                 $rs = array_get($t, 'rs');
 
                 // build Guzzle request params array
@@ -195,7 +194,7 @@ class RestService extends Model
                 $t['data'] = [];
 
                 // execute request
-                $query_log_id = QueryLog::start_rest_service_query($gw_query_log_id, $rs->id, $rs->name, $url, $params, $file_path);
+                $query_log_id = QueryLog::start_rest_service_query($rs->id, $rs->name, $url, $params, $file_path);
 
                 yield $client
                     ->requestAsync('POST', $url, $options)
@@ -218,15 +217,14 @@ class RestService extends Model
                                 return $t;
                             }
                         },
-                        function ($exception) use ($gw_query_log_id, $query_log_id, $t) {
+                        function ($exception) use ($query_log_id, $t) {
                             $response = $exception->getMessage();
                             Log::error($response);
                             QueryLog::end_rest_service_query($query_log_id, '', 'error', $response);
 
                             $t['status'] = 'error';
                             $t['error_message'] = $response;
-                            $t['gw_query_log_id'] = $gw_query_log_id;
-
+                            
                             return $t;
                         }
                     );
