@@ -61,137 +61,23 @@ class Sequence
         $filters['ir_data_format'] = 'airr';
 
         $response_list = RestService::sequences_data($filters, $folder_path, $username);
-
-        // get stats about files
-        Log::debug('Get TSV files stats');
-        $file_stats = [];
-        foreach ($response_list as $response) {
-            if (isset($response['data']['file_path'])) {
-                $t = [];
-                $file_path = $response['data']['file_path'];
-                $t['name'] = basename($file_path);
-                $t['size'] = human_filesize($file_path);
-
-                // count number of lines
-                $n = 0;
-                $f = fopen($file_path, 'r');
-                while (! feof($f)) {
-                    $line = fgets($f);
-                    if (! empty(trim($line))) {
-                        $n++;
-                    }
-                }
-                fclose($f);
-                $t['nb_sequences'] = $n - 1; // remove count of headers line
-                $file_stats[] = $t;
-            }
-        }
-
-        // add info.txt
-        $s = '';
-        $s .= '* Summary *' . "\n";
-
-        $nb_sequences_total = 0;
-        foreach ($file_stats as $t) {
-            $nb_sequences_total += $t['nb_sequences'];
-        }
-        $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
-
-        foreach ($file_stats as $t) {
-            $s .= $t['name'] . ': ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
-        }
-        $s .= "\n";
-
-        $s .= '* Metadata filters *' . "\n";
-        Log::debug($sample_filters);
-        if (count($sample_filters) == 0) {
-            $s .= 'None' . "\n";
-        }
-        foreach ($sample_filters as $k => $v) {
-            if (is_array($v)) {
-                $v = implode(' or ', $v);
-            }
-            // use human-friendly filter name
-            $s .= __('short.' . $k) . ': ' . $v . "\n";
-        }
-        $s .= "\n";
-
-        $s .= '* Sequence filters *' . "\n";
-        unset($filters['ir_project_sample_id_list']);
-        unset($filters['cols']);
-        unset($filters['filters_order']);
-        unset($filters['sample_query_id']);
-        unset($filters['open_filter_panel_list']);
-        unset($filters['username']);
-        unset($filters['ir_username']);
-        unset($filters['ir_data_format']);
-        unset($filters['output']);
-        unset($filters['tsv']);
-        foreach (RestService::findEnabled() as $rs) {
-            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-            unset($filters[$sample_id_list_key]);
-        }
-
-        foreach ($filters as $k => $v) {
-            if ($v === null) {
-                unset($filters[$k]);
-            }
-        }
-
-        Log::debug($filters);
-        if (count($filters) == 0) {
-            $s .= 'None' . "\n";
-        }
-        foreach ($filters as $k => $v) {
-            if (is_array($v)) {
-                $v = implode(' or ', $v);
-            }
-            // use human-friendly filter name
-            $s .= __('short.' . $k) . ': ' . $v . "\n";
-        }
-        $s .= "\n";
-
-        $s .= '* Source *' . "\n";
-        $s .= $url . "\n";
-        $date_str_human = date('M j, Y', $now);
-        $time_str_human = date('H:i T', $now);
-        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "\n";
-
-        $info_file_path = $folder_path . '/info.txt';
-        file_put_contents($info_file_path, $s);
+        $file_stats = self::file_stats($response_list);
+        
+        // generate info.txt
+        $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now);
 
         // zip files
-        $zipPath = $folder_path . '.zip';
-        Log::info('Zip files to ' . $zipPath);
-        $zip = new ZipArchive();
-        $zip->open($zipPath, ZipArchive::CREATE);
-        foreach ($response_list as $response) {
-            if (isset($response['data']['file_path'])) {
-                $file_path = $response['data']['file_path'];
-                Log::debug('Adding to ZIP: ' . $file_path);
-                $zip->addFile($file_path, basename($file_path));
-            }
-        }
-        $zip->addFile($info_file_path, basename($info_file_path));
-        $zip->close();
+        $zip_path = self::zip_files($folder_path, $response_list, $info_file_path);
 
         // delete files
-        Log::debug('Delete downloaded files...');
-        foreach ($response_list as $response) {
-            $file_path = $response['data']['file_path'];
-            File::delete($file_path);
-        }
-        File::delete($info_file_path);
+        self::delete_files($response_list, $info_file_path, $folder_path);
 
-        // delete containing folder
-        rmdir($folder_path);
-
-        $zipPublicPath = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
+        $zip_public_path = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
 
         $t = [];
-        $t['size'] = filesize($zipPath);
-        $t['system_path'] = $zipPath;
-        $t['public_path'] = $zipPublicPath;
+        $t['size'] = filesize($zip_path);
+        $t['system_path'] = $zip_path;
+        $t['public_path'] = $zip_public_path;
 
         return $t;
     }
@@ -405,5 +291,140 @@ class Sequence
         $data['filtered_repositories'] = $filtered_repositories;
 
         return $data;
+    }
+
+    public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now)
+    {
+        $s = '';
+        $s .= '* Summary *' . "\n";
+
+        $nb_sequences_total = 0;
+        foreach ($file_stats as $t) {
+            $nb_sequences_total += $t['nb_sequences'];
+        }
+        $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
+
+        foreach ($file_stats as $t) {
+            $s .= $t['name'] . ': ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
+        }
+        $s .= "\n";
+
+        $s .= '* Metadata filters *' . "\n";
+        Log::debug($sample_filters);
+        if (count($sample_filters) == 0) {
+            $s .= 'None' . "\n";
+        }
+        foreach ($sample_filters as $k => $v) {
+            if (is_array($v)) {
+                $v = implode(' or ', $v);
+            }
+            // use human-friendly filter name
+            $s .= __('short.' . $k) . ': ' . $v . "\n";
+        }
+        $s .= "\n";
+
+        $s .= '* Sequence filters *' . "\n";
+        unset($filters['ir_project_sample_id_list']);
+        unset($filters['cols']);
+        unset($filters['filters_order']);
+        unset($filters['sample_query_id']);
+        unset($filters['open_filter_panel_list']);
+        unset($filters['username']);
+        unset($filters['ir_username']);
+        unset($filters['ir_data_format']);
+        unset($filters['output']);
+        unset($filters['tsv']);
+        foreach (RestService::findEnabled() as $rs) {
+            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+            unset($filters[$sample_id_list_key]);
+        }
+
+        foreach ($filters as $k => $v) {
+            if ($v === null) {
+                unset($filters[$k]);
+            }
+        }
+
+        Log::debug($filters);
+        if (count($filters) == 0) {
+            $s .= 'None' . "\n";
+        }
+        foreach ($filters as $k => $v) {
+            if (is_array($v)) {
+                $v = implode(' or ', $v);
+            }
+            // use human-friendly filter name
+            $s .= __('short.' . $k) . ': ' . $v . "\n";
+        }
+        $s .= "\n";
+
+        $s .= '* Source *' . "\n";
+        $s .= $url . "\n";
+        $date_str_human = date('M j, Y', $now);
+        $time_str_human = date('H:i T', $now);
+        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "\n";
+
+        $info_file_path = $folder_path . '/info.txt';
+        file_put_contents($info_file_path, $s);
+        return $info_file_path;
+    }
+
+    public static function zip_files($folder_path, $response_list, $info_file_path): array
+    {
+        $zipPath = $folder_path . '.zip';
+        Log::info('Zip files to ' . $zipPath);
+        $zip = new ZipArchive();
+        $zip->open($zipPath, ZipArchive::CREATE);
+        foreach ($response_list as $response) {
+            if (isset($response['data']['file_path'])) {
+                $file_path = $response['data']['file_path'];
+                Log::debug('Adding to ZIP: ' . $file_path);
+                $zip->addFile($file_path, basename($file_path));
+            }
+        }
+        $zip->addFile($info_file_path, basename($info_file_path));
+        $zip->close();
+        return $zipPath;
+    }
+
+    public static function delete_files($response_list, $info_file_path, $folder_path): void
+    {
+        Log::debug('Delete downloaded files...');
+        foreach ($response_list as $response) {
+            $file_path = $response['data']['file_path'];
+            File::delete($file_path);
+        }
+        File::delete($info_file_path);
+
+        // delete containing folder
+        rmdir($folder_path);
+    }
+
+    public static function file_stats($response_list)
+    {
+        Log::debug('Get TSV files stats');
+        $file_stats = [];
+        foreach ($response_list as $response) {
+            if (isset($response['data']['file_path'])) {
+                $t = [];
+                $file_path = $response['data']['file_path'];
+                $t['name'] = basename($file_path);
+                $t['size'] = human_filesize($file_path);
+
+                // count number of lines
+                $n = 0;
+                $f = fopen($file_path, 'r');
+                while (!feof($f)) {
+                    $line = fgets($f);
+                    if (!empty(trim($line))) {
+                        $n++;
+                    }
+                }
+                fclose($f);
+                $t['nb_sequences'] = $n - 1; // remove count of headers line
+                $file_stats[] = $t;
+            }
+        }
+        return $file_stats;
     }
 }
