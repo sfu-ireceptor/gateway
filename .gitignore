@@ -21,3 +21,6 @@ Homestead.json
 
 # iReceptor specific
 public/data/
+
+# IDE
+.idea
