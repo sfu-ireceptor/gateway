@@ -62,7 +62,7 @@ class Sequence
 
         $response_list = RestService::sequences_data($filters, $folder_path, $username);
         $file_stats = self::file_stats($response_list);
-        
+
         // generate info.txt
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now);
 
@@ -366,6 +366,7 @@ class Sequence
 
         $info_file_path = $folder_path . '/info.txt';
         file_put_contents($info_file_path, $s);
+
         return $info_file_path;
     }
 
@@ -384,6 +385,7 @@ class Sequence
         }
         $zip->addFile($info_file_path, basename($info_file_path));
         $zip->close();
+
         return $zipPath;
     }
 
@@ -414,9 +416,9 @@ class Sequence
                 // count number of lines
                 $n = 0;
                 $f = fopen($file_path, 'r');
-                while (!feof($f)) {
+                while (! feof($f)) {
                     $line = fgets($f);
-                    if (!empty(trim($line))) {
+                    if (! empty(trim($line))) {
                         $n++;
                     }
                 }
@@ -425,6 +427,7 @@ class Sequence
                 $file_stats[] = $t;
             }
         }
+
         return $file_stats;
     }
 }
