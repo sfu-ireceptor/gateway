@@ -370,7 +370,7 @@ class Sequence
         return $info_file_path;
     }
 
-    public static function zip_files($folder_path, $response_list, $info_file_path): array
+    public static function zip_files($folder_path, $response_list, $info_file_path)
     {
         $zipPath = $folder_path . '.zip';
         Log::info('Zip files to ' . $zipPath);
@@ -389,7 +389,7 @@ class Sequence
         return $zipPath;
     }
 
-    public static function delete_files($response_list, $info_file_path, $folder_path): void
+    public static function delete_files($response_list, $info_file_path, $folder_path)
     {
         Log::debug('Delete downloaded files...');
         foreach ($response_list as $response) {
