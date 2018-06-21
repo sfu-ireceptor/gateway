@@ -19,7 +19,7 @@ class AdminController extends Controller
 {
     public function getQueues()
     {
-        $jobs = [];
+        $jobs = []; 
         $jobs['default'] = LocalJob::findLast('default');
         $jobs['agave'] = LocalJob::findLast('agave');
 
