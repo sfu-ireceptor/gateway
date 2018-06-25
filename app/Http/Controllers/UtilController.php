@@ -61,7 +61,7 @@ class UtilController extends Controller
             Log::info('-------- Deployment STARTED --------');
 
             $root_path = base_path();
-            $process = new Process('cd ' . $root_path . '; ./deploy.sh');
+            $process = new Process('cd ' . $root_path . '; ./util/scripts/deploy.sh');
             $process->run(function ($type, $buffer) {
                 echo $buffer;
                 Log::info($buffer);
