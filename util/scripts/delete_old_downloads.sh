@@ -3,6 +3,7 @@
 SCRIPT_FOLDER="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DOWNLOADS_FOLDER=${SCRIPT_FOLDER}'/../../storage/app/public/'
 
+date
 echo "Deleting old files in $DOWNLOADS_FOLDER"
 find $DOWNLOADS_FOLDER  -type f  -name '[!.]*' -mtime +6 -delete
 
