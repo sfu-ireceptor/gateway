@@ -1,1 +1,1 @@
-30 02 * * * /var/www/ireceptor_gateway/util/scripts/delete_old_downloads.sh
+30 02 * * * /var/www/ireceptor_gateway/util/scripts/delete_old_downloads.sh >> /var/www/ireceptor_gateway/storage/logs/cron.log 2>&1
