@@ -232,6 +232,8 @@
 											@isset($s->{$sequence_column_name->name})
 												@if($sequence_column_name->name == 'functional')
 													{{ $s->{$sequence_column_name->name} ? 'Yes' : 'No' }}
+												@elseif($sequence_column_name->name == 'v_call' || $sequence_column_name->name == 'j_call' || $sequence_column_name->name == 'd_call')
+													{{ str_limit($s->{$sequence_column_name->name}, $limit = 30, $end = '‥') }}
 												@else 
 													{{ $s->{$sequence_column_name->name} }}
 												@endif
