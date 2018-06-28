@@ -20,8 +20,8 @@ return [
     | Gateway request timeout
     |--------------------------------------------------------------------------
     |
-    | Maximum time the gateway will take to handle a user request
-    | Ex: loading a sequence page
+    | Maximum execution time for a gateway request
+    | Ex: showing a sequence page
     |
     */
 
