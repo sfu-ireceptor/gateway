@@ -70,7 +70,7 @@
 						<div id="collapseTwo" class="panel-collapse collapse {{ in_array('1', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingTwo">
 							<div class="panel-body">
 								<div class="form-group">
-									{{ Form::label('junction_aa', $filters_list_all['junction_aa']) }}
+									{{ Form::label('junction_aa', __('short.junction_aa')) }}
 									@include('help', ['id' => 'junction_aa'])
 									{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided, minimum of 4 AA required). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
