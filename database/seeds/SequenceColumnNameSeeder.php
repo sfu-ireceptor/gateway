@@ -27,7 +27,7 @@ class SequenceColumnNameSeeder extends Seeder
             ],
             [
               'name' => 'junction_aa',
-              'title' => 'Junction Sequence (AA)',
+              'title' => 'Junction AA',
               'enabled' => true,
             ],
             [
