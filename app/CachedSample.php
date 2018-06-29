@@ -53,7 +53,7 @@ class CachedSample extends Model
         $t['rest_service_list'] = RestService::findEnabled(['id', 'name'])->toArray();
 
         // stats
-        $t['total_repositories'] = RestService::findEnabled()->count();
+        $t['total_repositories'] = count(self::distinctValuesGrouped(['rest_service_id']));
         $t['total_labs'] = count(self::distinctValuesGrouped(['rest_service_id', 'lab_name']));
         $t['total_projects'] = count(self::distinctValuesGrouped(['rest_service_id', 'study_title']));
         $t['total_samples'] = self::count();
