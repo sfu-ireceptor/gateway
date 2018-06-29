@@ -15,10 +15,12 @@ class HomeController extends Controller
         $metadata = Sample::metadata($username);
         $data = $metadata;
 
+        // get list of samples
         $sample_list = Sample::public_samples();
-        $sample_data = Sample::stats($sample_list);
-
         $data['sample_list_json'] = json_encode($sample_list);
+
+        // generate statistics
+        $sample_data = Sample::stats($sample_list);
         $data['rest_service_list'] = $sample_data['rs_list'];
 
         // cell type
@@ -36,9 +38,6 @@ class HomeController extends Controller
         }
         $data['subject_organism_list'] = $subject_organism_list;
 
-        // clear any lingering form data
-        $request->session()->forget('_old_input');
-
         // get fields names
         $sequenceColumnNameList = SequenceColumnName::findEnabled();
         $filters_list_all = [];
@@ -48,6 +47,9 @@ class HomeController extends Controller
             $filters_list_all[$name] = $title;
         }
         $data['filters_list_all'] = $filters_list_all;
+
+        // clear any lingering form data
+        $request->session()->forget('_old_input');
 
         return view('home', $data);
     }
