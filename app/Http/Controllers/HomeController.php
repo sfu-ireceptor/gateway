@@ -15,10 +15,8 @@ class HomeController extends Controller
         $metadata = Sample::metadata($username);
         $data = $metadata;
 
-        // get data for graphs and repositories/labs/studies popup
-        $query_log_id = $request->get('query_log_id');
-        $sample_data = Sample::find(['ajax' => true], $username, $query_log_id);
-        $sample_list = $sample_data['items'];
+        $sample_list = Sample::public_samples();
+        $sample_data = Sample::stats($sample_list);
 
         $data['sample_list_json'] = json_encode($sample_list);
         $data['rest_service_list'] = $sample_data['rs_list'];
