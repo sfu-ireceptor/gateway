@@ -16,7 +16,7 @@
 					<ul>
 						@foreach ($rest_service_list as $rs_data)
 						    <li  class="rs_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-home"}'>
-						     	<span class="node_name">{{ $rs_data['rs']->name }}</span>
+						     	<span class="node_name">{{ $rs_data['rs_name'] }}</span>
 						     	<em>{{ human_number($rs_data['total_sequences']) }} sequences</em>
 							    <ul>
 						 			@foreach ($rs_data['study_tree'] as $lab)

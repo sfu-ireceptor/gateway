@@ -60,20 +60,55 @@ class Sample
             }
         }
 
-        return self::stats($response_list);
+        // merge all service responses into a single list of samples
+        $sample_list = [];
+        foreach ($response_list as $response) {
+            $sample_list = array_merge($sample_list, $response['data']);
+        }
+
+        // return the statistics about that list of samples
+        return self::stats($sample_list);
     }
 
-    public static function stats($response_list)
+    public static function stats($sample_list)
     {
+        // group samples by service
+        $samples_by_rs = [];
+        foreach ($sample_list as $sample) {
+            $rs_id = $sample->rest_service_id;
+            
+            if (! isset($samples_by_rs[$rs_id])) {
+                $samples_by_rs[$rs_id]['name'] = $sample->rest_service_name;
+                $samples_by_rs[$rs_id]['sample_list'] = [];
+            }
+
+            $samples_by_rs[$rs_id]['sample_list'][] = $sample;
+        }
+
+        // Example:
+        // [
+        //   14 => 
+        //   [
+        //     'name' => 'IPA 1',
+        //     'sample_list' => [...],
+        //   ],
+        //   15 => 
+        //   [
+        //     'name' => 'IPA 2',
+        //     'sample_list' => [...],
+        //   ],
+        // ]
+
+
         // initialize return array
         $data = [];
         $data['items'] = [];
         $data['rs_list'] = [];
         $data['total'] = 0;
 
-        foreach ($response_list as $response) {
-            $rs = $response['rs'];
-            $sample_list = $response['data'];
+        foreach ($samples_by_rs as $t) {
+            $rs_name = $t['name'];
+            $sample_list = $t['sample_list'];
 
             // calculate summary statistics
             $lab_list = [];
@@ -81,6 +116,7 @@ class Sample
             $study_sequence_count = [];
             $study_list = [];
             $total_sequences = 0;
+            
             foreach ($sample_list as $sample) {
                 if (isset($sample->ir_sequence_count)) {
                     $sequence_count = $sample->ir_sequence_count;
@@ -164,7 +200,7 @@ class Sample
 
             // rest service data
             $rs_data = [];
-            $rs_data['rs'] = $rs;
+            $rs_data['rs_name'] = $rs_name;
             $rs_data['study_tree'] = $study_tree;
             $rs_data['total_samples'] = count($sample_list);
             $rs_data['total_labs'] = count($lab_list);
@@ -188,7 +224,7 @@ class Sample
         foreach ($data['rs_list'] as $rs_data) {
             if ($rs_data['total_samples'] > 0) {
                 $total_filtered_repositories++;
-                $filtered_repositories[] = $rs_data['rs'];
+                $filtered_repositories[] = $rs_data['rs_name'];
             }
 
             $total_filtered_samples += $rs_data['total_samples'];

@@ -121,10 +121,7 @@ class SampleController extends Controller
         $data['total_filtered_samples'] = $sample_data['total_filtered_samples'];
         $data['total_filtered_sequences'] = $sample_data['total_filtered_sequences'];
 
-        $filtered_repositories_names = array_map(function ($rs) {
-            return $rs->name;
-        }, $sample_data['filtered_repositories']);
-        $data['filtered_repositories_names'] = implode(', ', $filtered_repositories_names);
+        $data['filtered_repositories_names'] = implode(', ', $sample_data['filtered_repositories']);
 
         // create copy of filters for display
         $filter_fields = [];
