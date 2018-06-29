@@ -31,6 +31,9 @@ class RestService extends Model
         $filters['username'] = $username;
         $filters['ir_username'] = $username;
 
+        // time out
+        $options['timeout'] = config('ireceptor.service_request_timeout_samples');
+
         // prepare parameters for each service
         $request_params = [];
         foreach (self::findEnabled() as $rs) {
@@ -57,6 +60,9 @@ class RestService extends Model
         // add username to filters
         $filters['username'] = $username;
         $filters['ir_username'] = $username;
+
+        // time out
+        $options['timeout'] = config('ireceptor.service_request_timeout');
 
         // prepare request parameters for each service
         $request_params = [];
@@ -98,6 +104,9 @@ class RestService extends Model
         // add username to filters
         $filters['username'] = $username;
         $filters['ir_username'] = $username;
+
+        // time out
+        $options['timeout'] = config('ireceptor.service_file_request_timeout');
 
         // prepare request parameters for each service
         $request_params = [];
@@ -151,12 +160,11 @@ class RestService extends Model
                 $options = [];
                 $options['auth'] = [$rs->username, $rs->password];
 
-                if ($file_path == '') {
-                    $options['timeout'] = config('ireceptor.service_request_timeout');
-                } else {
-                    $options['timeout'] = config('ireceptor.service_file_request_timeout');
+                if(isset($request_params['timeout'])) {
+                    $options['timeout'] = $request_params['timeout'];
                 }
-
+                unset($request_params['timeout']);
+ 
                 // remove null values.
                 foreach ($params as $k => $v) {
                     if ($v === null) {

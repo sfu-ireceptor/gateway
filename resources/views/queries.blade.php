@@ -106,8 +106,9 @@
 
 			<h3>Service timeouts</h3>
 			<p>
-				JSON request: <strong>{{ $service_request_timeout }} sec</strong><br>
-				File request: <strong>{{ $service_file_request_timeout }} sec</strong>
+				/samples (JSON): <strong>{{ $service_request_timeout_samples }} sec</strong><br>
+				/sequences_summary (JSON): <strong>{{ $service_request_timeout }} sec</strong><br>
+				/sequences_data (file): <strong>{{ $service_file_request_timeout }} sec</strong>
 			</p>
 		</div>
 	</div>
