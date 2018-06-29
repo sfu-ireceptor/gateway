@@ -76,7 +76,7 @@ class Sample
         $samples_by_rs = [];
         foreach ($sample_list as $sample) {
             $rs_id = $sample->rest_service_id;
-            
+
             if (! isset($samples_by_rs[$rs_id])) {
                 $samples_by_rs[$rs_id]['name'] = $sample->rest_service_name;
                 $samples_by_rs[$rs_id]['sample_list'] = [];
@@ -87,18 +87,17 @@ class Sample
 
         // Example:
         // [
-        //   14 => 
+        //   14 =>
         //   [
         //     'name' => 'IPA 1',
         //     'sample_list' => [...],
         //   ],
-        //   15 => 
+        //   15 =>
         //   [
         //     'name' => 'IPA 2',
         //     'sample_list' => [...],
         //   ],
         // ]
-
 
         // initialize return array
         $data = [];
@@ -116,7 +115,7 @@ class Sample
             $study_sequence_count = [];
             $study_list = [];
             $total_sequences = 0;
-            
+
             foreach ($sample_list as $sample) {
                 if (isset($sample->ir_sequence_count)) {
                     $sequence_count = $sample->ir_sequence_count;
