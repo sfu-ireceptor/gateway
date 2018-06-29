@@ -160,11 +160,11 @@ class RestService extends Model
                 $options = [];
                 $options['auth'] = [$rs->username, $rs->password];
 
-                if(isset($request_params['timeout'])) {
+                if (isset($request_params['timeout'])) {
                     $options['timeout'] = $request_params['timeout'];
                 }
                 unset($request_params['timeout']);
- 
+
                 // remove null values.
                 foreach ($params as $k => $v) {
                     if ($v === null) {
