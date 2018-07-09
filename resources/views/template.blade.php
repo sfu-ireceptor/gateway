@@ -102,14 +102,15 @@
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">admin<span class="caret"></span></a>
 								<ul class="dropdown-menu" role="menu">
-								  <li><a href="/admin/news">News</a></li>
-								  <li><a href="/admin/databases">Databases</a></li>
-								  <li><a href="/admin/users">Users</a></li>
+								  <li><a href="/admin/news"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> News</a></li>
+								  <li><a href="/admin/databases"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Databases</a></li>
+								  <li><a href="/admin/users"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Users</a></li>
 								  <li role="separator" class="divider"></li>
-								  <li><a href="/admin/queries">User queries</a></li>
+								  <li><a href="/admin/queries"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> User queries</a></li>
+								  <li><a href="/cgi-bin/awstats.pl"><span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Stats</a></li>
 {{-- 								  <li><a href="/admin/queues">Queues</a></li> --}}
 								  <li role="separator" class="divider"></li>
-								  <li><a href="/admin/field-names">Field names</a></li>
+								  <li><a href="/admin/field-names"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Field names</a></li>
 								  <li><a href="/canarie">CANARIE</a></li>
 								</ul>
 							</li>
