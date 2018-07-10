@@ -3,7 +3,7 @@
 		<div class="login_about_box">
 			<h3>About iReceptor</h3>
 			<p>
-				iReceptor provides a technology platform that lowers the barrier to immune genetics researchers who need to federate large, distributed, immune genetics data repositories in order to answer complex questions about the immune response. The iReceptor Gateway is a scientific web platform which enables the exploration, analysis, and downloading of curated “Next Generation” sequence (NGS) data across a number of international data repositories.  
+				iReceptor is a science gateway to independent repositories of “Next Generation” sequence data from immune responses, enabling unified exploration, analysis and download.  It is aimed to aid immune genetics researchers who need to federate large, distributed, immune genetics data repositories in order to answer complex questions about the immune response across international data repositories. 
 			</p>
 
 			<p>
