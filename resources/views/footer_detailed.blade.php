@@ -3,11 +3,11 @@
 		<div class="login_about_box">
 			<h3>About iReceptor</h3>
 			<p>
-				iReceptor provides a technology platform that lowers the barrier to immune genetics researchers who need to federate large, distributed, immune genetics data repositories in order to answer complex questions about the immune response. The iReceptor Gateway is a scientific web platform which enables the exploration, analysis, and downloading of curated “Next Generation” sequence (NGS) data across a number of international data repositories.  
+				iReceptor is a science gateway to independent repositories of “Next Generation” sequence data from immune responses, enabling unified exploration, analysis and download.  It is aimed to aid immune genetics researchers who need to federate large, distributed, immune genetics data repositories in order to answer complex questions about the immune response across international data repositories. 
 			</p>
 
 			<p>
-				iReceptor works with the <a href="http://airr.irmacs.sfu.ca/">Adaptive Immune Receptor Repertoire (AIRR) Community</a> to create standards for data of antibody (Ab)/B-cell and T-cell receptor (TcR) repertoires. We call this AIRR-seq data. The main goal of iReceptor is to connect a distributed network of AIRR-seq repositories (the AIRR Data Commons), allowing queries across multiple projects, labs, and institutions. Integrating these important AIRR-seq repositories will result in improvements to the design of vaccines, therapeutic antibodies and cancer immunotherapies. 
+				iReceptor works with the <a href="https://www.antibodysociety.org/about-the-airr-community/">Adaptive Immune Receptor Repertoire (AIRR) Community</a> to create standards for data of antibody (Ab)/B-cell and T-cell receptor (TcR) repertoires. We call this AIRR-seq data. The main goal of iReceptor is to connect a distributed network of AIRR-seq repositories (the AIRR Data Commons), allowing queries across multiple projects, labs, and institutions. Integrating these important AIRR-seq repositories will result in improvements to the design of vaccines, therapeutic antibodies and cancer immunotherapies. 
 			</p>
 
 			<p>
