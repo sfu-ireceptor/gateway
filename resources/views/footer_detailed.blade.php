@@ -7,7 +7,7 @@
 			</p>
 
 			<p>
-				iReceptor works with the <a href="https://www.antibodysociety.org/about-the-airr-community/">Adaptive Immune Receptor Repertoire (AIRR) Community</a> to create standards for data of antibody (Ab)/B-cell and T-cell receptor (TcR) repertoires. We call this AIRR-seq data. The main goal of iReceptor is to connect a distributed network of AIRR-seq repositories (the AIRR Data Commons), allowing queries across multiple projects, labs, and institutions. Integrating these important AIRR-seq repositories will result in improvements to the design of vaccines, therapeutic antibodies and cancer immunotherapies. 
+				iReceptor works with the <a href="http://airr-community.org">Adaptive Immune Receptor Repertoire (AIRR) Community</a> to create standards for data of antibody (Ab)/B-cell and T-cell receptor (TcR) repertoires. We call this AIRR-seq data. The main goal of iReceptor is to connect a distributed network of AIRR-seq repositories (the AIRR Data Commons), allowing queries across multiple projects, labs, and institutions. Integrating these important AIRR-seq repositories will result in improvements to the design of vaccines, therapeutic antibodies and cancer immunotherapies. 
 			</p>
 
 			<p>
