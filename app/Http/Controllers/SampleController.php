@@ -7,6 +7,7 @@ use App\Sample;
 use App\Bookmark;
 use App\QueryLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SampleController extends Controller
 {
@@ -19,6 +20,17 @@ class SampleController extends Controller
 
     public function index(Request $request)
     {
+        // if "remove one filter" request, generate new query_id and redirect to it
+        if ($request->has('remove_filter')) {
+            $filters = Query::getParams($request->input('query_id'));
+            $filter_to_remove = $request->input('remove_filter');
+
+            unset($filters[$filter_to_remove]);
+            $new_query_id = Query::saveParams($filters, 'samples');
+
+            return redirect('samples?query_id=' . $new_query_id);
+        }
+
         $username = auth()->user()->username;
 
         /*************************************************

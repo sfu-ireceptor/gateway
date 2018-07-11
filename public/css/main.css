@@ -114,8 +114,9 @@ fieldset {
 	margin-top: 0px;
 	margin-bottom: 7px;
 }
-.active_filters span.label {
+.active_filters a.label {
 	margin-right: 3px;
+	text-decoration: none;
 }
 
 .active_filters .bookmark {

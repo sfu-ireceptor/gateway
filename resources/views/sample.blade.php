@@ -197,12 +197,13 @@
 					<div class="active_filters">
 						<h3>Active filters</h3>
 						@foreach($filter_fields as $filter_key => $filter_value)
-							<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
+							<a title= "@lang('short.' . $filter_key): {{$filter_value}}" href="/samples?query_id={{$sample_query_id}}&amp;remove_filter={{ $filter_key }}" class="label label-primary">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 								@lang('short.' . $filter_key)
-							</span>
+							</a>
 						@endforeach
 						<a href="/samples" class="remove_filters">
-							Remove filters
+							Remove all filters
 						</a>
 
 						<a class="bookmark" href="/system/" data-uri="{{ $url }}">
