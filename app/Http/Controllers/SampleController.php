@@ -98,17 +98,17 @@ class SampleController extends Controller
         /*************************************************
         * retrieve filters */
 
-        $query_id = $request->input('query_id');
-        if ($query_id) {
+        $query_id = '';
+        $params = [];
+
+        if($request->has('query_id')) {
+            $query_id = $request->input('query_id');
             $params = Query::getParams($query_id);
-            if (! $request->session()->has('_old_input')) {
-                $request->session()->put('_old_input', $params);
-            }
-        } else {
-            $params = $request->all();
-            $request->session()->forget('_old_input');
-            $query_id = '';
         }
+ 
+        // fill form fields accordingly
+        $request->session()->forget('_old_input');
+        $request->session()->put('_old_input', $params);
 
         $data['sample_query_id'] = $query_id;
 
