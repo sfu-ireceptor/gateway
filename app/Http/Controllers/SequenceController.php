@@ -29,6 +29,36 @@ class SequenceController extends Controller
 
     public function index(Request $request)
     {
+        // if no query id, generate one and redirect to it
+        if( ! $request->has('query_id')) {
+            $query_id = Query::saveParams($request->except(['_token']), 'sequences');
+            return redirect('sequences?query_id=' . $query_id)->withInput();
+        }
+
+        // if "remove one filter" request, generate new query_id and redirect to it
+        if ($request->has('remove_filter')) {
+            $filters = Query::getParams($request->input('query_id'));
+            $filter_to_remove = $request->input('remove_filter');
+
+            if($filter_to_remove == 'all') {
+                // remove all filters but sample filters
+                $new_filters = [];
+                foreach ($filters as $name => $value) {
+                    if (starts_with($name, 'ir_project_sample_id_list_') || $name == 'sample_query_id') {
+                        $new_filters[$name] = $value;
+                    }
+                }
+            }
+            else {
+                // remove only that filter
+                unset($filters[$filter_to_remove]);
+                $new_filters = $filters;
+            }
+
+            $new_query_id = Query::saveParams($new_filters, 'sequences');
+            return redirect('sequences?query_id=' . $new_query_id);
+        }
+
         $username = auth()->user()->username;
 
         /*************************************************
@@ -51,31 +81,18 @@ class SequenceController extends Controller
         $data['functional_list'] = $functional_list;
         $data['ir_annotation_tool_list'] = $annotation_tool_list;
 
+
+        /*************************************************
+        * retrieve filters */
+
         $query_id = $request->input('query_id');
-        if ($query_id) {
-            $filters = Query::getParams($query_id);
-            // if (! $request->session()->has('_old_input')) {
-            //     $request->session()->put('_old_input', $filters);
-            // }
+        $filters = Query::getParams($query_id);
+ 
+        // fill form fields accordingly
+        $request->session()->forget('_old_input');
+        $request->session()->put('_old_input', $filters);
 
-            // generate query_id for "Clear Filters" button
-            $no_filters_params = [];
-            foreach ($filters as $name => $value) {
-                if (starts_with($name, 'ir_project_sample_id_list_')) {
-                    $no_filters_params[$name] = $value;
-                } elseif ($name == 'sample_query_id') {
-                    $no_filters_params[$name] = $value;
-                }
-            }
-            $data['no_filters_query_id'] = Query::saveParams($no_filters_params, 'sequences');
-
-            $data['query_id'] = $query_id;
-        } else {
-            $query_id = Query::saveParams($request->except(['_token']), 'sequences');
-
-            return redirect('sequences?query_id=' . $query_id)->withInput();
-        }
-
+        $data['query_id'] = $query_id;
         $data['sample_query_id'] = '';
         $sample_filter_fields = [];
         if (isset($filters['sample_query_id'])) {
@@ -113,8 +130,6 @@ class SequenceController extends Controller
 
             return redirect($tsvFilePath);
         }
-
-        // $request->flashExcept('ir_project_sample_id_list');   // keep submitted form values
 
         // sequence list
         $sequence_data = Sequence::summary($filters, $username);
