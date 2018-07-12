@@ -311,11 +311,11 @@ class SequenceController extends Controller
 
     public function quickSearch(Request $request)
     {
-         // if "remove one filter" request, generate new query_id and redirect to it
+        // if "remove one filter" request, generate new query_id and redirect to it
         if ($request->has('remove_filter')) {
             $filters = Query::getParams($request->input('query_id'));
             $filter_to_remove = $request->input('remove_filter');
-            
+
             unset($filters[$filter_to_remove]);
             $new_filters = $filters;
 
