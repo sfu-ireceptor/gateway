@@ -353,8 +353,13 @@ class SequenceController extends Controller
         /*************************************************
         * get filtered sequence data and related statistics */
 
-        $query_id = $request->input('query_id');
-        $filters = Query::getParams($query_id);
+        $query_id = '';
+        $filters = [];
+
+        if ($request->has('query_id')) {
+            $query_id = $request->input('query_id');
+            $filters = Query::getParams($query_id);
+        }
 
         // fill form fields accordingly
         $request->session()->forget('_old_input');
