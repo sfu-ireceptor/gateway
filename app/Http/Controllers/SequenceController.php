@@ -311,6 +311,19 @@ class SequenceController extends Controller
 
     public function quickSearch(Request $request)
     {
+         // if "remove one filter" request, generate new query_id and redirect to it
+        if ($request->has('remove_filter')) {
+            $filters = Query::getParams($request->input('query_id'));
+            $filter_to_remove = $request->input('remove_filter');
+            
+            unset($filters[$filter_to_remove]);
+            $new_filters = $filters;
+
+            $new_query_id = Query::saveParams($new_filters, 'sequences');
+
+            return redirect('sequences-quick-search?query_id=' . $new_query_id);
+        }
+
         $username = auth()->user()->username;
 
         /*************************************************
@@ -332,7 +345,7 @@ class SequenceController extends Controller
             $subject_organism_list[$v] = $v;
         }
 
-        // data
+        // view data
         $data = [];
         $data['cell_type_list'] = $cell_type_list;
         $data['subject_organism_list'] = $subject_organism_list;
@@ -340,29 +353,14 @@ class SequenceController extends Controller
         /*************************************************
         * get filtered sequence data and related statistics */
 
-        $filters = [];
         $query_id = $request->input('query_id');
-        if ($query_id) {
-            $filters = Query::getParams($query_id);
-            if (! $request->session()->has('_old_input')) {
-                $request->session()->put('_old_input', $filters);
-            }
+        $filters = Query::getParams($query_id);
 
-            $data['query_id'] = $query_id;
-        } else {
-            $request->session()->forget('_old_input');
+        // fill form fields accordingly
+        $request->session()->forget('_old_input');
+        $request->session()->put('_old_input', $filters);
 
-            // redirect old-style URLs
-            if (! empty($request->all())) {
-                $query_id = Query::saveParams($request->except(['_token']), 'sequences');
-
-                return redirect('sequences-quick-search?query_id=' . $query_id)->withInput();
-            }
-        }
-
-        // // for quick testing
-        // $filters['cell_subset'] = ['B cell'];
-        // $filters['junction_aa'] = 'CAHRRVGSSSDWNGGDYDFW';
+        $data['query_id'] = $query_id;
 
         $sample_filters = [];
         if (isset($filters['cell_subset'])) {
@@ -385,8 +383,8 @@ class SequenceController extends Controller
         $sample_query_id = Query::saveParams($sample_filters, 'samples');
         $download_filters['sample_query_id'] = $sample_query_id;
 
-        $query_id = Query::saveParams($download_filters, 'sequences');
-        $data['query_id'] = $query_id;
+        $download_query_id = Query::saveParams($download_filters, 'sequences');
+        $data['download_query_id'] = $download_query_id;
 
         $sequence_data = Sequence::full_search($sample_filters, $sequence_filters, $username);
 

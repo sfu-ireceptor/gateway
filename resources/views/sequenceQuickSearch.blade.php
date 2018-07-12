@@ -91,13 +91,14 @@
 						<h3>Active filters</h3>
 
 						@foreach($filter_fields as $filter_key => $filter_value)
-							<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
+							<a title= "@lang('short.' . $filter_key): {{ $filter_value }}" href="/sequences-quick-search?query_id={{ $query_id }}&amp;remove_filter={{ $filter_key }}" class="label label-primary">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 								@lang('short.' . $filter_key)
-							</span>
+							</a>
 						@endforeach
 
 						<a href="/sequences-quick-search" class="remove_filters">
-							Remove filters
+							Remove all filters
 						</a>
 
 						<a class="bookmark" href="/system/" data-uri="{{ $url }}">
@@ -165,12 +166,12 @@
 
 				@if (! empty($sequence_list))
 					@if ($total_filtered_sequences > config('ireceptor.sequences_download_limit'))
-						<a href="/sequences-download?query_id={{ $query_id }}" class="btn btn-primary pull-right download_sequences generate_file_asynchronously" disabled="disabled" role="button" data-container="body" data-toggle="tooltip" data-placement="top" title="Downloads of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future." data-trigger="hover" tabindex="0">
+						<a href="/sequences-download?query_id={{ $download_query_id }}" class="btn btn-primary pull-right download_sequences generate_file_asynchronously" disabled="disabled" role="button" data-container="body" data-toggle="tooltip" data-placement="top" title="Downloads of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future." data-trigger="hover" tabindex="0">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
 						</a>
 					@else
-						<a href="/sequences-download?query_id={{ $query_id }}" class="btn btn-primary pull-right download_sequences generate_file_asynchronously">
+						<a href="/sequences-download?query_id={{ $download_query_id }}" class="btn btn-primary pull-right download_sequences generate_file_asynchronously">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
 						</a>

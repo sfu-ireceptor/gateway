@@ -172,14 +172,14 @@
 						@if ( ! empty($filter_fields))
 							Sequence filters:
 							@foreach($filter_fields as $filter_key => $filter_value)
-								<a title= "@lang('short.' . $filter_key): {{$filter_value}}" href="/sequences?query_id={{$query_id}}&amp;remove_filter={{ $filter_key }}" class="label label-primary">
+								<a title= "@lang('short.' . $filter_key): {{ $filter_value }}" href="/sequences?query_id={{ $query_id }}&amp;remove_filter={{ $filter_key }}" class="label label-primary">
 									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 									@lang('short.' . $filter_key)
 								</a>
 							@endforeach
 
 							<a href="/sequences?query_id={{ $query_id }}&amp;remove_filter=all" class="remove_filters">
-								Remove sequence filters
+								Remove all sequence filters
 							</a>
 						@endif
 
