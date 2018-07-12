@@ -101,11 +101,11 @@ class SampleController extends Controller
         $query_id = '';
         $params = [];
 
-        if($request->has('query_id')) {
+        if ($request->has('query_id')) {
             $query_id = $request->input('query_id');
             $params = Query::getParams($query_id);
         }
- 
+
         // fill form fields accordingly
         $request->session()->forget('_old_input');
         $request->session()->put('_old_input', $params);
