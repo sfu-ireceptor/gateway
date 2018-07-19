@@ -32,7 +32,7 @@
 							<td>{{ $rs->name }}</td>	
 							<td><a href="{{ $rs->url }}">{{ $rs->url }}</a></td>					
 							<td><a href="{{ $rs->url }}v2/samples?username={{ Auth::user()->username }}">/v2/samples</a></td>
-							<td><a href="{{ $rs->url }}v2/sequences_summary?username={{ Auth::user()->username }}">v2/sequences_summary</a></td>			
+							<td><a href="{{ $rs->url }}v2/sequences_summary?username={{ Auth::user()->username }}">/v2/sequences_summary</a></td>
 						</tr>
 					@endforeach
 				</tbody>
