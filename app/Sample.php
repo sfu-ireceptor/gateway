@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Facades\App\RestService;
+
 class Sample
 {
     public static function public_samples()
@@ -37,12 +39,14 @@ class Sample
         // do requests
         $response_list = RestService::samples($filters, $username);
 
-        // if error, update gateway query status accordingly
-        foreach ($response_list as $response) {
-            $gw_query_log_id = request()->get('query_log_id');
-            if ($response['status'] == 'error' && $gw_query_log_id != null) {
-                QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
-            }
+        // if error, update gateway query status
+        $gw_query_log_id = request()->get('query_log_id');
+        if( $gw_query_log_id != null) {
+            foreach ($response_list as $response) {
+                if ($response['status'] == 'error') {
+                    QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
+                }
+            }            
         }
 
         // tweak responses
