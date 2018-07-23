@@ -64,6 +64,10 @@ a.btn {
 	text-decoration: none;
 }
 
+a[disabled=disabled]:active {
+	pointer-events: none;
+}
+
 .panel-title a {
 	text-decoration: none;
 }
