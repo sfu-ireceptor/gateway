@@ -117,8 +117,8 @@ class SampleTest extends TestCase
         $keys = array_keys($sample);
         shuffle($keys);
 
-        while($key = array_pop($keys)){
-           unset($sample[$key]);
+        while ($key = array_pop($keys)) {
+            unset($sample[$key]);
             Log::debug('Removing sample field: ' . $key);
 
             $response_list = [
