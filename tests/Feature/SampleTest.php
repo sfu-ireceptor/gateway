@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use Facades\App\RestService;
+use Illuminate\Support\Facades\Log;
 
 class SampleTest extends TestCase
 {
@@ -97,6 +98,7 @@ class SampleTest extends TestCase
             'ir_project_sample_id' => 4,
         ];
 
+        // test sample page works with 1 full sample
         $response_list = [
             [
                 'rs' => (object) $rs,
@@ -105,9 +107,32 @@ class SampleTest extends TestCase
             ],
         ];
 
-        RestService::shouldReceive('samples')->once()->andReturn($response_list);
+        RestService::shouldReceive('samples')->andReturn($response_list);
+
+        // test sample page still works with missing sample fields
+        Log::debug('Start testing removing fields from sample...');
 
         $u = factory(\App\User::class)->make();
-        $this->actingAs($u)->get('/samples')->assertOk();
+
+        $keys = array_keys($sample);
+        shuffle($keys);
+
+        while($key = array_pop($keys)){
+           unset($sample[$key]);
+            Log::debug('Removing sample field: ' . $key);
+
+            $response_list = [
+                [
+                    'rs' => (object) $rs,
+                    'status' => 'success',
+                    'data' => [(object) $sample],
+                ],
+            ];
+
+            // Log::debug($response_list);
+            RestService::shouldReceive('samples')->andReturn($response_list);
+
+            $this->actingAs($u)->get('/samples')->assertOk();
+        }
     }
 }
