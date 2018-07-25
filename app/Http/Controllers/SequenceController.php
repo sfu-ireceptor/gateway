@@ -124,9 +124,11 @@ class SequenceController extends Controller
 
             // log result
             $query_log_id = $request->get('query_log_id');
-            $query_log = QueryLog::find($query_log_id);
-            $query_log->result_size = $t['size'];
-            $query_log->save();
+            if($query_log_id != null) {
+                $query_log = QueryLog::find($query_log_id);
+                $query_log->result_size = $t['size'];
+                $query_log->save();                
+            }
 
             return redirect($tsvFilePath);
         }
@@ -136,9 +138,11 @@ class SequenceController extends Controller
 
         // log result
         $query_log_id = $request->get('query_log_id');
-        $query_log = QueryLog::find($query_log_id);
-        $query_log->result_size = $sequence_data['total_filtered_sequences'];
-        $query_log->save();
+        if($query_log_id != null) {
+            $query_log = QueryLog::find($query_log_id);
+            $query_log->result_size = $sequence_data['total_filtered_sequences'];
+            $query_log->save();
+        }
 
         // summary for each REST service
         $rest_service_list = $sequence_data['rs_list'];
@@ -395,9 +399,11 @@ class SequenceController extends Controller
 
         // log result
         $query_log_id = $request->get('query_log_id');
-        $query_log = QueryLog::find($query_log_id);
-        $query_log->result_size = $sequence_data['total_filtered_sequences'];
-        $query_log->save();
+        if ($query_log_id != null) {
+            $query_log = QueryLog::find($query_log_id);
+            $query_log->result_size = $sequence_data['total_filtered_sequences'];
+            $query_log->save();            
+        }
 
         // summary for each REST service
         $rest_service_list = $sequence_data['rs_list'];
@@ -547,9 +553,11 @@ class SequenceController extends Controller
 
         // log result
         $query_log_id = $request->get('query_log_id');
-        $query_log = QueryLog::find($query_log_id);
-        $query_log->result_size = $t['size'];
-        $query_log->save();
+        if($query_log_id != null) {
+            $query_log = QueryLog::find($query_log_id);
+            $query_log->result_size = $t['size'];
+            $query_log->save();            
+        }
 
         if ($request->ajax()) {
             return url($tsvFilePath);
