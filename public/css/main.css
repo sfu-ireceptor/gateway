@@ -64,6 +64,7 @@ a.btn {
 	text-decoration: none;
 }
 
+/* disable click (but not hover) on disabled links */
 a[disabled=disabled]:active {
 	pointer-events: none;
 }
