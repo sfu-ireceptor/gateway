@@ -10,7 +10,7 @@ class SampleTest extends TestCase
 {
     private $rs = [
         'id' => 1,
-        'name' => 'Fake Rest Service'
+        'name' => 'Fake Rest Service',
     ];
 
     private $sample = [
@@ -109,7 +109,6 @@ class SampleTest extends TestCase
     /** @test */
     public function full_sample()
     {
-
         $response_list = [
             [
                 'rs' => (object) $this->rs,
@@ -149,7 +148,7 @@ class SampleTest extends TestCase
                     'data' => [(object) $this->sample],
                 ],
             ];
- 
+
             // mock RestService::samples()
             RestService::shouldReceive('samples')->andReturn($response_list);
 
