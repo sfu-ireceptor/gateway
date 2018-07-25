@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use Closure;
 use App\QueryLog;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
 
 class LogQuery
 {
@@ -18,9 +17,8 @@ class LogQuery
      */
     public function handle($request, Closure $next)
     {
-        // do nothing if it's just a test        
-        if(App::environment() == 'testing')
-        {
+        // do nothing if it's just a test
+        if (App::environment() == 'testing') {
             return $next($request);
         }
 

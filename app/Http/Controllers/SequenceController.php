@@ -124,10 +124,10 @@ class SequenceController extends Controller
 
             // log result
             $query_log_id = $request->get('query_log_id');
-            if($query_log_id != null) {
+            if ($query_log_id != null) {
                 $query_log = QueryLog::find($query_log_id);
                 $query_log->result_size = $t['size'];
-                $query_log->save();                
+                $query_log->save();
             }
 
             return redirect($tsvFilePath);
@@ -138,7 +138,7 @@ class SequenceController extends Controller
 
         // log result
         $query_log_id = $request->get('query_log_id');
-        if($query_log_id != null) {
+        if ($query_log_id != null) {
             $query_log = QueryLog::find($query_log_id);
             $query_log->result_size = $sequence_data['total_filtered_sequences'];
             $query_log->save();
@@ -402,7 +402,7 @@ class SequenceController extends Controller
         if ($query_log_id != null) {
             $query_log = QueryLog::find($query_log_id);
             $query_log->result_size = $sequence_data['total_filtered_sequences'];
-            $query_log->save();            
+            $query_log->save();
         }
 
         // summary for each REST service
@@ -553,10 +553,10 @@ class SequenceController extends Controller
 
         // log result
         $query_log_id = $request->get('query_log_id');
-        if($query_log_id != null) {
+        if ($query_log_id != null) {
             $query_log = QueryLog::find($query_log_id);
             $query_log->result_size = $t['size'];
-            $query_log->save();            
+            $query_log->save();
         }
 
         if ($request->ajax()) {
