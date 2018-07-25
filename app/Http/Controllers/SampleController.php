@@ -119,11 +119,10 @@ class SampleController extends Controller
 
         // log result
         $query_log_id = $request->get('query_log_id');
-        if ($query_log_id != null)
-        {
+        if ($query_log_id != null) {
             $query_log = QueryLog::find($query_log_id);
             $query_log->result_size = $sample_data['total_filtered_samples'];
-            $query_log->save();            
+            $query_log->save();
         }
 
         $data['sample_list'] = $sample_data['items'];
