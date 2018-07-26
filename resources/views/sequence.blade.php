@@ -248,12 +248,12 @@
 				
 				@if (! empty($sequence_list))
 					@if ($total_filtered_sequences > config('ireceptor.sequences_download_limit'))
-						<a href="/sequences-download?query_id={{ $query_id }}" class="btn btn-primary pull-right download_sequences generate_file_asynchronously" disabled="disabled" role="button" data-container="body" data-toggle="tooltip" data-placement="top" title="Downloads of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future." data-trigger="hover" tabindex="0">
+						<a href="/sequences-download" class="btn btn-primary pull-right download_sequences" disabled="disabled" role="button" data-container="body" data-toggle="tooltip" data-placement="top" title="Downloads of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future." data-trigger="hover" tabindex="0">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
 						</a>
 					@else
-						<a href="/sequences-download?query_id={{ $query_id }}" class="btn btn-primary pull-right download_sequences generate_file_asynchronously">
+						<a href="/sequences-download?query_id={{ $query_id }}" class="btn btn-primary pull-right download_sequences" target="_blank">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
 						</a>

@@ -562,7 +562,7 @@ class SequenceController extends Controller
         if ($request->ajax()) {
             return url($tsvFilePath);
         } else {
-            redirect($tsvFilePath);
+            return redirect($tsvFilePath);
         }
     }
 }
