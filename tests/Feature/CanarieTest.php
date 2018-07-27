@@ -30,5 +30,4 @@ class CanarieTest extends TestCase
             }
         }
     }
-
 }
