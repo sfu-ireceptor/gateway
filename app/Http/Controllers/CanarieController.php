@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Job;
+use App\User;
 use App\Agave;
 use App\Stats;
 use Carbon\Carbon;
@@ -54,7 +56,7 @@ class CanarieController extends Controller
         $t['tags'] = ['immunology', 'iReceptor'];
 
         if ($request->wantsJson()) {
-            return $response->json($t);
+            return response()->json($t);
         } else {
             return view('canarie/info', $t);
         }
@@ -76,7 +78,7 @@ class CanarieController extends Controller
         $t['tags'] = ['immunology', 'iReceptor'];
 
         if ($request->wantsJson()) {
-            return $response->json($t);
+            return response()->json($t);
         } else {
             return view('canarie/info', $t);
         }
@@ -98,7 +100,7 @@ class CanarieController extends Controller
         $t['tags'] = ['immunology', 'iReceptor'];
 
         if ($request->wantsJson()) {
-            return $response->json($t);
+            return response()->json($t);
         } else {
             return view('canarie/info', $t);
         }
@@ -114,7 +116,7 @@ class CanarieController extends Controller
         $t['lastReset'] = $s->startDateIso8601();
 
         if ($request->wantsJson()) {
-            return $response->json($t);
+            return response()->json($t);
         } else {
             $t['name'] = 'iReceptor Gateway Stats';
             $t['key'] = 'Number of requests';
@@ -138,7 +140,7 @@ class CanarieController extends Controller
         $t['lastReset'] = $d->toDateString() . 'T' . $d->toTimeString() . 'Z';
 
         if ($request->wantsJson()) {
-            return $response->json($t);
+            return response()->json($t);
         } else {
             $t['name'] = 'iReceptor Authentication Service Stats';
             $t['key'] = 'Number of users';
@@ -162,7 +164,7 @@ class CanarieController extends Controller
         $t['lastReset'] = $d->toDateString() . 'T' . $d->toTimeString() . 'Z';
 
         if ($request->wantsJson()) {
-            return $response->json($t);
+            return response()->json($t);
         } else {
             $t['name'] = 'iReceptor Commputation Service Stats';
             $t['key'] = 'Number of jobs';
