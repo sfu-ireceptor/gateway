@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Job;
+use App\User;
 use App\Agave;
 use App\Stats;
 use Carbon\Carbon;
 use App\RestService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\User;
-use App\Job;
 
 class CanarieController extends Controller
 {
