@@ -43,6 +43,13 @@ class RestServiceSeeder extends Seeder
                     'password' => '',
                     'version' => 2,
                 ],
+                [
+                    'url' => 'https://ipa-mono.ireceptor.org/',
+                    'name' => 'iReceptor Public Archive (Mono)',
+                    'username' => '',
+                    'password' => '',
+                    'version' => 2,
+                ],
             ];
 
         foreach ($l as $t) {
