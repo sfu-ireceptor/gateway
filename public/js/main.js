@@ -310,20 +310,23 @@ $(document).ready(function() {
 	});
 
 
-	$('.generate_file_asynchronously').click(function(){
+	$('a.download_sequences').each(function(){
 		var url = $(this).attr('href');
 
-		show_loading_message();
+		// show_loading_message();
 
 		console.log('url=' + url);
 		$.get(url, function(file_url) {
-			hide_loading_message();
+			// hide_loading_message();
+			var message = 'Your file is ready. If the download didn\'t start automatically, <a href="' + file_url + '">click here</a>';
+			$('p.download_status').html(message);
 			window.location.href = file_url;
 		})
 		.fail(function(jqXHR, status, message) {
 			console.log(status + ': ' + message);
-			hide_loading_message();
-			alert('Sorry, there was a problem with the download. Try again later or contact us at support@ireceptor.org.');
+			// hide_loading_message();
+			var message = 'Sorry, there was a problem with the download. Try again later or contact us at support@ireceptor.org.';
+			$('p.download_status').html(message);
 		});
 
 		return false;

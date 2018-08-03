@@ -519,6 +519,17 @@ class SequenceController extends Controller
 
     public function download(Request $request)
     {
+        $query_id = $request->input('query_id');
+
+        $data = [];
+        $data['query_id'] = $query_id;
+
+        // display view
+        return view('sequenceDownload', $data);
+    }
+
+    public function downloadDirect(Request $request)
+    {
         $username = auth()->user()->username;
 
         $query_id = $request->input('query_id');
