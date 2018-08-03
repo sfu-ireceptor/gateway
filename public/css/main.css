@@ -790,6 +790,10 @@ a.download_sequences {
 	margin-right: 2px;
 }
 
+.download_status {
+	display: none;
+}
+
 /* @group sequence column selector */
 
 .sequence_column_selector .checkbox {
@@ -1058,8 +1062,7 @@ form.sequence_column_selector {
 	display: block;
 }
 
-.reloading_message {
-	display: none;
+.reloading_message, .download_message {
 	background-color: #f8f8f8;
 	border-radius: 6px;
 	border: 1px solid #e7e7e7;
@@ -1070,7 +1073,7 @@ form.sequence_column_selector {
 	padding: 40px 0 25px 50px;
 }
 
-.reloading_message h3 {
+.reloading_message h3, .download_message h3 {
 	margin-top: 5px;
 }
 

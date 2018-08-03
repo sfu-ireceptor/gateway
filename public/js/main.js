@@ -309,27 +309,23 @@ $(document).ready(function() {
 		hide_loading_message();
 	});
 
-
-	$('a.download_sequences').each(function(){
+	// automatically do AJAX download query on sequence download page
+	$('a.download_sequences_direct').each(function(){
 		var url = $(this).attr('href');
-
-		// show_loading_message();
-
 		console.log('url=' + url);
+
 		$.get(url, function(file_url) {
-			// hide_loading_message();
-			var message = 'Your file is ready. If the download didn\'t start automatically, <a href="' + file_url + '">click here</a>';
-			$('p.download_status').html(message);
+			$('.download_message').hide();
+			var message = 'Your file is ready. If the download didn\'t start automatically, <a href="' + file_url + '">click here</a>.';
+			$('.download_status').addClass('alert-success').show().html(message);
 			window.location.href = file_url;
 		})
 		.fail(function(jqXHR, status, message) {
 			console.log(status + ': ' + message);
-			// hide_loading_message();
-			var message = 'Sorry, there was a problem with the download. Try again later or contact us at support@ireceptor.org.';
-			$('p.download_status').html(message);
+			$('.download_message').hide();
+			var message = 'Sorry, there was a problem with the download. Try again later or contact us at <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.';
+			$('.download_status').addClass('alert-danger').show().html(message);
 		});
-
-		return false;
 	});
 
 	/**********************************************************
