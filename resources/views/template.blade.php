@@ -121,8 +121,8 @@
 								<li><a href="/user/account">My account</a></li>
 								  <li role="separator" class="divider"></li>
 								<li><a href="/bookmarks">Bookmarks</a></li>
-{{-- 								<li><a href="/jobs">Jobs</a></li>
-								<li><a href="/systems">Systems</a></li> --}}
+								{{-- <li><a href="/jobs">Jobs</a></li> --}}
+								<li><a href="/systems">Systems</a></li>
 								  <li role="separator" class="divider"></li>
 								<li><a href="/logout">Log Out</a></li>
 							</ul>
