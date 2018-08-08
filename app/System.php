@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class System extends Model
 {
@@ -30,7 +31,7 @@ class System extends Model
 
     public static function get($id, $user_id)
     {
-        $system = static::where('user_id', 1)->where('id', $id)->first();
+        $system = static::where('user_id', $user_id)->where('id', $id)->first();
 
         return $system;
     }
