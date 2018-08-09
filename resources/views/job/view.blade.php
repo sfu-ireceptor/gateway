@@ -16,7 +16,7 @@
 	</h1>
 
 	<div class="job_view_progress">
-		@include('jobProgress')
+		@include('job/progress')
 	</div>	
 
 	<h2>{{ $job->app }}</h2>
@@ -38,7 +38,7 @@
 	@endif
 
 	<div class="job_steps">
-		@include('jobSteps')
+		@include('job/steps')
 	</div>
 
 

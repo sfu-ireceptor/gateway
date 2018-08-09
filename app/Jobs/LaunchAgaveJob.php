@@ -6,6 +6,7 @@ use App\Job;
 use App\Agave;
 use App\LocalJob;
 use App\RestService;
+use App\Sequence;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
@@ -62,7 +63,11 @@ class LaunchAgaveJob implements ShouldQueue
             $job->updateStatus('FEDERATING DATA');
             Log::info('$f[filters_json]' . $this->f['filters_json']);
             $filters = json_decode($this->f['filters_json'], true);
-            $dataFilePath = RestService::sequencesTSV($filters, $this->gw_username);
+            $t = Sequence::sequencesTSV($filters, $this->gw_username);
+            $dataFilePath = $t['public_path'];
+
+            // Log::debug('$dataFilePath=' . $dataFilePath );
+
             $folder = dirname($dataFilePath);
             $folder = str_replace('/data/', '', $folder);
 

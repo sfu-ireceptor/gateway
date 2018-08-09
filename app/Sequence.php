@@ -42,7 +42,7 @@ class Sequence
         return $data;
     }
 
-    public static function sequencesTSV($filters, $username, $url, $sample_filters = [])
+    public static function sequencesTSV($filters, $username, $url = '', $sample_filters = [])
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));

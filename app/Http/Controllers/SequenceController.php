@@ -117,22 +117,6 @@ class SequenceController extends Controller
         }
         $data['sample_filter_fields'] = $sample_filter_fields;
 
-        // if tsv
-        if (isset($filters['tsv'])) {
-            $t = Sequence::sequencesTSV($filters, $username, $request->fullUrl(), $sample_filter_fields);
-            $tsvFilePath = $t['public_path'];
-
-            // log result
-            $query_log_id = $request->get('query_log_id');
-            if ($query_log_id != null) {
-                $query_log = QueryLog::find($query_log_id);
-                $query_log->result_size = $t['size'];
-                $query_log->save();
-            }
-
-            return redirect($tsvFilePath);
-        }
-
         // sequence list
         $sequence_data = Sequence::summary($filters, $username);
 

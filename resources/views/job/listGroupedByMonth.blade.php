@@ -13,7 +13,7 @@
 				</td>
 
 				<td class="status">						
-					@include('jobProgress')
+					@include('job/progress')
 				</td>
 				<td>
 					<a href="/jobs/delete/{{ $job->id }}">
