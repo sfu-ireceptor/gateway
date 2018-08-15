@@ -8,7 +8,7 @@
 	<div class="row">
 		<div class="col-md-6">
 
-			<h2>Jobs</h2>
+			<h2>Local jobs</h2>
 			@include('queueTable', array('jobList' => $jobs['default'] ))
 		</div>
 		<div class="col-md-6">

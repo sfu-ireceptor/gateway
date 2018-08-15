@@ -328,7 +328,7 @@
 						</tbody>
 					</table>
 
-	{{-- 				<!-- apps -->
+					<!-- apps -->
 					<h2>Analysis Apps</h2>
 
 					@if (isset($system))
@@ -404,7 +404,7 @@
 						<p>
 							<a href="systems">Add a system</a> to be able to use analysis apps.
 						</p>
-					@endif --}}
+					@endif
 				@endif
 			<div>
 		</div>

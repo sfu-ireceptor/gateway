@@ -108,7 +108,8 @@
 								  <li role="separator" class="divider"></li>
 								  <li><a href="/admin/queries"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> User queries</a></li>
 								  <li><a href="/cgi-bin/awstats.pl"><span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Stats</a></li>
-{{-- 								  <li><a href="/admin/queues">Queues</a></li> --}}
+								  <li role="separator" class="divider"></li>
+								  <li><a href="/admin/queues"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Queues</a></li>
 								  <li role="separator" class="divider"></li>
 								  <li><a href="/admin/field-names"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Field names</a></li>
 								  <li><a href="/canarie">CANARIE</a></li>
@@ -118,13 +119,13 @@
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->username }}<span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="/user/account">My account</a></li>
+								<li><a href="/user/account"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> My account</a></li>
 								  <li role="separator" class="divider"></li>
-								<li><a href="/bookmarks">Bookmarks</a></li>
-								{{-- <li><a href="/jobs">Jobs</a></li> --}}
-								<li><a href="/systems">Systems</a></li>
+								<li><a href="/bookmarks"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Bookmarks</a></li>
+								<li><a href="/jobs"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Jobs</a></li>
+								<li><a href="/systems"><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> Systems</a></li>
 								  <li role="separator" class="divider"></li>
-								<li><a href="/logout">Log Out</a></li>
+								<li><a href="/logout"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Log Out</a></li>
 							</ul>
 						</li>
 					@endif
