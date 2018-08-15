@@ -203,12 +203,14 @@ class Agave
             'name' => $name,
             'type' => 'EXECUTION',
             'executionType' => 'HPC',
-            'scheduler' => 'PBS',
+            'scheduler' => 'CUSTOM_SLURM',
             'queues' => [
-                    [
-                        'name' => 'pre',
-                    ],
-                ],
+                [
+                'name' => 'default',
+                'maxRequestedTime' => '06:00:00',
+                'customDirectives' => "#SBATCH -t \${AGAVE_JOB_MAX_RUNTIME}\n#SBATCH -N \${AGAVE_JOB_NODE_COUNT} -n \${AGAVE_JOB_PROCESSORS_PER_NODE}\n#SBATCH --account=rpp-breden-ab\n"
+                ]
+            ],
             'login' => [
                     'protocol' => 'SSH',
                     'host' => $host,
@@ -321,7 +323,8 @@ class Agave
             'version' => '1.00',
             'executionSystem' => $executionSystem,
             'parallelism' => 'SERIAL',
-            'executionType' => 'CLI',
+            'executionType' => 'HPC',
+            'defaultMaxRequestedTime' => '06:00:00',
             'deploymentSystem' => $deploymentSystem,
             'deploymentPath' => $deploymentPath,
             'templatePath' => 'app.sh',
@@ -333,7 +336,7 @@ class Agave
         return $t;
     }
 
-    public function getJobConfig($name, $app_id, $storage_archiving, $notification_url, $inputFolder, $params, $inputs)
+    public function getJobConfig($name, $app_id, $storage_archiving, $notification_url, $folder, $params, $inputs)
     {
         $t = [
             'name' => $name,
@@ -343,7 +346,7 @@ class Agave
             'maxRunTime' => '00:10:00',
             'archive' => true,
             'archiveSystem' => $storage_archiving,
-            'archivePath' => $inputFolder,
+            'archivePath' => $folder,
             'notifications' => [
                 [
                     'url' => $notification_url . '/agave/update-status/${JOB_ID}/${JOB_STATUS}',

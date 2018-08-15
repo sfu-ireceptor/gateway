@@ -27,25 +27,25 @@ class UtilController extends Controller
         }
 
         $localJobId = $lj->id;
-        Queue::push(function ($j) use ($id, $status, $localJobId) {
-            $localJob = LocalJob::find($localJobId);
-            $localJob->setRunning();
+        // Queue::push(function ($j) use ($id, $status, $localJobId) {
+        //     $localJob = LocalJob::find($localJobId);
+        //     $localJob->setRunning();
 
-            // save job status in DB
-            $job = Job::where('agave_id', '=', $id)->first();
+        //     // save job status in DB
+        //     $job = Job::where('agave_id', '=', $id)->first();
 
-            // ignore the status update if the job has already FAILED or is FINISHED
-            if ($job->agave_status == 'FAILED' || $job->agave_status == 'FINISHED') {
-                $localJob->setFinished();
+        //     // ignore the status update if the job has already FAILED or is FINISHED
+        //     if ($job->agave_status == 'FAILED' || $job->agave_status == 'FINISHED') {
+        //         $localJob->setFinished();
 
-                return;
-            }
+        //         return;
+        //     }
 
-            $job->updateStatus($status);
+        //     $job->updateStatus($status);
 
-            $j->delete(); // remove job from Laravel queue
-            $localJob->setFinished();
-        }, null, 'agave');
+        //     $j->delete(); // remove job from Laravel queue
+        //     $localJob->setFinished();
+        // }, null, 'agave');
     }
 
     // called by GitHub hook

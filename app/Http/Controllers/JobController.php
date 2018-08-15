@@ -82,7 +82,7 @@ class JobController extends Controller
             $appName = 'app-histogram--' . $executionSystem->name;
             $appDeploymentPath = 'histogram';
             $params['param1'] = 'cdr3_length';
-            $inputs['file1'] = 'data.tsv.zip';
+            // $inputs['file1'] = 'data.tsv.zip';
             $appHumanName = 'Standard Histogram Generator';
         } elseif ($appId == 2) {
             Log::info('2');
@@ -96,13 +96,13 @@ class JobController extends Controller
             $params['red'] = floatval($colorArray[0]);
             $params['green'] = floatval($colorArray[1]);
             $params['blue'] = floatval($colorArray[2]);
-            $inputs['file1'] = 'data.tsv.zip';
+            // $inputs['file1'] = 'data.tsv.zip';
             $appHumanName = 'Amazing Historgram Generator';
         } elseif ($appId == 3) {
             Log::info('3');
             $appName = 'app-nishanth01--' . $executionSystem->name;
             $appDeploymentPath = 'nishanth01';
-            $inputs['file1'] = 'data.tsv.zip';
+            // $inputs['file1'] = 'data.tsv.zip';
             $appHumanName = 'Nishanth App 01';
         }
 
