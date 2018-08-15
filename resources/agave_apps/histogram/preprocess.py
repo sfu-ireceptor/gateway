@@ -1,8 +1,7 @@
 import sys
 import csv
 
-with open(sys.argv[1], 'rb') as csvfile:
-	rows = csv.reader(csvfile)
+with open(sys.argv[1], 'rb') as f:
+	rows = csv.DictReader(f, dialect='excel-tab')
 	for row in rows:
-		print row[25]
-
+		print row['junction_nt_length']
