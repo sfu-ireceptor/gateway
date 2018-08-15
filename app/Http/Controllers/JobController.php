@@ -59,7 +59,7 @@ class JobController extends Controller
         $data = [];
         $data['job_list_grouped_by_month'] = $job_list;
 
-        return view('job/istGroupedByMonth', $data);
+        return view('job/listGroupedByMonth', $data);
     }
 
     public function postLaunchApp(Request $request)

@@ -27,6 +27,10 @@ class UtilController extends Controller
         }
 
         $localJobId = $lj->id;
+
+        // queue job
+        $this->dispatch(new \App\Jobs\ProcessAgaveNotification($id, $status, $localJobId))->onQueue('agave');
+
         // Queue::push(function ($j) use ($id, $status, $localJobId) {
         //     $localJob = LocalJob::find($localJobId);
         //     $localJob->setRunning();
