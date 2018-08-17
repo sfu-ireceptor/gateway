@@ -9,7 +9,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Facades\Log;
 
 class ProcessAgaveNotification implements ShouldQueue
 {
@@ -46,6 +45,6 @@ class ProcessAgaveNotification implements ShouldQueue
         $job->updateStatus($this->status);
 
         // $j->delete(); // remove job from Laravel queue
-        $localJob->setFinished(); 
+        $localJob->setFinished();
     }
 }
