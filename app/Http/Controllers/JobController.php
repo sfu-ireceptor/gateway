@@ -81,14 +81,14 @@ class JobController extends Controller
             Log::info('1');
             $appName = 'app-histogram--' . $executionSystem->name;
             $appDeploymentPath = 'histogram';
-            $params['param1'] = 'cdr3_length';
+            $params['param1'] = 'junction_nt_length';
             // $inputs['file1'] = 'data.tsv.zip';
             $appHumanName = 'Standard Histogram Generator';
         } elseif ($appId == 2) {
             Log::info('2');
             $appName = 'app-histogram2--' . $executionSystem->name;
             $appDeploymentPath = 'histogram2';
-            $params['param1'] = 'cdr3_length';
+            $params['param1'] = 'junction_nt_length';
 
             $colorStr = $f['color'];
             $colorArray = explode('_', $colorStr);
@@ -154,7 +154,7 @@ class JobController extends Controller
 
         $data['files'] = [];
         if ($job['input_folder'] != '') {
-            $folder = 'data/' . $job['input_folder'];
+            $folder = 'storage/' . $job['input_folder'];
             if (File::exists($folder)) {
                 $data['files'] = File::allFiles($folder);
                 $data['filesHTML'] = dir_to_html($folder);

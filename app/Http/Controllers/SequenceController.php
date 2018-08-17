@@ -270,7 +270,7 @@ class SequenceController extends Controller
 
         // for histogram generator
         $var_list = [];
-        $var_list['cdr3_length'] = 'CDR3 Length';
+        $var_list['junction_nt_length'] = 'Junction Length (AA)';
         $data['var_list'] = $var_list;
 
         $data['system'] = System::getCurrentSystem(auth()->user()->id);

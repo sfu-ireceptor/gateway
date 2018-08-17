@@ -113,7 +113,7 @@ class Job extends Model
     "appId": "$app_id",
 
     "parameters":{
-        "param1":"cdr3_length"
+        "param1":"junction_nt_length"
     },
 
     "inputs":{

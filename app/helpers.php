@@ -10,7 +10,8 @@ if (! function_exists('dir_to_array')) {
 
         $cdir = scandir($dir);
         foreach ($cdir as $key => $value) {
-            if (! in_array($value, ['.', '..'])) {
+            // don't show hidden files
+            if (! in_array($value, ['.', '..']) && $value[0] !=  '.') {
                 if (is_dir($dir . DIRECTORY_SEPARATOR . $value)) {
                     $result[$value] = dir_to_array($dir . DIRECTORY_SEPARATOR . $value);
                 } else {

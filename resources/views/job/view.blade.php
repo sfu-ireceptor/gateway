@@ -33,7 +33,7 @@
 	@if (count($files) > 0)
 		<h2>Files</h2>
 		<div class="result_files">
-			{{ $filesHTML }}
+			{!! $filesHTML !!}
 		</div>
 	@endif
 

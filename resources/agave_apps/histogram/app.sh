@@ -16,8 +16,11 @@ VARNAME=${param1}
 # uncompress zip file
 unzip "$ZIP_FILE" && rm "$ZIP_FILE"
 
-# preprocess input file -> tmp.csv
-python preprocess.py data.csv > tmp.csv && rm data.csv
+# preprocess input files -> tmp.csv
+echo 'junction_nt_length' >> tmp.csv
+for f in *.tsv; do
+	python preprocess.py $f >> tmp.csv
+done
 
 ##############################################
 # use tmp.csv to generate the histogram
@@ -46,4 +49,5 @@ chmod 644 "$OFILE"
 # Debugging output, print data/time when shell command is finished.
 echo "Histogram finished at: `date`"
 
-rm "$IFILE"
+# rm *tsv
+rm tmp.csv
