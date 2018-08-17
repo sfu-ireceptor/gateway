@@ -5,7 +5,6 @@ namespace App\Jobs;
 use App\Job;
 use App\Agave;
 use App\LocalJob;
-use App\RestService;
 use App\Sequence;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;

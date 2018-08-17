@@ -208,8 +208,8 @@ class Agave
                 [
                 'name' => 'default',
                 'maxRequestedTime' => '06:00:00',
-                'customDirectives' => "#SBATCH -t \${AGAVE_JOB_MAX_RUNTIME}\n#SBATCH -N \${AGAVE_JOB_NODE_COUNT} -n \${AGAVE_JOB_PROCESSORS_PER_NODE}\n#SBATCH --account=rpp-breden-ab\n"
-                ]
+                'customDirectives' => "#SBATCH -t \${AGAVE_JOB_MAX_RUNTIME}\n#SBATCH -N \${AGAVE_JOB_NODE_COUNT} -n \${AGAVE_JOB_PROCESSORS_PER_NODE}\n#SBATCH --account=rpp-breden-ab\n",
+                ],
             ],
             'login' => [
                     'protocol' => 'SSH',
