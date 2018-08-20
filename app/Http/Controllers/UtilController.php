@@ -6,8 +6,8 @@ use App\Job;
 use App\LocalJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\Process\Process;
 use App\Jobs\ProcessAgaveNotification;
+use Symfony\Component\Process\Process;
 
 class UtilController extends Controller
 {
