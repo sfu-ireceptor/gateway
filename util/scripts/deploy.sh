@@ -18,7 +18,7 @@ php artisan config:clear
 php artisan cache:clear
 php artisan config:cache
 
-# restart queues
+# restart queues 
 php artisan -v queue:restart
 
 # update database
