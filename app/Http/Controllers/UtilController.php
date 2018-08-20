@@ -7,6 +7,7 @@ use App\LocalJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
+use App\Jobs\ProcessAgaveNotification;
 
 class UtilController extends Controller
 {
@@ -28,8 +29,8 @@ class UtilController extends Controller
 
         $localJobId = $lj->id;
 
-        // queue job
-        $this->dispatch(new \App\Jobs\ProcessAgaveNotification($id, $status, $localJobId))->onQueue('agave');
+        // queue as a job (to make sure notifications are processed in order)
+        ProcessAgaveNotification::dispatch($id, $status, $localJobId)->onQueue('agave');
 
         // Queue::push(function ($j) use ($id, $status, $localJobId) {
         //     $localJob = LocalJob::find($localJobId);
