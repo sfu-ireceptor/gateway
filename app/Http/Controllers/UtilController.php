@@ -31,26 +31,6 @@ class UtilController extends Controller
 
         // queue as a job (to make sure notifications are processed in order)
         ProcessAgaveNotification::dispatch($id, $status, $localJobId)->onQueue('agave');
-
-        // Queue::push(function ($j) use ($id, $status, $localJobId) {
-        //     $localJob = LocalJob::find($localJobId);
-        //     $localJob->setRunning();
-
-        //     // save job status in DB
-        //     $job = Job::where('agave_id', '=', $id)->first();
-
-        //     // ignore the status update if the job has already FAILED or is FINISHED
-        //     if ($job->agave_status == 'FAILED' || $job->agave_status == 'FINISHED') {
-        //         $localJob->setFinished();
-
-        //         return;
-        //     }
-
-        //     $job->updateStatus($status);
-
-        //     $j->delete(); // remove job from Laravel queue
-        //     $localJob->setFinished();
-        // }, null, 'agave');
     }
 
     // called by GitHub hook

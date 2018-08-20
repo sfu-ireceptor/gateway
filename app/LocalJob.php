@@ -17,7 +17,7 @@ class LocalJob extends Model
         $now = new Carbon('now');
         $this->submitted = $now;
 
-        $this->status = 'Pending';
+        $this->status = 'Waiting';
     }
 
     public function submitted()

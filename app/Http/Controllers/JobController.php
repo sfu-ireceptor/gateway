@@ -118,7 +118,7 @@ class JobController extends Controller
         $job->url = $f['data_url'];
         $job->app = $appHumanName;
         $job->save();
-        $job->updateStatus('PENDING');
+        $job->updateStatus('WAITING');
 
         // config parameters for the job
         $jobId = $job->id;

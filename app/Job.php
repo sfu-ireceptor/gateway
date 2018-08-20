@@ -188,8 +188,8 @@ STR;
             case 'CREATED':
                 $progress = 0;
                 break;
-            case 'PENDING':
-                $progress = 0;
+            case 'WAITING':
+                $progress = 3;
                 break;
             case 'FEDERATING DATA':
                 $progress = 5;
@@ -199,6 +199,9 @@ STR;
                 break;
             case 'JOB ACCEPTED BY AGAVE. PENDING.':
                 $progress = 20;
+                break;
+            case 'PENDING.':
+                $progress = 25;
                 break;
             case 'PROCESSING_INPUTS':
                 $progress = 30;
@@ -222,12 +225,13 @@ STR;
                 $progress = 70;
                 $status = 1;
                 break;
-            case 'ARCHIVING':
+            case 'CLEANING_UP':
                 $progress = 80;
                 $status = 1;
                 break;
-            case 'CLEANING_UP':
+            case 'ARCHIVING':
                 $progress = 90;
+                $status = 1;
                 break;
             case 'FINISHED':
                 $progress = 100;
