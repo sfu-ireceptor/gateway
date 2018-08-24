@@ -47,15 +47,19 @@ return [
         'test_user_username' => env('TEST_USER_USERNAME'),
         'test_user_password' => env('TEST_USER_PASSWORD'),
 
+        'system_execution' => [
+            'name_prefix'  => env('AGAVE_SYSTEM_EXECUTION_NAME_PREFIX', 'exec-'),
+        ],
+
         'system_staging' => [
-            'name_prefix'  => env('AGAVE_SYSTEM_STAGING_NAME_PREFIX', 'system-staging-irec-'),
+            'name_prefix'  => env('AGAVE_SYSTEM_STAGING_NAME_PREFIX', 'staging-'),
             'host'  => env('AGAVE_SYSTEM_STAGING_HOST', 'ireceptorgw.irmacs.sfu.ca'),
             'auth' => env('AGAVE_SYSTEM_STAGING_AUTH'),
             'rootdir'  => env('AGAVE_SYSTEM_STAGING_ROOTDIR'),
         ],
 
         'system_deploy' => [
-            'name_prefix'  => env('AGAVE_SYSTEM_DEPLOY_NAME_PREFIX', 'system-deploy-irec-'),
+            'name_prefix'  => env('AGAVE_SYSTEM_DEPLOY_NAME_PREFIX', 'deploy-'),
             'host'  => env('AGAVE_SYSTEM_DEPLOY_HOST', 'ireceptorgw.irmacs.sfu.ca'),
             'auth' => env('AGAVE_SYSTEM_DEPLOY_AUTH'),
             'rootdir'  => env('AGAVE_SYSTEM_DEPLOY_ROOTDIR'),

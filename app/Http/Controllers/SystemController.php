@@ -41,7 +41,7 @@ class SystemController extends Controller
         // create execution system
         $sshKeys = $agave->generateSSHKeys();
 
-        $systemExecutionName = 'system-exec--' . $systemHostStr . '-' . $username;
+        $systemExecutionName = config('services.agave.system_execution.name_prefix') . $username . '-' . $systemHostStr;
         $systemExecutionHost = $systemHost;
         $systemExecutionUsername = $username;
         $systemExecutionPublicKey = $sshKeys['public'];
