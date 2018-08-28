@@ -14,6 +14,9 @@ class ProcessAgaveNotification implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    // number of times the job may be attempted.
+    public $tries = 2;
+
     protected $id;
     protected $status;
     protected $localJobId;

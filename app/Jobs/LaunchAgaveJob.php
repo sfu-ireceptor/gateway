@@ -18,6 +18,9 @@ class LaunchAgaveJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    // number of times the job may be attempted.
+    public $tries = 2;
+
     protected $jobId;
     protected $f;
     protected $tenant_url;

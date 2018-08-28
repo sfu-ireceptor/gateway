@@ -30,11 +30,33 @@
 	@endif
 
 
-	@if (count($files) > 0)
+	@if (count($files) > 0 && $job->app != 'Third-party analysis')
 		<h2>Files</h2>
+		@foreach ($files as $f)
+			{{ $f }}
+		@endforeach
+
 		<div class="result_files">
+			
 			{!! $filesHTML !!}
 		</div>
+	@endif
+
+	@if (count($files) > 0 && $job->app == 'Third-party analysis')
+		<h2>BRepertoire</h2>
+		<ul>
+			@foreach ($files as $f)
+				@if (basename($f) != 'info.txt')
+					<li>
+						<a href="http://mabra.biomed.kcl.ac.uk/BRepertoire/?branch=analysis&amp;tab=tab_propertyUpload&amp;delim=tab&amp;loadURL={{ config('app.url') . '/' . $f }}" class="btn btn-default">
+							{{ basename($f) }}
+							<span class="glyphicon glyphicon-export" aria-hidden="true"></span>
+						</a>
+					</li>
+				@endif
+			@endforeach
+		</ul>
+		
 	@endif
 
 	<div class="job_steps">

@@ -42,7 +42,7 @@ class Sequence
         return $data;
     }
 
-    public static function sequencesTSV($filters, $username, $url = '', $sample_filters = [])
+    public static function sequencesTSVFolder($filters, $username, $url = '', $sample_filters = [])
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
@@ -65,6 +65,22 @@ class Sequence
 
         // generate info.txt
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now);
+
+        $t = [];
+        $t['folder_path'] = $folder_path;
+        $t['response_list'] = $response_list;
+        $t['info_file_path'] = $info_file_path;
+
+        return $t;
+    }
+
+    public static function sequencesTSV($filters, $username, $url = '', $sample_filters = [])
+    {
+        $t = self::sequencesTSVFolder($filters, $username, $url, $sample_filters);
+
+        $folder_path = $t['folder_path'];
+        $response_list = $t['response_list'];
+        $info_file_path = $t['info_file_path'];
 
         // zip files
         $zip_path = self::zip_files($folder_path, $response_list, $info_file_path);
