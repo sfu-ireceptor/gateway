@@ -32,12 +32,7 @@
 
 	@if (count($files) > 0 && $job->app != 'Third-party analysis')
 		<h2>Files</h2>
-		@foreach ($files as $f)
-			{{ $f }}
-		@endforeach
-
 		<div class="result_files">
-			
 			{!! $filesHTML !!}
 		</div>
 	@endif
