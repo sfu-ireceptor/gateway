@@ -7,11 +7,11 @@ use App\Agave;
 use App\System;
 use App\JobStep;
 use App\LocalJob;
+use App\Jobs\LaunchAgaveJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use App\Jobs\PrepareDataForThirdPartyAnalysis;
-use App\Jobs\LaunchAgaveJob;
 
 class JobController extends Controller
 {
@@ -77,9 +77,7 @@ class JobController extends Controller
             Log::info('999');
             $appHumanName = 'Third-party analysis';
             $jobDescription = 'Data federation';
-        }
-
-        else {
+        } else {
             // create Agave app
             $executionSystem = System::getCurrentSystem(auth()->user()->id);
             $username = $executionSystem->username;
@@ -150,10 +148,9 @@ class JobController extends Controller
 
         // queue job
         if ($appId == 999) {
-            PrepareDataForThirdPartyAnalysis::dispatch($jobId, $f, $gw_username, $localJobId);            
-        }
-        else {
-            LaunchAgaveJob::dispatch($jobId, $f, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $localJobId);            
+            PrepareDataForThirdPartyAnalysis::dispatch($jobId, $f, $gw_username, $localJobId);
+        } else {
+            LaunchAgaveJob::dispatch($jobId, $f, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $localJobId);
         }
 
         return redirect('jobs/view/' . $jobId);
