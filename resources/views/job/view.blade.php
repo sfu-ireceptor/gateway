@@ -48,7 +48,7 @@
 			@foreach ($files as $f)
 				@if (basename($f) != 'info.txt')
 					<li>
-						<a href="http://mabra.biomed.kcl.ac.uk/BRepertoire/?branch=analysis&amp;tab=tab_propertyUpload&amp;delim=tab&amp;loadURL={{ config('app.url') . '/' . $f }}" class="btn btn-default">
+						<a href="http://mabra.biomed.kcl.ac.uk/BRepertoire/?branch=analysis&amp;tab=tab_propertyUpload&amp;delim=tab&amp;loadURL={{ config('app.url') . '/' . $f }}" class="btn btn-default" target="_blank">
 							{{ basename($f) }}
 							<span class="glyphicon glyphicon-export" aria-hidden="true"></span>
 						</a>
