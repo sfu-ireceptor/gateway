@@ -24,7 +24,7 @@ class Query extends Model
     {
         $q = static::find($id);
 
-        if($q == null) {
+        if ($q == null) {
             return [];
         }
 

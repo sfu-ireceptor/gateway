@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Facades\App\Query;
 use App\Sample;
 use App\System;
 use App\Bookmark;
 use App\QueryLog;
 use App\Sequence;
+use Facades\App\Query;
 use App\SequenceColumnName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
