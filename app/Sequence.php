@@ -244,8 +244,7 @@ class Sequence
             }
 
             // Check to see if the study exists in the lab, and if not, create it.
-            if( ! isset($sample->study_title))
-            {
+            if (! isset($sample->study_title)) {
                 $sample->study_title = '';
             }
             if (! isset($study_tree[$lab]['studies'])) {

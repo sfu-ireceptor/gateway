@@ -291,10 +291,10 @@ class SequenceTest extends TestCase
         // mock Query::getParams()
         Query::shouldReceive('getParams')->andReturn($this->query_params);
 
-      // get list of sample fields in random order
+        // get list of sample fields in random order
         $keys = array_keys($this->sample_info);
         shuffle($keys);
-        
+
         // remove one field at the time
         while ($key = array_pop($keys)) {
             unset($this->sample_info[$key]);
