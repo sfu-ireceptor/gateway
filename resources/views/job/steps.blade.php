@@ -32,7 +32,7 @@
 		</tbody>
 	</table>
 
-@if (isset($job) && $job->progress >= 20)
+@if (isset($job) && $job->progress >= 20  && $job->app != 'Third-party analysis')
 	<p>
 		<a href="/jobs/agave-history/{{ $job->id }}">View Agave history</a>
 	</p>	
