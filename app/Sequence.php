@@ -215,7 +215,7 @@ class Sequence
             }
 
             // If we have a total sequence count, add the total up.
-            if (isset($sample->ir_sequence_count)) {
+            if (isset($sample->ir_filtered_sequence_count)) {
                 $total_sequences += $sample->ir_filtered_sequence_count;
             }
         }
