@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Facades\App\Query;
 use Facades\App\RestService;
+use Illuminate\Support\Facades\Log;
 
 class SequenceTest extends TestCase
 {
@@ -279,5 +280,67 @@ class SequenceTest extends TestCase
         $u = factory(\App\User::class)->make();
 
         $this->actingAs($u)->get('/sequences?query_id=0')->assertOk();
+    }
+
+    /** @test */
+    public function incomplete_sequence_data()
+    {
+        // generate fake user
+        $u = factory(\App\User::class)->make();
+
+        // mock Query::getParams()
+        Query::shouldReceive('getParams')->andReturn($this->query_params);
+
+      // get list of sample fields in random order
+        $keys = array_keys($this->sample_info);
+        shuffle($keys);
+        
+        // remove one field at the time
+        while ($key = array_pop($keys)) {
+            unset($this->sample_info[$key]);
+            Log::debug('Removing sample_info field: ' . $key);
+
+            $response_list = [
+                [
+                    'rs' => (object) $this->rs,
+                    'status' => 'success',
+                    'data' => (object) [
+                        'summary' => [(object) $this->sample_info],
+                        'items' => [(object) $this->sequence_item],
+                    ],
+                ],
+            ];
+
+            // mock RestService::sequences_summary()
+            RestService::shouldReceive('sequences_summary')->once()->andReturn($response_list);
+
+            $this->actingAs($u)->get('/sequences?query_id=0')->assertOk();
+        }
+
+        // get list of sequence fields in random order
+        $keys = array_keys($this->sequence_item);
+        shuffle($keys);
+
+        // remove one field at the time
+        while ($key = array_pop($keys)) {
+            unset($this->sequence_item[$key]);
+            Log::debug('Removing sequence field: ' . $key);
+
+            $response_list = [
+                [
+                    'rs' => (object) $this->rs,
+                    'status' => 'success',
+                    'data' => (object) [
+                        'summary' => [(object) $this->sample_info],
+                        'items' => [(object) $this->sequence_item],
+                    ],
+                ],
+            ];
+
+            // mock RestService::sequences_summary()
+            RestService::shouldReceive('sequences_summary')->once()->andReturn($response_list);
+
+            $this->actingAs($u)->get('/sequences?query_id=0')->assertOk();
+        }
     }
 }

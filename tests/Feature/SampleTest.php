@@ -127,7 +127,7 @@ class SampleTest extends TestCase
     }
 
     /** @test */
-    public function partial_sample()
+    public function incomplete_sample()
     {
         // generate fake user
         $u = factory(\App\User::class)->make();
