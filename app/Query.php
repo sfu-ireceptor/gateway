@@ -24,6 +24,10 @@ class Query extends Model
     {
         $q = static::find($id);
 
+        if($q == null) {
+            return [];
+        }
+
         return json_decode($q->params, true);
     }
 }

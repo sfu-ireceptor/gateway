@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Query;
+use Facades\App\Query;
 use App\Sample;
 use App\System;
 use App\Bookmark;
