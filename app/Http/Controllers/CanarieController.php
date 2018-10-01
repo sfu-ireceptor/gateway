@@ -133,8 +133,7 @@ class CanarieController extends Controller
         if (! $agave->isUp()) {
             app()->abort(503, 'iReceptor Authentication Service is down.');
             Log::debug('iReceptor Authentication Service is down.');
-        }
-        else {
+        } else {
             Log::debug('iReceptor Authentication Service is up.');
         }
 
