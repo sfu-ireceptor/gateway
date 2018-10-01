@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use App\RestService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class CanarieController extends Controller
 {
@@ -131,6 +132,10 @@ class CanarieController extends Controller
         $agave = new Agave;
         if (! $agave->isUp()) {
             app()->abort(503, 'iReceptor Authentication Service is down.');
+            Log::debug('iReceptor Authentication Service is down.');
+        }
+        else {
+            Log::debug('iReceptor Authentication Service is up.');
         }
 
         $t = [];
