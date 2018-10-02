@@ -65,6 +65,7 @@ class Agave
         } catch (ClientException $e) {
             Log::debug('An exception occured while getting a token from Agave:');
             Log::debug($e);
+
             return;
         }
 
