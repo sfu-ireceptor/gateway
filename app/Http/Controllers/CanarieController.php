@@ -130,6 +130,7 @@ class CanarieController extends Controller
     public function authStats(Request $request, Response $response)
     {
         $agave = new Agave;
+        Log::debug('** Sending request to Agave');
         if (! $agave->isUp()) {
             app()->abort(503, 'iReceptor Authentication Service is down.');
             Log::debug('iReceptor Authentication Service is down.');
@@ -144,12 +145,14 @@ class CanarieController extends Controller
         $t['lastReset'] = $d->toDateString() . 'T' . $d->toTimeString() . 'Z';
 
         if ($request->wantsJson()) {
+            Log::debug(' -> returning JSON resposonse');
             return response()->json($t);
         } else {
             $t['name'] = 'iReceptor Authentication Service Stats';
             $t['key'] = 'Number of users';
             $t['val'] = $t['nbUsers'];
 
+            Log::debug(' -> returning view');
             return view('canarie/stats', $t);
         }
     }

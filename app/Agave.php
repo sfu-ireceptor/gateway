@@ -63,6 +63,8 @@ class Agave
             $response = json_decode($response->getBody());
             $this->raiseExceptionIfAgaveError($response);
         } catch (ClientException $e) {
+            Log::debug('An exception occured while getting a token from Agave:');
+            Log::debug($e);
             return;
         }
 
