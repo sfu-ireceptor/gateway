@@ -146,6 +146,7 @@ class CanarieController extends Controller
 
         if ($request->wantsJson()) {
             Log::debug(' -> returning JSON resposonse');
+
             return response()->json($t);
         } else {
             $t['name'] = 'iReceptor Authentication Service Stats';
@@ -153,6 +154,7 @@ class CanarieController extends Controller
             $t['val'] = $t['nbUsers'];
 
             Log::debug(' -> returning view');
+
             return view('canarie/stats', $t);
         }
     }
