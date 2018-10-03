@@ -58,7 +58,7 @@ class Agave
         $params['scope'] = 'PRODUCTION';
 
         try {
-            $response = $this->client->request('POST', '/token', ['auth' => $auth, 'headers' => $headers, 'form_params' => $params]);
+            $response = $this->client->request('POST', '/token', ['auth' => $auth, 'headers' => $headers, 'form_params' => $params, 'timeout' => 10]);
 
             $response = json_decode($response->getBody());
             $this->raiseExceptionIfAgaveError($response);
