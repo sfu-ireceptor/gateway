@@ -134,7 +134,7 @@ class CanarieController extends Controller
             app()->abort(503, 'iReceptor Authentication Service is down.');
             Log::debug('iReceptor Authentication Service is down.');
         }
-        
+
         $t = [];
 
         $t['nbUsers'] = User::count();
