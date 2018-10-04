@@ -29,7 +29,7 @@
 
 			<table class="table table-bordered table-striped rs_list">
 				<thead>
-						{{-- <th class="text-nowrap">Added</th> --}}
+						<th class="text-nowrap">Added</th>
 						<th class="text-nowrap">Name</th>
 						<th class="text-nowrap">Email</th>
 						<th class="text-nowrap">Username</th>
@@ -39,7 +39,7 @@
 				<tbody>
 					@foreach ($l as $t)
 						<tr>
-{{-- 							<td class="text-muted text-nowrap">{{ Carbon\Carbon::createFromFormat('YmdGisZ', $t->create_time)->format('M j, Y') }}</td>		 --}}	
+							<td class="text-muted text-nowrap">{{ Carbon\Carbon::createFromFormat('YmdGisZ', $t->create_time)->format('M j, Y') }}</td>			
 							<td class="text-nowrap">
 								<a href="/admin/edit-user/{{ $t->username }}">
 									{{ $t->first_name }} {{ $t->last_name }}
