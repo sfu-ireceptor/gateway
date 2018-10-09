@@ -18,7 +18,7 @@ class CanarieController extends Controller
     {
         $data = [];
 
-        $rs_list = RestService::all();
+        $rs_list = RestService::findAvailable();
         $data['rs_list'] = $rs_list;
 
         return view('canarie/links', $data);

@@ -14,8 +14,14 @@ class RestService extends Model
         'url', 'name', 'username', 'password', 'enabled', 'version',
     ];
 
-    // return list of enabled services
-    public static function findEnabled($filters = null)
+    public static function findAvailable($field_list = null)
+    {
+        $l = static::where('hidden', '=', false)->orderBy('name', 'asc')->get($field_list);
+
+        return $l;
+    }
+
+    public static function findEnabled($field_list = null)
     {
         $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get($filters);
 
