@@ -50,6 +50,13 @@ class RestServiceSeeder extends Seeder
                     'password' => '',
                     'version' => 2,
                 ],
+                [
+                    'url' => 'http://192.168.108.240:8080/',
+                    'name' => 'iReceptor Turnkey 2 (tk2)',
+                    'username' => '',
+                    'password' => '',
+                    'version' => 2,
+                ],
             ];
 
         foreach ($l as $t) {
