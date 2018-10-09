@@ -23,7 +23,7 @@ class RestService extends Model
 
     public static function findEnabled($field_list = null)
     {
-        $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get($filters);
+        $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get($field_list);
 
         return $l;
     }
