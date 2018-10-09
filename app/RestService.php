@@ -95,6 +95,9 @@ class RestService extends Model
 
     // send "/sequences_data" request to all enabled services
     // save returned files in $folder_path
+    // curl -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "username=titi&ir_username=titi&ir_project_sample_id_list[]=680&ir_data_format=airr" https://ipa.ireceptor.org/v2/sequences_data
+    // curl -X POST -d "ir_project_sample_id_list=8961797805343895065-242ac11c-0001-012&ir_data_format=airr" https://vdjserver.org/ireceptor/v2/sequences_data
+
     public static function sequences_data($filters, $folder_path, $username = '')
     {
         $base_uri = 'sequences_data';
@@ -106,7 +109,7 @@ class RestService extends Model
         $filters['ir_username'] = $username;
 
         // time out
-        $options['timeout'] = config('ireceptor.service_file_request_timeout');
+        $filters['timeout'] = config('ireceptor.service_file_request_timeout');
 
         // prepare request parameters for each service
         $request_params = [];
