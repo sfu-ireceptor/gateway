@@ -31,7 +31,7 @@ class AdminController extends Controller
 
     public function getDatabases()
     {
-        $rs_list = RestService::all();
+        $rs_list = RestService::findAvailable();
 
         $data = [];
         $data['rs_list'] = $rs_list;
