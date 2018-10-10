@@ -221,10 +221,11 @@ if (! function_exists('convert_arrays_to_strings')) {
     function convert_arrays_to_strings($o)
     {
         foreach ($o as $k => $v) {
-            if(is_array($v)) {
+            if (is_array($v)) {
                 $o->$k = json_encode($v);
             }
         }
+
         return $o;
     }
 }

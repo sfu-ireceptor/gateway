@@ -33,7 +33,7 @@ class TestController extends Controller
     public function getIndex()
     {
         $o = new \stdClass();
-        $o->titi = "aa";
+        $o->titi = 'aa';
         $o->tata = ['fsdfsd', 'fsdfa'];
         $o->ttoto = ['fsdfsd', ['fsdfa', 'fsdfds']];
         $o->ttotofds = 5;
