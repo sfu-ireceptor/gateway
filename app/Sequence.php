@@ -156,8 +156,12 @@ class Sequence
                 continue;
             }
 
-            $data['items'] = array_merge($obj->items, $data['items']);
+            // convert any array properties to strings
+            $obj->summary = array_map('convert_arrays_to_strings', $obj->summary);
+            $obj->items = array_map('convert_arrays_to_strings', $obj->items);
+
             $data['summary'] = array_merge($obj->summary, $data['summary']);
+            $data['items'] = array_merge($obj->items, $data['items']);
 
             $rs_data = self::stats($obj, $data);
             $rs_data['rs'] = $rs;

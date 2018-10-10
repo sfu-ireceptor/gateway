@@ -214,3 +214,17 @@ if (! function_exists('url_path')) {
         return $s;
     }
 }
+
+// takes an object
+// returns the same object with any array property converted to a string (JSON)
+if (! function_exists('convert_arrays_to_strings')) {
+    function convert_arrays_to_strings($o)
+    {
+        foreach ($o as $k => $v) {
+            if(is_array($v)) {
+                $o->$k = json_encode($v);
+            }
+        }
+        return $o;
+    }
+}

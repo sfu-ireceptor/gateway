@@ -32,6 +32,24 @@ class TestController extends Controller
 
     public function getIndex()
     {
+        $o = new \stdClass();
+        $o->titi = "aa";
+        $o->tata = ['fsdfsd', 'fsdfa'];
+        $o->ttoto = ['fsdfsd', ['fsdfa', 'fsdfds']];
+        $o->ttotofds = 5;
+        $o->dfs = null;
+        // dd($o);
+
+        convert_arrays_to_strings($o);
+        // foreach ($o as $k => $v) {
+        //     if(is_array($v)) {
+        //         $o->$k = json_encode($v);
+        //     }
+        // }
+        dd($o);
+
+        die();
+
         echo human_filesize('/var/www/ireceptor_gateway/storage/app/public/ir_2018-04-03_2239_5ac402badc061/scott-lab.tsv');
 
         die();
