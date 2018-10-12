@@ -1,21 +1,22 @@
 <?php
 
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AlterRestServiceAddHidden extends Migration
+class AlterRestServiceAddGroup extends Migration
 {
     public function up()
     {
         Schema::table('rest_service', function ($table) {
-            $table->boolean('hidden')->default(false);
+            $table->text('rest_service_group_code')->nullable();
         });
     }
 
     public function down()
     {
         Schema::table('rest_service', function ($table) {
-            $table->dropColumn('hidden');
+            $table->dropColumn('rest_service_group_code');
         });
     }
 }

@@ -25,6 +25,13 @@ class RestService extends Model
     {
         $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get($field_list);
 
+        // add group name
+        foreach ($l as $rs) {
+            $group_code = $rs->rest_service_group_code;
+            $group_name = RestServiceGroup::nameForCode($group_code);
+            $rs->group_name = $group_name;            
+        }
+
         return $l;
     }
 
