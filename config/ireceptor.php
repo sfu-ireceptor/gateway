@@ -12,7 +12,7 @@ return [
     |
     */
 
-    'service_request_timeout' => env('IRECEPTOR_SERVICE_REQUEST_TIMEOUT', 120),
+    'service_request_timeout' => env('IRECEPTOR_SERVICE_REQUEST_TIMEOUT', 180),
     'service_file_request_timeout' => env('IRECEPTOR_SERVICE_FILE_REQUEST_TIMEOUT', 2700),
 
     /*
@@ -25,7 +25,7 @@ return [
     |
     */
 
-    'gateway_request_timeout' => env('IRECEPTOR_GATEWAY_REQUEST_TIMEOUT', 180),
+    'gateway_request_timeout' => env('IRECEPTOR_GATEWAY_REQUEST_TIMEOUT', 240),
     'gateway_file_request_timeout' => env('IRECEPTOR_GATEWAY_FILE_REQUEST_TIMEOUT', 3600),
 
     /*
