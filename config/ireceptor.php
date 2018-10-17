@@ -21,7 +21,6 @@ return [
     // allow less time for samples queries
     'service_request_timeout_samples' => env('IRECEPTOR_SERVICE_REQUEST_TIMEOUT_SAMPLES', 10),
 
-
     /*
     |--------------------------------------------------------------------------
     | Gateway request timeout
@@ -35,7 +34,6 @@ return [
     'gateway_request_timeout' => env('IRECEPTOR_GATEWAY_REQUEST_TIMEOUT', 240),
 
     'gateway_file_request_timeout' => env('IRECEPTOR_GATEWAY_FILE_REQUEST_TIMEOUT', 3600),
-
 
     /*
     |--------------------------------------------------------------------------
