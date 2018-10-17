@@ -12,21 +12,30 @@ return [
     |
     */
 
+    // default
     'service_request_timeout' => env('IRECEPTOR_SERVICE_REQUEST_TIMEOUT', 180),
+
+    // allow more time for file queries
     'service_file_request_timeout' => env('IRECEPTOR_SERVICE_FILE_REQUEST_TIMEOUT', 2700),
+
+    // allow less time for samples queries
+    'service_request_timeout_samples' => env('IRECEPTOR_SERVICE_REQUEST_TIMEOUT_SAMPLES', 10),
+
 
     /*
     |--------------------------------------------------------------------------
     | Gateway request timeout
     |--------------------------------------------------------------------------
     |
-    | Maximum time the gateway will take to handle a user request
-    | Ex: loading a sequence page
+    | Maximum execution time for a gateway request
+    | Ex: showing a sequence page
     |
     */
 
     'gateway_request_timeout' => env('IRECEPTOR_GATEWAY_REQUEST_TIMEOUT', 240),
+
     'gateway_file_request_timeout' => env('IRECEPTOR_GATEWAY_FILE_REQUEST_TIMEOUT', 3600),
+
 
     /*
     |--------------------------------------------------------------------------
