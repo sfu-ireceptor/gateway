@@ -38,7 +38,7 @@ class RestService extends Model
         $filters['ir_username'] = $username;
 
         // time out
-        $options['timeout'] = config('ireceptor.service_request_timeout_samples');
+        $filters['timeout'] = config('ireceptor.service_request_timeout_samples');
 
         // prepare parameters for each service
         $request_params = [];
@@ -68,7 +68,7 @@ class RestService extends Model
         $filters['ir_username'] = $username;
 
         // time out
-        $options['timeout'] = config('ireceptor.service_request_timeout');
+        $filters['timeout'] = config('ireceptor.service_request_timeout');
 
         // prepare request parameters for each service
         $request_params = [];
