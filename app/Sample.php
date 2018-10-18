@@ -3,7 +3,6 @@
 namespace App;
 
 use Facades\App\RestService;
-use Illuminate\Support\Facades\Log;
 
 class Sample
 {
