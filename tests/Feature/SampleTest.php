@@ -97,6 +97,7 @@ class SampleTest extends TestCase
         'ir_subject_age_min' => 35,
         'ir_subject_age_max' => 35,
         'ir_project_sample_id' => 4,
+        'real_rest_service_id' => 1,
     ];
 
     /*
