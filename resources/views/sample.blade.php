@@ -310,15 +310,9 @@
 									@endisset
 								</td>
 								<td class="text-nowrap">
-									@if ($sample->rest_service_group_name)
-										<span title="{{ $sample->rest_service_group_name }}">
-											{{ str_limit($sample->rest_service_group_name, $limit = 9, $end = '‥') }}
-										</span>
-									@else
-										<span title="{{ $sample->rest_service_name }}">
-											{{ str_limit($sample->rest_service_name, $limit = 9, $end = '‥') }}
-										</span>
-									@endif
+									<span title="{{ $sample->rest_service_name }}">
+										{{ str_limit($sample->rest_service_name, $limit = 9, $end = '‥') }}
+									</span>
 								</td>
 								<td class="text-nowrap">
 									@isset($sample->lab_name)

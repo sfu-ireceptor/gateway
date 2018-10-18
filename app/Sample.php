@@ -3,6 +3,7 @@
 namespace App;
 
 use Facades\App\RestService;
+use Illuminate\Support\Facades\Log;
 
 class Sample
 {
@@ -57,8 +58,7 @@ class Sample
             foreach ($sample_list as $sample) {
                 // add rest service id/name
                 $sample->rest_service_id = $rs->id;
-                $sample->rest_service_name = $rs->name;
-                $sample->rest_service_group_name = $rs->group_name;
+                $sample->rest_service_name = $rs->display_name;
 
                 // add study URL
                 $sample = self::generate_study_url($sample);

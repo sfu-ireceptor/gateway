@@ -25,11 +25,12 @@ class RestService extends Model
     {
         $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get($field_list);
 
-        // add group name
         foreach ($l as $rs) {
-            $group_code = $rs->rest_service_group_code;
-            $group_name = RestServiceGroup::nameForCode($group_code);
-            $rs->group_name = $group_name;            
+            // add group name
+            $rs->group_name = RestServiceGroup::nameForCode($rs->rest_service_group_code);       
+
+            // add display name
+            $rs->display_name = $rs->group_name ? $rs->group_name : $rs->name;
         }
 
         return $l;
@@ -61,6 +62,51 @@ class RestService extends Model
 
         // do requests
         $response_list = self::doRequests($request_params);
+
+        // add "real" rest_service_id to each sample
+        foreach ($response_list as $response) {
+            $rs = $response['rs'];
+
+            $sample_list = $response['data'];
+            foreach ($sample_list as $sample) {
+                // so any query is sent to the proper service 
+                $sample->real_rest_service_id = $rs->id;
+            }
+
+            $response['data'] = $sample_list;
+        }
+
+        // merge service responses belonging to the same group
+        $response_list_grouped = [];
+        foreach ($response_list as $response) {
+            $group = $response['rs']->rest_service_group_code;
+            // service doesn't belong to a group -> just add the response
+            if($group == '') {
+                $response_list_grouped[] = $response;
+            }
+            else {
+                // a response with that group already exists? -> merge
+                if(isset($response_list_grouped[$group])) {
+                    $r1 = $response_list_grouped[$group];
+                    $r2 = $response;
+
+                    // merge response status
+                    if($r2['status'] != 'success') {
+                        $r1['status'] = $r2['status'];
+                    }
+
+                    // merge list of samples
+                    $r1['data'] = array_merge($r1['data'], $r2['data']);
+
+                    $response_list_grouped[$group] = $r1;
+                }
+                else {
+                    $response_list_grouped[$group] = $response;
+                }
+            }
+        }       
+
+        $response_list = $response_list_grouped;
 
         return $response_list;
     }
