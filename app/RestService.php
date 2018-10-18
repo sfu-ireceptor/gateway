@@ -26,11 +26,10 @@ class RestService extends Model
         $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get($field_list);
 
         foreach ($l as $rs) {
-            // add group name
-            $rs->group_name = RestServiceGroup::nameForCode($rs->rest_service_group_code);       
+            $group_name = RestServiceGroup::nameForCode($rs->rest_service_group_code);       
 
             // add display name
-            $rs->display_name = $rs->group_name ? $rs->group_name : $rs->name;
+            $rs->display_name = $group_name ? $group_name : $rs->name;
         }
 
         return $l;

@@ -11,6 +11,7 @@ class SampleTest extends TestCase
     private $rs = [
         'id' => 1,
         'name' => 'Fake Rest Service',
+        'display_name' => 'Fake Rest Service',
     ];
 
     private $sample = [
