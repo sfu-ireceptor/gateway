@@ -9,7 +9,7 @@ class RestServiceGroupSeeder extends Seeder
     {
         $l = [
                 [
-                	'code' => 'ipa',
+                    'code' => 'ipa',
                     'name' => 'iReceptor Public Archive',
                 ],
             ];

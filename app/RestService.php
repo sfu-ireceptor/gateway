@@ -26,7 +26,7 @@ class RestService extends Model
         $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get($field_list);
 
         foreach ($l as $rs) {
-            $group_name = RestServiceGroup::nameForCode($rs->rest_service_group_code);       
+            $group_name = RestServiceGroup::nameForCode($rs->rest_service_group_code);
 
             // add display name
             $rs->display_name = $group_name ? $group_name : $rs->name;
@@ -68,7 +68,7 @@ class RestService extends Model
 
             $sample_list = $response['data'];
             foreach ($sample_list as $sample) {
-                // so any query is sent to the proper service 
+                // so any query is sent to the proper service
                 $sample->real_rest_service_id = $rs->id;
             }
 
@@ -80,17 +80,16 @@ class RestService extends Model
         foreach ($response_list as $response) {
             $group = $response['rs']->rest_service_group_code;
             // service doesn't belong to a group -> just add the response
-            if($group == '') {
+            if ($group == '') {
                 $response_list_grouped[] = $response;
-            }
-            else {
+            } else {
                 // a response with that group already exists? -> merge
-                if(isset($response_list_grouped[$group])) {
+                if (isset($response_list_grouped[$group])) {
                     $r1 = $response_list_grouped[$group];
                     $r2 = $response;
 
                     // merge response status
-                    if($r2['status'] != 'success') {
+                    if ($r2['status'] != 'success') {
                         $r1['status'] = $r2['status'];
                     }
 
@@ -98,12 +97,11 @@ class RestService extends Model
                     $r1['data'] = array_merge($r1['data'], $r2['data']);
 
                     $response_list_grouped[$group] = $r1;
-                }
-                else {
+                } else {
                     $response_list_grouped[$group] = $response;
                 }
             }
-        }       
+        }
 
         $response_list = $response_list_grouped;
 
