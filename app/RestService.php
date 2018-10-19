@@ -146,6 +146,37 @@ class RestService extends Model
         // do requests
         $response_list = self::doRequests($request_params);
 
+        // merge service responses belonging to the same group
+        $response_list_grouped = [];
+        foreach ($response_list as $response) {
+            $group = $response['rs']->rest_service_group_code;
+            // service doesn't belong to a group -> just add the response
+            if ($group == '') {
+                $response_list_grouped[] = $response;
+            } else {
+                // a response with that group already exists? -> merge
+                if (isset($response_list_grouped[$group])) {
+                    $r1 = $response_list_grouped[$group];
+                    $r2 = $response;
+
+                    // merge response status
+                    if ($r2['status'] != 'success') {
+                        $r1['status'] = $r2['status'];
+                    }
+
+                    // merge list of samples
+                    $r1['data']->summary = array_merge($r1['data']->summary, $r2['data']->summary);
+                    $r1['data']->items = array_merge($r1['data']->items, $r2['data']->items);
+
+                    $response_list_grouped[$group] = $r1;
+                } else {
+                    $response_list_grouped[$group] = $response;
+                }
+            }
+        }
+
+        $response_list = $response_list_grouped;
+
         return $response_list;
     }
 
