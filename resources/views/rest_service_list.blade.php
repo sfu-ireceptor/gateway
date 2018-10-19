@@ -21,8 +21,8 @@
 							     		{{ $rs_data['rs_name'] }}
 						     		@endisset
 						     		
-						     		@isset($rs_data['rs']->name)
-						     			{{ $rs_data['rs']->name }}
+						     		@isset($rs_data['rs']->display_name)
+						     			{{ $rs_data['rs']->display_name }}
 						     		@endisset
 						     	</span>
 						     	<em>{{ human_number($rs_data['total_sequences']) }} sequences</em>
