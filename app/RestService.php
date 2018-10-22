@@ -198,26 +198,54 @@ class RestService extends Model
         // time out
         $filters['timeout'] = config('ireceptor.service_file_request_timeout');
 
-        // prepare request parameters for each service
-        $request_params = [];
+
+        // get list of rest services which will actually be queried
+        $rs_list = [];
         foreach (self::findEnabled() as $rs) {
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             if (array_key_exists($sample_id_list_key, $filters) && ! empty($filters[$sample_id_list_key])) {
-                // remove REST service id
-                // ir_project_sample_id_list_2 -> ir_project_sample_id_list
-                $filters['ir_project_sample_id_list'] = $filters[$sample_id_list_key];
-                unset($filters[$sample_id_list_key]);
-            } else {
-                // if no sample id for this REST service, don't query it.
-                continue;
+                $rs_list[$rs->id] = $rs;
             }
+        }
+
+        // for groups, keep track of number of services for that group
+        $group_list = [];
+        foreach ($rs_list as $rs) {
+            $group = $rs->rest_service_group_code;
+            if($group) {
+                if ( ! isset($group_list[$group])) {
+                    $group_list[$group] = 0;
+                }
+                $group_list[$group] += 1;
+            }
+        }
+
+        // prepare request parameters for each service
+        $request_params = [];
+        $group_list_count = [];
+        foreach ($rs_list as $rs) {
+            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+            // remove REST service id
+            // ir_project_sample_id_list_2 -> ir_project_sample_id_list
+            $filters['ir_project_sample_id_list'] = $filters[$sample_id_list_key];
+            unset($filters[$sample_id_list_key]);
 
             $t = [];
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;
             $t['params'] = $filters;
-            $t['file_path'] = $folder_path . '/' . str_slug($rs->name) . '.tsv';
 
+            // add number suffix for rest services belonging to the same group 
+            $file_suffix = '';
+            $group = $rs->rest_service_group_code;
+            if($group && $group_list[$group] >= 1) {
+                if(! isset($group_list_count[$group])) {
+                    $group_list_count[$group] = 0;
+                }
+                $group_list_count[$group] += 1;
+                $file_suffix = '-' . $group_list_count[$group];
+            }
+            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
             $request_params[] = $t;
         }
 
