@@ -198,7 +198,6 @@ class RestService extends Model
         // time out
         $filters['timeout'] = config('ireceptor.service_file_request_timeout');
 
-
         // get list of rest services which will actually be queried
         $rs_list = [];
         foreach (self::findEnabled() as $rs) {
@@ -212,8 +211,8 @@ class RestService extends Model
         $group_list = [];
         foreach ($rs_list as $rs) {
             $group = $rs->rest_service_group_code;
-            if($group) {
-                if ( ! isset($group_list[$group])) {
+            if ($group) {
+                if (! isset($group_list[$group])) {
                     $group_list[$group] = 0;
                 }
                 $group_list[$group] += 1;
@@ -235,11 +234,11 @@ class RestService extends Model
             $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;
             $t['params'] = $filters;
 
-            // add number suffix for rest services belonging to the same group 
+            // add number suffix for rest services belonging to the same group
             $file_suffix = '';
             $group = $rs->rest_service_group_code;
-            if($group && $group_list[$group] >= 1) {
-                if(! isset($group_list_count[$group])) {
+            if ($group && $group_list[$group] >= 1) {
+                if (! isset($group_list_count[$group])) {
                     $group_list_count[$group] = 0;
                 }
                 $group_list_count[$group] += 1;
