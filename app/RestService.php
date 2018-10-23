@@ -159,14 +159,17 @@ class RestService extends Model
                     $r1 = $response_list_grouped[$group];
                     $r2 = $response;
 
+                    // merge data if both responses were sucessful
+                    if ($r1['status'] == 'success' && $r2['status'] == 'success') {
+                        $r1['data']->summary = array_merge($r1['data']->summary, $r2['data']->summary);
+                        $r1['data']->items = array_merge($r1['data']->items, $r2['data']->items);
+                    }
+
                     // merge response status
                     if ($r2['status'] != 'success') {
                         $r1['status'] = $r2['status'];
+                        $r1['error_message'] = $r2['error_message'];
                     }
-
-                    // merge list of samples
-                    $r1['data']->summary = array_merge($r1['data']->summary, $r2['data']->summary);
-                    $r1['data']->items = array_merge($r1['data']->items, $r2['data']->items);
 
                     $response_list_grouped[$group] = $r1;
                 } else {
