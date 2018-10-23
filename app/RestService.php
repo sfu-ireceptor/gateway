@@ -272,15 +272,13 @@ class RestService extends Model
                 $file_path = array_get($t, 'file_path', '');
                 $returnArray = array_get($t, 'returnArray', false);
                 $rs = array_get($t, 'rs');
+                $timeout = array_get($t, 'params.timeout', config('ireceptor.service_request_timeout'));
+                array_forget($t, 'params.timeout');
 
                 // build Guzzle request params array
                 $options = [];
                 $options['auth'] = [$rs->username, $rs->password];
-
-                if (isset($request_params['timeout'])) {
-                    $options['timeout'] = $request_params['timeout'];
-                }
-                unset($request_params['timeout']);
+                $options['timeout'] = $timeout;
 
                 // remove null values.
                 foreach ($params as $k => $v) {
