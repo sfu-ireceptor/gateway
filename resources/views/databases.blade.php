@@ -21,6 +21,7 @@
 					<tr>
 						<th>Enabled</th>
 						<th>Name</th>
+						<th>Visible Name</th>
 						<th>URL</th>
 						<th></th>
 					</tr>
@@ -30,6 +31,7 @@
 						<tr>
 							<td>{{ Form::checkbox('rs_enabled', $rs->id, $rs->enabled) }}</td>					
 							<td>{{ $rs->name }}</td>	
+							<td>{{ $rs->display_name }}</td>	
 							<td><a href="{{ $rs->url }}">{{ $rs->url }}</a></td>					
 							<td><a href="{{ $rs->url }}v2/samples?username={{ Auth::user()->username }}">/v2/samples</a></td>
 							<td><a href="{{ $rs->url }}v2/sequences_summary?username={{ Auth::user()->username }}">/v2/sequences_summary</a></td>
