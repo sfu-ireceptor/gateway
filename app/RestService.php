@@ -16,14 +16,21 @@ class RestService extends Model
 
     public static function findAvailable($field_list = null)
     {
-        $l = static::where('hidden', '=', false)->orderBy('name', 'asc')->get($field_list);
+        $l = static::where('hidden', false)->orderBy('name', 'asc')->get($field_list);
 
         return $l;
     }
 
     public static function findEnabled($field_list = null)
     {
-        $l = static::where('enabled', '=', true)->orderBy('name', 'asc')->get($field_list);
+        $l = static::where('hidden', false)->where('enabled', true)->orderBy('name', 'asc')->get($field_list);
+
+        foreach ($l as $rs) {
+            $group_name = RestServiceGroup::nameForCode($rs->rest_service_group_code);
+
+            // add display name
+            $rs->display_name = $group_name ? $group_name : $rs->name;
+        }
 
         return $l;
     }
@@ -54,6 +61,49 @@ class RestService extends Model
 
         // do requests
         $response_list = self::doRequests($request_params);
+
+        // add "real" rest_service_id to each sample
+        foreach ($response_list as $response) {
+            $rs = $response['rs'];
+
+            $sample_list = $response['data'];
+            foreach ($sample_list as $sample) {
+                // so any query is sent to the proper service
+                $sample->real_rest_service_id = $rs->id;
+            }
+
+            $response['data'] = $sample_list;
+        }
+
+        // merge service responses belonging to the same group
+        $response_list_grouped = [];
+        foreach ($response_list as $response) {
+            $group = $response['rs']->rest_service_group_code;
+            // service doesn't belong to a group -> just add the response
+            if ($group == '') {
+                $response_list_grouped[] = $response;
+            } else {
+                // a response with that group already exists? -> merge
+                if (isset($response_list_grouped[$group])) {
+                    $r1 = $response_list_grouped[$group];
+                    $r2 = $response;
+
+                    // merge response status
+                    if ($r2['status'] != 'success') {
+                        $r1['status'] = $r2['status'];
+                    }
+
+                    // merge list of samples
+                    $r1['data'] = array_merge($r1['data'], $r2['data']);
+
+                    $response_list_grouped[$group] = $r1;
+                } else {
+                    $response_list_grouped[$group] = $response;
+                }
+            }
+        }
+
+        $response_list = $response_list_grouped;
 
         return $response_list;
     }
@@ -96,6 +146,40 @@ class RestService extends Model
         // do requests
         $response_list = self::doRequests($request_params);
 
+        // merge service responses belonging to the same group
+        $response_list_grouped = [];
+        foreach ($response_list as $response) {
+            $group = $response['rs']->rest_service_group_code;
+            // service doesn't belong to a group -> just add the response
+            if ($group == '') {
+                $response_list_grouped[] = $response;
+            } else {
+                // a response with that group already exists? -> merge
+                if (isset($response_list_grouped[$group])) {
+                    $r1 = $response_list_grouped[$group];
+                    $r2 = $response;
+
+                    // merge data if both responses were sucessful
+                    if ($r1['status'] == 'success' && $r2['status'] == 'success') {
+                        $r1['data']->summary = array_merge($r1['data']->summary, $r2['data']->summary);
+                        $r1['data']->items = array_merge($r1['data']->items, $r2['data']->items);
+                    }
+
+                    // merge response status
+                    if ($r2['status'] != 'success') {
+                        $r1['status'] = $r2['status'];
+                        $r1['error_message'] = $r2['error_message'];
+                    }
+
+                    $response_list_grouped[$group] = $r1;
+                } else {
+                    $response_list_grouped[$group] = $response;
+                }
+            }
+        }
+
+        $response_list = $response_list_grouped;
+
         return $response_list;
     }
 
@@ -117,26 +201,53 @@ class RestService extends Model
         // time out
         $filters['timeout'] = config('ireceptor.service_file_request_timeout');
 
-        // prepare request parameters for each service
-        $request_params = [];
+        // get list of rest services which will actually be queried
+        $rs_list = [];
         foreach (self::findEnabled() as $rs) {
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             if (array_key_exists($sample_id_list_key, $filters) && ! empty($filters[$sample_id_list_key])) {
-                // remove REST service id
-                // ir_project_sample_id_list_2 -> ir_project_sample_id_list
-                $filters['ir_project_sample_id_list'] = $filters[$sample_id_list_key];
-                unset($filters[$sample_id_list_key]);
-            } else {
-                // if no sample id for this REST service, don't query it.
-                continue;
+                $rs_list[$rs->id] = $rs;
             }
+        }
+
+        // for groups, keep track of number of services for that group
+        $group_list = [];
+        foreach ($rs_list as $rs) {
+            $group = $rs->rest_service_group_code;
+            if ($group) {
+                if (! isset($group_list[$group])) {
+                    $group_list[$group] = 0;
+                }
+                $group_list[$group] += 1;
+            }
+        }
+
+        // prepare request parameters for each service
+        $request_params = [];
+        $group_list_count = [];
+        foreach ($rs_list as $rs) {
+            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+            // remove REST service id
+            // ir_project_sample_id_list_2 -> ir_project_sample_id_list
+            $filters['ir_project_sample_id_list'] = $filters[$sample_id_list_key];
+            unset($filters[$sample_id_list_key]);
 
             $t = [];
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;
             $t['params'] = $filters;
-            $t['file_path'] = $folder_path . '/' . str_slug($rs->name) . '.tsv';
 
+            // add number suffix for rest services belonging to the same group
+            $file_suffix = '';
+            $group = $rs->rest_service_group_code;
+            if ($group && $group_list[$group] >= 1) {
+                if (! isset($group_list_count[$group])) {
+                    $group_list_count[$group] = 0;
+                }
+                $group_list_count[$group] += 1;
+                $file_suffix = '-' . $group_list_count[$group];
+            }
+            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
             $request_params[] = $t;
         }
 
@@ -164,15 +275,13 @@ class RestService extends Model
                 $file_path = array_get($t, 'file_path', '');
                 $returnArray = array_get($t, 'returnArray', false);
                 $rs = array_get($t, 'rs');
+                $timeout = array_get($t, 'params.timeout', config('ireceptor.service_request_timeout'));
+                array_forget($t, 'params.timeout');
 
                 // build Guzzle request params array
                 $options = [];
                 $options['auth'] = [$rs->username, $rs->password];
-
-                if (isset($request_params['timeout'])) {
-                    $options['timeout'] = $request_params['timeout'];
-                }
-                unset($request_params['timeout']);
+                $options['timeout'] = $timeout;
 
                 // remove null values.
                 foreach ($params as $k => $v) {

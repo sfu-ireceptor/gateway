@@ -143,7 +143,7 @@
 						<p>Sorry, data is incomplete:</p>
 						<ul>
 							@foreach ($rest_service_list_no_response as $rs)
-								<li>{{ $rs->name }} didn't return data before the allotted time of {{ config('ireceptor.service_request_timeout') }} sec  </li>
+								<li>{{ $rs->display_name }} didn't return data before the allotted time of {{ config('ireceptor.service_request_timeout') }} sec  </li>
 							@endforeach
 						</ul>
 				</div>

@@ -409,7 +409,7 @@ class SequenceController extends Controller
         $data['filtered_repositories'] = $sequence_data['filtered_repositories'];
 
         $filtered_repositories_names = array_map(function ($rs) {
-            return $rs->name;
+            return $rs->display_name;
         }, $sequence_data['filtered_repositories']);
         $data['filtered_repositories_names'] = implode(', ', $filtered_repositories_names);
 

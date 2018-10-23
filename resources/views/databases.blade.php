@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container">
-	<h1>Databases <small>Choose those available to ALL users of this gateway</small></h1>
+	<h1>Databases <small>Choose those available to <strong>all</strong> users of this gateway</small></h1>
 
 	@if (isset($notification))
 	<div class="alert alert-warning alert-dismissible" role="alert">

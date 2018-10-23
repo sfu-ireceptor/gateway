@@ -8,6 +8,7 @@ use App\Sample;
 use App\FieldName;
 use Carbon\Carbon;
 use App\RestService;
+use App\RestServiceGroup;
 use App\SequenceColumnName;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -32,6 +33,10 @@ class TestController extends Controller
 
     public function getIndex()
     {
+        echo RestServiceGroup::nameForCode('ipa');
+
+        die();
+
         $o = new \stdClass();
         $o->titi = 'aa';
         $o->tata = ['fsdfsd', 'fsdfa'];

@@ -9,6 +9,7 @@ class RestServiceSeeder extends Seeder
     {
         $l = [
                 [
+                    'rest_service_group_code' => 'ipa',
                     'url' => 'https://ipa-sql.ireceptor.org/',
                     'name' => 'iReceptor Public Archive (SQL)',
                     'username' => '',
@@ -23,6 +24,7 @@ class RestServiceSeeder extends Seeder
                     'version' => 2,
                 ],
                 [
+                    'rest_service_group_code' => 'ipa',
                     'url' => 'https://ipa-staging.ireceptor.org/',
                     'name' => 'iReceptor Public Archive [staging]',
                     'username' => '',
@@ -30,6 +32,7 @@ class RestServiceSeeder extends Seeder
                     'version' => 2,
                 ],
                 [
+                    'rest_service_group_code' => 'ipa',
                     'url' => 'https://ipa.ireceptor.org/',
                     'name' => 'iReceptor Public Archive',
                     'username' => '',
@@ -37,6 +40,7 @@ class RestServiceSeeder extends Seeder
                     'version' => 2,
                 ],
                 [
+                    'rest_service_group_code' => 'ipa',
                     'url' => 'http://206.12.99.176:8080/',
                     'name' => 'iReceptor Public Archive (Turnkey)',
                     'username' => '',
@@ -44,6 +48,7 @@ class RestServiceSeeder extends Seeder
                     'version' => 2,
                 ],
                 [
+                    'rest_service_group_code' => 'ipa',
                     'url' => 'https://ipa-mono.ireceptor.org/',
                     'name' => 'iReceptor Public Archive (Mono)',
                     'username' => '',
@@ -51,6 +56,7 @@ class RestServiceSeeder extends Seeder
                     'version' => 2,
                 ],
                 [
+                    'rest_service_group_code' => 'ipa',
                     'url' => 'http://192.168.108.240:8080/',
                     'name' => 'iReceptor Turnkey 2 (tk2)',
                     'username' => '',
