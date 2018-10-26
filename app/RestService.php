@@ -284,7 +284,7 @@ class RestService extends Model
                 $timeout = array_get($t, 'params.timeout', config('ireceptor.service_request_timeout'));
                 array_forget($t, 'params.timeout');
                 $params = array_get($t, 'params', []);
-                
+
                 // build Guzzle request params array
                 $options = [];
                 $options['auth'] = [$rs->username, $rs->password];
