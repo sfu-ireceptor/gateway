@@ -278,13 +278,13 @@ class RestService extends Model
             foreach ($request_params as $t) {
                 // get request params values
                 $url = array_get($t, 'url', []);
-                $params = array_get($t, 'params', []);
                 $file_path = array_get($t, 'file_path', '');
                 $returnArray = array_get($t, 'returnArray', false);
                 $rs = array_get($t, 'rs');
                 $timeout = array_get($t, 'params.timeout', config('ireceptor.service_request_timeout'));
                 array_forget($t, 'params.timeout');
-
+                $params = array_get($t, 'params', []);
+                
                 // build Guzzle request params array
                 $options = [];
                 $options['auth'] = [$rs->username, $rs->password];
