@@ -14,7 +14,12 @@ class TrimStrings extends BaseTrimmer
     protected $except = [
         'password',
         'password_confirmation',
+        'sex',
+        'organism',
+        'ethnicity',
         'cell_subset',
+        'tissue',
+        'template_class',
     ];
 
     // override cleanValue() and cleanArray() from TransformsRequest so array attributes can also be excluded
