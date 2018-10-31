@@ -2,23 +2,23 @@
 
 namespace Tests\Unit;
 
-use Illuminate\Http\Request;
 use Tests\TestCase;
+use Illuminate\Http\Request;
 use App\Http\Middleware\TrimStrings;
 
 class TrimStringsTest extends TestCase
 {
-    /** @test */	
+    /** @test */
     public function trimSimpleFields()
     {
         $middleware = new TrimStrings;
         $request = new Request(
             [
-            	'field1' => 'value1',
-            	'field2' => 'value2 ',
-            	'field3' => ' value3',
-            	'field4' => ' value4 ',
-            	'field5' => '  value5  '
+                'field1' => 'value1',
+                'field2' => 'value2 ',
+                'field3' => ' value3',
+                'field4' => ' value4 ',
+                'field5' => '  value5  ',
             ]
         );
 
@@ -31,49 +31,49 @@ class TrimStringsTest extends TestCase
         });
     }
 
-    /** @test */	
+    /** @test */
     public function trimArrayFields()
     {
         $middleware = new TrimStrings;
         $request = new Request(
             [
-            	'field1' => ['value1', 'value2'],
-            	
-            	'field2' => ['value1', 'value2 '],
-            	'field3' => ['value1', ' value2'],
-            	'field4' => ['value1', ' value2 '],
-	           	'field5' => ['value1', '  value2  '],
+                'field1' => ['value1', 'value2'],
 
-            	'field6' => ['value1 ', 'value2'],
-            	'field7' => [' value1', 'value2'],
-            	'field8' => [' value1 ', 'value2'],
-            	'field9' => ['  value1  ', 'value2'],
+                'field2' => ['value1', 'value2 '],
+                'field3' => ['value1', ' value2'],
+                'field4' => ['value1', ' value2 '],
+                   'field5' => ['value1', '  value2  '],
 
-            	'field10' => ['  value1  ', '  value2  '],
+                'field6' => ['value1 ', 'value2'],
+                'field7' => [' value1', 'value2'],
+                'field8' => [' value1 ', 'value2'],
+                'field9' => ['  value1  ', 'value2'],
+
+                'field10' => ['  value1  ', '  value2  '],
             ]
         );
 
         $middleware->handle($request, function (Request $request) {
-        	for ($i=1; $i <=10 ; $i++) { 
-        		$t = $request->get('field' . $i);
-	            $this->assertEquals('value1', $t[0]);
-	            $this->assertEquals('value2', $t[1]);        	
-        	}
+            for ($i = 1; $i <= 10; $i++) {
+                $t = $request->get('field' . $i);
+                $this->assertEquals('value1', $t[0]);
+                $this->assertEquals('value2', $t[1]);
+            }
         });
     }
 
-    /** @test */	
+    /** @test */
     public function trimSimpleFieldsExceptSome()
     {
         $middleware = new TrimStrings2;
 
         $request = new Request(
             [
-            	'field1' => 'value1',
-            	'field2' => 'value2 ',
-            	'field3' => ' value3',
-            	'field4' => ' value4 ',
-            	'field5' => '  value5  '
+                'field1' => 'value1',
+                'field2' => 'value2 ',
+                'field3' => ' value3',
+                'field4' => ' value4 ',
+                'field5' => '  value5  ',
             ]
         );
 
@@ -86,44 +86,42 @@ class TrimStringsTest extends TestCase
         });
     }
 
-    /** @test */	
+    /** @test */
     public function trimArrayFieldsExceptSome()
     {
         $middleware = new TrimStrings2;
         $request = new Request(
             [
-            	'field1' => ['value1', 'value2'],
-            	
-            	'field2' => ['value1', 'value2 '],
-            	'field3' => ['value1', ' value2'],
-            	'field4' => ['value1', ' value2 '],
-	           	'field5' => ['value1', '  value2  '],
+                'field1' => ['value1', 'value2'],
 
-            	'field6' => ['value1 ', 'value2'],
-            	'field7' => [' value1', 'value2'],
-            	'field8' => [' value1 ', 'value2'],
-            	'field9' => ['  value1  ', 'value2'],
+                'field2' => ['value1', 'value2 '],
+                'field3' => ['value1', ' value2'],
+                'field4' => ['value1', ' value2 '],
+                   'field5' => ['value1', '  value2  '],
 
-            	'field10' => ['  value1  ', '  value2  '],
+                'field6' => ['value1 ', 'value2'],
+                'field7' => [' value1', 'value2'],
+                'field8' => [' value1 ', 'value2'],
+                'field9' => ['  value1  ', 'value2'],
+
+                'field10' => ['  value1  ', '  value2  '],
             ]
         );
 
         $middleware->handle($request, function (Request $request) {
-        	for ($i=1; $i <=10 ; $i++) { 
-        		$t = $request->get('field' . $i);
-        		if($i == 3) {
-		            $this->assertEquals('value1', $t[0]);
-		            $this->assertEquals(' value2', $t[1]);        	        			
-        		}
-        		else if ($i == 4) {
-		            $this->assertEquals('value1', $t[0]);
-		            $this->assertEquals(' value2 ', $t[1]);        	        			        			
-        		}
-        		else {
-		            $this->assertEquals('value1', $t[0]);
-		            $this->assertEquals('value2', $t[1]);        			
-        		}
-        	}
+            for ($i = 1; $i <= 10; $i++) {
+                $t = $request->get('field' . $i);
+                if ($i == 3) {
+                    $this->assertEquals('value1', $t[0]);
+                    $this->assertEquals(' value2', $t[1]);
+                } elseif ($i == 4) {
+                    $this->assertEquals('value1', $t[0]);
+                    $this->assertEquals(' value2 ', $t[1]);
+                } else {
+                    $this->assertEquals('value1', $t[0]);
+                    $this->assertEquals('value2', $t[1]);
+                }
+            }
         });
     }
 }
