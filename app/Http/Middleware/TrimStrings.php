@@ -33,6 +33,7 @@ class TrimStrings extends BaseTrimmer
             if ($key != '') {
                 $arrayKey = $key;
             }
+
             return $this->cleanValue($arrayKey, $arrayValue);
         })->all();
     }
