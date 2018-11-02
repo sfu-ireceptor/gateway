@@ -32,14 +32,14 @@ class TrimStrings extends BaseTrimmer
         return $this->transform($key, $value);
     }
 
-    protected function cleanArray(array $data, $key = '')
+    protected function cleanArray(array $data, $parentKey = '')
     {
-        return collect($data)->map(function ($arrayValue, $arrayKey) use ($key) {
-            if ($key != '') {
-                $arrayKey = $key;
+        return collect($data)->map(function ($value, $key) use ($parentKey) {
+            if (is_numeric($key) && $parentKey != '') {
+                $key = $parentKey;
             }
 
-            return $this->cleanValue($arrayKey, $arrayValue);
+            return $this->cleanValue($key, $value);
         })->all();
     }
 }

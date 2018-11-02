@@ -33,6 +33,66 @@ class TestController extends Controller
 
     public function getIndex()
     {
+        // echo "fdsafads";
+
+        // die();
+        
+        // $middleware = new class extends \Illuminate\Foundation\Http\Middleware\TrimStrings {
+        //     protected $except = ['field2'];
+        // };
+
+        $middleware = new class extends \App\Http\Middleware\TrimStrings {
+            protected $except = ['field2'];
+        };
+
+
+// $t = [
+//             'nested' => [
+//                 [
+//                     'field1' => ' trimmed ',
+//                     'field2' => ' not trimmed ',
+//                 ],
+//             ],
+//         ];
+
+// $t =             [
+//                 'field1' => 'value1',
+//                 'field2' => 'value2 ',
+//                 'field3' => ' value3',
+//                 'field4' => ' value4 ',
+//                 'field5' => '  value5  ',
+//             ];
+
+$t = [
+                'field1' => ['value1', 'value2'],
+
+                'field2' => ['value1', 'value2 '],
+                'field3' => ['value1', ' value2'],
+                'field4' => ['value1', ' value2 '],
+                   'field5' => ['value1', '  value2  '],
+
+                'field6' => ['value1 ', 'value2'],
+                'field7' => [' value1', 'value2'],
+                'field8' => [' value1 ', 'value2'],
+                'field9' => ['  value1  ', 'value2'],
+
+                'field10' => ['  value1  ', '  value2  '],
+                'nested' => [
+                                [
+                                    'field1' => ' trimmed ',
+                                    'field2' => ' not trimmed ',
+                                ],
+                            ],
+            ];
+
+        $request = new \Illuminate\Http\Request($t);
+
+        $middleware->handle($request, function ($request) {
+            dump($request->input());
+        });
+
+        die();
+
         echo RestServiceGroup::nameForCode('ipa');
 
         die();
