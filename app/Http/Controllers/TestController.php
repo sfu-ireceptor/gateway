@@ -36,7 +36,7 @@ class TestController extends Controller
         // echo "fdsafads";
 
         // die();
-        
+
         // $middleware = new class extends \Illuminate\Foundation\Http\Middleware\TrimStrings {
         //     protected $except = ['field2'];
         // };
@@ -45,8 +45,7 @@ class TestController extends Controller
             protected $except = ['field2'];
         };
 
-
-// $t = [
+        // $t = [
 //             'nested' => [
 //                 [
 //                     'field1' => ' trimmed ',
@@ -55,7 +54,7 @@ class TestController extends Controller
 //             ],
 //         ];
 
-// $t =             [
+        // $t =             [
 //                 'field1' => 'value1',
 //                 'field2' => 'value2 ',
 //                 'field3' => ' value3',
@@ -63,7 +62,7 @@ class TestController extends Controller
 //                 'field5' => '  value5  ',
 //             ];
 
-$t = [
+        $t = [
                 'field1' => ['value1', 'value2'],
 
                 'field2' => ['value1', 'value2 '],
