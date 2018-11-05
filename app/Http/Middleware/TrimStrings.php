@@ -23,6 +23,7 @@ class TrimStrings extends BaseTrimmer
     ];
 
     // override cleanValue() and cleanArray() from TransformsRequest so array attributes can also be excluded
+    // https://github.com/laravel/framework/pull/26350
     protected function cleanValue($key, $value)
     {
         if (is_array($value)) {
@@ -32,12 +33,10 @@ class TrimStrings extends BaseTrimmer
         return $this->transform($key, $value);
     }
 
-    protected function cleanArray(array $data, $parentKey = '')
+    protected function cleanArray(array $data, $parentKey = null)
     {
         return collect($data)->map(function ($value, $key) use ($parentKey) {
-            if (is_int($key) && $parentKey != '') {
-                $key = $parentKey;
-            }
+            $key = is_int($key) && is_string($parentKey) ? $parentKey : $key;
 
             return $this->cleanValue($key, $value);
         })->all();
