@@ -16,7 +16,7 @@ return [
     'service_request_timeout' => env('IRECEPTOR_SERVICE_REQUEST_TIMEOUT', 180),
 
     // allow more time for file queries
-    'service_file_request_timeout' => env('IRECEPTOR_SERVICE_FILE_REQUEST_TIMEOUT', 2700),
+    'service_file_request_timeout' => env('IRECEPTOR_SERVICE_FILE_REQUEST_TIMEOUT', 24 * 60 * 60),
 
     // allow less time for samples queries
     'service_request_timeout_samples' => env('IRECEPTOR_SERVICE_REQUEST_TIMEOUT_SAMPLES', 10),
