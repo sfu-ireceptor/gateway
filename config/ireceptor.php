@@ -13,7 +13,7 @@ return [
     */
 
     // default
-    'service_request_timeout' => env('IRECEPTOR_SERVICE_REQUEST_TIMEOUT', 180),
+    'service_request_timeout' => env('IRECEPTOR_SERVICE_REQUEST_TIMEOUT', 3 * 60),
 
     // allow more time for file queries
     'service_file_request_timeout' => env('IRECEPTOR_SERVICE_FILE_REQUEST_TIMEOUT', 24 * 60 * 60),
@@ -31,9 +31,9 @@ return [
     |
     */
 
-    'gateway_request_timeout' => env('IRECEPTOR_GATEWAY_REQUEST_TIMEOUT', 240),
+    'gateway_request_timeout' => env('IRECEPTOR_GATEWAY_REQUEST_TIMEOUT', 4 * 60),
 
-    'gateway_file_request_timeout' => env('IRECEPTOR_GATEWAY_FILE_REQUEST_TIMEOUT', 3600),
+    'gateway_file_request_timeout' => env('IRECEPTOR_GATEWAY_FILE_REQUEST_TIMEOUT', 3 * 24 * 60 * 60),
 
     /*
     |--------------------------------------------------------------------------
