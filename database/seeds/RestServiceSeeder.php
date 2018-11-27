@@ -56,14 +56,6 @@ class RestServiceSeeder extends Seeder
                     'version' => 2,
                 ],
                 [
-                    'rest_service_group_code' => 'ipa',
-                    'url' => 'http://192.168.108.240:8080/',
-                    'name' => 'iReceptor Turnkey 2 (tk2)',
-                    'username' => '',
-                    'password' => '',
-                    'version' => 2,
-                ],
-                [
                     'rest_service_group_code' => '',
                     'url' => 'https://206.12.88.221/',
                     'name' => 'IPA Arbutus 1',
