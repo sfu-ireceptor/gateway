@@ -63,6 +63,14 @@ class RestServiceSeeder extends Seeder
                     'password' => '',
                     'version' => 2,
                 ],
+                [
+                    'rest_service_group_code' => '',
+                    'url' => 'https://206.12.88.221/',
+                    'name' => 'IPA Arbutus 1',
+                    'username' => '',
+                    'password' => '',
+                    'version' => 2,
+                ],
             ];
 
         foreach ($l as $t) {
