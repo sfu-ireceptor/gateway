@@ -244,7 +244,7 @@
 							</div>
 						</div>										
 					</div>
-				@endif
+				@endif 
 				
 				@if (! empty($sequence_list))
 					@if ($total_filtered_sequences > config('ireceptor.sequences_download_limit'))
