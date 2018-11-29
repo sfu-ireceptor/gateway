@@ -47,7 +47,7 @@ class RestServiceSeeder extends Seeder
                     'password' => '',
                     'version' => 2,
                 ],
-                [ 
+                [
                     'rest_service_group_code' => 'ipa',
                     'url' => 'https://ipa-mono.ireceptor.org/',
                     'name' => 'iReceptor Public Archive (Mono)',
