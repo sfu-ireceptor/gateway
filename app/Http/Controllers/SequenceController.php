@@ -504,9 +504,20 @@ class SequenceController extends Controller
     public function download(Request $request)
     {
         $query_id = $request->input('query_id');
+        $nb_sequences = $request->input('n');
+        $time_estimate_max = '24 hours';
+
+        if($nb_sequences < 500000) {
+            $time_estimate_max = '20 min';
+        }
+
+        if($nb_sequences < 100000) {
+            $time_estimate_max = '5 min';
+        }
 
         $data = [];
         $data['query_id'] = $query_id;
+        $data['time_estimate_max'] = $time_estimate_max;
 
         // display view
         return view('sequenceDownload', $data);

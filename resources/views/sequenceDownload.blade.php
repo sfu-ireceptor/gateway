@@ -19,7 +19,9 @@
 					This could take a while, don't close this window.
 					<a href="/sequences-download-direct?query_id={{ $query_id }}" class="download_sequences_direct"></a>
 				</p>
-
+				<p>
+					<small>Time estimate: less than {{ $time_estimate_max }}</small>.
+				</p>
 			</div>
 		</div>
 	</div>
