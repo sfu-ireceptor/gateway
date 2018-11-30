@@ -507,11 +507,11 @@ class SequenceController extends Controller
         $nb_sequences = $request->input('n');
         $time_estimate_max = '24 hours';
 
-        if($nb_sequences < 500000) {
+        if ($nb_sequences < 500000) {
             $time_estimate_max = '20 min';
         }
 
-        if($nb_sequences < 100000) {
+        if ($nb_sequences < 100000) {
             $time_estimate_max = '5 min';
         }
 
