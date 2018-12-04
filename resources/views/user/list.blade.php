@@ -30,20 +30,21 @@
 			<table class="table table-bordered table-striped rs_list">
 				<thead>
 						<th class="text-nowrap">Added</th>
-						<th class="text-nowrap">Name</th>
+						<th class="text-nowrap">Name / Username</th>
 						<th class="text-nowrap">Email</th>
-						<th class="text-nowrap">Username</th>
 						<th class="text-nowrap">Last Login</th>
 					</tr>
 				</thead>
 				<tbody>
 					@foreach ($l as $t)
 						<tr>
-							<td class="text-muted text-nowrap">{{ Carbon\Carbon::createFromFormat('YmdGisZ', $t->create_time)->format('M j, Y') }}</td>			
+							<td class="text-muted text-nowrap" title="{{ Carbon\Carbon::createFromFormat('YmdGisZ', $t->create_time)->format('M j, Y') }}">
+								{{ Carbon\Carbon::createFromFormat('YmdGisZ', $t->create_time)->format('M Y') }}
+							</td>			
 							<td class="text-nowrap">
-								<a href="/admin/edit-user/{{ $t->username }}">
-									{{ $t->first_name }} {{ $t->last_name }}
-								</a>
+								<a href="/admin/edit-user/{{ $t->username }}">{{ $t->first_name }} {{ $t->last_name }}</a>
+								/
+								{{ $t->username }}
 								{{ $t->admin ? '(admin)' : '' }}
 							</td>
 							<td class="text-nowrap">
@@ -53,9 +54,6 @@
 									  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
 									</button>
 								</a>-->
-							</td>
-							<td class="text-nowrap">{{ $t->username }}
-
 							</td>
 							<td class="text-muted text-nowrap">
 								{{ $t->updated_at ? Carbon\Carbon::parse($t->updated_at)->format('M d, Y') : '' }}
