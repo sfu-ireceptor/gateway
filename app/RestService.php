@@ -298,7 +298,7 @@ class RestService extends Model
                 }
 
                 // For VDJServer, send array parameters without brackets. Ex: p1=a&p1=b
-                if (str_contains($url, 'vdj') || str_contains($url, '206.12.99.176:8080')) {
+                if (str_contains($url, 'vdj') || str_contains($url, '206.12.99.176:8080') || str_contains($url, 'i3.ireceptor.org')) {
                     // build query string with special function which doesn't add brackets
                     $queryString = \GuzzleHttp\Psr7\build_query($params, PHP_QUERY_RFC1738);
 
