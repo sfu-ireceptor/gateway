@@ -7,8 +7,9 @@ class FieldNameSeeder extends CsvSeeder
     public function __construct()
     {
         $this->table = 'field_name';
-        $this->filename = base_path() . '/database/seeds/csv/field_names.csv';
+        $this->filename = base_path() . '/database/seeds/csv/field_names.tsv';
         $this->offset_rows = 2;
+        $this->csv_delimiter = "\t";
     }
 
     public function run()
@@ -21,12 +22,12 @@ class FieldNameSeeder extends CsvSeeder
             2 => 'ir_v2',
             3 => 'ir_short',
             4 => 'ir_full',
-            5 => 'ir_v1',
-            6 => 'ir_v1_sql',
-            7 => 'airr',
-            8 => 'airr_full',
-            9 => 'airr_description',
-            10 => 'airr_example',
+            13 => 'ir_v1',
+            14 => 'ir_v1_sql',
+            17 => 'airr',
+            19 => 'airr_full',
+            20 => 'airr_description',
+            21 => 'airr_example',
         ];
 
         parent::run();
