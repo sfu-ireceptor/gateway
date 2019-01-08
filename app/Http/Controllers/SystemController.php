@@ -46,8 +46,9 @@ class SystemController extends Controller
         $systemExecutionUsername = $username;
         $systemExecutionPublicKey = $sshKeys['public'];
         $systemExecutionPrivateKey = $sshKeys['private'];
+        $systemExecutionPort = 22;
 
-        $config = $agave->getExcutionSystemConfig($systemExecutionName, $systemExecutionHost, $systemExecutionUsername, $systemExecutionPrivateKey, $systemExecutionPublicKey);
+        $config = $agave->getExcutionSystemConfig($systemExecutionName, $systemExecutionHost, $systemExecutionPort, $systemExecutionUsername, $systemExecutionPrivateKey, $systemExecutionPublicKey);
         $response = $agave->createSystem($token, $config);
         Log::info('execution system created: ' . $systemExecutionName);
 
@@ -65,20 +66,22 @@ class SystemController extends Controller
         // create deployment system (where the app originally is)
         $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . $username;
         $systemDeploymentHost = config('services.agave.system_deploy.host');
+        $systemDeploymentPort = config('services.agave.system_deploy.port');
         $systemDeploymentAuth = json_decode(config('services.agave.system_deploy.auth'));
         $systemDeploymentRootDir = config('services.agave.system_deploy.rootdir');
 
-        $config = $agave->getStorageSystemConfig($systemDeploymentName, $systemDeploymentHost, $systemDeploymentAuth, $systemDeploymentRootDir);
+        $config = $agave->getStorageSystemConfig($systemDeploymentName, $systemDeploymentHost, $systemDeploymentPort, $systemDeploymentAuth, $systemDeploymentRootDir);
         $response = $agave->createSystem($token, $config);
         Log::info('deployment system created: ' . $systemDeploymentName);
 
         // create staging system (on this machine, where the data files will copied from)
         $systemStagingName = config('services.agave.system_staging.name_prefix') . $username;
         $systemStagingHost = config('services.agave.system_staging.host');
+        $systemStagingPort = config('services.agave.system_staging.port');
         $systemStagingAuth = json_decode(config('services.agave.system_staging.auth'));
         $systemStagingRootDir = config('services.agave.system_staging.rootdir');
 
-        $config = $agave->getStorageSystemConfig($systemStagingName, $systemStagingHost, $systemStagingAuth, $systemStagingRootDir);
+        $config = $agave->getStorageSystemConfig($systemStagingName, $systemStagingHost, $systemStagingPort, $systemStagingAuth, $systemStagingRootDir);
         $response = $agave->createSystem($token, $config);
         Log::info('staging system created: ' . $systemStagingName);
 
