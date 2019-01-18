@@ -40,4 +40,11 @@ class FieldName extends Model
 
         return $object_list;
     }
+
+    public static function getSampleFields()
+    {
+        $l = static::where('ir_class', '=', 'repertoire')->orderBy('created_at', 'desc')->get()->toArray();
+
+        return $l;
+    }
 }

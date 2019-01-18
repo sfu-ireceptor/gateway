@@ -6,6 +6,7 @@ use App\Query;
 use App\Sample;
 use App\Bookmark;
 use App\QueryLog;
+use App\FieldName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -163,6 +164,23 @@ class SampleController extends Controller
             $open_filter_panel_list = $params['open_filter_panel_list'];
         }
         $data['open_filter_panel_list'] = $open_filter_panel_list;
+
+        // get sample fields, add generated sample fields
+        $field_list = FieldName::getSampleFields();
+        
+        $f = [];
+
+        $f['ir_id'] = 'rest_service_name';
+        $f['ir_short'] = 'Repository';
+        $f['ir_subclass'] = 'other';
+        $field_list[] = $f;
+
+        $f['ir_id'] = 'ir_sequence_count';
+        $f['ir_short'] = 'Sequences';
+        $f['ir_subclass'] = 'other';
+        $field_list[] = $f;
+
+        $data['field_list'] = $field_list;
 
         return view('sample', $data);
     }
