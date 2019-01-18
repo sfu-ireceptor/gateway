@@ -167,7 +167,7 @@ class SampleController extends Controller
 
         // get sample fields, add generated sample fields
         $field_list = FieldName::getSampleFields();
-        
+
         $f = [];
 
         $f['ir_id'] = 'rest_service_name';
