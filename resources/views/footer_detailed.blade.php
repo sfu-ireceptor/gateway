@@ -43,7 +43,7 @@
 	</div>
 	<div class="col-md-4">
 		<h4>Developed and Run by</h4>
-		<a href="http://www.irmacs.sfu.ca/" class="irmacs">
+		<a href="http://www.sfu.ca/irmacs-archive/irmacs/index.html" class="irmacs">
 			<img src="/images/logos/irmacs.png">
 		</a>
 	</div>
