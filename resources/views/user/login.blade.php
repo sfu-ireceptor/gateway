@@ -25,12 +25,12 @@
 
 							<p>
 								{{ Form::label('username', 'Username') }}
-								{{ Form::text('username', '', array('class' => 'form-control', 'placeholder' => 'e.g. \'jane_lee\'')) }}
+								{{ Form::text('username', '', array('class' => 'form-control')) }}
 							</p>
 							<p>
 								{{ Form::label('password', 'Password') }}
 								{{ $errors->first("password") }}
-								{{ Form::password('password', array('class' => 'form-control', 'placeholder' => 'e.g. \'sx4KL2\'')) }}
+								{{ Form::password('password', array('class' => 'form-control')) }}
 							</p>
 							<p class="submit">
 								{{ Form::submit('Log In →', array('class' => 'btn btn-primary')) }}
