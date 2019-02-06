@@ -33,6 +33,14 @@ class RestServiceSeeder extends Seeder
                     'version' => 2,
                 ],
                 [
+                    'rest_service_group_code' => 'ipa',
+                    'url' => 'https://ipa4.ireceptor.org/',
+                    'name' => 'IPA 4',
+                    'username' => '',
+                    'password' => '',
+                    'version' => 2,
+                ],
+                [
                     'url' => 'https://vdjserver.org/ireceptor/',
                     'name' => 'VDJServer',
                     'username' => '',
