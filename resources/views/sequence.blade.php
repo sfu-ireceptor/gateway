@@ -266,17 +266,17 @@
 						</small>
 					</h3>
 
-					<!-- sequence data column selector -->
-					<div class="collapse" id="sequence_column_selector">
+					<!-- table column selector -->
+					<div class="collapse" id="column_selector">
 						<div class="panel panel-default">
 							<div class="panel-heading">
-								<button class="btn btn-primary btn-xs pull-right" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector">
+								<button class="btn btn-primary btn-xs pull-right" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
 						  			Done
 								</button>
 								<h4 class="panel-title">Edit Individual Sequences Columns</h4>
 							</div>
 					  		<div class="panel-body">
-								<form class="sequence_column_selector">
+								<form class="column_selector">
 									@foreach ($sequence_column_name_list as $sequence_column_name)
 										<div class="checkbox">
 											<label>
@@ -295,7 +295,7 @@
 						<thead>
 							<tr>
 								<th class="checkbox_cell">
-									<a class="btn btn-primary btn-xs" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector" title="Edit Columns">
+									<a class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
 									  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 									</a>
 								</th>

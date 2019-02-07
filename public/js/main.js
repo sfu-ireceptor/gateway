@@ -191,7 +191,7 @@ $(document).ready(function() {
 	});
 
 	// column selection
-    $('.sequence_column_selector input').change(function() {
+    $('.column_selector input').change(function() {
         var columnId = $(this).val();
         var columns = [];
 
@@ -204,7 +204,7 @@ $(document).ready(function() {
         }
 
         // save ids of currently displayed columns in hidden form field
-        $('.sequence_column_selector input:checked').each(function() {
+        $('.column_selector input:checked').each(function() {
         	var columnId = $(this).val().replace(/^seq_col_/, '');
         	columns.push(columnId);
         });

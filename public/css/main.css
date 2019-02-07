@@ -796,40 +796,40 @@ a.download_sequences {
 
 /* @group sequence column selector */
 
-.sequence_column_selector .checkbox {
+.column_selector .checkbox {
 	margin-top: -2px;
 }
 
-#sequence_column_selector {
+#column_selector {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	font-size: 14px;
 }
 
-form.sequence_column_selector {
+form.column_selector {
 	-webkit-column-count: 7; /* Chrome, Safari, Opera */
     -moz-column-count: 7; /* Firefox */
     column-count: 7;
 	margin-bottom: 0;
 }
 
-#sequence_column_selector .panel {
+#column_selector .panel {
 	margin-bottom: 0;
 }
 
-#sequence_column_selector .panel-heading {
+#column_selector .panel-heading {
 	padding: 5px 10px;
 }
 
-#sequence_column_selector .panel-heading button {
+#column_selector .panel-heading button {
 	margin-top: -3px;
 }
 
-#sequence_column_selector .panel-heading .panel-title {
+#column_selector .panel-heading .panel-title {
 	font-size: 14px;	
 }
 
-#sequence_column_selector .panel-body {
+#column_selector .panel-body {
 }
 
 .analysis_apps_tabpanel .nav-tabs {

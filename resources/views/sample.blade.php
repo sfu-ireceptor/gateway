@@ -265,6 +265,31 @@
 
 
 				@if (! empty($sample_list))
+
+				<!-- table column selector -->
+				<div class="collapse" id="column_selector">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<button class="btn btn-primary btn-xs pull-right" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
+					  			Done
+							</button>
+							<h4 class="panel-title">Edit Individual Samples Columns</h4>
+						</div>
+				  		<div class="panel-body">
+							<form class="column_selector">
+								@foreach ($field_list as $field)
+									<div class="checkbox">
+										<label>
+											<input name="sequence_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'sample_col_' . $field['ir_id']}}" />
+											{{ $field['ir_short'] }}
+										</label>
+									</div>		
+								@endforeach
+							</form>
+				  		</div>
+					</div>
+				</div>
+
 				{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form show_loading_message')) }}
 
 					<h3>Individual Samples</h3>
@@ -274,14 +299,18 @@
 						<a class="select_all_samples" href="#">Select All</a>
 						{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse_sequences browse-seq-data-button')) }}
 					</p>
+
+
+
 					
+					<!-- sample data -->
 					<table class="table table-striped sample_list table-condensed much_data table-bordered">
 						<thead> 
 							<tr>
 								<th class="checkbox_cell">
-	{{-- 								<button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
+									<a class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
 									  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-									</button> --}}
+									</a>
 								</th>
 
 								@foreach ($field_list as $field)
