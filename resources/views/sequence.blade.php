@@ -280,7 +280,7 @@
 									@foreach ($sequence_column_name_list as $sequence_column_name)
 										<div class="checkbox">
 											<label>
-												<input name="sequence_columns" class="{{ $sequence_column_name->name }}" data-id="{{ $sequence_column_name->id }}" type="checkbox" value="{{'seq_col_' . $sequence_column_name->id}}" {{ in_array($sequence_column_name->id, $current_sequence_columns) ? 'checked="checked"' : '' }} />
+												<input name="sequence_columns" class="{{ $sequence_column_name->name }}" data-id="{{ $sequence_column_name->id }}" type="checkbox" value="{{'seq_col_' . $sequence_column_name->id}}" {{ in_array($sequence_column_name->id, $current_columns) ? 'checked="checked"' : '' }} />
 												{{ $sequence_column_name->title }}
 											</label>
 										</div>		
@@ -300,7 +300,7 @@
 									</a>
 								</th>
 								@foreach ($sequence_column_name_list as $sequence_column_name)
-									<th class="text-nowrap seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_sequence_columns) ? '' : 'hidden' }}">
+									<th class="text-nowrap seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_columns) ? '' : 'hidden' }}">
 										{{ $sequence_column_name->title }}
 									</th>
 								@endforeach
@@ -311,7 +311,7 @@
 							<tr>
 								<td></td>
 								@foreach ($sequence_column_name_list as $sequence_column_name)
-										<td class="seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_sequence_columns) ? '' : 'hidden' }}">
+										<td class="seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_columns) ? '' : 'hidden' }}">
 											@isset($s->{$sequence_column_name->name})
 												@if($sequence_column_name->name == 'functional')
 													{{ $s->{$sequence_column_name->name} ? 'Yes' : 'No' }}

@@ -164,7 +164,7 @@ class SequenceController extends Controller
         } else {
             $currentSequenceColumns = $defaultSequenceColumns;
         }
-        $data['current_sequence_columns'] = $currentSequenceColumns;
+        $data['current_columns'] = $currentSequenceColumns;
         $data['sequence_column_name_list'] = SequenceColumnName::findEnabled();
         // foreach ($data['sequence_column_name_list'] as $o) {
         //     echo $o->id . '-' . $o->title . '<br />';
@@ -425,7 +425,7 @@ class SequenceController extends Controller
         } else {
             $currentSequenceColumns = $defaultSequenceColumns;
         }
-        $data['current_sequence_columns'] = $currentSequenceColumns;
+        $data['current_columns'] = $currentSequenceColumns;
         $data['sequence_column_name_list'] = SequenceColumnName::findEnabled();
         // foreach ($data['sequence_column_name_list'] as $o) {
         //     echo $o->id . '-' . $o->title . '<br />';
