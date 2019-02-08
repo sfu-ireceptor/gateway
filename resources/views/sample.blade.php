@@ -280,7 +280,7 @@
 								@foreach ($field_list as $field)
 									<div class="checkbox">
 										<label>
-											<input name="sequence_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'sample_col_' . $field['ir_id']}}" />
+											<input name="sequence_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'col_' . $field['ir_id']}}" {{ in_array($field['ir_id'], $current_columns) ? 'checked="checked"' : '' }}/>
 											{{ $field['ir_short'] }}
 										</label>
 									</div>		
@@ -314,7 +314,8 @@
 								</th>
 
 								@foreach ($field_list as $field)
-									<th class="text-nowrap sample_col_{{ $field['ir_id'] }}">
+
+									<th class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 										{{ $field['ir_short'] }}
 									</th>
 								@endforeach
@@ -332,7 +333,7 @@
 								</td>
 
 								@foreach ($field_list as $field)
-									<td class="text-nowrap">
+									<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 										@isset($sample->{$field['ir_id']})
 											@if($field['ir_id'] == 'ir_sequence_count')
 												@if ($sample->ir_sequence_count > 0)

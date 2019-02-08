@@ -182,6 +182,24 @@ class SampleController extends Controller
 
         $data['field_list'] = $field_list;
 
+        // displayed columns
+        $current_columns = [];
+        $current_columns[] = 'rest_service_name';
+        $current_columns[] = 'lab_name';
+        $current_columns[] = 'study_title';
+        $current_columns[] = 'study_group_description';
+        $current_columns[] = 'subject_id';
+        $current_columns[] = 'ir_sequence_count';
+        $current_columns[] = 'tissue';
+        $current_columns[] = 'cell_subset';
+        $current_columns[] = 'cell_phenotype';
+        $current_columns[] = 'sample_id';
+        $current_columns[] = 'template_class';
+        $current_columns[] = 'study_id';
+        $current_columns[] = 'pub_ids';
+        $current_columns[] = 'sequencing_platform';
+        $data['current_columns'] = $current_columns;
+
         return view('sample', $data);
     }
 
