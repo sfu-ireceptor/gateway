@@ -47,6 +47,13 @@ class RestServiceSeeder extends Seeder
                     'password' => '',
                     'version' => 2,
                 ],
+                [
+                    'url' => 'http://sidhu.ireceptor.org/',
+                    'name' => 'Sidhu',
+                    'username' => '',
+                    'password' => '',
+                    'version' => 2,
+                ],
             ];
 
         foreach ($l as $t) {
