@@ -211,51 +211,6 @@ $(document).ready(function() {
         $('input[name=cols]').val(columns.join('_'));
     });
 
-    function updateFiltersOrderField() {
-    	var filtersList = [];
-    	$('div.filter_list > .col-md-2').each(function() {
-    		var fieldName = $('input', $(this)).attr('name');
-    		var fieldId = $('input[type=checkbox].' + fieldName).data('id');
-	    	filtersList.push(fieldId);
-	    	$('input[name=filters_order]').val(filtersList.join('_'));
-    	});
-    }
-
-    $('button.add_field').click(function() {
-    	var select = $('select.add_field');
-    	var fieldName = select.val();
-    	var fieldTitle = $("select.add_field option:selected").text();
-
-    	// init field template with current select option
-    	$('#field_template label').attr('for', fieldName);
-		$('#field_template label').text(fieldTitle);
-    	$('#field_template input').attr('id', fieldName);
-   		$('#field_template input').attr('name', fieldName);
-
-		$('#field_template > div').clone(true).appendTo($('div.filter_list')); 
-		$('select.add_field option:selected').remove();
-
-		updateFiltersOrderField();
-    });
-
-    $('button.remove_field').click(function() {
-    	var div = $(this).parents('.form-group');
-    	var fieldName = $('input', div).attr('name');
-    	var fieldTitle = $('label', div).text();
-    	var select = $('select.add_field');
-
-    	// remove filter
-    	div.remove();
-
-    	// update "add new filter" select
-    	select.append('<option value="' + fieldName + '">' + fieldTitle + '</option>');
-    	updateFiltersOrderField();
-    });
-
-    // tooltips
-    $('[data-toggle="tooltip"]').tooltip();
-
-
     // reloading message
     function show_reloading_message() {
     	$('.reloading_contents').after($('.reloading_message'));
