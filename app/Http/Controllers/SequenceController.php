@@ -158,7 +158,6 @@ class SequenceController extends Controller
         $data['url'] = $current_url;
         $data['bookmark_id'] = Bookmark::getIdFromURl($current_url, auth()->user()->id);
 
-
         // get sequence fields
         $field_list = FieldName::getSequenceFields();
         $data['field_list'] = $field_list;
