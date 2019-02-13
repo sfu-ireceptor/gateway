@@ -149,7 +149,7 @@ class SampleController extends Controller
                 }
             }
         }
-        
+
         // remove gateway-specific params
         unset($filter_fields['cols']);
         unset($filter_fields['open_filter_panel_list']);
