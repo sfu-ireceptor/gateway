@@ -7,6 +7,7 @@ use App\System;
 use App\Bookmark;
 use App\QueryLog;
 use App\Sequence;
+use App\FieldName;
 use Facades\App\Query;
 use App\SequenceColumnName;
 use Illuminate\Http\Request;
@@ -157,20 +158,28 @@ class SequenceController extends Controller
         $data['url'] = $current_url;
         $data['bookmark_id'] = Bookmark::getIdFromURl($current_url, auth()->user()->id);
 
-        // columns to display
-        $defaultSequenceColumns = [1, 2, 3, 4, 5];
+
+        // get sequence fields
+        $field_list = FieldName::getSequenceFields();
+        $data['field_list'] = $field_list;
+        // dd($field_list);
+
+        // table columns to display
         if (isset($filters['cols'])) {
-            $currentSequenceColumns = explode('_', $filters['cols']);
+            $current_columns = explode(',', $filters['cols']);
         } else {
-            $currentSequenceColumns = $defaultSequenceColumns;
+            $current_columns = [];
+            $current_columns[] = 'v_call';
+            $current_columns[] = 'j_call';
+            $current_columns[] = 'd_call';
+            $current_columns[] = 'junction_aa';
+            $current_columns[] = 'junction_length';
         }
-        $data['current_columns'] = $currentSequenceColumns;
-        $data['sequence_column_name_list'] = SequenceColumnName::findEnabled();
-        // foreach ($data['sequence_column_name_list'] as $o) {
-        //     echo $o->id . '-' . $o->title . '<br />';
-        // }
-        // die();
-        $currentSequenceColumnsStr = implode('_', $currentSequenceColumns);
+        $data['current_columns'] = $current_columns;
+
+        // string value for hidden field
+        $current_columns_str = implode(',', $current_columns);
+        $data['current_columns_str'] = $current_columns_str;
 
         // filters
         $defaultFiltersListIds = [1, 2, 3, 4, 5];
@@ -225,7 +234,7 @@ class SequenceController extends Controller
                 }
             }
         }
-        $hidden_fields[] = ['name' => 'cols', 'value' => $currentSequenceColumnsStr];
+        $hidden_fields[] = ['name' => 'cols', 'value' => $current_columns_str];
         $hidden_fields[] = ['name' => 'filters_order', 'value' => $currentFiltersListIdsStr];
         $data['hidden_fields'] = $hidden_fields;
         $data['filters_json'] = json_encode($filters);
@@ -255,6 +264,7 @@ class SequenceController extends Controller
         }
         // remove gateway-specific filters
         unset($filter_fields['cols']);
+        unset($filter_fields['filters_order']);
         unset($filter_fields['sample_query_id']);
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
@@ -276,16 +286,6 @@ class SequenceController extends Controller
 
         // display view
         return view('sequence', $data);
-
-        // for later: display current project/sample names
-    // <p>
-    //     @foreach ($sample_list as $sample)
-    //         <strong>{{ $sample->project_name }}</strong>
-    //         -
-    //         <strong>{{ $sample->sample_name }}</strong>
-    //         <br />
-    //     @endforeach
-    // </p>
     }
 
     public function postQuickSearch(Request $request)

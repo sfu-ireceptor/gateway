@@ -281,7 +281,7 @@
 								@foreach ($field_list as $field)
 									<div class="checkbox">
 										<label>
-											<input name="sequence_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'col_' . $field['ir_id']}}" {{ in_array($field['ir_id'], $current_columns) ? 'checked="checked"' : '' }}/>
+											<input name="table_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'col_' . $field['ir_id']}}" {{ in_array($field['ir_id'], $current_columns) ? 'checked="checked"' : '' }}/>
 											{{ $field['ir_short'] }}
 										</label>
 									</div>		
@@ -300,9 +300,6 @@
 						<a class="select_all_samples" href="#">Select All</a>
 						{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse_sequences browse-seq-data-button')) }}
 					</p>
-
-
-
 					
 					<!-- sample data -->
 					<table class="table table-striped sample_list table-condensed much_data table-bordered">
@@ -315,7 +312,6 @@
 								</th>
 
 								@foreach ($field_list as $field)
-
 									<th class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 										{{ $field['ir_short'] }}
 									</th>

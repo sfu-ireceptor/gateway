@@ -47,4 +47,11 @@ class FieldName extends Model
 
         return $l;
     }
+
+    public static function getSequenceFields()
+    {
+        $l = static::where('ir_class', '=', 'rearrangement')->orderBy('created_at', 'desc')->get()->toArray();
+
+        return $l;
+    }
 }
