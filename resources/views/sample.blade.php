@@ -354,7 +354,7 @@
 												@endisset
 											@else
 												<span title="{{ $sample->{$field['ir_id']} }}">
-												{{ str_limit($sample->{$field['ir_id']}, $limit = 100, $end = '‥') }}
+												{{ str_limit($sample->{$field['ir_id']}, $limit = 25, $end = '‥') }}
 												</span>
 											@endif
 										@endif
