@@ -16,6 +16,7 @@
 
 			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'post', 'class' => 'sample_search show_reloading_message')) }}
 				<input type="hidden" name="project_id_list" />
+				<input type="hidden" name="cols" value="{{ $current_columns_str }}">
 
 				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 					<div class="panel panel-default">

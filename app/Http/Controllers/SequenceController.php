@@ -255,7 +255,6 @@ class SequenceController extends Controller
         }
         // remove gateway-specific filters
         unset($filter_fields['cols']);
-        unset($filter_fields['filters_order']);
         unset($filter_fields['sample_query_id']);
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;

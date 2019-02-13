@@ -149,7 +149,9 @@ class SampleController extends Controller
                 }
             }
         }
+        
         // remove gateway-specific params
+        unset($filter_fields['cols']);
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
 
@@ -182,23 +184,31 @@ class SampleController extends Controller
 
         $data['field_list'] = $field_list;
 
-        // displayed columns
-        $current_columns = [];
-        $current_columns[] = 'rest_service_name';
-        $current_columns[] = 'lab_name';
-        $current_columns[] = 'study_title';
-        $current_columns[] = 'study_group_description';
-        $current_columns[] = 'subject_id';
-        $current_columns[] = 'ir_sequence_count';
-        $current_columns[] = 'tissue';
-        $current_columns[] = 'cell_subset';
-        $current_columns[] = 'cell_phenotype';
-        $current_columns[] = 'sample_id';
-        $current_columns[] = 'template_class';
-        $current_columns[] = 'study_id';
-        $current_columns[] = 'pub_ids';
-        $current_columns[] = 'sequencing_platform';
+        // table columns to display
+        if (isset($params['cols'])) {
+            $current_columns = explode(',', $params['cols']);
+        } else {
+            $current_columns = [];
+            $current_columns[] = 'rest_service_name';
+            $current_columns[] = 'lab_name';
+            $current_columns[] = 'study_title';
+            $current_columns[] = 'study_group_description';
+            $current_columns[] = 'subject_id';
+            $current_columns[] = 'ir_sequence_count';
+            $current_columns[] = 'tissue';
+            $current_columns[] = 'cell_subset';
+            $current_columns[] = 'cell_phenotype';
+            $current_columns[] = 'sample_id';
+            $current_columns[] = 'template_class';
+            $current_columns[] = 'study_id';
+            $current_columns[] = 'pub_ids';
+            $current_columns[] = 'sequencing_platform';
+        }
         $data['current_columns'] = $current_columns;
+
+        // string value for hidden field
+        $current_columns_str = implode(',', $current_columns);
+        $data['current_columns_str'] = $current_columns_str;
 
         return view('sample', $data);
     }
