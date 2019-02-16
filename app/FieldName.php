@@ -43,14 +43,14 @@ class FieldName extends Model
 
     public static function getSampleFields()
     {
-        $l = static::where('ir_class', '=', 'repertoire')->orderBy('created_at', 'desc')->get()->toArray();
+        $l = static::where('ir_class', '=', 'repertoire')->orderBy('default_order', 'asc')->get()->toArray();
 
         return $l;
     }
 
     public static function getSequenceFields()
     {
-        $l = static::where('ir_class', '=', 'rearrangement')->orderBy('created_at', 'desc')->get()->toArray();
+        $l = static::where('ir_class', '=', 'rearrangement')->orderBy('default_order', 'asc')->get()->toArray();
 
         return $l;
     }

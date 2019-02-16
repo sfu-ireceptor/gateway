@@ -15,7 +15,7 @@ class AlterFieldNameTableAddIrClass extends Migration
 
     public function down()
     {
-        Schema::table('rest_service', function ($table) {
+        Schema::table('field_name', function ($table) {
             $table->dropColumn('ir_class');
             $table->dropColumn('ir_subclass');
         });
