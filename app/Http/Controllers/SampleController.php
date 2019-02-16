@@ -175,11 +175,13 @@ class SampleController extends Controller
         $f['ir_id'] = 'rest_service_name';
         $f['ir_short'] = 'Repository';
         $f['ir_subclass'] = 'other';
+        $f['default_visible'] = true;
         $field_list[] = $f;
 
         $f['ir_id'] = 'ir_sequence_count';
         $f['ir_short'] = 'Sequences';
         $f['ir_subclass'] = 'other';
+        $f['default_visible'] = true;
         $field_list[] = $f;
 
         $data['field_list'] = $field_list;
@@ -189,20 +191,11 @@ class SampleController extends Controller
             $current_columns = explode(',', $params['cols']);
         } else {
             $current_columns = [];
-            $current_columns[] = 'rest_service_name';
-            $current_columns[] = 'lab_name';
-            $current_columns[] = 'study_title';
-            $current_columns[] = 'study_group_description';
-            $current_columns[] = 'subject_id';
-            $current_columns[] = 'ir_sequence_count';
-            $current_columns[] = 'tissue';
-            $current_columns[] = 'cell_subset';
-            $current_columns[] = 'cell_phenotype';
-            $current_columns[] = 'sample_id';
-            $current_columns[] = 'template_class';
-            $current_columns[] = 'study_id';
-            $current_columns[] = 'pub_ids';
-            $current_columns[] = 'sequencing_platform';
+            foreach ($field_list as $field) {
+                if($field['default_visible']) {
+                    $current_columns[] = $field['ir_id'];
+                }
+            }
         }
         $data['current_columns'] = $current_columns;
 

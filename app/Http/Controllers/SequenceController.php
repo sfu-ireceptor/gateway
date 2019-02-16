@@ -168,11 +168,11 @@ class SequenceController extends Controller
             $current_columns = explode(',', $filters['cols']);
         } else {
             $current_columns = [];
-            $current_columns[] = 'v_call';
-            $current_columns[] = 'j_call';
-            $current_columns[] = 'd_call';
-            $current_columns[] = 'junction_aa';
-            $current_columns[] = 'junction_length';
+            foreach ($field_list as $field) {
+                if($field['default_visible']) {
+                    $current_columns[] = $field['ir_id'];
+                }
+            }
         }
         $data['current_columns'] = $current_columns;
 
