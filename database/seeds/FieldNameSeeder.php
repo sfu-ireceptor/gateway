@@ -38,7 +38,7 @@ class FieldNameSeeder extends CsvSeeder
         // delete any empty rows
         DB::table($this->table)->whereNull('ir_id')->delete();
 
-        // define default fields and their order 
+        // define default fields and their order
         $this->define_default_sample_fields();
         $this->define_default_sequence_fields();
     }

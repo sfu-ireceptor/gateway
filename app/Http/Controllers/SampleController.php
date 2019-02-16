@@ -192,7 +192,7 @@ class SampleController extends Controller
         } else {
             $current_columns = [];
             foreach ($field_list as $field) {
-                if($field['default_visible']) {
+                if ($field['default_visible']) {
                     $current_columns[] = $field['ir_id'];
                 }
             }

@@ -169,7 +169,7 @@ class SequenceController extends Controller
         } else {
             $current_columns = [];
             foreach ($field_list as $field) {
-                if($field['default_visible']) {
+                if ($field['default_visible']) {
                     $current_columns[] = $field['ir_id'];
                 }
             }
@@ -200,7 +200,6 @@ class SequenceController extends Controller
         $hidden_fields[] = ['name' => 'cols', 'value' => $current_columns_str];
         $data['hidden_fields'] = $hidden_fields;
         $data['filters_json'] = json_encode($filters);
-
 
         // create copy of filters for display
         $filter_fields = [];
