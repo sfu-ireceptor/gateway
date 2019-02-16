@@ -38,12 +38,12 @@ class FieldNameSeeder extends CsvSeeder
         // delete any empty rows
         DB::table($this->table)->whereNull('ir_id')->delete();
 
-
         $this->define_default_sample_fields();
         $this->define_default_sequence_fields();
     }
 
-    public function define_default_sample_fields() {
+    public function define_default_sample_fields()
+    {
         // these sample fields are visible by default, in this order
         $l = [];
         $l[] = ['ir_id' => 'lab_name', 'default_visible' => true];
@@ -62,10 +62,11 @@ class FieldNameSeeder extends CsvSeeder
 
         foreach ($l as $i => $t) {
             FieldName::where('ir_id', $t['ir_id'])->update(['default_order' => $i, 'default_visible' => $t['default_visible']]);
-        }        
+        }
     }
 
-    public function define_default_sequence_fields() {
+    public function define_default_sequence_fields()
+    {
         // these sequence fields are visible by default, in this order
         $l = [];
         $l[] = ['ir_id' => 'v_call', 'default_visible' => true];
@@ -76,6 +77,6 @@ class FieldNameSeeder extends CsvSeeder
 
         foreach ($l as $i => $t) {
             FieldName::where('ir_id', $t['ir_id'])->update(['default_order' => $i, 'default_visible' => $t['default_visible']]);
-        }       
+        }
     }
 }
