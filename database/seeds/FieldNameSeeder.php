@@ -38,45 +38,44 @@ class FieldNameSeeder extends CsvSeeder
         // delete any empty rows
         DB::table($this->table)->whereNull('ir_id')->delete();
 
+        // define default fields and their order 
         $this->define_default_sample_fields();
         $this->define_default_sequence_fields();
     }
 
     public function define_default_sample_fields()
     {
-        // these sample fields are visible by default, in this order
         $l = [];
-        $l[] = ['ir_id' => 'lab_name', 'default_visible' => true];
-        $l[] = ['ir_id' => 'study_title', 'default_visible' => true];
-        $l[] = ['ir_id' => 'study_group_description', 'default_visible' => true];
-        $l[] = ['ir_id' => 'subject_id', 'default_visible' => true];
-        $l[] = ['ir_id' => 'ir_sequence_count', 'default_visible' => true];
-        $l[] = ['ir_id' => 'tissue', 'default_visible' => true];
-        $l[] = ['ir_id' => 'cell_subset', 'default_visible' => true];
-        $l[] = ['ir_id' => 'cell_phenotype', 'default_visible' => true];
-        $l[] = ['ir_id' => 'sample_id', 'default_visible' => true];
-        $l[] = ['ir_id' => 'template_class', 'default_visible' => true];
-        $l[] = ['ir_id' => 'study_id', 'default_visible' => true];
-        $l[] = ['ir_id' => 'pub_ids', 'default_visible' => true];
-        $l[] = ['ir_id' => 'sequencing_platform', 'default_visible' => true];
+        $l[] = ['id' => 'lab_name', 'visible' => true];
+        $l[] = ['id' => 'study_title', 'visible' => true];
+        $l[] = ['id' => 'study_group_description', 'visible' => true];
+        $l[] = ['id' => 'subject_id', 'visible' => true];
+        $l[] = ['id' => 'ir_sequence_count', 'visible' => true];
+        $l[] = ['id' => 'tissue', 'visible' => true];
+        $l[] = ['id' => 'cell_subset', 'visible' => true];
+        $l[] = ['id' => 'cell_phenotype', 'visible' => true];
+        $l[] = ['id' => 'sample_id', 'visible' => true];
+        $l[] = ['id' => 'template_class', 'visible' => true];
+        $l[] = ['id' => 'study_id', 'visible' => true];
+        $l[] = ['id' => 'pub_ids', 'visible' => true];
+        $l[] = ['id' => 'sequencing_platform', 'visible' => true];
 
         foreach ($l as $i => $t) {
-            FieldName::where('ir_id', $t['ir_id'])->update(['default_order' => $i, 'default_visible' => $t['default_visible']]);
+            FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);
         }
     }
 
     public function define_default_sequence_fields()
     {
-        // these sequence fields are visible by default, in this order
         $l = [];
-        $l[] = ['ir_id' => 'v_call', 'default_visible' => true];
-        $l[] = ['ir_id' => 'j_call', 'default_visible' => true];
-        $l[] = ['ir_id' => 'd_call', 'default_visible' => true];
-        $l[] = ['ir_id' => 'junction_aa', 'default_visible' => true];
-        $l[] = ['ir_id' => 'junction_length', 'default_visible' => true];
+        $l[] = ['id' => 'v_call', 'visible' => true];
+        $l[] = ['id' => 'j_call', 'visible' => true];
+        $l[] = ['id' => 'd_call', 'visible' => true];
+        $l[] = ['id' => 'junction_aa', 'visible' => true];
+        $l[] = ['id' => 'junction_length', 'visible' => true];
 
         foreach ($l as $i => $t) {
-            FieldName::where('ir_id', $t['ir_id'])->update(['default_order' => $i, 'default_visible' => $t['default_visible']]);
+            FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);
         }
     }
 }

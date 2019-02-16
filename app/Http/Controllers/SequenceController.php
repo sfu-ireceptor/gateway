@@ -115,6 +115,7 @@ class SequenceController extends Controller
             }
             // remove gateway-specific params
             unset($sample_filter_fields['open_filter_panel_list']);
+            unset($sample_filter_fields['cols']);
         }
         $data['sample_filter_fields'] = $sample_filter_fields;
 
@@ -161,7 +162,6 @@ class SequenceController extends Controller
         // get sequence fields
         $field_list = FieldName::getSequenceFields();
         $data['field_list'] = $field_list;
-        // dd($field_list);
 
         // table columns to display
         if (isset($filters['cols'])) {
@@ -180,48 +180,12 @@ class SequenceController extends Controller
         $current_columns_str = implode(',', $current_columns);
         $data['current_columns_str'] = $current_columns_str;
 
-        // filters
-        $defaultFiltersListIds = [1, 2, 3, 4, 5];
-        $filtersListIds = [];
-        if (isset($filters['filters_order'])) {
-            $filtersListIds = explode('_', $filters['filters_order']);
-        } else {
-            $filtersListIds = $defaultFiltersListIds;
-        }
-
-        $filtersListDisplayed = [];
-        $filtersListSelect = [];
-
         // keep filters panels open
         $open_filter_panel_list = [];
         if (isset($filters['open_filter_panel_list'])) {
             $open_filter_panel_list = $filters['open_filter_panel_list'];
         }
         $data['open_filter_panel_list'] = $open_filter_panel_list;
-
-        $sequenceColumnNameList = SequenceColumnName::findEnabled();
-
-        // create array for select field
-        foreach ($sequenceColumnNameList as $s) {
-            $name = $s['name'];
-            $title = $s['title'];
-            if (! in_array($s['id'], $filtersListIds)) {
-                $filtersListSelect[$name] = $title;
-            }
-        }
-
-        // create array to display fields in the right order
-        foreach ($filtersListIds as $filterId) {
-            $field = SequenceColumnName::find($filterId);
-            $name = $field['name'];
-            $title = $field['title'];
-            $filtersListDisplayed[$name] = $title;
-        }
-
-        $data['filters_list'] = $filtersListDisplayed;
-        $data['filters_list_select'] = $filtersListSelect;
-        $data['filters_list_all'] = array_merge($filtersListDisplayed, $filtersListSelect);
-        $currentFiltersListIdsStr = implode('_', $filtersListIds);
 
         // hidden form fields
         $hidden_fields = [];
@@ -234,18 +198,9 @@ class SequenceController extends Controller
             }
         }
         $hidden_fields[] = ['name' => 'cols', 'value' => $current_columns_str];
-        $hidden_fields[] = ['name' => 'filters_order', 'value' => $currentFiltersListIdsStr];
         $data['hidden_fields'] = $hidden_fields;
         $data['filters_json'] = json_encode($filters);
 
-        // build URL without sequence filters but keeping samples selection
-        $sequence_filters = [];
-        $sequence_column_name_list = SequenceColumnName::findEnabled();
-        foreach ($sequence_column_name_list as $scn) {
-            $sequence_filters[] = $scn['name'];
-        }
-        $filters_without_sequence_filters = array_except($filters, $sequence_filters);
-        $data['no_filters_url'] = '/sequences?' . http_build_query($filters_without_sequence_filters);
 
         // create copy of filters for display
         $filter_fields = [];

@@ -34,19 +34,19 @@
 						<div id="collapseOne" class="panel-collapse collapse {{ in_array('0', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingOne">
 							<div class="panel-body">
 								<div class="form-group">
-									{{ Form::label('v_call', $filters_list_all['v_call']) }}
+									{{ Form::label('v_call',  __('short.v_call')) }}
 									@include('help', ['id' => 'v_call'])
 									{{ Form::text('v_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">
-									{{ Form::label('j_call', $filters_list_all['j_call']) }}
+									{{ Form::label('j_call', __('short.j_call')) }}
 									@include('help', ['id' => 'j_call'])
 									{{ Form::text('j_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">
-									{{ Form::label('d_call', $filters_list_all['d_call']) }}
+									{{ Form::label('d_call', __('short.d_call')) }}
 									@include('help', ['id' => 'd_call'])
 									{{ Form::text('d_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
@@ -76,7 +76,7 @@
 								</div>
 
 								<div class="form-group">
-									{{ Form::label('junction_aa_length', $filters_list_all['junction_aa_length']) }}
+									{{ Form::label('junction_aa_length', __('short.junction_length')) }}
 									{{ Form::text('junction_aa_length', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact value match. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
@@ -99,29 +99,13 @@
 						<div id="collapseThree" class="panel-collapse collapse {{ in_array('2', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingThree">
 							<div class="panel-body">
 								<div class="form-group">
-									{{ Form::label('ir_annotation_tool', $filters_list_all['ir_annotation_tool']) }}
+									{{ Form::label('ir_annotation_tool', __('short.ir_annotation_tool')) }}
 									{{ Form::select('ir_annotation_tool', $ir_annotation_tool_list, '', array('class' => 'form-control')) }}
 								</div>
 								<div class="form-group">
-									{{ Form::label('functional', $filters_list_all['functional']) }}
+									{{ Form::label('functional', __('short.functional')) }}
 									{{ Form::select('functional', $functional_list, '', array('class' => 'form-control')) }}
 								</div>
-							{{-- 	<div class="form-group">
-									{{ Form::label('rev_comp', $filters_list_all['rev_comp']) }}
-									{{ Form::text('rev_comp', '', array('class' => 'form-control')) }}
-								</div>
-								<div class="form-group">
-									{{ Form::label('v_score', $filters_list_all['v_score']) }}
-									{{ Form::text('v_score', '', array('class' => 'form-control')) }}
-								</div>
-								<div class="form-group">
-									{{ Form::label('d_score', $filters_list_all['d_score']) }}
-									{{ Form::text('d_score', '', array('class' => 'form-control')) }}
-								</div>
-								<div class="form-group">
-									{{ Form::label('j_score', $filters_list_all['j_score']) }}
-									{{ Form::text('j_score', '', array('class' => 'form-control')) }}
-								</div> --}}
 								<p class="button_container">
 									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 								</p>

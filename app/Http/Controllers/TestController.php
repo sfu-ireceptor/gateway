@@ -9,7 +9,6 @@ use App\FieldName;
 use Carbon\Carbon;
 use App\RestService;
 use App\RestServiceGroup;
-use App\SequenceColumnName;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -325,13 +324,6 @@ class TestController extends Controller
 
 //         // echo http_build_query($data, '', '&');
 //         // die();
-
-//         // $l = SequenceColumnName::all();
-//         // foreach ($l as $s) {
-//         //     $name = $s['name'];
-//         //     $title = $s['title'];
-//         //     echo $name . "\t" . $title . "\n";
-//         // }
 
 //         // // echo __('sp.sex');
 
