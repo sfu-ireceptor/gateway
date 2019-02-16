@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Sample;
-use App\SequenceColumnName;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
