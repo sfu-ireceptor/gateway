@@ -38,14 +38,42 @@ class FieldNameSeeder extends CsvSeeder
         // delete any empty rows
         DB::table($this->table)->whereNull('ir_id')->delete();
 
+        // add extra fields (gateway specific)
+        $this->add_gateway_specific_fields();
+
         // define default fields and their order
         $this->define_default_sample_fields();
         $this->define_default_sequence_fields();
     }
 
+    public function add_gateway_specific_fields()
+    {
+        $l = [];
+        $l[] = [
+                    'ir_id' => 'rest_service_name',
+                    'ir_short' => 'Repository',
+                    'ir_class' => 'repertoire',
+                    'ir_subclass' => 'other',
+                ];
+
+        // HACK: ir_class is overridden from "ir_repertoire" to "repertoire", so its displayed by default 
+        $l[] = [
+                    'ir_id' => 'ir_sequence_count',
+                    'ir_short' => 'Sequences',
+                    'ir_class' => 'repertoire',
+                    'ir_subclass' => 'other',
+                ];
+
+        foreach ($l as $t) {
+            FieldName::updateOrCreate(['ir_id' => $t['ir_id']], $t);
+        }
+    }
+
     public function define_default_sample_fields()
     {
         $l = [];
+        $l[] = ['id' => 'rest_service_name', 'visible' => true];
+        $l[] = ['id' => 'lab_name', 'visible' => true];
         $l[] = ['id' => 'lab_name', 'visible' => true];
         $l[] = ['id' => 'study_title', 'visible' => true];
         $l[] = ['id' => 'study_group_description', 'visible' => true];

@@ -341,16 +341,16 @@
 											@elseif($field['ir_id'] == 'study_title')
 												@isset($sample->study_url)
 													<a href="{{$sample->study_url}}" title="{{ $sample->study_title }}" target="_blank">
-														{{ str_limit($sample->study_title, $limit = 50, $end = '‥') }}
+														{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
 													</a>
 												@else
 													<span title="{{ $sample->study_title }}">
-														{{ str_limit($sample->study_title, $limit = 50, $end = '‥') }}
+														{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
 													</span>							
 												@endisset
 											@else
 												<span title="{{ $sample->{$field['ir_id']} }}">
-												{{ str_limit($sample->{$field['ir_id']}, $limit = 25, $end = '‥') }}
+												{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
 												</span>
 											@endif
 										@endif

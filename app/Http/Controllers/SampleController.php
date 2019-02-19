@@ -167,23 +167,8 @@ class SampleController extends Controller
         }
         $data['open_filter_panel_list'] = $open_filter_panel_list;
 
-        // get sample fields, add generated sample fields
+        // get sample fields
         $field_list = FieldName::getSampleFields();
-
-        $f = [];
-
-        $f['ir_id'] = 'rest_service_name';
-        $f['ir_short'] = 'Repository';
-        $f['ir_subclass'] = 'other';
-        $f['default_visible'] = true;
-        $field_list[] = $f;
-
-        $f['ir_id'] = 'ir_sequence_count';
-        $f['ir_short'] = 'Sequences';
-        $f['ir_subclass'] = 'other';
-        $f['default_visible'] = true;
-        $field_list[] = $f;
-
         $data['field_list'] = $field_list;
 
         // table columns to display
