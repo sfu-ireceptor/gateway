@@ -56,7 +56,7 @@ class FieldNameSeeder extends CsvSeeder
                     'ir_subclass' => 'other',
                 ];
 
-        // HACK: ir_class is overridden from "ir_repertoire" to "repertoire", so its displayed by default 
+        // HACK: ir_class is overridden from "ir_repertoire" to "repertoire", so its displayed by default
         $l[] = [
                     'ir_id' => 'ir_sequence_count',
                     'ir_short' => 'Sequences',
