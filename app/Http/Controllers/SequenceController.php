@@ -370,61 +370,31 @@ class SequenceController extends Controller
         $data['url'] = $current_url;
         $data['bookmark_id'] = Bookmark::getIdFromURl($current_url, auth()->user()->id);
 
-        // columns to display
-        $defaultSequenceColumns = [1, 2, 3, 4, 5];
+        // get sequence fields
+        $field_list = FieldName::getSequenceFields();
+        $data['field_list'] = $field_list;
+
+        // table columns to display
         if (isset($filters['cols'])) {
-            $currentSequenceColumns = explode('_', $filters['cols']);
+            $current_columns = explode(',', $filters['cols']);
         } else {
-            $currentSequenceColumns = $defaultSequenceColumns;
-        }
-        $data['current_columns'] = $currentSequenceColumns;
-        $data['sequence_column_name_list'] = SequenceColumnName::findEnabled();
-        // foreach ($data['sequence_column_name_list'] as $o) {
-        //     echo $o->id . '-' . $o->title . '<br />';
-        // }
-        // die();
-        $currentSequenceColumnsStr = implode('_', $currentSequenceColumns);
-
-        // filters
-        $defaultFiltersListIds = [1, 2, 3, 4, 5];
-        $filtersListIds = [];
-        if (isset($filters['filters_order'])) {
-            $filtersListIds = explode('_', $filters['filters_order']);
-        } else {
-            $filtersListIds = $defaultFiltersListIds;
-        }
-
-        $filtersListDisplayed = [];
-        $filtersListSelect = [];
-
-        $sequenceColumnNameList = SequenceColumnName::findEnabled();
-
-        // create array for select field
-        foreach ($sequenceColumnNameList as $s) {
-            $name = $s['name'];
-            $title = $s['title'];
-            if (! in_array($s['id'], $filtersListIds)) {
-                $filtersListSelect[$name] = $title;
+            $current_columns = [];
+            foreach ($field_list as $field) {
+                if ($field['default_visible']) {
+                    $current_columns[] = $field['ir_id'];
+                }
             }
         }
+        $data['current_columns'] = $current_columns;
 
-        // create array to display fields in the right order
-        foreach ($filtersListIds as $filterId) {
-            $field = SequenceColumnName::find($filterId);
-            $name = $field['name'];
-            $title = $field['title'];
-            $filtersListDisplayed[$name] = $title;
-        }
-
-        $data['filters_list'] = $filtersListDisplayed;
-        $data['filters_list_select'] = $filtersListSelect;
-        $data['filters_list_all'] = array_merge($filtersListDisplayed, $filtersListSelect);
-        $currentFiltersListIdsStr = implode('_', $filtersListIds);
+        // string value for hidden field
+        $current_columns_str = implode(',', $current_columns);
+        $data['current_columns_str'] = $current_columns_str;
 
         // hidden form fields
         $hidden_fields = [];
 
-        $hidden_fields[] = ['name' => 'cols', 'value' => $currentSequenceColumnsStr];
+        $hidden_fields[] = ['name' => 'cols', 'value' => $current_columns_str];
         $data['hidden_fields'] = $hidden_fields;
         $data['filters_json'] = json_encode($filters);
 
