@@ -9,7 +9,6 @@ use App\QueryLog;
 use App\Sequence;
 use App\FieldName;
 use Facades\App\Query;
-use App\SequenceColumnName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
