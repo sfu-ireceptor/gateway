@@ -8,7 +8,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RestServiceGroupSeeder::class);
         $this->call(RestServiceSeeder::class);
-        $this->call(SequenceColumnNameSeeder::class);
         $this->call(FieldNameSeeder::class);
     }
 }
