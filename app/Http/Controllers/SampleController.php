@@ -171,6 +171,10 @@ class SampleController extends Controller
         $field_list = FieldName::getSampleFields();
         $data['field_list'] = $field_list;
 
+        // get sample fields grouped
+        $field_list_grouped = FieldName::getSampleFieldsGrouped();
+        $data['field_list_grouped'] = $field_list_grouped;
+
         // table columns to display
         if (isset($params['cols'])) {
             $current_columns = explode(',', $params['cols']);

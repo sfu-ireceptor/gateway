@@ -54,4 +54,41 @@ class FieldName extends Model
 
         return $l;
     }
+
+    public static function getSampleFieldsGrouped()
+    {
+        $l = static::where('ir_class', '=', 'repertoire')->orderBy('ir_subclass', 'asc')->orderBy('ir_short', 'asc')->get()->toArray();
+        $groups = static::getGroups();
+
+        $gl = [];
+        foreach ($l as $t) {
+            if( ! isset($gl[$t['ir_subclass']])) {
+                $gl[$t['ir_subclass']] = ['name' => $groups[$t['ir_subclass']], 'fields' => []];
+            }
+            $gl[$t['ir_subclass']]['fields'][] = $t;
+        }
+
+        return $gl;
+    }
+
+    public static function getGroups()
+    {
+        $l = [];
+        
+        $l['study'] = 'Study';
+        $l['subject'] = 'Subject';
+        $l['diagnosis'] = 'Diagnosis';
+        $l['sample'] = 'Sample';
+        $l['cell_processing'] = 'Cell Processing';
+        $l['nucleic_acid_processing'] = 'Nucleic Acid Processing';
+        $l['sequencing_run'] = 'Sequencing Run';
+        $l['software_processing'] = 'Software Processing';
+        $l['ir_metadata'] = 'iReceptor Metadata';
+        $l['other'] = 'Other';
+        $l['ir_parameter'] = 'iReceptor Parameter';
+        $l['rearrangement'] = 'Rearrangement';
+        $l['ir_rearrangement'] = 'iReceptor Rearrangement';
+
+        return $l;
+    }
 }
