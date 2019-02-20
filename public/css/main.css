@@ -1101,9 +1101,9 @@ button.multiselect b {
 }
 
 form.column_selector {
-	-webkit-column-count: 7; /* Chrome, Safari, Opera */
-    -moz-column-count: 7; /* Firefox */
-    column-count: 7;
+	-webkit-column-count: 5; /* Chrome, Safari, Opera */
+    -moz-column-count: 5; /* Firefox */
+    column-count: 5;
 	margin-bottom: 0;
 }
 
@@ -1124,7 +1124,9 @@ form.column_selector {
 }
 
 #column_selector .panel-body h5 {
-	margin-top: 20px;
+	margin-top: 25px;
+	margin-bottom: 5px;
+	break-after: avoid;
 }
 
 #column_selector .panel-body h5:first-of-type {

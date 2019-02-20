@@ -61,11 +61,15 @@ class FieldName extends Model
         $groups = static::getGroups();
 
         $gl = [];
-        foreach ($l as $t) {
-            if( ! isset($gl[$t['ir_subclass']])) {
-                $gl[$t['ir_subclass']] = ['name' => $groups[$t['ir_subclass']], 'fields' => []];
+        foreach ($groups as $group_key => $group_name) {
+            foreach ($l as $t) {
+                if($group_key == $t['ir_subclass']) {
+                    if( ! isset($gl[$t['ir_subclass']])) {
+                        $gl[$t['ir_subclass']] = ['name' => $groups[$t['ir_subclass']], 'fields' => []];
+                    }
+                    $gl[$t['ir_subclass']]['fields'][] = $t;                    
+                }
             }
-            $gl[$t['ir_subclass']]['fields'][] = $t;
         }
 
         return $gl;
@@ -75,19 +79,20 @@ class FieldName extends Model
     {
         $l = [];
         
-        $l['study'] = 'Study';
         $l['subject'] = 'Subject';
-        $l['diagnosis'] = 'Diagnosis';
+        $l['study'] = 'Study';
         $l['sample'] = 'Sample';
+
+        $l['diagnosis'] = 'Diagnosis';
         $l['cell_processing'] = 'Cell Processing';
         $l['nucleic_acid_processing'] = 'Nucleic Acid Processing';
         $l['sequencing_run'] = 'Sequencing Run';
         $l['software_processing'] = 'Software Processing';
         $l['ir_metadata'] = 'iReceptor Metadata';
-        $l['other'] = 'Other';
         $l['ir_parameter'] = 'iReceptor Parameter';
         $l['rearrangement'] = 'Rearrangement';
         $l['ir_rearrangement'] = 'iReceptor Rearrangement';
+        $l['other'] = 'Other';
 
         return $l;
     }
