@@ -63,11 +63,11 @@ class FieldName extends Model
         $gl = [];
         foreach ($groups as $group_key => $group_name) {
             foreach ($l as $t) {
-                if($group_key == $t['ir_subclass']) {
-                    if( ! isset($gl[$t['ir_subclass']])) {
+                if ($group_key == $t['ir_subclass']) {
+                    if (! isset($gl[$t['ir_subclass']])) {
                         $gl[$t['ir_subclass']] = ['name' => $groups[$t['ir_subclass']], 'fields' => []];
                     }
-                    $gl[$t['ir_subclass']]['fields'][] = $t;                    
+                    $gl[$t['ir_subclass']]['fields'][] = $t;
                 }
             }
         }
@@ -78,7 +78,7 @@ class FieldName extends Model
     public static function getGroups()
     {
         $l = [];
-        
+
         $l['subject'] = 'Subject';
         $l['study'] = 'Study';
         $l['sample'] = 'Sample';
