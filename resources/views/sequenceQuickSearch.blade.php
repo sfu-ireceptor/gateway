@@ -195,13 +195,16 @@
 							</div>
 					  		<div class="panel-body">
 								<form class="column_selector">
-									@foreach ($field_list as $field)
-										<div class="checkbox">
-											<label>
-												<input name="table_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'col_' . $field['ir_id']}}" {{ in_array($field['ir_id'], $current_columns) ? 'checked="checked"' : '' }}/>
-												{{ $field['ir_short'] }}
-											</label>
-										</div>		
+									@foreach ($field_list_grouped as $field_group)
+										<h5>{{ $field_group['name'] }}</h5>
+										@foreach ($field_group['fields'] as $field)
+											<div class="checkbox">
+												<label>
+													<input name="table_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'col_' . $field['ir_id']}}" {{ in_array($field['ir_id'], $current_columns) ? 'checked="checked"' : '' }}/>
+													{{ $field['ir_short'] }}
+												</label>
+											</div>		
+										@endforeach
 									@endforeach
 								</form>
 					  		</div>

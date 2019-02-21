@@ -55,26 +55,6 @@ class FieldName extends Model
         return $l;
     }
 
-    public static function getSampleFieldsGrouped()
-    {
-        $l = static::where('ir_class', '=', 'repertoire')->orderBy('ir_subclass', 'asc')->orderBy('ir_short', 'asc')->get()->toArray();
-        $groups = static::getGroups();
-
-        $gl = [];
-        foreach ($groups as $group_key => $group_name) {
-            foreach ($l as $t) {
-                if ($group_key == $t['ir_subclass']) {
-                    if (! isset($gl[$t['ir_subclass']])) {
-                        $gl[$t['ir_subclass']] = ['name' => $groups[$t['ir_subclass']], 'fields' => []];
-                    }
-                    $gl[$t['ir_subclass']]['fields'][] = $t;
-                }
-            }
-        }
-
-        return $gl;
-    }
-
     public static function getGroups()
     {
         $l = [];
@@ -96,4 +76,35 @@ class FieldName extends Model
 
         return $l;
     }
+
+    public static function getFieldsGrouped($ir_class)
+    {
+        $l = static::where('ir_class', '=', $ir_class)->orderBy('ir_subclass', 'asc')->orderBy('ir_short', 'asc')->get()->toArray();
+        $groups = static::getGroups();
+
+        $gl = [];
+        foreach ($groups as $group_key => $group_name) {
+            foreach ($l as $t) {
+                if ($group_key == $t['ir_subclass']) {
+                    if (! isset($gl[$t['ir_subclass']])) {
+                        $gl[$t['ir_subclass']] = ['name' => $groups[$t['ir_subclass']], 'fields' => []];
+                    }
+                    $gl[$t['ir_subclass']]['fields'][] = $t;
+                }
+            }
+        }
+
+        return $gl;
+    }
+
+    public static function getSampleFieldsGrouped()
+    {
+        return static::getFieldsGrouped('repertoire');
+    }    
+
+    public static function getSequenceFieldsGrouped()
+    {
+        return static::getFieldsGrouped('rearrangement');
+    }
+
 }

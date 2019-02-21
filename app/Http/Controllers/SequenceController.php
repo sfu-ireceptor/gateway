@@ -162,6 +162,10 @@ class SequenceController extends Controller
         $field_list = FieldName::getSequenceFields();
         $data['field_list'] = $field_list;
 
+        // get sequence fields grouped
+        $field_list_grouped = FieldName::getSequenceFieldsGrouped();
+        $data['field_list_grouped'] = $field_list_grouped;
+
         // table columns to display
         if (isset($filters['cols'])) {
             $current_columns = explode(',', $filters['cols']);
@@ -373,6 +377,10 @@ class SequenceController extends Controller
         $field_list = FieldName::getSequenceFields();
         $data['field_list'] = $field_list;
 
+        // get sequence fields grouped
+        $field_list_grouped = FieldName::getSequenceFieldsGrouped();
+        $data['field_list_grouped'] = $field_list_grouped;
+        
         // table columns to display
         if (isset($filters['cols'])) {
             $current_columns = explode(',', $filters['cols']);
