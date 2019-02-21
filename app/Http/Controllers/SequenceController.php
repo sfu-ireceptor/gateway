@@ -380,7 +380,7 @@ class SequenceController extends Controller
         // get sequence fields grouped
         $field_list_grouped = FieldName::getSequenceFieldsGrouped();
         $data['field_list_grouped'] = $field_list_grouped;
-        
+
         // table columns to display
         if (isset($filters['cols'])) {
             $current_columns = explode(',', $filters['cols']);
