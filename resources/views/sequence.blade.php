@@ -267,7 +267,7 @@
 											<div class="checkbox">
 												<label>
 													<input name="table_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'col_' . $field['ir_id']}}" {{ in_array($field['ir_id'], $current_columns) ? 'checked="checked"' : '' }}/>
-													{{ $field['ir_short'] }}
+													@lang('short.' . $field['ir_id'])
 												</label>
 											</div>		
 										@endforeach
