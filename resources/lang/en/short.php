@@ -9,8 +9,8 @@ foreach ($l as $t) {
     $str_short = trim($t['ir_short']);
 
     // if no "short" value is defined, return "ir_id" key
-    if($str_short == '') {
-    	$str_short = $t['ir_id'];
+    if ($str_short == '') {
+        $str_short = $t['ir_id'];
     }
 
     $data[$t['ir_id']] = $str_short;
