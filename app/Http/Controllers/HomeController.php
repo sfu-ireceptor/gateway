@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Sample;
-use App\SequenceColumnName;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -37,16 +36,6 @@ class HomeController extends Controller
             $subject_organism_list[$v] = $v;
         }
         $data['subject_organism_list'] = $subject_organism_list;
-
-        // get fields names
-        $sequenceColumnNameList = SequenceColumnName::findEnabled();
-        $filters_list_all = [];
-        foreach ($sequenceColumnNameList as $s) {
-            $name = $s['name'];
-            $title = $s['title'];
-            $filters_list_all[$name] = $title;
-        }
-        $data['filters_list_all'] = $filters_list_all;
 
         // clear any lingering form data
         $request->session()->forget('_old_input');

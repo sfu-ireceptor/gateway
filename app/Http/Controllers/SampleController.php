@@ -6,6 +6,7 @@ use App\Query;
 use App\Sample;
 use App\Bookmark;
 use App\QueryLog;
+use App\FieldName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -148,7 +149,9 @@ class SampleController extends Controller
                 }
             }
         }
+
         // remove gateway-specific params
+        unset($filter_fields['cols']);
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
 
@@ -163,6 +166,31 @@ class SampleController extends Controller
             $open_filter_panel_list = $params['open_filter_panel_list'];
         }
         $data['open_filter_panel_list'] = $open_filter_panel_list;
+
+        // get sample fields
+        $field_list = FieldName::getSampleFields();
+        $data['field_list'] = $field_list;
+
+        // get sample fields grouped
+        $field_list_grouped = FieldName::getSampleFieldsGrouped();
+        $data['field_list_grouped'] = $field_list_grouped;
+
+        // table columns to display
+        if (isset($params['cols'])) {
+            $current_columns = explode(',', $params['cols']);
+        } else {
+            $current_columns = [];
+            foreach ($field_list as $field) {
+                if ($field['default_visible']) {
+                    $current_columns[] = $field['ir_id'];
+                }
+            }
+        }
+        $data['current_columns'] = $current_columns;
+
+        // string value for hidden field
+        $current_columns_str = implode(',', $current_columns);
+        $data['current_columns_str'] = $current_columns_str;
 
         return view('sample', $data);
     }

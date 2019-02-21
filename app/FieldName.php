@@ -40,4 +40,70 @@ class FieldName extends Model
 
         return $object_list;
     }
+
+    public static function getSampleFields()
+    {
+        $l = static::where('ir_class', '=', 'repertoire')->orderBy('default_order', 'asc')->get()->toArray();
+
+        return $l;
+    }
+
+    public static function getSequenceFields()
+    {
+        $l = static::where('ir_class', '=', 'rearrangement')->orderBy('default_order', 'asc')->get()->toArray();
+
+        return $l;
+    }
+
+    public static function getGroups()
+    {
+        $l = [];
+
+        $l['subject'] = 'Subject';
+        $l['study'] = 'Study';
+        $l['sample'] = 'Sample';
+
+        $l['diagnosis'] = 'Diagnosis';
+        $l['cell_processing'] = 'Cell Processing';
+        $l['nucleic_acid_processing'] = 'Nucleic Acid Processing';
+        $l['sequencing_run'] = 'Sequencing Run';
+        $l['software_processing'] = 'Software Processing';
+        $l['ir_metadata'] = 'iReceptor Metadata';
+        $l['ir_parameter'] = 'iReceptor Parameter';
+        $l['rearrangement'] = 'Rearrangement';
+        $l['ir_rearrangement'] = 'iReceptor Rearrangement';
+        $l['other'] = 'Other';
+
+        return $l;
+    }
+
+    public static function getFieldsGrouped($ir_class)
+    {
+        $l = static::where('ir_class', '=', $ir_class)->orderBy('ir_subclass', 'asc')->orderBy('ir_short', 'asc')->get()->toArray();
+        $groups = static::getGroups();
+
+        $gl = [];
+        foreach ($groups as $group_key => $group_name) {
+            foreach ($l as $t) {
+                if ($group_key == $t['ir_subclass']) {
+                    if (! isset($gl[$t['ir_subclass']])) {
+                        $gl[$t['ir_subclass']] = ['name' => $groups[$t['ir_subclass']], 'fields' => []];
+                    }
+                    $gl[$t['ir_subclass']]['fields'][] = $t;
+                }
+            }
+        }
+
+        return $gl;
+    }
+
+    public static function getSampleFieldsGrouped()
+    {
+        return static::getFieldsGrouped('repertoire');
+    }
+
+    public static function getSequenceFieldsGrouped()
+    {
+        return static::getFieldsGrouped('rearrangement');
+    }
 }

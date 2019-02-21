@@ -34,19 +34,19 @@
 						<div id="collapseOne" class="panel-collapse collapse {{ in_array('0', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingOne">
 							<div class="panel-body">
 								<div class="form-group">
-									{{ Form::label('v_call', $filters_list_all['v_call']) }}
+									{{ Form::label('v_call',  __('short.v_call')) }}
 									@include('help', ['id' => 'v_call'])
 									{{ Form::text('v_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">
-									{{ Form::label('j_call', $filters_list_all['j_call']) }}
+									{{ Form::label('j_call', __('short.j_call')) }}
 									@include('help', ['id' => 'j_call'])
 									{{ Form::text('j_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">
-									{{ Form::label('d_call', $filters_list_all['d_call']) }}
+									{{ Form::label('d_call', __('short.d_call')) }}
 									@include('help', ['id' => 'd_call'])
 									{{ Form::text('d_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
@@ -76,7 +76,7 @@
 								</div>
 
 								<div class="form-group">
-									{{ Form::label('junction_aa_length', $filters_list_all['junction_aa_length']) }}
+									{{ Form::label('junction_aa_length', __('short.junction_length')) }}
 									{{ Form::text('junction_aa_length', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact value match. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
@@ -99,29 +99,13 @@
 						<div id="collapseThree" class="panel-collapse collapse {{ in_array('2', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingThree">
 							<div class="panel-body">
 								<div class="form-group">
-									{{ Form::label('ir_annotation_tool', $filters_list_all['ir_annotation_tool']) }}
+									{{ Form::label('ir_annotation_tool', __('short.ir_annotation_tool')) }}
 									{{ Form::select('ir_annotation_tool', $ir_annotation_tool_list, '', array('class' => 'form-control')) }}
 								</div>
 								<div class="form-group">
-									{{ Form::label('functional', $filters_list_all['functional']) }}
+									{{ Form::label('functional', __('short.functional')) }}
 									{{ Form::select('functional', $functional_list, '', array('class' => 'form-control')) }}
 								</div>
-							{{-- 	<div class="form-group">
-									{{ Form::label('rev_comp', $filters_list_all['rev_comp']) }}
-									{{ Form::text('rev_comp', '', array('class' => 'form-control')) }}
-								</div>
-								<div class="form-group">
-									{{ Form::label('v_score', $filters_list_all['v_score']) }}
-									{{ Form::text('v_score', '', array('class' => 'form-control')) }}
-								</div>
-								<div class="form-group">
-									{{ Form::label('d_score', $filters_list_all['d_score']) }}
-									{{ Form::text('d_score', '', array('class' => 'form-control')) }}
-								</div>
-								<div class="form-group">
-									{{ Form::label('j_score', $filters_list_all['j_score']) }}
-									{{ Form::text('j_score', '', array('class' => 'form-control')) }}
-								</div> --}}
 								<p class="button_container">
 									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 								</p>
@@ -266,24 +250,27 @@
 						</small>
 					</h3>
 
-					<!-- sequence data column selector -->
-					<div class="collapse" id="sequence_column_selector">
+					<!-- table column selector -->
+					<div class="collapse" id="column_selector">
 						<div class="panel panel-default">
 							<div class="panel-heading">
-								<button class="btn btn-primary btn-xs pull-right" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector">
+								<button class="btn btn-primary btn-xs pull-right" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
 						  			Done
 								</button>
 								<h4 class="panel-title">Edit Individual Sequences Columns</h4>
 							</div>
 					  		<div class="panel-body">
-								<form class="sequence_column_selector">
-									@foreach ($sequence_column_name_list as $sequence_column_name)
-										<div class="checkbox">
-											<label>
-												<input name="sequence_columns" class="{{ $sequence_column_name->name }}" data-id="{{ $sequence_column_name->id }}" type="checkbox" value="{{'seq_col_' . $sequence_column_name->id}}" {{ in_array($sequence_column_name->id, $current_sequence_columns) ? 'checked="checked"' : '' }} />
-												{{ $sequence_column_name->title }}
-											</label>
-										</div>		
+								<form class="column_selector">
+									@foreach ($field_list_grouped as $field_group)
+										<h5>{{ $field_group['name'] }}</h5>
+										@foreach ($field_group['fields'] as $field)
+											<div class="checkbox">
+												<label>
+													<input name="table_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'col_' . $field['ir_id']}}" {{ in_array($field['ir_id'], $current_columns) ? 'checked="checked"' : '' }}/>
+													{{ $field['ir_short'] }}
+												</label>
+											</div>		
+										@endforeach
 									@endforeach
 								</form>
 					  		</div>
@@ -295,13 +282,13 @@
 						<thead>
 							<tr>
 								<th class="checkbox_cell">
-									<a class="btn btn-primary btn-xs" data-toggle="collapse" href="#sequence_column_selector" aria-expanded="false" aria-controls="sequence_column_selector" title="Edit Columns">
+									<a class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
 									  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 									</a>
 								</th>
-								@foreach ($sequence_column_name_list as $sequence_column_name)
-									<th class="text-nowrap seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_sequence_columns) ? '' : 'hidden' }}">
-										{{ $sequence_column_name->title }}
+								@foreach ($field_list as $field)
+									<th class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
+										{{ $field['ir_short'] }}
 									</th>
 								@endforeach
 							</tr>
@@ -310,18 +297,20 @@
 							@foreach ($sequence_list as $s)
 							<tr>
 								<td></td>
-								@foreach ($sequence_column_name_list as $sequence_column_name)
-										<td class="seq_col_{{ $sequence_column_name->id }} {{ in_array($sequence_column_name->id, $current_sequence_columns) ? '' : 'hidden' }}">
-											@isset($s->{$sequence_column_name->name})
-												@if($sequence_column_name->name == 'functional')
-													{{ $s->{$sequence_column_name->name} ? 'Yes' : 'No' }}
-												@elseif($sequence_column_name->name == 'v_call' || $sequence_column_name->name == 'j_call' || $sequence_column_name->name == 'd_call')
-													{{ str_limit($s->{$sequence_column_name->name}, $limit = 30, $end = '‥') }}
-												@else 
-													{{ $s->{$sequence_column_name->name} }}
-												@endif
-											@endisset
-										</td>
+								@foreach ($field_list as $field)
+									<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
+										@isset($s->{$field['ir_id']})
+											@if($field['ir_id'] == 'functional')
+												{{ $s->functional ? 'Yes' : 'No' }}											
+											@elseif($field['ir_id'] == 'v_call' || $field['ir_id'] == 'v_call' || $field['ir_id'] == 'd_call' )
+												{{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
+											@else
+												<span title="{{ $s->{$field['ir_id']} }}">
+												{{ $s->{$field['ir_id']} }}
+												</span>
+											@endif
+										@endif
+									</td>
 								@endforeach
 							</tr>
 							@endforeach

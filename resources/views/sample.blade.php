@@ -16,6 +16,7 @@
 
 			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'post', 'class' => 'sample_search show_reloading_message')) }}
 				<input type="hidden" name="project_id_list" />
+				<input type="hidden" name="cols" value="{{ $current_columns_str }}">
 
 				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 					<div class="panel panel-default">
@@ -265,6 +266,34 @@
 
 
 				@if (! empty($sample_list))
+
+				<!-- table column selector -->
+				<div class="collapse" id="column_selector">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<button class="btn btn-primary btn-xs pull-right" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
+					  			Done
+							</button>
+							<h4 class="panel-title">Edit Individual Samples Columns</h4>
+						</div>
+				  		<div class="panel-body">
+							<form class="column_selector">
+								@foreach ($field_list_grouped as $field_group)
+									<h5>{{ $field_group['name'] }}</h5>
+									@foreach ($field_group['fields'] as $field)
+										<div class="checkbox">
+											<label>
+												<input name="table_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'col_' . $field['ir_id']}}" {{ in_array($field['ir_id'], $current_columns) ? 'checked="checked"' : '' }}/>
+												{{ $field['ir_short'] }}
+											</label>
+										</div>		
+									@endforeach
+								@endforeach
+							</form>
+				  		</div>
+					</div>
+				</div>
+
 				{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form show_loading_message')) }}
 
 					<h3>Individual Samples</h3>
@@ -275,28 +304,21 @@
 						{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse_sequences browse-seq-data-button')) }}
 					</p>
 					
+					<!-- sample data -->
 					<table class="table table-striped sample_list table-condensed much_data table-bordered">
 						<thead> 
 							<tr>
 								<th class="checkbox_cell">
-	{{-- 								<button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
+									<a class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
 									  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-									</button> --}}
+									</a>
 								</th>
-								<th>Repository</th>
-								<th>@lang('short.lab_name')</th>
-								<th>@lang('short.study_title')</th>
-								<th>@lang('short.study_group_description')</th>
-								<th>@lang('short.subject_id')</th>
-								<th>Sequences</th>
-								<th>@lang('short.tissue')</th>
-								<th>@lang('short.cell_subset')</th>
-								<th>@lang('short.cell_phenotype')</th>
-								<th>@lang('short.sample_id')</th>
-								<th>@lang('short.template_class')</th>
-								<th>@lang('short.study_id')</th>
-								<th>@lang('short.pub_ids')</th>
-								<th>@lang('short.sequencing_platform')</th>
+
+								@foreach ($field_list as $field)
+									<th class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
+										{{ $field['ir_short'] }}
+									</th>
+								@endforeach
 							</tr>
 						</thead>
 						<tbody>
@@ -309,109 +331,34 @@
 										@endif
 									@endisset
 								</td>
-								<td class="text-nowrap">
-									<span title="{{ $sample->rest_service_name }}">
-										{{ str_limit($sample->rest_service_name, $limit = 9, $end = '‥') }}
-									</span>
-								</td>
-								<td class="text-nowrap">
-									@isset($sample->lab_name)
-										<span title="{{ $sample->lab_name }}">
-										{{ str_limit($sample->lab_name, $limit = 10, $end = '‥') }}
-										</span>
-									@endif
-								</td>
-								<td>
-									@isset($sample->study_title)
-										@isset($sample->study_url)
-											<a href="{{$sample->study_url}}" title="{{ $sample->study_title }}" target="_blank">
-												{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
-											</a>
-										@else
-											<span title="{{ $sample->study_title }}">
-												{{ str_limit($sample->study_title, $limit = 25, $end = '‥') }}
-											</span>							
-										@endisset
-									@endisset
-								</td>
-								<td>
-									@isset($sample->study_group_description)
-										<span title="{{ $sample->study_group_description }}">
-										{{ str_limit($sample->study_group_description, $limit = 15, $end = '‥') }}
-										</span>
-									@endisset
-								</td>	
-								<td>
-									@isset($sample->subject_id)
-										<span title="{{ $sample->subject_id }}">
-										{{ str_limit($sample->subject_id, $limit = 15, $end = '‥') }}
-										</span>
-									@endisset
-								</td>							
-								<td>
-									@isset($sample->ir_sequence_count)
-										@if ($sample->ir_sequence_count > 0)
-											<a href="sequences?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->ir_project_sample_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
-												<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
-											</a>
+
+								@foreach ($field_list as $field)
+									<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
+										@isset($sample->{$field['ir_id']})
+											@if($field['ir_id'] == 'ir_sequence_count')
+												@if ($sample->ir_sequence_count > 0)
+													<a href="sequences?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->ir_project_sample_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
+														<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
+													</a>
+												@endif
+											@elseif($field['ir_id'] == 'study_title')
+												@isset($sample->study_url)
+													<a href="{{$sample->study_url}}" title="{{ $sample->study_title }}" target="_blank">
+														{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
+													</a>
+												@else
+													<span title="{{ $sample->study_title }}">
+														{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
+													</span>							
+												@endisset
+											@else
+												<span title="{{ $sample->{$field['ir_id']} }}">
+												{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+												</span>
+											@endif
 										@endif
-									@endisset
-								</td>
-								<td>
-									@isset($sample->tissue)
-										<span title="{{ $sample->tissue }}">
-										{{ str_limit($sample->tissue, $limit = 12, $end = '‥') }}
-										</span>
-									@endisset
-								</td>
-								<td>
-									@isset($sample->cell_subset)
-										<span title="{{ $sample->cell_subset }}">
-										{{ str_limit($sample->cell_subset, $limit = 12, $end = '‥') }}
-										</span>
-									@endisset
-								<td>
-									@isset($sample->cell_phenotype)
-										<span title="{{ $sample->cell_phenotype }}">
-										{{ str_limit($sample->cell_phenotype, $limit = 12, $end = '‥') }}
-										</span>
-									@endisset
-								</td>						
-								<td>
-									@isset($sample->sample_id)
-										<span title="{{ $sample->sample_id }}">
-										{{ str_limit($sample->sample_id, $limit = 12, $end = '') }}
-										</span>
-									@endisset
-								</td>	
-								<td>
-									@isset($sample->template_class)
-										<span title="{{ $sample->template_class }}">
-										{{ str_limit($sample->template_class, $limit = 12, $end = '‥') }}
-										</span>
-									@endisset
-								</td>
-								<td>
-									@isset($sample->study_id)
-										<span title="{{ $sample->study_id }}">
-										{{ str_limit($sample->study_id, $limit = 15, $end = '‥') }}
-										</span>
-									@endisset
-								</td>		
-								<td>
-									@isset($sample->pub_ids)
-										<span title="{{ $sample->pub_ids }}">
-										{{ str_limit($sample->pub_ids, $limit = 15, $end = '‥') }}
-										</span>
-									@endisset
-								</td>	
-								<td>
-									@isset($sample->sequencing_platform)
-										<span title="{{ $sample->sequencing_platform }}">
-										{{ str_limit($sample->sequencing_platform, $limit = 20, $end = '‥') }}
-										</span>
-									@endisset
-								</td>
+									</td>
+								@endforeach
 							</tr>
 							@endforeach
 						</tbody>
