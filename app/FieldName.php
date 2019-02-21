@@ -100,11 +100,10 @@ class FieldName extends Model
     public static function getSampleFieldsGrouped()
     {
         return static::getFieldsGrouped('repertoire');
-    }    
+    }
 
     public static function getSequenceFieldsGrouped()
     {
         return static::getFieldsGrouped('rearrangement');
     }
-
 }
