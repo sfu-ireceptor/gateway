@@ -8,7 +8,7 @@ class FieldNameSeeder extends CsvSeeder
     public function __construct()
     {
         $this->table = 'field_name';
-        $this->filename = base_path() . '/database/seeds/csv/field_names.tsv';
+        $this->filename = base_path() . '/database/seeds/data/field_names.tsv';
         $this->offset_rows = 2;
         $this->csv_delimiter = "\t";
     }
