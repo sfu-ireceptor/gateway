@@ -23,14 +23,12 @@ class FieldNameSeeder extends CsvSeeder
             2 => 'ir_v2',
             3 => 'ir_short',
             4 => 'ir_full',
-            13 => 'ir_v1',
-            14 => 'ir_v1_sql',
-            15 => 'ir_class',
-            16 => 'ir_subclass',
-            17 => 'airr',
-            19 => 'airr_full',
-            20 => 'airr_description',
-            21 => 'airr_example',
+            13 => 'ir_class',
+            14 => 'ir_subclass',
+            15 => 'airr',
+            17 => 'airr_full',
+            18 => 'airr_description',
+            19 => 'airr_example',
         ];
 
         parent::run();
