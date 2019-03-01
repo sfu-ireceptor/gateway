@@ -229,30 +229,30 @@ MiAIRR Rearrangements	sequence_id	sequence_id	Sequence ID	Sequence ID	1_Summary.
 	repertoire_id	repertoire_id	Repertoire ID	Repertoire ID			repertoire_id				repertoire_id		rearrangement	rearrangement	repertoire_id	string	repertoire id	Identifier to the associated repertoire in study metadata.	 	 
 	rearrangement_set_id	rearrangement_set_id	Rearrangement Set ID	Rearrangement Set ID			rearrangement_set_id				rearrangement_set_id		rearrangement	rearrangement	rearrangement_set_id	string	rearrangement set id	Identifier to the sequence annotation object for the repertoire in study metadata with the associated software processing for this rearrangement. If this field is empty than the primary sequence annotation is assumed. 	 	 
 	germline_database	germline_database	Germline Database	Germline Database			germline_database				germline_database		rearrangement	rearrangement	germline_database	string	germline database	"Source of germline V(D)J genes with version number or date accessed. For example, 'IMGT/GENE-DB 3.1.18 (15 March 2018)'. "	 	 
-	ir_junction_aa_length	junction_aa_length	Junction Length (AA) 	Number of Junction AA 							ir_junction_aa_length	junction_aa_length	ir_rearrangement	ir_rearrangement						 
-	ir_annotation_tool	ir_annotation_tool		Annotation Tool							ir_annotation_tool	ir_annotation_tool	ir_rearrangement	ir_rearrangement						 
-	ir_substring	ir_substring									ir_substring	substring	ir_rearrangement	ir_rearrangement						 
-	ir_productive	ir_productive									ir_productive		ir_rearrangement	ir_rearrangement						 
-	ir_vgene_string	ir_vgene_string		V-Gene							ir_vgene_string		ir_rearrangement	ir_rearrangement						 
-	ir_vgene_family	ir_vgene_family		V-Gene Family							ir_vgene_family	vgene_family	ir_rearrangement	ir_rearrangement						 
-	ir_vgene_gene	ir_vgene_gene		V-Gene Gene							ir_vgene_gene	vgene_gene	ir_rearrangement	ir_rearrangement						 
-	ir_jgene_string	ir_jgene_string		J-Gene							ir_jgene_string		ir_rearrangement	ir_rearrangement						 
-	ir_jgene_family	ir_jgene_family		J-Gene Family							ir_jgene_family	jgene_family	ir_rearrangement	ir_rearrangement						 
-	ir_jgene_gene	ir_jgene_gene		J-Gene Gene							ir_jgene_gene	jgene_gene	ir_rearrangement	ir_rearrangement						 
-	ir_dgene_string	ir_dgene_string		D-Gene String							ir_dgene_string		ir_rearrangement	ir_rearrangement						 
-	ir_dgene_family	ir_dgene_family		D-Gene Family							ir_dgene_family	dgene_family	ir_rearrangement	ir_rearrangement						 
-	ir_dgene_gene	ir_dgene_gene		D-Gene Gene							ir_dgene_gene	dgene_gene	ir_rearrangement	ir_rearrangement						 
-	ir_created_at	ir_created_at									ir_created_at		ir_rearrangement	ir_rearrangement						 
-	ir_updated_at	ir_updated_at									ir_updated_at		ir_rearrangement	ir_rearrangement						 
-	ir_project_sample_id	ir_project_sample_id									ir_project_sample_id		ir_rearrangement	ir_rearrangement						 
+	ir_junction_aa_length	junction_aa_length	Junction Length (AA) 	Junction Length (AA) 							ir_junction_aa_length	junction_aa_length	ir_rearrangement	ir_rearrangement						 
+	ir_annotation_tool	ir_annotation_tool	Annotation Tool	Annotation Tool							ir_annotation_tool	ir_annotation_tool	ir_rearrangement	ir_rearrangement						 
+	ir_substring	ir_substring	Junction Index Substring	Junction Index Substring							ir_substring	substring	ir_rearrangement	ir_rearrangement						 
+	ir_productive	ir_productive	Productive	Productive							ir_productive		ir_rearrangement	ir_rearrangement						 
+	ir_vgene_string	ir_vgene_string	V-Gene	V-Gene							ir_vgene_string		ir_rearrangement	ir_rearrangement						 
+	ir_vgene_family	ir_vgene_family	V-Gene Family	V-Gene Family							ir_vgene_family	vgene_family	ir_rearrangement	ir_rearrangement						 
+	ir_vgene_gene	ir_vgene_gene	V-Gene Gene	V-Gene Gene							ir_vgene_gene	vgene_gene	ir_rearrangement	ir_rearrangement						 
+	ir_jgene_string	ir_jgene_string	J-Gene	J-Gene							ir_jgene_string		ir_rearrangement	ir_rearrangement						 
+	ir_jgene_family	ir_jgene_family	J-Gene Family	J-Gene Family							ir_jgene_family	jgene_family	ir_rearrangement	ir_rearrangement						 
+	ir_jgene_gene	ir_jgene_gene	J-Gene Gene	J-Gene Gene							ir_jgene_gene	jgene_gene	ir_rearrangement	ir_rearrangement						 
+	ir_dgene_string	ir_dgene_string	D-Gene String	D-Gene String							ir_dgene_string		ir_rearrangement	ir_rearrangement						 
+	ir_dgene_family	ir_dgene_family	D-Gene Family	D-Gene Family							ir_dgene_family	dgene_family	ir_rearrangement	ir_rearrangement						 
+	ir_dgene_gene	ir_dgene_gene	D-Gene Gene	D-Gene Gene							ir_dgene_gene	dgene_gene	ir_rearrangement	ir_rearrangement						 
+	ir_created_at	ir_created_at	Creation Date	Creation Date							ir_created_at		ir_rearrangement	ir_rearrangement						 
+	ir_updated_at	ir_updated_at	Update Date	Update Date							ir_updated_at		ir_rearrangement	ir_rearrangement						 
+	ir_project_sample_id	ir_project_sample_id	Repertoire ID	Repertoire ID							ir_project_sample_id		ir_rearrangement	ir_rearrangement						 
 	ir_pair_cdr1_aa	ir_pair_cdr1_aa	CDR1 AA (paired)	CDR1 AA (paired)							ir_pair_cdr1_aa		ir_rearrangement	ir_rearrangement						 
 	ir_pair_cdr2_aa	ir_pair_cdr2_aa	CDR2 AA (paired)	CDR2 AA (paired)							ir_pair_cdr2_aa		ir_rearrangement	ir_rearrangement						 
 	ir_pair_cdr3_aa	ir_pair_cdr3_aa	CDR3 AA (paired)	CDR3 AA (paired)							ir_pair_cdr3_aa		ir_rearrangement	ir_rearrangement						 
-	ir_pair_v_call	ir_pair_v_call	V Gene (paired)	V Gene and Allele (paired)							ir_pair_v_call		ir_rearrangement	ir_rearrangement						 
-	ir_pair_d_call	ir_pair_d_call	D Gene (paired)	D Gene and Allele (paired)							ir_pair_d_call		ir_rearrangement	ir_rearrangement						 
-	ir_pair_j_call	ir_pair_j_call	J Gene (paired)	J Gene and Allele (paired)							ir_pair_j_call		ir_rearrangement	ir_rearrangement						 
+	ir_pair_v_call	ir_pair_v_call	V Gene and Allele (paired)	V Gene and Allele (paired)							ir_pair_v_call		ir_rearrangement	ir_rearrangement						 
+	ir_pair_d_call	ir_pair_d_call	D Gene and Allele (paired)	D Gene and Allele (paired)							ir_pair_d_call		ir_rearrangement	ir_rearrangement						 
+	ir_pair_j_call	ir_pair_j_call	J Gene and Allele (paired)	J Gene and Allele (paired)							ir_pair_j_call		ir_rearrangement	ir_rearrangement						 
 	ir_pair_junction_aa	ir_pair_junction_aa	Junction AA (paired)	Junction AA (paired)							ir_pair_junction_aa		ir_rearrangement	ir_rearrangement						 
-																				
+	ir_pair_id	ir_pair_id	Pair ID	Paired Sequence ID							ir_pair_id		ir_rearrangement	ir_rearrangement						 
 																				
 																				
 																				
