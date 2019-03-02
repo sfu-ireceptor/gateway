@@ -76,7 +76,7 @@
 								</div>
 
 								<div class="form-group">
-									{{ Form::label('junction_aa_length', __('short.junction_length')) }}
+									{{ Form::label('junction_aa_length', __('short.ir_junction_aa_length')) }}
 									{{ Form::text('junction_aa_length', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact value match. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
