@@ -43,12 +43,34 @@ class Sequence
         return $data;
     }
 
+    public static function expectedSequencesByRestSevice($filters, $username) {
+        $response_list = RestService::sequences_summary($filters, $username);
+        $expected_nb_sequences_by_rs = [];
+        foreach ($response_list as $response) {
+            $rest_service_id = $response['rs']->id;
+
+            $sample_list = $response['data']->summary;
+            $nb_sequences = 0;
+            foreach ($sample_list as $sample) {
+                $nb_sequences += $sample->ir_filtered_sequence_count;
+            }
+
+            $expected_nb_sequences_by_rs[$rest_service_id] = $nb_sequences;
+        }
+
+        return $expected_nb_sequences_by_rs;
+    }
+
     public static function sequencesTSVFolder($filters, $username, $url = '', $sample_filters = [])
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
         $filters = self::clean_filters($filters);
+
+        // do extra sequence summary request to get expected number of sequences
+        // for sanity check after download
+        $expected_nb_sequences_by_rs = self::expectedSequencesByRestSevice($filters, $username);
 
         // create receiving folder
         $storage_folder = storage_path() . '/app/public/';
@@ -454,7 +476,7 @@ class Sequence
                     }
                 }
                 fclose($f);
-                $t['nb_sequences'] = $n - 1; // remove count of headers line
+                $t['nb_sequences'] = $n - 1; // don't count first line (columns headers)
                 $file_stats[] = $t;
             }
         }
