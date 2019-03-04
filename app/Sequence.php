@@ -415,15 +415,22 @@ class Sequence
 
     public static function delete_files($response_list, $info_file_path, $folder_path)
     {
-        Log::debug('Delete downloaded files...');
+        Log::debug('Deleting downloaded files...');
         foreach ($response_list as $response) {
             $file_path = $response['data']['file_path'];
-            File::delete($file_path);
+            if(File::exists($file_path)) {
+                File::delete($file_path);
+            }
         }
-        File::delete($info_file_path);
+
+        if(File::exists($info_file_path)) {
+            File::delete($info_file_path);
+        }
 
         // delete containing folder
-        rmdir($folder_path);
+        if(File::exists($folder_path)) {
+            rmdir($folder_path);
+        }
     }
 
     public static function file_stats($response_list)
