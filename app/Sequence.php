@@ -418,17 +418,17 @@ class Sequence
         Log::debug('Deleting downloaded files...');
         foreach ($response_list as $response) {
             $file_path = $response['data']['file_path'];
-            if(File::exists($file_path)) {
+            if (File::exists($file_path)) {
                 File::delete($file_path);
             }
         }
 
-        if(File::exists($info_file_path)) {
+        if (File::exists($info_file_path)) {
             File::delete($info_file_path);
         }
 
         // delete containing folder
-        if(File::exists($folder_path)) {
+        if (File::exists($folder_path)) {
             rmdir($folder_path);
         }
     }
