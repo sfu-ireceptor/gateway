@@ -352,19 +352,17 @@ class Sequence
             $expected_nb_sequences_total += $t['expected_nb_sequences'];
         }
         $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
-        if($is_download_incomplete) {
-            $s .= 'Warning: download appears to be incomplete:' . "\n";            
+        if ($is_download_incomplete) {
+            $s .= 'Warning: download appears to be incomplete:' . "\n";
             $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "\n";
-        }
-        else {
+        } else {
             $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
         }
 
         foreach ($file_stats as $t) {
-            if($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
-                $s .= $t['name'] . ' (incomplete, expected '. $t['expected_nb_sequences'] . ' sequences): ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
-            }
-            else {
+            if ($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
+                $s .= $t['name'] . ' (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences): ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
+            } else {
                 $s .= $t['name'] . ': ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
             }
         }
