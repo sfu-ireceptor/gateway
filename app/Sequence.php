@@ -85,7 +85,7 @@ class Sequence
         $filters['ir_data_format'] = 'airr';
 
         $response_list = RestService::sequences_data($filters, $folder_path, $username);
-        $file_stats = self::file_stats($response_list);
+        $file_stats = self::file_stats($response_list, $expected_nb_sequences_by_rs);
 
         // generate info.txt
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now);
@@ -346,13 +346,27 @@ class Sequence
         $s .= '* Summary *' . "\n";
 
         $nb_sequences_total = 0;
+        $expected_nb_sequences_total = 0;
         foreach ($file_stats as $t) {
             $nb_sequences_total += $t['nb_sequences'];
+            $expected_nb_sequences_total += $t['expected_nb_sequences'];
         }
-        $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
+        $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
+        if($is_download_incomplete) {
+            $s .= 'Warning: download appears to be incomplete:' . "\n";            
+            $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "\n";
+        }
+        else {
+            $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
+        }
 
         foreach ($file_stats as $t) {
-            $s .= $t['name'] . ': ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
+            if($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
+                $s .= $t['name'] . ' (incomplete, expected '. $t['expected_nb_sequences'] . ' sequences): ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
+            }
+            else {
+                $s .= $t['name'] . ': ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
+            }
         }
         $s .= "\n";
 
@@ -456,11 +470,13 @@ class Sequence
         }
     }
 
-    public static function file_stats($response_list)
+    public static function file_stats($response_list, $expected_nb_sequences_by_rs)
     {
         Log::debug('Get TSV files stats');
         $file_stats = [];
         foreach ($response_list as $response) {
+            $rest_service_id = $response['rs']->id;
+
             if (isset($response['data']['file_path'])) {
                 $t = [];
                 $file_path = $response['data']['file_path'];
@@ -478,6 +494,7 @@ class Sequence
                 }
                 fclose($f);
                 $t['nb_sequences'] = $n - 1; // don't count first line (columns headers)
+                $t['expected_nb_sequences'] = $expected_nb_sequences_by_rs[$rest_service_id];
                 $file_stats[] = $t;
             }
         }
