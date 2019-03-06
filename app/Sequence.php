@@ -43,7 +43,8 @@ class Sequence
         return $data;
     }
 
-    public static function expectedSequencesByRestSevice($filters, $username) {
+    public static function expectedSequencesByRestSevice($filters, $username)
+    {
         $response_list = RestService::sequences_summary($filters, $username);
         $expected_nb_sequences_by_rs = [];
         foreach ($response_list as $response) {
