@@ -91,7 +91,7 @@ class Sequence
         foreach ($file_stats as $t) {
             if ($t['nb_sequences'] != $t['expected_nb_sequences']) {
                 $delta = ($t['expected_nb_sequences'] - $t['nb_sequences']);
-                $str = 'expected ' . $nb_sequences_total . 'sequences, got ' . $expected_nb_sequences . ' sequences (difference=' . $delta . ' sequences)';
+                $str = 'expected ' . $t['expected_nb_sequences'] . 'sequences, got ' . $t['nb_sequences'] . ' sequences (difference=' . $delta . ' sequences)';
                 Log::warn($t['rest_service_name'] . ': ' . $str);
 
                 $query_log_id = $t['query_log_id'];
