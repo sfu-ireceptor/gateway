@@ -100,7 +100,7 @@ class Sequence
                 $ql->status = 'error';
                 $ql->save();
             }
-        }        
+        }
 
         // generate info.txt
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now);
@@ -115,12 +115,12 @@ class Sequence
         $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
 
         // if download is incomplete, update gateway query status
-        if($is_download_incomplete) {
+        if ($is_download_incomplete) {
             $gw_query_log_id = request()->get('query_log_id');
             if ($gw_query_log_id != null) {
                 $error_message = 'Some downloaded files appear to be incomplete';
                 QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
-            }            
+            }
         }
 
         $t = [];

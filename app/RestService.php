@@ -360,7 +360,7 @@ class RestService extends Model
                             $t['status'] = 'error';
                             $t['error_message'] = $response;
                             $t['query_log_id'] = $query_log_id;
-                            
+
                             return $t;
                         }
                     );
