@@ -284,11 +284,12 @@ $(document).ready(function() {
 		var url = $(this).attr('href');
 		console.log('url=' + url);
 
-		$.get(url, function(file_url) {
+		$.get(url, function(data) {
+			var file_path = data.file_path;
 			$('.download_message').hide();
-			var message = 'Your file is ready. If the download didn\'t start automatically, <a href="' + file_url + '">click here</a>.';
+			var message = 'Your file is ready. If the download didn\'t start automatically, <a href="' + file_path + '">click here</a>.';
 			$('.download_status').addClass('alert-success').show().html(message);
-			window.location.href = file_url;
+			window.location.href = file_path;
 		})
 		.fail(function(jqXHR, status, message) {
 			console.log(status + ': ' + message);

@@ -10,6 +10,7 @@ use App\Sequence;
 use App\FieldName;
 use Facades\App\Query;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
 class SequenceController extends Controller
@@ -452,7 +453,7 @@ class SequenceController extends Controller
         return view('sequenceDownload', $data);
     }
 
-    public function downloadDirect(Request $request)
+    public function downloadDirect(Request $request, Response $response)
     {
         $username = auth()->user()->username;
 
@@ -495,7 +496,9 @@ class SequenceController extends Controller
         }
 
         if ($request->ajax()) {
-            return url($tsvFilePath);
+            $t = [];
+            $t['file_path'] = $tsvFilePath;
+            return response()->json($t);
         } else {
             return redirect($tsvFilePath);
         }
