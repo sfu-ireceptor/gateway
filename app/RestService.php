@@ -340,12 +340,14 @@ class RestService extends Model
                                 $json = $response->getBody();
                                 $obj = json_decode($json, $returnArray);
                                 $t['data'] = $obj;
+                                $t['query_log_id'] = $query_log_id;
 
                                 return $t;
                             } else {
                                 QueryLog::end_rest_service_query($query_log_id, filesize($file_path));
 
                                 $t['data']['file_path'] = $file_path;
+                                $t['query_log_id'] = $query_log_id;
 
                                 return $t;
                             }
@@ -357,7 +359,8 @@ class RestService extends Model
 
                             $t['status'] = 'error';
                             $t['error_message'] = $response;
-
+                            $t['query_log_id'] = $query_log_id;
+                            
                             return $t;
                         }
                     );
