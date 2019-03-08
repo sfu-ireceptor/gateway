@@ -500,7 +500,7 @@ class SequenceController extends Controller
 
             $data['file_path'] = $tsvFilePath;
 
-            if($t['is_download_incomplete']) {
+            if ($t['is_download_incomplete']) {
                 $data['incomplete'] = $t['is_download_incomplete'];
                 $data['file_stats'] = $t['file_stats'];
             }
