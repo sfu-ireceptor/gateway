@@ -496,9 +496,16 @@ class SequenceController extends Controller
         }
 
         if ($request->ajax()) {
-            $t = [];
-            $t['file_path'] = $tsvFilePath;
-            return response()->json($t);
+            $data = [];
+
+            $data['file_path'] = $tsvFilePath;
+
+            if($t['is_download_incomplete']) {
+                $data['incomplete'] = $t['is_download_incomplete'];
+                $data['file_stats'] = $t['file_stats'];
+            }
+
+            return response()->json($data);
         } else {
             return redirect($tsvFilePath);
         }

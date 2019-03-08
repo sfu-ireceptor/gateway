@@ -286,9 +286,24 @@ $(document).ready(function() {
 
 		$.get(url, function(data) {
 			var file_path = data.file_path;
-			$('.download_message').hide();
+			var incomplete = data.incomplete;
+			var file_stats = data.file_stats;
 			var message = 'Your file is ready. If the download didn\'t start automatically, <a href="' + file_path + '">click here</a>.';
-			$('.download_status').addClass('alert-success').show().html(message);
+			var status = 'alert-success';
+
+			if(incomplete) {
+				message += '<br><br>' + 'Warning: some sequences seem to be missing:' + '<ul>';
+				file_stats.forEach(function(t) {
+					if(t.incomplete) {
+						message += '<li>' + t.rest_service_name + ' (' + t.name + '): expected ' + t.expected_nb_sequences + ' sequences, received ' + t.nb_sequences + '</li>';						
+					}
+				});
+				message += '</ul>';
+				status = 'alert-warning';
+			}
+
+			$('.download_message').hide();
+			$('.download_status').addClass(status).show().html(message);
 			window.location.href = file_path;
 		})
 		.fail(function(jqXHR, status, message) {

@@ -128,6 +128,7 @@ class Sequence
         $t['response_list'] = $response_list;
         $t['info_file_path'] = $info_file_path;
         $t['is_download_incomplete'] = $is_download_incomplete;
+        $t['file_stats'] = $file_stats;
 
         return $t;
     }
@@ -140,6 +141,7 @@ class Sequence
         $response_list = $t['response_list'];
         $info_file_path = $t['info_file_path'];
         $is_download_incomplete = $t['is_download_incomplete'];
+        $file_stats = $t['file_stats'];
 
         // zip files
         $zip_path = self::zip_files($folder_path, $response_list, $info_file_path);
@@ -154,6 +156,7 @@ class Sequence
         $t['system_path'] = $zip_path;
         $t['public_path'] = $zip_public_path;
         $t['is_download_incomplete'] = $is_download_incomplete;
+        $t['file_stats'] = $file_stats;
 
         return $t;
     }
@@ -531,6 +534,7 @@ class Sequence
                 $t['expected_nb_sequences'] = $expected_nb_sequences_by_rs[$rest_service_id];
                 $t['query_log_id'] = $response['query_log_id'];
                 $t['rest_service_name'] = $response['rs']->name;
+                $t['incomplete'] = ($t['nb_sequences'] != $t['expected_nb_sequences']);
 
                 $file_stats[] = $t;
             }
