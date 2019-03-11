@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class FieldName extends Model
 {
@@ -87,6 +88,12 @@ class FieldName extends Model
         $gl = [];
         foreach ($groups as $group_key => $group_name) {
             foreach ($l as $t) {
+                // if ir_subclass is not known, log warning and override it to 'other'
+                if(! isset($groups[$t['ir_subclass']])) {
+                    Log::warn($t['ir_subclass']  . ' ir_subclass needs to be defined as a group in ' . static::class);
+                    $t['ir_subclass'] = 'other';
+                }
+
                 if ($group_key == $t['ir_subclass']) {
                     if (! isset($gl[$t['ir_subclass']])) {
                         $gl[$t['ir_subclass']] = ['name' => $groups[$t['ir_subclass']], 'fields' => []];
