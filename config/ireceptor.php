@@ -47,4 +47,17 @@ return [
 
    'sequences_download_limit' => env('IRECEPTOR_SEQUENCES_DOWNLOAD_LIMIT', 500000000),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Display all ir_ fields
+    |--------------------------------------------------------------------------
+    |
+    | Display all ir-prefixed fields
+    | Ex: ir_show_unproductive
+    |
+    */
+
+   'display_all_ir_fields' => env('IRECEPTOR_IR_FIELDS', FALSE),
+
+
 ];

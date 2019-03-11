@@ -70,6 +70,8 @@ class FieldName extends Model
         $l['software_processing'] = 'Software Processing';
         $l['ir_metadata'] = 'iReceptor Metadata';
         $l['ir_parameter'] = 'iReceptor Parameter';
+        $l['ir_api'] = 'iReceptor API';
+        $l['ir_curator'] = 'iReceptor Curator';
         $l['rearrangement'] = 'Rearrangement';
         $l['ir_rearrangement'] = 'iReceptor Rearrangement';
         $l['other'] = 'Other';
@@ -77,9 +79,9 @@ class FieldName extends Model
         return $l;
     }
 
-    public static function getFieldsGrouped($ir_class)
+    public static function getFieldsGrouped($ir_class_list)
     {
-        $l = static::where('ir_class', '=', $ir_class)->orderBy('ir_subclass', 'asc')->orderBy('ir_short', 'asc')->get()->toArray();
+        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('ir_subclass', 'asc')->orderBy('ir_short', 'asc')->get()->toArray();
         $groups = static::getGroups();
 
         $gl = [];
@@ -99,11 +101,23 @@ class FieldName extends Model
 
     public static function getSampleFieldsGrouped()
     {
-        return static::getFieldsGrouped('repertoire');
+        $ir_class_list = ['repertoire'];
+
+        if(config('ireceptor.display_all_ir_fields')) {
+            $ir_class_list[] = 'ir_repertoire';
+        }
+
+        return static::getFieldsGrouped($ir_class_list);
     }
 
     public static function getSequenceFieldsGrouped()
     {
-        return static::getFieldsGrouped('rearrangement');
+        $ir_class_list = ['rearrangement'];
+
+        if(config('ireceptor.display_all_ir_fields')) {
+            $ir_class_list[] = 'ir_rearrangement';
+        }
+        
+        return static::getFieldsGrouped($ir_class_list);
     }
 }
