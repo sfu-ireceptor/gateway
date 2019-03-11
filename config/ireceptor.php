@@ -57,7 +57,6 @@ return [
     |
     */
 
-   'display_all_ir_fields' => env('IRECEPTOR_IR_FIELDS', FALSE),
-
+   'display_all_ir_fields' => env('IRECEPTOR_IR_FIELDS', false),
 
 ];
