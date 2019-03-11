@@ -32,7 +32,7 @@ class TestController extends Controller
 
     public function printBody()
     {
-        echo "hi there 3";
+        echo 'hi there 3';
         // trigger_error('var must be numeric');
 
         flush();
@@ -42,34 +42,29 @@ class TestController extends Controller
         // header('HTTP/1.1 500 Internal Server Error');
         // die();
         // abort(500, 'yoooooo');
-    // header('X-Error-Message: Incorrect username', true, 500);
-    // die('Incorrect username');
+        // header('X-Error-Message: Incorrect username', true, 500);
+        // die('Incorrect username');
 
-        echo "hi there 40";
+        echo 'hi there 40';
     }
 
     public function getIndex()
     {
-        if(File::exists('/vagrant/ireceptor_gateway/app')){
-            echo "exists";
+        if (File::exists('/vagrant/ireceptor_gateway/app')) {
+            echo 'exists';
         } else {
-            echo "doest not exist";
+            echo 'doest not exist';
         }
 
         die();
-
-
 
         // return response($this->printBody())
         //     ->header('Content-Type', 'text/tsv')
         //     ->header('Content-Disposition', 'attachment;filename="data.tsv"');
 
- // return response(Sequence::airr_data($params))->header('Content-Type', 'text/tsv')->header('Content-Disposition', 'attachment;filename="data.tsv"');
-
+        // return response(Sequence::airr_data($params))->header('Content-Type', 'text/tsv')->header('Content-Disposition', 'attachment;filename="data.tsv"');
 
         die();
-
-
 
         // echo "fdsafads";
 

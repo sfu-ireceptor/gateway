@@ -2,8 +2,8 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Model;
 
 class FieldName extends Model
 {
@@ -89,8 +89,8 @@ class FieldName extends Model
         foreach ($groups as $group_key => $group_name) {
             foreach ($l as $t) {
                 // if ir_subclass is not known, log warning and override it to 'other'
-                if(! isset($groups[$t['ir_subclass']])) {
-                    Log::warn($t['ir_subclass']  . ' ir_subclass needs to be defined as a group in ' . static::class);
+                if (! isset($groups[$t['ir_subclass']])) {
+                    Log::warn($t['ir_subclass'] . ' ir_subclass needs to be defined as a group in ' . static::class);
                     $t['ir_subclass'] = 'other';
                 }
 
@@ -110,7 +110,7 @@ class FieldName extends Model
     {
         $ir_class_list = ['repertoire'];
 
-        if(config('ireceptor.display_all_ir_fields')) {
+        if (config('ireceptor.display_all_ir_fields')) {
             $ir_class_list[] = 'ir_repertoire';
         }
 
@@ -121,10 +121,10 @@ class FieldName extends Model
     {
         $ir_class_list = ['rearrangement'];
 
-        if(config('ireceptor.display_all_ir_fields')) {
+        if (config('ireceptor.display_all_ir_fields')) {
             $ir_class_list[] = 'ir_rearrangement';
         }
-        
+
         return static::getFieldsGrouped($ir_class_list);
     }
 }
