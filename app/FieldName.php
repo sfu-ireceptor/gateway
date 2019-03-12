@@ -44,14 +44,26 @@ class FieldName extends Model
 
     public static function getSampleFields()
     {
-        $l = static::where('ir_class', '=', 'repertoire')->orderBy('default_order', 'asc')->get()->toArray();
+        $ir_class_list = ['repertoire'];
+
+        if (config('ireceptor.display_all_ir_fields')) {
+            $ir_class_list[] = 'ir_repertoire';
+        }
+
+        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('default_order', 'asc')->get()->toArray();
 
         return $l;
     }
 
     public static function getSequenceFields()
     {
-        $l = static::where('ir_class', '=', 'rearrangement')->orderBy('default_order', 'asc')->get()->toArray();
+        $ir_class_list = ['rearrangement'];
+
+        if (config('ireceptor.display_all_ir_fields')) {
+            $ir_class_list[] = 'ir_rearrangement';
+        }
+
+        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('default_order', 'asc')->get()->toArray();
 
         return $l;
     }

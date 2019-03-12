@@ -222,7 +222,7 @@
 								</th>
 								@foreach ($field_list as $field)
 									<th class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
-										{{ $field['ir_short'] }}
+										@lang('short.' . $field['ir_id'])
 									</th>
 								@endforeach
 							</tr>
