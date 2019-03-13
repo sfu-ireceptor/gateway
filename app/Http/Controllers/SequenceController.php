@@ -77,7 +77,7 @@ class SequenceController extends Controller
         $annotation_tool_list[''] = 'Any';
         $annotation_tool_list['MiXCR'] = 'MiXCR';
         $annotation_tool_list['V-Quest'] = 'V-Quest';
-        $annotation_tool_list['IgBlast'] = 'IgBlast';
+        $annotation_tool_list['IgBLAST'] = 'IgBLAST';
 
         // view data
         $data = [];
