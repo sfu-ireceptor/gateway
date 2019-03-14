@@ -129,6 +129,7 @@
 							@endisset
 							to return results.
 						</p>
+						<p>For more information, go to our <a href="http://ireceptor.org/platform/doc/faq" class="external" target="_blank"> FAQ (Frequently Asked Questions)</a></p>
 					</div>
 				@else
 					<!-- Statistics -->

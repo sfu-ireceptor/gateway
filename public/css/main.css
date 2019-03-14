@@ -369,6 +369,16 @@ a.inactive {
 	top: 1px;
 }
 
+a.external:after {
+	content: url("../images/external_link.png");
+	margin: 0 0 0 2px;	
+}
+
+.nav a.external:after {
+	content: url("../images/external_link2.png");
+	margin: 0 0 0 4px;
+}
+
 /* @end */
 
 /* @group top navigation */

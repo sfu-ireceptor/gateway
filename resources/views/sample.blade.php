@@ -229,6 +229,7 @@
 					<div class="no_results">
 						<h2>No Results</h2>
 						<p>Remove a filter or <a href="/samples">remove all filters</a> to return results.</p>
+						<p>For more information, go to our <a href="http://ireceptor.org/platform/doc/faq" class="external" target="_blank"> FAQ (Frequently Asked Questions)</a></p>			
 					</div>
 				@else
 					<!-- Statistics -->

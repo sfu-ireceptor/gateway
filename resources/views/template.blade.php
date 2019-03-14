@@ -97,6 +97,7 @@
 			      </ul>
 
 			      <ul class="nav navbar-nav navbar-right">
+			      	<li><a href="http://ireceptor.org/platform/doc" class="external" target="_blank">Help</a> </li>
 			    	@if(Auth::check())
 				    	@if(Auth::user()->isAdmin())		    	
 							<li class="dropdown">
@@ -145,6 +146,7 @@
 					<div class="col-md-12">
 						@section('footer')
 							<p class="text-right mini_footer">
+								<a href="http://ireceptor.org/platform/doc" class="external" target="_blank">Help</a> |
 								<a href="/about">About iReceptor</a>
 							</p>
 				        @show
