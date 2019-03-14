@@ -559,6 +559,10 @@ footer a:hover {
 	max-width: 140px;	
 }
 
+.footer_container h3.help {
+	margin-top: 40px;
+}
+
 /* @end */
 
 /* @group login page */
