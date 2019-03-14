@@ -98,7 +98,7 @@ class FieldNameSeeder extends CsvSeeder
         $l[] = ['id' => 'j_call', 'visible' => true];
         $l[] = ['id' => 'd_call', 'visible' => true];
         $l[] = ['id' => 'junction_aa', 'visible' => true];
-        $l[] = ['id' => 'junction_length', 'visible' => true];
+        $l[] = ['id' => 'ir_junction_aa_length', 'visible' => true];
 
         foreach ($l as $i => $t) {
             FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);

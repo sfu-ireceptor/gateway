@@ -22,7 +22,6 @@ class FieldName extends Model
     public static function convertList($data, $from, $to)
     {
         $mapping = self::all([$from, $to])->toArray();
-        // var_dump($mapping);die();
 
         return convert_arrays_keys($data, $mapping, $from, $to);
     }
