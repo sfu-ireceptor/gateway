@@ -355,15 +355,20 @@
 											@elseif($field['ir_id'] == 'pub_ids')
 												@if (starts_with($sample->{$field['ir_id']}, 'PMC'))
 													<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4528413/{{ $sample->{$field['ir_id']} }}/">
-														{{ $sample->{$field['ir_id']} }}
+														{{ str_limit(remove_url_prefix('https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4528413/' . $sample->{$field['ir_id']} . '/'), $limit = 25, $end = '‥') }}
+													</a>
+												@elseif (starts_with($sample->{$field['ir_id']}, 'nature: '))
+													<a href="https://www.nature.com/{{ str_replace('nature: ', '', $sample->{$field['ir_id']}) }}">
+														{{ str_limit(remove_url_prefix('https://www.nature.com/' . str_replace('nature: ', '', $sample->{$field['ir_id']})), $limit = 25, $end = '‥') }}
+
 													</a>
 												@elseif(is_url($sample->{$field['ir_id']}))
 													<a href="{{ $sample->{$field['ir_id']} }}">
-														{{ url_hostname($sample->{$field['ir_id']}) }}
+														{{ str_limit(remove_url_prefix($sample->{$field['ir_id']}), $limit = 25, $end = '‥') }}
 													</a>
 												@else	
 													<span title="{{ $sample->{$field['ir_id']} }}">
-														{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+													{{ $sample->{$field['ir_id']} }}
 													</span>
 												@endif
 											@else
