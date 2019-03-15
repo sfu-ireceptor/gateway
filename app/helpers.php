@@ -252,21 +252,20 @@ if (! function_exists('remove_url_prefix')) {
     function remove_url_prefix($url)
     {
         $t = parse_url($url);
-     
+
         $host = $t['host'];
         $path = $t['path'];
         $str = $host . $path;
-        
 
-        if(isset($t['query'])) {
+        if (isset($t['query'])) {
             $str .= '?' . $t['query'];
         }
 
-        if(isset($t['fragment'])) {
+        if (isset($t['fragment'])) {
             $str .= '#' . $t['fragment'];
         }
 
-        if(starts_with($str, 'www.')) {
+        if (starts_with($str, 'www.')) {
             $str = str_replace('www.', '', $str);
         }
 
