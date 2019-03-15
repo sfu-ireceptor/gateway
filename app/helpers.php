@@ -229,3 +229,20 @@ if (! function_exists('convert_arrays_to_strings')) {
         return $o;
     }
 }
+
+// test if string is URL
+if (! function_exists('is_url')) {
+    function is_url($str)
+    {
+        return filter_var($str, FILTER_VALIDATE_URL);
+    }
+}
+
+// return URL hostname
+// Ex: http://php.net/manual/en/function.parse-url.php -> php.net
+if (! function_exists('url_hostname')) {
+    function url_hostname($url)
+    {
+        return parse_url($url, PHP_URL_HOST);
+    }
+}

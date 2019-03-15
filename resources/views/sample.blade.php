@@ -352,6 +352,20 @@
 														{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
 													</span>							
 												@endisset
+											@elseif($field['ir_id'] == 'pub_ids')
+												@if (starts_with($sample->{$field['ir_id']}, 'PMC'))
+													<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4528413/{{ $sample->{$field['ir_id']} }}/">
+														{{ $sample->{$field['ir_id']} }}
+													</a>
+												@elseif(is_url($sample->{$field['ir_id']}))
+													<a href="{{ $sample->{$field['ir_id']} }}">
+														{{ url_hostname($sample->{$field['ir_id']}) }}
+													</a>
+												@else	
+													<span title="{{ $sample->{$field['ir_id']} }}">
+														{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+													</span>
+												@endif
 											@else
 												<span title="{{ $sample->{$field['ir_id']} }}">
 												{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
