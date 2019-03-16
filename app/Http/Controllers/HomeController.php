@@ -58,13 +58,12 @@ class HomeController extends Controller
 
         // remove gateway-specific fields
         foreach ($sample_field_list as $i => $sample_field) {
-            if($sample_field['ir_id'] == 'rest_service_name') {
+            if ($sample_field['ir_id'] == 'rest_service_name') {
                 unset($sample_field_list[$i]);
             }
         }
 
         $data['sample_field_list'] = $sample_field_list;
-
 
         // get sequence fields
         $sequence_field_list = FieldName::getSequenceFields();
