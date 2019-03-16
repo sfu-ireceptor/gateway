@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Sample;
+use App\FieldName;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -46,5 +47,29 @@ class HomeController extends Controller
     public function about()
     {
         return view('about');
+    }
+
+    public function fieldsDefinitions()
+    {
+        $data = [];
+
+        // get sample fields
+        $sample_field_list = FieldName::getSampleFields();
+
+        // remove gateway-specific fields
+        foreach ($sample_field_list as $i => $sample_field) {
+            if($sample_field['ir_id'] == 'rest_service_name') {
+                unset($sample_field_list[$i]);
+            }
+        }
+
+        $data['sample_field_list'] = $sample_field_list;
+
+
+        // get sequence fields
+        $sequence_field_list = FieldName::getSequenceFields();
+        $data['sequence_field_list'] = $sequence_field_list;
+
+        return view('fieldsDefinitions', $data);
     }
 }
