@@ -146,6 +146,7 @@
 					<div class="col-md-12">
 						@section('footer')
 							<p class="text-right mini_footer">
+								<a href="/fields-definitions">Data elements definitions</a> |								
 								<a href="http://ireceptor.org/platform/doc" class="external" target="_blank">Help</a> |
 								<a href="/about">About iReceptor</a>
 							</p>
