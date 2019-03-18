@@ -1,6 +1,6 @@
 @extends('template')
 
-@section('title', 'About')
+@section('title', 'About iReceptor')
 
 @section('content')
 <div class="container page">
@@ -10,12 +10,18 @@
 	<div class="row">
 		<div class="col-md-8">			
 
-			<h2>Our Mission</h2>
+			<h2 class="first">Our Mission</h2>
 
 			<p>iReceptor is a distributed data management system and scientific gateway for mining “Next Generation” sequence data from immune responses. The goal of the project is to: improve the design of vaccines, therapeutic antibodies and cancer immunotherapies by integrating Canadian and international data repositories of antibody and T-cell receptor gene sequences.</p>
 			<p>iReceptor provides a technology platform that will lower the barrier to immune genetics researchers who need to federate large, distributed, immune genetics data repositories in order to answer complex questions about the immune response. The focus of the iReceptor project is to leverage existing capabilities and technologies to build a new scientific platform for the immune genetics research community.</p>
 			<p>To learn more about us visit: <a href="http://ireceptor.org">http://ireceptor.org</a>.</p>
 			<p>To ask questions, host a data repository, or say hi, email <a class="email" href="mailto:help@ireceptor.org">help@ireceptor.org</a>.</p>
+
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-10">	
 
 			<h2>Our Team</h2>
 
@@ -123,12 +129,14 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="col-md-6">
+						<h4>Collaborator</h4>
 						<p>
 							Dr. Lindsay Cowell<br>
 							Department of Clinical Science<br>
 							University of Texas, Southwestern
 						</p>
 
+						<h4>Collaborator</h4>
 						<p>
 							Dr. Robert Holt<br>
 							Michael Smith Genome Sciences Centre<br>
@@ -136,11 +144,14 @@
 						</p>
 					</div>
 					<div class="col-md-6">
+						<h4>Collaborator</h4>
 						<p>
 							Dr. Sachdev Sidhu<br>
 							Donelly Centre for Cellular + Biomolecular Research<br>
 							The University of Toronto
 						</p>
+
+						<h4>Collaborator</h4>
 						<p>
 							Dr. Scott Christley<br>
 							Computational Biology<br>
@@ -166,18 +177,18 @@
 			</a>
 		</div>
 		<div class="col-md-4">
+			<h4>Developed and Run by</h4>
+			<a href="http://www.sfu.ca/irmacs-archive/irmacs/index.html" class="irmacs">
+				<img src="/images/logos/irmacs.png">
+			</a>
+		</div>
+		<div class="col-md-4">
 			<h4 class="powered">Powered by</h4>
 			<a href="https://www.computecanada.ca/" class="compute_canada">
 				<img src="/images/logos/compute_canada.png">
 			</a>
 			<a href="http://agaveapi.co/" class="agave">
 				<img src="/images/logos/agave.png">
-			</a>
-		</div>
-		<div class="col-md-4">
-			<h4>Developed and Run by</h4>
-			<a href="http://www.irmacs.sfu.ca/" class="irmacs">
-				<img src="/images/logos/irmacs.png">
 			</a>
 		</div>
 	</div>

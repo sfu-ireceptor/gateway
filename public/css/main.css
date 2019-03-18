@@ -33,6 +33,10 @@ h2 {
 	margin-top: 30px;
 }
 
+h2.first {
+	margin-top: 0px;
+}
+
 h3 {
 	font-size: 20px;
 	margin-bottom: 5px;
@@ -1158,8 +1162,23 @@ form.column_selector {
 	font-size: 16px;
 }
 
-.page h3 {
+.page h2 {
 	margin-top: 40px;
+}
+
+.page h2.first {
+	margin-top: 20px;
+}
+
+.page h3 {
+	margin-bottom: -5px;
+}
+
+.page h4 {
+	font-size: 16px;
+	font-weight: bold;
+	margin-bottom: 2px;
+	margin-top: 20px;
 }
 
 
