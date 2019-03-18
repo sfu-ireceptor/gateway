@@ -1151,3 +1151,17 @@ form.column_selector {
 
 
 /* @end */
+
+/* @group page */
+
+.page {
+	font-size: 16px;
+}
+
+.page h3 {
+	margin-top: 40px;
+}
+
+
+
+/* @end */
