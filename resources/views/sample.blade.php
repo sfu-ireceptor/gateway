@@ -344,7 +344,7 @@
 												@endif
 											@elseif($field['ir_id'] == 'study_title')
 												@isset($sample->study_url)
-													<a href="{{$sample->study_url}}" title="{{ $sample->study_title }}" target="_blank">
+													<a href="{{ $sample->study_url }}" title="{{ $sample->study_url }}" target="_blank">
 														{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
 													</a>
 												@else
@@ -353,24 +353,15 @@
 													</span>							
 												@endisset
 											@elseif($field['ir_id'] == 'pub_ids')
-												@if (starts_with($sample->{$field['ir_id']}, 'PMC'))
-													<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/{{ $sample->{$field['ir_id']} }}/">
-														{{ str_limit(remove_url_prefix('https://www.ncbi.nlm.nih.gov/pmc/articles/' . $sample->{$field['ir_id']} . '/'), $limit = 25, $end = '‥') }}
+												@isset($sample->study_url)
+													<a href="{{ $sample->study_url }}" title="{{ $sample->study_url }}" target="_blank">
+														{{ str_limit(remove_url_prefix($sample->study_url), $limit = 25, $end = '‥') }}
 													</a>
-												@elseif (starts_with($sample->{$field['ir_id']}, 'nature: '))
-													<a href="https://www.nature.com/{{ str_replace('nature: ', '', $sample->{$field['ir_id']}) }}">
-														{{ str_limit(remove_url_prefix('https://www.nature.com/' . str_replace('nature: ', '', $sample->{$field['ir_id']})), $limit = 25, $end = '‥') }}
-
-													</a>
-												@elseif(is_url($sample->{$field['ir_id']}))
-													<a href="{{ $sample->{$field['ir_id']} }}">
-														{{ str_limit(remove_url_prefix($sample->{$field['ir_id']}), $limit = 25, $end = '‥') }}
-													</a>
-												@else	
+												@else
 													<span title="{{ $sample->{$field['ir_id']} }}">
 													{{ $sample->{$field['ir_id']} }}
-													</span>
-												@endif
+													</span>							
+												@endisset
 											@else
 												<span title="{{ $sample->{$field['ir_id']} }}">
 												{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}

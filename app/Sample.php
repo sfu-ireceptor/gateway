@@ -60,7 +60,7 @@ class Sample
                 $sample->rest_service_name = $rs->display_name;
 
                 // add study URL
-                $sample = self::generate_study_url($sample);
+                $sample = self::generate_study_urls($sample);
             }
         }
 
@@ -246,17 +246,28 @@ class Sample
         return $data;
     }
 
-    public static function generate_study_url($sample)
+    public static function generate_study_urls($sample)
     {
+        // generate NCBI url
         if (isset($sample->study_id)) {
             if (preg_match('/PRJ/', $sample->study_id)) {
-                $sample->study_url = 'https://www.ncbi.nlm.nih.gov/bioproject/?term=' . $sample->study_id;
+                $sample->ncbi_url = 'https://www.ncbi.nlm.nih.gov/bioproject/?term=' . $sample->study_id;
             } elseif (preg_match('/SRP/', $sample->study_id)) {
-                $sample->study_url = 'https://www.ncbi.nlm.nih.gov/Traces/sra/?study=' . $sample->study_id;
+                $sample->ncbi_url = 'https://www.ncbi.nlm.nih.gov/Traces/sra/?study=' . $sample->study_id;
             } else {
-                unset($sample->study_url);
             }
         }
+
+        // generate study URL
+        if (isset($sample->pub_ids)) {
+            if (starts_with($sample->pub_ids, 'PMC')) {
+                $sample->study_url = 'https://www.ncbi.nlm.nih.gov/pmc/articles/' . $sample->pub_ids;
+            } elseif (starts_with($sample->pub_ids, 'nature: ')) {
+                $sample->study_url = 'https://www.nature.com/' . str_replace('nature: ', '', $sample->pub_ids);
+            } elseif (is_url($sample->pub_ids)) {
+                $sample->study_url = $sample->pub_ids;
+            }
+        }        
 
         return $sample;
     }

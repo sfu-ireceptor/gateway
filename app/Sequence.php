@@ -251,7 +251,7 @@ class Sequence
         $total_sequences = 0;
         $filtered_sequences = 0;
         foreach ($obj->summary as $sample) {
-            $sample = Sample::generate_study_url($sample);
+            $sample = Sample::generate_study_urls($sample);
 
             // If there are some sequences in this sample
             if (isset($sample->ir_filtered_sequence_count)) {
