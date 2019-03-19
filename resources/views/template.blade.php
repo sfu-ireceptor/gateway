@@ -153,11 +153,13 @@
 				<div class="row">
 					<div class="col-md-12">
 						@section('footer')
-							<p class="text-right mini_footer">
-								<a href="/about">About iReceptor</a> |
-								<a href="/fields-definitions">Data elements definitions</a> |								
-								<a href="http://ireceptor.org/platform/doc" class="external" target="_blank">Documentation</a>								
-							</p>
+							<div class="mini_footer">
+								<p class="text-right">
+									<a href="/about">About iReceptor</a> |
+									<a href="/fields-definitions">Data elements definitions</a> |								
+									<a href="http://ireceptor.org/platform/doc" class="external" target="_blank">Documentation</a>								
+								</p>
+							</div>
 				        @show
 					</div>
 				</div>
