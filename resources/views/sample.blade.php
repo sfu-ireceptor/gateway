@@ -342,6 +342,16 @@
 														<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
 													</a>
 												@endif
+											@elseif($field['ir_id'] == 'study_id')
+												@isset($sample->ncbi_url)
+													<a href="{{ $sample->ncbi_url }}" title="{{ $sample->ncbi_url }}" target="_blank">
+														{{ str_limit($sample->study_id, $limit = 20, $end = '‥') }}
+													</a>
+												@else
+													<span title="{{ $sample->{$field['ir_id']} }}">
+														{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+													</span>						
+												@endisset
 											@elseif($field['ir_id'] == 'study_title')
 												@isset($sample->study_url)
 													<a href="{{ $sample->study_url }}" title="{{ $sample->study_url }}" target="_blank">
@@ -359,12 +369,12 @@
 													</a>
 												@else
 													<span title="{{ $sample->{$field['ir_id']} }}">
-													{{ $sample->{$field['ir_id']} }}
+														{{ $sample->{$field['ir_id']} }}
 													</span>							
 												@endisset
 											@else
 												<span title="{{ $sample->{$field['ir_id']} }}">
-												{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+													{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
 												</span>
 											@endif
 										@endif
