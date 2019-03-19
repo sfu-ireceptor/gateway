@@ -61,6 +61,9 @@ class HomeController extends Controller
             if ($sample_field['ir_id'] == 'rest_service_name') {
                 unset($sample_field_list[$i]);
             }
+            if ($sample_field['ir_id'] == 'ir_sequence_count') {
+                unset($sample_field_list[$i]);
+            }
         }
 
         $data['sample_field_list'] = $sample_field_list;
