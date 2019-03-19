@@ -267,7 +267,7 @@ class Sample
             } elseif (is_url($sample->pub_ids)) {
                 $sample->study_url = $sample->pub_ids;
             }
-        }        
+        }
 
         return $sample;
     }
