@@ -320,7 +320,7 @@
 						</tbody>
 					</table>
 
-					<!-- apps -->
+					{{-- <!-- apps -->
 					<h2>Analysis Apps</h2>
 
 					@if (isset($system) && $total_filtered_sequences <= config('ireceptor.sequences_download_limit'))
@@ -407,7 +407,7 @@
 						<p>
 							<a href="systems">Add a system</a> to be able to use analysis apps.
 						</p>
-					@endif
+					@endif --}}
 				@endif
 			<div>
 		</div>
