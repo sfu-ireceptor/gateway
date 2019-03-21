@@ -43,12 +43,35 @@ class Sequence
         return $data;
     }
 
+    public static function expectedSequencesByRestSevice($filters, $username)
+    {
+        $response_list = RestService::sequences_summary($filters, $username);
+        $expected_nb_sequences_by_rs = [];
+        foreach ($response_list as $response) {
+            $rest_service_id = $response['rs']->id;
+
+            $sample_list = $response['data']->summary;
+            $nb_sequences = 0;
+            foreach ($sample_list as $sample) {
+                $nb_sequences += $sample->ir_filtered_sequence_count;
+            }
+
+            $expected_nb_sequences_by_rs[$rest_service_id] = $nb_sequences;
+        }
+
+        return $expected_nb_sequences_by_rs;
+    }
+
     public static function sequencesTSVFolder($filters, $username, $url = '', $sample_filters = [])
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
         $filters = self::clean_filters($filters);
+
+        // do extra sequence summary request to get expected number of sequences
+        // for sanity check after download
+        $expected_nb_sequences_by_rs = self::expectedSequencesByRestSevice($filters, $username);
 
         // create receiving folder
         $storage_folder = storage_path() . '/app/public/';
@@ -62,15 +85,50 @@ class Sequence
         $filters['ir_data_format'] = 'airr';
 
         $response_list = RestService::sequences_data($filters, $folder_path, $username);
-        $file_stats = self::file_stats($response_list);
+        $file_stats = self::file_stats($response_list, $expected_nb_sequences_by_rs);
+
+        // if some files are incomplete, log it
+        foreach ($file_stats as $t) {
+            if ($t['nb_sequences'] != $t['expected_nb_sequences']) {
+                $delta = ($t['expected_nb_sequences'] - $t['nb_sequences']);
+                $str = 'expected ' . $t['expected_nb_sequences'] . ' sequences, got ' . $t['nb_sequences'] . ' sequences (difference=' . $delta . ' sequences)';
+                Log::warn($t['rest_service_name'] . ': ' . $str);
+
+                $query_log_id = $t['query_log_id'];
+                $ql = QueryLog::find($query_log_id);
+                $ql->message .= $str;
+                $ql->status = 'error';
+                $ql->save();
+            }
+        }
 
         // generate info.txt
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now);
+
+        // is download incomplete?
+        $nb_sequences_total = 0;
+        $expected_nb_sequences_total = 0;
+        foreach ($file_stats as $t) {
+            $nb_sequences_total += $t['nb_sequences'];
+            $expected_nb_sequences_total += $t['expected_nb_sequences'];
+        }
+        $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
+
+        // if download is incomplete, update gateway query status
+        if ($is_download_incomplete) {
+            $gw_query_log_id = request()->get('query_log_id');
+            if ($gw_query_log_id != null) {
+                $error_message = 'Some downloaded files appear to be incomplete';
+                QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
+            }
+        }
 
         $t = [];
         $t['folder_path'] = $folder_path;
         $t['response_list'] = $response_list;
         $t['info_file_path'] = $info_file_path;
+        $t['is_download_incomplete'] = $is_download_incomplete;
+        $t['file_stats'] = $file_stats;
 
         return $t;
     }
@@ -82,6 +140,8 @@ class Sequence
         $folder_path = $t['folder_path'];
         $response_list = $t['response_list'];
         $info_file_path = $t['info_file_path'];
+        $is_download_incomplete = $t['is_download_incomplete'];
+        $file_stats = $t['file_stats'];
 
         // zip files
         $zip_path = self::zip_files($folder_path, $response_list, $info_file_path);
@@ -95,6 +155,8 @@ class Sequence
         $t['size'] = filesize($zip_path);
         $t['system_path'] = $zip_path;
         $t['public_path'] = $zip_public_path;
+        $t['is_download_incomplete'] = $is_download_incomplete;
+        $t['file_stats'] = $file_stats;
 
         return $t;
     }
@@ -189,7 +251,7 @@ class Sequence
         $total_sequences = 0;
         $filtered_sequences = 0;
         foreach ($obj->summary as $sample) {
-            $sample = Sample::generate_study_url($sample);
+            $sample = Sample::generate_study_urls($sample);
 
             // If there are some sequences in this sample
             if (isset($sample->ir_filtered_sequence_count)) {
@@ -323,13 +385,25 @@ class Sequence
         $s .= '* Summary *' . "\n";
 
         $nb_sequences_total = 0;
+        $expected_nb_sequences_total = 0;
         foreach ($file_stats as $t) {
             $nb_sequences_total += $t['nb_sequences'];
+            $expected_nb_sequences_total += $t['expected_nb_sequences'];
         }
-        $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
+        $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
+        if ($is_download_incomplete) {
+            $s .= 'Warning: download appears to be incomplete:' . "\n";
+            $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "\n";
+        } else {
+            $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
+        }
 
         foreach ($file_stats as $t) {
-            $s .= $t['name'] . ': ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
+            if ($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
+                $s .= $t['name'] . ' (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences): ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
+            } else {
+                $s .= $t['name'] . ': ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
+            }
         }
         $s .= "\n";
 
@@ -415,22 +489,31 @@ class Sequence
 
     public static function delete_files($response_list, $info_file_path, $folder_path)
     {
-        Log::debug('Delete downloaded files...');
+        Log::debug('Deleting downloaded files...');
         foreach ($response_list as $response) {
             $file_path = $response['data']['file_path'];
-            File::delete($file_path);
+            if (File::exists($file_path)) {
+                File::delete($file_path);
+            }
         }
-        File::delete($info_file_path);
+
+        if (File::exists($info_file_path)) {
+            File::delete($info_file_path);
+        }
 
         // delete containing folder
-        rmdir($folder_path);
+        if (File::exists($folder_path)) {
+            rmdir($folder_path);
+        }
     }
 
-    public static function file_stats($response_list)
+    public static function file_stats($response_list, $expected_nb_sequences_by_rs)
     {
         Log::debug('Get TSV files stats');
         $file_stats = [];
         foreach ($response_list as $response) {
+            $rest_service_id = $response['rs']->id;
+
             if (isset($response['data']['file_path'])) {
                 $t = [];
                 $file_path = $response['data']['file_path'];
@@ -447,7 +530,12 @@ class Sequence
                     }
                 }
                 fclose($f);
-                $t['nb_sequences'] = $n - 1; // remove count of headers line
+                $t['nb_sequences'] = $n - 1; // don't count first line (columns headers)
+                $t['expected_nb_sequences'] = $expected_nb_sequences_by_rs[$rest_service_id];
+                $t['query_log_id'] = $response['query_log_id'];
+                $t['rest_service_name'] = $response['rs']->name;
+                $t['incomplete'] = ($t['nb_sequences'] != $t['expected_nb_sequences']);
+
                 $file_stats[] = $t;
             }
         }

@@ -190,71 +190,41 @@ $(document).ready(function() {
 		return false;
 	});
 
-	// column selection
-    $('.sequence_column_selector input').change(function() {
-        var columnId = $(this).val();
-        var columns = [];
+	// update table column visibility using state of corresponding column selector checkboxe
+	function update_column_visibility(column_checkbox) {
+		var columnId = column_checkbox.val();
 
-        // show or hide corresponding column
-        if($(this).is(":checked")) {
+		// show/hide corresponding column
+        if(column_checkbox.is(":checked")) {
         	$('table .' + columnId).removeClass('hidden');
         }
         else {
         	$('table .' + columnId).addClass('hidden');
         }
+	}
+
+	// change column visiblity
+    $('.column_selector input').change(function() {
+    	update_column_visibility($(this));
 
         // save ids of currently displayed columns in hidden form field
-        $('.sequence_column_selector input:checked').each(function() {
-        	var columnId = $(this).val().replace(/^seq_col_/, '');
+        var columns = [];
+        $('.column_selector input:checked').each(function() {
+        	var columnId = $(this).val().replace(/^col_/, '');
         	columns.push(columnId);
         });
-        $('input[name=cols]').val(columns.join('_'));
+        $('input[name=cols]').val(columns.join(','));
     });
 
-    function updateFiltersOrderField() {
-    	var filtersList = [];
-    	$('div.filter_list > .col-md-2').each(function() {
-    		var fieldName = $('input', $(this)).attr('name');
-    		var fieldId = $('input[type=checkbox].' + fieldName).data('id');
-	    	filtersList.push(fieldId);
-	    	$('input[name=filters_order]').val(filtersList.join('_'));
-    	});
-    }
+	// update all table columns visiblity using column selector checkboxes
+	function show_hide_columns() {
+		$('.column_selector input[type=checkbox]').each(function() {
+			update_column_visibility($(this));
+		});
+	}
 
-    $('button.add_field').click(function() {
-    	var select = $('select.add_field');
-    	var fieldName = select.val();
-    	var fieldTitle = $("select.add_field option:selected").text();
-
-    	// init field template with current select option
-    	$('#field_template label').attr('for', fieldName);
-		$('#field_template label').text(fieldTitle);
-    	$('#field_template input').attr('id', fieldName);
-   		$('#field_template input').attr('name', fieldName);
-
-		$('#field_template > div').clone(true).appendTo($('div.filter_list')); 
-		$('select.add_field option:selected').remove();
-
-		updateFiltersOrderField();
-    });
-
-    $('button.remove_field').click(function() {
-    	var div = $(this).parents('.form-group');
-    	var fieldName = $('input', div).attr('name');
-    	var fieldTitle = $('label', div).text();
-    	var select = $('select.add_field');
-
-    	// remove filter
-    	div.remove();
-
-    	// update "add new filter" select
-    	select.append('<option value="' + fieldName + '">' + fieldTitle + '</option>');
-    	updateFiltersOrderField();
-    });
-
-    // tooltips
-    $('[data-toggle="tooltip"]').tooltip();
-
+	// on page load, update table columns visibity 
+	show_hide_columns();
 
     // reloading message
     function show_reloading_message() {
@@ -314,11 +284,27 @@ $(document).ready(function() {
 		var url = $(this).attr('href');
 		console.log('url=' + url);
 
-		$.get(url, function(file_url) {
+		$.get(url, function(data) {
+			var file_path = data.file_path;
+			var incomplete = data.incomplete;
+			var file_stats = data.file_stats;
+			var message = 'Your file is ready. If the download didn\'t start automatically, <a href="' + file_path + '">click here</a>.';
+			var status = 'alert-success';
+
+			if(incomplete) {
+				message += '<br><br>' + 'Warning: some sequences seem to be missing:' + '<ul>';
+				file_stats.forEach(function(t) {
+					if(t.incomplete) {
+						message += '<li>' + t.rest_service_name + ' (' + t.name + '): expected ' + t.expected_nb_sequences + ' sequences, received ' + t.nb_sequences + '</li>';						
+					}
+				});
+				message += '</ul>';
+				status = 'alert-warning';
+			}
+
 			$('.download_message').hide();
-			var message = 'Your file is ready. If the download didn\'t start automatically, <a href="' + file_url + '">click here</a>.';
-			$('.download_status').addClass('alert-success').show().html(message);
-			window.location.href = file_url;
+			$('.download_status').addClass(status).show().html(message);
+			window.location.href = file_path;
 		})
 		.fail(function(jqXHR, status, message) {
 			console.log(status + ': ' + message);

@@ -23,7 +23,10 @@
 			To ask questions or get involved, email:<br>
 			<a href="mailto:support@ireceptor.org">support@ireceptor.org</a>
 		</p>
-
+		<h3 class="help">Help</h3>
+		<p>
+			For more information about using the iReceptor Gateway, have a look at the <a href="http://ireceptor.org/platform/doc" class="external" target="_blank">iReceptor documentation</a>
+		</p>
 	</div>
 	</div>
 </div>

@@ -15,8 +15,8 @@
 							<th>ir_v2</th>
 							<th>ir_short</th>
 							<th>ir_full</th>
-							<th>ir_v1</th>
-							<th>ir_v1_sql</th>
+							<th>ir_class</th>
+							<th>ir_subclass</th>
 							<th>airr</th>
 							<th>airr_full</th>
 							<th>airr_description</th>
@@ -30,8 +30,8 @@
 							<td class="text-nowrap">{{ $s['ir_v2'] }}</td>
 							<td class="text-nowrap">{{ $s['ir_short'] }}</td>
 							<td class="text-nowrap">{{ $s['ir_full'] }}</td>
-							<td class="text-nowrap">{{ $s['ir_v1'] }}</td>
-							<td class="text-nowrap">{{ $s['ir_v1_sql'] }}</td>
+							<td class="text-nowrap">{{ $s['ir_class'] }}</td>
+							<td class="text-nowrap">{{ $s['ir_subclass'] }}</td>
 							<td class="text-nowrap">{{ $s['airr'] }}</td>
 							<td class="text-nowrap">{{ $s['airr_full'] }}</td>
 							<td class="text-nowrap">{{ $s['airr_description'] }}</td>

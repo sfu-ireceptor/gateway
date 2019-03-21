@@ -199,7 +199,7 @@ class Agave
         return $this->doGETRequest($url, $token, true);
     }
 
-    public function getExcutionSystemConfig($name, $host, $username, $privateKey, $publicKey)
+    public function getExcutionSystemConfig($name, $host, $port, $username, $privateKey, $publicKey)
     {
         $t = [
             'id' => $name,
@@ -217,7 +217,7 @@ class Agave
             'login' => [
                     'protocol' => 'SSH',
                     'host' => $host,
-                    'port' => 22,
+                    'port' => $port,
                     'auth' => [
                             'type' => 'SSHKEYS',
                             'username' => $username,
@@ -228,7 +228,7 @@ class Agave
             'storage' => [
                     'protocol' => 'SFTP',
                     'host' => $host,
-                    'port' => 22,
+                    'port' => $port,
                     'auth' => [
                             'type' => 'SSHKEYS',
                             'username' => $username,
@@ -242,7 +242,7 @@ class Agave
         return $t;
     }
 
-    public function getStorageSystemConfig($name, $host, $auth, $rootDir)
+    public function getStorageSystemConfig($name, $host, $port, $auth, $rootDir)
     {
         $t = [
             'id' => $name,
@@ -251,7 +251,7 @@ class Agave
             'storage' => [
                     'protocol' => 'SFTP',
                     'host' => $host,
-                    'port' => 22,
+                    'port' => $port,
                     'auth' => $auth,
                     'rootDir' => $rootDir,
                 ],

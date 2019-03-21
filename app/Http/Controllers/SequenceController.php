@@ -7,9 +7,10 @@ use App\System;
 use App\Bookmark;
 use App\QueryLog;
 use App\Sequence;
+use App\FieldName;
 use Facades\App\Query;
-use App\SequenceColumnName;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
 class SequenceController extends Controller
@@ -76,6 +77,7 @@ class SequenceController extends Controller
         $annotation_tool_list[''] = 'Any';
         $annotation_tool_list['MiXCR'] = 'MiXCR';
         $annotation_tool_list['V-Quest'] = 'V-Quest';
+        $annotation_tool_list['IgBLAST'] = 'IgBLAST';
 
         // view data
         $data = [];
@@ -114,6 +116,7 @@ class SequenceController extends Controller
             }
             // remove gateway-specific params
             unset($sample_filter_fields['open_filter_panel_list']);
+            unset($sample_filter_fields['cols']);
         }
         $data['sample_filter_fields'] = $sample_filter_fields;
 
@@ -157,32 +160,30 @@ class SequenceController extends Controller
         $data['url'] = $current_url;
         $data['bookmark_id'] = Bookmark::getIdFromURl($current_url, auth()->user()->id);
 
-        // columns to display
-        $defaultSequenceColumns = [1, 2, 3, 4, 5];
+        // get sequence fields
+        $field_list = FieldName::getSequenceFields();
+        $data['field_list'] = $field_list;
+
+        // get sequence fields grouped
+        $field_list_grouped = FieldName::getSequenceFieldsGrouped();
+        $data['field_list_grouped'] = $field_list_grouped;
+
+        // table columns to display
         if (isset($filters['cols'])) {
-            $currentSequenceColumns = explode('_', $filters['cols']);
+            $current_columns = explode(',', $filters['cols']);
         } else {
-            $currentSequenceColumns = $defaultSequenceColumns;
+            $current_columns = [];
+            foreach ($field_list as $field) {
+                if ($field['default_visible']) {
+                    $current_columns[] = $field['ir_id'];
+                }
+            }
         }
-        $data['current_sequence_columns'] = $currentSequenceColumns;
-        $data['sequence_column_name_list'] = SequenceColumnName::findEnabled();
-        // foreach ($data['sequence_column_name_list'] as $o) {
-        //     echo $o->id . '-' . $o->title . '<br />';
-        // }
-        // die();
-        $currentSequenceColumnsStr = implode('_', $currentSequenceColumns);
+        $data['current_columns'] = $current_columns;
 
-        // filters
-        $defaultFiltersListIds = [1, 2, 3, 4, 5];
-        $filtersListIds = [];
-        if (isset($filters['filters_order'])) {
-            $filtersListIds = explode('_', $filters['filters_order']);
-        } else {
-            $filtersListIds = $defaultFiltersListIds;
-        }
-
-        $filtersListDisplayed = [];
-        $filtersListSelect = [];
+        // string value for hidden field
+        $current_columns_str = implode(',', $current_columns);
+        $data['current_columns_str'] = $current_columns_str;
 
         // keep filters panels open
         $open_filter_panel_list = [];
@@ -190,30 +191,6 @@ class SequenceController extends Controller
             $open_filter_panel_list = $filters['open_filter_panel_list'];
         }
         $data['open_filter_panel_list'] = $open_filter_panel_list;
-
-        $sequenceColumnNameList = SequenceColumnName::findEnabled();
-
-        // create array for select field
-        foreach ($sequenceColumnNameList as $s) {
-            $name = $s['name'];
-            $title = $s['title'];
-            if (! in_array($s['id'], $filtersListIds)) {
-                $filtersListSelect[$name] = $title;
-            }
-        }
-
-        // create array to display fields in the right order
-        foreach ($filtersListIds as $filterId) {
-            $field = SequenceColumnName::find($filterId);
-            $name = $field['name'];
-            $title = $field['title'];
-            $filtersListDisplayed[$name] = $title;
-        }
-
-        $data['filters_list'] = $filtersListDisplayed;
-        $data['filters_list_select'] = $filtersListSelect;
-        $data['filters_list_all'] = array_merge($filtersListDisplayed, $filtersListSelect);
-        $currentFiltersListIdsStr = implode('_', $filtersListIds);
 
         // hidden form fields
         $hidden_fields = [];
@@ -225,19 +202,9 @@ class SequenceController extends Controller
                 }
             }
         }
-        $hidden_fields[] = ['name' => 'cols', 'value' => $currentSequenceColumnsStr];
-        $hidden_fields[] = ['name' => 'filters_order', 'value' => $currentFiltersListIdsStr];
+        $hidden_fields[] = ['name' => 'cols', 'value' => $current_columns_str];
         $data['hidden_fields'] = $hidden_fields;
         $data['filters_json'] = json_encode($filters);
-
-        // build URL without sequence filters but keeping samples selection
-        $sequence_filters = [];
-        $sequence_column_name_list = SequenceColumnName::findEnabled();
-        foreach ($sequence_column_name_list as $scn) {
-            $sequence_filters[] = $scn['name'];
-        }
-        $filters_without_sequence_filters = array_except($filters, $sequence_filters);
-        $data['no_filters_url'] = '/sequences?' . http_build_query($filters_without_sequence_filters);
 
         // create copy of filters for display
         $filter_fields = [];
@@ -277,16 +244,6 @@ class SequenceController extends Controller
 
         // display view
         return view('sequence', $data);
-
-        // for later: display current project/sample names
-    // <p>
-    //     @foreach ($sample_list as $sample)
-    //         <strong>{{ $sample->project_name }}</strong>
-    //         -
-    //         <strong>{{ $sample->sample_name }}</strong>
-    //         <br />
-    //     @endforeach
-    // </p>
     }
 
     public function postQuickSearch(Request $request)
@@ -418,61 +375,35 @@ class SequenceController extends Controller
         $data['url'] = $current_url;
         $data['bookmark_id'] = Bookmark::getIdFromURl($current_url, auth()->user()->id);
 
-        // columns to display
-        $defaultSequenceColumns = [1, 2, 3, 4, 5];
+        // get sequence fields
+        $field_list = FieldName::getSequenceFields();
+        $data['field_list'] = $field_list;
+
+        // get sequence fields grouped
+        $field_list_grouped = FieldName::getSequenceFieldsGrouped();
+        $data['field_list_grouped'] = $field_list_grouped;
+
+        // table columns to display
         if (isset($filters['cols'])) {
-            $currentSequenceColumns = explode('_', $filters['cols']);
+            $current_columns = explode(',', $filters['cols']);
         } else {
-            $currentSequenceColumns = $defaultSequenceColumns;
-        }
-        $data['current_sequence_columns'] = $currentSequenceColumns;
-        $data['sequence_column_name_list'] = SequenceColumnName::findEnabled();
-        // foreach ($data['sequence_column_name_list'] as $o) {
-        //     echo $o->id . '-' . $o->title . '<br />';
-        // }
-        // die();
-        $currentSequenceColumnsStr = implode('_', $currentSequenceColumns);
-
-        // filters
-        $defaultFiltersListIds = [1, 2, 3, 4, 5];
-        $filtersListIds = [];
-        if (isset($filters['filters_order'])) {
-            $filtersListIds = explode('_', $filters['filters_order']);
-        } else {
-            $filtersListIds = $defaultFiltersListIds;
-        }
-
-        $filtersListDisplayed = [];
-        $filtersListSelect = [];
-
-        $sequenceColumnNameList = SequenceColumnName::findEnabled();
-
-        // create array for select field
-        foreach ($sequenceColumnNameList as $s) {
-            $name = $s['name'];
-            $title = $s['title'];
-            if (! in_array($s['id'], $filtersListIds)) {
-                $filtersListSelect[$name] = $title;
+            $current_columns = [];
+            foreach ($field_list as $field) {
+                if ($field['default_visible']) {
+                    $current_columns[] = $field['ir_id'];
+                }
             }
         }
+        $data['current_columns'] = $current_columns;
 
-        // create array to display fields in the right order
-        foreach ($filtersListIds as $filterId) {
-            $field = SequenceColumnName::find($filterId);
-            $name = $field['name'];
-            $title = $field['title'];
-            $filtersListDisplayed[$name] = $title;
-        }
-
-        $data['filters_list'] = $filtersListDisplayed;
-        $data['filters_list_select'] = $filtersListSelect;
-        $data['filters_list_all'] = array_merge($filtersListDisplayed, $filtersListSelect);
-        $currentFiltersListIdsStr = implode('_', $filtersListIds);
+        // string value for hidden field
+        $current_columns_str = implode(',', $current_columns);
+        $data['current_columns_str'] = $current_columns_str;
 
         // hidden form fields
         $hidden_fields = [];
 
-        $hidden_fields[] = ['name' => 'cols', 'value' => $currentSequenceColumnsStr];
+        $hidden_fields[] = ['name' => 'cols', 'value' => $current_columns_str];
         $data['hidden_fields'] = $hidden_fields;
         $data['filters_json'] = json_encode($filters);
 
@@ -523,7 +454,7 @@ class SequenceController extends Controller
         return view('sequenceDownload', $data);
     }
 
-    public function downloadDirect(Request $request)
+    public function downloadDirect(Request $request, Response $response)
     {
         $username = auth()->user()->username;
 
@@ -566,7 +497,16 @@ class SequenceController extends Controller
         }
 
         if ($request->ajax()) {
-            return url($tsvFilePath);
+            $data = [];
+
+            $data['file_path'] = $tsvFilePath;
+
+            if ($t['is_download_incomplete']) {
+                $data['incomplete'] = $t['is_download_incomplete'];
+                $data['file_stats'] = $t['file_stats'];
+            }
+
+            return response()->json($data);
         } else {
             return redirect($tsvFilePath);
         }

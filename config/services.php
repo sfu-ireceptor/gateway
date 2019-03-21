@@ -54,6 +54,7 @@ return [
         'system_staging' => [
             'name_prefix'  => env('AGAVE_SYSTEM_STAGING_NAME_PREFIX', 'staging-'),
             'host'  => env('AGAVE_SYSTEM_STAGING_HOST', 'ireceptorgw.irmacs.sfu.ca'),
+            'port'  => env('AGAVE_SYSTEM_STAGING_PORT', 22),
             'auth' => env('AGAVE_SYSTEM_STAGING_AUTH'),
             'rootdir'  => env('AGAVE_SYSTEM_STAGING_ROOTDIR'),
         ],
@@ -61,6 +62,7 @@ return [
         'system_deploy' => [
             'name_prefix'  => env('AGAVE_SYSTEM_DEPLOY_NAME_PREFIX', 'deploy-'),
             'host'  => env('AGAVE_SYSTEM_DEPLOY_HOST', 'ireceptorgw.irmacs.sfu.ca'),
+            'port'  => env('AGAVE_SYSTEM_DEPLOY_PORT', 22),
             'auth' => env('AGAVE_SYSTEM_DEPLOY_AUTH'),
             'rootdir'  => env('AGAVE_SYSTEM_DEPLOY_ROOTDIR'),
         ],

@@ -13,7 +13,7 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 		<link href="/css/bootstrap-multiselect.css" rel="stylesheet" />
 		<link href="/css/jstree/default/style.min.css" rel="stylesheet" />
-		<link href="/css/main.css?v=20" rel="stylesheet">
+		<link href="/css/main.css?v=26" rel="stylesheet">
 
 		<!-- IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -97,6 +97,15 @@
 			      </ul>
 
 			      <ul class="nav navbar-nav navbar-right">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Help<span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+						  <li><a href="http://ireceptor.org/platform/doc/faq" class="external" target="_blank"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Frequently Asked Questions</a></li>  						  
+						  <li><a href="/fields-definitions"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Data elements definitions</a></li>
+						  <li><a href="http://ireceptor.org/platform/doc" class="external" target="_blank"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Documentation</a></li>
+						  <li><a href="/about"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> About iReceptor</a></li>
+						</ul>
+					</li>
 			    	@if(Auth::check())
 				    	@if(Auth::user()->isAdmin())		    	
 							<li class="dropdown">
@@ -123,8 +132,8 @@
 								  <li role="separator" class="divider"></li>
 								<li><a href="/bookmarks"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Bookmarks</a></li>
 {{-- 								<li><a href="/jobs"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Jobs</a></li>
-								<li><a href="/systems"><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> Systems</a></li> --}}
-								  <li role="separator" class="divider"></li>
+								<li><a href="/systems"><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> Systems</a></li>
+ --}}								  <li role="separator" class="divider"></li>
 								<li><a href="/logout"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Log Out</a></li>
 							</ul>
 						</li>
@@ -144,9 +153,13 @@
 				<div class="row">
 					<div class="col-md-12">
 						@section('footer')
-							<p class="text-right mini_footer">
-								<a href="/about">About iReceptor</a>
-							</p>
+							<div class="mini_footer">
+								<p class="text-right">
+									<a href="/about">About iReceptor</a> |
+									<a href="/fields-definitions">Data elements definitions</a> |								
+									<a href="http://ireceptor.org/platform/doc" class="external" target="_blank">Documentation</a>								
+								</p>
+							</div>
 				        @show
 					</div>
 				</div>
@@ -167,7 +180,7 @@
 		<script src="/js/bootstrap-multiselect.js"></script>
 		<script src="/js/pluralize.js"></script>
 
-		<script src="/js/main.js?v=22"></script>
+		<script src="/js/main.js?v=24"></script>
 		<script src="/js/visualization.js?v=13"></script>
 	</body>
 

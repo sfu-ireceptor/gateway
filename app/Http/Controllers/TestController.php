@@ -9,7 +9,6 @@ use App\FieldName;
 use Carbon\Carbon;
 use App\RestService;
 use App\RestServiceGroup;
-use App\SequenceColumnName;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,8 +30,42 @@ class TestController extends Controller
         echo 'done';
     }
 
+    public function printBody()
+    {
+        echo 'hi there 3';
+        // trigger_error('var must be numeric');
+
+        flush();
+        ob_flush();
+        sleep(10);
+        exit(1);
+        // header('HTTP/1.1 500 Internal Server Error');
+        // die();
+        // abort(500, 'yoooooo');
+        // header('X-Error-Message: Incorrect username', true, 500);
+        // die('Incorrect username');
+
+        echo 'hi there 40';
+    }
+
     public function getIndex()
     {
+        if (File::exists('/vagrant/ireceptor_gateway/app')) {
+            echo 'exists';
+        } else {
+            echo 'doest not exist';
+        }
+
+        die();
+
+        // return response($this->printBody())
+        //     ->header('Content-Type', 'text/tsv')
+        //     ->header('Content-Disposition', 'attachment;filename="data.tsv"');
+
+        // return response(Sequence::airr_data($params))->header('Content-Type', 'text/tsv')->header('Content-Disposition', 'attachment;filename="data.tsv"');
+
+        die();
+
         // echo "fdsafads";
 
         // die();
@@ -325,13 +358,6 @@ class TestController extends Controller
 
 //         // echo http_build_query($data, '', '&');
 //         // die();
-
-//         // $l = SequenceColumnName::all();
-//         // foreach ($l as $s) {
-//         //     $name = $s['name'];
-//         //     $title = $s['title'];
-//         //     echo $name . "\t" . $title . "\n";
-//         // }
 
 //         // // echo __('sp.sex');
 

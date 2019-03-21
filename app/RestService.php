@@ -54,6 +54,9 @@ class RestService extends Model
         // time out
         $filters['timeout'] = config('ireceptor.service_request_timeout_samples');
 
+        // override field names from gateway (ir_id) to AIRR (ir_v2)
+        $filters = FieldName::convert($filters, 'ir_id', 'ir_v2');
+
         // prepare parameters for each service
         $request_params = [];
         foreach (self::findEnabled() as $rs) {
@@ -86,6 +89,10 @@ class RestService extends Model
         $response_list_grouped = [];
         foreach ($response_list as $response) {
             $group = $response['rs']->rest_service_group_code;
+
+            // override field names from AIRR (ir_v2) to gateway (ir_id)
+            $response['data'] = FieldName::convertObjectList($response['data'], 'ir_v2', 'ir_id');
+
             // service doesn't belong to a group -> just add the response
             if ($group == '') {
                 $response_list_grouped[] = $response;
@@ -143,6 +150,9 @@ class RestService extends Model
                 continue;
             }
 
+            // override field names from gateway (ir_id) to AIRR (ir_v2)
+            $filters = FieldName::convert($filters, 'ir_id', 'ir_v2');
+
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;
             $t['params'] = $filters;
@@ -157,6 +167,11 @@ class RestService extends Model
         $response_list_grouped = [];
         foreach ($response_list as $response) {
             $group = $response['rs']->rest_service_group_code;
+
+            // override field names from AIRR (ir_v2) to gateway (ir_id)
+            $response['data']->summary = FieldName::convertObjectList($response['data']->summary, 'ir_v2', 'ir_id');
+            $response['data']->items = FieldName::convertObjectList($response['data']->items, 'ir_v2', 'ir_id');
+
             // service doesn't belong to a group -> just add the response
             if ($group == '') {
                 $response_list_grouped[] = $response;
@@ -238,6 +253,9 @@ class RestService extends Model
             // ir_project_sample_id_list_2 -> ir_project_sample_id_list
             $filters['ir_project_sample_id_list'] = $filters[$sample_id_list_key];
             unset($filters[$sample_id_list_key]);
+
+            // override field names from gateway (ir_id) to AIRR (ir_v2)
+            $filters = FieldName::convert($filters, 'ir_id', 'ir_v2');
 
             $t = [];
             $t['rs'] = $rs;
@@ -340,12 +358,14 @@ class RestService extends Model
                                 $json = $response->getBody();
                                 $obj = json_decode($json, $returnArray);
                                 $t['data'] = $obj;
+                                $t['query_log_id'] = $query_log_id;
 
                                 return $t;
                             } else {
                                 QueryLog::end_rest_service_query($query_log_id, filesize($file_path));
 
                                 $t['data']['file_path'] = $file_path;
+                                $t['query_log_id'] = $query_log_id;
 
                                 return $t;
                             }
@@ -357,6 +377,7 @@ class RestService extends Model
 
                             $t['status'] = 'error';
                             $t['error_message'] = $response;
+                            $t['query_log_id'] = $query_log_id;
 
                             return $t;
                         }

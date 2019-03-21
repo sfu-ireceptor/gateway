@@ -106,7 +106,7 @@ class SequenceTest extends TestCase
     ];
 
     private $sequence_item = [
-        'junction_aa_length' => 16,
+        'ir_junction_aa_length' => 16,
         'vjregion_sequence_aa' => '',
         'v_call' => 'IGHV3-48*03, or IGHV3-7*02, or IGHV3-11*06, or IGHV3-7*01, or IGHV3-48*04, or IGHV3-69-1*01, or IGHV3-69-1*02, or IGHV3-21*01, or IGHV3-21*02',
         'fr2region_mutation_string' => '',

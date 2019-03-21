@@ -70,6 +70,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/sequences-download', 'SequenceController@download')->name('sequences-download');
     Route::get('/sequences-download-direct', 'SequenceController@downloadDirect')->name('sequences-download')->middleware('log_query');
 
+    Route::get('/fields-definitions', 'HomeController@fieldsDefinitions')->name('fields-definitions');
+
     Route::prefix('user')->group(function () {
         Route::get('account', 'UserController@getAccount');
 
