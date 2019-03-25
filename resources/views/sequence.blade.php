@@ -103,8 +103,8 @@
 									{{ Form::select('ir_annotation_tool', $ir_annotation_tool_list, '', array('class' => 'form-control')) }}
 								</div>
 								<div class="form-group">
-									{{ Form::label('functional', __('short.productive')) }}
-									{{ Form::select('functional', $functional_list, '', array('class' => 'form-control')) }}
+									{{ Form::label('productive', __('short.productive')) }}
+									{{ Form::select('productive', $functional_list, '', array('class' => 'form-control')) }}
 								</div>
 								<p class="button_container">
 									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
