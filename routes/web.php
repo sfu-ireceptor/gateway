@@ -27,6 +27,9 @@ Route::get('user/reset-password-confirmation', 'UserController@getResetPasswordC
 // about
 Route::get('about', 'HomeController@about')->name('about');
 
+// fields definitions
+Route::get('/fields-definitions', 'HomeController@fieldsDefinitions')->name('fields-definitions');
+
 // public stats
 Route::get('/samples/stats', 'SampleController@stats')->name('samples-stats');
 
@@ -69,8 +72,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/sequences-quick-search', 'SequenceController@postQuickSearch')->name('sequences-quick-search-post');
     Route::get('/sequences-download', 'SequenceController@download')->name('sequences-download');
     Route::get('/sequences-download-direct', 'SequenceController@downloadDirect')->name('sequences-download')->middleware('log_query');
-
-    Route::get('/fields-definitions', 'HomeController@fieldsDefinitions')->name('fields-definitions');
 
     Route::prefix('user')->group(function () {
         Route::get('account', 'UserController@getAccount');
