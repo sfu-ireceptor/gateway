@@ -71,8 +71,8 @@ class FieldName extends Model
     {
         $l = [];
 
-        $l['subject'] = 'Subject';
         $l['study'] = 'Study';
+        $l['subject'] = 'Subject';
         $l['sample'] = 'Sample';
 
         $l['diagnosis'] = 'Diagnosis';
