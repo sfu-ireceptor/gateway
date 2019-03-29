@@ -13,22 +13,23 @@
 	</ul>
 
 	<!-- tab panes -->
-	<div class="tab-content">
+	<div class="tab-content fields_definitions">
 
 		<div role="tabpanel" class="tab-pane active" id="metadata">
 			<div class="row">
 				<div class="col-md-12">
-					@if (count($sample_field_list) > 0)
-						<table class="table table-striped system_list">
+					@foreach ($sample_field_list_grouped as $field_group)
+						<h2>{{ $field_group['name'] }}</h2>
+						<table class="table table-striped">
 							<thead>
 								<tr>
-									<th>Name</th>
-									<th>Description</th>
+									<th></th>
+									<th></th>
 									<th>Example</th>
 								</tr>
 							</thead>
 							<tbody>
-								@foreach ($sample_field_list as $s)
+								@foreach ($field_group['fields'] as $s)
 								<tr>
 									<td class="text-nowrap"><strong>{{ $s['ir_short'] }}</strong></td>
 									<td class="">{{ $s['airr_description'] }}</td>
@@ -36,7 +37,7 @@
 								@endforeach
 							</tbody>
 						</table>
-					@endif
+					@endforeach
 				</div>
 			</div>
 		</div>
@@ -44,17 +45,18 @@
 		<div role="tabpanel" class="tab-pane" id="sequences">
 			<div class="row">
 				<div class="col-md-12">
-					@if (count($sequence_field_list) > 0)
-						<table class="table table-striped system_list">
+					@foreach ($sequence_field_list_grouped as $field_group)
+						<h2>{{ $field_group['name'] }}</h2>
+						<table class="table table-striped">
 							<thead>
 								<tr>
-									<th>Name</th>
-									<th>Description</th>
+									<th></th>
+									<th></th>
 									<th>Example</th>
 								</tr>
 							</thead>
 							<tbody>
-								@foreach ($sequence_field_list as $s)
+								@foreach ($field_group['fields'] as $s)
 								<tr>
 									<td class="text-nowrap"><strong>{{ $s['ir_short'] }}</strong></td>
 									<td class="">{{ $s['airr_description'] }}</td>
@@ -62,7 +64,7 @@
 								@endforeach
 							</tbody>
 						</table>
-					@endif
+					@endforeach
 				</div>
 			</div>
 		</div>

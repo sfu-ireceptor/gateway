@@ -1187,3 +1187,17 @@ form.column_selector {
 
 
 /* @end */
+
+/* @group field definitions page */
+
+.fields_definitions h2 {
+	margin-bottom: -24px;
+	margin-top: 36px;
+}
+
+.fields_definitions h2:first-of-type {
+	margin-top: 20px;
+}
+
+
+/* @end */
