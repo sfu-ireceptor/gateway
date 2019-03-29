@@ -57,7 +57,7 @@ class HomeController extends Controller
         $sample_field_list_grouped = FieldName::getSampleFieldsGrouped();
         $data['sample_field_list_grouped'] = $sample_field_list_grouped;
 
-                // get sequence fields grouped
+        // get sequence fields grouped
         $sequence_field_list_grouped = FieldName::getSequenceFieldsGrouped();
         $data['sequence_field_list_grouped'] = $sequence_field_list_grouped;
 
