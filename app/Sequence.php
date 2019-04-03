@@ -117,10 +117,8 @@ class Sequence
         // if download is incomplete, update gateway query status
         if ($is_download_incomplete) {
             $gw_query_log_id = request()->get('query_log_id');
-            if ($gw_query_log_id != null) {
-                $error_message = 'Some downloaded files appear to be incomplete';
-                QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
-            }
+            $error_message = 'Some downloaded files appear to be incomplete';
+            QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
         }
 
         $t = [];

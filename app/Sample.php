@@ -41,11 +41,9 @@ class Sample
 
         // if error, update gateway query status
         $gw_query_log_id = request()->get('query_log_id');
-        if ($gw_query_log_id != null) {
-            foreach ($response_list as $response) {
-                if ($response['status'] == 'error') {
-                    QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
-                }
+        foreach ($response_list as $response) {
+            if ($response['status'] == 'error') {
+                QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
             }
         }
 
