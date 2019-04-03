@@ -420,20 +420,20 @@
 
 <script>
 	var graphFields = [
-	        "@lang('v2.sample_id')", 
-	        "@lang('v2.organism')",
+	        "@lang('v2.subject_id')",
+	        "@lang('v2.sample_id')",
 	        "@lang('v2.disease_state_sample')", 
 	        "@lang('v2.tissue')",
-	        "@lang('v2.cell_subset')", 
-	        "@lang('v2.template_class')"
+	        "@lang('v2.cell_subset')",
+	        "@lang('v2.sequencing_platform')"
 	    ];
 	var graphNames = [
+	        "@lang('short.subject_id')",
 	        "@lang('short.sample_id')",
-	        "@lang('short.organism')", 
 	        "@lang('short.disease_state_sample')",
 	        "@lang('short.tissue')", 
-	        "@lang('short.cell_subset')", 
-	        "@lang('short.template_class')"
+	        "@lang('short.cell_subset')",
+	        "@lang('short.sequencing_platform')"
 	    ];
 var graphDIV = "sequence_chart";
 var graphInternalLabels = true;
