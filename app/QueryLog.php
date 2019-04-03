@@ -89,14 +89,14 @@ class QueryLog extends Model
 
     public static function set_gateway_query_status($query_log_id, $status = 'done', $message = null)
     {
-        if($query_log_id != null) {
+        if ($query_log_id != null) {
             $ql = self::find($query_log_id);
 
             $ql->status = $status;
             $ql->message = $message;
 
             $ql->save();
-            Log::debug('set gateway query to ' . $status);            
+            Log::debug('set gateway query to ' . $status);
         }
     }
 

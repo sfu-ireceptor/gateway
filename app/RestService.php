@@ -163,14 +163,14 @@ class RestService extends Model
         // do requests
         $response_list_raw = self::doRequests($request_params);
 
-        // validate responses        
+        // validate responses
         $response_list = [];
         foreach ($response_list_raw as $response) {
-            if(isset($response['data']->summary) && is_array($response['data']->summary)) {
-                if(isset($response['data']->items) && is_array($response['data']->items)) {
+            if (isset($response['data']->summary) && is_array($response['data']->summary)) {
+                if (isset($response['data']->items) && is_array($response['data']->items)) {
                     $response_list[] = $response;
                     continue;
-                }    
+                }
             }
 
             $query_log_id = $response['query_log_id'];
