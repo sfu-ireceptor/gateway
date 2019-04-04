@@ -12,7 +12,7 @@ MYSQL_PASSWORD="$DB_PASSWORD"
 
 # create dump folder if it doesn't exist
 DUMP_FOLDER=${SCRIPT_FOLDER}'/../../storage/db_backups'
-mkdir ${DUMP_FOLDER}
+mkdir -p ${DUMP_FOLDER}
 
 TIME=`date +%Y-%m-%d_%H-%M-%S`
 
