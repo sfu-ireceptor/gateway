@@ -33,4 +33,4 @@ echo "Done"
 # delete old backups
 date
 echo "Deleting old backups in ${DUMP_FOLDER}"
-#find ${DUMP_FOLDER}  -type f  -name '[!.]*' -mtime +31 -delete
+find ${DUMP_FOLDER}  -type f  -name '[!.]*' -mtime +31 -delete
