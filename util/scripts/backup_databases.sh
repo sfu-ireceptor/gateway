@@ -1,32 +1,31 @@
 #!/bin/bash
 
 SCRIPT_FOLDER="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+TIME=`date +%Y-%m-%d_%H-%M-%S`
+echo ${TIME} "************************************"
 
 # source Laravel .env config file
 CONFIG_FILE=${SCRIPT_FOLDER}'/../../.env'
 source ${CONFIG_FILE}
 
-MYSQL_DATABASE="$DB_DATABASE"
-MYSQL_USER="$DB_USERNAME"
-MYSQL_PASSWORD="$DB_PASSWORD"
-
 # create dump folder if it doesn't exist
 DUMP_FOLDER=${SCRIPT_FOLDER}'/../../storage/db_backups'
 mkdir -p ${DUMP_FOLDER}
 
-TIME=`date +%Y-%m-%d_%H-%M-%S`
-
-# MongoDB
+# MongoDB backup
 date
 echo "Backing up MongoDB database into ${DUMP_FOLDER}"
 MONGODB_DUMP_FILE=${TIME}_mongodb.bz2
 mongodump --archive | bzip2 > ${DUMP_FOLDER}/${MONGODB_DUMP_FILE}
 echo "Done"
 
-# MySQL
+# MySQL backup
 date
 echo "Backing up MYSQL database into ${DUMP_FOLDER}"
 MYSQL_DUMP_FILE=${TIME}_mysql.bz2
+MYSQL_DATABASE="$DB_DATABASE"
+MYSQL_USER="$DB_USERNAME"
+MYSQL_PASSWORD="$DB_PASSWORD"
 sudo mysqldump -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE} > ${DUMP_FOLDER}/${MYSQL_DUMP_FILE}
 echo "Done"
 
