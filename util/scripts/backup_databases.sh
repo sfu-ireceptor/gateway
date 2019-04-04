@@ -1,12 +1,14 @@
 #!/bin/bash
 
 SCRIPT_FOLDER="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-TIME=`date +%Y-%m-%d_%H-%M-%S`
-echo ${TIME} "************************************"
+echo "****************************************************"
 
 # source Laravel .env config file
 CONFIG_FILE=${SCRIPT_FOLDER}'/../../.env'
 source ${CONFIG_FILE}
+
+# get the current time
+TIME=`date +%Y-%m-%d_%H-%M-%S`
 
 # create dump folder if it doesn't exist
 DUMP_FOLDER=${SCRIPT_FOLDER}'/../../storage/db_backups'
