@@ -54,38 +54,6 @@ class RestServiceSeeder extends Seeder
                     'password' => '',
                     'version' => 2,
                 ],
-                [
-                    'rest_service_group_code' => '',
-                    'url' => 'https://ipa1-staging.ireceptor.org/',
-                    'name' => 'Staging IPA 1',
-                    'username' => '',
-                    'password' => '',
-                    'version' => 2,
-                ],
-                [
-                    'rest_service_group_code' => '',
-                    'url' => 'https://ipa2-staging.ireceptor.org/',
-                    'name' => 'Staging IPA 2',
-                    'username' => '',
-                    'password' => '',
-                    'version' => 2,
-                ],
-                [
-                    'rest_service_group_code' => '',
-                    'url' => 'https://ipa3-staging.ireceptor.org/',
-                    'name' => 'Staging IPA 3',
-                    'username' => '',
-                    'password' => '',
-                    'version' => 2,
-                ],
-                [
-                    'rest_service_group_code' => '',
-                    'url' => 'https://ipa4-staging.ireceptor.org/',
-                    'name' => 'Staging IPA 4',
-                    'username' => '',
-                    'password' => '',
-                    'version' => 2,
-                ],
             ];
 
         foreach ($l as $t) {
