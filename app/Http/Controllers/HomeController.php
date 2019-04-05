@@ -53,24 +53,13 @@ class HomeController extends Controller
     {
         $data = [];
 
-        // get sample fields
-        $sample_field_list = FieldName::getSampleFields();
+        // get sample fields grouped
+        $sample_field_list_grouped = FieldName::getSampleFieldsGrouped();
+        $data['sample_field_list_grouped'] = $sample_field_list_grouped;
 
-        // remove gateway-specific fields
-        foreach ($sample_field_list as $i => $sample_field) {
-            if ($sample_field['ir_id'] == 'rest_service_name') {
-                unset($sample_field_list[$i]);
-            }
-            if ($sample_field['ir_id'] == 'ir_sequence_count') {
-                unset($sample_field_list[$i]);
-            }
-        }
-
-        $data['sample_field_list'] = $sample_field_list;
-
-        // get sequence fields
-        $sequence_field_list = FieldName::getSequenceFields();
-        $data['sequence_field_list'] = $sequence_field_list;
+        // get sequence fields grouped
+        $sequence_field_list_grouped = FieldName::getSequenceFieldsGrouped();
+        $data['sequence_field_list_grouped'] = $sequence_field_list_grouped;
 
         return view('fieldsDefinitions', $data);
     }

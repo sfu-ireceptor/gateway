@@ -161,7 +161,25 @@ class RestService extends Model
         }
 
         // do requests
-        $response_list = self::doRequests($request_params);
+        $response_list_raw = self::doRequests($request_params);
+
+        // validate responses
+        $response_list = [];
+        foreach ($response_list_raw as $response) {
+            if (isset($response['data']->summary) && is_array($response['data']->summary)) {
+                if (isset($response['data']->items) && is_array($response['data']->items)) {
+                    $response_list[] = $response;
+                    continue;
+                }
+            }
+
+            $query_log_id = $response['query_log_id'];
+            QueryLog::update_rest_service_query($query_log_id, '', 'error', 'Incorrect response format');
+
+            $gw_query_log_id = request()->get('query_log_id');
+            $error_message = 'Incorrect service response format';
+            QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
+        }
 
         // merge service responses belonging to the same group
         $response_list_grouped = [];

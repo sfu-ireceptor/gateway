@@ -89,13 +89,15 @@ class QueryLog extends Model
 
     public static function set_gateway_query_status($query_log_id, $status = 'done', $message = null)
     {
-        $ql = self::find($query_log_id);
+        if ($query_log_id != null) {
+            $ql = self::find($query_log_id);
 
-        $ql->status = $status;
-        $ql->message = $message;
+            $ql->status = $status;
+            $ql->message = $message;
 
-        $ql->save();
-        Log::debug('set gateway query to ' . $status);
+            $ql->save();
+            Log::debug('set gateway query to ' . $status);
+        }
     }
 
     public static function start_rest_service_query($rest_service_id, $rest_service_name, $path, $params, $filePath)
@@ -158,6 +160,18 @@ class QueryLog extends Model
         $start_time = Carbon::instance($ql->start_time);
         $duration = $start_time->diffInSeconds($now);
         $ql->duration = $duration;
+
+        $ql->status = $status;
+        $ql->message = $message;
+
+        $ql->result_size = $result_size;
+
+        $ql->save();
+    }
+
+    public static function update_rest_service_query($query_log_id, $result_size = '', $status = 'done', $message = null)
+    {
+        $ql = self::find($query_log_id);
 
         $ql->status = $status;
         $ql->message = $message;
