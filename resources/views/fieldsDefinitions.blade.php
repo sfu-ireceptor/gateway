@@ -6,6 +6,9 @@
 <div class="container">
 	<h1>Data elements definitions</h1>
 
+	<p>The terms describing the data stored in the network of AIRR-seq repositories federated by the iReceptor Gateway are driven by the recommendations of the AIRR Community: the <a href="https://www.nature.com/articles/ni.3873">AIRR Minimal Standards (MiAIRR)</a> for study metadata and the <a href="https://www.frontiersin.org/articles/10.3389/fimmu.2018.02206/full">AIRR Rearrangement schema</a> representing annotated rearrangements. For more information, visit the <a href="http://docs.airr-community.org/">AIRR Community documentation page</a>.</p>
+	<p>The definitions and relevant examples for each field are given below:</p>
+
 	<!-- tabs -->
 	<ul class="nav nav-tabs" role="tablist">
 	<li role="presentation" class="active"><a href="#metadata" role="tab" data-toggle="tab">Metadata</a></li>
