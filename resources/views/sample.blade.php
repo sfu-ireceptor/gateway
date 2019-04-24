@@ -18,6 +18,12 @@
 				<input type="hidden" name="project_id_list" />
 				<input type="hidden" name="cols" value="{{ $current_columns_str }}">
 
+			    <div class="form-group full_text_search">
+					{{ Form::label('full_text_search', __('short.full_text_search')) }}
+					@include('help', ['id' => 'full_text_search'])
+					{{ Form::text('full_text_search', '', array('class' => 'form-control')) }}
+				</div>
+
 				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 					<div class="panel panel-default">
 						<div class="panel-heading" role="tab" id="headingOne">

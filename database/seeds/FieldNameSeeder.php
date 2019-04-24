@@ -54,6 +54,15 @@ class FieldNameSeeder extends CsvSeeder
                     'ir_subclass' => 'other',
                 ];
 
+        $l[] = [
+                    'ir_id' => 'full_text_search',
+                    'ir_short' => 'Full-text search ',
+                    'ir_class' => 'repertoire',
+                    'ir_subclass' => 'other',
+                    'airr_description' => 'Search across all metadata fields (case insensitive)',
+                    'airr_example' => 'cancer tumor'
+                ];
+
         // HACK: ir_class is overridden from "ir_repertoire" to "repertoire", so its displayed by default
         $l[] = [
                     'ir_id' => 'ir_sequence_count',

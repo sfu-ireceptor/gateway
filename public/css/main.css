@@ -762,6 +762,11 @@ footer a:hover {
 	margin-top: 6px;
 }
 
+.sample_search .full_text_search {
+	margin-top: 10px;
+	margin-bottom: 12px;
+}
+
 .sample_list .label {
 	font-size: 95%;
 	font-weight: normal;
