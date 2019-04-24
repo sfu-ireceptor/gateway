@@ -60,7 +60,7 @@ class FieldNameSeeder extends CsvSeeder
                     'ir_class' => 'repertoire',
                     'ir_subclass' => 'other',
                     'airr_description' => 'Search across all metadata fields (case insensitive)',
-                    'airr_example' => 'cancer tumor'
+                    'airr_example' => 'cancer tumor',
                 ];
 
         // HACK: ir_class is overridden from "ir_repertoire" to "repertoire", so its displayed by default
