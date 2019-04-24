@@ -3,6 +3,8 @@
 namespace App;
 
 use Facades\App\RestService;
+use Illuminate\Support\Facades\Log;
+
 
 class Sample
 {
@@ -258,10 +260,9 @@ class Sample
 
         // generate study URL
         if (isset($sample->pub_ids)) {
-            if (starts_with($sample->pub_ids, 'PMC')) {
-                $sample->study_url = 'https://www.ncbi.nlm.nih.gov/pmc/articles/' . $sample->pub_ids;
-            } elseif (starts_with($sample->pub_ids, 'nature: ')) {
-                $sample->study_url = 'https://www.nature.com/' . str_replace('nature: ', '', $sample->pub_ids);
+            if ( ! (stripos($sample->pub_ids, 'PMID') === FALSE)) {
+                $pmid = preg_replace('~\D~', '', $sample->pub_ids);
+                $sample->study_url = 'https://www.ncbi.nlm.nih.gov/pubmed/' . $pmid;
             } elseif (is_url($sample->pub_ids)) {
                 $sample->study_url = $sample->pub_ids;
             }
