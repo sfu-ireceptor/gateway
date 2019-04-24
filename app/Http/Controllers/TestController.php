@@ -50,13 +50,11 @@ class TestController extends Controller
 
     public function getIndex()
     {
-
         $str = 'pmid: 25100740"';
-        if ( ! (stripos($str, 'PMID') === FALSE)) {
-            echo "found";
-        }
-        else {
-            echo "not found";
+        if (! (stripos($str, 'PMID') === false)) {
+            echo 'found';
+        } else {
+            echo 'not found';
         }
 
         // if (File::exists('/vagrant/ireceptor_gateway/app')) {
