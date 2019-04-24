@@ -3,7 +3,6 @@
 namespace App;
 
 use Facades\App\RestService;
-use Illuminate\Support\Facades\Log;
 
 class Sample
 {
@@ -54,7 +53,7 @@ class Sample
             $sample_list = $response['data'];
 
             // do full text search if required
-            if(isset($filters['full_text_search'])) {
+            if (isset($filters['full_text_search'])) {
                 $search_terms = explode(' ', $filters['full_text_search']);
 
                 $sample_list_result = [];
@@ -65,12 +64,12 @@ class Sample
                         $term = trim($term);
                         if (stripos($sample_str, $term) === false) {
                             $is_match = false;
-                        }                                        
+                        }
                     }
-                    if($is_match) {
+                    if ($is_match) {
                         $sample_list_result[] = $sample;
                     }
-                }  
+                }
                 $response_list[$i]['data'] = $sample_list_result;
             }
 
