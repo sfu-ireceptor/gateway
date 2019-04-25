@@ -111,10 +111,10 @@ class JobController extends Controller
                 $appHumanName = 'Amazing Historgram Generator';
             } elseif ($appId == 3) {
                 Log::info('3');
-                $appName = 'app-nishanth01--' . $executionSystem->name;
-                $appDeploymentPath = 'nishanth01';
+                $appName = 'app-stats--' . $executionSystem->name;
+                $appDeploymentPath = 'stats';
                 // $inputs['file1'] = 'data.tsv.zip';
-                $appHumanName = 'Nishanth App 01';
+                $appHumanName = 'Stats';
             }
 
             $agave = new Agave;
