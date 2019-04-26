@@ -184,7 +184,8 @@ class QueryLog extends Model
     public static function find_gateway_queries($all)
     {
         if ($all) {
-            $l = static::where('level', '=', 'gateway')->orderBy('start_time', 'desc')->get();
+            // $l = static::where('level', '=', 'gateway')->orderBy('start_time', 'desc')->get();
+            $l = static::where('level', '=', 'gateway')->where('start_time', '>', new \DateTime('-2 months'))->orderBy('start_time', 'desc')->get();
         } else {
             $l = static::where('level', '=', 'gateway')->where('start_time', '>', new \DateTime('-7 days'))->orderBy('start_time', 'desc')->get();
         }
