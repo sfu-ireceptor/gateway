@@ -74,7 +74,6 @@ class Sample
             }
 
             $sample_list = $response['data'];
-            // dd($sample_list);
             foreach ($sample_list as $sample) {
                 // add rest service id/name
                 $sample->rest_service_id = $rs->id;
