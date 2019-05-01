@@ -86,6 +86,8 @@ class FieldName extends Model
         $l['ir_curator'] = 'iReceptor Curator';
         $l['rearrangement'] = 'Rearrangement';
         $l['ir_rearrangement'] = 'iReceptor Rearrangement';
+        $l['ir_rearrangement_db'] = 'iReceptor Rearrangement (database)';
+        $l['ir_rearrangement_pair'] = 'iReceptor Rearrangement (pair)';
         $l['other'] = 'Other';
 
         return $l;
