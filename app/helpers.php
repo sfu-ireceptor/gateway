@@ -272,3 +272,13 @@ if (! function_exists('remove_url_prefix')) {
         return $str;
     }
 }
+
+// get class name without namespace
+if (! function_exists('get_class_name')) {
+    function get_class_name($obj)
+    {
+        $classname = get_class($obj);
+        if ($pos = strrpos($classname, '\\')) return substr($classname, $pos + 1);
+        return $pos;
+    }
+}

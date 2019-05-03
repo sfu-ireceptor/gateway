@@ -161,34 +161,42 @@ class RestService extends Model
         }
 
         // do requests
-        $response_list_raw = self::doRequests($request_params);
-
-        // validate responses
-        $response_list = [];
-        foreach ($response_list_raw as $response) {
-            if (isset($response['data']->summary) && is_array($response['data']->summary)) {
-                if (isset($response['data']->items) && is_array($response['data']->items)) {
-                    $response_list[] = $response;
-                    continue;
-                }
-            }
-
-            $query_log_id = $response['query_log_id'];
-            QueryLog::update_rest_service_query($query_log_id, '', 'error', 'Incorrect response format');
-
-            $gw_query_log_id = request()->get('query_log_id');
-            $error_message = 'Incorrect service response format';
-            QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
-        }
+        $response_list = self::doRequests($request_params);
 
         // merge service responses belonging to the same group
         $response_list_grouped = [];
         foreach ($response_list as $response) {
+            
+            // validate response format
+            $valid = false;
+            if($response['status'] != 'error') {   
+                if (isset($response['data']->summary) && is_array($response['data']->summary)) {
+                    if (isset($response['data']->items) && is_array($response['data']->items)) {
+                        $response_list[] = $response;
+                        $valid = true;
+                    }
+                }
+
+                if( ! $valid) {
+                    $response['status'] = 'error';
+                    $response['error_message'] = 'Incorrect response format';
+
+                    $query_log_id = $response['query_log_id'];
+                    QueryLog::update_rest_service_query($query_log_id, '', 'error', 'Incorrect response format');
+
+                    $gw_query_log_id = request()->get('query_log_id');
+                    $error_message = 'Incorrect service response format';
+                    QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);                
+                }
+            }
+
             $group = $response['rs']->rest_service_group_code;
 
-            // override field names from AIRR (ir_v2) to gateway (ir_id)
-            $response['data']->summary = FieldName::convertObjectList($response['data']->summary, 'ir_v2', 'ir_id');
-            $response['data']->items = FieldName::convertObjectList($response['data']->items, 'ir_v2', 'ir_id');
+            if($response['status'] != 'error') {
+                // override field names from AIRR (ir_v2) to gateway (ir_id)
+                $response['data']->summary = FieldName::convertObjectList($response['data']->summary, 'ir_v2', 'ir_id');
+                $response['data']->items = FieldName::convertObjectList($response['data']->items, 'ir_v2', 'ir_id');                
+            }
 
             // service doesn't belong to a group -> just add the response
             if ($group == '') {
@@ -389,6 +397,7 @@ class RestService extends Model
                             }
                         },
                         function ($exception) use ($query_log_id, $t) {
+                            // log error
                             $response = $exception->getMessage();
                             Log::error($response);
                             QueryLog::end_rest_service_query($query_log_id, '', 'error', $response);
@@ -396,6 +405,11 @@ class RestService extends Model
                             $t['status'] = 'error';
                             $t['error_message'] = $response;
                             $t['query_log_id'] = $query_log_id;
+                            $t['error_type'] = 'error';
+                            $error_class = get_class_name($exception);
+                            if($error_class == 'ConnectException') {
+                                $t['error_type'] = 'timeout';
+                            }
 
                             return $t;
                         }
