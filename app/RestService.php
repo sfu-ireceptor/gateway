@@ -190,13 +190,18 @@ class RestService extends Model
                 }
             }
 
+            // if an error occured, create empty data structure
+            if($response['status'] == 'error') {
+                $response['data'] = new \stdClass();
+                $response['data']->summary = [];
+                $response['data']->items=[];   
+            }
+
             $group = $response['rs']->rest_service_group_code;
 
-            if($response['status'] != 'error') {
-                // override field names from AIRR (ir_v2) to gateway (ir_id)
-                $response['data']->summary = FieldName::convertObjectList($response['data']->summary, 'ir_v2', 'ir_id');
-                $response['data']->items = FieldName::convertObjectList($response['data']->items, 'ir_v2', 'ir_id');                
-            }
+            // override field names from AIRR (ir_v2) to gateway (ir_id)
+            $response['data']->summary = FieldName::convertObjectList($response['data']->summary, 'ir_v2', 'ir_id');
+            $response['data']->items = FieldName::convertObjectList($response['data']->items, 'ir_v2', 'ir_id');                
 
             // service doesn't belong to a group -> just add the response
             if ($group == '') {
@@ -207,16 +212,15 @@ class RestService extends Model
                     $r1 = $response_list_grouped[$group];
                     $r2 = $response;
 
-                    // merge data if both responses were sucessful
-                    if ($r1['status'] == 'success' && $r2['status'] == 'success') {
-                        $r1['data']->summary = array_merge($r1['data']->summary, $r2['data']->summary);
-                        $r1['data']->items = array_merge($r1['data']->items, $r2['data']->items);
-                    }
+                    // merge data
+                    $r1['data']->summary = array_merge($r1['data']->summary, $r2['data']->summary);
+                    $r1['data']->items = array_merge($r1['data']->items, $r2['data']->items);
 
                     // merge response status
                     if ($r2['status'] != 'success') {
                         $r1['status'] = $r2['status'];
                         $r1['error_message'] = $r2['error_message'];
+                        $r1['error_type'] = $r2['error_type'];
                     }
 
                     $response_list_grouped[$group] = $r1;

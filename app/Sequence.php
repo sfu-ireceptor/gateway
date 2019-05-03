@@ -200,22 +200,25 @@ class Sequence
                 $rs->error_type = $response['error_type'];
                 $data['rs_list_no_response'][] = $rs;
                 QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
-                continue;
-            } elseif (! isset($obj->items)) {
+            } 
+            if (! isset($obj->items)) {
                 $errror_message = 'No "items" element in JSON response';
                 Log::error($errror_message);
                 Log::error($obj);
                 QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $errror_message);
+                $rs->error_type = 'error';
                 $data['rs_list_no_response'][] = $rs;
-                continue;
-            } elseif (! isset($obj->summary)) {
+                $obj->items = [];
+            }
+            if (! isset($obj->summary)) {
                 $errror_message = 'No "summary" element in JSON response';
                 Log::error($errror_message);
                 Log::error($obj);
                 QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $errror_message);
+                $rs->error_type = 'error';
                 $data['rs_list_no_response'][] = $rs;
-                continue;
-            }
+                $obj->summary = [];
+             }
 
             // convert any array properties to strings
             $obj->summary = array_map('convert_arrays_to_strings', $obj->summary);

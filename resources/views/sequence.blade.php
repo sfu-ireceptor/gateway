@@ -128,9 +128,9 @@
 						<ul>
 							@foreach ($rest_service_list_no_response as $rs)
 								@if($rs->error_type == 'timeout')
-									<li>{{ $rs->display_name }} didn't return data before the allotted time of {{ config('ireceptor.service_request_timeout') }} sec  </li>
+									<li>{{ $rs->display_name }} didn't return complete data before the allotted time of {{ config('ireceptor.service_request_timeout') }} sec  </li>
 								@else
-									<li>{{ $rs->display_name }} didn't return data (an error occured) </li>
+									<li>{{ $rs->display_name }} returned incomplete data (an error occured) </li>
 								@endif
 
 							@endforeach
