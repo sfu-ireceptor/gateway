@@ -166,10 +166,10 @@ class RestService extends Model
         // merge service responses belonging to the same group
         $response_list_grouped = [];
         foreach ($response_list as $response) {
-            
+
             // validate response format
             $valid = false;
-            if($response['status'] != 'error') {   
+            if ($response['status'] != 'error') {
                 if (isset($response['data']->summary) && is_array($response['data']->summary)) {
                     if (isset($response['data']->items) && is_array($response['data']->items)) {
                         $response_list[] = $response;
@@ -177,7 +177,7 @@ class RestService extends Model
                     }
                 }
 
-                if( ! $valid) {
+                if (! $valid) {
                     $response['status'] = 'error';
                     $response['error_message'] = 'Incorrect response format';
 
@@ -186,7 +186,7 @@ class RestService extends Model
 
                     $gw_query_log_id = request()->get('query_log_id');
                     $error_message = 'Incorrect service response format';
-                    QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);                
+                    QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
                 }
             }
 
@@ -411,7 +411,7 @@ class RestService extends Model
                             $t['query_log_id'] = $query_log_id;
                             $t['error_type'] = 'error';
                             $error_class = get_class_name($exception);
-                            if($error_class == 'ConnectException') {
+                            if ($error_class == 'ConnectException') {
                                 $t['error_type'] = 'timeout';
                             }
 
