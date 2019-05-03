@@ -191,17 +191,17 @@ class RestService extends Model
             }
 
             // if an error occured, create empty data structure
-            if($response['status'] == 'error') {
+            if ($response['status'] == 'error') {
                 $response['data'] = new \stdClass();
                 $response['data']->summary = [];
-                $response['data']->items=[];   
+                $response['data']->items = [];
             }
 
             $group = $response['rs']->rest_service_group_code;
 
             // override field names from AIRR (ir_v2) to gateway (ir_id)
             $response['data']->summary = FieldName::convertObjectList($response['data']->summary, 'ir_v2', 'ir_id');
-            $response['data']->items = FieldName::convertObjectList($response['data']->items, 'ir_v2', 'ir_id');                
+            $response['data']->items = FieldName::convertObjectList($response['data']->items, 'ir_v2', 'ir_id');
 
             // service doesn't belong to a group -> just add the response
             if ($group == '') {
