@@ -36,6 +36,8 @@ return [
     ],
 
     'agave' => [
+        'enabled'  => env('AGAVE_ENABLED', false),
+
         'tenant_url'  => env('AGAVE_TENANT_URL', 'https://irec.tenants.prod.agaveapi.co'),
 
         'api_key' => env('AGAVE_API_KEY'),

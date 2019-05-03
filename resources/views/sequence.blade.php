@@ -320,95 +320,97 @@
 						</tbody>
 					</table>
 
-{{-- 					<!-- apps -->
-					<h2>Analysis Apps</h2>
+					@if(config('services.agave.enabled'))
+						<!-- apps -->
+						<h2>Analysis Apps</h2>
 
-					@if (isset($system) && $total_filtered_sequences <= config('ireceptor.sequences_download_limit'))
+						@if (isset($system) && $total_filtered_sequences <= config('ireceptor.sequences_download_limit'))
 
-						<div role="tabpanel" class="analysis_apps_tabpanel">
-							<!-- Tab links -->
-							<ul class="nav nav-tabs" role="tablist">
-								<li role="presentation" class="active"><a href="#app1" aria-controls="app1" role="tab" data-toggle="tab">Histogram</a></li>
-								<li role="presentation"><a href="#app3" aria-controls="app3" role="tab" data-toggle="tab">Stats</a></li>
-								<li role="presentation"><a href="#app4" aria-controls="app4" role="tab" data-toggle="tab">Third-party analysis</a></li>
-							</ul>
+							<div role="tabpanel" class="analysis_apps_tabpanel">
+								<!-- Tab links -->
+								<ul class="nav nav-tabs" role="tablist">
+									<li role="presentation" class="active"><a href="#app1" aria-controls="app1" role="tab" data-toggle="tab">Histogram</a></li>
+									<li role="presentation"><a href="#app3" aria-controls="app3" role="tab" data-toggle="tab">Stats</a></li>
+									<li role="presentation"><a href="#app4" aria-controls="app4" role="tab" data-toggle="tab">Third-party analysis</a></li>
+								</ul>
 
-							<!-- Tab panes -->
-							<div class="tab-content">
+								<!-- Tab panes -->
+								<div class="tab-content">
 
-								<div role="tabpanel" class="tab-pane active" id="app1">
-					    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-										{{ Form::hidden('filters_json', $filters_json) }}
-										{{ Form::hidden('data_url', $url) }}
-										{{ Form::hidden('app_id', 1) }}
+									<div role="tabpanel" class="tab-pane active" id="app1">
+						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
+											{{ Form::hidden('filters_json', $filters_json) }}
+											{{ Form::hidden('data_url', $url) }}
+											{{ Form::hidden('app_id', 1) }}
 
-									    <div class="row">
-									    	<div class="col-md-3">
-											    <div class="form-group">
-													{{ Form::label('var', 'Variable') }}
-													{{ Form::select('var', $var_list, '', array('class' => 'form-control')) }}
+										    <div class="row">
+										    	<div class="col-md-3">
+												    <div class="form-group">
+														{{ Form::label('var', 'Variable') }}
+														{{ Form::select('var', $var_list, '', array('class' => 'form-control')) }}
+													</div>
 												</div>
 											</div>
-										</div>
 
-										{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
-									{{ Form::close() }}
-								</div>
-								
-								<div role="tabpanel" class="tab-pane" id="app2">
-					    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-										{{ Form::hidden('filters_json', $filters_json) }}
-										{{ Form::hidden('data_url', $url) }}
-										{{ Form::hidden('app_id', 2) }}
+											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
+										{{ Form::close() }}
+									</div>
+									
+									<div role="tabpanel" class="tab-pane" id="app2">
+						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
+											{{ Form::hidden('filters_json', $filters_json) }}
+											{{ Form::hidden('data_url', $url) }}
+											{{ Form::hidden('app_id', 2) }}
 
-									    <div class="row">
-									    	<div class="col-md-3">
-											    <div class="form-group">
-													{{ Form::label('var', 'Variable') }}
-													{{ Form::select('var', $var_list, '', array('class' => 'form-control')) }}
+										    <div class="row">
+										    	<div class="col-md-3">
+												    <div class="form-group">
+														{{ Form::label('var', 'Variable') }}
+														{{ Form::select('var', $var_list, '', array('class' => 'form-control')) }}
+													</div>
+												</div>
+										    	<div class="col-md-3">
+												    <div class="form-group">
+														{{ Form::label('var', 'Color') }}
+														{{ Form::select('color', $amazingHistogramGeneratorColorList, '', array('class' => 'form-control')) }}
+													</div>
 												</div>
 											</div>
-									    	<div class="col-md-3">
-											    <div class="form-group">
-													{{ Form::label('var', 'Color') }}
-													{{ Form::select('color', $amazingHistogramGeneratorColorList, '', array('class' => 'form-control')) }}
-												</div>
-											</div>
-										</div>
 
-										{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
-									{{ Form::close() }}
+											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
+										{{ Form::close() }}
+									</div>
+
+									<div role="tabpanel" class="tab-pane" id="app3">
+						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
+											{{ Form::hidden('filters_json', $filters_json) }}
+											{{ Form::hidden('data_url', $url) }}
+											{{ Form::hidden('app_id', 3) }}
+
+											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
+										{{ Form::close() }}
+									</div>
+
+									<div role="tabpanel" class="tab-pane" id="app4">
+						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
+											{{ Form::hidden('filters_json', $filters_json) }}
+											{{ Form::hidden('data_url', $url) }}
+											{{ Form::hidden('app_id', 999) }}
+
+											{{ Form::submit('Prepare data for third-party analysis', array('class' => 'btn btn-primary')) }}
+										{{ Form::close() }}									
+									</div>
+
 								</div>
-
-								<div role="tabpanel" class="tab-pane" id="app3">
-					    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-										{{ Form::hidden('filters_json', $filters_json) }}
-										{{ Form::hidden('data_url', $url) }}
-										{{ Form::hidden('app_id', 3) }}
-
-										{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
-									{{ Form::close() }}
-								</div>
-
-								<div role="tabpanel" class="tab-pane" id="app4">
-					    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-										{{ Form::hidden('filters_json', $filters_json) }}
-										{{ Form::hidden('data_url', $url) }}
-										{{ Form::hidden('app_id', 999) }}
-
-										{{ Form::submit('Prepare data for third-party analysis', array('class' => 'btn btn-primary')) }}
-									{{ Form::close() }}									
-								</div>
-
 							</div>
-						</div>
-					@elseif($total_filtered_sequences > config('ireceptor.sequences_download_limit'))
-						<p>Sorry, analyses of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future.</p>
-					@else
-						<p>
-							<a href="systems">Add a system</a> to be able to use analysis apps.
-						</p>
-					@endif --}}
+						@elseif($total_filtered_sequences > config('ireceptor.sequences_download_limit'))
+							<p>Sorry, analyses of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future.</p>
+						@else
+							<p>
+								<a href="systems">Add a system</a> to be able to use analysis apps.
+							</p>
+						@endif
+					@endif
 				@endif
 			<div>
 		</div>
