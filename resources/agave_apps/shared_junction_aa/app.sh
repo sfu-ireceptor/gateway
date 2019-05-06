@@ -20,43 +20,6 @@ else
 	ZIP_FILE=${file1}
 fi
 
-function do_shared_junction()
-# Parameters: VARNAME to process, array of input files
-{
-    # Temporary file for data
-    TMP_FILE=tmp.tsv
-
-    # preprocess input files -> tmp.csv
-    echo "Extracting $1 from files started at: `date`" 
-    echo $1 > $TMP_FILE
-    for f in "${tsv_files[@]}"; do
-	echo "    Extracting $1 from $f"
-	python preprocess.py $f $1 >> $TMP_FILE
-    done
-
-    ##############################################
-    # Generate the image file.
-    OFILE_BASE="report-$1-histogram"
-
-    # Debugging output
-    echo "Histogram started at: `date`" 
-    echo "Input file = $TMP_FILE"
-    echo "Variable = $1"
-    echo "Output file = $OFILE_BASE.png"
-
-    # Run the python histogram command
-    #python histogram.py $TMP_FILE $OFILE
-    python airr_histogram.py $1 $TMP_FILE $OFILE_BASE.png
-    #convert $OFILE_BASE.png $OFILE_BASE.jpg
-
-    # change permissions
-    chmod 644 "$OFILE_BASE.png"
-    #chmod 644 "$OFILE_BASE.jpg"
-
-    # Remove the temporary file.
-    rm -f $TMP_FILE
-}
-
 # Temporary DIR
 TMP_DIR=./tmp
 # The Gateway provides information about the download in the file info.txt
@@ -64,7 +27,6 @@ INFO_FILE=info.txt
 
 ##############################################
 # uncompress zip file
-#XXXunzip "$ZIP_FILE" && rm "$ZIP_FILE"
 echo "Extracting files started at: `date`" 
 unzip -o "$ZIP_FILE" 
 
