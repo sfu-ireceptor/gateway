@@ -237,7 +237,10 @@ class SequenceController extends Controller
 
         // for histogram generator
         $var_list = [];
-        $var_list['junction_nt_length'] = 'Junction Length (AA)';
+        $var_list['junction_length'] = __('short.junction_length');
+        $var_list['v_call'] = __('short.v_call');
+        $var_list['d_call'] = __('short.d_call');
+        $var_list['j_call'] = __('short.j_call');
         $data['var_list'] = $var_list;
 
         $data['system'] = System::getCurrentSystem(auth()->user()->id);
