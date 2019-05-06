@@ -92,7 +92,7 @@ class JobController extends Controller
                 Log::info('1');
                 $appName = 'app-histogram--' . $executionSystem->name;
                 $appDeploymentPath = 'histogram';
-                $params['param1'] = 'junction_nt_length';
+                $params['param1'] = $f['var'];
                 // $inputs['file1'] = 'data.tsv.zip';
                 $appHumanName = 'Standard Histogram Generator';
             } elseif ($appId == 2) {
