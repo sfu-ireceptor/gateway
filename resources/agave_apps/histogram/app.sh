@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Histogram App 5.0"
+echo "Histogram App 6.0 (2019-05-06)"
 
 ##############################################
 # init environment
@@ -17,9 +17,9 @@ VARNAME=${param1}
 unzip "$ZIP_FILE" && rm "$ZIP_FILE"
 
 # preprocess input files -> tmp.csv
-echo 'junction_nt_length' >> tmp.csv
+echo "$VARNAME" >> tmp.csv
 for f in *.tsv; do
-	python preprocess.py $f >> tmp.csv
+	python preprocess.py "$f" "$VARNAME" >> tmp.csv
 done
 
 ##############################################
