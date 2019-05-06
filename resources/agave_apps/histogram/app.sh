@@ -50,4 +50,4 @@ chmod 644 "$OFILE"
 echo "Histogram finished at: `date`"
 
 # rm *tsv
-rm tmp.csv
+# rm tmp.csv
