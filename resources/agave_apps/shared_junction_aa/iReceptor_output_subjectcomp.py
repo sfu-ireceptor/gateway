@@ -32,7 +32,9 @@ parser.add_argument('-outfile_tag', type=str, nargs = '?', const = 'comparison_r
 
 args = parser.parse_args()
 
-print("\nThe arguments are: ",args.seqs_dir, "\t", args.outfile_tag)
+print("\nThe arguments are: ",args.seqs_dir, "\t", args.outfile_tag, "\t", args.output_dir)
+
+
 
 if args.outfile_tag is None:
     args.outfile_tag = 'results'
@@ -65,7 +67,8 @@ pwstats_junctions_file = open(pwstats_junctions_filenm,'w')
 ##-- Get the list of files from the input directory location
 
 list_of_files = os.listdir(args.seqs_dir)
-os.chdir(args.seqs_dir)
+print(list_of_files)
+#os.chdir(args.seqs_dir)
 
 ##-- Get the dictionary of repositories and the repository files from the sequence data files available for each of the repositories
 
@@ -76,7 +79,7 @@ for curr_file in list_of_files:
     if curr_file == "info.txt":
         continue
 
-    currfilenm_wext = os.path.basename(curr_file)
+    currfilenm_wext = args.seqs_dir+"/"+curr_file
     currfilenm_woext = os.path.splitext(currfilenm_wext)[0]
 
     repositories[currfilenm_woext] = currfilenm_wext
@@ -280,6 +283,8 @@ fig.layout.yaxis = dict(tickangle=0, title = "Samples")
 fig.layout.legend = dict(x=-0.1, y=-0.2, orientation="h")
 
 heatmapfilenm = args.output_dir + "/" + 'heatmap_pairwise_shared_junction_aa' + "_" + str(args.outfile_tag)
+print("getwd = ", os.getcwd())
+print("heatmap file = ", heatmapfilenm)
 offly.plot(fig, filename=(heatmapfilenm + ".html"), auto_open = False)
 
 
