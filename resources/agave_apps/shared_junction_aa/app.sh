@@ -75,7 +75,7 @@ mkdir $TMP_DIR
 mv -f $tsv_files $TMP_DIR
 
 # Run the historgram for the variable of interest
-python iReceptor_output_subjectcomp.py -seqs_dir $TMP_DIR -output_dir '.' -pairwise_limit 5 -outfile_tag 5
+python iReceptor_output_subjectcomp.py -seqs_dir $TMP_DIR -output_dir . -pairwise_limit 5 -outfile_tag 5
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
 echo "Removing original ZIP file $ZIP_FILE"
