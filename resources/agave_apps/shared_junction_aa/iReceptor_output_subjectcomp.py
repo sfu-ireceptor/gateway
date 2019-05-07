@@ -79,7 +79,7 @@ for curr_file in list_of_files:
     if curr_file == "info.txt":
         continue
 
-    currfilenm_wext = args.seqs_dir+"/"+curr_file
+    currfilenm_wext = os.path.basename(curr_file)
     currfilenm_woext = os.path.splitext(currfilenm_wext)[0]
 
     repositories[currfilenm_woext] = currfilenm_wext
@@ -97,7 +97,7 @@ persample_junctions['aminos'] = collections.OrderedDict()
 
 for each_repository in repositories:
 
-    curr_results_file = repositories[each_repository]    
+    curr_results_file = args.seqs_dir + "/" + repositories[each_repository]    
     curr_rep_df = pd.read_table(curr_results_file)
 
     print("\nCurrent repository = ",each_repository,"\tcurrent results file = ",curr_results_file,"\tsize of the current results file = ",len(curr_rep_df))
