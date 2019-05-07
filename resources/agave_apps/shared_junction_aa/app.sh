@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Share Junction App"
+echo "Shared Junction App"
 
 ##############################################
 # init environment

@@ -116,6 +116,13 @@ class JobController extends Controller
                 // $inputs['file1'] = 'data.tsv.zip';
                 $appHumanName = 'Stats';
             }
+            } elseif ($appId == 5) {
+                Log::info('5');
+                $appName = 'app-shared-junction--' . $executionSystem->name;
+                $appDeploymentPath = 'shared_junction_aa';
+                // $inputs['file1'] = 'data.tsv.zip';
+                $appHumanName = 'Shared Junction';
+            }
 
             $agave = new Agave;
             $config = $agave->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
