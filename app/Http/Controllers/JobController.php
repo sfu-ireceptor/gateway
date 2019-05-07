@@ -115,7 +115,6 @@ class JobController extends Controller
                 $appDeploymentPath = 'stats';
                 // $inputs['file1'] = 'data.tsv.zip';
                 $appHumanName = 'Stats';
-            }
             } elseif ($appId == 5) {
                 Log::info('5');
                 $appName = 'app-shared-junction--' . $executionSystem->name;
