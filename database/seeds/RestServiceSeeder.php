@@ -42,7 +42,7 @@ class RestServiceSeeder extends Seeder
                 ],
                 [
                     'rest_service_group_code' => 'ipa',
-                    'url' => 'https://ipa5.ireceptor.org/',
+                    'url' => 'http://ipa5.ireceptor.org/',
                     'name' => 'IPA 5',
                     'username' => '',
                     'password' => '',
