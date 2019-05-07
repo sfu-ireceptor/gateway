@@ -12,7 +12,7 @@ fi
 module load scipy-stack
 source ~/python/agave/bin/activate
 
-ls
+ls -al
 
 # app variables (will be subsituted by AGAVE). If they don't exist
 # use command line arguments.
