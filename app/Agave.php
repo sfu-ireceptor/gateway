@@ -319,6 +319,12 @@ class Agave
                     'id' => 'file1',
                 ],
             ];
+        } elseif ($id == 5) {
+            $inputs = [
+                [
+                    'id' => 'file1',
+                ],
+            ];
         }
 
         $t = [
