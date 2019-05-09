@@ -337,6 +337,7 @@
 									<li role="presentation" class="active"><a href="#app1" aria-controls="app1" role="tab" data-toggle="tab">Histogram</a></li>
 									<li role="presentation"><a href="#app3" aria-controls="app3" role="tab" data-toggle="tab">Stats</a></li>
 									<li role="presentation"><a href="#app5" aria-controls="app5" role="tab" data-toggle="tab">Shared Junction</a></li>
+									<li role="presentation"><a href="#app6" aria-controls="app6" role="tab" data-toggle="tab">Genoa</a></li>
 									<li role="presentation"><a href="#app4" aria-controls="app4" role="tab" data-toggle="tab">Third-party analysis</a></li>
 								</ul>
 
@@ -417,6 +418,18 @@
 											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
 										{{ Form::close() }}
 									</div>
+
+									<div role="tabpanel" class="tab-pane" id="app6">
+						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
+											{{ Form::hidden('filters_json', $filters_json) }}
+											{{ Form::hidden('data_url', $url) }}
+											{{ Form::hidden('app_id', 6) }}
+
+											<p>Test analysis app.</p>
+											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
+										{{ Form::close() }}
+									</div>
+
 
 								</div>
 							</div>
