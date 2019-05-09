@@ -209,7 +209,7 @@
 								@lang('short.' . $filter_key)
 							</a>
 						@endforeach
-						<a href="/samples" class="remove_filters">
+						<a href="/samples?query_id={{ $query_id }}&amp;remove_filter=all" class="remove_filters">
 							Remove all filters
 						</a>
 

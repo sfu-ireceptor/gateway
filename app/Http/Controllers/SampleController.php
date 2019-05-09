@@ -21,15 +21,28 @@ class SampleController extends Controller
 
     public function index(Request $request)
     {
+
         // if "remove one filter" request, generate new query_id and redirect to it
         if ($request->has('remove_filter')) {
             $filters = Query::getParams($request->input('query_id'));
             $filter_to_remove = $request->input('remove_filter');
 
-            unset($filters[$filter_to_remove]);
-            $new_query_id = Query::saveParams($filters, 'samples');
-
+            if ($filter_to_remove == 'all') {
+                // remove all filters but columns filters
+                $new_filters = [];
+                foreach ($filters as $name => $value) {
+                    if ($name == 'cols') {
+                        $new_filters[$name] = $value;
+                    }
+                }
+            } else {
+                // remove only that filter
+                unset($filters[$filter_to_remove]);
+                $new_filters = $filters;
+            }
+            $new_query_id = Query::saveParams($new_filters, 'samples');
             return redirect('samples?query_id=' . $new_query_id);
+
         }
 
         $username = auth()->user()->username;
@@ -105,6 +118,7 @@ class SampleController extends Controller
         if ($request->has('query_id')) {
             $query_id = $request->input('query_id');
             $params = Query::getParams($query_id);
+            $data['query_id'] = $query_id;
         }
 
         // fill form fields accordingly
