@@ -43,10 +43,10 @@ class SequenceController extends Controller
             $filter_to_remove = $request->input('remove_filter');
 
             if ($filter_to_remove == 'all') {
-                // remove all filters but sample filters
+                // remove all filters but sample filters and columns filters
                 $new_filters = [];
                 foreach ($filters as $name => $value) {
-                    if (starts_with($name, 'ir_project_sample_id_list_') || $name == 'sample_query_id') {
+                    if (starts_with($name, 'ir_project_sample_id_list_') || $name == 'sample_query_id' || $name == 'cols') {
                         $new_filters[$name] = $value;
                     }
                 }
