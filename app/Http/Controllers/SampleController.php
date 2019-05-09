@@ -41,8 +41,8 @@ class SampleController extends Controller
                 $new_filters = $filters;
             }
             $new_query_id = Query::saveParams($new_filters, 'samples');
-            return redirect('samples?query_id=' . $new_query_id);
 
+            return redirect('samples?query_id=' . $new_query_id);
         }
 
         $username = auth()->user()->username;
