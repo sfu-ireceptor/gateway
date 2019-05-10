@@ -482,6 +482,10 @@ a.navbar-brand img {
   z-index: 1; 
 }
 
+.navbar-nav > li > .dropdown-menu {
+	min-width: 210px;
+}
+
 
 /* @end */
 
