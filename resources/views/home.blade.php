@@ -39,7 +39,7 @@
 
 		<div class="col-md-4 side_search_links">
 			<p class="adv_search_link">	
-				<a  class="btn btn-primary btn-lg" role="button" href="/samples">Metadata Search →</a>
+				<a  class="btn btn-primary btn-lg" role="button" href="/samples">Repertoire Metadata Search →</a>
 			</p>
 
 			<p>Find interesting sequences and sequence annotations by exploring study, subject, and sample metadata</p>

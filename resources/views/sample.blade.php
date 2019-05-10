@@ -1,12 +1,12 @@
 @extends('template')
 
-@section('title', 'Metadata Search')
+@section('title', 'Repertoire Metadata Search')
 
 @section('content')
 
 <div class="container-fluid sample_container">
 
-	<h1>1. Metadata Search</h1>
+	<h1>1. Repertoire Metadata Search</h1>
 	<p class="sh1">Filter by study/subject/sample and choose samples to analyze relevant sequence data</p>
 
 	<div class="row">

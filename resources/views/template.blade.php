@@ -41,7 +41,7 @@
 							</a>
 							<ul class="dropdown-menu" role="menu">
 							  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
-							  <li><a href="/samples">Metadata Search</a></li>
+							  <li><a href="/samples">Repertoire Metadata Search</a></li>
 							</ul>
 						</li>
 						<li role="presentation" class="active sequences">
@@ -55,12 +55,12 @@
 							</a>
 							<ul class="dropdown-menu" role="menu">
 							  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
-							  <li><a href="/samples">Metadata Search</a></li>
+							  <li><a href="/samples">Repertoire Metadata Search</a></li>
 							</ul>
 						</li>
 						<li role="presentation" class="active samples">
 							<a href="#" class="active inactive">
-								1. Metadata
+								1. Repertoire Metadata
 							</a>
 						</li>
 						<li role="presentation" class="sequences">
@@ -74,12 +74,12 @@
 							</a>
 							<ul class="dropdown-menu" role="menu">
 							  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
-							  <li><a href="/samples">Metadata Search</a></li>
+							  <li><a href="/samples">Repertoire Metadata Search</a></li>
 							</ul>
 						</li>
 						<li role="presentation" class="active samples">
 							<a href="/samples?query_id=@yield('sample_query_id', '')">
-								1. Metadata
+								1. Repertoire Metadata
 							</a>
 						</li>
 						<li role="presentation" class="active sequences">
@@ -90,7 +90,7 @@
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Search<span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
 							  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
-							  <li><a href="/samples">Metadata Search</a></li>
+							  <li><a href="/samples">Repertoire Metadata Search</a></li>
 							</ul>
 						</li>
 					@endif
