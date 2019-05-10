@@ -62,6 +62,20 @@ class RestServiceSeeder extends Seeder
                     'password' => '',
                     'version' => 2,
                 ],
+                [
+                    'url' => 'http://206.12.91.5/',
+                    'name' => 'Genoa Scratch',
+                    'username' => '',
+                    'password' => '',
+                    'version' => 2,
+                ],
+                [
+                    'url' => 'http://206.12.88.104/',
+                    'name' => 'Genoa Turnkey',
+                    'username' => '',
+                    'password' => '',
+                    'version' => 2,
+                ]
             ];
 
         foreach ($l as $t) {
