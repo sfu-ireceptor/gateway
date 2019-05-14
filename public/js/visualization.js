@@ -236,7 +236,7 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels
                     dataLabels: {
                         className: class_name,
                         // Color of the labels.
-                        color: "#888888", 
+                        color: "#666666",
                         // Do we want to display labels.
                         enabled: true,
                         /*overflow: "justify",*/
