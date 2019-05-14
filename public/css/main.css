@@ -57,6 +57,7 @@ em.dateRelative {
 }
 
 a {
+	color: #2E6DA8;
 	text-decoration: underline;
 }
 
@@ -1206,6 +1207,16 @@ form.column_selector {
 
 .fields_definitions h2:first-of-type {
 	margin-top: 20px;
+}
+
+
+/* @end */
+
+/* @group accessibility overrides */
+
+.intro_home a,
+.statistics a {
+	color: #2E6DA8;
 }
 
 
