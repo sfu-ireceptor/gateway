@@ -848,6 +848,14 @@ a.download_sequences {
 
 /* @group components */
 
+/* @group tabs */
+
+.nav-tabs a {
+	text-decoration: none;
+}
+
+/* @end */
+
 /* @group js-tree */
 
 
@@ -1195,8 +1203,6 @@ form.column_selector {
 	margin-top: 20px;
 }
 
-
-
 /* @end */
 
 /* @group field definitions page */
@@ -1210,7 +1216,6 @@ form.column_selector {
 	margin-top: 20px;
 }
 
-
 /* @end */
 
 /* @group accessibility overrides */
@@ -1219,6 +1224,5 @@ form.column_selector {
 .statistics a {
 	color: #2E6DA8;
 }
-
 
 /* @end */
