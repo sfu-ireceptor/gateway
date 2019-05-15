@@ -309,7 +309,7 @@
 						<span class="nb_selected_samples">{{ count($sample_list) }}</span> samples selected
 						<a class="unselect_all_samples" href="#">Unselect All</a>
 						<a class="select_all_samples" href="#">Select All</a>
-						{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse_sequences browse-seq-data-button')) }}
+						{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load', 'disabled' => 'disabled')) }}
 					</p>
 					
 					<!-- sample data -->
@@ -396,7 +396,7 @@
 					<input type="hidden" name="project_id_list" />
 					<input type="hidden" name="sample_query_id" value="{{ $sample_query_id }}" />
 					<p class="pull-right">
-					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button')) }}
+					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
 					</p>
 				{{ Form::close() }}
 				@endif
