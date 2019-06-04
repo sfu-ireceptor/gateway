@@ -76,6 +76,13 @@ class RestServiceSeeder extends Seeder
                     'password' => '',
                     'version' => 2,
                 ],
+                [
+                    'url' => 'http://142.150.76.132/',
+                    'name' => 'Sidhu-UoT',
+                    'username' => '',
+                    'password' => '',
+                    'version' => 2,
+                ],
             ];
 
         foreach ($l as $t) {
