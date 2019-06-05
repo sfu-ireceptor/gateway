@@ -53,7 +53,7 @@ class CanarieController extends Controller
         $d = new Carbon('first day of July 2015', 'UTC');
         $t['releaseTime'] = $d->toDateString() . 'T' . $d->toTimeString() . 'Z';
         $t['researchSubject'] = 'Immunology';
-        $t['supportEmail'] = 'help@irmacs.sfu.ca';
+        $t['supportEmail'] = 'support@ireceptor.org';
         $t['tags'] = ['immunology', 'iReceptor'];
 
         if ($request->wantsJson()) {
@@ -75,7 +75,7 @@ class CanarieController extends Controller
         $d = new Carbon('first day of July 2015', 'UTC');
         $t['releaseTime'] = $d->toDateString() . 'T' . $d->toTimeString() . 'Z';
         $t['researchSubject'] = 'Immunology';
-        $t['supportEmail'] = 'help@irmacs.sfu.ca';
+        $t['supportEmail'] = 'support@ireceptor.org';
         $t['tags'] = ['immunology', 'iReceptor'];
 
         if ($request->wantsJson()) {
@@ -97,7 +97,7 @@ class CanarieController extends Controller
         $d = new Carbon('first day of July 2015', 'UTC');
         $t['releaseTime'] = $d->toDateString() . 'T' . $d->toTimeString() . 'Z';
         $t['researchSubject'] = 'Immunology';
-        $t['supportEmail'] = 'help@irmacs.sfu.ca';
+        $t['supportEmail'] = 'support@ireceptor.org';
         $t['tags'] = ['immunology', 'iReceptor'];
 
         if ($request->wantsJson()) {
