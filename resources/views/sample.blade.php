@@ -362,7 +362,7 @@
 												@endisset
 											@elseif($field['ir_id'] == 'study_title')
 												@isset($sample->study_url)
-													<a href="{{ $sample->study_url }}" title="{{ $sample->study_url }}" target="_blank">
+													<a href="{{ $sample->study_url }}" title="{{ $sample->study_title }}" target="_blank">
 														{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
 													</a>
 												@else
