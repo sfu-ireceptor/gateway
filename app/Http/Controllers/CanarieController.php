@@ -34,12 +34,7 @@ class CanarieController extends Controller
             $url = 'http://ireceptor.irmacs.sfu.ca/node/113';
         }
 
-        $data = [];
-        $data['title'] = '/' . $page;
-        $data['page'] = $page;
-        $data['url'] = $url;
-
-        return view('canarie/link', $data);
+        return redirect($url);
     }
 
     public function platformInfo(Request $request, Response $response)
