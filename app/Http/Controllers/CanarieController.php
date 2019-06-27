@@ -31,7 +31,7 @@ class CanarieController extends Controller
         if ($page == 'factsheet') {
             $url = 'http://www.canarie.ca/software/platforms/ireceptor/';
         } elseif ($page == 'provenance' || $page == 'licence') {
-            $url = 'http://ireceptor.irmacs.sfu.ca/platform/doc';
+            $url = 'http://ireceptor.irmacs.sfu.ca/node/113';
         }
 
         $data = [];
