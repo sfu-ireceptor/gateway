@@ -48,9 +48,9 @@ class CanarieController extends Controller
 
         $t['name'] = 'iReceptor Gateway';
         $t['synopsis'] = 'A Distributed Data Management System and Scientific Gateway for Mining Next Generation Sequence Data from Immune Responses';
-        $t['version'] = '0.1';
+        $t['version'] = '2.0';
         $t['institution'] = 'IRMACS/Simon Fraser University';
-        $d = new Carbon('first day of July 2015', 'UTC');
+        $d = new Carbon('first day of July 2018', 'UTC');
         $t['releaseTime'] = $d->toDateString() . 'T' . $d->toTimeString() . 'Z';
         $t['researchSubject'] = 'Immunology';
         $t['supportEmail'] = 'support@ireceptor.org';
