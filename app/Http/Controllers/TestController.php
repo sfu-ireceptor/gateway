@@ -50,6 +50,9 @@ class TestController extends Controller
 
     public function getIndex()
     {
+        echo starts_with('This is my name', 'Thisf');
+        die();
+
         $str = 'pmid: 25100740"';
         if (! (stripos($str, 'PMID') === false)) {
             echo 'found';

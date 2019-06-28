@@ -153,6 +153,13 @@ class RestService extends Model
             // override field names from gateway (ir_id) to AIRR (ir_v2)
             $filters = FieldName::convert($filters, 'ir_id', 'ir_v2');
 
+            // remove extra ir_project_sample_id_list_ fields
+            foreach ($filters as $key => $value) {
+                if (starts_with($key, 'ir_project_sample_id_list_')) {
+                    unset($filters[$key]);
+                }
+            }
+
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;
             $t['params'] = $filters;
