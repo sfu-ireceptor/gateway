@@ -16,7 +16,7 @@ class CanarieTest extends TestCase
     {
         foreach ($this->prefixes as $prefix) {
             foreach ($this->html_routes as $route) {
-                $this->get($prefix . '/' . $route)->assertOk();
+                $this->get($prefix . '/' . $route)->assertStatus(302);
             }
         }
     }
