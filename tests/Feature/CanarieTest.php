@@ -31,6 +31,7 @@ class CanarieTest extends TestCase
             }
         }
     }
+
     /** @test */
     public function test_json_routes()
     {
