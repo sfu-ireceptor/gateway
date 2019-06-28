@@ -139,30 +139,32 @@ class RestService extends Model
         foreach (self::findEnabled() as $rs) {
             $t = [];
 
+            $service_filters = $filters;
+
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-            if (array_key_exists($sample_id_list_key, $filters) && ! empty($filters[$sample_id_list_key])) {
+            if (array_key_exists($sample_id_list_key, $service_filters) && ! empty($service_filters[$sample_id_list_key])) {
                 // remove REST service id
                 // ir_project_sample_id_list_2 -> ir_project_sample_id_list
-                $filters['ir_project_sample_id_list'] = $filters[$sample_id_list_key];
-                unset($filters[$sample_id_list_key]);
+                $service_filters['ir_project_sample_id_list'] = $service_filters[$sample_id_list_key];
+                unset($service_filters[$sample_id_list_key]);
             } else {
                 // if no sample id for this REST service, don't query it.
                 continue;
             }
 
             // override field names from gateway (ir_id) to AIRR (ir_v2)
-            $filters = FieldName::convert($filters, 'ir_id', 'ir_v2');
+            $service_filters = FieldName::convert($service_filters, 'ir_id', 'ir_v2');
 
             // remove extra ir_project_sample_id_list_ fields
-            foreach ($filters as $key => $value) {
+            foreach ($service_filters as $key => $value) {
                 if (starts_with($key, 'ir_project_sample_id_list_')) {
-                    unset($filters[$key]);
+                    unset($service_filters[$key]);
                 }
             }
 
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;
-            $t['params'] = $filters;
+            $t['params'] = $service_filters;
 
             $request_params[] = $t;
         }
