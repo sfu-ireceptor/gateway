@@ -19,6 +19,7 @@
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 </IfModule>
 
+
 # necessary to deal with the big number of samples on the sequences page
 # otherwise: some samples and filters are truncated
 php_value max_input_vars 5000
