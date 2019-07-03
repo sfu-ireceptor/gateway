@@ -71,6 +71,13 @@ class FieldNameSeeder extends CsvSeeder
                     'ir_subclass' => 'other',
                 ];
 
+        $l[] = [
+                    'ir_id' => 'ir_junction_aa_length',
+                    'ir_short' => 'Junction Length (AA)',
+                    'ir_class' => 'rearrangement',
+                    'ir_subclass' => 'rearrangement',
+                ];
+
         foreach ($l as $t) {
             FieldName::updateOrCreate(['ir_id' => $t['ir_id']], $t);
         }
