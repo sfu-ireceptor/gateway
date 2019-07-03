@@ -63,7 +63,7 @@ class FieldNameSeeder extends CsvSeeder
                     'airr_example' => 'cancer tumor',
                 ];
 
-        // HACK: ir_class is overridden from "ir_repertoire" to "repertoire", so its displayed by default
+        // HACK: override ir_class from "ir_repertoire" to "repertoire", so this field is displayed by default
         $l[] = [
                     'ir_id' => 'ir_sequence_count',
                     'ir_short' => 'Sequences',
@@ -71,6 +71,7 @@ class FieldNameSeeder extends CsvSeeder
                     'ir_subclass' => 'other',
                 ];
 
+        // HACK: override ir_class from from "ir_rearrangement" to "rearrangement", so this field is displayed by default
         $l[] = [
                     'ir_id' => 'ir_junction_aa_length',
                     'ir_short' => 'Junction Length (AA)',
