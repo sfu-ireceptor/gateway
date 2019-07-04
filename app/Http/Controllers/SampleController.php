@@ -140,7 +140,12 @@ class SampleController extends Controller
             $query_log->save();
         }
 
-        $data['sample_list'] = $sample_data['items'];
+        // sort sample list
+        $sample_list = $sample_data['items'];
+        $ir_sequence_count = array_column($sample_list, 'ir_sequence_count');
+        array_multisort($ir_sequence_count, SORT_DESC, $sample_list);
+        $data['sample_list'] = $sample_list;
+        
         $data['rest_service_list'] = $sample_data['rs_list'];
         $data['sample_list_json'] = json_encode($sample_data['items']);
 

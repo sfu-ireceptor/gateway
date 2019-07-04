@@ -72,21 +72,6 @@ $(document).ready(function() {
 		update_sample_selection_info();
 	});
 
-	// make table sortable
-	$('table.sample_list').DataTable({
-    	paging: false,
-    	searching: false,
-    	info: false,
-    	stateSave: true,
-    	order: [[ 5, 'asc' ]],
-    	columnDefs: [
-						{
-							'orderable': false,
-							'targets': 0
-						}
-					],
-	});
-
 	// jstree: rest services -> labs -> projects tree
 	$('#rest_service_list').on('ready.jstree', function (e, data) {
 			// hack to make links work
