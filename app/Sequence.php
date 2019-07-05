@@ -532,7 +532,14 @@ class Sequence
                 }
                 fclose($f);
                 $t['nb_sequences'] = $n - 1; // don't count first line (columns headers)
-                $t['expected_nb_sequences'] = $expected_nb_sequences_by_rs[$rest_service_id];
+                $t['expected_nb_sequences'] = 0;
+                if(isset($expected_nb_sequences_by_rs[$rest_service_id])) {
+                    $t['expected_nb_sequences'] = $expected_nb_sequences_by_rs[$rest_service_id];
+                }
+                else {
+                    Log::error('rest_service ' . $rest_service_id . ' is missing from $expected_nb_sequences_by_rs array');
+                    Log::error($expected_nb_sequences_by_rs);
+                }
                 $t['query_log_id'] = $response['query_log_id'];
                 $t['rest_service_name'] = $response['rs']->name;
                 $t['incomplete'] = ($t['nb_sequences'] != $t['expected_nb_sequences']);
