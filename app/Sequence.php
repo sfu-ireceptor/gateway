@@ -50,13 +50,13 @@ class Sequence
             $rest_service_id = $response['rs']->id;
 
             $nb_sequences = 0;
-            if(isset($response['data']) && isset($response['data']->summary)) {
+            if (isset($response['data']) && isset($response['data']->summary)) {
                 $sample_list = $response['data']->summary;
                 foreach ($sample_list as $sample) {
-                    if(isset($sample->ir_filtered_sequence_count)) {
-                        $nb_sequences += $sample->ir_filtered_sequence_count;                        
+                    if (isset($sample->ir_filtered_sequence_count)) {
+                        $nb_sequences += $sample->ir_filtered_sequence_count;
                     }
-                }                
+                }
             }
 
             $expected_nb_sequences_by_rs[$rest_service_id] = $nb_sequences;

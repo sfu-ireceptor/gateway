@@ -172,7 +172,7 @@ class RestService extends Model
         // do requests
         $response_list = self::doRequests($request_params);
 
-        if($group_by_rest_service) {
+        if ($group_by_rest_service) {
             // merge service responses belonging to the same group
             $response_list_grouped = [];
             foreach ($response_list as $response) {
