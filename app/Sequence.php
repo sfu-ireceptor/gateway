@@ -44,15 +44,19 @@ class Sequence
 
     public static function expectedSequencesByRestSevice($filters, $username)
     {
-        $response_list = RestService::sequences_summary($filters, $username);
+        $response_list = RestService::sequences_summary($filters, $username, false);
         $expected_nb_sequences_by_rs = [];
         foreach ($response_list as $response) {
             $rest_service_id = $response['rs']->id;
 
-            $sample_list = $response['data']->summary;
             $nb_sequences = 0;
-            foreach ($sample_list as $sample) {
-                $nb_sequences += $sample->ir_filtered_sequence_count;
+            if(isset($response['data']) && isset($response['data']->summary)) {
+                $sample_list = $response['data']->summary;
+                foreach ($sample_list as $sample) {
+                    if(isset($sample->ir_filtered_sequence_count)) {
+                        $nb_sequences += $sample->ir_filtered_sequence_count;                        
+                    }
+                }                
             }
 
             $expected_nb_sequences_by_rs[$rest_service_id] = $nb_sequences;

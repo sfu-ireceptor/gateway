@@ -123,7 +123,7 @@ class RestService extends Model
     }
 
     // send "/sequences_summary" request to all enabled services
-    public static function sequences_summary($filters, $username = '')
+    public static function sequences_summary($filters, $username = '', $group_by_rest_service = true)
     {
         $base_uri = 'sequences_summary';
 
@@ -172,74 +172,76 @@ class RestService extends Model
         // do requests
         $response_list = self::doRequests($request_params);
 
-        // merge service responses belonging to the same group
-        $response_list_grouped = [];
-        foreach ($response_list as $response) {
+        if($group_by_rest_service) {
+            // merge service responses belonging to the same group
+            $response_list_grouped = [];
+            foreach ($response_list as $response) {
 
-            // validate response format
-            $valid = false;
-            if ($response['status'] != 'error') {
-                if (isset($response['data']->summary) && is_array($response['data']->summary)) {
-                    if (isset($response['data']->items) && is_array($response['data']->items)) {
-                        $response_list[] = $response;
-                        $valid = true;
+                // validate response format
+                $valid = false;
+                if ($response['status'] != 'error') {
+                    if (isset($response['data']->summary) && is_array($response['data']->summary)) {
+                        if (isset($response['data']->items) && is_array($response['data']->items)) {
+                            $response_list[] = $response;
+                            $valid = true;
+                        }
+                    }
+
+                    if (! $valid) {
+                        $response['status'] = 'error';
+                        $response['error_message'] = 'Incorrect response format';
+
+                        $query_log_id = $response['query_log_id'];
+                        QueryLog::update_rest_service_query($query_log_id, '', 'error', 'Incorrect response format');
+
+                        $gw_query_log_id = request()->get('query_log_id');
+                        $error_message = 'Incorrect service response format';
+                        QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
                     }
                 }
 
-                if (! $valid) {
-                    $response['status'] = 'error';
-                    $response['error_message'] = 'Incorrect response format';
-
-                    $query_log_id = $response['query_log_id'];
-                    QueryLog::update_rest_service_query($query_log_id, '', 'error', 'Incorrect response format');
-
-                    $gw_query_log_id = request()->get('query_log_id');
-                    $error_message = 'Incorrect service response format';
-                    QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
+                // if an error occured, create empty data structure
+                if ($response['status'] == 'error') {
+                    $response['data'] = new \stdClass();
+                    $response['data']->summary = [];
+                    $response['data']->items = [];
                 }
-            }
 
-            // if an error occured, create empty data structure
-            if ($response['status'] == 'error') {
-                $response['data'] = new \stdClass();
-                $response['data']->summary = [];
-                $response['data']->items = [];
-            }
+                $group = $response['rs']->rest_service_group_code;
 
-            $group = $response['rs']->rest_service_group_code;
+                // override field names from AIRR (ir_v2) to gateway (ir_id)
+                $response['data']->summary = FieldName::convertObjectList($response['data']->summary, 'ir_v2', 'ir_id');
+                $response['data']->items = FieldName::convertObjectList($response['data']->items, 'ir_v2', 'ir_id');
 
-            // override field names from AIRR (ir_v2) to gateway (ir_id)
-            $response['data']->summary = FieldName::convertObjectList($response['data']->summary, 'ir_v2', 'ir_id');
-            $response['data']->items = FieldName::convertObjectList($response['data']->items, 'ir_v2', 'ir_id');
-
-            // service doesn't belong to a group -> just add the response
-            if ($group == '') {
-                $response_list_grouped[] = $response;
-            } else {
-                // a response with that group already exists? -> merge
-                if (isset($response_list_grouped[$group])) {
-                    $r1 = $response_list_grouped[$group];
-                    $r2 = $response;
-
-                    // merge data
-                    $r1['data']->summary = array_merge($r1['data']->summary, $r2['data']->summary);
-                    $r1['data']->items = array_merge($r1['data']->items, $r2['data']->items);
-
-                    // merge response status
-                    if ($r2['status'] != 'success') {
-                        $r1['status'] = $r2['status'];
-                        $r1['error_message'] = $r2['error_message'];
-                        $r1['error_type'] = $r2['error_type'];
-                    }
-
-                    $response_list_grouped[$group] = $r1;
+                // service doesn't belong to a group -> just add the response
+                if ($group == '') {
+                    $response_list_grouped[] = $response;
                 } else {
-                    $response_list_grouped[$group] = $response;
+                    // a response with that group already exists? -> merge
+                    if (isset($response_list_grouped[$group])) {
+                        $r1 = $response_list_grouped[$group];
+                        $r2 = $response;
+
+                        // merge data
+                        $r1['data']->summary = array_merge($r1['data']->summary, $r2['data']->summary);
+                        $r1['data']->items = array_merge($r1['data']->items, $r2['data']->items);
+
+                        // merge response status
+                        if ($r2['status'] != 'success') {
+                            $r1['status'] = $r2['status'];
+                            $r1['error_message'] = $r2['error_message'];
+                            $r1['error_type'] = $r2['error_type'];
+                        }
+
+                        $response_list_grouped[$group] = $r1;
+                    } else {
+                        $response_list_grouped[$group] = $response;
+                    }
                 }
             }
-        }
 
-        $response_list = $response_list_grouped;
+            $response_list = $response_list_grouped;
+        }
 
         return $response_list;
     }
