@@ -304,7 +304,15 @@
 
 				{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form show_loading_message')) }}
 
-					<h3>Individual Samples</h3>
+					<h3>
+						Individual Samples
+						<small>
+							{{ min($total_filtered_samples, config('ireceptor.nb_samples_displayed_by_default')) }} of {{ $total_filtered_samples }}
+							@if ($total_filtered_samples > config('ireceptor.nb_samples_displayed_by_default'))
+								<a href="">Show all {{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}</a>
+							@endif
+						</small>
+					</h3>
 					<p class="table_info">
 						<span class="nb_selected_samples">{{ count($sample_list) }}</span> samples selected
 						<a class="unselect_all_samples" href="#">Unselect All</a>

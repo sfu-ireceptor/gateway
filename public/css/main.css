@@ -42,6 +42,17 @@ h3 {
 	margin-bottom: 5px;
 }
 
+h3 small {
+	margin-left: 4px;
+	font-size: 14px;
+	margin-right: 5px;	
+}
+
+h3 a {
+	margin-left: 4px;
+	margin-right: 5px;	
+}
+
 h3.first {
 	margin-top: 0px;	
 }
@@ -810,11 +821,6 @@ a.select_all_samples {
 
 .analysis_apps_tabpanel .tab-content {
 	min-height: 200px;
-}
-
-.sequence_count {
-	font-size: 15px;
-	margin-left: 3px;
 }
 
 a.download_sequences {

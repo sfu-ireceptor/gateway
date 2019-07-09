@@ -77,8 +77,8 @@ $(document).ready(function() {
     	paging: false,
     	searching: false,
     	info: false,
-    	stateSave: true,
-    	order: [[ 5, 'asc' ]],
+    	stateSave: false,
+    	order: [[ 6, 'desc' ]],
     	columnDefs: [
 						{
 							'orderable': false,
