@@ -403,6 +403,14 @@
 							@endforeach
 						</tbody>
 					</table>
+					<p class="text-center">
+						@if (request()->show_all_samples)
+						@else
+							@if ($total_filtered_samples > config('ireceptor.nb_samples_displayed_by_default'))
+								<a href="{{ $show_all_samples_url }}">Show all {{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}</a>
+							@endif
+						@endif
+					</p>
 
 					<input type="hidden" name="project_id_list" />
 					<input type="hidden" name="sample_query_id" value="{{ $sample_query_id }}" />
