@@ -307,9 +307,12 @@
 					<h3>
 						Individual Samples
 						<small>
-							{{ min($total_filtered_samples, config('ireceptor.nb_samples_displayed_by_default')) }} of {{ $total_filtered_samples }}
-							@if ($total_filtered_samples > config('ireceptor.nb_samples_displayed_by_default'))
-								<a href="">Show all {{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}</a>
+							{{ count($sample_list) }} of {{ $total_filtered_samples }}
+							@if (request()->show_all_samples)
+							@else
+								@if ($total_filtered_samples > config('ireceptor.nb_samples_displayed_by_default'))
+									<a href="{{ $show_all_samples_url }}">Show all {{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}}</a>
+								@endif
 							@endif
 						</small>
 					</h3>

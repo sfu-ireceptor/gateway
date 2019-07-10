@@ -140,13 +140,18 @@ class SampleController extends Controller
             $query_log->save();
         }
 
-        // sort and truncate sample list
+        // sort sample list
         $sample_list = $sample_data['items'];
         $ir_sequence_count = array_column($sample_list, 'ir_sequence_count');
         array_multisort($ir_sequence_count, SORT_DESC, $sample_list);
-        $sample_list = array_slice($sample_list, 0, config('ireceptor.nb_samples_displayed_by_default'));
-        $data['sample_list'] = $sample_list;
 
+        // truncate sample list
+        if ( ! $request->has('show_all_samples') || ! $request->input('show_all_samples')) {
+            $sample_list = array_slice($sample_list, 0, config('ireceptor.nb_samples_displayed_by_default'));
+            $data['show_all_samples_url'] = $request->fullUrlWithQuery(['show_all_samples' => true]);
+        }
+
+        $data['sample_list'] = $sample_list;
         $data['rest_service_list'] = $sample_data['rs_list'];
         $data['sample_list_json'] = json_encode($sample_data['items']);
 

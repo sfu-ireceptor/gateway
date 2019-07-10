@@ -48,8 +48,12 @@ class TestController extends Controller
         echo 'hi there 40';
     }
 
-    public function getIndex()
+    public function getIndex(Request $request)
     {
+        echo $request->fullUrlWithQuery(['aa'=>true]);
+
+        die();
+
         echo starts_with('This is my name', 'Thisf');
         die();
 
