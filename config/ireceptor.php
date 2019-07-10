@@ -69,5 +69,5 @@ return [
     |
     */
 
-   'nb_samples_displayed_by_default' => env('NB_SAMPLES_DISPLAYED_BY_DEFAULT', 15),
+   'nb_samples_displayed_by_default' => env('NB_SAMPLES_DISPLAYED_BY_DEFAULT', 200),
 ];
