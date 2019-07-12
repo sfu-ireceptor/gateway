@@ -70,12 +70,12 @@ class RestService extends Model
             unset($filters['cols']);
             // dd($filters);
 
-            if(isset($filters['subject_id'])) {
+            if (isset($filters['subject_id'])) {
                 $filters['subject.subject_id'] = $filters['subject_id'];
                 unset($filters['subject_id']);
             }
 
-            if(isset($filters['cell_subset'])) {
+            if (isset($filters['cell_subset'])) {
                 $filters['sample.cell_subset'] = $filters['cell_subset'];
                 unset($filters['cell_subset']);
             }
@@ -97,14 +97,11 @@ class RestService extends Model
                 $filter_object_list[] = $filter;
             }
 
-
             $filter_object = new \stdClass();
-            if(count($filter_object_list) == 0) {
-            }
-            elseif(count($filter_object_list) == 1) {
+            if (count($filter_object_list) == 0) {
+            } elseif (count($filter_object_list) == 1) {
                 $filter_object->filters = $filter_object_list[0];
-            }
-            else {
+            } else {
                 $filters_and = new \stdClass();
                 $filters_and->op = 'and';
                 $filters_and->content = [];
@@ -118,7 +115,6 @@ class RestService extends Model
 
                 $filter_object->filters = $filters_and;
                 // $filter_object->filters->content = array_values($filters_and->content);
-                
             }
 
             // dd($filter_object);
@@ -130,7 +126,6 @@ class RestService extends Model
             $t['params'] = json_encode($filter_object);
             // dd($t['params']);
 
-
             $request_params[] = $t;
         }
 
@@ -138,11 +133,10 @@ class RestService extends Model
         $response_list = self::doRequests($request_params);
         // dd($response_list);
 
-
         foreach ($response_list as $r_key => $response) {
             $rs = $response['rs'];
 
-            if(isset($response['data']->Repertoire)) {
+            if (isset($response['data']->Repertoire)) {
                 // add "real" rest_service_id to each sample
                 $sample_list = $response['data']->Repertoire;
                 foreach ($sample_list as $sample) {
@@ -150,21 +144,17 @@ class RestService extends Model
                     $sample->real_rest_service_id = $rs->id;
                 }
 
-                $response['data'] = $sample_list;                
-            }
-            else if(isset($response['data']->success) && ! $response['data']->success) {
+                $response['data'] = $sample_list;
+            } elseif (isset($response['data']->success) && ! $response['data']->success) {
                 $response['status'] = 'error';
                 $response['error_message'] = $response['data']->message;
-            }
-            else {
+            } else {
                 $response['status'] = 'error';
                 $response['error_message'] = 'Malformed response from service';
             }
             $response_list[$r_key] = $response;
-
         }
         // dd($response_list);
-
 
         // // merge service responses belonging to the same group
         // $response_list_grouped = [];
@@ -435,7 +425,7 @@ class RestService extends Model
 
                 $options['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
                 $options['body'] = $params_str;
-                
+
                 if ($file_path != '') {
                     $dirPath = dirname($file_path);
                     if (! is_dir($dirPath)) {
