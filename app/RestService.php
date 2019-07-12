@@ -45,14 +45,7 @@ class RestService extends Model
     // send "/samples" request to all enabled services
     public static function samples($filters, $username = '')
     {
-        $base_uri = 'samples';
-
-        // add username to filters
-        $filters['username'] = $username;
-        $filters['ir_username'] = $username;
-
-        // time out
-        $filters['timeout'] = config('ireceptor.service_request_timeout_samples');
+        $base_uri = 'repertoire';
 
         // override field names from gateway (ir_id) to AIRR (ir_v2)
         $filters = FieldName::convert($filters, 'ir_id', 'ir_v2');
@@ -63,61 +56,149 @@ class RestService extends Model
             $t = [];
 
             $t['rs'] = $rs;
-            $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;
-            $t['params'] = $filters;
+            $t['url'] = $rs->url . $base_uri;
+            $t['timeout'] = config('ireceptor.service_request_timeout_samples');
+
+            // remove null filter values.
+            foreach ($filters as $k => $v) {
+                if ($v === null) {
+                    unset($filters[$k]);
+                }
+            }
+
+            // remove gateway filters
+            unset($filters['cols']);
+            // dd($filters);
+
+            if(isset($filters['subject_id'])) {
+                $filters['subject.subject_id'] = $filters['subject_id'];
+                unset($filters['subject_id']);
+            }
+
+            if(isset($filters['cell_subset'])) {
+                $filters['sample.cell_subset'] = $filters['cell_subset'];
+                unset($filters['cell_subset']);
+            }
+
+            // manual filters
+            // $filters['subject.subject_id'] = 'TW05B';
+            // $filters['sample.cell_subset'] = 'Memory CD8+ T cell';
+
+            $filter_object_list = [];
+            foreach ($filters as $k => $v) {
+                $filter_content = new \stdClass();
+                $filter_content->field = $k;
+                $filter_content->value = $v;
+
+                $filter = new \stdClass();
+                $filter->op = '=';
+                $filter->content = $filter_content;
+
+                $filter_object_list[] = $filter;
+            }
+
+
+            $filter_object = new \stdClass();
+            if(count($filter_object_list) == 0) {
+            }
+            elseif(count($filter_object_list) == 1) {
+                $filter_object->filters = $filter_object_list[0];
+            }
+            else {
+                $filters_and = new \stdClass();
+                $filters_and->op = 'and';
+                $filters_and->content = [];
+                foreach ($filter_object_list as $filter) {
+                    $filters_and->content[] = $filter;
+                }
+                // $filters_and->content = array_values($filters_and->content);
+                // dd($filters_and->content);
+                // echo  json_encode($filters_and->content, JSON_PRETTY_PRINT);
+                // die();
+
+                $filter_object->filters = $filters_and;
+                // $filter_object->filters->content = array_values($filters_and->content);
+                
+            }
+
+            // dd($filter_object);
+
+            // $filters['tetewt'] = 32;
+            // dd($filters);
+            // echo  json_encode($filter_object,  JSON_PRETTY_PRINT);
+            // die();
+            $t['params'] = json_encode($filter_object);
+            // dd($t['params']);
+
 
             $request_params[] = $t;
         }
 
         // do requests
         $response_list = self::doRequests($request_params);
+        // dd($response_list);
 
-        // add "real" rest_service_id to each sample
-        foreach ($response_list as $response) {
+
+        foreach ($response_list as $r_key => $response) {
             $rs = $response['rs'];
 
-            $sample_list = $response['data'];
-            foreach ($sample_list as $sample) {
-                // so any query is sent to the proper service
-                $sample->real_rest_service_id = $rs->id;
-            }
-
-            $response['data'] = $sample_list;
-        }
-
-        // merge service responses belonging to the same group
-        $response_list_grouped = [];
-        foreach ($response_list as $response) {
-            $group = $response['rs']->rest_service_group_code;
-
-            // override field names from AIRR (ir_v2) to gateway (ir_id)
-            $response['data'] = FieldName::convertObjectList($response['data'], 'ir_v2', 'ir_id');
-
-            // service doesn't belong to a group -> just add the response
-            if ($group == '') {
-                $response_list_grouped[] = $response;
-            } else {
-                // a response with that group already exists? -> merge
-                if (isset($response_list_grouped[$group])) {
-                    $r1 = $response_list_grouped[$group];
-                    $r2 = $response;
-
-                    // merge response status
-                    if ($r2['status'] != 'success') {
-                        $r1['status'] = $r2['status'];
-                    }
-
-                    // merge list of samples
-                    $r1['data'] = array_merge($r1['data'], $r2['data']);
-
-                    $response_list_grouped[$group] = $r1;
-                } else {
-                    $response_list_grouped[$group] = $response;
+            if(isset($response['data']->Repertoire)) {
+                // add "real" rest_service_id to each sample
+                $sample_list = $response['data']->Repertoire;
+                foreach ($sample_list as $sample) {
+                    // so any query is sent to the proper service
+                    $sample->real_rest_service_id = $rs->id;
                 }
-            }
-        }
 
-        $response_list = $response_list_grouped;
+                $response['data'] = $sample_list;                
+            }
+            else if(isset($response['data']->success) && ! $response['data']->success) {
+                $response['status'] = 'error';
+                $response['error_message'] = $response['data']->message;
+            }
+            else {
+                $response['status'] = 'error';
+                $response['error_message'] = 'Malformed response from service';
+            }
+            $response_list[$r_key] = $response;
+
+        }
+        // dd($response_list);
+
+
+        // // merge service responses belonging to the same group
+        // $response_list_grouped = [];
+        // foreach ($response_list as $response) {
+        //     $group = $response['rs']->rest_service_group_code;
+
+        //     // override field names from AIRR (ir_v2) to gateway (ir_id)
+        //     $response['data'] = FieldName::convertObjectList($response['data'], 'ir_v2', 'ir_id');
+
+        //     // service doesn't belong to a group -> just add the response
+        //     if ($group == '') {
+        //         $response_list_grouped[] = $response;
+        //     } else {
+        //         // a response with that group already exists? -> merge
+        //         if (isset($response_list_grouped[$group])) {
+        //             $r1 = $response_list_grouped[$group];
+        //             $r2 = $response;
+
+        //             // merge response status
+        //             if ($r2['status'] != 'success') {
+        //                 $r1['status'] = $r2['status'];
+        //             }
+
+        //             // merge list of samples
+        //             $r1['data'] = array_merge($r1['data'], $r2['data']);
+
+        //             $response_list_grouped[$group] = $r1;
+        //         } else {
+        //             $response_list_grouped[$group] = $response;
+        //         }
+        //     }
+        // }
+
+        // $response_list = $response_list_grouped;
 
         return $response_list;
     }
@@ -130,9 +211,6 @@ class RestService extends Model
         // add username to filters
         $filters['username'] = $username;
         $filters['ir_username'] = $username;
-
-        // time out
-        $filters['timeout'] = config('ireceptor.service_request_timeout');
 
         // prepare request parameters for each service
         $request_params = [];
@@ -165,6 +243,7 @@ class RestService extends Model
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;
             $t['params'] = $service_filters;
+            $t['timeout'] = config('ireceptor.service_request_timeout');
 
             $request_params[] = $t;
         }
@@ -261,9 +340,6 @@ class RestService extends Model
         $filters['username'] = $username;
         $filters['ir_username'] = $username;
 
-        // time out
-        $filters['timeout'] = config('ireceptor.service_file_request_timeout');
-
         // get list of rest services which will actually be queried
         $rs_list = [];
         foreach (self::findEnabled() as $rs) {
@@ -302,6 +378,7 @@ class RestService extends Model
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;
             $t['params'] = $filters;
+            $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
             // add number suffix for rest services belonging to the same group
             $file_suffix = '';
@@ -340,35 +417,25 @@ class RestService extends Model
                 $file_path = array_get($t, 'file_path', '');
                 $returnArray = array_get($t, 'returnArray', false);
                 $rs = array_get($t, 'rs');
-                $timeout = array_get($t, 'params.timeout', config('ireceptor.service_request_timeout'));
+                $timeout = array_get($t, 'timeout', config('ireceptor.service_request_timeout'));
                 array_forget($t, 'params.timeout');
-                $params = array_get($t, 'params', []);
+                $params_str = array_get($t, 'params', '{}');
 
                 // build Guzzle request params array
                 $options = [];
                 $options['auth'] = [$rs->username, $rs->password];
                 $options['timeout'] = $timeout;
 
-                // remove null values.
-                foreach ($params as $k => $v) {
-                    if ($v === null) {
-                        unset($params[$k]);
-                    }
-                }
+                // // remove null values.
+                // foreach ($params as $k => $v) {
+                //     if ($v === null) {
+                //         unset($params[$k]);
+                //     }
+                // }
 
-                // For VDJServer, send array parameters without brackets. Ex: p1=a&p1=b
-                if (str_contains($url, 'vdj') || str_contains($url, '206.12.99.176:8080')) {
-                    // build query string with special function which doesn't add brackets
-                    $queryString = \GuzzleHttp\Psr7\build_query($params, PHP_QUERY_RFC1738);
-
-                    // set request body and header manually
-                    $options['body'] = $queryString;
-                    $options['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
-                } else {
-                    // For PHP services, use Guzzle default behaviour. Ex: p1[]=a&p1[]=b
-                    $options['form_params'] = $params;
-                }
-
+                $options['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
+                $options['body'] = $params_str;
+                
                 if ($file_path != '') {
                     $dirPath = dirname($file_path);
                     if (! is_dir($dirPath)) {
@@ -386,7 +453,7 @@ class RestService extends Model
                 $t['data'] = [];
 
                 // execute request
-                $query_log_id = QueryLog::start_rest_service_query($rs->id, $rs->name, $url, $params, $file_path);
+                $query_log_id = QueryLog::start_rest_service_query($rs->id, $rs->name, $url, $params_str, $file_path);
 
                 yield $client
                     ->requestAsync('POST', $url, $options)

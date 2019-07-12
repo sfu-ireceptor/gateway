@@ -90,6 +90,13 @@ class RestServiceSeeder extends Seeder
                     'password' => '',
                     'version' => 2,
                 ],
+                [
+                    'url' => 'https://vdjserver.org/airr/v1/',
+                    'name' => 'VDJServer ADC',
+                    'username' => '',
+                    'password' => '',
+                    'version' => 2,
+                ],
             ];
 
         foreach ($l as $t) {
