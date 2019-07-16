@@ -97,6 +97,13 @@ class RestServiceSeeder extends Seeder
                     'password' => '',
                     'version' => 2,
                 ],
+                [
+                    'url' => 'https://206.12.89.109/airr/v1/',
+                    'name' => 'IPA ADC',
+                    'username' => '',
+                    'password' => '',
+                    'version' => 2,
+                ],
             ];
 
         foreach ($l as $t) {
