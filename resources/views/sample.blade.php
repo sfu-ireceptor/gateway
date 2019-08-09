@@ -198,7 +198,10 @@
 		</div>
 
 		<div class="col-md-10">
-			<div class="reloading_contents">
+
+			@include('finishingLoadingMessage')
+
+			<div class="reloading_contents hidden">
 				<!-- Active filters -->
 				@if ( ! empty($filter_fields))
 					<div class="active_filters">
