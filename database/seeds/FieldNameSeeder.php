@@ -26,6 +26,8 @@ class FieldNameSeeder extends CsvSeeder
             14 => 'ir_class',
             15 => 'ir_subclass',
             16 => 'airr',
+            17 => 'ir_adc_api_query',
+            18 => 'ir_adc_api_response',
             20 => 'airr_full',
             21 => 'airr_description',
             22 => 'airr_example',
