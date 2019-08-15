@@ -21,6 +21,8 @@
 							<th>airr_full</th>
 							<th>airr_description</th>
 							<th>airr_example</th>
+							<th>ir_adc_api_query</th>
+							<th>ir_adc_api_response</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -36,6 +38,8 @@
 							<td class="text-nowrap">{{ $s['airr_full'] }}</td>
 							<td class="text-nowrap">{{ $s['airr_description'] }}</td>
 							<td class="text-nowrap">{{ $s['airr_example'] }}</td>
+							<td class="text-nowrap">{{ $s['ir_adc_api_query'] }}</td>
+							<td class="text-nowrap">{{ $s['ir_adc_api_response'] }}</td>
 						@endforeach
 					</tbody>
 				</table>
