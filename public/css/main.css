@@ -1062,7 +1062,7 @@ a.download_sequences {
 	display: none;
 }
 
-.reloading_message, .download_message {
+.reloading_message, .download_message, .finishing_loading_message {
 	background-color: #f8f8f8;
 	border-radius: 6px;
 	border: 1px solid #e7e7e7;
@@ -1073,7 +1073,11 @@ a.download_sequences {
 	padding: 40px 0 25px 50px;
 }
 
-.reloading_message h3, .download_message h3 {
+.reloading_message {
+	display: none;
+}
+
+.reloading_message h3, .download_message h3, .finishing_loading_message h3 {
 	margin-top: 5px;
 }
 

@@ -311,7 +311,9 @@
 											@if($field['ir_id'] == 'functional')
 												{{ $s->functional ? 'Yes' : 'No' }}											
 											@elseif($field['ir_id'] == 'v_call' || $field['ir_id'] == 'v_call' || $field['ir_id'] == 'd_call' )
-												{{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
+												<span title="{{ $s->{$field['ir_id']} }}">
+													{{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
+												</span>
 											@else
 												<span title="{{ $s->{$field['ir_id']} }}">
 												{{ $s->{$field['ir_id']} }}

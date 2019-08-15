@@ -266,12 +266,21 @@ $(document).ready(function() {
 		$('.loading_message_background').hide();
     }
 
+    function hide_finishing_loading_message() {
+    	$('.reloading_contents').removeClass('hidden');
+    	$('.finishing_loading_message').hide();
+    }
+
 	$('form.show_loading_message').submit(function(){
 		show_loading_message();
 	});
 
     $(window).bind("pageshow", function(event) {
 		hide_loading_message();
+	});
+
+	jQuery(window).load(function () {
+		hide_finishing_loading_message();
 	});
 
 	$('.loading_message a.cancel').click(function(){

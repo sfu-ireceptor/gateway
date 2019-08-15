@@ -13,7 +13,7 @@
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
 		<link href="/css/bootstrap-multiselect.css" rel="stylesheet" />
 		<link href="/css/jstree/default/style.min.css" rel="stylesheet" />
-		<link href="/css/main.css?v=28" rel="stylesheet">
+		<link href="/css/main.css?v=29" rel="stylesheet">
 
 		<!-- IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -182,7 +182,7 @@
 		<script src="/js/bootstrap-multiselect.js"></script>
 		<script src="/js/pluralize.js"></script>
 
-		<script src="/js/main.js?v=24"></script>
+		<script src="/js/main.js?v=25"></script>
 		<script src="/js/visualization.js?v=13"></script>
 	</body>
 
