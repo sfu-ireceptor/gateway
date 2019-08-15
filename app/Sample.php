@@ -95,7 +95,6 @@ class Sample
                 // $sample->lab_name = data_get($sample, 'study.lab_name');
                 // $sample->lab_name = data_get($sample, 'study.lab_name');
 
-
                 // dd($sample);
             }
             $sample_list = FieldName::convertObjectList($sample_list, 'ir_v2', 'ir_id');
