@@ -70,19 +70,7 @@ class RestService extends Model
             unset($filters['cols']);
             // dd($filters);
 
-            if (isset($filters['subject_id'])) {
-                $filters['subject.subject_id'] = $filters['subject_id'];
-                unset($filters['subject_id']);
-            }
-
-            if (isset($filters['cell_subset'])) {
-                $filters['sample.cell_subset'] = $filters['cell_subset'];
-                unset($filters['cell_subset']);
-            }
-
-            // manual filters
-            // $filters['subject.subject_id'] = 'TW05B';
-            // $filters['sample.cell_subset'] = 'Memory CD8+ T cell';
+            $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
 
             $filter_object_list = [];
             foreach ($filters as $k => $v) {
@@ -91,7 +79,7 @@ class RestService extends Model
                 $filter_content->value = $v;
 
                 $filter = new \stdClass();
-                $filter->op = '=';
+                $filter->op = 'contains';
                 $filter->content = $filter_content;
 
                 $filter_object_list[] = $filter;
