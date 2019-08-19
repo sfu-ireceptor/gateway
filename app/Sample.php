@@ -3,6 +3,7 @@
 namespace App;
 
 use Facades\App\RestService;
+use Illuminate\Support\Facades\Log;
 
 class Sample
 {
@@ -82,23 +83,22 @@ class Sample
                 // add study URL
                 $sample = self::generate_study_urls($sample);
 
-                $sample->lab_name = data_get($sample, 'study.lab_name');
-                $sample->study_title = data_get($sample, 'study.study_title');
-                $sample->subject_id = data_get($sample, 'subject.subject_id');
-                $sample->tissue = data_get($sample, 'sample.0.tissue');
-                $sample->cell_subset = data_get($sample, 'sample.0.cell_subset');
-                $sample->sample_id = data_get($sample, 'sample.0.sample_id');
-                // $sample->lab_name = data_get($sample, 'study.lab_name');
-                // $sample->lab_name = data_get($sample, 'study.lab_name');
-                // $sample->lab_name = data_get($sample, 'study.lab_name');
-                // $sample->lab_name = data_get($sample, 'study.lab_name');
-                // $sample->lab_name = data_get($sample, 'study.lab_name');
-                // $sample->lab_name = data_get($sample, 'study.lab_name');
-
-                // dd($sample);
+                $sample_field_list = FieldName::getSampleFields();
+                foreach ($sample_field_list as $sample_field) {
+                    if($sample_field['ir_id'] != 'organism') { // TODO decide with Scott the proper format and update mapping
+                        // Log::debug($sample_field);
+                        if(isset($sample_field['ir_adc_api_response'])) {
+                            $field_name = $sample_field['ir_id'];
+                            $field_value = data_get($sample, $sample_field['ir_adc_api_response']);
+                            // if(is_object($field_value)) {
+                            //     dd($field_value);
+                            // }
+                            $sample->{$field_name} = $field_value;
+                        }
+                    }
+                }
             }
             $sample_list = FieldName::convertObjectList($sample_list, 'ir_v2', 'ir_id');
-            // dd($sample_list);
         }
 
         // merge all service responses into a single list of samples
@@ -106,7 +106,6 @@ class Sample
         foreach ($response_list as $response) {
             $sample_list = array_merge($sample_list, $response['data']);
         }
-        // dd($sample_list);
 
         // return the statistics about that list of samples
         return self::stats($sample_list);
