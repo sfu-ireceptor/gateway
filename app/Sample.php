@@ -34,11 +34,14 @@ class Sample
 
     public static function find($filters, $username)
     {
+        $service_filters = $filters;
+
         // remove gateway-specific filters
-        unset($filters['open_filter_panel_list']);
+        unset($service_filters['open_filter_panel_list']);
+        unset($service_filters['full_text_search']);
 
         // do requests
-        $response_list = RestService::samples($filters, $username);
+        $response_list = RestService::samples($service_filters, $username);
 
         // if error, update gateway query status
         $gw_query_log_id = request()->get('query_log_id');
@@ -72,10 +75,11 @@ class Sample
                         $sample_list_result[] = $sample;
                     }
                 }
+
                 $response_list[$i]['data'] = $sample_list_result;
             }
 
-            $sample_list = $response['data'];
+            $sample_list = $response_list[$i]['data'];
             // dd($sample_list);
             if (! is_array($sample_list)) {
                 $sample_list = [];
