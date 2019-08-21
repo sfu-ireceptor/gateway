@@ -81,7 +81,7 @@ class RestService extends Model
                 $filter = new \stdClass();
 
                 $filter->op = 'contains';
-                if(is_array($v)) {
+                if (is_array($v)) {
                     $filter->op = 'in';
                 }
 
