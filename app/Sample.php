@@ -49,6 +49,7 @@ class Sample
         }
 
         // tweak responses
+        $sample_list_all = [];
         foreach ($response_list as $i => $response) {
             $rs = $response['rs'];
             $sample_list = $response['data'];
@@ -75,6 +76,11 @@ class Sample
             }
 
             $sample_list = $response['data'];
+            // dd($sample_list);
+            if( ! is_array($sample_list)) {
+                $sample_list = [];
+            }
+
             foreach ($sample_list as $sample) {
                 // add rest service id/name
                 $sample->rest_service_id = $rs->id;
@@ -99,16 +105,12 @@ class Sample
                 }
             }
             $sample_list = FieldName::convertObjectList($sample_list, 'ir_v2', 'ir_id');
-        }
 
-        // merge all service responses into a single list of samples
-        $sample_list = [];
-        foreach ($response_list as $response) {
-            $sample_list = array_merge($sample_list, $response['data']);
+            $sample_list_all = array_merge($sample_list_all, $sample_list);
         }
 
         // return the statistics about that list of samples
-        return self::stats($sample_list);
+        return self::stats($sample_list_all);
     }
 
     public static function stats($sample_list)

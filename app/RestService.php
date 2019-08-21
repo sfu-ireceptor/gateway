@@ -68,9 +68,9 @@ class RestService extends Model
 
             // remove gateway filters
             unset($filters['cols']);
-            // dd($filters);
 
             $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
+            // dd($filters);
 
             $filter_object_list = [];
             foreach ($filters as $k => $v) {
@@ -79,7 +79,12 @@ class RestService extends Model
                 $filter_content->value = $v;
 
                 $filter = new \stdClass();
+
                 $filter->op = 'contains';
+                if(is_array($v)) {
+                    $filter->op = 'in';
+                }
+
                 $filter->content = $filter_content;
 
                 $filter_object_list[] = $filter;
@@ -136,6 +141,7 @@ class RestService extends Model
             } elseif (isset($response['data']->success) && ! $response['data']->success) {
                 $response['status'] = 'error';
                 $response['error_message'] = $response['data']->message;
+                $response['data'] = [];
             } else {
                 $response['status'] = 'error';
                 $response['error_message'] = 'Malformed response from service';
