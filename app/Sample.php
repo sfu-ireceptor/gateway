@@ -77,7 +77,7 @@ class Sample
 
             $sample_list = $response['data'];
             // dd($sample_list);
-            if( ! is_array($sample_list)) {
+            if (! is_array($sample_list)) {
                 $sample_list = [];
             }
 
