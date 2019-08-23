@@ -42,7 +42,8 @@ class RestService extends Model
         return $l;
     }
 
-    // send "/samples" request to all enabled services
+
+    // do samples request to all enabled services
     public static function samples($filters, $username = '')
     {
         $base_uri = 'repertoire';
@@ -135,6 +136,9 @@ class RestService extends Model
                 foreach ($sample_list as $sample) {
                     // so any query is sent to the proper service
                     $sample->real_rest_service_id = $rs->id;
+
+                    // get sequence count
+
                 }
 
                 $response['data'] = $sample_list;
@@ -185,6 +189,105 @@ class RestService extends Model
         // $response_list = $response_list_grouped;
 
         return $response_list;
+    }
+
+    public static function sequence_count($filters, $rest_service_id, $sample_id, $username = '')
+    {
+         $base_uri = 'rearrangement';
+
+        // override field names from gateway (ir_id) to AIRR (ir_v2)
+        $filters = FieldName::convert($filters, 'ir_id', 'ir_v2');
+
+        $rs = self::find($rest_service_id);
+
+        // prepare parameters for each service
+        $request_params = [];
+        $t = [];
+
+        $t['rs'] = $rs;
+        $t['url'] = $rs->url . $base_uri;
+        $t['timeout'] = config('ireceptor.service_request_timeout_samples');
+
+        // remove null filter values.
+        foreach ($filters as $k => $v) {
+            if ($v === null) {
+                unset($filters[$k]);
+            }
+        }
+
+        // remove gateway filters
+        unset($filters['cols']);
+
+        $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
+
+
+        $filter_object_list = [];
+        foreach ($filters as $k => $v) {
+            $filter_content = new \stdClass();
+            $filter_content->field = $k;
+            $filter_content->value = $v;
+
+            $filter = new \stdClass();
+
+            $filter->op = 'contains';
+            if (is_array($v)) {
+                $filter->op = 'in';
+            }
+
+            $filter->content = $filter_content;
+
+            $filter_object_list[] = $filter;
+        }
+
+        // add sample id filter
+        $filter_content = new \stdClass();
+        $filter_content->field = 'repertoire_id';
+        $filter_content->value = [$sample_id];
+
+        $filter = new \stdClass();
+        $filter->op = 'in';
+        $filter->content = $filter_content;
+
+        $filter_object_list[] = $filter;
+
+        // build filters string
+        $filter_object = new \stdClass();
+        if (count($filter_object_list) == 0) {
+        } elseif (count($filter_object_list) == 1) {
+            $filter_object->filters = $filter_object_list[0];
+        } else {
+            $filters_and = new \stdClass();
+            $filters_and->op = 'and';
+            $filters_and->content = [];
+            foreach ($filter_object_list as $filter) {
+                $filters_and->content[] = $filter;
+            }
+
+            $filter_object->filters = $filters_and;
+        }
+
+        $filter_object->facets = 'repertoire_id';
+
+        // echo  json_encode($filter_object,  JSON_PRETTY_PRINT);
+        // die();
+        $t['params'] = json_encode($filter_object);
+
+        $request_params[] = $t;
+
+        // do requests
+        $response_list = self::doRequests($request_params);
+        // dd($response_list);
+
+        $nb_sequences = 0;
+        foreach ($response_list as $r_key => $response) {
+            $rs = $response['rs'];
+
+            if (isset($response['data']->Rearrangement)) {
+                $nb_sequences = $response['data']->Rearrangement[0]->count;
+            }
+        }
+
+        return $nb_sequences;
     }
 
     // send "/sequences_summary" request to all enabled services
