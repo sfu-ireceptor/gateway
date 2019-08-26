@@ -137,8 +137,13 @@ class RestService extends Model
                     // so any query is sent to the proper service
                     $sample->real_rest_service_id = $rs->id;
 
-                    // get sequence count
+                    // set sample
+                    // TODO remove it after IR-1460 is done
+                    $sample->ir_project_sample_id = $sample->repertoire_id;
 
+                    // get sequence count
+                    $nb_sequences = RestService::sequence_count($filters, $rs->id, $sample->repertoire_id);
+                    $sample->ir_sequence_count = $nb_sequences;
                 }
 
                 $response['data'] = $sample_list;

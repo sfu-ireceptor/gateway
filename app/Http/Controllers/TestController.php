@@ -50,6 +50,10 @@ class TestController extends Controller
 
     public function getIndex()
     {
+        dd(RestService::sequence_count([],36,'5168912186246295065-242ac11c-0001-012'));
+
+
+        die();
         echo starts_with('This is my name', 'Thisf');
         die();
 
