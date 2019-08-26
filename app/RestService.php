@@ -42,7 +42,6 @@ class RestService extends Model
         return $l;
     }
 
-
     // do samples request to all enabled services
     public static function samples($filters, $username = '')
     {
@@ -142,7 +141,7 @@ class RestService extends Model
                     $sample->ir_project_sample_id = $sample->repertoire_id;
 
                     // get sequence count
-                    $nb_sequences = RestService::sequence_count($filters, $rs->id, $sample->repertoire_id);
+                    $nb_sequences = self::sequence_count($filters, $rs->id, $sample->repertoire_id);
                     $sample->ir_sequence_count = $nb_sequences;
                 }
 
@@ -198,7 +197,7 @@ class RestService extends Model
 
     public static function sequence_count($filters, $rest_service_id, $sample_id, $username = '')
     {
-         $base_uri = 'rearrangement';
+        $base_uri = 'rearrangement';
 
         // override field names from gateway (ir_id) to AIRR (ir_v2)
         $filters = FieldName::convert($filters, 'ir_id', 'ir_v2');
@@ -224,7 +223,6 @@ class RestService extends Model
         unset($filters['cols']);
 
         $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
-
 
         $filter_object_list = [];
         foreach ($filters as $k => $v) {
