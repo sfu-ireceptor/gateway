@@ -11,7 +11,7 @@
 
 	<!-- tabs -->
 	<ul class="nav nav-tabs" role="tablist">
-	<li role="presentation" class="active"><a href="#metadata" role="tab" data-toggle="tab">Metadata</a></li>
+	<li role="presentation" class="active"><a href="#metadata" role="tab" data-toggle="tab">Repertoire Metadata</a></li>
 	<li role="presentation"><a href="#sequences" role="tab" data-toggle="tab">Sequences</a></li>
 	</ul>
 
