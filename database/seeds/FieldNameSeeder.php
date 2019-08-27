@@ -87,7 +87,7 @@ class FieldNameSeeder extends CsvSeeder
     public function define_default_sample_fields()
     {
         $l = [];
-        
+
         $l[] = ['id' => 'rest_service_name', 'visible' => true];
         $l[] = ['id' => 'study_title', 'visible' => true];
         $l[] = ['id' => 'disease_state_sample', 'visible' => true];
