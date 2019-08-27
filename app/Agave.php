@@ -475,6 +475,7 @@ class Agave
                 $multipart[] = ['filename' => $filename, 'name' => $filename, 'contents' => $file_str];
             }
 
+            $headers['Content-Type'] = 'application/json';
             $data = ['headers' => $headers, 'multipart' => $multipart];
         }
 
