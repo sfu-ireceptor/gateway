@@ -7,7 +7,7 @@
 <div class="container-fluid sample_container">
 
 	<h1>1. Repertoire Metadata Search</h1>
-	<p class="sh1">Filter by study/subject/sample and choose samples to analyze relevant sequence data</p>
+	<p class="sh1">Filter by study/subject/sample and choose repertoires to analyze relevant sequence data</p>
 
 	<div class="row">
 		<div class="col-md-2 filters">
@@ -247,7 +247,7 @@
 						<p>
 							<strong>
 								{{number_format($total_filtered_sequences)}} sequences
-								({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}})
+								({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
 							</strong>
 							returned from
 
@@ -284,7 +284,7 @@
 							<button class="btn btn-primary btn-xs pull-right" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
 					  			Done
 							</button>
-							<h4 class="panel-title">Edit Individual Samples Columns</h4>
+							<h4 class="panel-title">Edit Individual Repertoires Columns</h4>
 						</div>
 				  		<div class="panel-body">
 							<form class="column_selector">
@@ -307,12 +307,12 @@
 
 				{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form show_loading_message')) }}
 
-					<h3>Individual Samples</h3>
+					<h3>Individual Repertoires</h3>
 					<p class="table_info">
-						<span class="nb_selected_samples">{{ count($sample_list) }}</span> samples selected
+						<span class="nb_selected_samples">{{ count($sample_list) }}</span> repertoires selected
 						<a class="unselect_all_samples" href="#">Unselect All</a>
 						<a class="select_all_samples" href="#">Select All</a>
-						{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load', 'disabled' => 'disabled')) }}
+						{{ Form::submit('Browse sequences from selected repertoires →', array('class' => 'btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load', 'disabled' => 'disabled')) }}
 					</p>
 					
 					<!-- sample data -->
@@ -399,7 +399,7 @@
 					<input type="hidden" name="project_id_list" />
 					<input type="hidden" name="sample_query_id" value="{{ $sample_query_id }}" />
 					<p class="pull-right">
-					{{ Form::submit('Browse sequences from selected samples →', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
+					{{ Form::submit('Browse sequences from selected repertoires →', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
 					</p>
 				{{ Form::close() }}
 				@endif
