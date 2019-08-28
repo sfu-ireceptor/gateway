@@ -138,7 +138,7 @@
 						<p>
 							<strong>
 								{{number_format($total_filtered_sequences)}} sequences
-								({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}})
+								({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
 							</strong>
 							returned from
 							<a href="#" data-toggle="modal" data-target="#myModal">
