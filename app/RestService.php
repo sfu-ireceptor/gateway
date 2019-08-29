@@ -207,11 +207,10 @@ class RestService extends Model
         $t['url'] = $rs->url . $base_uri;
         $t['timeout'] = config('ireceptor.service_request_timeout_samples');
 
-
         // build repertoire_id filter
         $filter_content = new \stdClass();
         $filter_content->field = 'repertoire_id';
-        $filter_content->value = [(string)$sample_id];
+        $filter_content->value = [(string) $sample_id];
 
         $filter = new \stdClass();
         $filter->op = 'in';
