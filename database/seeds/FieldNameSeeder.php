@@ -89,20 +89,21 @@ class FieldNameSeeder extends CsvSeeder
     public function define_default_sample_fields()
     {
         $l = [];
+
         $l[] = ['id' => 'rest_service_name', 'visible' => true];
-        $l[] = ['id' => 'lab_name', 'visible' => true];
-        $l[] = ['id' => 'lab_name', 'visible' => true];
         $l[] = ['id' => 'study_title', 'visible' => true];
+        $l[] = ['id' => 'disease_state_sample', 'visible' => true];
         $l[] = ['id' => 'study_group_description', 'visible' => true];
-        $l[] = ['id' => 'subject_id', 'visible' => true];
         $l[] = ['id' => 'ir_sequence_count', 'visible' => true];
+        $l[] = ['id' => 'lab_name', 'visible' => true];
         $l[] = ['id' => 'tissue', 'visible' => true];
         $l[] = ['id' => 'cell_subset', 'visible' => true];
         $l[] = ['id' => 'cell_phenotype', 'visible' => true];
+        $l[] = ['id' => 'pub_ids', 'visible' => true];
+        $l[] = ['id' => 'study_id', 'visible' => true];
+        $l[] = ['id' => 'subject_id', 'visible' => true];
         $l[] = ['id' => 'sample_id', 'visible' => true];
         $l[] = ['id' => 'template_class', 'visible' => true];
-        $l[] = ['id' => 'study_id', 'visible' => true];
-        $l[] = ['id' => 'pub_ids', 'visible' => true];
         $l[] = ['id' => 'sequencing_platform', 'visible' => true];
 
         foreach ($l as $i => $t) {

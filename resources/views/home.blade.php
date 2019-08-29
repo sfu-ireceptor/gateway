@@ -11,7 +11,7 @@
 			<div class="intro_home">
 				<p>
 					<strong>{{ human_number($total_sequences) }} sequences</strong> and
-					<strong>{{ $total_samples }} samples</strong> are currently available,<br>
+					<strong>{{ $total_samples }} repertoires</strong> are currently available,<br>
 					from
 					<a href="#" data-toggle="modal" data-target="#myModal">
 						{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}},

@@ -144,7 +144,7 @@
 						<h3>Active filters</h3>
 
 						@if ( ! empty($sample_filter_fields))
-							Metadata filters:
+							Repertoire Metadata filters:
 							@foreach($sample_filter_fields as $filter_key => $filter_value)
 								<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
 									@lang('short.' . $filter_key)
@@ -152,7 +152,7 @@
 							@endforeach
 							@isset($sample_query_id)
 								<a href="/samples?query_id=@yield('sample_query_id', '')"class="remove_filters">
-									Go back to metadata search
+									Go back to Repertoire Metadata Search
 								</a>
 							@endisset						
 							<br>
@@ -210,7 +210,7 @@
 						<p>
 							<strong>
 								{{number_format($total_filtered_sequences)}} sequences
-								({{ $total_filtered_samples }} {{ str_plural('sample', $total_filtered_samples)}})
+								({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
 							</strong>
 							returned from
 							<a href="#" data-toggle="modal" data-target="#myModal">
