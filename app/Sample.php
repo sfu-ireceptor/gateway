@@ -108,7 +108,8 @@ class Sample
                     }
                 }
             }
-            $sample_list = FieldName::convertObjectList($sample_list, 'ir_v2', 'ir_id');
+
+            $sample_list = FieldName::convertObjectList($sample_list, 'ir_adc_api_response', 'ir_id');
 
             $sample_list_all = array_merge($sample_list_all, $sample_list);
         }
