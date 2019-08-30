@@ -11,8 +11,8 @@ use App\RestService;
 use App\RestServiceGroup;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
@@ -51,7 +51,8 @@ class TestController extends Controller
 
     public function getIndex()
     {
-        echo App::environment();die();
+        echo App::environment();
+        die();
 
         // throw new \Exception('Yet another error: why??');
 
