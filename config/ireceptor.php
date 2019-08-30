@@ -10,7 +10,6 @@ return [
 
    'email_support' => env('IRECEPTOR_EMAIL_SUPPORT', 'support@ireceptor.org'),
 
-
     /*
     |--------------------------------------------------------------------------
     | Service request timeout

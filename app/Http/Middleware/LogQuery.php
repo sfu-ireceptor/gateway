@@ -34,7 +34,7 @@ class LogQuery
             $error_message = $response->exception->getMessage();
             QueryLog::end_gateway_query($query_log_id, 'error', $error_message);
 
-            if(App::environment() == 'production') {
+            if (App::environment() == 'production') {
                 // send email notification
                 $username = auth()->user()->username;
 
@@ -45,7 +45,7 @@ class LogQuery
 
                 Mail::send(['text' => 'emails.data_query_error'], $t, function ($message) use ($username) {
                     $message->to(config('ireceptor.email_support'))->subject('Gateway User Query Error for ' . $username);
-                });                
+                });
             }
         }
 
