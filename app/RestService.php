@@ -158,40 +158,6 @@ class RestService extends Model
         }
         // dd($response_list);
 
-        // // merge service responses belonging to the same group
-        // $response_list_grouped = [];
-        // foreach ($response_list as $response) {
-        //     $group = $response['rs']->rest_service_group_code;
-
-        //     // override field names from AIRR (ir_v2) to gateway (ir_id)
-        //     $response['data'] = FieldName::convertObjectList($response['data'], 'ir_v2', 'ir_id');
-
-        //     // service doesn't belong to a group -> just add the response
-        //     if ($group == '') {
-        //         $response_list_grouped[] = $response;
-        //     } else {
-        //         // a response with that group already exists? -> merge
-        //         if (isset($response_list_grouped[$group])) {
-        //             $r1 = $response_list_grouped[$group];
-        //             $r2 = $response;
-
-        //             // merge response status
-        //             if ($r2['status'] != 'success') {
-        //                 $r1['status'] = $r2['status'];
-        //             }
-
-        //             // merge list of samples
-        //             $r1['data'] = array_merge($r1['data'], $r2['data']);
-
-        //             $response_list_grouped[$group] = $r1;
-        //         } else {
-        //             $response_list_grouped[$group] = $response;
-        //         }
-        //     }
-        // }
-
-        // $response_list = $response_list_grouped;
-
         return $response_list;
     }
 
@@ -454,13 +420,6 @@ class RestService extends Model
                 $options = [];
                 $options['auth'] = [$rs->username, $rs->password];
                 $options['timeout'] = $timeout;
-
-                // // remove null values.
-                // foreach ($params as $k => $v) {
-                //     if ($v === null) {
-                //         unset($params[$k]);
-                //     }
-                // }
 
                 $options['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
                 $options['body'] = $params_str;
