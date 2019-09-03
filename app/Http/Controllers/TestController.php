@@ -12,6 +12,7 @@ use App\RestServiceGroup;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
@@ -51,8 +52,12 @@ class TestController extends Controller
     public function getIndex()
     {
         dd(RestService::sequence_count([], 37, '7'));
-
         die();
+
+        echo App::environment();
+        die();
+        // throw new \Exception('Yet another error: why??');
+
         echo starts_with('This is my name', 'Thisf');
         die();
 
