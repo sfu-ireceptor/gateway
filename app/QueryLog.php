@@ -107,6 +107,7 @@ class QueryLog extends Model
             $ql = self::find($query_log_id);
             $status = $ql->status;
         }
+
         return $status;
     }
 
