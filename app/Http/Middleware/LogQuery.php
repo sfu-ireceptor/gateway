@@ -6,6 +6,7 @@ use Closure;
 use App\QueryLog;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class LogQuery
 {
@@ -28,14 +29,16 @@ class LogQuery
         $request->attributes->set('query_log_id', $query_log_id);
         $response = $next($request);
 
-        if (empty($response->exception)) {
-            QueryLog::end_gateway_query($query_log_id);
-        } else {
+        if (! empty($response->exception)) {
             $error_message = $response->exception->getMessage();
-            QueryLog::end_gateway_query($query_log_id, 'error', $error_message);
+            QueryLog::end_gateway_query($query_log_id, 'error', $error_message);            
+        }
 
-            if (App::environment() == 'production') {
-                // send email notification
+        $gw_query_status = QueryLog::get_gateway_query_status($query_log_id);
+
+        // if error, send email notification
+        if ($gw_query_status != 'done') {
+            if(App::environment() == 'production') {
                 $username = auth()->user()->username;
 
                 $t = [];
