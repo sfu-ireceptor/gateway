@@ -31,8 +31,7 @@ class LogQuery
         if (! empty($response->exception)) {
             $error_message = $response->exception->getMessage();
             QueryLog::end_gateway_query($query_log_id, 'error', $error_message);
-        }
-        else {
+        } else {
             QueryLog::end_gateway_query($query_log_id);
         }
 
