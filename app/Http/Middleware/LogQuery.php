@@ -32,6 +32,9 @@ class LogQuery
             $error_message = $response->exception->getMessage();
             QueryLog::end_gateway_query($query_log_id, 'error', $error_message);
         }
+        else {
+            QueryLog::end_gateway_query($query_log_id);
+        }
 
         $gw_query_status = QueryLog::get_gateway_query_status($query_log_id);
 
