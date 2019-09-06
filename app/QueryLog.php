@@ -111,6 +111,18 @@ class QueryLog extends Model
         return $status;
     }
 
+    public static function get_gateway_query_message($query_log_id)
+    {
+        $message = '';
+        if ($query_log_id != null) {
+            $ql = self::find($query_log_id);
+            $message = $ql->message;
+        }
+
+        return $message;
+    }
+
+
     public static function start_rest_service_query($rest_service_id, $rest_service_name, $path, $params, $filePath)
     {
         $t = [];

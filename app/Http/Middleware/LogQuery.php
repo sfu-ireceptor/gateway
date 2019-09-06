@@ -39,6 +39,7 @@ class LogQuery
         if ($gw_query_status != 'done') {
             if (App::environment() == 'production') {
                 $username = auth()->user()->username;
+                $error_message = get_gateway_query_message($query_log_id);
 
                 $t = [];
                 $t['username'] = $username;
