@@ -201,11 +201,7 @@ class RestService extends Model
     // send "/sequences_summary" request to all enabled services
     public static function sequences_summary($filters, $username = '', $group_by_rest_service = true)
     {
-        $base_uri = 'sequences_summary';
-
-        // add username to filters
-        $filters['username'] = $username;
-        $filters['ir_username'] = $username;
+        $base_uri = 'rearrangement';
 
         // prepare request parameters for each service
         $request_params = [];
@@ -235,87 +231,245 @@ class RestService extends Model
                 }
             }
 
+            // TODO simpler way to do this?
+            $service_filters['repertoire_id'] = $service_filters['ir_project_sample_id_list'];
+            unset($service_filters['ir_project_sample_id_list']);
+            // dd($service_filters);
+
+            $sample_data = self::samples($service_filters);
+            // dd($sample_data);
+            return $sample_data;
+
+  //           $filter_object_list = [];
+  //           foreach ($service_filters as $k => $v) {
+  //               $filter_content = new \stdClass();
+  //               $filter_content->field = $k;
+  //               $filter_content->value = $v;
+
+  //               $filter = new \stdClass();
+
+  //               $filter->op = 'contains';
+  //               if (is_array($v)) {
+  //                   $filter->op = 'in';
+  //               }
+
+  //               $filter->content = $filter_content;
+
+  //               $filter_object_list[] = $filter;
+  //           }
+
+
+  // $filter_object = new \stdClass();
+  //           if (count($filter_object_list) == 0) {
+  //           } elseif (count($filter_object_list) == 1) {
+  //               $filter_object->filters = $filter_object_list[0];
+  //           } else {
+  //               $filters_and = new \stdClass();
+  //               $filters_and->op = 'and';
+  //               $filters_and->content = [];
+  //               foreach ($filter_object_list as $filter) {
+  //                   $filters_and->content[] = $filter;
+  //               }
+  //               // $filters_and->content = array_values($filters_and->content);
+  //               // dd($filters_and->content);
+  //               // echo  json_encode($filters_and->content, JSON_PRETTY_PRINT);
+  //               // die();
+
+  //               $filter_object->filters = $filters_and;
+  //               // $filter_object->filters->content = array_values($filters_and->content);
+  //           }
+  //                   $filter_object->facets = 'repertoire_id';
+
+
+  //           // dd($filter_object_list);
+
+  //           // echo  json_encode($filter_object,  JSON_PRETTY_PRINT);
+  //           // die();
+
+
+
+  //           $t['rs'] = $rs;
+  //           $t['url'] = $rs->url . $base_uri;
+  //           $t['params'] = json_encode($filter_object);
+  //           $t['timeout'] = config('ireceptor.service_request_timeout');
+
+  //           $request_params[] = $t;
+
+            // dd($t);
+        }
+
+        // do requests
+        // dd($request_params);
+        $response_list = self::doRequests($request_params);
+
+        // if ($group_by_rest_service) {
+        //     // merge service responses belonging to the same group
+        //     $response_list_grouped = [];
+        //     foreach ($response_list as $response) {
+
+        //         // validate response format
+        //         $valid = false;
+        //         if ($response['status'] != 'error') {
+        //             if (isset($response['data']->summary) && is_array($response['data']->summary)) {
+        //                 if (isset($response['data']->items) && is_array($response['data']->items)) {
+        //                     $response_list[] = $response;
+        //                     $valid = true;
+        //                 }
+        //             }
+
+        //             if (! $valid) {
+        //                 $response['status'] = 'error';
+        //                 $response['error_message'] = 'Incorrect response format';
+
+        //                 $query_log_id = $response['query_log_id'];
+        //                 QueryLog::update_rest_service_query($query_log_id, '', 'error', 'Incorrect response format');
+
+        //                 $gw_query_log_id = request()->get('query_log_id');
+        //                 $error_message = 'Incorrect service response format';
+        //                 QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
+        //             }
+        //         }
+
+        //         // if an error occured, create empty data structure
+        //         if ($response['status'] == 'error') {
+        //             $response['data'] = new \stdClass();
+        //             $response['data']->summary = [];
+        //             $response['data']->items = [];
+        //         }
+
+        //         $group = $response['rs']->rest_service_group_code;
+
+        //         // override field names from AIRR (ir_v2) to gateway (ir_id)
+        //         $response['data']->summary = FieldName::convertObjectList($response['data']->summary, 'ir_v2', 'ir_id');
+        //         $response['data']->items = FieldName::convertObjectList($response['data']->items, 'ir_v2', 'ir_id');
+
+        //         // service doesn't belong to a group -> just add the response
+        //         if ($group == '') {
+        //             $response_list_grouped[] = $response;
+        //         } else {
+        //             // a response with that group already exists? -> merge
+        //             if (isset($response_list_grouped[$group])) {
+        //                 $r1 = $response_list_grouped[$group];
+        //                 $r2 = $response;
+
+        //                 // merge data
+        //                 $r1['data']->summary = array_merge($r1['data']->summary, $r2['data']->summary);
+        //                 $r1['data']->items = array_merge($r1['data']->items, $r2['data']->items);
+
+        //                 // merge response status
+        //                 if ($r2['status'] != 'success') {
+        //                     $r1['status'] = $r2['status'];
+        //                     $r1['error_message'] = $r2['error_message'];
+        //                     $r1['error_type'] = $r2['error_type'];
+        //                 }
+
+        //                 $response_list_grouped[$group] = $r1;
+        //             } else {
+        //                 $response_list_grouped[$group] = $response;
+        //             }
+        //         }
+        //     }
+
+        //     $response_list = $response_list_grouped;
+        // }
+
+        return $response_list;
+    }
+
+
+
+
+    // retrieves n sequences
+    public static function sequence_list($filters, $n = 10)
+    {
+        $base_uri = 'rearrangement';
+
+        // prepare request parameters for each service
+        $request_params = [];
+        foreach (self::findEnabled() as $rs) {
+            $service_filters = $filters;
+
+            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+            if (array_key_exists($sample_id_list_key, $service_filters) && ! empty($service_filters[$sample_id_list_key])) {
+                // remove REST service id
+                // ir_project_sample_id_list_2 -> ir_project_sample_id_list
+                $service_filters['ir_project_sample_id_list'] = $service_filters[$sample_id_list_key];
+                unset($service_filters[$sample_id_list_key]);
+            } else {
+                // if no sample id for this REST service, don't query it.
+                continue;
+            }
+
+            // override field names from gateway (ir_id) to AIRR (ir_v2)
+            $service_filters = FieldName::convert($service_filters, 'ir_id', 'ir_v2');
+
+            // remove extra ir_project_sample_id_list_ fields
+            foreach ($service_filters as $key => $value) {
+                if (starts_with($key, 'ir_project_sample_id_list_')) {
+                    unset($service_filters[$key]);
+                }
+            }
+
+            // TODO simpler way to do this?
+            $service_filters['repertoire_id'] = $service_filters['ir_project_sample_id_list'];
+            unset($service_filters['ir_project_sample_id_list']);
+
+
+            // prepare parameters for each service
+            $t = [];
+
             $t['rs'] = $rs;
-            $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;
-            $t['params'] = $service_filters;
-            $t['timeout'] = config('ireceptor.service_request_timeout');
+            $t['url'] = $rs->url . $base_uri;
+
+
+            $filter_object_list = [];
+            foreach ($service_filters as $k => $v) {
+                $filter_content = new \stdClass();
+                $filter_content->field = $k;
+                $filter_content->value = $v;
+
+
+                $filter = new \stdClass();
+
+                $filter->op = 'contains';
+                if (is_array($v)) {
+                    $filter->op = 'in';
+                }
+
+                $filter->content = $filter_content;
+
+                $filter_object_list[] = $filter;
+            }
+
+            $filter_object = new \stdClass();
+            if (count($filter_object_list) == 0) {
+            } elseif (count($filter_object_list) == 1) {
+                $filter_object->filters = $filter_object_list[0];
+            } else {
+                $filters_and = new \stdClass();
+                $filters_and->op = 'and';
+                $filters_and->content = [];
+                foreach ($filter_object_list as $filter) {
+                    $filters_and->content[] = $filter;
+                }
+                $filter_object->filters = $filters_and;
+            }
+
+            $filter_object->from = 0;
+            $filter_object->size = $n;
+            $filter_object->fields = ['v_call', 'd_call', 'j_call', 'junction_aa'];
+
+            // echo  json_encode($filter_object,  JSON_PRETTY_PRINT);
+            // die();
+            $t['params'] = json_encode($filter_object);
 
             $request_params[] = $t;
         }
 
         // do requests
         $response_list = self::doRequests($request_params);
-
-        if ($group_by_rest_service) {
-            // merge service responses belonging to the same group
-            $response_list_grouped = [];
-            foreach ($response_list as $response) {
-
-                // validate response format
-                $valid = false;
-                if ($response['status'] != 'error') {
-                    if (isset($response['data']->summary) && is_array($response['data']->summary)) {
-                        if (isset($response['data']->items) && is_array($response['data']->items)) {
-                            $response_list[] = $response;
-                            $valid = true;
-                        }
-                    }
-
-                    if (! $valid) {
-                        $response['status'] = 'error';
-                        $response['error_message'] = 'Incorrect response format';
-
-                        $query_log_id = $response['query_log_id'];
-                        QueryLog::update_rest_service_query($query_log_id, '', 'error', 'Incorrect response format');
-
-                        $gw_query_log_id = request()->get('query_log_id');
-                        $error_message = 'Incorrect service response format';
-                        QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
-                    }
-                }
-
-                // if an error occured, create empty data structure
-                if ($response['status'] == 'error') {
-                    $response['data'] = new \stdClass();
-                    $response['data']->summary = [];
-                    $response['data']->items = [];
-                }
-
-                $group = $response['rs']->rest_service_group_code;
-
-                // override field names from AIRR (ir_v2) to gateway (ir_id)
-                $response['data']->summary = FieldName::convertObjectList($response['data']->summary, 'ir_v2', 'ir_id');
-                $response['data']->items = FieldName::convertObjectList($response['data']->items, 'ir_v2', 'ir_id');
-
-                // service doesn't belong to a group -> just add the response
-                if ($group == '') {
-                    $response_list_grouped[] = $response;
-                } else {
-                    // a response with that group already exists? -> merge
-                    if (isset($response_list_grouped[$group])) {
-                        $r1 = $response_list_grouped[$group];
-                        $r2 = $response;
-
-                        // merge data
-                        $r1['data']->summary = array_merge($r1['data']->summary, $r2['data']->summary);
-                        $r1['data']->items = array_merge($r1['data']->items, $r2['data']->items);
-
-                        // merge response status
-                        if ($r2['status'] != 'success') {
-                            $r1['status'] = $r2['status'];
-                            $r1['error_message'] = $r2['error_message'];
-                            $r1['error_type'] = $r2['error_type'];
-                        }
-
-                        $response_list_grouped[$group] = $r1;
-                    } else {
-                        $response_list_grouped[$group] = $response;
-                    }
-                }
-            }
-
-            $response_list = $response_list_grouped;
-        }
+        // dd($response_list);
+        // $nb_sequences = data_get($response_list, '0.data.Rearrangement.0.count', 0);
 
         return $response_list;
     }
@@ -452,6 +606,7 @@ class RestService extends Model
 
                                 // return object generated from json response
                                 $json = $response->getBody();
+                                // echo $json;die();
                                 $obj = json_decode($json, $returnArray);
                                 $t['data'] = $obj;
                                 $t['query_log_id'] = $query_log_id;

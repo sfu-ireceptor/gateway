@@ -25,7 +25,7 @@ class Sequence
 
     public static function summary($filters, $username)
     {
-        $filters = self::clean_filters($filters);
+        // $filters = self::clean_filters($filters);
 
         // remove gateway-specific filters
         unset($filters['cols']);
@@ -33,12 +33,79 @@ class Sequence
         unset($filters['sample_query_id']);
         unset($filters['open_filter_panel_list']);
 
+        // dd($filters);
+
+        $response_list = RestService::sequence_list($filters);
+        
+        // merge responses
+        $sequence_list = [];
+        foreach ($response_list as $response) {
+            // dd($response);
+            $rs = $response['rs'];
+            $obj = $response['data'];
+
+            $sequence_list = $sequence_list + data_get($obj, 'Rearrangement', []);
+
+        }
+
+        // convert any array properties to strings
+        $sequence_list = array_map('convert_arrays_to_strings', $sequence_list);
+
+        // dd($sequence_list);
+
         // do requests
         $response_list = RestService::sequences_summary($filters, $username);
+        // dd($response_list);
+
+        $sample_list_all = [];
+        foreach ($response_list as $i => $response) {
+            $rs = $response['rs'];
+            $sample_list = $response['data'];
+
+            $sample_list = $response_list[$i]['data'];
+            // dd($sample_list);
+            if (! is_array($sample_list)) {
+                $sample_list = [];
+            }
+
+            foreach ($sample_list as $sample) {
+                // add rest service id/name
+                $sample->rest_service_id = $rs->id;
+                $sample->rest_service_name = $rs->display_name;
+
+                // add study URL
+                $sample = Sample::generate_study_urls($sample);
+
+                $sample_field_list = FieldName::getSampleFields();
+                foreach ($sample_field_list as $sample_field) {
+                    if ($sample_field['ir_id'] != 'organism') { // TODO decide with Scott the proper format and update mapping
+                        // Log::debug($sample_field);
+                        if (isset($sample_field['ir_adc_api_response'])) {
+                            $field_name = $sample_field['ir_id'];
+                            $field_value = data_get($sample, $sample_field['ir_adc_api_response']);
+                            // if(is_object($field_value)) {
+                            //     dd($field_value);
+                            // }
+                            $sample->{$field_name} = $field_value;
+                        }
+                    }
+                }
+            }
+
+            $sample_list = FieldName::convertObjectList($sample_list, 'ir_adc_api_response', 'ir_id');
+
+            $sample_list_all = array_merge($sample_list_all, $sample_list);
+        }
+
+        $sample_list = Sample::stats($sample_list_all);
+        // dd($sample_list);
 
         // generate stats
-        $data = self::process_response($response_list);
+        // $data = self::process_response($response_list);
 
+        $data = $sample_list;
+        $data['items'] = $sequence_list;
+        // dd($data);
         return $data;
     }
 
@@ -70,7 +137,7 @@ class Sequence
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
-        $filters = self::clean_filters($filters);
+        // $filters = self::clean_filters($filters);
 
         // do extra sequence summary request to get expected number of sequences
         // for sanity check after download
@@ -162,26 +229,26 @@ class Sequence
         return $t;
     }
 
-    public static function clean_filters($filters)
-    {
-        if (isset($filters['v_call'])) {
-            $filters['v_call'] = strtoupper($filters['v_call']);
-        }
+    // public static function clean_filters($filters)
+    // {
+    //     if (isset($filters['v_call'])) {
+    //         $filters['v_call'] = strtoupper($filters['v_call']);
+    //     }
 
-        if (isset($filters['j_call'])) {
-            $filters['j_call'] = strtoupper($filters['j_call']);
-        }
+    //     if (isset($filters['j_call'])) {
+    //         $filters['j_call'] = strtoupper($filters['j_call']);
+    //     }
 
-        if (isset($filters['d_call'])) {
-            $filters['d_call'] = strtoupper($filters['d_call']);
-        }
+    //     if (isset($filters['d_call'])) {
+    //         $filters['d_call'] = strtoupper($filters['d_call']);
+    //     }
 
-        if (isset($filters['junction_aa'])) {
-            $filters['junction_aa'] = strtoupper($filters['junction_aa']);
-        }
+    //     if (isset($filters['junction_aa'])) {
+    //         $filters['junction_aa'] = strtoupper($filters['junction_aa']);
+    //     }
 
-        return $filters;
-    }
+    //     return $filters;
+    // }
 
     public static function process_response($response_list)
     {
@@ -204,31 +271,31 @@ class Sequence
                 $data['rs_list_no_response'][] = $rs;
                 QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
             }
-            if (! isset($obj->items)) {
-                $errror_message = 'No "items" element in JSON response';
-                Log::error($errror_message);
-                Log::error($obj);
-                QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $errror_message);
-                $rs->error_type = 'error';
-                $data['rs_list_no_response'][] = $rs;
-                $obj->items = [];
-            }
-            if (! isset($obj->summary)) {
-                $errror_message = 'No "summary" element in JSON response';
-                Log::error($errror_message);
-                Log::error($obj);
-                QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $errror_message);
-                $rs->error_type = 'error';
-                $data['rs_list_no_response'][] = $rs;
-                $obj->summary = [];
-            }
+            // if (! isset($obj->items)) {
+            //     $errror_message = 'No "items" element in JSON response';
+            //     Log::error($errror_message);
+            //     Log::error($obj);
+            //     QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $errror_message);
+            //     $rs->error_type = 'error';
+            //     $data['rs_list_no_response'][] = $rs;
+            //     $obj->items = [];
+            // }
+            // if (! isset($obj->summary)) {
+            //     $errror_message = 'No "summary" element in JSON response';
+            //     Log::error($errror_message);
+            //     Log::error($obj);
+            //     QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $errror_message);
+            //     $rs->error_type = 'error';
+            //     $data['rs_list_no_response'][] = $rs;
+            //     $obj->summary = [];
+            // }
 
-            // convert any array properties to strings
-            $obj->summary = array_map('convert_arrays_to_strings', $obj->summary);
-            $obj->items = array_map('convert_arrays_to_strings', $obj->items);
+            // // convert any array properties to strings
+            // $obj->summary = array_map('convert_arrays_to_strings', $obj->summary);
+            // $obj->items = array_map('convert_arrays_to_strings', $obj->items);
 
-            $data['summary'] = $data['summary'] + $obj->summary;
-            $data['items'] = $data['items'] + $obj->items;
+            // $data['summary'] = $data['summary'] + $obj->summary;
+            // $data['items'] = $data['items'] + $obj->items;
 
             $rs_data = self::stats($obj, $data);
             $rs_data['rs'] = $rs;
