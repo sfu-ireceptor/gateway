@@ -36,7 +36,7 @@ class Sequence
         // dd($filters);
 
         $response_list = RestService::sequence_list($filters);
-        
+
         // merge responses
         $sequence_list = [];
         foreach ($response_list as $response) {
@@ -45,7 +45,6 @@ class Sequence
             $obj = $response['data'];
 
             $sequence_list = $sequence_list + data_get($obj, 'Rearrangement', []);
-
         }
 
         // convert any array properties to strings

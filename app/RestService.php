@@ -239,7 +239,7 @@ class RestService extends Model
             // dd($sample_data);
             return $sample_data;
 
-  //           $filter_object_list = [];
+            //           $filter_object_list = [];
   //           foreach ($service_filters as $k => $v) {
   //               $filter_content = new \stdClass();
   //               $filter_content->field = $k;
@@ -256,7 +256,6 @@ class RestService extends Model
 
   //               $filter_object_list[] = $filter;
   //           }
-
 
   // $filter_object = new \stdClass();
   //           if (count($filter_object_list) == 0) {
@@ -279,13 +278,10 @@ class RestService extends Model
   //           }
   //                   $filter_object->facets = 'repertoire_id';
 
-
   //           // dd($filter_object_list);
 
   //           // echo  json_encode($filter_object,  JSON_PRETTY_PRINT);
   //           // die();
-
-
 
   //           $t['rs'] = $rs;
   //           $t['url'] = $rs->url . $base_uri;
@@ -375,9 +371,6 @@ class RestService extends Model
         return $response_list;
     }
 
-
-
-
     // retrieves n sequences
     public static function sequence_list($filters, $n = 10)
     {
@@ -420,20 +413,17 @@ class RestService extends Model
             $service_filters['repertoire_id'] = $service_filters['ir_project_sample_id_list'];
             unset($service_filters['ir_project_sample_id_list']);
 
-
             // prepare parameters for each service
             $t = [];
 
             $t['rs'] = $rs;
             $t['url'] = $rs->url . $base_uri;
 
-
             $filter_object_list = [];
             foreach ($service_filters as $k => $v) {
                 $filter_content = new \stdClass();
                 $filter_content->field = $k;
                 $filter_content->value = $v;
-
 
                 $filter = new \stdClass();
 
