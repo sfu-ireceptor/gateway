@@ -187,13 +187,12 @@ class RestService extends Model
         $filter_object->filters = $filter;
         $filter_object->facets = 'repertoire_id';
 
-        // echo  json_encode($filter_object,  JSON_PRETTY_PRINT);
-        // die();
+        // echo  json_encode($filter_object,  JSON_PRETTY_PRINT);die();
         $t['params'] = json_encode($filter_object);
 
         // do request
         $response_list = self::doRequests([$t]);
-        $nb_sequences = data_get($response_list, '0.data.Rearrangement.0.count', 0);
+        $nb_sequences = data_get($response_list, '0.data.Facet.0.count', 0);
 
         return $nb_sequences;
     }
@@ -384,6 +383,13 @@ class RestService extends Model
     {
         $base_uri = 'rearrangement';
 
+        // remove null filter values.
+        foreach ($filters as $k => $v) {
+            if ($v === null) {
+                unset($filters[$k]);
+            }
+        }
+
         // prepare request parameters for each service
         $request_params = [];
         foreach (self::findEnabled() as $rs) {
@@ -459,8 +465,7 @@ class RestService extends Model
             $filter_object->size = $n;
             $filter_object->fields = ['v_call', 'd_call', 'j_call', 'junction_aa'];
 
-            // echo  json_encode($filter_object,  JSON_PRETTY_PRINT);
-            // die();
+            // echo  json_encode($filter_object,  JSON_PRETTY_PRINT);die();
             $t['params'] = json_encode($filter_object);
 
             $request_params[] = $t;
@@ -469,7 +474,7 @@ class RestService extends Model
         // do requests
         $response_list = self::doRequests($request_params);
         // dd($response_list);
-        // $nb_sequences = data_get($response_list, '0.data.Rearrangement.0.count', 0);
+        $nb_sequences = data_get($response_list, '0.data.Rearrangement.0.count', 0);
 
         return $response_list;
     }
