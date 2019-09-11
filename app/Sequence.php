@@ -421,17 +421,18 @@ class Sequence
 
     public static function aggregate_stats($data)
     {
+        $filtered_repositories = [];
+
         $total_filtered_repositories = 0;
         $total_filtered_labs = 0;
         $total_filtered_studies = 0;
         $total_filtered_samples = 0;
         $total_filtered_sequences = 0;
-        $filtered_repositories = [];
 
         foreach ($data['rs_list'] as $rs_data) {
             if ($rs_data['total_samples'] > 0) {
-                $total_filtered_repositories++;
                 $filtered_repositories[] = $rs_data['rs'];
+                $total_filtered_repositories++;
             }
 
             $total_filtered_samples += $rs_data['total_samples'];
