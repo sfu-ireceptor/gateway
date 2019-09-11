@@ -31,6 +31,9 @@ class SequenceController extends Controller
 
     public function index(Request $request)
     {
+        /*************************************************
+        * Immediate redirects */
+
         // if legacy request without query id, generate query id and redirect
         if (! $request->has('query_id')) {
             $query_id = Query::saveParams($request->except(['_token']), 'sequences');
@@ -38,45 +41,61 @@ class SequenceController extends Controller
             return redirect('sequences?query_id=' . $query_id)->withInput();
         }
 
-        // if "remove one filter" request, generate new query_id and redirect
+        // if "remove filter" request, generate new query_id and redirect
         if ($request->has('remove_filter')) {
-            return self::removeOneFilter($request);
+            return self::removeFilter($request);
         }
 
-        $username = auth()->user()->username;
-
         /*************************************************
-        * prepare form data */
+        * Get sequence data */
 
-        // functional
-        $functional_list = [];
-        $functional_list[''] = 'Any';
-        $functional_list['true'] = 'Yes';
-        $functional_list['false'] = 'No';
-
-        // annotation_tool
-        $annotation_tool_list = [];
-        $annotation_tool_list[''] = 'Any';
-        $annotation_tool_list['MiXCR'] = 'MiXCR';
-        $annotation_tool_list['V-Quest'] = 'V-Quest';
-        $annotation_tool_list['IgBLAST'] = 'IgBLAST';
-
-        // view data
-        $data = [];
-        $data['functional_list'] = $functional_list;
-        $data['ir_annotation_tool_list'] = $annotation_tool_list;
-
-        /*************************************************
-        * retrieve filters */
-
+        // parameters
         $query_id = $request->input('query_id');
         $filters = Query::getParams($query_id);
+        $username = auth()->user()->username;
 
-        // fill form fields accordingly
+        // retrieve data
+        $sequence_data = Sequence::summary($filters, $username);
+
+        // store data size in user query log
+        $query_log_id = $request->get('query_log_id');
+        $query_log = QueryLog::find($query_log_id);
+        if ($query_log != null) {
+            $query_log->result_size = $sequence_data['total_filtered_sequences'];
+            $query_log->save();
+        }
+
+        /*************************************************
+        * Prepare data elements for view */
+
+        // sequence data
+        $data = [];
+
+        $data['sequence_list'] = $sequence_data['items'];
+        $data['sample_list_json'] = json_encode($sequence_data['items']);
+        // $data['rest_service_list'] = $rest_service_list;
+        // $data['rest_service_list_no_response'] = $sequence_data['rs_list_no_response'];
+
+        // Pass on the summary data from the sequence_data returned.
+        $data['total_filtered_samples'] = $sequence_data['total_filtered_samples'];
+        $data['total_filtered_repositories'] = $sequence_data['total_filtered_repositories'];
+        $data['total_filtered_labs'] = $sequence_data['total_filtered_labs'];
+        $data['total_filtered_studies'] = $sequence_data['total_filtered_studies'];
+        $data['total_filtered_sequences'] = $sequence_data['total_filtered_sequences'];
+        $data['filtered_repositories'] = $sequence_data['filtered_repositories'];
+
+        // $filtered_repositories_names = array_map(function ($rs) {
+        //     return $rs->name;
+        // }, $sequence_data['filtered_repositories']);
+        // $data['filtered_repositories_names'] = implode(', ', $filtered_repositories_names);
+
+        // populate form fields if needed
         $request->session()->forget('_old_input');
         $request->session()->put('_old_input', $filters);
 
         $data['query_id'] = $query_id;
+
+        // sample query id
         $data['sample_query_id'] = '';
         $sample_filter_fields = [];
         if (isset($filters['sample_query_id'])) {
@@ -102,40 +121,22 @@ class SequenceController extends Controller
         }
         $data['sample_filter_fields'] = $sample_filter_fields;
 
-        // sequence list
-        $sequence_data = Sequence::summary($filters, $username);
+        // functional
+        $functional_list = [];
+        $functional_list[''] = 'Any';
+        $functional_list['true'] = 'Yes';
+        $functional_list['false'] = 'No';
 
-        // log result
-        $query_log_id = $request->get('query_log_id');
-        if ($query_log_id != null) {
-            $query_log = QueryLog::find($query_log_id);
-            $query_log->result_size = $sequence_data['total_filtered_sequences'];
-            $query_log->save();
-        }
+        $data['functional_list'] = $functional_list;
 
-        // // summary for each REST service
-        // $rest_service_list = $sequence_data['rs_list'];
-        // foreach ($rest_service_list as $rs) {
-        //     $summary = $rs['summary'];
-        // }
-
-        $data['sequence_list'] = $sequence_data['items'];
-        $data['sample_list_json'] = json_encode($sequence_data['items']);
-        // $data['rest_service_list'] = $rest_service_list;
-        // $data['rest_service_list_no_response'] = $sequence_data['rs_list_no_response'];
-
-        // Pass on the summary data from the sequence_data returned.
-        $data['total_filtered_samples'] = $sequence_data['total_filtered_samples'];
-        $data['total_filtered_repositories'] = $sequence_data['total_filtered_repositories'];
-        $data['total_filtered_labs'] = $sequence_data['total_filtered_labs'];
-        $data['total_filtered_studies'] = $sequence_data['total_filtered_studies'];
-        $data['total_filtered_sequences'] = $sequence_data['total_filtered_sequences'];
-        $data['filtered_repositories'] = $sequence_data['filtered_repositories'];
-
-        // $filtered_repositories_names = array_map(function ($rs) {
-        //     return $rs->name;
-        // }, $sequence_data['filtered_repositories']);
-        // $data['filtered_repositories_names'] = implode(', ', $filtered_repositories_names);
+        // annotation_tool
+        $annotation_tool_list = [];
+        $annotation_tool_list[''] = 'Any';
+        $annotation_tool_list['MiXCR'] = 'MiXCR';
+        $annotation_tool_list['V-Quest'] = 'V-Quest';
+        $annotation_tool_list['IgBLAST'] = 'IgBLAST';
+        
+        $data['ir_annotation_tool_list'] = $annotation_tool_list;
 
         // for bookmarking
         $current_url = $request->fullUrl();
@@ -202,6 +203,7 @@ class SequenceController extends Controller
                 }
             }
         }
+
         // remove gateway-specific filters
         unset($filter_fields['cols']);
         unset($filter_fields['filters_order']);
@@ -498,13 +500,13 @@ class SequenceController extends Controller
         }
     }
 
-    public function removeOneFilter(Request $request)
+    public function removeFilter(Request $request)
     {
         $filters = Query::getParams($request->input('query_id'));
-        $filter_to_remove = $request->input('remove_filter');
 
+        $filter_to_remove = $request->input('remove_filter');
         if ($filter_to_remove == 'all') {
-            // remove all filters but sample filters and columns filters
+            // keep only sample/columns filters
             $new_filters = [];
             foreach ($filters as $name => $value) {
                 if (starts_with($name, 'ir_project_sample_id_list_') || $name == 'sample_query_id' || $name == 'cols') {
@@ -512,7 +514,7 @@ class SequenceController extends Controller
                 }
             }
         } else {
-            // remove only that filter
+            // remove only that one filter
             unset($filters[$filter_to_remove]);
             $new_filters = $filters;
         }
