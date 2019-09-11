@@ -74,12 +74,12 @@ $(document).ready(function() {
 
 	// make table sortable
 	$('table.sample_list').DataTable({
-    	paging: false,
-    	searching: false,
-    	info: false,
-    	stateSave: true,
-    	order: [[ 5, 'asc' ]],
-    	columnDefs: [
+		paging: false,
+		searching: false,
+		info: false,
+		stateSave: true,
+		order: [[ 5, 'desc' ]],
+		columnDefs: [
 						{
 							'orderable': false,
 							'targets': 0
