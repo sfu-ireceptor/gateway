@@ -17,48 +17,30 @@ class SequenceController extends Controller
 {
     public function __construct()
     {
+        // default timeout for all sequence requests
         $timeout = config('ireceptor.gateway_request_timeout');
         set_time_limit($timeout);
     }
 
+    // when sequence form is submitted (POST), generate query id and redirect (GET)
     public function postIndex(Request $request)
     {
         $query_id = Query::saveParams($request->except(['_token']), 'sequences');
-
         return redirect('sequences?query_id=' . $query_id)->withInput();
     }
 
     public function index(Request $request)
     {
-        // if no query id, generate one and redirect to it
+        // if legacy request without query id, generate query id and redirect
         if (! $request->has('query_id')) {
             $query_id = Query::saveParams($request->except(['_token']), 'sequences');
 
             return redirect('sequences?query_id=' . $query_id)->withInput();
         }
 
-        // if "remove one filter" request, generate new query_id and redirect to it
+        // if "remove one filter" request, generate new query_id and redirect
         if ($request->has('remove_filter')) {
-            $filters = Query::getParams($request->input('query_id'));
-            $filter_to_remove = $request->input('remove_filter');
-
-            if ($filter_to_remove == 'all') {
-                // remove all filters but sample filters and columns filters
-                $new_filters = [];
-                foreach ($filters as $name => $value) {
-                    if (starts_with($name, 'ir_project_sample_id_list_') || $name == 'sample_query_id' || $name == 'cols') {
-                        $new_filters[$name] = $value;
-                    }
-                }
-            } else {
-                // remove only that filter
-                unset($filters[$filter_to_remove]);
-                $new_filters = $filters;
-            }
-
-            $new_query_id = Query::saveParams($new_filters, 'sequences');
-
-            return redirect('sequences?query_id=' . $new_query_id);
+            return self::removeOneFilter($request);
         }
 
         $username = auth()->user()->username;
@@ -515,4 +497,28 @@ class SequenceController extends Controller
             return redirect($tsvFilePath);
         }
     }
+
+    public function removeOneFilter(Request $request)
+    {
+        $filters = Query::getParams($request->input('query_id'));
+        $filter_to_remove = $request->input('remove_filter');
+
+        if ($filter_to_remove == 'all') {
+            // remove all filters but sample filters and columns filters
+            $new_filters = [];
+            foreach ($filters as $name => $value) {
+                if (starts_with($name, 'ir_project_sample_id_list_') || $name == 'sample_query_id' || $name == 'cols') {
+                    $new_filters[$name] = $value;
+                }
+            }
+        } else {
+            // remove only that filter
+            unset($filters[$filter_to_remove]);
+            $new_filters = $filters;
+        }
+
+        $new_query_id = Query::saveParams($new_filters, 'sequences');
+        return redirect('sequences?query_id=' . $new_query_id);        
+    }
+
 }
