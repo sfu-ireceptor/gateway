@@ -26,6 +26,7 @@ class SequenceController extends Controller
     public function postIndex(Request $request)
     {
         $query_id = Query::saveParams($request->except(['_token']), 'sequences');
+
         return redirect('sequences?query_id=' . $query_id)->withInput();
     }
 
@@ -135,7 +136,7 @@ class SequenceController extends Controller
         $annotation_tool_list['MiXCR'] = 'MiXCR';
         $annotation_tool_list['V-Quest'] = 'V-Quest';
         $annotation_tool_list['IgBLAST'] = 'IgBLAST';
-        
+
         $data['ir_annotation_tool_list'] = $annotation_tool_list;
 
         // for bookmarking
@@ -520,7 +521,7 @@ class SequenceController extends Controller
         }
 
         $new_query_id = Query::saveParams($new_filters, 'sequences');
-        return redirect('sequences?query_id=' . $new_query_id);        
-    }
 
+        return redirect('sequences?query_id=' . $new_query_id);
+    }
 }
