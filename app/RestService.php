@@ -104,25 +104,25 @@ class RestService extends Model
         // do requests to all services
         $response_list = self::doRequests($request_params_all);
 
-        foreach ($response_list as $r_key => $response) {
+        // tweak responses
+        foreach ($response_list as $i => $response) {
             $rs = $response['rs'];
 
+            // if well-formed response
             if (isset($response['data']->Repertoire)) {
-                // add "real" rest_service_id to each sample
                 $sample_list = $response['data']->Repertoire;
                 foreach ($sample_list as $sample) {
-                    // so any query is sent to the proper service
+                    // add rest_service_id to each sample
+                    // done here so it's the real service id (not the group id)
+                    // so any subsequent query is sent to the right service
                     $sample->real_rest_service_id = $rs->id;
 
-                    // set sample
-                    // TODO remove it after IR-1460 is done
-                    $sample->ir_project_sample_id = $sample->repertoire_id;
-
-                    // get sequence count
+                    // add sequence count
                     $nb_sequences = self::sequence_count($rs->id, $sample->repertoire_id);
                     $sample->ir_sequence_count = $nb_sequences;
                 }
 
+                // replace Info/Repertoire by simple list of samples
                 $response['data'] = $sample_list;
             } elseif (isset($response['data']->success) && ! $response['data']->success) {
                 $response['status'] = 'error';
@@ -131,10 +131,10 @@ class RestService extends Model
             } else {
                 $response['status'] = 'error';
                 $response['error_message'] = 'Malformed response from service';
+                $response['data'] = [];
             }
-            $response_list[$r_key] = $response;
+            $response_list[$i] = $response;
         }
-        // dd($response_list);
 
         return $response_list;
     }
