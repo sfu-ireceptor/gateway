@@ -42,19 +42,8 @@ class RestService extends Model
         return $l;
     }
 
-    // do samples request to all enabled services
-    public static function samples($filters, $username = '')
+    public static function generate_json_query($filters, $query_parameters = [])
     {
-        // remove empty filters
-        foreach ($filters as $k => $v) {
-            if ($v === null) {
-                unset($filters[$k]);
-            }
-        }
-
-        // rename filters: internal gateway name -> official API name
-        $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
-
         // build array of filter clauses
         $filter_list = [];
         foreach ($filters as $k => $v) {
@@ -85,16 +74,40 @@ class RestService extends Model
             }
         }
 
+        // add extra parameters
+        foreach ($query_parameters as $key => $value) {
+            $filter_object->{$key} = $value;
+        }
+
         // convert filter object to JSON
         $filter_object_json = json_encode($filter_object);
         Log::debug(json_encode($filter_object, JSON_PRETTY_PRINT));
+
+        return $filter_object_json;        
+    }
+
+    // do samples request to all enabled services
+    public static function samples($filters, $username = '')
+    {
+        // remove empty filters
+        foreach ($filters as $k => $v) {
+            if ($v === null) {
+                unset($filters[$k]);
+            }
+        }
+
+        // rename filters: internal gateway name -> official API name
+        $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
+
+        // generate filters json string
+        $filters_json = self::generate_json_query($filters);
 
         // prepare request parameters for all services
         $request_params_all = [];
         foreach (self::findEnabled() as $rs) {
             $t = [];
             $t['url'] = $rs->url . 'repertoire';
-            $t['params'] = $filter_object_json;
+            $t['params'] = $filters_json;
             $t['rs'] = $rs;
             $t['timeout'] = config('ireceptor.service_request_timeout_samples');
 
@@ -141,32 +154,22 @@ class RestService extends Model
 
     public static function sequence_count($rest_service_id, $sample_id)
     {
-        $base_uri = 'rearrangement';
+        // generate filters json string
+        $filters = [];
+        $filters['repertoire_id'] = [(string) $sample_id];
+
+        $query_parameters = [];
+        $query_parameters['facets'] = 'repertoire_id';
+
+        $filters_json = self::generate_json_query($filters, $query_parameters);
 
         // prepare parameters for each service
         $t = [];
-
         $rs = self::find($rest_service_id);
+        $t['url'] = $rs->url . 'rearrangement';
+        $t['params'] = $filters_json;
         $t['rs'] = $rs;
-        $t['url'] = $rs->url . $base_uri;
         $t['timeout'] = config('ireceptor.service_request_timeout_samples');
-
-        // build repertoire_id filter
-        $filter_content = new \stdClass();
-        $filter_content->field = 'repertoire_id';
-        $filter_content->value = [(string) $sample_id];
-
-        $filter = new \stdClass();
-        $filter->op = 'in';
-        $filter->content = $filter_content;
-
-        // build filters string
-        $filter_object = new \stdClass();
-        $filter_object->filters = $filter;
-        $filter_object->facets = 'repertoire_id';
-
-        // echo  json_encode($filter_object,  JSON_PRETTY_PRINT);die();
-        $t['params'] = json_encode($filter_object);
 
         // do request
         $response_list = self::doRequests([$t]);
