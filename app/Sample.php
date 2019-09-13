@@ -36,7 +36,8 @@ class Sample
     {
         $service_filters = $filters;
 
-        // remove gateway-specific filters
+        // remove gateway-only filters
+        unset($service_filters['cols']);
         unset($service_filters['open_filter_panel_list']);
         unset($service_filters['full_text_search']);
 

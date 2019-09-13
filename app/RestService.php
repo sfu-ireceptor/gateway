@@ -45,15 +45,12 @@ class RestService extends Model
     // do samples request to all enabled services
     public static function samples($filters, $username = '')
     {
-        // remove filters with null values
+        // remove empty filters
         foreach ($filters as $k => $v) {
             if ($v === null) {
                 unset($filters[$k]);
             }
         }
-
-        // remove gateway-only filters
-        unset($filters['cols']);
 
         // rename filters: internal gateway name -> official API name
         $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
