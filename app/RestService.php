@@ -162,7 +162,7 @@ class RestService extends Model
     {
         // ensure all sample ids are strings
         foreach ($sample_id_list as $k => $v) {
-            $sample_id_list[$k] = (string)$v;
+            $sample_id_list[$k] = (string) $v;
         }
 
         // generate filters string (JSON)
@@ -194,7 +194,7 @@ class RestService extends Model
         // TODO might not be needed because of IR-1484
         // add count = 0
         foreach ($sample_id_list as $sample_id) {
-            if( ! isset($sequence_count[$sample_id])) {
+            if (! isset($sequence_count[$sample_id])) {
                 $sequence_count[$sample_id] = 0;
             }
         }
