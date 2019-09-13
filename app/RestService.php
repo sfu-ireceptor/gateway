@@ -83,7 +83,7 @@ class RestService extends Model
         $filter_object_json = json_encode($filter_object);
         Log::debug(json_encode($filter_object, JSON_PRETTY_PRINT));
 
-        return $filter_object_json;        
+        return $filter_object_json;
     }
 
     // do samples request to all enabled services
