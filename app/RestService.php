@@ -45,86 +45,67 @@ class RestService extends Model
     // do samples request to all enabled services
     public static function samples($filters, $username = '')
     {
-        $base_uri = 'repertoire';
-
-        // override field names from gateway (ir_id) to AIRR (ir_v2)
-        $filters = FieldName::convert($filters, 'ir_id', 'ir_v2');
-
-        // prepare parameters for each service
-        $request_params = [];
-        foreach (self::findEnabled() as $rs) {
-            $t = [];
-
-            $t['rs'] = $rs;
-            $t['url'] = $rs->url . $base_uri;
-            $t['timeout'] = config('ireceptor.service_request_timeout_samples');
-
-            // remove null filter values.
-            foreach ($filters as $k => $v) {
-                if ($v === null) {
-                    unset($filters[$k]);
-                }
+        // remove filters with null values
+        foreach ($filters as $k => $v) {
+            if ($v === null) {
+                unset($filters[$k]);
             }
-
-            // remove gateway filters
-            unset($filters['cols']);
-
-            $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
-            // dd($filters);
-
-            $filter_object_list = [];
-            foreach ($filters as $k => $v) {
-                $filter_content = new \stdClass();
-                $filter_content->field = $k;
-                $filter_content->value = $v;
-
-                $filter = new \stdClass();
-
-                $filter->op = 'contains';
-                if (is_array($v)) {
-                    $filter->op = 'in';
-                }
-
-                $filter->content = $filter_content;
-
-                $filter_object_list[] = $filter;
-            }
-
-            $filter_object = new \stdClass();
-            if (count($filter_object_list) == 0) {
-            } elseif (count($filter_object_list) == 1) {
-                $filter_object->filters = $filter_object_list[0];
-            } else {
-                $filters_and = new \stdClass();
-                $filters_and->op = 'and';
-                $filters_and->content = [];
-                foreach ($filter_object_list as $filter) {
-                    $filters_and->content[] = $filter;
-                }
-                // $filters_and->content = array_values($filters_and->content);
-                // dd($filters_and->content);
-                // echo  json_encode($filters_and->content, JSON_PRETTY_PRINT);
-                // die();
-
-                $filter_object->filters = $filters_and;
-                // $filter_object->filters->content = array_values($filters_and->content);
-            }
-
-            // dd($filter_object);
-
-            // $filters['tetewt'] = 32;
-            // dd($filters);
-            // echo  json_encode($filter_object,  JSON_PRETTY_PRINT);
-            // die();
-            $t['params'] = json_encode($filter_object);
-            // dd($t['params']);
-
-            $request_params[] = $t;
         }
 
-        // do requests
-        $response_list = self::doRequests($request_params);
-        // dd($response_list);
+        // remove gateway-only filters
+        unset($filters['cols']);
+
+        // rename filters: internal gateway name -> official API name
+        $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
+
+        // build array of filter clauses
+        $filter_list = [];
+        foreach ($filters as $k => $v) {
+            $filter = new \stdClass();
+            $filter->op = 'contains';
+            if (is_array($v)) {
+                $filter->op = 'in';
+            }
+
+            $filter->content = new \stdClass();
+            $filter->content->field = $k;
+            $filter->content->value = $v;
+
+            $filter_list[] = $filter;
+        }
+
+        // build final filter object
+        $filter_object = new \stdClass();
+        if (count($filter_list) == 0) {
+        } elseif (count($filter_list) == 1) {
+            $filter_object->filters = $filter_list[0];
+        } else {
+            $filter_object->filters = new \stdClass();
+            $filter_object->filters->op = 'and';
+            $filter_object->filters->content = [];
+            foreach ($filter_list as $filter) {
+                $filter_object->filters->content[] = $filter;
+            }
+        }
+
+        // convert filter object to JSON
+        $filter_object_json = json_encode($filter_object);
+        Log::debug(json_encode($filter_object, JSON_PRETTY_PRINT));
+
+        // prepare request parameters for all services
+        $request_params_all = [];
+        foreach (self::findEnabled() as $rs) {
+            $t = [];
+            $t['url'] = $rs->url . 'repertoire';
+            $t['params'] = $filter_object_json;
+            $t['rs'] = $rs;
+            $t['timeout'] = config('ireceptor.service_request_timeout_samples');
+
+            $request_params_all[] = $t;
+        }
+
+        // do requests to all services
+        $response_list = self::doRequests($request_params_all);
 
         foreach ($response_list as $r_key => $response) {
             $rs = $response['rs'];
