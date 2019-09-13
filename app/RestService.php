@@ -99,7 +99,7 @@ class RestService extends Model
         // rename filters: internal gateway name -> official API name
         $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
 
-        // generate filters json string
+        // generate filters string (JSON)
         $filters_json = self::generate_json_query($filters);
 
         // prepare request parameters for all services
@@ -124,15 +124,21 @@ class RestService extends Model
             // if well-formed response
             if (isset($response['data']->Repertoire)) {
                 $sample_list = $response['data']->Repertoire;
+                $sample_id_list = [];
                 foreach ($sample_list as $sample) {
                     // add rest_service_id to each sample
                     // done here so it's the real service id (not the group id)
                     // so any subsequent query is sent to the right service
                     $sample->real_rest_service_id = $rs->id;
 
-                    // add sequence count
-                    $nb_sequences = self::sequence_count($rs->id, $sample->repertoire_id);
-                    $sample->ir_sequence_count = $nb_sequences;
+                    // build list of sample ids
+                    $sample_id_list[] = $sample->repertoire_id;
+                }
+
+                // do sequence count query and add them to the samples
+                $sequence_count = self::sequence_count($rs->id, $sample_id_list);
+                foreach ($sample_list as $sample) {
+                    $sample->ir_sequence_count = $sequence_count[$sample->repertoire_id];
                 }
 
                 // replace Info/Repertoire by simple list of samples
@@ -152,11 +158,16 @@ class RestService extends Model
         return $response_list;
     }
 
-    public static function sequence_count($rest_service_id, $sample_id)
+    public static function sequence_count($rest_service_id, $sample_id_list)
     {
-        // generate filters json string
+        // ensure all sample ids are strings
+        foreach ($sample_id_list as $k => $v) {
+            $sample_id_list[$k] = (string)$v;
+        }
+
+        // generate filters string (JSON)
         $filters = [];
-        $filters['repertoire_id'] = [(string) $sample_id];
+        $filters['repertoire_id'] = $sample_id_list;
 
         $query_parameters = [];
         $query_parameters['facets'] = 'repertoire_id';
@@ -173,9 +184,22 @@ class RestService extends Model
 
         // do request
         $response_list = self::doRequests([$t]);
-        $nb_sequences = data_get($response_list, '0.data.Facet.0.count', 0);
+        $facet_list = data_get($response_list, '0.data.Facet', []);
 
-        return $nb_sequences;
+        $sequence_count = [];
+        foreach ($facet_list as $facet) {
+            $sequence_count[$facet->repertoire_id] = $facet->count;
+        }
+
+        // TODO might not be needed because of IR-1484
+        // add count = 0
+        foreach ($sample_id_list as $sample_id) {
+            if( ! isset($sequence_count[$sample_id])) {
+                $sequence_count[$sample_id] = 0;
+            }
+        }
+
+        return $sequence_count;
     }
 
     // send "/sequences_summary" request to all enabled services
