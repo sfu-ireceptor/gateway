@@ -238,7 +238,7 @@ class RestService extends Model
 
             // get filtered sequence count for each sample
             $sample_list_filtered_count = self::sequence_count($rs->id, $sample_id_list, $sequence_filters);
-            
+
             foreach ($sample_list as $sample) {
                 $sample_id = $sample->repertoire_id;
                 $sample->ir_filtered_sequence_count = $sample_list_filtered_count[$sample_id];
@@ -344,8 +344,6 @@ class RestService extends Model
         foreach (self::findEnabled() as $rs) {
             $service_filters = $filters;
 
-
-
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             if (array_key_exists($sample_id_list_key, $service_filters) && ! empty($service_filters[$sample_id_list_key])) {
                 // remove REST service id
@@ -367,7 +365,6 @@ class RestService extends Model
                 }
             }
 
-
             // TODO simpler way to do this?
             $service_filters['repertoire_id'] = $service_filters['ir_project_sample_id_list'];
             unset($service_filters['ir_project_sample_id_list']);
@@ -377,8 +374,7 @@ class RestService extends Model
             // $c = self::sequence_count($rs->id, $sample_id_list, $service_filters);
             // dd($c);
             // // die();
-            // // dd($filters);   
-
+            // // dd($filters);
 
             // prepare parameters for each service
             $t = [];
