@@ -25,16 +25,14 @@ class Sequence
 
     public static function summary($filters, $username)
     {
-        // $filters = self::clean_filters($filters);
-
         // remove gateway-specific filters
         unset($filters['cols']);
         unset($filters['filters_order']);
         unset($filters['sample_query_id']);
         unset($filters['open_filter_panel_list']);
 
-        // dd($filters);
 
+        // get a few sequences from each service
         $response_list = RestService::sequence_list($filters);
 
         // merge responses
@@ -50,9 +48,8 @@ class Sequence
         // convert any array properties to strings
         $sequence_list = array_map('convert_arrays_to_strings', $sequence_list);
 
-        // dd($sequence_list);
 
-        // do requests
+        // get sequences summary
         $response_list = RestService::sequences_summary($filters, $username);
         // dd($response_list);
 

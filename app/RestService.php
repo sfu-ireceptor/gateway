@@ -158,15 +158,14 @@ class RestService extends Model
         return $response_list;
     }
 
-    public static function sequence_count($rest_service_id, $sample_id_list)
+    public static function sequence_count($rest_service_id, $sample_id_list, $filters = [])
     {
-        // ensure all sample ids are strings
+        // force all sample ids to string
         foreach ($sample_id_list as $k => $v) {
             $sample_id_list[$k] = (string) $v;
         }
 
-        // generate filters string (JSON)
-        $filters = [];
+        // generate JSON query
         $filters['repertoire_id'] = $sample_id_list;
 
         $query_parameters = [];
@@ -174,7 +173,7 @@ class RestService extends Model
 
         $filters_json = self::generate_json_query($filters, $query_parameters);
 
-        // prepare parameters for each service
+        // prepare parameters array
         $t = [];
         $rs = self::find($rest_service_id);
         $t['url'] = $rs->url . 'rearrangement';
@@ -205,102 +204,54 @@ class RestService extends Model
     // send "/sequences_summary" request to all enabled services
     public static function sequences_summary($filters, $username = '', $group_by_rest_service = true)
     {
-        $base_uri = 'rearrangement';
+        // remove null filter values.
+        foreach ($filters as $k => $v) {
+            if ($v === null) {
+                unset($filters[$k]);
+            }
+        }
 
-        // prepare request parameters for each service
-        $request_params = [];
+        // build list of sequence filters only (remove sample id filters)
+        $sequence_filters = $filters;
+        unset($sequence_filters['project_id_list']);
         foreach (self::findEnabled() as $rs) {
-            $t = [];
+            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+            unset($sequence_filters[$sample_id_list_key]);
+        }
 
-            $service_filters = $filters;
+        // query each service one by one
+        $response_list = [];
+        foreach (self::findEnabled() as $rs) {
+            $sample_id_list = [];
 
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-            if (array_key_exists($sample_id_list_key, $service_filters) && ! empty($service_filters[$sample_id_list_key])) {
-                // remove REST service id
-                // ir_project_sample_id_list_2 -> ir_project_sample_id_list
-                $service_filters['ir_project_sample_id_list'] = $service_filters[$sample_id_list_key];
-                unset($service_filters[$sample_id_list_key]);
+            if (isset($filters[$sample_id_list_key])) {
+                $sample_id_list = $filters[$sample_id_list_key];
             } else {
-                // if no sample id for this REST service, don't query it.
+                // if no sample id for this service, don't query it.
                 continue;
             }
 
-            // override field names from gateway (ir_id) to AIRR (ir_v2)
-            $service_filters = FieldName::convert($service_filters, 'ir_id', 'ir_v2');
+            // retrieve list of samples
+            $sample_data = self::samples(['repertoire_id' => $sample_id_list]);
+            $sample_list = data_get($sample_data, '0.data', []);
 
-            // remove extra ir_project_sample_id_list_ fields
-            foreach ($service_filters as $key => $value) {
-                if (starts_with($key, 'ir_project_sample_id_list_')) {
-                    unset($service_filters[$key]);
-                }
+            // get filtered sequence count for each sample
+            $sample_list_filtered_count = self::sequence_count($rs->id, $sample_id_list, $sequence_filters);
+            
+            foreach ($sample_list as $sample) {
+                $sample_id = $sample->repertoire_id;
+                $sample->ir_filtered_sequence_count = $sample_list_filtered_count[$sample_id];
             }
 
-            // TODO simpler way to do this?
-            $service_filters['repertoire_id'] = $service_filters['ir_project_sample_id_list'];
-            unset($service_filters['ir_project_sample_id_list']);
-            // dd($service_filters);
-
-            $sample_data = self::samples($service_filters);
-            // dd($sample_data);
-            return $sample_data;
-
-            //           $filter_object_list = [];
-  //           foreach ($service_filters as $k => $v) {
-  //               $filter_content = new \stdClass();
-  //               $filter_content->field = $k;
-  //               $filter_content->value = $v;
-
-  //               $filter = new \stdClass();
-
-  //               $filter->op = 'contains';
-  //               if (is_array($v)) {
-  //                   $filter->op = 'in';
-  //               }
-
-  //               $filter->content = $filter_content;
-
-  //               $filter_object_list[] = $filter;
-  //           }
-
-  // $filter_object = new \stdClass();
-  //           if (count($filter_object_list) == 0) {
-  //           } elseif (count($filter_object_list) == 1) {
-  //               $filter_object->filters = $filter_object_list[0];
-  //           } else {
-  //               $filters_and = new \stdClass();
-  //               $filters_and->op = 'and';
-  //               $filters_and->content = [];
-  //               foreach ($filter_object_list as $filter) {
-  //                   $filters_and->content[] = $filter;
-  //               }
-  //               // $filters_and->content = array_values($filters_and->content);
-  //               // dd($filters_and->content);
-  //               // echo  json_encode($filters_and->content, JSON_PRETTY_PRINT);
-  //               // die();
-
-  //               $filter_object->filters = $filters_and;
-  //               // $filter_object->filters->content = array_values($filters_and->content);
-  //           }
-  //                   $filter_object->facets = 'repertoire_id';
-
-  //           // dd($filter_object_list);
-
-  //           // echo  json_encode($filter_object,  JSON_PRETTY_PRINT);
-  //           // die();
-
-  //           $t['rs'] = $rs;
-  //           $t['url'] = $rs->url . $base_uri;
-  //           $t['params'] = json_encode($filter_object);
-  //           $t['timeout'] = config('ireceptor.service_request_timeout');
-
-  //           $request_params[] = $t;
-
-            // dd($t);
+            // dd($sample_list);
+            $t = [];
+            $t['rs'] = $rs;
+            $t['data'] = $sample_list;
+            $response_list[] = $t;
         }
 
-        // do requests
-        // dd($request_params);
-        $response_list = self::doRequests($request_params);
+        return $response_list;
 
         // if ($group_by_rest_service) {
         //     // merge service responses belonging to the same group
@@ -393,6 +344,8 @@ class RestService extends Model
         foreach (self::findEnabled() as $rs) {
             $service_filters = $filters;
 
+
+
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             if (array_key_exists($sample_id_list_key, $service_filters) && ! empty($service_filters[$sample_id_list_key])) {
                 // remove REST service id
@@ -414,9 +367,18 @@ class RestService extends Model
                 }
             }
 
+
             // TODO simpler way to do this?
             $service_filters['repertoire_id'] = $service_filters['ir_project_sample_id_list'];
             unset($service_filters['ir_project_sample_id_list']);
+
+            // $sample_id_list = $service_filters['repertoire_id'];
+            // unset($service_filters['repertoire_id']);
+            // $c = self::sequence_count($rs->id, $sample_id_list, $service_filters);
+            // dd($c);
+            // // die();
+            // // dd($filters);   
+
 
             // prepare parameters for each service
             $t = [];
