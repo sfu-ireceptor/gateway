@@ -219,7 +219,10 @@ class Sequence
                 QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
             }
 
-            $rs_data = self::stats($response['data']);
+            $sample_list = $response['data'];
+            $sample_list = Sample::convert_sample_list($sample_list, $rs);
+
+            $rs_data = self::stats($sample_list);
             $rs_data['rs'] = $rs;
             $data['rs_list'][] = $rs_data;
         }
@@ -233,7 +236,6 @@ class Sequence
     public static function stats($sample_list)
     {
         $rs_data = [];
-        // $rs_data['summary'] = $obj->summary;
 
         // calculate summary statistics
         $lab_list = [];

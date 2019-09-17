@@ -81,42 +81,49 @@ class Sample
             }
 
             $sample_list = $response_list[$i]['data'];
-            // dd($sample_list);
-            if (! is_array($sample_list)) {
-                $sample_list = [];
-            }
-
-            foreach ($sample_list as $sample) {
-                // add rest service id/name
-                $sample->rest_service_id = $rs->id;
-                $sample->rest_service_name = $rs->display_name;
-
-                // add study URL
-                $sample = self::generate_study_urls($sample);
-
-                $sample_field_list = FieldName::getSampleFields();
-                foreach ($sample_field_list as $sample_field) {
-                    if ($sample_field['ir_id'] != 'organism') { // TODO decide with Scott the proper format and update mapping
-                        // Log::debug($sample_field);
-                        if (isset($sample_field['ir_adc_api_response'])) {
-                            $field_name = $sample_field['ir_id'];
-                            $field_value = data_get($sample, $sample_field['ir_adc_api_response']);
-                            // if(is_object($field_value)) {
-                            //     dd($field_value);
-                            // }
-                            $sample->{$field_name} = $field_value;
-                        }
-                    }
-                }
-            }
-
-            $sample_list = FieldName::convertObjectList($sample_list, 'ir_adc_api_response', 'ir_id');
-
+            $sample_list = self::convert_sample_list($sample_list, $rs);
+            
             $sample_list_all = array_merge($sample_list_all, $sample_list);
         }
 
         // return the statistics about that list of samples
         return self::stats($sample_list_all);
+    }
+
+    // convert/complete sample list
+    public static function convert_sample_list($sample_list, $rs)
+    {
+        if (! is_array($sample_list)) {
+            $sample_list = [];
+        }
+
+        foreach ($sample_list as $sample) {
+            // add rest service id/name
+            $sample->rest_service_id = $rs->id;
+            $sample->rest_service_name = $rs->display_name;
+
+            // add study URL
+            $sample = self::generate_study_urls($sample);
+
+            $sample_field_list = FieldName::getSampleFields();
+            foreach ($sample_field_list as $sample_field) {
+                if ($sample_field['ir_id'] != 'organism') { // TODO decide with Scott the proper format and update mapping
+                    // Log::debug($sample_field);
+                    if (isset($sample_field['ir_adc_api_response'])) {
+                        $field_name = $sample_field['ir_id'];
+                        $field_value = data_get($sample, $sample_field['ir_adc_api_response']);
+                        // if(is_object($field_value)) {
+                        //     dd($field_value);
+                        // }
+                        $sample->{$field_name} = $field_value;
+                    }
+                }
+            }
+        }
+
+        $sample_list = FieldName::convertObjectList($sample_list, 'ir_adc_api_response', 'ir_id');
+        
+        return $sample_list;
     }
 
     public static function stats($sample_list)
