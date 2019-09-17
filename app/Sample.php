@@ -82,7 +82,7 @@ class Sample
 
             $sample_list = $response_list[$i]['data'];
             $sample_list = self::convert_sample_list($sample_list, $rs);
-            
+
             $sample_list_all = array_merge($sample_list_all, $sample_list);
         }
 
@@ -122,7 +122,7 @@ class Sample
         }
 
         $sample_list = FieldName::convertObjectList($sample_list, 'ir_adc_api_response', 'ir_id');
-        
+
         return $sample_list;
     }
 
