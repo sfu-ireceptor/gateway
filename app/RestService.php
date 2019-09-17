@@ -248,6 +248,7 @@ class RestService extends Model
             $t = [];
             $t['rs'] = $rs;
             $t['data'] = $sample_list;
+            $t['status'] = 'sucess';
             $response_list[] = $t;
         }
 

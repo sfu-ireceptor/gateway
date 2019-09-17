@@ -51,54 +51,10 @@ class Sequence
         $response_list = RestService::sequences_summary($filters, $username);
         // dd($response_list);
 
-        $sample_list_all = [];
-        foreach ($response_list as $i => $response) {
-            $rs = $response['rs'];
-            $sample_list = $response['data'];
-
-            $sample_list = $response_list[$i]['data'];
-            // dd($sample_list);
-            if (! is_array($sample_list)) {
-                $sample_list = [];
-            }
-
-            foreach ($sample_list as $sample) {
-                // add rest service id/name
-                $sample->rest_service_id = $rs->id;
-                $sample->rest_service_name = $rs->display_name;
-
-                // add study URL
-                $sample = Sample::generate_study_urls($sample);
-
-                $sample_field_list = FieldName::getSampleFields();
-                foreach ($sample_field_list as $sample_field) {
-                    if ($sample_field['ir_id'] != 'organism') { // TODO decide with Scott the proper format and update mapping
-                        // Log::debug($sample_field);
-                        if (isset($sample_field['ir_adc_api_response'])) {
-                            $field_name = $sample_field['ir_id'];
-                            $field_value = data_get($sample, $sample_field['ir_adc_api_response']);
-                            // if(is_object($field_value)) {
-                            //     dd($field_value);
-                            // }
-                            $sample->{$field_name} = $field_value;
-                        }
-                    }
-                }
-            }
-
-            $sample_list = FieldName::convertObjectList($sample_list, 'ir_adc_api_response', 'ir_id');
-
-            $sample_list_all = array_merge($sample_list_all, $sample_list);
-        }
-
-        $sample_list = Sample::stats($sample_list_all);
-        // dd($sample_list);
-
         // generate stats
-        // $data = self::process_response($response_list);
-
-        $data = $sample_list;
+        $data = self::process_response($response_list);
         $data['items'] = $sequence_list;
+
         // dd($data);
         return $data;
     }
@@ -248,50 +204,22 @@ class Sequence
     {
         // initialize return array
         $data = [];
-        $data['items'] = [];
-        $data['summary'] = [];
         $data['rs_list'] = [];
         $data['rs_list_no_response'] = [];
 
         // process returned data
         foreach ($response_list as $response) {
             $rs = $response['rs'];
-            $obj = $response['data'];
 
-            // check response format
+            // if response error, update gateway user query status
             $gw_query_log_id = request()->get('query_log_id');
             if ($response['status'] == 'error') {
                 $rs->error_type = $response['error_type'];
                 $data['rs_list_no_response'][] = $rs;
                 QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
             }
-            // if (! isset($obj->items)) {
-            //     $errror_message = 'No "items" element in JSON response';
-            //     Log::error($errror_message);
-            //     Log::error($obj);
-            //     QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $errror_message);
-            //     $rs->error_type = 'error';
-            //     $data['rs_list_no_response'][] = $rs;
-            //     $obj->items = [];
-            // }
-            // if (! isset($obj->summary)) {
-            //     $errror_message = 'No "summary" element in JSON response';
-            //     Log::error($errror_message);
-            //     Log::error($obj);
-            //     QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $errror_message);
-            //     $rs->error_type = 'error';
-            //     $data['rs_list_no_response'][] = $rs;
-            //     $obj->summary = [];
-            // }
 
-            // // convert any array properties to strings
-            // $obj->summary = array_map('convert_arrays_to_strings', $obj->summary);
-            // $obj->items = array_map('convert_arrays_to_strings', $obj->items);
-
-            // $data['summary'] = $data['summary'] + $obj->summary;
-            // $data['items'] = $data['items'] + $obj->items;
-
-            $rs_data = self::stats($obj, $data);
+            $rs_data = self::stats($response['data']);
             $rs_data['rs'] = $rs;
             $data['rs_list'][] = $rs_data;
         }
@@ -302,10 +230,10 @@ class Sequence
         return $data;
     }
 
-    public static function stats($obj, $data)
+    public static function stats($sample_list)
     {
         $rs_data = [];
-        $rs_data['summary'] = $obj->summary;
+        // $rs_data['summary'] = $obj->summary;
 
         // calculate summary statistics
         $lab_list = [];
@@ -316,7 +244,7 @@ class Sequence
 
         $total_sequences = 0;
         $filtered_sequences = 0;
-        foreach ($obj->summary as $sample) {
+        foreach ($sample_list as $sample) {
             $sample = Sample::generate_study_urls($sample);
 
             // If there are some sequences in this sample
@@ -356,7 +284,7 @@ class Sequence
         $lab_data = [];
         $new_study_data = [];
 
-        foreach ($obj->summary as $sample) {
+        foreach ($sample_list as $sample) {
             // if a sample doesn't have a lab_name.
             if (isset($sample->lab_name)) {
                 $lab = $sample->lab_name;
@@ -404,7 +332,7 @@ class Sequence
                 }
             }
         }
-        $rs_data['total_samples'] = count($obj->summary);
+        $rs_data['total_samples'] = count($sample_list);
         $rs_data['total_labs'] = count($lab_list);
         $rs_data['total_studies'] = count($study_list);
         $rs_data['total_sequences'] = $total_sequences;
