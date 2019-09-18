@@ -55,7 +55,6 @@ class Sequence
         $data = self::process_response($response_list);
 
         $data['items'] = $sequence_list;
-        $data['summary'] = $data;
         
         // dd($data);
         return $data;
@@ -208,6 +207,7 @@ class Sequence
         $data = [];
         $data['rs_list'] = [];
         $data['rs_list_no_response'] = [];
+        $data['summary'] = [];
 
         // process returned data
         foreach ($response_list as $response) {
@@ -223,6 +223,9 @@ class Sequence
 
             $sample_list = $response['data'];
             $sample_list = Sample::convert_sample_list($sample_list, $rs);
+
+            // create full list of samples (for graphs)
+            $data['summary'] = $data['summary'] + $sample_list;
 
             $rs_data = self::stats($sample_list);
             $rs_data['rs'] = $rs;

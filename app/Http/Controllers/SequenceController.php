@@ -74,7 +74,6 @@ class SequenceController extends Controller
 
         $data['sequence_list'] = $sequence_data['items'];
         $data['sample_list_json'] = json_encode($sequence_data['summary']);
-        // dd($data['sample_list_json']);
         // $data['rest_service_list'] = $rest_service_list;
         // $data['rest_service_list_no_response'] = $sequence_data['rs_list_no_response'];
 
@@ -334,12 +333,6 @@ class SequenceController extends Controller
             $query_log = QueryLog::find($query_log_id);
             $query_log->result_size = $sequence_data['total_filtered_sequences'];
             $query_log->save();
-        }
-
-        // summary for each REST service
-        $rest_service_list = $sequence_data['rs_list'];
-        foreach ($rest_service_list as $rs) {
-            $summary = $rs['summary'];
         }
 
         $data['sequence_list'] = $sequence_data['items'];
