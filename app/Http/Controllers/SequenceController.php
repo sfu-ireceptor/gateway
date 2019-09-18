@@ -73,7 +73,8 @@ class SequenceController extends Controller
         $data = [];
 
         $data['sequence_list'] = $sequence_data['items'];
-        $data['sample_list_json'] = json_encode($sequence_data['items']);
+        $data['sample_list_json'] = json_encode($sequence_data['summary']);
+        // dd($data['sample_list_json']);
         // $data['rest_service_list'] = $rest_service_list;
         // $data['rest_service_list_no_response'] = $sequence_data['rs_list_no_response'];
 

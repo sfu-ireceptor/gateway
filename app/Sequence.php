@@ -53,8 +53,10 @@ class Sequence
 
         // generate stats
         $data = self::process_response($response_list);
-        $data['items'] = $sequence_list;
 
+        $data['items'] = $sequence_list;
+        $data['summary'] = $data;
+        
         // dd($data);
         return $data;
     }
