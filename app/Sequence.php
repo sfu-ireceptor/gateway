@@ -55,7 +55,7 @@ class Sequence
         $data = self::process_response($response_list);
 
         $data['items'] = $sequence_list;
-        
+
         // dd($data);
         return $data;
     }
