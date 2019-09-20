@@ -240,8 +240,6 @@ class Sequence
 
     public static function stats($sample_list)
     {
-        $rs_data = [];
-
         // calculate summary statistics
         $lab_list = [];
         $lab_sequence_count = [];
@@ -250,13 +248,11 @@ class Sequence
         $study_sequence_count = [];
 
         $total_sequences = 0;
-        $filtered_sequences = 0;
+        $nb_filtered_sequences = 0;
         foreach ($sample_list as $sample) {
-            $sample = Sample::generate_study_urls($sample);
-
             // If there are some sequences in this sample
             if (isset($sample->ir_filtered_sequence_count)) {
-                $filtered_sequences += $sample->ir_filtered_sequence_count;
+                $nb_filtered_sequences += $sample->ir_filtered_sequence_count;
                 // If we have a lab and we haven't seen it already, add it
                 if (isset($sample->lab_name)) {
                     if (! in_array($sample->lab_name, $lab_list)) {
@@ -339,11 +335,14 @@ class Sequence
                 }
             }
         }
+
+        $rs_data = [];
+
         $rs_data['total_samples'] = count($sample_list);
         $rs_data['total_labs'] = count($lab_list);
         $rs_data['total_studies'] = count($study_list);
         $rs_data['total_sequences'] = $total_sequences;
-        $rs_data['filtered_sequences'] = $filtered_sequences;
+        $rs_data['nb_filtered_sequences'] = $nb_filtered_sequences;
         $rs_data['study_tree'] = $study_tree;
 
         return $rs_data;
@@ -368,7 +367,7 @@ class Sequence
             $total_filtered_samples += $rs_data['total_samples'];
             $total_filtered_labs += $rs_data['total_labs'];
             $total_filtered_studies += $rs_data['total_studies'];
-            $total_filtered_sequences += $rs_data['filtered_sequences'];
+            $total_filtered_sequences += $rs_data['nb_filtered_sequences'];
         }
 
         $data['total_filtered_samples'] = $total_filtered_samples;
