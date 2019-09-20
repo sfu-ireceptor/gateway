@@ -259,15 +259,14 @@ class Sequence
             if (isset($sample->ir_filtered_sequence_count)) {
                 $nb_filtered_sequences = $sample->ir_filtered_sequence_count;
                 $total_filtered_sequences += $nb_filtered_sequences;
-                
+
                 // add lab
                 $lab_name = '';
                 if (isset($sample->lab_name)) {
                     $lab_name = $sample->lab_name;
+                } elseif (isset($sample->collected_by)) {
+                    $lab_name = $sample->collected_by;
                 }
-                elseif (isset($sample->collected_by)) {
-                    $lab_name = $sample->collected_by;   
-                }                
 
                 if ($lab_name != '') {
                     if (! in_array($lab_name, $lab_list)) {
@@ -275,19 +274,18 @@ class Sequence
                         $lab_sequence_count[$lab_name] = 0;
                     }
                     $lab_sequence_count[$lab_name] += $nb_filtered_sequences;
-                } 
+                }
 
                 // add study
                 $study_title = isset($sample->study_title) ? $sample->study_title : '';
-                if($study_title != '') {
+                if ($study_title != '') {
                     if (! in_array($study_title, $study_list)) {
                         $study_list[] = $study_title;
                         $study_sequence_count[$study_title] = 0;
-                    } 
-                    $study_sequence_count[$study_title] += $nb_filtered_sequences;                    
+                    }
+                    $study_sequence_count[$study_title] += $nb_filtered_sequences;
                 }
             }
-
         }
 
         $study_tree = [];
