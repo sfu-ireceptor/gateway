@@ -240,47 +240,54 @@ class Sequence
 
     public static function stats($sample_list)
     {
-        // calculate summary statistics
+        $total_sequences = 0;
+        $total_filtered_sequences = 0;
+
         $lab_list = [];
         $lab_sequence_count = [];
 
         $study_list = [];
         $study_sequence_count = [];
 
-        $total_sequences = 0;
-        $nb_filtered_sequences = 0;
         foreach ($sample_list as $sample) {
-            // If there are some sequences in this sample
-            if (isset($sample->ir_filtered_sequence_count)) {
-                $nb_filtered_sequences += $sample->ir_filtered_sequence_count;
-                // If we have a lab and we haven't seen it already, add it
-                if (isset($sample->lab_name)) {
-                    if (! in_array($sample->lab_name, $lab_list)) {
-                        $lab_list[] = $sample->lab_name;
-                        $lab_sequence_count[$sample->lab_name] = $sample->ir_filtered_sequence_count;
-                    } else {
-                        $lab_sequence_count[$sample->lab_name] += $sample->ir_filtered_sequence_count;
-                    }
-                } elseif (isset($sample->collected_by)) {
-                    if (! in_array($sample->collected_by, $lab_list)) {
-                        $lab_list[] = $sample->collected_by;
-                    }
-                }
-                // If we have a study title and we haven't seen it allready, add it
-                if (isset($sample->study_title)) {
-                    if (! in_array($sample->study_title, $study_list)) {
-                        $study_list[] = $sample->study_title;
-                        $study_sequence_count[$sample->study_title] = $sample->ir_filtered_sequence_count;
-                    } else {
-                        $study_sequence_count[$sample->study_title] += $sample->ir_filtered_sequence_count;
-                    }
-                }
-            }
-
-            // If we have a total sequence count, add the total up.
+            // sequence count for that sample
             if (isset($sample->ir_sequence_count)) {
                 $total_sequences += $sample->ir_sequence_count;
             }
+
+            // filtered sequence count for that sample
+            if (isset($sample->ir_filtered_sequence_count)) {
+                $nb_filtered_sequences = $sample->ir_filtered_sequence_count;
+                $total_filtered_sequences += $nb_filtered_sequences;
+                
+                // add lab
+                $lab_name = '';
+                if (isset($sample->lab_name)) {
+                    $lab_name = $sample->lab_name;
+                }
+                elseif (isset($sample->collected_by)) {
+                    $lab_name = $sample->collected_by;   
+                }                
+
+                if ($lab_name != '') {
+                    if (! in_array($lab_name, $lab_list)) {
+                        $lab_list[] = $lab_name;
+                        $lab_sequence_count[$lab_name] = 0;
+                    }
+                    $lab_sequence_count[$lab_name] += $nb_filtered_sequences;
+                } 
+
+                // add study
+                $study_title = isset($sample->study_title) ? $sample->study_title : '';
+                if($study_title != '') {
+                    if (! in_array($study_title, $study_list)) {
+                        $study_list[] = $study_title;
+                        $study_sequence_count[$study_title] = 0;
+                    } 
+                    $study_sequence_count[$study_title] += $nb_filtered_sequences;                    
+                }
+            }
+
         }
 
         $study_tree = [];
@@ -342,7 +349,7 @@ class Sequence
         $rs_data['total_labs'] = count($lab_list);
         $rs_data['total_studies'] = count($study_list);
         $rs_data['total_sequences'] = $total_sequences;
-        $rs_data['nb_filtered_sequences'] = $nb_filtered_sequences;
+        $rs_data['total_filtered_sequences'] = $total_filtered_sequences;
         $rs_data['study_tree'] = $study_tree;
 
         return $rs_data;
@@ -367,7 +374,7 @@ class Sequence
             $total_filtered_samples += $rs_data['total_samples'];
             $total_filtered_labs += $rs_data['total_labs'];
             $total_filtered_studies += $rs_data['total_studies'];
-            $total_filtered_sequences += $rs_data['nb_filtered_sequences'];
+            $total_filtered_sequences += $rs_data['total_filtered_sequences'];
         }
 
         $data['total_filtered_samples'] = $total_filtered_samples;
