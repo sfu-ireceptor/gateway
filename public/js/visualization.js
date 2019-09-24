@@ -1,27 +1,11 @@
-// Process the various chart elements if they exist
-$(document).ready(function()
-{
-    if ($('#landing_charts').length > 0 ) doLandingCharts();
-    if ($('#sequence_charts').length > 0 ) doSequenceCharts();
-    if ($('#sample_charts').length > 0 ) doSampleCharts();
-}
-);
+$(document).ready(function() {
+    var graphDIV = "chart";
+    var graphLabelLength = 10;
 
-// Different functions to generate different charts on different page. Their parameters are set at the bottom of the corresponding Laravel blade views
-function doLandingCharts()
-{
-    showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels, graphLabelLength);
-}
-function doSampleCharts()
-{
-    showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels, graphLabelLength);
-}
-function doSequenceCharts()
-{
-    // Get the JSON and process it. We currently have no mechanism to get the 
-    // filtered data to the visualization - working on it...
-    showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels, graphLabelLength);
-}
+    $('#charts').each(function() {
+        showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels, graphLabelLength);
+    });
+});
 
 /**********************************************************
 * Functions
