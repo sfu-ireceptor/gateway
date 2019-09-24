@@ -7,24 +7,15 @@ $(document).ready(function()
 }
 );
 
-// Function to process the Landing Page charts. Data (graphData,
-// graphFields, and graphNames) is provided by the appropriate 
-// blades that contain the relevant DIV (in this case landing_charts)
+// Different functions to generate different charts on different page. Their parameters are set at the bottom of the corresponding Laravel blade views
 function doLandingCharts()
 {
     showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels, graphLabelLength);
 }
-// Function to process the Landing Page charts. Data (graphData,
-// graphFields, and graphNames) is provided by the appropriate 
-// blades that contain the relevant DIV (in this case sample_charts)
 function doSampleCharts()
 {
     showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels, graphLabelLength);
 }
-
-// Function to process the Landing Page charts. Data (graphData,
-// graphFields, and graphNames) is provided by the appropriate 
-// blades that contain the relevant DIV (in this case sequence_charts)
 function doSequenceCharts()
 {
     // Get the JSON and process it. We currently have no mechanism to get the 
@@ -36,17 +27,14 @@ function doSequenceCharts()
 * Functions
 **********************************************************/
 
-// showData aggregates thee json data provided over the fields given
-// in the graphFields variable (an array of field names). It renders
-// a graph for each aggregated field into the HTML container ID provided
+// showData aggregates the json data over the fields of graphFields (array of field names)
+// renders a graph for each aggregated field into the HTML container provided
 // by the htmlBase variable with an integer index appended to the ID name. 
-// Each graph is given the title as provided in the graphNames array.
+// Each graph is given the title provided in the graphNames array.
 // 
-// Preconditions:
-// - this function assumes that the graphFields and graphNames arrays are the
-// same size.
-// - this funtion assumes there is a valid html container ID for each graph
-// with a container ID given by the string htmlBase with a suffix of the index
+// Requisites:
+// - arrays graphFields and graphNames have the same size.
+// - valid html container for each graph with ID given by the string htmlBase with a suffix of the index
 // of the graph (starting at 1). For example, if there are N graphs and htmlBase
 // is "foo" then there should be N valid html containers with the IDs "foo1",
 // "foo2" up to "fooN".
