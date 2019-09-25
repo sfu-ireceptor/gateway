@@ -40,8 +40,17 @@ function showData(json, graphFields, graphNames, countField, htmlBase, internalL
     var containerNumber = 1; // The numeric suffix, containers expected to start at 1
     for (index in graphFields)
     {
-        // Get the aggregated data for this field.
-        aggregateData = irAggregateData(graphFields[index], json, countField, aggregateBySequence);
+        // valeus count for this field.
+        valuesCount = irAggregateData(graphFields[index], json, aggregateBySequence, countField);
+
+        // transform aggregate data structure for chart
+        var aggregateData = [];
+        var i = 0;
+        for (field in valuesCount) {
+            aggregateData[i] = {name:field, count:valuesCount[field]};   
+            i++;
+        }
+
         // Build the chart data structure.
         chart = irBuildPieChart(graphNames[index], aggregateData, 3, internalLabels, truncateLabels);
         //chart = irBuildBarChart(graphNames[index], aggregateData, 4, internalLabels);
@@ -351,146 +360,40 @@ function irBuildBarChart(fieldTitle, data, level)
 }
 
 
-// Example of data returned from the API - an array of data objects like the following:
-// {
-// "subject_code":"Pooled mice control SI PBS","subject_id":13,"subject_gender":null,"subject_species":"Mouse","subject_ethnicity":"",
-// "project_id":1,"project_name":"Mouse single immunization","project_parent_id":-1,"sra_accession":null,
-// "lab_id":1,"lab_name":"Jamie Scott Lab",//
-// "disease_state_id":null,"disease_state_name":null,"case_control_id":1,"case_control_name":"Case",
-// "sample_id":1,"project_sample_id":1,"sequence_count":28619,//
-// "project_sample_note":"Controls using PBS immunization","sra_run_id":null,"sample_name":"3-PC-B",
-// "subject_age":null,"sample_subject_id":13,"dna_id":1,"dna_type":"cDNA",
-// "sample_source_id":2,"sample_source_name":"Blood","lab_cell_subset_name":"Plasma Cell","ireceptor_cell_subset_name":"Plasma Cell",
-// "marker_1":"CD138+","marker_2":null,"marker_3":null,"marker_4":null,"marker_5":null,"marker_6":null
-// }
-//
-// Do an aggregation count across the JSON data, aggregating on the series
-// name provided in "seriesName" and aggregating the counts in "countField".
-//
-// seriesName: String that represents the series of interest that we are aggregating on (e.g. subject_species).
-//
-// jsonData: This is JSON data from the iReceptor API, in either the format 
-// provided by the /v2/sequence_summary API call or the /v1 and /v2 samples API call.
+// Generate array of values count for a given field 
 // 
-// aggregationSummary: A boolean flag that denotes whether jsonData came from
-// the /v2/sequence_summary API or not. If not, we assume the data came from the
-// /v1/samples API.
-function irAggregateData(seriesName, jsonData, countField, aggregateBySequence=true)
-{
-    // Debug level so we can debug the code...
-    var debugLevel = 0;
-    // Arrays to hold the aggregated value names and aggregated counts
-    // e.g. an aggregateName might be "Mature T Cell" and the count might be 1,000,000 sequences
-    var aggregateName = [];
-    var aggregateCount = [];
-    var aggregationData;
-    //var countField;
-    
-    // Debug: tell us the series name we are looking for.
-    if (debugLevel > 0) 
-    {
-        console.log("irAggregateData: Series name = " + seriesName + "\n");
-        console.log("irAggregateData: countField = " + countField + "\n");
-        if (debugLevel > 1)
-            console.log("irAggregateData: json Data = " + JSON.stringify(jsonData) + "\n");
-    }
-    
-    // Process each element in the data from iReceptor. 
-    var count = 0
-    for (element in jsonData)
-    {
-        // Get the element.
+// field: that field
+// objList: list of objects
+// aggregateBySequence: aggregate number of sequences count instead of
+//  just incrementing value count for each object that field value
+function irAggregateData(field, objList, aggregateBySequence = true, sequenceCountField = 'ir_sequence_count')
+{        
+    var valuesCount = [];
 
-        if (debugLevel > 0)
-            console.log("Element: " + element + "\n");
-        elementData = jsonData[element];
-        if (debugLevel > 0)
-            console.log("ElementData: " + elementData + "\n");           
+    for (i in objList) {
+        var obj = objList[i];
+        if (obj.hasOwnProperty(field)) {
+            var value = obj[field];
 
-        if (debugLevel > 1)
-            console.log("Element: series = " + seriesName + ", element = " + JSON.stringify(elementData) + "\n");        
-        // Get the value of the field we are aggregating on for this element.
-        var fieldValue;
-        var fieldCount = 0;
-        fieldValue = elementData[seriesName];
+            if(value === null) {
+                value = 'No data';
+            }
 
-        if (fieldValue == null) 
-        {
-            // If it doesn't exist in this element, then keep track of the count 
-            // of the data that doesn't have this field. This should be rare, but
-            // it can happen if the data models are different and are missing data.
-            fieldValue = "No data";
+            fieldCount = 1;
             if (aggregateBySequence)
             {
-                // If the element is found, and there is a count, get it,
-                // otherwise there are no sequences for this element.
-                if (!isNaN(elementData[countField]))
-                    fieldCount = elementData[countField];
-                else
-                    fieldCount = 0;
+                fieldCount = 0;
+                if($.isNumeric(obj[sequenceCountField])) {
+                    fieldCount = obj[sequenceCountField];
+                }
             }
-            else fieldCount = 1;
-        }
-        else
-        {
-            // If the element is found, extract the count.
-            if (aggregateBySequence)
-            {
-                // If the element is found, and there is a count, get it,
-                // otherwise there are no sequences for this element.
-                if (!isNaN(elementData[countField]))
-                    fieldCount = elementData[countField];
-                else
-                    fieldCount = 0;
-            }
-            else fieldCount = 1;
-        }
 
-        // Do the aggregation step if we have a count for the field.
-        if (fieldCount > 0)
-        {
-            // If we haven't seen this one before, do an initial assignment
-            // otherwise increment the value.
-            if (aggregateName[fieldValue] == null)
-            {
-                // If we haven't seen this field before (it doesn't exist in our 
-                // aggregator data structure) then initialize the cound for this
-                // field.
-                aggregateCount[fieldValue] = fieldCount;
-                aggregateName[fieldValue] = fieldValue;
+            if( ! (value in valuesCount)) {
+                valuesCount[value] = 0;
             }
-            else
-            {
-                // If we have seen this field before, increment the count.
-                aggregateCount[fieldValue] += fieldCount;
-            }
+            valuesCount[value]+= fieldCount; 
         }
+    }
 
-        // Do some debug output if required.
-        if (debugLevel > 1)
-        {
-            var jsonString1 = JSON.stringify(fieldValue);
-            var jsonString2 = JSON.stringify(fieldCount);
-            console.log("irAggregateData: Found " + aggregateName[fieldValue] + " = " + aggregateCount[fieldValue] + "\n");
-        }
-        count = count + 1;
-    }
-    
-    // Once we have the fully aggregated data, iterate over the unique
-    // aggregate elements and generate the series data with a name and
-    // value pair
-    count = 0;
-    var seriesData = [];
-    for (element in aggregateCount)
-    {
-         if (debugLevel > 0)
-             console.log("irAggregateData: Generating series data - " + element + " = " + aggregateCount[element] + "\n");
-         seriesData[count] = {name:element,count:aggregateCount[element]};
-         count = count + 1;
-    }
-    if (debugLevel > 0)
-        console.log("\n");
-    
-    // Return the aggregate name/value list.
-    return seriesData;
+    return valuesCount;
 }
