@@ -212,7 +212,8 @@ class AdminController extends Controller
         // create Agave account
         $agave = new Agave;
         $token = $agave->getAdminToken();
-        $u = $agave->createUser($token, $firstName, $lastName, $email);
+        $username = $agave->generateUsername($firstName, $lastName, $token);
+        $u = $agave->createUser($token, $username, $firstName, $lastName, $email);
 
         $t = [];
         $t['login_link'] = config('app.url') . '/login';

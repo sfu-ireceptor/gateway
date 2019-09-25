@@ -131,11 +131,8 @@ class Agave
         return $this->doPOSTRequestWithJSON($url, $token, $config);
     }
 
-    public function createUser($token, $first_name, $last_name, $email)
+    public function createUser($token, $username, $first_name, $last_name, $email)
     {
-        $first_name_stripped = $string = str_replace(' ', '', $first_name);
-        $last_name_stripped = $string = str_replace(' ', '', $last_name);
-        $username = strtolower($first_name_stripped) . '_' . strtolower($last_name_stripped);
         $password = str_random(24);
 
         $url = '/profiles/v2/?pretty=true';
@@ -388,6 +385,38 @@ class Agave
         $url = '/profiles/v2/' . $username;
 
         return $this->doGETRequest($url, $token);
+    }
+
+    public function userExists($username, $token)
+    {
+        $l = $this->getUsers($token);
+        foreach ($l as $u) {
+            if ($u->username == $username) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function generateUsername($first_name, $last_name, $token)
+    {
+        $first_name_stripped = $string = str_replace(' ', '', $first_name);
+        $last_name_stripped = $string = str_replace(' ', '', $last_name);
+        $username = strtolower($first_name_stripped) . '_' . strtolower($last_name_stripped);
+
+        // if username already exists, append number
+        if ($this->userExists($username, $token)) {
+            $i = 2;
+            $alternate_username = $username . $i;
+            while ($this->userExists($alternate_username, $token)) {
+                $i++;
+                $alternate_username = $username . $i;
+            }
+            $username = $alternate_username;
+        }
+
+        return $username;
     }
 
     public function getUserWithEmail($email, $token)
