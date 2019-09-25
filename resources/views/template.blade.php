@@ -183,7 +183,7 @@
 		<script src="/js/pluralize.js"></script>
 
 		<script src="/js/main.js?v=26"></script>
-		<script src="/js/visualization.js?v=13"></script>
+		<script src="/js/visualization.js?v=14"></script>
 	</body>
 
 </html>

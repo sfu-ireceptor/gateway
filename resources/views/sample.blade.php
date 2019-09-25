@@ -261,14 +261,14 @@
 						<!-- repos/labs/studies details popup -->
 						@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
 
-						<div id="sample_charts" class="charts">
+						<div id="charts" class="charts">
 							<div class="row">
-								<div class="col-md-2 chart" id="sample_chart1"></div>
-								<div class="col-md-2 chart" id="sample_chart2"></div>
-								<div class="col-md-2 chart" id="sample_chart3"></div>
-								<div class="col-md-2 chart" id="sample_chart4"></div>
-								<div class="col-md-2 chart" id="sample_chart5"></div>
-								<div class="col-md-2 chart" id="sample_chart6"></div>
+								<div class="col-md-2 chart" id="chart1"></div>
+								<div class="col-md-2 chart" id="chart2"></div>
+								<div class="col-md-2 chart" id="chart3"></div>
+								<div class="col-md-2 chart" id="chart4"></div>
+								<div class="col-md-2 chart" id="chart5"></div>
+								<div class="col-md-2 chart" id="chart6"></div>
 							</div>
 						</div>								
 					</div>
@@ -429,9 +429,8 @@
 	        "@lang('short.cell_subset')", 
 	        "@lang('short.template_class')"
 	    ];
-	var graphDIV = "sample_chart";
+
 	var graphInternalLabels = true;
-	var graphLabelLength = 10;
 	var graphCountField = "ir_sequence_count";
 	var graphData = {!! $sample_list_json !!};
 </script>

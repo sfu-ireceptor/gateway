@@ -22,16 +22,16 @@
 					@include('rest_service_list')
 				</p>
 
-				<div id="landing_charts">
+				<div id="charts">
 					<div class="row">
-						<div class="col-md-4 chart" id="landing_chart1"></div>
-						<div class="col-md-4 chart" id="landing_chart2"></div>
-						<div class="col-md-4 chart" id="landing_chart3"></div>
+						<div class="col-md-4 chart" id="chart1"></div>
+						<div class="col-md-4 chart" id="chart2"></div>
+						<div class="col-md-4 chart" id="chart3"></div>
 					</div>
 					<div class="row">
-						<div class="col-md-4 chart" id="landing_chart4"></div>
-						<div class="col-md-4 chart" id="landing_chart5"></div>
-						<div class="col-md-4 chart" id="landing_chart6"></div>
+						<div class="col-md-4 chart" id="chart4"></div>
+						<div class="col-md-4 chart" id="chart5"></div>
+						<div class="col-md-4 chart" id="chart6"></div>
 					</div>
 				</div>
 			</div>
@@ -97,7 +97,6 @@
 </div>
 
 <script>
-
 	var graphFields = [
 	        "@lang('v2.study_description')", 
 	        "@lang('v2.organism')",
@@ -116,12 +115,9 @@
 	        "@lang('short.template_class')"
 	    ];
 	
-	var graphDIV = "landing_chart";
 	var graphInternalLabels = false;
-	var graphLabelLength = 10;
 	var graphCountField = "ir_sequence_count";
 	var graphData = {!! $sample_list_json !!};
-
 </script>
 
 @stop
