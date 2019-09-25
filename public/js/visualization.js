@@ -379,19 +379,22 @@ function irAggregateData(field, objList, aggregateBySequence = true, sequenceCou
                 value = 'No data';
             }
 
-            fieldCount = 1;
+            count = 1;
             if (aggregateBySequence)
             {
-                fieldCount = 0;
                 if($.isNumeric(obj[sequenceCountField])) {
-                    fieldCount = obj[sequenceCountField];
+                    count = obj[sequenceCountField];
+                }
+                else {
+                    // there is no sequence with that field value
+                    count = 0;
                 }
             }
 
             if( ! (value in valuesCount)) {
                 valuesCount[value] = 0;
             }
-            valuesCount[value]+= fieldCount; 
+            valuesCount[value]+= count; 
         }
     }
 
