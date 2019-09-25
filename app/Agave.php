@@ -389,12 +389,13 @@ class Agave
 
     public function userExists($username, $token)
     {
-        $l = $this->getUsers($token); 
+        $l = $this->getUsers($token);
         foreach ($l as $u) {
-            if($u->username == $username) {
+            if ($u->username == $username) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -405,15 +406,15 @@ class Agave
         $username = strtolower($first_name_stripped) . '_' . strtolower($last_name_stripped);
 
         // if username already exists, append number
-        if($this->userExists($username, $token)) {
+        if ($this->userExists($username, $token)) {
             $i = 2;
             $alternate_username = $username . $i;
-            while($this->userExists($alternate_username, $token)) {
+            while ($this->userExists($alternate_username, $token)) {
                 $i++;
-                $alternate_username = $username . $i;                
+                $alternate_username = $username . $i;
             }
             $username = $alternate_username;
-        } 
+        }
 
         return $username;
     }
