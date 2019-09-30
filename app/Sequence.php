@@ -31,6 +31,12 @@ class Sequence
         unset($filters['sample_query_id']);
         unset($filters['open_filter_panel_list']);
 
+        // get sequences summary
+        $response_list = RestService::sequences_summary($filters, $username);
+
+        // generate stats
+        $data = self::process_response($response_list);
+
         // get a few sequences from each service
         $response_list = RestService::sequence_list($filters);
 
@@ -47,12 +53,7 @@ class Sequence
         // convert any array properties to strings
         $sequence_list = array_map('convert_arrays_to_strings', $sequence_list);
 
-        // get sequences summary
-        $response_list = RestService::sequences_summary($filters, $username);
-
-        // generate stats
-        $data = self::process_response($response_list);
-
+        // add to stats data
         $data['items'] = $sequence_list;
 
         return $data;
