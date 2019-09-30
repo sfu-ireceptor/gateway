@@ -155,7 +155,33 @@ class RestService extends Model
             $response_list[$i] = $response;
         }
 
-        return $response_list;
+        // group responses belonging to the same group
+        $response_list_grouped = [];
+        foreach ($response_list as $response) {
+            $group = $response['rs']->rest_service_group_code;
+
+            // service doesn't belong to a group -> just add response
+            if ($group == '') {
+                $response_list_grouped[] = $response;
+            } else {
+                // a response with that group already exists? -> merge
+                if (isset($response_list_grouped[$group])) {
+                    $r1 = $response_list_grouped[$group];
+                    $r2 = $response;
+                    // merge response status
+                    if ($r2['status'] != 'success') {
+                        $r1['status'] = $r2['status'];
+                    }
+                    // merge list of samples
+                    $r1['data'] = array_merge($r1['data'], $r2['data']);
+                    $response_list_grouped[$group] = $r1;
+                } else {
+                    $response_list_grouped[$group] = $response;
+                }
+            }
+        }
+
+        return $response_list_grouped;
     }
 
     public static function sequence_count($rest_service_id, $sample_id_list, $filters = [])
