@@ -49,14 +49,12 @@ class Sequence
 
         // get sequences summary
         $response_list = RestService::sequences_summary($filters, $username);
-        // dd($response_list);
 
         // generate stats
         $data = self::process_response($response_list);
 
         $data['items'] = $sequence_list;
 
-        // dd($data);
         return $data;
     }
 
