@@ -237,6 +237,9 @@ class RestService extends Model
             }
         }
 
+        // rename filters: internal gateway name -> official API name
+        $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
+
         // build list of sequence filters only (remove sample id filters)
         $sequence_filters = $filters;
         unset($sequence_filters['project_id_list']);
@@ -426,22 +429,37 @@ class RestService extends Model
         return $response_list;
     }
 
-    // send "/sequences_data" request to all enabled services
+    // retrieve TSV sequence data from enabled services
     // save returned files in $folder_path
-    // curl -X POST -H "Content-Type:application/x-www-form-urlencoded" -d "username=titi&ir_username=titi&ir_project_sample_id_list[]=680&ir_data_format=airr" https://ipa.ireceptor.org/v2/sequences_data
-    // curl -X POST -d "ir_project_sample_id_list=8961797805343895065-242ac11c-0001-012&ir_data_format=airr" https://vdjserver.org/ireceptor/v2/sequences_data
-
+    // Example:
+    // curl -k -i --data @test.json https://206.12.89.109/airr/v1/rearrangement
+    // {
+    //   "filters": {
+    //     "op": "in",
+    //     "content": {
+    //       "field": "repertoire_id",
+    //       "value": [
+    //         "12"
+    //       ]
+    //     }
+    //   },
+    //   "format": "tsv"
+    // }
     public static function sequences_data($filters, $folder_path, $username = '')
     {
-        $base_uri = 'sequences_data';
-
         $now = time();
 
-        // add username to filters
-        $filters['username'] = $username;
-        $filters['ir_username'] = $username;
+        // remove null filter values.
+        foreach ($filters as $k => $v) {
+            if ($v === null) {
+                unset($filters[$k]);
+            }
+        }
 
-        // get list of rest services which will actually be queried
+        // rename filters: internal gateway name -> official API name
+        $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
+
+        // build list of services to query
         $rs_list = [];
         foreach (self::findEnabled() as $rs) {
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
@@ -450,7 +468,7 @@ class RestService extends Model
             }
         }
 
-        // for groups, keep track of number of services for that group
+        // count services in each service group
         $group_list = [];
         foreach ($rs_list as $rs) {
             $group = $rs->rest_service_group_code;
@@ -467,18 +485,24 @@ class RestService extends Model
         $group_list_count = [];
         foreach ($rs_list as $rs) {
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-            // remove REST service id
-            // ir_project_sample_id_list_2 -> ir_project_sample_id_list
-            $filters['ir_project_sample_id_list'] = $filters[$sample_id_list_key];
-            unset($filters[$sample_id_list_key]);
+            // rename service id filter and remove other services' filters
+            // ir_project_sample_id_list_2 -> repertoire_id
+            $filters['repertoire_id'] = $filters[$sample_id_list_key];
+            foreach (self::findEnabled() as $rs) {
+                $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+                unset($filters[$sample_id_list_key]);
+            }
 
-            // override field names from gateway (ir_id) to AIRR (ir_v2)
-            $filters = FieldName::convert($filters, 'ir_id', 'ir_v2');
+            $query_parameters = [];
+            $query_parameters['format'] = 'tsv';
+
+            // generate JSON query
+           $filters_json = self::generate_json_query($filters, $query_parameters);
 
             $t = [];
             $t['rs'] = $rs;
-            $t['url'] = $rs->url . 'v' . $rs->version . '/' . $base_uri;
-            $t['params'] = $filters;
+            $t['url'] = $rs->url . 'rearrangement';
+            $t['params'] = $filters_json;
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
             // add number suffix for rest services belonging to the same group

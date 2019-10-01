@@ -87,8 +87,6 @@ class Sequence
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
-        // $filters = self::clean_filters($filters);
-
         // do extra sequence summary request to get expected number of sequences
         // for sanity check after download
         $expected_nb_sequences_by_rs = self::expectedSequencesByRestSevice($filters, $username);
@@ -100,9 +98,6 @@ class Sequence
         $folder_name = 'ir_' . $time_str . '_' . uniqid();
         $folder_path = $storage_folder . $folder_name;
         File::makeDirectory($folder_path, 0777, true, true);
-
-        $filters['output'] = 'tsv';
-        $filters['ir_data_format'] = 'airr';
 
         $response_list = RestService::sequences_data($filters, $folder_path, $username);
         $file_stats = self::file_stats($response_list, $expected_nb_sequences_by_rs);
@@ -178,27 +173,6 @@ class Sequence
 
         return $t;
     }
-
-    // public static function clean_filters($filters)
-    // {
-    //     if (isset($filters['v_call'])) {
-    //         $filters['v_call'] = strtoupper($filters['v_call']);
-    //     }
-
-    //     if (isset($filters['j_call'])) {
-    //         $filters['j_call'] = strtoupper($filters['j_call']);
-    //     }
-
-    //     if (isset($filters['d_call'])) {
-    //         $filters['d_call'] = strtoupper($filters['d_call']);
-    //     }
-
-    //     if (isset($filters['junction_aa'])) {
-    //         $filters['junction_aa'] = strtoupper($filters['junction_aa']);
-    //     }
-
-    //     return $filters;
-    // }
 
     public static function process_response($response_list)
     {
