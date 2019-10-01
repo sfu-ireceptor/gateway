@@ -285,7 +285,6 @@ class RestService extends Model
             // merge service responses belonging to the same group
             $response_list_grouped = [];
             foreach ($response_list as $response) {
-
                 $group = $response['rs']->rest_service_group_code;
 
                 // service doesn't belong to a group -> just add response
@@ -303,11 +302,11 @@ class RestService extends Model
                         // merge response status
                         if ($r2['status'] != 'success') {
                             $r1['status'] = $r2['status'];
-                            if(isset($r2['error_message'])) {
-                                $r1['error_message'] = $r2['error_message'];                                
+                            if (isset($r2['error_message'])) {
+                                $r1['error_message'] = $r2['error_message'];
                             }
-                            if(isset($r2['error_type'])) {
-                                $r1['error_type'] = $r2['error_type'];                                
+                            if (isset($r2['error_type'])) {
+                                $r1['error_type'] = $r2['error_type'];
                             }
                         }
 
@@ -497,7 +496,7 @@ class RestService extends Model
             $query_parameters['format'] = 'tsv';
 
             // generate JSON query
-           $filters_json = self::generate_json_query($filters, $query_parameters);
+            $filters_json = self::generate_json_query($filters, $query_parameters);
 
             $t = [];
             $t['rs'] = $rs;
