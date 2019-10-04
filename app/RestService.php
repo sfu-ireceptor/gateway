@@ -483,25 +483,29 @@ class RestService extends Model
         $request_params = [];
         $group_list_count = [];
         foreach ($rs_list as $rs) {
+            $rs_filters = $filters;
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             // rename service id filter and remove other services' filters
             // ir_project_sample_id_list_2 -> repertoire_id
-            $filters['repertoire_id'] = $filters[$sample_id_list_key];
-            foreach (self::findEnabled() as $rs) {
-                $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-                unset($filters[$sample_id_list_key]);
+            $rs_filters['repertoire_id'] = $rs_filters[$sample_id_list_key];
+
+            // remove extra ir_project_sample_id_list_ fields
+            foreach ($rs_filters as $key => $value) {
+                if (starts_with($key, 'ir_project_sample_id_list_')) {
+                    unset($rs_filters[$key]);
+                }
             }
 
             $query_parameters = [];
             $query_parameters['format'] = 'tsv';
 
             // generate JSON query
-            $filters_json = self::generate_json_query($filters, $query_parameters);
+            $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
 
             $t = [];
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'rearrangement';
-            $t['params'] = $filters_json;
+            $t['params'] = $rs_filters_json;
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
             // add number suffix for rest services belonging to the same group
