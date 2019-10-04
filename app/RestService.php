@@ -54,7 +54,7 @@ class RestService extends Model
             }
 
             // TODO should this be defined in Brian's mapping file?
-            if($k == 'ir_junction_aa_length') {
+            if ($k == 'ir_junction_aa_length') {
                 $filter->op = '=';
             }
 
