@@ -53,6 +53,11 @@ class RestService extends Model
                 $filter->op = 'in';
             }
 
+            // TODO should this be defined in Brian's mapping file?
+            if($k == 'ir_junction_aa_length') {
+                $filter->op = '=';
+            }
+
             $filter->content = new \stdClass();
             $filter->content->field = $k;
             $filter->content->value = $v;
