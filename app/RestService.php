@@ -378,44 +378,13 @@ class RestService extends Model
             $t['rs'] = $rs;
             $t['url'] = $rs->url . $base_uri;
 
-            $filter_object_list = [];
-            foreach ($service_filters as $k => $v) {
-                $filter_content = new \stdClass();
-                $filter_content->field = $k;
-                $filter_content->value = $v;
+            $params = [];
+            $params['from'] = 0;
+            $params['size'] = $n;
+            $params['fields'] = ['v_call', 'd_call', 'j_call', 'junction_aa'];
 
-                $filter = new \stdClass();
-
-                $filter->op = 'contains';
-                if (is_array($v)) {
-                    $filter->op = 'in';
-                }
-
-                $filter->content = $filter_content;
-
-                $filter_object_list[] = $filter;
-            }
-
-            $filter_object = new \stdClass();
-            if (count($filter_object_list) == 0) {
-            } elseif (count($filter_object_list) == 1) {
-                $filter_object->filters = $filter_object_list[0];
-            } else {
-                $filters_and = new \stdClass();
-                $filters_and->op = 'and';
-                $filters_and->content = [];
-                foreach ($filter_object_list as $filter) {
-                    $filters_and->content[] = $filter;
-                }
-                $filter_object->filters = $filters_and;
-            }
-
-            $filter_object->from = 0;
-            $filter_object->size = $n;
-            $filter_object->fields = ['v_call', 'd_call', 'j_call', 'junction_aa'];
-
-            // echo  json_encode($filter_object,  JSON_PRETTY_PRINT);die();
-            $t['params'] = json_encode($filter_object);
+            $filters_json = self::generate_json_query($service_filters, $params);
+            $t['params'] = $filters_json;
 
             $request_params[] = $t;
         }
