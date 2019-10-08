@@ -402,6 +402,89 @@ class RestService extends Model
         return $response_list;
     }
 
+
+    public static function repertoire_data($filters, $folder_path, $username = '')
+    {
+        $now = time();
+
+        // remove null filter values.
+        foreach ($filters as $k => $v) {
+            if ($v === null) {
+                unset($filters[$k]);
+            }
+        }
+
+        // build list of services to query
+        $rs_list = [];
+        foreach (self::findEnabled() as $rs) {
+            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+            if (array_key_exists($sample_id_list_key, $filters) && ! empty($filters[$sample_id_list_key])) {
+                $rs_list[$rs->id] = $rs;
+            }
+        }
+
+        // count services in each service group
+        $group_list = [];
+        foreach ($rs_list as $rs) {
+            $group = $rs->rest_service_group_code;
+            if ($group) {
+                if (! isset($group_list[$group])) {
+                    $group_list[$group] = 0;
+                }
+                $group_list[$group] += 1;
+            }
+        }
+
+        // prepare request parameters for each service
+        $request_params = [];
+        $group_list_count = [];
+        foreach ($rs_list as $rs) {
+            $rs_filters = [];
+            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+            // rename service id filter and remove other services' filters
+            // ir_project_sample_id_list_2 -> repertoire_id
+            $rs_filters['repertoire_id'] = $filters[$sample_id_list_key];
+
+            // remove extra ir_project_sample_id_list_ fields
+            foreach ($rs_filters as $key => $value) {
+                if (starts_with($key, 'ir_project_sample_id_list_')) {
+                    unset($rs_filters[$key]);
+                }
+            }
+
+            $query_parameters = [];
+            $query_parameters['format'] = 'tsv';
+
+            // generate JSON query
+            $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
+
+            $t = [];
+            $t['rs'] = $rs;
+            $t['url'] = $rs->url . 'repertoire';
+            $t['params'] = $rs_filters_json;
+            $t['timeout'] = config('ireceptor.service_file_request_timeout');
+
+            // add number suffix for rest services belonging to the same group
+            $file_suffix = '';
+            $group = $rs->rest_service_group_code;
+            if ($group && $group_list[$group] >= 1) {
+                if (! isset($group_list_count[$group])) {
+                    $group_list_count[$group] = 0;
+                }
+                $group_list_count[$group] += 1;
+                $file_suffix = '-' . $group_list_count[$group];
+            }
+            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '-metadata.json';
+            $request_params[] = $t;
+        }
+
+        // do requests, write tsv data to files
+        Log::debug('Do metadata files for TSV requests...');
+        $response_list = self::doRequests($request_params);
+
+        return $response_list;
+    }
+
     // retrieve TSV sequence data from enabled services
     // save returned files in $folder_path
     // Example:
@@ -461,7 +544,7 @@ class RestService extends Model
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             // rename service id filter and remove other services' filters
             // ir_project_sample_id_list_2 -> repertoire_id
-            $rs_filters['repertoire_id'] = $rs_filters[$sample_id_list_key];
+            $rs_filters['repertoire_id'] = $filters[$sample_id_list_key];
 
             // remove extra ir_project_sample_id_list_ fields
             foreach ($rs_filters as $key => $value) {

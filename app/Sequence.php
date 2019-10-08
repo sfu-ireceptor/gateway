@@ -99,6 +99,7 @@ class Sequence
         $folder_path = $storage_folder . $folder_name;
         File::makeDirectory($folder_path, 0777, true, true);
 
+        $metadata_response_list = RestService::repertoire_data($filters, $folder_path, $username);
         $response_list = RestService::sequences_data($filters, $folder_path, $username);
         $file_stats = self::file_stats($response_list, $expected_nb_sequences_by_rs);
 
@@ -139,6 +140,7 @@ class Sequence
         $t = [];
         $t['folder_path'] = $folder_path;
         $t['response_list'] = $response_list;
+        $t['metadata_response_list'] = $metadata_response_list;
         $t['info_file_path'] = $info_file_path;
         $t['is_download_incomplete'] = $is_download_incomplete;
         $t['file_stats'] = $file_stats;
@@ -152,15 +154,16 @@ class Sequence
 
         $folder_path = $t['folder_path'];
         $response_list = $t['response_list'];
+        $metadata_response_list = $t['metadata_response_list'];
         $info_file_path = $t['info_file_path'];
         $is_download_incomplete = $t['is_download_incomplete'];
         $file_stats = $t['file_stats'];
 
         // zip files
-        $zip_path = self::zip_files($folder_path, $response_list, $info_file_path);
+        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path);
 
         // delete files
-        self::delete_files($response_list, $info_file_path, $folder_path);
+        self::delete_files($response_list, $metadata_response_list, $info_file_path, $folder_path);
 
         $zip_public_path = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
 
@@ -447,7 +450,7 @@ class Sequence
         return $info_file_path;
     }
 
-    public static function zip_files($folder_path, $response_list, $info_file_path)
+    public static function zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path)
     {
         $zipPath = $folder_path . '.zip';
         Log::info('Zip files to ' . $zipPath);
@@ -460,16 +463,30 @@ class Sequence
                 $zip->addFile($file_path, basename($file_path));
             }
         }
+        foreach ($metadata_response_list as $response) {
+            if (isset($response['data']['file_path'])) {
+                $file_path = $response['data']['file_path'];
+                Log::debug('Adding to ZIP: ' . $file_path);
+                $zip->addFile($file_path, basename($file_path));
+            }
+        }
         $zip->addFile($info_file_path, basename($info_file_path));
         $zip->close();
 
         return $zipPath;
     }
 
-    public static function delete_files($response_list, $info_file_path, $folder_path)
+    public static function delete_files($response_list, $metadata_response_list, $info_file_path, $folder_path)
     {
         Log::debug('Deleting downloaded files...');
         foreach ($response_list as $response) {
+            $file_path = $response['data']['file_path'];
+            if (File::exists($file_path)) {
+                File::delete($file_path);
+            }
+        }
+
+        foreach ($metadata_response_list as $response) {
             $file_path = $response['data']['file_path'];
             if (File::exists($file_path)) {
                 File::delete($file_path);
