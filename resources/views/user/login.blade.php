@@ -55,6 +55,7 @@
 		</div>
 
 		<div class="col-md-9">
+
 			<div class="intro">
 				<p>
 					A <strong>science gateway</strong>
@@ -63,7 +64,9 @@
 					enabling unified exploration, analysis and download.
 				</p>
 			</div>
+
 			<div class="intro2">
+
 				<p>
 					<strong>{{ human_number($total_sequences) }} sequences</strong> and
 					<strong>{{ $total_samples }} repertoires</strong> are currently available,<br>
@@ -72,18 +75,20 @@
 					{{ $total_labs }} research {{ str_plural('lab', $total_labs)}} and
 					{{ $total_projects }} {{ str_plural('study', $total_projects)}}.
 				</p>
-				<div id="landing_charts">
+
+				<div id="charts">
 					<div class="row">
-						<div class="col-md-4 chart" id="landing_chart1"></div>
-						<div class="col-md-4 chart" id="landing_chart2"></div>
-						<div class="col-md-4 chart" id="landing_chart3"></div>
+						<div class="col-md-4 chart" id="chart1"></div>
+						<div class="col-md-4 chart" id="chart2"></div>
+						<div class="col-md-4 chart" id="chart3"></div>
 					</div>
 					<div class="row">
-						<div class="col-md-4 chart" id="landing_chart4"></div>
-						<div class="col-md-4 chart" id="landing_chart5"></div>
-						<div class="col-md-4 chart" id="landing_chart6"></div>
+						<div class="col-md-4 chart" id="chart4"></div>
+						<div class="col-md-4 chart" id="chart5"></div>
+						<div class="col-md-4 chart" id="chart6"></div>
 					</div>
 				</div>
+				
 			</div>
 		</div>
 	</div>
