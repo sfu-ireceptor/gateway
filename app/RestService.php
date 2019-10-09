@@ -402,7 +402,6 @@ class RestService extends Model
         return $response_list;
     }
 
-
     public static function repertoire_data($filters, $folder_path, $username = '')
     {
         $now = time();
