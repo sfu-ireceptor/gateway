@@ -466,16 +466,16 @@ class Sequence
         foreach ($metadata_response_list as $response) {
             if (isset($response['data']['file_path'])) {
                 $file_path = $response['data']['file_path'];
-                
+
                 // try to prettify json
                 $json_data = file_get_contents($file_path);
                 $json_data_pretty = json_encode(json_decode($json_data), JSON_PRETTY_PRINT);
-                if($json_data_pretty != null) {
+                if ($json_data_pretty != null) {
                     $json_data = $json_data_pretty;
                 }
 
                 file_put_contents($file_path, $json_data);
-                
+
                 Log::debug('Adding to ZIP: ' . $file_path);
                 $zip->addFile($file_path, basename($file_path));
             }
