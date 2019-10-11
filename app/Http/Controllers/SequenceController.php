@@ -67,7 +67,7 @@ class SequenceController extends Controller
         }
 
         /*************************************************
-        * Prepare data elements for view */
+        * Prepare view data */
 
         // sequence data
         $data = [];
@@ -84,11 +84,6 @@ class SequenceController extends Controller
         $data['total_filtered_studies'] = $sequence_data['total_filtered_studies'];
         $data['total_filtered_sequences'] = $sequence_data['total_filtered_sequences'];
         $data['filtered_repositories'] = $sequence_data['filtered_repositories'];
-
-        // $filtered_repositories_names = array_map(function ($rs) {
-        //     return $rs->name;
-        // }, $sequence_data['filtered_repositories']);
-        // $data['filtered_repositories_names'] = implode(', ', $filtered_repositories_names);
 
         // populate form fields if needed
         $request->session()->forget('_old_input');
@@ -245,62 +240,27 @@ class SequenceController extends Controller
 
     public function quickSearch(Request $request)
     {
-        // if "remove one filter" request, generate new query_id and redirect to it
+        /*************************************************
+        * Immediate redirects */
+
+        // if "remove filter" request, generate new query_id and redirect
         if ($request->has('remove_filter')) {
-            $filters = Query::getParams($request->input('query_id'));
-            $filter_to_remove = $request->input('remove_filter');
-
-            unset($filters[$filter_to_remove]);
-            $new_filters = $filters;
-
-            $new_query_id = Query::saveParams($new_filters, 'sequences');
-
-            return redirect('sequences-quick-search?query_id=' . $new_query_id);
+            return self::removeFilter($request);
         }
 
+        /*************************************************
+        * Get sequence data */
+
+        // parameters
         $username = auth()->user()->username;
-
-        /*************************************************
-        * prepare form data */
-
-        // get data
-        $metadata = Sample::metadata($username);
-
-        // cell type
-        $cell_type_list = [];
-        foreach ($metadata['cell_subset'] as $v) {
-            $cell_type_list[$v] = $v;
-        }
-
-        // organism
-        $subject_organism_list = [];
-        $subject_organism_list[''] = 'Any';
-        foreach ($metadata['organism'] as $v) {
-            $subject_organism_list[$v] = $v;
-        }
-
-        // view data
-        $data = [];
-        $data['cell_type_list'] = $cell_type_list;
-        $data['subject_organism_list'] = $subject_organism_list;
-
-        /*************************************************
-        * get filtered sequence data and related statistics */
-
         $query_id = '';
         $filters = [];
-
         if ($request->has('query_id')) {
             $query_id = $request->input('query_id');
             $filters = Query::getParams($query_id);
         }
 
-        // fill form fields accordingly
-        $request->session()->forget('_old_input');
-        $request->session()->put('_old_input', $filters);
-
-        $data['query_id'] = $query_id;
-
+        // sample filters
         $sample_filters = [];
         if (isset($filters['cell_subset'])) {
             $sample_filters['cell_subset'] = $filters['cell_subset'];
@@ -309,10 +269,46 @@ class SequenceController extends Controller
             $sample_filters['organism'] = $filters['organism'];
         }
 
+        // sequence filters
         $sequence_filters = [];
         if (isset($filters['junction_aa'])) {
             $sequence_filters['junction_aa'] = $filters['junction_aa'];
         }
+
+        // retrieve data
+        $sequence_data = Sequence::full_search($sample_filters, $sequence_filters, $username);
+        // dd($sequence_data);
+
+        // store data size in user query log
+        $query_log_id = $request->get('query_log_id');
+        $query_log = QueryLog::find($query_log_id);
+        if ($query_log != null) {
+            $query_log->result_size = $sequence_data['total_filtered_sequences'];
+            $query_log->save();
+        }
+
+        /*************************************************
+        * Prepare view data */
+
+        $data = [];
+
+        // get cached sample metadata
+        $metadata = Sample::metadata($username);
+
+        // cell type
+        $cell_type_list = [];
+        foreach ($metadata['cell_subset'] as $v) {
+            $cell_type_list[$v] = $v;
+        }
+        $data['cell_type_list'] = $cell_type_list;
+
+        // organism
+        $subject_organism_list = [];
+        $subject_organism_list[''] = 'Any';
+        foreach ($metadata['organism'] as $v) {
+            $subject_organism_list[$v] = $v;
+        }
+        $data['subject_organism_list'] = $subject_organism_list;
 
         // generate query id for download link
         $sample_id_list = Sample::find_sample_id_list($sample_filters, $username);
@@ -325,20 +321,11 @@ class SequenceController extends Controller
         $download_query_id = Query::saveParams($download_filters, 'sequences');
         $data['download_query_id'] = $download_query_id;
 
-        $sequence_data = Sequence::full_search($sample_filters, $sequence_filters, $username);
-
-        // log result
-        $query_log_id = $request->get('query_log_id');
-        if ($query_log_id != null) {
-            $query_log = QueryLog::find($query_log_id);
-            $query_log->result_size = $sequence_data['total_filtered_sequences'];
-            $query_log->save();
-        }
 
         $data['sequence_list'] = $sequence_data['items'];
         $data['sample_list_json'] = json_encode($sequence_data['summary']);
-        $data['rest_service_list'] = $rest_service_list;
-        $data['rs_list_no_response'] = $sequence_data['rs_list_no_response'];
+        $data['rest_service_list'] = $sequence_data['rs_list'];
+        // $data['rs_list_no_response'] = $sequence_data['rs_list_no_response'];
 
         // Pass on the summary data from the sequence_data returned.
         $data['total_filtered_samples'] = $sequence_data['total_filtered_samples'];
@@ -348,10 +335,11 @@ class SequenceController extends Controller
         $data['total_filtered_sequences'] = $sequence_data['total_filtered_sequences'];
         $data['filtered_repositories'] = $sequence_data['filtered_repositories'];
 
-        $filtered_repositories_names = array_map(function ($rs) {
-            return $rs->display_name;
-        }, $sequence_data['filtered_repositories']);
-        $data['filtered_repositories_names'] = implode(', ', $filtered_repositories_names);
+         // populate form fields if needed
+        $request->session()->forget('_old_input');
+        $request->session()->put('_old_input', $filters);
+
+        $data['query_id'] = $query_id;
 
         // for bookmarking
         $current_url = $request->fullUrl();
@@ -516,6 +504,7 @@ class SequenceController extends Controller
 
         $new_query_id = Query::saveParams($new_filters, 'sequences');
 
-        return redirect('sequences?query_id=' . $new_query_id);
+        $uri = $request->route()->uri;
+        return redirect($uri  .'?query_id=' . $new_query_id);
     }
 }

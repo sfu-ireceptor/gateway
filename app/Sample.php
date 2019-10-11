@@ -20,7 +20,7 @@ class Sample
     public static function find_sample_id_list($filters, $username)
     {
         // get samples
-        $sample_data = self::find($filters, $username);
+        $sample_data = self::find($filters, $username, false);
         $sample_list = $sample_data['items'];
 
         // generate list of sample ids
@@ -32,17 +32,12 @@ class Sample
         return $sample_id_list;
     }
 
-    public static function find($filters, $username)
+    public static function find($filters, $username, $count_sequences = true)
     {
         $service_filters = $filters;
 
-        // remove gateway-only filters
-        unset($service_filters['cols']);
-        unset($service_filters['open_filter_panel_list']);
-        unset($service_filters['full_text_search']);
-
         // do requests
-        $response_list = RestService::samples($service_filters, $username);
+        $response_list = RestService::samples($service_filters, $username, $count_sequences);
 
         // if error, update gateway query status
         $gw_query_log_id = request()->get('query_log_id');

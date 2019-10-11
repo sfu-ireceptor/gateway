@@ -50,7 +50,7 @@ Route::get('auth/service/{page}', 'CanarieController@linkPage');
 Route::get('computation/service/{page}', 'CanarieController@linkPage');
 
 // just for dev
-Route::get('test', 'TestController@getIndex');
+Route::get('test', 'TestController@getIndex')->name('test-page');
 Route::any('test2', 'TestController@index2');
 Route::any('wait/{seconds}', 'TestController@wait');
 Route::get('email', 'TestController@email');

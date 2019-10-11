@@ -13,11 +13,11 @@ class Sequence
     // ([sample filters] -> (sample query) => [sample id list]) + [sequence filters] -> (sequence_summary query)
     public static function full_search($sample_filters, $sequence_filters, $username)
     {
+        // get list of sample ids
         $sample_id_filters = Sample::find_sample_id_list($sample_filters, $username);
 
         // get sequences summary
         $sequence_filters = array_merge($sequence_filters, $sample_id_filters);
-        $sequence_filters = self::clean_filters($sequence_filters);
         $sequence_data = self::summary($sequence_filters, $username);
 
         return $sequence_data;
@@ -25,12 +25,6 @@ class Sequence
 
     public static function summary($filters, $username)
     {
-        // remove gateway-specific filters
-        unset($filters['cols']);
-        unset($filters['filters_order']);
-        unset($filters['sample_query_id']);
-        unset($filters['open_filter_panel_list']);
-
         // get sequences summary
         $response_list = RestService::sequences_summary($filters, $username);
 

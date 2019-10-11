@@ -49,8 +49,11 @@ class TestController extends Controller
         echo 'hi there 40';
     }
 
-    public function getIndex()
+    public function getIndex(Request $request)
     {
+        echo($request->route()->uri);
+        die();
+
         dd(RestService::sequence_count([], 37, '7'));
         die();
 
