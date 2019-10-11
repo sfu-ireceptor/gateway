@@ -51,7 +51,7 @@ class TestController extends Controller
 
     public function getIndex(Request $request)
     {
-        echo($request->route()->uri);
+        echo $request->route()->uri;
         die();
 
         dd(RestService::sequence_count([], 37, '7'));
