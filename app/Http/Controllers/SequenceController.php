@@ -321,7 +321,6 @@ class SequenceController extends Controller
         $download_query_id = Query::saveParams($download_filters, 'sequences');
         $data['download_query_id'] = $download_query_id;
 
-
         $data['sequence_list'] = $sequence_data['items'];
         $data['sample_list_json'] = json_encode($sequence_data['summary']);
         $data['rest_service_list'] = $sequence_data['rs_list'];
@@ -335,7 +334,7 @@ class SequenceController extends Controller
         $data['total_filtered_sequences'] = $sequence_data['total_filtered_sequences'];
         $data['filtered_repositories'] = $sequence_data['filtered_repositories'];
 
-         // populate form fields if needed
+        // populate form fields if needed
         $request->session()->forget('_old_input');
         $request->session()->put('_old_input', $filters);
 
@@ -505,6 +504,7 @@ class SequenceController extends Controller
         $new_query_id = Query::saveParams($new_filters, 'sequences');
 
         $uri = $request->route()->uri;
-        return redirect($uri  .'?query_id=' . $new_query_id);
+
+        return redirect($uri . '?query_id=' . $new_query_id);
     }
 }

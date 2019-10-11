@@ -145,12 +145,12 @@ class RestService extends Model
                     $sample_id_list[] = $sample->repertoire_id;
                 }
 
-                if($count_sequences) {
+                if ($count_sequences) {
                     // do sequence count query and add them to the samples
                     $sequence_count = self::sequence_count($rs->id, $sample_id_list);
                     foreach ($sample_list as $sample) {
                         $sample->ir_sequence_count = $sequence_count[$sample->repertoire_id];
-                    }                    
+                    }
                 }
 
                 // replace Info/Repertoire by simple list of samples
