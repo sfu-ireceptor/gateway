@@ -425,6 +425,8 @@ class RestService extends Model
                 unset($filters[$k]);
             }
         }
+        // remove gateway-specific filters
+        unset($filters['sample_query_id']);
 
         // build list of services to query
         $rs_list = [];
@@ -523,6 +525,9 @@ class RestService extends Model
                 unset($filters[$k]);
             }
         }
+
+        // remove gateway-specific filters
+        unset($filters['sample_query_id']);
 
         // rename filters: internal gateway name -> official API name
         $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
