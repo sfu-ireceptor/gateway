@@ -91,7 +91,8 @@ class RestService extends Model
         return $filter_object_json;
     }
 
-    public static function clean_filters($filters) {
+    public static function clean_filters($filters)
+    {
         // remove empty filters
         foreach ($filters as $k => $v) {
             if ($v === null) {
