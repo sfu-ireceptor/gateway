@@ -198,6 +198,15 @@ class RestService extends Model
 
     public static function sequence_count($rest_service_id, $sample_id_list, $filters = [])
     {
+        unset($filters['open_filter_panel_list']);
+
+        // remove null filter values.
+        foreach ($filters as $k => $v) {
+            if ($v === null) {
+                unset($filters[$k]);
+            }
+        }
+
         // force all sample ids to string
         foreach ($sample_id_list as $k => $v) {
             $sample_id_list[$k] = (string) $v;
@@ -353,6 +362,9 @@ class RestService extends Model
             }
         }
 
+        unset($filters['open_filter_panel_list']);
+        unset($filters['cols']);
+
         // prepare request parameters for each service
         $request_params = [];
         foreach (self::findEnabled() as $rs) {
@@ -427,6 +439,7 @@ class RestService extends Model
         }
         // remove gateway-specific filters
         unset($filters['sample_query_id']);
+        unset($filters['open_filter_panel_list']);
 
         // build list of services to query
         $rs_list = [];
@@ -467,7 +480,6 @@ class RestService extends Model
             }
 
             $query_parameters = [];
-            $query_parameters['format'] = 'tsv';
 
             // generate JSON query
             $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
@@ -528,6 +540,8 @@ class RestService extends Model
 
         // remove gateway-specific filters
         unset($filters['sample_query_id']);
+        unset($filters['cols']);
+        unset($filters['open_filter_panel_list']);
 
         // rename filters: internal gateway name -> official API name
         $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
