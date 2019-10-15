@@ -91,20 +91,29 @@ class RestService extends Model
         return $filter_object_json;
     }
 
-    // do samples request to all enabled services
-    public static function samples($filters, $username = '', $count_sequences = true)
-    {
-        // remove gateway-specific filters
-        unset($filters['cols']);
-        unset($filters['open_filter_panel_list']);
-        unset($filters['full_text_search']);
-
+    public static function clean_filters($filters) {
         // remove empty filters
         foreach ($filters as $k => $v) {
             if ($v === null) {
                 unset($filters[$k]);
             }
         }
+
+        // remove gateway-specific filters
+        unset($filters['cols']);
+        unset($filters['open_filter_panel_list']);
+        unset($filters['full_text_search']);
+        unset($filters['filters_order']);
+        unset($filters['sample_query_id']);
+
+        return $filters;
+    }
+
+    // do samples request to all enabled services
+    public static function samples($filters, $username = '', $count_sequences = true)
+    {
+        // clean filters for services
+        $filters = self::clean_filters($filters);
 
         // rename filters: internal gateway name -> official API name
         $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
@@ -198,14 +207,8 @@ class RestService extends Model
 
     public static function sequence_count($rest_service_id, $sample_id_list, $filters = [])
     {
-        unset($filters['open_filter_panel_list']);
-
-        // remove null filter values.
-        foreach ($filters as $k => $v) {
-            if ($v === null) {
-                unset($filters[$k]);
-            }
-        }
+        // clean filters for services
+        $filters = self::clean_filters($filters);
 
         // force all sample ids to string
         foreach ($sample_id_list as $k => $v) {
@@ -251,18 +254,8 @@ class RestService extends Model
     // send "/sequences_summary" request to all enabled services
     public static function sequences_summary($filters, $username = '', $group_by_rest_service = true)
     {
-        // remove gateway-specific filters
-        unset($filters['cols']);
-        unset($filters['filters_order']);
-        unset($filters['sample_query_id']);
-        unset($filters['open_filter_panel_list']);
-
-        // remove null filter values.
-        foreach ($filters as $k => $v) {
-            if ($v === null) {
-                unset($filters[$k]);
-            }
-        }
+        // clean filters for services
+        $filters = self::clean_filters($filters);
 
         // rename filters: internal gateway name -> official API name
         $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
@@ -355,15 +348,8 @@ class RestService extends Model
     {
         $base_uri = 'rearrangement';
 
-        // remove null filter values.
-        foreach ($filters as $k => $v) {
-            if ($v === null) {
-                unset($filters[$k]);
-            }
-        }
-
-        unset($filters['open_filter_panel_list']);
-        unset($filters['cols']);
+        // clean filters for services
+        $filters = self::clean_filters($filters);
 
         // prepare request parameters for each service
         $request_params = [];
@@ -431,15 +417,8 @@ class RestService extends Model
     {
         $now = time();
 
-        // remove null filter values.
-        foreach ($filters as $k => $v) {
-            if ($v === null) {
-                unset($filters[$k]);
-            }
-        }
-        // remove gateway-specific filters
-        unset($filters['sample_query_id']);
-        unset($filters['open_filter_panel_list']);
+        // clean filters for services
+        $filters = self::clean_filters($filters);
 
         // build list of services to query
         $rs_list = [];
@@ -531,17 +510,8 @@ class RestService extends Model
     {
         $now = time();
 
-        // remove null filter values.
-        foreach ($filters as $k => $v) {
-            if ($v === null) {
-                unset($filters[$k]);
-            }
-        }
-
-        // remove gateway-specific filters
-        unset($filters['sample_query_id']);
-        unset($filters['cols']);
-        unset($filters['open_filter_panel_list']);
+        // clean filters for services
+        $filters = self::clean_filters($filters);
 
         // rename filters: internal gateway name -> official API name
         $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
