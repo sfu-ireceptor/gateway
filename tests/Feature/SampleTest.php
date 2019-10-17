@@ -103,8 +103,8 @@ class SampleTest extends TestCase
 
     /*
     |--------------------------------------------------------------------------
-    | Simulate service returning 1 sample,
-    | to test that sample page works even if fields are missing
+    | Simulate service returning 1 sample
+    | and test that samples page works (even if fields are missing)
     |--------------------------------------------------------------------------
     */
 
