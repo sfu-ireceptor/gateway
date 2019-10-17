@@ -24,7 +24,7 @@ class SequenceTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-      self::$repertoire_data = [
+        self::$repertoire_data = [
         (object) [
         'repertoire_id' => 8,
         'subject' => (object) [
@@ -120,10 +120,10 @@ class SequenceTest extends TestCase
          'real_rest_service_id' => 40,
          'ir_sequence_count' => 4846,
          'ir_filtered_sequence_count' => 4846,
-      ]
+      ],
     ];
 
-      self::$sequence_list = [
+        self::$sequence_list = [
       [
         'Info' => (object) [
            'Title' => 'AIRR Data Commons API',
@@ -196,9 +196,9 @@ class SequenceTest extends TestCase
              'v_call' => 'IGHV4-39*01',
           ],
         ],
-      ]
+      ],
     ];
-  }
+    }
 
     /*
     |--------------------------------------------------------------------------
