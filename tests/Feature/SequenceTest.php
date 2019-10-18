@@ -252,16 +252,11 @@ class SequenceTest extends TestCase
         // get list of fields in random order
         $keys = get_data_fields($repertoire_data);
 
-        // shuffle($keys);
-        // echo array_pop($keys);
-        // dd($keys);
-        // dd($keys);
-
         while ($key = array_shift($keys)) {
-            Log::debug('Removing field: ' . $key);
             // set element to null
+            Log::debug('Set ' . $key . ' to null');
             data_set($repertoire_data, $key, null);
-            Log::debug($repertoire_data);
+            // Log::debug($repertoire_data);
 
             $response_list = [
                 [
