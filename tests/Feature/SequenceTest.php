@@ -16,7 +16,7 @@ class SequenceTest extends TestCase
     ];
 
     protected static $query_params = [
-     'ir_project_sample_id_list_3' => [0 => '299', 1 => '475'],
+     'ir_project_sample_id_list_3' => [0 => '8', 1 => '475'],
     ];
 
     protected static $repertoire_data = [];
@@ -241,64 +241,55 @@ class SequenceTest extends TestCase
         $this->actingAs($u)->get('/sequences?query_id=0')->assertOk();
     }
 
-    // /** @test */
-    // public function incomplete_sequence_data()
-    // {
-    //     // generate fake user
-    //     $u = factory(\App\User::class)->make();
+    /** @test */
+    public function incomplete_sequence_data()
+    {
+        // generate fake user
+        $u = factory(\App\User::class)->make();
 
-    //     // mock Query::getParams()
-    //     Query::shouldReceive('getParams')->andReturn(self::$query_params);
+        $repertoire_data = self::$repertoire_data;
 
-    //     // get list of sample fields in random order
-    //     $keys = array_keys(self::$sample_info);
-    //     shuffle($keys);
+        // get list of fields in random order
+        $keys = get_data_fields($repertoire_data);
+        
+        // shuffle($keys);
+        // echo array_pop($keys);
+        // dd($keys);
+        // dd($keys);
 
-    //     // remove one field at the time
-    //     while ($key = array_pop($keys)) {
-    //         unset(self::$sample_info[$key]);
-    //         Log::debug('Removing sample_info field: ' . $key);
+        while ($key = array_shift($keys)) {
+            Log::debug('Removing field: ' . $key);
+            // set element to null
+            data_set($repertoire_data, $key, null);
+            Log::debug($repertoire_data);
+        
+            $response_list = [
+                [
+                    'rs' => (object) self::$rs,
+                    'status' => 'success',
+                    'data' => $repertoire_data,
+                ],
+            ];
 
-    //         $response_list = [
-    //             [
-    //                 'rs' => (object) self::$rs,
-    //                 'status' => 'success',
-    //                 'data' => (object) [
-    //                     'summary' => [(object) self::$sample_info],
-    //                     'items' => [(object) self::$sequence_item],
-    //                 ],
-    //             ],
-    //         ];
+            $sequence_list_response = [
+              [
+                'rs' => (object) self::$rs,
+                'status' => 'success',
+                'data' => self::$sequence_list,
+                'query_log_id' => '5da77e26a98320062425ad8a',
+              ],
+            ];
 
-    //         // mock RestService::sequences_summary()
-    //         RestService::shouldReceive('sequences_summary')->once()->andReturn($response_list);
+            // mock Query::getParams()
+            Query::shouldReceive('getParams')->andReturn(self::$query_params);
 
-    //         self::$actingAs($u)->get('/sequences?query_id=0')->assertOk();
-    //     }
+            // mock RestService::sequences_summary()
+            RestService::shouldReceive('sequences_summary')->once()->andReturn($response_list);
+            RestService::shouldReceive('sequence_list')->once()->andReturn($sequence_list_response);
 
-    //     // get list of sequence fields in random order
-    //     $keys = array_keys(self::$sequence_item);
-    //     shuffle($keys);
 
-    //     // remove one field at the time
-    //     while ($key = array_pop($keys)) {
-    //         unset(self::$sequence_item[$key]);
-    //         Log::debug('Removing sequence field: ' . $key);
-
-    //         $response_list = [
-    //             [
-    //                 'rs' => (object) self::$rs,
-    //                 'status' => 'success',
-    //                 'data' =>  [
-    //                     (object) self::$sample_info]
-    //                 ],
-    //             ],
-    //         ];
-
-    //         // mock RestService::sequences_summary()
-    //         RestService::shouldReceive('sequences_summary')->once()->andReturn($response_list);
-
-    //         self::$actingAs($u)->get('/sequences?query_id=0')->assertOk();
-    //     }
-    // }
+            // test sequence page is working
+            $this->actingAs($u)->get('/sequences?query_id=0')->assertOk();
+        }
+    }
 }
