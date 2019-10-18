@@ -251,7 +251,7 @@ class SequenceTest extends TestCase
 
         // get list of fields in random order
         $keys = get_data_fields($repertoire_data);
-        
+
         // shuffle($keys);
         // echo array_pop($keys);
         // dd($keys);
@@ -262,7 +262,7 @@ class SequenceTest extends TestCase
             // set element to null
             data_set($repertoire_data, $key, null);
             Log::debug($repertoire_data);
-        
+
             $response_list = [
                 [
                     'rs' => (object) self::$rs,
@@ -286,7 +286,6 @@ class SequenceTest extends TestCase
             // mock RestService::sequences_summary()
             RestService::shouldReceive('sequences_summary')->once()->andReturn($response_list);
             RestService::shouldReceive('sequence_list')->once()->andReturn($sequence_list_response);
-
 
             // test sequence page is working
             $this->actingAs($u)->get('/sequences?query_id=0')->assertOk();
