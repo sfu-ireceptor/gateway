@@ -285,29 +285,29 @@ if (! function_exists('get_class_name')) {
     }
 }
 
-
 // get list of fields of object/array using dot notation
 // (recursive)
 if (! function_exists('get_data_fields')) {
     function get_data_fields($o)
     {
-    $keys = [];
-    foreach ((array)$o as $k => $v) {
-        if (is_array($v) || is_object($v)) {
-            // find sub keys
-            $l = get_data_fields($v);
-            
-            // append parent key to sub keys
-            $l2 = [];
-            foreach ($l as $k2 => $v2) {
-                $l2[] = $k . '.' . $v2;
-            }
+        $keys = [];
+        foreach ((array) $o as $k => $v) {
+            if (is_array($v) || is_object($v)) {
+                // find sub keys
+                $l = get_data_fields($v);
 
-            $keys = array_merge($keys,$l2);
+                // append parent key to sub keys
+                $l2 = [];
+                foreach ($l as $k2 => $v2) {
+                    $l2[] = $k . '.' . $v2;
+                }
+
+                $keys = array_merge($keys, $l2);
+            }
+            // add key
+            $keys[] = $k;
         }
-        // add key
-        $keys[] = $k;
-    }
-    return $keys;
+
+        return $keys;
     }
 }
