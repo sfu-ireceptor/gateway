@@ -34,6 +34,12 @@
 <div class="row credits">
 	<div class="col-md-4">
 		<h4>Funded by</h4>
+		<a href="http://www.cihr-irsc.gc.ca/" class="cihr">
+			<img src="/images/logos/cihr.png">
+		</a>
+		<a href="https://europa.eu/" class="eu">
+			<img src="/images/logos/eu.jpg">
+		</a>
 		<a href="http://www.innovation.ca" class="cfi">
 			<img src="/images/logos/cfi.png"><br />
 		</a>
