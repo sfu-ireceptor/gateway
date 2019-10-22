@@ -532,11 +532,22 @@ footer a:hover {
 
 .credits img {
 	max-width: 200px;
-	margin-bottom: 20px;
+	margin-bottom: 30px;
 }
 
 .credits .canarie img {
 	max-width: 210px;
+}
+
+.credits .eu img {
+	margin-top: 10px;
+	max-width: 164px;
+	margin-bottom: 30px;
+}
+
+.credits .cfi img {
+	margin-top: 14px;
+	margin-bottom: 50px;
 }
 
 .credits .compute_canada img {
