@@ -272,6 +272,7 @@ class RestService extends Model
         // query each service one by one
         $response_list = [];
         foreach (self::findEnabled() as $rs) {
+            $success = true;
             $sample_id_list = [];
 
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
@@ -284,7 +285,17 @@ class RestService extends Model
 
             // retrieve list of samples
             $sample_data = self::samples(['repertoire_id' => $sample_id_list]);
-            $sample_list = data_get($sample_data, '0.data', []);
+            $sample_list = [];
+            foreach ($sample_data as $rs_data) {
+                if($rs->id == $rs_data['rs']->id) {
+                    $sample_list = data_get($rs_data, 'data', []);
+                    $query_status = data_get($rs_data, 'status', 'success');
+                    if($query_status == 'error') {
+                        $success = false;
+                    }
+                    break;
+                }
+            }
 
             // get filtered sequence count for each sample
             $sample_list_filtered_count = self::sequence_count($rs->id, $sample_id_list, $sequence_filters);
@@ -294,11 +305,16 @@ class RestService extends Model
                 $sample->ir_filtered_sequence_count = $sample_list_filtered_count[$sample_id];
             }
 
-            // dd($sample_list);
             $t = [];
             $t['rs'] = $rs;
             $t['data'] = $sample_list;
-            $t['status'] = 'sucess';
+            if($success) {
+                $t['status'] = 'success';
+            }
+            else {
+                $t['status'] = 'error';
+                $t['error_type'] = 'service';                                
+            }
             $response_list[] = $t;
         }
 
