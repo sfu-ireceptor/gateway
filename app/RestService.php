@@ -287,10 +287,10 @@ class RestService extends Model
             $sample_data = self::samples(['repertoire_id' => $sample_id_list]);
             $sample_list = [];
             foreach ($sample_data as $rs_data) {
-                if($rs->id == $rs_data['rs']->id) {
+                if ($rs->id == $rs_data['rs']->id) {
                     $sample_list = data_get($rs_data, 'data', []);
                     $query_status = data_get($rs_data, 'status', 'success');
-                    if($query_status == 'error') {
+                    if ($query_status == 'error') {
                         $success = false;
                     }
                     break;
@@ -308,12 +308,11 @@ class RestService extends Model
             $t = [];
             $t['rs'] = $rs;
             $t['data'] = $sample_list;
-            if($success) {
+            if ($success) {
                 $t['status'] = 'success';
-            }
-            else {
+            } else {
                 $t['status'] = 'error';
-                $t['error_type'] = 'service';                                
+                $t['error_type'] = 'service';
             }
             $response_list[] = $t;
         }
@@ -694,7 +693,7 @@ class RestService extends Model
                             // note: a bit hacky (knows about request()) but simpler like that
                             $gw_query_log_id = request()->get('query_log_id');
                             QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $t['error_message']);
-                        
+
                             return $t;
                         }
                     );
