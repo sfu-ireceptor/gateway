@@ -183,12 +183,9 @@ class Sequence
         foreach ($response_list as $response) {
             $rs = $response['rs'];
 
-            // if response error, update gateway user query status
-            $gw_query_log_id = request()->get('query_log_id');
             if ($response['status'] == 'error') {
                 $rs->error_type = $response['error_type'];
                 $data['rs_list_no_response'][] = $rs;
-                QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $response['error_message']);
             }
 
             $sample_list = $response['data'];

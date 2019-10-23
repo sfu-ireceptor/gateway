@@ -674,6 +674,11 @@ class RestService extends Model
                                 $t['error_type'] = 'timeout';
                             }
 
+                            // update gateway user query status
+                            // note: a bit hacky (knows about request()) but simpler like that
+                            $gw_query_log_id = request()->get('query_log_id');
+                            QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $t['error_message']);
+                        
                             return $t;
                         }
                     );
