@@ -61,8 +61,8 @@
 		<a href="https://www.computecanada.ca/" class="compute_canada">
 			<img src="/images/logos/compute_canada.png">
 		</a>
-		<a href="http://agaveapi.co/" class="agave">
-			<img src="/images/logos/agave.png">
+		<a href="https://www.tacc.utexas.edu/tapis" class="tapis">
+			<img src="/images/logos/tapis.png">
 		</a>
 	</div>
 </div>

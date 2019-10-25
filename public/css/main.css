@@ -570,6 +570,14 @@ footer a:hover {
 	margin-bottom: 5px;
 }
 
+.credits .tapis img {
+	max-width: 140px;
+	display: block;
+	margin-bottom: 5px;
+	max-height: 150px;
+	margin-left: 10px;
+}
+
 .credits .irmacs img {
 	max-width: 140px;	
 }
