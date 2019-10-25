@@ -14,20 +14,13 @@ class RestService extends Model
         'url', 'name', 'username', 'password', 'enabled', 'version',
     ];
 
-    public static function findAvailable($field_list = null)
-    {
-        $l = static::where('hidden', false)->orderBy('name', 'asc')->get($field_list);
-
-        foreach ($l as $rs) {
-            $group_name = RestServiceGroup::nameForCode($rs->rest_service_group_code);
-
-            // add display name
-            $rs->display_name = $group_name ? $group_name : $rs->name;
-        }
-
-        return $l;
-    }
-
+    /**
+     * Returns the services which are enabled
+     *
+     * @param  array|null $field_list Fields to fetch. Fetches all fields by default.
+     *
+     * @return array List of RestService objects
+     */
     public static function findEnabled($field_list = null)
     {
         $l = static::where('hidden', false)->where('enabled', true)->orderBy('name', 'asc')->get($field_list);
@@ -42,6 +35,35 @@ class RestService extends Model
         return $l;
     }
 
+    /**
+     * Returns the services which can be enabled
+     *
+     * @param  array|null $field_list Fields to fetch. Fetches all fields by default.
+     *
+     * @return array List of RestService objects
+     */
+    public static function findAvailable($field_list = null)
+    {
+        $l = static::where('hidden', false)->orderBy('name', 'asc')->get($field_list);
+
+        foreach ($l as $rs) {
+            $group_name = RestServiceGroup::nameForCode($rs->rest_service_group_code);
+
+            // add display name
+            $rs->display_name = $group_name ? $group_name : $rs->name;
+        }
+
+        return $l;
+    }
+
+    /**
+     * Generates a JSON query for an ADC API service
+     *
+     * @param  array $filters Example: ["study.study_title" => "Immunoglobulin"]
+     * @param  array $query_parameters Example: ["facets" => "repertoire_id"]
+     *
+     * @return string JSON
+     */
     public static function generate_json_query($filters, $query_parameters = [])
     {
         // build array of filter clauses
