@@ -98,8 +98,15 @@ class RestServiceSeeder extends Seeder
                     'version' => 2,
                 ],
                 [
-                    'url' => 'https://206.12.89.109/airr/v1/',
-                    'name' => 'IPA ADC',
+                    'url' => 'https://airr-api.ireceptor.org/airr/v1/',
+                    'name' => 'IPA ADC Test (small)',
+                    'username' => '',
+                    'password' => '',
+                    'version' => 2,
+                ],
+                [
+                    'url' => 'https://airr-api2.ireceptor.org/airr/v1',
+                    'name' => 'IPA ADC Test 2 (big)',
                     'username' => '',
                     'password' => '',
                     'version' => 2,
