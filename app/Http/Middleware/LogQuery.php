@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use App\QueryLog;
+use Closure;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 

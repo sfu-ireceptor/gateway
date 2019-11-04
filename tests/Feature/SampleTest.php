@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use Facades\App\RestService;
 use Illuminate\Support\Facades\Log;
+use Tests\TestCase;
 
 class SampleTest extends TestCase
 {

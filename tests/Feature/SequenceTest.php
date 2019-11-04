@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use Facades\App\Query;
 use Facades\App\RestService;
 use Illuminate\Support\Facades\Log;
+use Tests\TestCase;
 
 class SequenceTest extends TestCase
 {

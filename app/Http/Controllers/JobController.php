@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Job;
 use App\Agave;
-use App\System;
+use App\Job;
+use App\Jobs\LaunchAgaveJob;
+use App\Jobs\PrepareDataForThirdPartyAnalysis;
 use App\JobStep;
 use App\LocalJob;
-use App\Jobs\LaunchAgaveJob;
+use App\System;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
-use App\Jobs\PrepareDataForThirdPartyAnalysis;
+use Illuminate\Support\Facades\Log;
 
 class JobController extends Controller
 {
