@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
-use Illuminate\Http\Request;
 use App\Http\Middleware\TrimStrings;
+use Illuminate\Http\Request;
+use Tests\TestCase;
 
 class TrimStringsTest extends TestCase
 {

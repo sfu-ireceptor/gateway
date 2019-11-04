@@ -2,8 +2,8 @@
 
 namespace App;
 
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class FieldName extends Model
 {

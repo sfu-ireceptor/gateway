@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Sample;
 use App\FieldName;
+use App\Sample;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
