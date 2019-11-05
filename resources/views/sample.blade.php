@@ -49,9 +49,9 @@
 								</div>
 
 							    <div class="form-group">
-									{{ Form::label('study_description', __('short.study_description')) }}
-									@include('help', ['id' => 'study_description'])
-									{{ Form::text('study_description', '', array('class' => 'form-control')) }}
+									{{ Form::label('study_type', __('short.study_type')) }}
+									@include('help', ['id' => 'study_type'])
+									{{ Form::text('study_type', '', array('class' => 'form-control')) }}
 								</div>
 
 							    <div class="form-group">
