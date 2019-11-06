@@ -55,7 +55,6 @@ class SampleController extends Controller
 
         // study type
         $study_type_list = [];
-        $study_type_list[''] = 'Any';
         foreach ($metadata['study_type'] as $v) {
             $study_type_list[$v] = $v;
         }
