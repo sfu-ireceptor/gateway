@@ -252,7 +252,7 @@ class RestService extends Model
         $t['url'] = $rs->url . 'rearrangement';
         $t['params'] = $filters_json;
         $t['rs'] = $rs;
-        $t['timeout'] = config('ireceptor.service_request_timeout_samples');
+        $t['timeout'] = config('ireceptor.service_request_timeout');
 
         // do request
         $response_list = self::doRequests([$t]);
