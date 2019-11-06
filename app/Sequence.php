@@ -41,7 +41,7 @@ class Sequence
             $rs = $response['rs'];
             $obj = $response['data'];
 
-            $sequence_list = $sequence_list + data_get($obj, 'Rearrangement', []);
+            $sequence_list = array_merge($sequence_list, data_get($obj, 'Rearrangement', []));
         }
 
         // convert any array properties to strings
@@ -192,7 +192,7 @@ class Sequence
             $sample_list = Sample::convert_sample_list($sample_list, $rs);
 
             // create full list of samples (for graphs)
-            $data['summary'] = $data['summary'] + $sample_list;
+            $data['summary'] = array_merge($data['summary'], $sample_list);
 
             $rs_data = self::stats($sample_list);
             $rs_data['rs'] = $rs;
