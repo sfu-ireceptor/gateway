@@ -53,6 +53,13 @@ class SampleController extends Controller
         // get data
         $metadata = Sample::metadata($username);
 
+        // study type
+        $study_type_list = [];
+        $study_type_list[''] = 'Any';
+        foreach ($metadata['study_type'] as $v) {
+            $study_type_list[$v] = $v;
+        }
+
         // gender
         $subject_gender_list = [];
         $subject_gender_list[''] = 'Any';
@@ -93,6 +100,7 @@ class SampleController extends Controller
 
         // data
         $data = [];
+        $data['study_type_list'] = $study_type_list;
         $data['subject_gender_list'] = $subject_gender_list;
         $data['subject_ethnicity_list'] = $subject_ethnicity_list;
         $data['subject_organism_list'] = $subject_organism_list;

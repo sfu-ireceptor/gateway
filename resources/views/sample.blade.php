@@ -51,7 +51,7 @@
 							    <div class="form-group">
 									{{ Form::label('study_type', __('short.study_type')) }}
 									@include('help', ['id' => 'study_type'])
-									{{ Form::text('study_type', '', array('class' => 'form-control')) }}
+									{{ Form::select('study_type', $study_type_list, '', array('class' => 'form-control')) }}
 								</div>
 
 							    <div class="form-group">
