@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Job;
-use App\User;
 use App\Agave;
-use App\Stats;
-use Carbon\Carbon;
+use App\Job;
 use App\RestService;
+use App\Stats;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
