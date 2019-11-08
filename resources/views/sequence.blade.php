@@ -315,9 +315,15 @@
 													{{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
 												</span>
 											@else
-												<span title="{{ $s->{$field['ir_id']} }}">
-												{{ $s->{$field['ir_id']} }}
-												</span>
+												@if(is_object($s->{$field['ir_id']}))
+													<span title="{{ json_encode($s->{$field['ir_id']}) }}">
+														{{ json_encode($s->{$field['ir_id']}) }}												
+													</span>
+												@else
+													<span title="{{ $s->{$field['ir_id']} }}">
+														{{ $s->{$field['ir_id']} }}												
+													</span>
+												@endif												
 											@endif
 										@endif
 									</td>

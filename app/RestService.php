@@ -435,7 +435,6 @@ class RestService extends Model
             $params = [];
             $params['from'] = 0;
             $params['size'] = $n;
-            $params['fields'] = ['v_call', 'd_call', 'j_call', 'junction_aa'];
 
             $filters_json = self::generate_json_query($service_filters, $params);
             $t['params'] = $filters_json;
@@ -681,7 +680,7 @@ class RestService extends Model
 
                                 // return object generated from json response
                                 $json = $response->getBody();
-                                // echo $json;die();
+                                // Log::debug($json);
                                 $obj = json_decode($json, $returnArray);
                                 $t['data'] = $obj;
                                 $t['query_log_id'] = $query_log_id;
