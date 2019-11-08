@@ -385,7 +385,11 @@
 												@endisset
 											@else
 												<span title="{{ $sample->{$field['ir_id']} }}">
-													{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+													@if (is_bool($sample->{$field['ir_id']}))
+														{{ $sample->{$field['ir_id']} ? 'true' : 'false' }}
+													@else
+														{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+													@endif
 												</span>
 											@endif
 										@endif
