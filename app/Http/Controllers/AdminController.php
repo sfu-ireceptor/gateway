@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\News;
-use App\User;
 use App\Agave;
-use App\LocalJob;
-use App\QueryLog;
-use App\FieldName;
-use App\RestService;
 use App\CachedSample;
+use App\FieldName;
+use App\LocalJob;
+use App\News;
+use App\QueryLog;
+use App\RestService;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Query;
-use App\Sample;
 use App\Bookmark;
-use App\QueryLog;
 use App\FieldName;
+use App\Query;
+use App\QueryLog;
+use App\Sample;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 

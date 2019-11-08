@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\News;
-use App\User;
 use App\Agave;
+use App\News;
 use App\Sample;
+use App\User;
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
