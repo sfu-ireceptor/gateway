@@ -23,6 +23,8 @@
 							<th>airr_example</th>
 							<th>ir_adc_api_query</th>
 							<th>ir_adc_api_response</th>
+							<th>airr_type</th>
+							<th>ir_api_input_type</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -40,6 +42,8 @@
 							<td class="text-nowrap">{{ $s['airr_example'] }}</td>
 							<td class="text-nowrap">{{ $s['ir_adc_api_query'] }}</td>
 							<td class="text-nowrap">{{ $s['ir_adc_api_response'] }}</td>
+							<td class="text-nowrap">{{ $s['airr_type'] }}</td>
+							<td class="text-nowrap">{{ $s['ir_api_input_type'] }}</td>
 						@endforeach
 					</tbody>
 				</table>

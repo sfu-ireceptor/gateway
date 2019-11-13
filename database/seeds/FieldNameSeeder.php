@@ -28,9 +28,11 @@ class FieldNameSeeder extends CsvSeeder
             16 => 'airr',
             17 => 'ir_adc_api_query',
             18 => 'ir_adc_api_response',
+            19 => 'airr_type',
             20 => 'airr_full',
             21 => 'airr_description',
             22 => 'airr_example',
+            28 => 'ir_api_input_type',
         ];
 
         parent::run();
