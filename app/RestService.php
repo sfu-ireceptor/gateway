@@ -80,15 +80,13 @@ class RestService extends Model
             $field_type = FieldName::getFieldType($k, 'ir_adc_api_query');
             if (is_array($v)) {
                 $filter->op = 'in';
-            }
-            else if($field_type == 'boolean') {
+            } elseif ($field_type == 'boolean') {
                 $filter->op = '=';
                 $v = boolval($v);
-            }
-            else if($field_type == 'integer') {
+            } elseif ($field_type == 'integer') {
                 $filter->op = '=';
                 $v = intval($v);
-            } else if($k == 'subject.sex') {
+            } elseif ($k == 'subject.sex') {
                 $filter->op = '=';
             }
 
