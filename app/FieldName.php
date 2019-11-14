@@ -41,6 +41,30 @@ class FieldName extends Model
         return $object_list;
     }
 
+    // return field array for a given field name
+    public static function getField($field_name, $column = 'ir_id')
+    {
+        $field = static::where($column, $field_name)->first();
+        if($field != null) {
+            $field = $field->toArray();
+        }
+
+        return $field;
+    }
+
+    // return field type for a given field name
+    public static function getFieldType($field_id, $column = 'ir_id')
+    {
+        $field = static::getField($field_id, $column);
+
+        $field_type = null;
+        if($field != null) {
+            $field_type = $field['airr_type'];
+        }
+
+        return $field_type;
+    }
+
     public static function getSampleFields()
     {
         $ir_class_list = ['repertoire'];

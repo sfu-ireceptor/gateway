@@ -51,6 +51,9 @@ class TestController extends Controller
 
     public function getIndex(Request $request)
     {
+        $f = FieldName::getFieldType('sequencing_platform');
+        dd($f);
+
         echo $request->route()->uri;
         die();
 

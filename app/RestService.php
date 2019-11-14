@@ -66,17 +66,29 @@ class RestService extends Model
      */
     public static function generate_json_query($filters, $query_parameters = [])
     {
+        // rename filters: internal gateway id -> ADC API name
+        $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
+
         // build array of filter clauses
         $filter_list = [];
         foreach ($filters as $k => $v) {
             $filter = new \stdClass();
+
+            // default -> substring query
             $filter->op = 'contains';
+
+            $field_type = FieldName::getFieldType($k, 'ir_adc_api_query');
             if (is_array($v)) {
                 $filter->op = 'in';
             }
-
-            // TODO should this be defined in Brian's mapping file?
-            if ($k == 'ir_junction_aa_length' || $k == 'subject.sex') {
+            else if($field_type == 'boolean') {
+                $filter->op = '=';
+                $v = boolval($v);
+            }
+            else if($field_type == 'integer') {
+                $filter->op = '=';
+                $v = intval($v);
+            } else if($k == 'subject.sex') {
                 $filter->op = '=';
             }
 
