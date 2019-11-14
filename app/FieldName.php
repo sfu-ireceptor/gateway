@@ -45,7 +45,7 @@ class FieldName extends Model
     public static function getField($field_name, $column = 'ir_id')
     {
         $field = static::where($column, $field_name)->first();
-        if($field != null) {
+        if ($field != null) {
             $field = $field->toArray();
         }
 
@@ -58,7 +58,7 @@ class FieldName extends Model
         $field = static::getField($field_id, $column);
 
         $field_type = null;
-        if($field != null) {
+        if ($field != null) {
             $field_type = $field['airr_type'];
         }
 

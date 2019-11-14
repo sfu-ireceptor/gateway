@@ -21,4 +21,3 @@ class AlterFieldNameTableAddAirrTypeField extends Migration
         });
     }
 }
-
