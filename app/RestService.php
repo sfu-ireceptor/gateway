@@ -86,7 +86,7 @@ class RestService extends Model
             } elseif ($field_type == 'integer') {
                 $filter->op = '=';
                 $v = intval($v);
-            } elseif ($k == 'subject.sex') {
+            } elseif ($k == 'subject.sex' || $k == 'v_call' || $k == 'j_call' || $k == 'd_call') {
                 $filter->op = '=';
             }
 
