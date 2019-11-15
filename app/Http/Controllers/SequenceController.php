@@ -125,15 +125,6 @@ class SequenceController extends Controller
 
         $data['functional_list'] = $functional_list;
 
-        // annotation_tool
-        $annotation_tool_list = [];
-        $annotation_tool_list[''] = 'Any';
-        $annotation_tool_list['MiXCR'] = 'MiXCR';
-        $annotation_tool_list['V-Quest'] = 'V-Quest';
-        $annotation_tool_list['IgBLAST'] = 'IgBLAST';
-
-        $data['ir_annotation_tool_list'] = $annotation_tool_list;
-
         // for bookmarking
         $current_url = $request->fullUrl();
         $data['url'] = $current_url;
