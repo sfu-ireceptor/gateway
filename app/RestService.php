@@ -82,7 +82,7 @@ class RestService extends Model
                 $filter->op = 'in';
             } elseif ($field_type == 'boolean') {
                 $filter->op = '=';
-                $v = filter_var($v, FILTER_VALIDATE_BOOLEAN);                
+                $v = filter_var($v, FILTER_VALIDATE_BOOLEAN);
             } elseif ($field_type == 'integer') {
                 $filter->op = '=';
                 $v = intval($v);
