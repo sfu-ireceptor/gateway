@@ -82,7 +82,7 @@ class RestService extends Model
                 $filter->op = 'in';
             } elseif ($field_type == 'boolean') {
                 $filter->op = '=';
-                $v = boolval($v);
+                $v = filter_var($v, FILTER_VALIDATE_BOOLEAN);                
             } elseif ($field_type == 'integer') {
                 $filter->op = '=';
                 $v = intval($v);
@@ -415,8 +415,8 @@ class RestService extends Model
                 continue;
             }
 
-            // override field names from gateway (ir_id) to AIRR (ir_v2)
-            $service_filters = FieldName::convert($service_filters, 'ir_id', 'ir_v2');
+            // override field names from gateway (ir_id) to AIRR (ir_adc_api_query)
+            $service_filters = FieldName::convert($service_filters, 'ir_id', 'ir_adc_api_query');
 
             // remove extra ir_project_sample_id_list_ fields
             foreach ($service_filters as $key => $value) {
