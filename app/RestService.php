@@ -70,7 +70,7 @@ class RestService extends Model
         $filters = self::clean_filters($filters);
 
         // add "age_unit" filter if "age_min" or "age_max" is set
-        if(isset($filters['ir_subject_age_min']) || isset($filters['ir_subject_age_max'])) {
+        if (isset($filters['ir_subject_age_min']) || isset($filters['ir_subject_age_max'])) {
             $filters['age_unit'] = 'year';
         }
 
@@ -89,9 +89,9 @@ class RestService extends Model
             if (is_array($v)) {
                 $filter->op = 'in';
             } elseif ($k == 'subject.age_min') {
-                $filter->op = '>=';              
+                $filter->op = '>=';
             } elseif ($k == 'subject.age_max') {
-                $filter->op = '<=';    
+                $filter->op = '<=';
             } elseif ($field_type == 'boolean') {
                 $filter->op = '=';
                 $v = filter_var($v, FILTER_VALIDATE_BOOLEAN);
@@ -100,7 +100,7 @@ class RestService extends Model
                 $v = intval($v);
             } elseif ($field_type == 'number') {
                 $filter->op = '=';
-                $v = (float)$v;
+                $v = (float) $v;
             } elseif ($k == 'subject.sex' || $k == 'v_call' || $k == 'j_call' || $k == 'd_call') {
                 $filter->op = '=';
             }
