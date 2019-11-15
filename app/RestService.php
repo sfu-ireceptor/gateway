@@ -66,6 +66,14 @@ class RestService extends Model
      */
     public static function generate_json_query($filters, $query_parameters = [])
     {
+        // clean filters
+        $filters = self::clean_filters($filters);
+
+        // add "age_unit" filter if "age_min" or "age_max" is set
+        if(isset($filters['ir_subject_age_min']) || isset($filters['ir_subject_age_max'])) {
+            $filters['age_unit'] = 'year';
+        }
+
         // rename filters: internal gateway id -> ADC API name
         $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
 
@@ -80,12 +88,19 @@ class RestService extends Model
             $field_type = FieldName::getFieldType($k, 'ir_adc_api_query');
             if (is_array($v)) {
                 $filter->op = 'in';
+            } elseif ($k == 'subject.age_min') {
+                $filter->op = '>=';              
+            } elseif ($k == 'subject.age_max') {
+                $filter->op = '<=';    
             } elseif ($field_type == 'boolean') {
                 $filter->op = '=';
                 $v = filter_var($v, FILTER_VALIDATE_BOOLEAN);
             } elseif ($field_type == 'integer') {
                 $filter->op = '=';
                 $v = intval($v);
+            } elseif ($field_type == 'number') {
+                $filter->op = '=';
+                $v = (float)$v;
             } elseif ($k == 'subject.sex' || $k == 'v_call' || $k == 'j_call' || $k == 'd_call') {
                 $filter->op = '=';
             }
@@ -147,9 +162,6 @@ class RestService extends Model
     {
         // clean filters for services
         $filters = self::clean_filters($filters);
-
-        // rename filters: internal gateway name -> official API name
-        $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
 
         // generate filters string (JSON)
         $filters_json = self::generate_json_query($filters);
@@ -240,9 +252,6 @@ class RestService extends Model
 
     public static function sequence_count($rest_service_id, $sample_id_list, $filters = [])
     {
-        // clean filters for services
-        $filters = self::clean_filters($filters);
-
         // force all sample ids to string
         foreach ($sample_id_list as $k => $v) {
             $sample_id_list[$k] = (string) $v;
@@ -287,12 +296,6 @@ class RestService extends Model
     // send "/sequences_summary" request to all enabled services
     public static function sequences_summary($filters, $username = '', $group_by_rest_service = true)
     {
-        // clean filters for services
-        $filters = self::clean_filters($filters);
-
-        // rename filters: internal gateway name -> official API name
-        $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
-
         // build list of sequence filters only (remove sample id filters)
         $sequence_filters = $filters;
         unset($sequence_filters['project_id_list']);
@@ -396,9 +399,6 @@ class RestService extends Model
     {
         $base_uri = 'rearrangement';
 
-        // clean filters for services
-        $filters = self::clean_filters($filters);
-
         // prepare request parameters for each service
         $request_params = [];
         foreach (self::findEnabled() as $rs) {
@@ -414,9 +414,6 @@ class RestService extends Model
                 // if no sample id for this REST service, don't query it.
                 continue;
             }
-
-            // override field names from gateway (ir_id) to AIRR (ir_adc_api_query)
-            $service_filters = FieldName::convert($service_filters, 'ir_id', 'ir_adc_api_query');
 
             // remove extra ir_project_sample_id_list_ fields
             foreach ($service_filters as $key => $value) {
@@ -463,9 +460,6 @@ class RestService extends Model
     public static function repertoire_data($filters, $folder_path, $username = '')
     {
         $now = time();
-
-        // clean filters for services
-        $filters = self::clean_filters($filters);
 
         // build list of services to query
         $rs_list = [];
@@ -556,12 +550,6 @@ class RestService extends Model
     public static function sequences_data($filters, $folder_path, $username = '')
     {
         $now = time();
-
-        // clean filters for services
-        $filters = self::clean_filters($filters);
-
-        // rename filters: internal gateway name -> official API name
-        $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
 
         // build list of services to query
         $rs_list = [];
