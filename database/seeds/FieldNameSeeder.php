@@ -19,20 +19,19 @@ class FieldNameSeeder extends CsvSeeder
         DB::table($this->table)->truncate();
 
         $this->mapping = [
-            1 => 'ir_id',
-            2 => 'ir_v2',
-            3 => 'ir_short',
-            4 => 'ir_full',
-            14 => 'ir_class',
-            15 => 'ir_subclass',
-            16 => 'airr',
+            0 => 'ir_id',
+            1 => 'ir_short',
+            2 => 'ir_full',
+            13 => 'airr',
+            14 => 'airr_full',
+            15 => 'ir_class',
+            16 => 'ir_subclass',
             17 => 'ir_adc_api_query',
             18 => 'ir_adc_api_response',
             19 => 'airr_type',
-            20 => 'airr_full',
-            21 => 'airr_description',
-            22 => 'airr_example',
-            28 => 'ir_api_input_type',
+            20 => 'airr_description',
+            24 => 'airr_example',
+            36 => 'ir_api_input_type',
         ];
 
         parent::run();
@@ -54,14 +53,14 @@ class FieldNameSeeder extends CsvSeeder
         $l[] = [
                     'ir_id' => 'rest_service_name',
                     'ir_short' => 'Repository',
-                    'ir_class' => 'repertoire',
+                    'ir_class' => 'Repertoire',
                     'ir_subclass' => 'other',
                 ];
 
         $l[] = [
                     'ir_id' => 'full_text_search',
                     'ir_short' => 'Full-text search ',
-                    'ir_class' => 'repertoire',
+                    'ir_class' => 'Repertoire',
                     'ir_subclass' => 'other',
                     'airr_description' => 'Search across all metadata fields (case insensitive)',
                     'airr_example' => 'cancer tumor',
@@ -71,7 +70,7 @@ class FieldNameSeeder extends CsvSeeder
         $l[] = [
                     'ir_id' => 'ir_sequence_count',
                     'ir_short' => 'Sequences',
-                    'ir_class' => 'repertoire',
+                    'ir_class' => 'Repertoire',
                     'ir_subclass' => 'other',
                 ];
 
@@ -79,7 +78,7 @@ class FieldNameSeeder extends CsvSeeder
         $l[] = [
                     'ir_id' => 'ir_junction_aa_length',
                     'ir_short' => 'Junction Length (AA)',
-                    'ir_class' => 'rearrangement',
+                    'ir_class' => 'Rearrangement',
                     'ir_subclass' => 'rearrangement',
                 ];
 

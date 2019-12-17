@@ -212,7 +212,7 @@ class SequenceController extends Controller
         $var_list['v_call'] = __('short.v_call');
         $var_list['d_call'] = __('short.d_call');
         $var_list['j_call'] = __('short.j_call');
-        $var_list = FieldName::convert($var_list, 'ir_id', 'ir_v2');
+        $var_list = FieldName::convert($var_list, 'ir_id', 'ir_adc_api_query');
         $data['var_list'] = $var_list;
 
         $data['system'] = System::getCurrentSystem(auth()->user()->id);

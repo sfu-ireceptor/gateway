@@ -384,14 +384,18 @@
 													</span>							
 												@endisset
 											@else
-												<span title="{{ $sample->{$field['ir_id']} }}">
-													@if (is_bool($sample->{$field['ir_id']}))
-														{{ $sample->{$field['ir_id']} ? 'true' : 'false' }}
+												@if (is_bool($sample->{$field['ir_id']}))
+													{{ $sample->{$field['ir_id']} ? 'true' : 'false' }}
+												@else
+													@if (is_object($sample->{$field['ir_id']}))
+														object...														
 													@else
-														{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+														<span title="{{ $sample->{$field['ir_id']} }}">
+															{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+														</span>
 													@endif
-												</span>
-											@endif
+												@endif
+										@endif
 										@endif
 									</td>
 								@endforeach
@@ -418,12 +422,12 @@
 
 <script>
 	var graphFields = [
-	        "@lang('v2.study_description')", 
-	        "@lang('v2.organism')",
-	        "@lang('v2.disease_state_sample')", 
-	        "@lang('v2.tissue')",
-	        "@lang('v2.cell_subset')", 
-	        "@lang('v2.template_class')"
+	        "study_description", 
+	        "organism",
+	        "disease_state_sample", 
+	        "tissue",
+	        "cell_subset", 
+	        "template_class"
 	    ];
 	var graphNames = [
 	        "@lang('short.study_description')",

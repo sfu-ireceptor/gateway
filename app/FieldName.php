@@ -67,7 +67,7 @@ class FieldName extends Model
 
     public static function getSampleFields()
     {
-        $ir_class_list = ['repertoire'];
+        $ir_class_list = ['Repertoire'];
 
         if (config('ireceptor.display_all_ir_fields')) {
             $ir_class_list[] = 'ir_repertoire';
@@ -80,7 +80,7 @@ class FieldName extends Model
 
     public static function getSequenceFields()
     {
-        $ir_class_list = ['rearrangement'];
+        $ir_class_list = ['Rearrangement'];
 
         if (config('ireceptor.display_all_ir_fields')) {
             $ir_class_list[] = 'ir_rearrangement';
@@ -95,15 +95,19 @@ class FieldName extends Model
     {
         $l = [];
 
-        $l['study'] = 'Study';
-        $l['subject'] = 'Subject';
-        $l['sample'] = 'Sample';
+        $l['Study'] = 'Study';
+        $l['Subject'] = 'Subject';
+        $l['Sample'] = 'Sample';
 
-        $l['diagnosis'] = 'Diagnosis';
-        $l['cell_processing'] = 'Cell Processing';
-        $l['nucleic_acid_processing'] = 'Nucleic Acid Processing';
-        $l['sequencing_run'] = 'Sequencing Run';
-        $l['software_processing'] = 'Software Processing';
+        $l['Diagnosis'] = 'Diagnosis';
+        $l['CellProcessing'] = 'Cell Processing';
+        $l['NucleicAcidProcessing'] = 'Nucleic Acid Processing';
+        $l['SequencingRun'] = 'Sequencing Run';
+        $l['DataProcessing'] = 'Data Processing';
+        $l['SampleProcessing'] = 'Sample Processing';
+        $l['RawSequenceData'] = 'Raw Sequence Data';
+        $l['PCRTarget'] = 'PCR Target';
+
         $l['ir_metadata'] = 'iReceptor Metadata';
         $l['ir_parameter'] = 'iReceptor Parameter';
         $l['ir_api'] = 'iReceptor API';
@@ -145,7 +149,7 @@ class FieldName extends Model
 
     public static function getSampleFieldsGrouped()
     {
-        $ir_class_list = ['repertoire'];
+        $ir_class_list = ['Repertoire'];
 
         if (config('ireceptor.display_all_ir_fields')) {
             $ir_class_list[] = 'ir_repertoire';
@@ -156,7 +160,7 @@ class FieldName extends Model
 
     public static function getSequenceFieldsGrouped()
     {
-        $ir_class_list = ['rearrangement'];
+        $ir_class_list = ['Rearrangement'];
 
         if (config('ireceptor.display_all_ir_fields')) {
             $ir_class_list[] = 'ir_rearrangement';

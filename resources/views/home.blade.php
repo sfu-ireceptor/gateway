@@ -98,12 +98,12 @@
 
 <script>
 	var graphFields = [
-	        "@lang('v2.study_description')", 
-	        "@lang('v2.organism')",
-	        "@lang('v2.disease_state_sample')", 
-	        "@lang('v2.tissue')",
-	        "@lang('v2.cell_subset')", 
-	        "@lang('v2.template_class')"
+	        "study_description", 
+	        "organism",
+	        "disease_state_sample", 
+	        "tissue",
+	        "cell_subset", 
+	        "template_class"
 	    ];
 	
 	var graphNames = [

@@ -12,7 +12,6 @@
 					<thead>
 						<tr>
 							<th>ir_id</th>
-							<th>ir_v2</th>
 							<th>ir_short</th>
 							<th>ir_full</th>
 							<th>ir_class</th>
@@ -31,7 +30,6 @@
 						@foreach ($field_name_list as $s)
 						<tr>
 							<td class="text-nowrap">{{ $s['ir_id'] }}</td>
-							<td class="text-nowrap">{{ $s['ir_v2'] }}</td>
 							<td class="text-nowrap">{{ $s['ir_short'] }}</td>
 							<td class="text-nowrap">{{ $s['ir_full'] }}</td>
 							<td class="text-nowrap">{{ $s['ir_class'] }}</td>
