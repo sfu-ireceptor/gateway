@@ -60,7 +60,7 @@ class FieldNameSeeder extends CsvSeeder
         $l[] = [
                     'ir_id' => 'full_text_search',
                     'ir_short' => 'Full-text search ',
-                    'ir_class' => 'Repertoire',
+                    'ir_class' => 'Hidden',
                     'ir_subclass' => 'other',
                     'airr_description' => 'Search across all metadata fields (case insensitive)',
                     'airr_example' => 'cancer tumor',
