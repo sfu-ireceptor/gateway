@@ -385,7 +385,7 @@
 												@endisset
 											@else
 												@if (is_bool($sample->{$field['ir_id']}))
-													{{ $sample->{$field['ir_id']} ? 'true' : 'false' }}
+													{{ $sample->{$field['ir_id']} ? 'Yes' : 'No' }}
 												@else
 													@if (is_object($sample->{$field['ir_id']}))
 														object...														

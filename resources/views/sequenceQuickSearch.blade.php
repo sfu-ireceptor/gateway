@@ -249,7 +249,7 @@
 												@else
 													<span title="{{ $s->{$field['ir_id']} }}">
 														@if (is_bool($s->{$field['ir_id']}))
-															{{ $s->{$field['ir_id']} ? 'true' : 'false' }}
+															{{ $s->{$field['ir_id']} ? 'Yes' : 'No' }}
 														@else
 															{{ $s->{$field['ir_id']} }}
 														@endif
