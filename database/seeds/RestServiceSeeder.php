@@ -124,7 +124,7 @@ class RestServiceSeeder extends Seeder
                     'username' => '',
                     'password' => '',
                     'version' => 2,
-                ],                
+                ],
             ];
 
         foreach ($l as $t) {
