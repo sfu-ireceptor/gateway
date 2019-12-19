@@ -481,4 +481,5 @@
 	var graphCountField = "ir_filtered_sequence_count";
 	var graphData = {!! $sample_list_json !!};
 </script>
+
 @stop

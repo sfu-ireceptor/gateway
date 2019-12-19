@@ -289,10 +289,9 @@
 	        "@lang('short.tissue')", 
 	        "@lang('short.cell_subset')"
 	    ];
-var graphDIV = "sequence_chart";
-var graphInternalLabels = true;
-var graphLabelLength = 10;
-var graphCountField = "ir_filtered_sequence_count";
-var graphData = {!! $sample_list_json !!};
+
+	var graphInternalLabels = true;
+	var graphCountField = "ir_filtered_sequence_count";
+	var graphData = {!! $sample_list_json !!};
 </script>
 @stop
