@@ -151,14 +151,14 @@
 						<!-- repos/labs/studies details popup -->
 						@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
 
-						<div id="sequence_charts" class="charts">
+						<div id="charts" class="charts">
 							<div class="row">
-								<div class="col-md-2 chart" id="sequence_chart1"></div>
-								<div class="col-md-2 chart" id="sequence_chart2"></div>
-								<div class="col-md-2 chart" id="sequence_chart3"></div>
-								<div class="col-md-2 chart" id="sequence_chart4"></div>
-								<div class="col-md-2 chart" id="sequence_chart5"></div>
-								<div class="col-md-2 chart" id="sequence_chart6"></div>
+								<div class="col-md-2 chart" id="chart1"></div>
+								<div class="col-md-2 chart" id="chart2"></div>
+								<div class="col-md-2 chart" id="chart3"></div>
+								<div class="col-md-2 chart" id="chart4"></div>
+								<div class="col-md-2 chart" id="chart5"></div>
+								<div class="col-md-2 chart" id="chart6"></div>
 							</div>
 						</div>										
 					</div>
@@ -279,10 +279,9 @@
 	        "@lang('short.tissue')", 
 	        "@lang('short.cell_subset')"
 	    ];
-var graphDIV = "sequence_chart";
-var graphInternalLabels = true;
-var graphLabelLength = 10;
-var graphCountField = "ir_filtered_sequence_count";
-var graphData = {!! $sample_list_json !!};
+
+	var graphInternalLabels = true;
+	var graphCountField = "ir_filtered_sequence_count";
+	var graphData = {!! $sample_list_json !!};
 </script>
 @stop
