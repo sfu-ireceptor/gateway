@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Job;
 use App\Agave;
-use App\Sample;
 use App\FieldName;
-use Carbon\Carbon;
+use App\Job;
 use App\RestService;
 use App\RestServiceGroup;
-use Illuminate\Support\Str;
+use App\Sample;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Symfony\Component\Process\Process;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class TestController extends Controller
 {

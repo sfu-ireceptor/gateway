@@ -2,9 +2,9 @@
 
 namespace App;
 
-use phpseclib\Crypt\RSA;
-use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Support\Facades\Log;
+use phpseclib\Crypt\RSA;
 
 class Agave
 {
