@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Job;
+use App\Jobs\ProcessAgaveNotification;
 use App\LocalJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Jobs\ProcessAgaveNotification;
 use Symfony\Component\Process\Process;
 
 class UtilController extends Controller
