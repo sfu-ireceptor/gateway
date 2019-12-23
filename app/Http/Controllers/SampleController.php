@@ -61,7 +61,6 @@ class SampleController extends Controller
 
         // gender
         $subject_gender_list = [];
-        $subject_gender_list[''] = 'Any';
         foreach ($metadata['sex'] as $v) {
             $subject_gender_list[$v] = $v;
         }

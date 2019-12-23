@@ -97,7 +97,7 @@
 								<div class="form-group">
 									{{ Form::label('sex', __('short.sex')) }}
 									@include('help', ['id' => 'sex'])
-									{{ Form::select('sex', $subject_gender_list, '', array('class' => 'form-control')) }}
+									{{ Form::select('sex[]', $subject_gender_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 							    <div class="form-group">
