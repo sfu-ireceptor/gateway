@@ -339,11 +339,7 @@
 							@foreach ($sample_list as $sample)
 							<tr>
 								<td class="checkbox_cell">
-									@isset($sample->ir_sequence_count)
-										@if ($sample->ir_sequence_count > 0)
-											<input type="checkbox" name="{{ 'ir_project_sample_id_list_' . $sample->real_rest_service_id . '[]' }}" value="{{ $sample->ir_project_sample_id }}" checked="checked" autocomplete="off"/>
-										@endif
-									@endisset
+									<input type="checkbox" name="{{ 'ir_project_sample_id_list_' . $sample->real_rest_service_id . '[]' }}" value="{{ $sample->ir_project_sample_id }}" checked="checked" autocomplete="off"/>
 								</td>
 
 								@foreach ($field_list as $field)
