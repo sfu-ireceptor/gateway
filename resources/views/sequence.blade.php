@@ -205,7 +205,9 @@
 					<div class="statistics">
 						<p>
 							<strong>
-								{{number_format($total_filtered_sequences)}} sequences
+								<span title="{{ number_format($total_filtered_sequences) }}">
+									{{ human_number($total_filtered_sequences) }} sequences
+								</span>
 								({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
 							</strong>
 							returned from
