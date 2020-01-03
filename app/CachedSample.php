@@ -71,7 +71,9 @@ class CachedSample extends Model
         // Ex: [0]=>[[0]=> "Unknown"] is replaced by [0]=> "Unknown"
         $t = [];
         foreach ($l as $lt) {
-            $t[] = $lt[0];
+            if( ! empty(trim($lt[0]))) {
+                $t[] = $lt[0];                
+            }
         }
 
         return $t;
