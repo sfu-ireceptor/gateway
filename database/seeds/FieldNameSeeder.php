@@ -51,36 +51,36 @@ class FieldNameSeeder extends CsvSeeder
     {
         $l = [];
         $l[] = [
-                    'ir_id' => 'rest_service_name',
-                    'ir_short' => 'Repository',
-                    'ir_class' => 'Repertoire',
-                    'ir_subclass' => 'other',
-                ];
+            'ir_id' => 'rest_service_name',
+            'ir_short' => 'Repository',
+            'ir_class' => 'Repertoire',
+            'ir_subclass' => 'other',
+        ];
 
         $l[] = [
-                    'ir_id' => 'full_text_search',
-                    'ir_short' => 'Full-text search ',
-                    'ir_class' => 'Hidden',
-                    'ir_subclass' => 'other',
-                    'airr_description' => 'Search across all metadata fields (case insensitive)',
-                    'airr_example' => 'cancer tumor',
-                ];
+            'ir_id' => 'full_text_search',
+            'ir_short' => 'Full-text search ',
+            'ir_class' => 'Hidden',
+            'ir_subclass' => 'other',
+            'airr_description' => 'Search across all metadata fields (case insensitive)',
+            'airr_example' => 'cancer tumor',
+        ];
 
         // HACK: override ir_class from "ir_repertoire" to "repertoire", so this field is displayed by default
         $l[] = [
-                    'ir_id' => 'ir_sequence_count',
-                    'ir_short' => 'Sequences',
-                    'ir_class' => 'Repertoire',
-                    'ir_subclass' => 'other',
-                ];
+            'ir_id' => 'ir_sequence_count',
+            'ir_short' => 'Sequences',
+            'ir_class' => 'Repertoire',
+            'ir_subclass' => 'other',
+        ];
 
         // HACK: override ir_class from from "ir_rearrangement" to "rearrangement", so this field is displayed by default
         $l[] = [
-                    'ir_id' => 'ir_junction_aa_length',
-                    'ir_short' => 'Junction Length (AA)',
-                    'ir_class' => 'Rearrangement',
-                    'ir_subclass' => 'rearrangement',
-                ];
+            'ir_id' => 'ir_junction_aa_length',
+            'ir_short' => 'Junction Length (AA)',
+            'ir_class' => 'Rearrangement',
+            'ir_subclass' => 'rearrangement',
+        ];
 
         foreach ($l as $t) {
             FieldName::updateOrCreate(['ir_id' => $t['ir_id']], $t);

@@ -206,34 +206,34 @@ class Agave
             'scheduler' => 'CUSTOM_SLURM',
             'queues' => [
                 [
-                'name' => 'default',
-                'maxRequestedTime' => '06:00:00',
-                'customDirectives' => "#SBATCH -t \${AGAVE_JOB_MAX_RUNTIME}\n#SBATCH -N \${AGAVE_JOB_NODE_COUNT} -n \${AGAVE_JOB_PROCESSORS_PER_NODE}\n#SBATCH --account=rpp-breden-ab\n",
+                    'name' => 'default',
+                    'maxRequestedTime' => '06:00:00',
+                    'customDirectives' => "#SBATCH -t \${AGAVE_JOB_MAX_RUNTIME}\n#SBATCH -N \${AGAVE_JOB_NODE_COUNT} -n \${AGAVE_JOB_PROCESSORS_PER_NODE}\n#SBATCH --account=rpp-breden-ab\n",
                 ],
             ],
             'login' => [
-                    'protocol' => 'SSH',
-                    'host' => $host,
-                    'port' => $port,
-                    'auth' => [
-                            'type' => 'SSHKEYS',
-                            'username' => $username,
-                            'publicKey' => $publicKey,
-                            'privateKey' => $privateKey,
-                        ],
+                'protocol' => 'SSH',
+                'host' => $host,
+                'port' => $port,
+                'auth' => [
+                    'type' => 'SSHKEYS',
+                    'username' => $username,
+                    'publicKey' => $publicKey,
+                    'privateKey' => $privateKey,
                 ],
+            ],
             'storage' => [
-                    'protocol' => 'SFTP',
-                    'host' => $host,
-                    'port' => $port,
-                    'auth' => [
-                            'type' => 'SSHKEYS',
-                            'username' => $username,
-                            'publicKey' => $publicKey,
-                            'privateKey' => $privateKey,
-                        ],
-                    'rootDir' => '/home' . '/' . $username . '/scratch',
+                'protocol' => 'SFTP',
+                'host' => $host,
+                'port' => $port,
+                'auth' => [
+                    'type' => 'SSHKEYS',
+                    'username' => $username,
+                    'publicKey' => $publicKey,
+                    'privateKey' => $privateKey,
                 ],
+                'rootDir' => '/home' . '/' . $username . '/scratch',
+            ],
         ];
 
         return $t;
@@ -246,12 +246,12 @@ class Agave
             'name' => $name,
             'type' => 'STORAGE',
             'storage' => [
-                    'protocol' => 'SFTP',
-                    'host' => $host,
-                    'port' => $port,
-                    'auth' => $auth,
-                    'rootDir' => $rootDir,
-                ],
+                'protocol' => 'SFTP',
+                'host' => $host,
+                'port' => $port,
+                'auth' => $auth,
+                'rootDir' => $rootDir,
+            ],
         ];
 
         return $t;
