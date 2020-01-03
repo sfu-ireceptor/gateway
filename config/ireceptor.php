@@ -8,7 +8,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-   'email_support' => env('IRECEPTOR_EMAIL_SUPPORT', 'support@ireceptor.org'),
+    'email_support' => env('IRECEPTOR_EMAIL_SUPPORT', 'support@ireceptor.org'),
 
     /*
     |--------------------------------------------------------------------------
@@ -53,7 +53,7 @@ return [
     |
     */
 
-   'sequences_download_limit' => env('IRECEPTOR_SEQUENCES_DOWNLOAD_LIMIT', 500000000),
+    'sequences_download_limit' => env('IRECEPTOR_SEQUENCES_DOWNLOAD_LIMIT', 500000000),
 
     /*
     |--------------------------------------------------------------------------
@@ -65,6 +65,6 @@ return [
     |
     */
 
-   'display_all_ir_fields' => env('IRECEPTOR_IR_FIELDS', false),
+    'display_all_ir_fields' => env('IRECEPTOR_IR_FIELDS', false),
 
 ];
