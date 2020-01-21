@@ -38,11 +38,25 @@
 		</div>
 
 		<div class="col-md-4 side_search_links">
-			<p class="adv_search_link">	
-				<a  class="btn btn-primary btn-lg" role="button" href="/samples">Repertoire Metadata Search →</a>
-			</p>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Repertoire Metadata Search</h3>
+				</div>
+				<div class="panel-body filters sequence_search">
+					<p>Find interesting sequences and sequence annotations by exploring study, subject, and sample metadata</p>
 
-			<p>Find interesting sequences and sequence annotations by exploring study, subject, and sample metadata</p>
+						<div class="row">
+							<div class="col-md-2">
+							</div>
+							<div class="col-md-10">
+								<p class="button_container">	
+									<a  class="btn btn-primary search_samples" role="button" href="/samples">Browse Repertoire Metadata →</a>
+								</p>
+							</div>
+						</div>
+
+				</div>
+			</div>
 
 			<div class="panel panel-default sequence_search_container">
 				<div class="panel-heading">
@@ -51,12 +65,12 @@
 				<div class="panel-body filters sequence_search">
 					{{ Form::open(array('url' => 'sequences-quick-search', 'role' => 'form', 'method' => 'post', 'class' => 'sequence_search show_loading_message')) }}
 							
-						<p>Find interesting sequences and sequence annotations by searching for Junction AA sequences.</p>
+						<p>Find sequences through all repositories with a specific Junction/CDR3 AA substring.</p>
 	
 						<div class="row">
 							<div class="col-md-7">
 								<div class="form-group junction_aa">
-									{{ Form::label('junction_aa', __('short.junction_aa')) }}
+									{{ Form::label('junction_aa', 'Junction/CDR3 AA') }}
 									@include('help', ['id' => 'junction_aa'])
 									{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4')) }}
 								</div>
@@ -81,7 +95,7 @@
 							<div class="col-md-7">
 								<div class="button_container">
 									<p>
-										{{ Form::submit('Search →', array('class' => 'btn btn-primary search_samples')) }}
+										{{ Form::submit('Search', array('class' => 'btn btn-primary search_samples')) }}
 									</p>
 								</div>
 							</div>

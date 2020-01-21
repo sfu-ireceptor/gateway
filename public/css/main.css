@@ -753,15 +753,6 @@ footer a:hover {
 	width: 358px;	
 }
 
-.sequence_search_container {
-	margin-top: 73px;
-}
-
-.sequence_search_container .junction_aa a[role=button] {
-	margin-top: 73px;
-	margin-left: -1px;
-}
-
 .sequence_search {
 	padding-bottom: 10px;
 }
