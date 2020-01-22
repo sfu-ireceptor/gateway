@@ -114,13 +114,14 @@
 								</div>
 
 								<div class="form-group">
-									{{ Form::label('ir_subject_age_min', __('short.age')) }}
 									@include('help', ['id' => 'age'])
 									<div class="row">
 										<div class="col-md-6">
+											{{ Form::label('ir_subject_age_min', __('short.ir_subject_age_min')) }}
 											{{ Form::text('ir_subject_age_min', '', array('class' => 'form-control', 'placeholder' => 'From')) }}
 										</div>
 										<div class="col-md-6">
+											{{ Form::label('ir_subject_age_max', __('short.ir_subject_age_max')) }}
 											{{ Form::text('ir_subject_age_max', '', array('class' => 'form-control', 'placeholder' => 'To')) }}
 										</div>
 									</div>
