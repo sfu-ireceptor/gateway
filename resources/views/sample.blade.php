@@ -118,11 +118,13 @@
 									<div class="row">
 										<div class="col-md-6">
 											{{ Form::label('ir_subject_age_min', __('short.ir_subject_age_min')) }}
-											{{ Form::text('ir_subject_age_min', '', array('class' => 'form-control', 'placeholder' => 'From')) }}
+											@include('help', ['id' => 'ir_subject_age_min'])
+											{{ Form::text('ir_subject_age_min', '', array('class' => 'form-control', 'placeholder' => '')) }}
 										</div>
 										<div class="col-md-6">
 											{{ Form::label('ir_subject_age_max', __('short.ir_subject_age_max')) }}
-											{{ Form::text('ir_subject_age_max', '', array('class' => 'form-control', 'placeholder' => 'To')) }}
+											@include('help', ['id' => 'ir_subject_age_max'])
+											{{ Form::text('ir_subject_age_max', '', array('class' => 'form-control', 'placeholder' => '')) }}
 										</div>
 									</div>
 								</div>
