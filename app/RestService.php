@@ -90,8 +90,10 @@ class RestService extends Model
                 $filter->op = 'in';
             } elseif ($k == 'subject.age_min') {
                 $filter->op = '>=';
+                $v = (float) $v;
             } elseif ($k == 'subject.age_max') {
                 $filter->op = '<=';
+                $v = (float) $v;
             } elseif ($field_type == 'boolean') {
                 $filter->op = '=';
                 $v = filter_var($v, FILTER_VALIDATE_BOOLEAN);
