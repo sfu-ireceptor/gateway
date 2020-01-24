@@ -202,7 +202,7 @@
 
 		<div class="col-md-10">
 
-			@include('finishingLoadingMessage')
+			@include('finishingLoadingMessage', ['total_filtered_samples' => $total_filtered_samples, 'total_filtered_repositories' => $total_filtered_repositories])
 
 			<div class="reloading_contents hidden">
 				<!-- Active filters -->
