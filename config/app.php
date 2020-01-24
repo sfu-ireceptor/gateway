@@ -217,7 +217,7 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
     ],
 
-        'locale' => 'en',
+    'locale' => 'en',
 
     /*
     |--------------------------------------------------------------------------
