@@ -112,26 +112,26 @@ class TestController extends Controller
 //             ];
 
         $t = [
-                'field1' => ['value1', 'value2'],
+            'field1' => ['value1', 'value2'],
 
-                'field2' => ['value1', 'value2 '],
-                'field3' => ['value1', ' value2'],
-                'field4' => ['value1', ' value2 '],
-                   'field5' => ['value1', '  value2  '],
+            'field2' => ['value1', 'value2 '],
+            'field3' => ['value1', ' value2'],
+            'field4' => ['value1', ' value2 '],
+            'field5' => ['value1', '  value2  '],
 
-                'field6' => ['value1 ', 'value2'],
-                'field7' => [' value1', 'value2'],
-                'field8' => [' value1 ', 'value2'],
-                'field9' => ['  value1  ', 'value2'],
+            'field6' => ['value1 ', 'value2'],
+            'field7' => [' value1', 'value2'],
+            'field8' => [' value1 ', 'value2'],
+            'field9' => ['  value1  ', 'value2'],
 
-                'field10' => ['  value1  ', '  value2  '],
-                'nested' => [
-                                [
-                                    'field1' => ' trimmed ',
-                                    'field2' => ' not trimmed ',
-                                ],
-                            ],
-            ];
+            'field10' => ['  value1  ', '  value2  '],
+            'nested' => [
+                [
+                    'field1' => ' trimmed ',
+                    'field2' => ' not trimmed ',
+                ],
+            ],
+        ];
 
         $request = new \Illuminate\Http\Request($t);
 

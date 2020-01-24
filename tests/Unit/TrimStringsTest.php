@@ -42,7 +42,7 @@ class TrimStringsTest extends TestCase
                 'field2' => ['value1', 'value2 '],
                 'field3' => ['value1', ' value2'],
                 'field4' => ['value1', ' value2 '],
-                   'field5' => ['value1', '  value2  '],
+                'field5' => ['value1', '  value2  '],
 
                 'field6' => ['value1 ', 'value2'],
                 'field7' => [' value1', 'value2'],
@@ -97,7 +97,7 @@ class TrimStringsTest extends TestCase
                 'field2' => ['value1', 'value2 '],
                 'field3' => ['value1', ' value2'],
                 'field4' => ['value1', ' value2 '],
-                   'field5' => ['value1', '  value2  '],
+                'field5' => ['value1', '  value2  '],
 
                 'field6' => ['value1 ', 'value2'],
                 'field7' => [' value1', 'value2'],
@@ -136,7 +136,7 @@ class TrimStringsTest extends TestCase
                 'field2' => ['value1', 'value2 '],
                 'field3' => ['value1', ' value2'],
                 'field4' => ['value1', ' value2 '],
-                   'field5' => ['value1', '  value2  '],
+                'field5' => ['value1', '  value2  '],
 
                 'field6' => ['value1 ', 'value2'],
                 'field7' => [' value1', 'value2'],
@@ -145,11 +145,11 @@ class TrimStringsTest extends TestCase
 
                 'field10' => ['  value1  ', '  value2  '],
                 'nested' => [
-                                [
-                                    'field1' => ' trimmed ',
-                                    'field2' => ' not trimmed ',
-                                ],
-                            ],
+                    [
+                        'field1' => ' trimmed ',
+                        'field2' => ' not trimmed ',
+                    ],
+                ],
             ]
         );
 
@@ -177,11 +177,11 @@ class TrimStringsTest extends TestCase
         $request = new Request(
             [
                 'nested' => [
-                                [
-                                    'field1' => ' trimmed ',
-                                    'field3' => ' not trimmed ',
-                                ],
-                            ],
+                    [
+                        'field1' => ' trimmed ',
+                        'field3' => ' not trimmed ',
+                    ],
+                ],
             ]
         );
 
