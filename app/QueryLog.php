@@ -203,9 +203,9 @@ class QueryLog extends Model
         $ql->save();
     }
 
-    public static function find_gateway_queries($nb_months = NULL)
+    public static function find_gateway_queries($nb_months = null)
     {
-        if ($nb_months == NULL) {
+        if ($nb_months == null) {
             $l = static::where('level', '=', 'gateway')->where('start_time', '>', new \DateTime('-7 days'))->orderBy('start_time', 'desc')->get();
         } else {
             // $l = static::where('level', '=', 'gateway')->orderBy('start_time', 'desc')->get();

@@ -311,7 +311,7 @@ class AdminController extends Controller
         return view('fieldNames', $data);
     }
 
-    public function queries($nb_months = NULL)
+    public function queries($nb_months = null)
     {
         $data = [];
         $data['nb_months'] = $nb_months;
