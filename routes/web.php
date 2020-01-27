@@ -127,7 +127,7 @@ Route::middleware('auth')->group(function () {
         Route::get('samples/update-cache', 'AdminController@getUpdateSampleCache');
         Route::get('field-names', 'AdminController@getFieldNames');
         Route::get('queries', 'AdminController@queries');
-        Route::get('queries/all', 'AdminController@allQueries');
+        Route::get('queries/months/{n}', 'AdminController@queriesMonths');
         Route::get('queries/{id}', 'AdminController@query');
     });
 });

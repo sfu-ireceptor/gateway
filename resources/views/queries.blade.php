@@ -94,8 +94,8 @@
 		<div class="col-md-2">
 			<h2>Notes</h2>
 
-			@if(! $all)
-				<p>Only the queries done over the last 7 days are shown. <a href="/admin/queries/all">See queries from last 2 months</a>.	</p>
+			@if($nb_months == NULL)
+				<p>Only the queries done over the last 7 days are shown. <a href="/admin/queries/months/2">See queries from last 2 months</a>.	</p>
 			@endif
 
 			<h3>Gateway timeouts</h3>
