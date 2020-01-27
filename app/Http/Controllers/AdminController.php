@@ -311,11 +311,11 @@ class AdminController extends Controller
         return view('fieldNames', $data);
     }
 
-    public function queries($all = false)
+    public function queries($nb_months = null)
     {
         $data = [];
-        $data['all'] = $all;
-        $data['queries'] = QueryLog::find_gateway_queries($all);
+        $data['nb_months'] = $nb_months;
+        $data['queries'] = QueryLog::find_gateway_queries($nb_months);
 
         $data['service_request_timeout'] = config('ireceptor.service_request_timeout');
         $data['gateway_request_timeout'] = config('ireceptor.gateway_request_timeout');
@@ -326,9 +326,9 @@ class AdminController extends Controller
         return view('queries', $data);
     }
 
-    public function allQueries()
+    public function queriesMonths($n)
     {
-        return $this->queries(true);
+        return $this->queries($n);
     }
 
     public function query($id)
