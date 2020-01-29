@@ -26,7 +26,7 @@ class Sample
         // generate list of sample ids
         $sample_id_list = [];
         foreach ($sample_list as $sample) {
-            $sample_id_list['ir_project_sample_id_list_' . $sample->real_rest_service_id][] = $sample->ir_project_sample_id;
+            $sample_id_list['ir_project_sample_id_list_' . $sample->real_rest_service_id][] = $sample->repertoire_id;
         }
 
         return $sample_id_list;
