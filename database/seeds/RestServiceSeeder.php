@@ -146,14 +146,20 @@ class RestServiceSeeder extends Seeder
             [
                 'url' => 'https://ipa2-staging.ireceptor.org/airr/v1/',
                 'name' => 'Staging IPA 2 ADC',
+                'username' => '',
+                'password' => '',
             ],
             [
                 'url' => 'https://ipa3-staging.ireceptor.org/airr/v1/',
                 'name' => 'Staging IPA 3 ADC',
+                'username' => '',
+                'password' => '',
             ],
             [
                 'url' => 'https://ipa4-staging.ireceptor.org/airr/v1/',
                 'name' => 'Staging IPA 4 ADC',
+                'username' => '',
+                'password' => '',
             ],
         ];
 
