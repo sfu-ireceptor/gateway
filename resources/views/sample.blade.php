@@ -389,7 +389,13 @@
 													{{ $sample->{$field['ir_id']} ? 'Yes' : 'No' }}
 												@else
 													@if (is_object($sample->{$field['ir_id']}))
-														object...														
+														<span title="{{ json_encode($sample->{$field['ir_id']}) }}">
+															{{ str_limit(json_encode($sample->{$field['ir_id']}), $limit = 20, $end = '‥') }}									
+														</span>			
+													@elseif (is_array($sample->{$field['ir_id']}))
+														<span title="{{ json_encode($sample->{$field['ir_id']}) }}">
+															{{ str_limit(json_encode($sample->{$field['ir_id']}), $limit = 20, $end = '‥') }}									
+														</span>			
 													@else
 														<span title="{{ $sample->{$field['ir_id']} }}">
 															{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
