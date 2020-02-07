@@ -72,7 +72,10 @@ class CachedSample extends Model
         $t = [];
         foreach ($l as $lt) {
             if (! empty(trim($lt[0]))) {
-                $t[] = $lt[0];
+                $val = trim($lt[0]);
+                if ( ! in_array($val, $t)) {
+                    $t[] = $val;                    
+                }
             }
         }
 
