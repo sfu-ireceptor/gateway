@@ -13,10 +13,9 @@
 				<div class="loader"></div> 
 			</div>
 			<div class="col-md-11">
-
-				<h3>Please wait, we're preparing your data...</h3>
+				<h3>We're preparing your data...</h3>
 				<p>
-					This could take a while, don't close this window.
+					This can take a while, please don't close this window.
 					<a href="/sequences-download-direct?query_id={{ $query_id }}" class="download_sequences_direct"></a>
 				</p>
 				<p>
