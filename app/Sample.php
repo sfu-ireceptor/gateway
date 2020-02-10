@@ -97,9 +97,6 @@ class Sample
             $sample->rest_service_id = $rs->id;
             $sample->rest_service_name = $rs->display_name;
 
-            // add study URL
-            $sample = self::generate_study_urls($sample);
-
             $sample_field_list = FieldName::getSampleFields();
             foreach ($sample_field_list as $sample_field) {
                 // Log::debug($sample_field);
@@ -112,6 +109,9 @@ class Sample
                     $sample->{$field_name} = $field_value;
                 }
             }
+
+            // add study URL
+            $sample = self::generate_study_urls($sample);
         }
 
         $sample_list = FieldName::convertObjectList($sample_list, 'ir_adc_api_response', 'ir_id');
