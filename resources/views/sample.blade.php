@@ -320,15 +320,15 @@
 
 						{{ Form::submit('Browse sequences from selected repertoires →', array('class' => 'btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load', 'disabled' => 'disabled')) }}
 					
-						<button class="btn btn-default dropdown-toggle download_repertoires" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" title="Download repertoire metadata search results as TSV">
+						<a href="/samples/tsv?query_id= {{ $sample_query_id }}" class="btn btn-default dropdown-toggle download_repertoires" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" title="Download repertoire metadata search results as TSV">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 							<span class="text">TSV</span>
-						</button>
+						</a>
 
-						<button class="btn btn-default dropdown-toggle download_repertoires" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" title="Download repertoire metadata search results as JSON">
+						<a href="/samples/json?query_id= {{ $sample_query_id }}" class="btn btn-default dropdown-toggle download_repertoires" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" title="Download repertoire metadata search results as JSON">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 							<span class="text">JSON</span>
-						</button>
+						</a>
 					</p>
 					
 					<!-- sample data -->
