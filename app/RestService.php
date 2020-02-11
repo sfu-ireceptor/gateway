@@ -533,6 +533,65 @@ class RestService extends Model
         return $response_list;
     }
 
+    public static function repertoire_data2($filters, $folder_path, $username = '')
+    {
+        $now = time();
+
+        // build list of services to query
+        $rs_list = [];
+        foreach (self::findEnabled() as $rs) {
+            $rs_list[$rs->id] = $rs;
+        }
+
+        // count services in each service group
+        $group_list = [];
+        foreach ($rs_list as $rs) {
+            $group = $rs->rest_service_group_code;
+            if ($group) {
+                if (! isset($group_list[$group])) {
+                    $group_list[$group] = 0;
+                }
+                $group_list[$group] += 1;
+            }
+        }
+
+        // prepare request parameters for each service
+        $request_params = [];
+        $group_list_count = [];
+        foreach ($rs_list as $rs) {
+
+            $query_parameters = [];
+
+            // generate JSON query
+            $rs_filters_json = self::generate_json_query($filters, $query_parameters);
+
+            $t = [];
+            $t['rs'] = $rs;
+            $t['url'] = $rs->url . 'repertoire';
+            $t['params'] = $rs_filters_json;
+            $t['timeout'] = config('ireceptor.service_file_request_timeout');
+
+            // add number suffix for rest services belonging to the same group
+            $file_suffix = '';
+            $group = $rs->rest_service_group_code;
+            if ($group && $group_list[$group] >= 1) {
+                if (! isset($group_list_count[$group])) {
+                    $group_list_count[$group] = 0;
+                }
+                $group_list_count[$group] += 1;
+                $file_suffix = '-' . $group_list_count[$group];
+            }
+            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '-metadata.json';
+            $request_params[] = $t;
+        }
+
+        // do requests, write tsv data to files
+        Log::debug('Do metadata files for TSV requests...');
+        $response_list = self::doRequests($request_params);
+
+        return $response_list;
+    }
+
     // retrieve TSV sequence data from enabled services
     // save returned files in $folder_path
     // Example:

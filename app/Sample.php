@@ -4,6 +4,9 @@ namespace App;
 
 use Facades\App\RestService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
+use ZipArchive;
+
 
 class Sample
 {
@@ -314,5 +317,67 @@ class Sample
         }
 
         return $sample;
+    }
+
+    public static function samplesJSON($filters, $username)
+    {
+        // create folder
+        $storage_folder = storage_path() . '/app/public/';
+        $now = time();
+        $time_str = date('Y-m-d_Hi', $now);
+        $folder_name = 'ir_' . $time_str . '_' . uniqid();
+        $folder_path = $storage_folder . $folder_name;
+        File::makeDirectory($folder_path, 0777, true, true);
+
+        // download json into files
+        $metadata_response_list = RestService::repertoire_data2($filters, $folder_path, $username);
+
+        // create zip file from folder
+        $zip_path = $folder_path . '.zip';
+        Log::info('Zip files to ' . $zip_path);
+        $zip = new ZipArchive();
+        $zip->open($zip_path, ZipArchive::CREATE);
+
+        foreach ($metadata_response_list as $response) {
+            if (isset($response['data']['file_path'])) {
+                $file_path = $response['data']['file_path'];
+
+                // try to prettify json
+                $json_data = file_get_contents($file_path);
+                $json_data_pretty = json_encode(json_decode($json_data), JSON_PRETTY_PRINT);
+                if ($json_data_pretty != null) {
+                    $json_data = $json_data_pretty;
+                }
+
+                file_put_contents($file_path, $json_data);
+
+                Log::debug('Adding to ZIP: ' . $file_path);
+                $zip->addFile($file_path, basename($file_path));
+            }
+        }
+
+        $zip->close();
+
+        // // delete files
+        // Log::debug('Deleting downloaded files...');
+        // foreach ($metadata_response_list as $response) {
+        //     $file_path = $response['data']['file_path'];
+        //     if (File::exists($file_path)) {
+        //         File::delete($file_path);
+        //     }
+        // }
+
+        // // delete folder
+        // if (File::exists($folder_path)) {
+        //     rmdir($folder_path);
+        // }
+
+        $zip_public_path = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
+        $t = [];
+        //$t['size'] = filesize($zip_path);
+        $t['system_path'] = $zip_path;
+        $t['public_path'] = $zip_public_path;
+
+        return $t;
     }
 }

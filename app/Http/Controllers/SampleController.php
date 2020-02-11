@@ -226,4 +226,31 @@ class SampleController extends Controller
 
         return json_encode($sample_list);
     }
+
+    public function json(Request $request)
+    {
+        $username = auth()->user()->username;
+
+        $query_id = '';
+        $params = [];
+
+        if ($request->has('query_id')) {
+            $query_id = $request->input('query_id');
+            $params = Query::getParams($query_id);
+            $data['query_id'] = $query_id;
+        }
+
+        $t = Sample::samplesJSON($params, $username);
+        $tsvFilePath = $t['public_path'];
+
+        // log result
+        $query_log_id = $request->get('query_log_id');
+        if ($query_log_id != null) {
+            $query_log = QueryLog::find($query_log_id);
+            $query_log->result_size = $t['size'];
+            $query_log->save();
+        }
+
+        return redirect($tsvFilePath);
+    }
 }
