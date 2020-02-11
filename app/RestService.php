@@ -559,7 +559,6 @@ class RestService extends Model
         $request_params = [];
         $group_list_count = [];
         foreach ($rs_list as $rs) {
-
             $query_parameters = [];
 
             // generate JSON query

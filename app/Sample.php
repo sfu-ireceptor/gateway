@@ -3,10 +3,9 @@
 namespace App;
 
 use Facades\App\RestService;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use ZipArchive;
-
 
 class Sample
 {
