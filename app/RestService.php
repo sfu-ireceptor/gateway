@@ -544,7 +544,7 @@ class RestService extends Model
             $rs = $response['rs'];
             $sample_list = $response['data'];
 
-            if(count($sample_list) > 0) {
+            if (count($sample_list) > 0) {
                 $rs_list[$rs->id] = $rs;
             }
         }
