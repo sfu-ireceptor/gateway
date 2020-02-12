@@ -400,19 +400,18 @@ class Sample
         foreach ($sample_list as $sample) {
             $row_columns = [];
             foreach ($field_list as $field) {
-                $value = " ";
-                if(isset($sample->{$field['ir_id']})) {
+                $value = ' ';
+                if (isset($sample->{$field['ir_id']})) {
                     $value = $sample->{$field['ir_id']};
-                    if(is_object($value) || is_array($value)) {
+                    if (is_object($value) || is_array($value)) {
                         $value = json_encode($value);
-                    }                    
+                    }
                 }
                 $row_columns[] = $value;
             }
-            fputcsv($f, $row_columns, "\t");            
+            fputcsv($f, $row_columns, "\t");
         }
 
         die();
     }
-
 }
