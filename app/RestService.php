@@ -537,10 +537,16 @@ class RestService extends Model
     {
         $now = time();
 
-        // build list of services to query
+        // build list of services to query (query only services which have results for those filters)
         $rs_list = [];
-        foreach (self::findEnabled() as $rs) {
-            $rs_list[$rs->id] = $rs;
+        $response_list = self::samples($filters, $username, false);
+        foreach ($response_list as $i => $response) {
+            $rs = $response['rs'];
+            $sample_list = $response['data'];
+
+            if(count($sample_list) > 0) {
+                $rs_list[$rs->id] = $rs;
+            }
         }
 
         // count services in each service group
