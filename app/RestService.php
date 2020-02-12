@@ -459,7 +459,7 @@ class RestService extends Model
         return $response_list;
     }
 
-    public static function repertoire_data($filters, $folder_path, $username = '')
+    public static function sample_list_repertoire_data($filters, $folder_path, $username = '')
     {
         $now = time();
 
@@ -533,7 +533,7 @@ class RestService extends Model
         return $response_list;
     }
 
-    public static function repertoire_data2($filters, $folder_path, $username = '')
+    public static function repertoire_data($filters, $folder_path, $username = '')
     {
         $now = time();
 

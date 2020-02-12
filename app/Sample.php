@@ -330,7 +330,7 @@ class Sample
         File::makeDirectory($folder_path, 0777, true, true);
 
         // download json into files
-        $metadata_response_list = RestService::repertoire_data2($filters, $folder_path, $username);
+        $metadata_response_list = RestService::repertoire_data($filters, $folder_path, $username);
 
         // create zip file from folder
         $zip_path = $folder_path . '.zip';
@@ -358,23 +358,23 @@ class Sample
 
         $zip->close();
 
-        // // delete files
-        // Log::debug('Deleting downloaded files...');
-        // foreach ($metadata_response_list as $response) {
-        //     $file_path = $response['data']['file_path'];
-        //     if (File::exists($file_path)) {
-        //         File::delete($file_path);
-        //     }
-        // }
+        // delete files
+        Log::debug('Deleting downloaded files...');
+        foreach ($metadata_response_list as $response) {
+            $file_path = $response['data']['file_path'];
+            if (File::exists($file_path)) {
+                File::delete($file_path);
+            }
+        }
 
-        // // delete folder
-        // if (File::exists($folder_path)) {
-        //     rmdir($folder_path);
-        // }
+        // delete folder
+        if (File::exists($folder_path)) {
+            rmdir($folder_path);
+        }
 
         $zip_public_path = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
         $t = [];
-        //$t['size'] = filesize($zip_path);
+        $t['size'] = filesize($zip_path);
         $t['system_path'] = $zip_path;
         $t['public_path'] = $zip_public_path;
 
