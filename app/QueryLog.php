@@ -45,8 +45,7 @@ class QueryLog extends Model
         if (str_contains($url, '/samples/json')) {
             $type = 'sample';
             $t['file'] = 'json';
-        }
-        elseif (str_contains($url, '/samples')) {
+        } elseif (str_contains($url, '/samples')) {
             $type = 'sample';
         } elseif (str_contains($url, '/sequences-quick-search')) {
             $type = 'combined';
