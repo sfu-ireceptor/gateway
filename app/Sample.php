@@ -379,4 +379,40 @@ class Sample
 
         return $t;
     }
+
+    public static function samplesTSV($filters, $username)
+    {
+        // get samples
+        $sample_data = self::find($filters, $username);
+        $sample_list = $sample_data['items'];
+
+        // get sample fields
+        $field_list = FieldName::getSampleFields();
+
+        $columns = [];
+        foreach ($field_list as $field) {
+            $columns[] = __('short.' . $field['ir_id']);
+        }
+
+        $f = fopen('php://output', 'w');
+        fputcsv($f, $columns, "\t");
+
+        foreach ($sample_list as $sample) {
+            $row_columns = [];
+            foreach ($field_list as $field) {
+                $value = " ";
+                if(isset($sample->{$field['ir_id']})) {
+                    $value = $sample->{$field['ir_id']};
+                    if(is_object($value) || is_array($value)) {
+                        $value = json_encode($value);
+                    }                    
+                }
+                $row_columns[] = $value;
+            }
+            fputcsv($f, $row_columns, "\t");            
+        }
+
+        die();
+    }
+
 }

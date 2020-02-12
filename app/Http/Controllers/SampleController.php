@@ -241,7 +241,7 @@ class SampleController extends Controller
         }
 
         $t = Sample::samplesJSON($params, $username);
-        $tsvFilePath = $t['public_path'];
+        $file_path = $t['public_path'];
 
         // log result
         $query_log_id = $request->get('query_log_id');
@@ -251,6 +251,33 @@ class SampleController extends Controller
             $query_log->save();
         }
 
-        return redirect($tsvFilePath);
+        return redirect($file_path);
+    }
+
+    public function tsv(Request $request)
+    {
+        $username = auth()->user()->username;
+
+        $query_id = '';
+        $params = [];
+
+        if ($request->has('query_id')) {
+            $query_id = $request->input('query_id');
+            $params = Query::getParams($query_id);
+            $data['query_id'] = $query_id;
+        }
+
+        $t = Sample::samplesTSV($params, $username);
+        $file_path = $t['public_path'];
+
+        // log result
+        $query_log_id = $request->get('query_log_id');
+        if ($query_log_id != null) {
+            $query_log = QueryLog::find($query_log_id);
+            $query_log->result_size = $t['size'];
+            $query_log->save();
+        }
+
+        return redirect($file_path);
     }
 }

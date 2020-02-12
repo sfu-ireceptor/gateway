@@ -51,6 +51,26 @@ class TestController extends Controller
 
     public function getIndex(Request $request)
     {
+
+ // header("Content-type: text/csv");
+    // header("Content-Disposition: attachment; filename=file.csv");
+
+    $columns = ['titi', 'tata'];
+
+    //$f = fopen($file_path, 'w');
+    $file = fopen('php://output', 'w');
+    fputcsv($file, $columns, "\t");
+ exit();
+
+        $data_to_pass = ['a' => 'test'];
+        return response(view('about')->with(compact('data_to_pass')), 200, [
+            'Content-Type' => 'application/json', // use your required mime type
+            'Content-Disposition' => 'attachment; filename="filename.xml"',
+        ]);
+
+        echo "aa";
+        die();
+
         $f = FieldName::getFieldType('sequencing_platform');
         dd($f);
 
