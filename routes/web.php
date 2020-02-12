@@ -65,7 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
     Route::post('/samples', 'SampleController@postIndex')->name('samples-post');
     Route::get('/samples', 'SampleController@index')->name('samples')->middleware('log_query');
-    Route::get('/samples/json', 'SampleController@json')->name('samples-json');
+    Route::get('/samples/json', 'SampleController@json')->name('samples-json')->middleware('log_query');
     Route::post('/sequences', 'SequenceController@postIndex')->name('sequences-post');
     Route::get('/sequences', 'SequenceController@index')->name('sequences')->middleware('log_query');
     Route::get('/sequences-quick-search', 'SequenceController@quickSearch')->name('sequences-quick-search')->middleware('log_query');

@@ -537,7 +537,7 @@ class RestService extends Model
     {
         $now = time();
 
-        // build list of services to query (query only services which have results for those filters)
+        // build list of services to that we'll create a JSON file for (those that do have results for those filters)
         $rs_list = [];
         $response_list = self::samples($filters, $username, false);
         foreach ($response_list as $i => $response) {
