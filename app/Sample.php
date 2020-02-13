@@ -419,7 +419,7 @@ class Sample
                     }
 
                     // remove any line breaks
-                    $value = str_replace(array("\r", "\n"), ' ', $value);
+                    $value = str_replace(["\r", "\n"], ' ', $value);
                 }
                 $row_columns[] = $value;
             }
