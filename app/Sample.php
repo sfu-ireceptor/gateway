@@ -394,9 +394,20 @@ class Sample
             $columns[] = __('short.' . $field['ir_id']);
         }
 
-        $f = fopen('php://output', 'w');
+        // generate file name
+        $storage_folder = storage_path() . '/app/public/';
+        $now = time();
+        $time_str = date('Y-m-d_Hi', $now);
+        $file_name = 'ir_' . $time_str . '_' . uniqid() . '.tsv';
+        $file_path = $storage_folder . $file_name;
+
+        // create file
+        $f = fopen($file_path, 'w');
+
+        // write headers row
         fputcsv($f, $columns, "\t");
 
+        // write contents
         foreach ($sample_list as $sample) {
             $row_columns = [];
             foreach ($field_list as $field) {
@@ -412,6 +423,13 @@ class Sample
             fputcsv($f, $row_columns, "\t");
         }
 
-        die();
+        $public_path = 'storage' . str_after($file_path, storage_path('app/public'));
+
+        $t = [];
+        $t['size'] = filesize($file_path);
+        $t['system_path'] = $file_path;
+        $t['public_path'] = $public_path;
+
+        return $t;
     }
 }
