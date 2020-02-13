@@ -417,6 +417,9 @@ class Sample
                     if (is_object($value) || is_array($value)) {
                         $value = json_encode($value);
                     }
+
+                    // remove any line breaks
+                    $value = str_replace(array("\r", "\n"), ' ', $value);
                 }
                 $row_columns[] = $value;
             }
