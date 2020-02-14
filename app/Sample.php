@@ -391,7 +391,11 @@ class Sample
 
         $columns = [];
         foreach ($field_list as $field) {
-            $columns[] = $field['airr'];
+            $column_name = $field['airr'];
+            if($column_name == '') {
+                $column_name = snake_case($field['ir_short']);
+            }
+            $columns[] = $column_name;
         }
 
         // generate file name

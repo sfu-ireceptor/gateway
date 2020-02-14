@@ -52,6 +52,11 @@ class TestController extends Controller
     public function getIndex(Request $request)
     {
 
+        $s = 'V Gene and Allele (paired)';
+        $s = snake_case($s);
+        echo $s;
+        die();
+
  // header("Content-type: text/csv");
         // header("Content-Disposition: attachment; filename=file.csv");
 
