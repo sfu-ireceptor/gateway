@@ -116,8 +116,6 @@ class Sample
             $sample = self::generate_study_urls($sample);
         }
 
-        $sample_list = FieldName::convertObjectList($sample_list, 'ir_adc_api_response', 'ir_id');
-
         return $sample_list;
     }
 

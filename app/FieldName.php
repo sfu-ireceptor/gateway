@@ -70,7 +70,7 @@ class FieldName extends Model
         $ir_class_list = ['Repertoire'];
 
         if (config('ireceptor.display_all_ir_fields')) {
-            $ir_class_list[] = 'ir_repertoire';
+            $ir_class_list[] = 'IR_Repertoire';
         }
 
         $l = static::whereIn('ir_class', $ir_class_list)->orderBy('default_order', 'asc')->get()->toArray();
@@ -83,7 +83,7 @@ class FieldName extends Model
         $ir_class_list = ['Rearrangement'];
 
         if (config('ireceptor.display_all_ir_fields')) {
-            $ir_class_list[] = 'ir_rearrangement';
+            $ir_class_list[] = 'IR_Rearrangement';
         }
 
         $l = static::whereIn('ir_class', $ir_class_list)->orderBy('default_order', 'asc')->get()->toArray();
