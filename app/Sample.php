@@ -391,7 +391,7 @@ class Sample
 
         $columns = [];
         foreach ($field_list as $field) {
-            $columns[] = __('short.' . $field['ir_id']);
+            $columns[] = $field['airr'];
         }
 
         // generate file name
