@@ -392,7 +392,7 @@ class Sample
         $columns = [];
         foreach ($field_list as $field) {
             $column_name = $field['airr'];
-            if($column_name == '') {
+            if ($column_name == '') {
                 $column_name = snake_case($field['ir_short']);
             }
             $columns[] = $column_name;
