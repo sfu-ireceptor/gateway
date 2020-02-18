@@ -111,7 +111,7 @@
 								
 								<!-- Button trigger modal -->
 								<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#myModal_{{ $q->id }}">
-								  POST parameters
+								  JSON query
 								</button>
 
 								<!-- Modal -->
