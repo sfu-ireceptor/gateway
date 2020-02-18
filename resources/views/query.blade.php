@@ -123,7 +123,7 @@
 								        <h4 class="modal-title" id="myModalLabel">POST parameters ({{ $q->url }} on {{ $q->rest_service_name}})</h4>
 								      </div>
 								      <div class="modal-body">
-								      	<pre>{{ json_encode($q->params, JSON_PRETTY_PRINT) }}</pre>
+								      	<pre>{{ json_encode(json_decode($q->params),JSON_PRETTY_PRINT) }}</pre>
 								      </div>
 								      <div class="modal-footer">
 								        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
