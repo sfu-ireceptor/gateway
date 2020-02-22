@@ -140,6 +140,13 @@ class RestServiceSeeder extends Seeder
                 'version' => 2,
             ],
             [
+                'url' => 'http://turnkey-test2.ireceptor.org/airr/v1/',
+                'name' => 'ADC Turnkey',
+                'username' => '',
+                'password' => '',
+                'version' => 2,
+            ],
+            [
                 'url' => 'https://ipa1-staging.ireceptor.org/airr/v1/',
                 'name' => 'Staging IPA 1 ADC',
                 'username' => '',
