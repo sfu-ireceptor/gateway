@@ -177,6 +177,12 @@ class RestServiceSeeder extends Seeder
                 'username' => '',
                 'password' => '',
             ],
+            [
+                'url' => 'http://206.12.89.162/airr/v1/',
+                'name' => 'IPA5 ADC',
+                'username' => '',
+                'password' => '',
+            ],
         ];
 
         foreach ($l as $t) {
