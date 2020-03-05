@@ -9,7 +9,7 @@ class FieldNameSeeder extends CsvSeeder
     {
         $this->table = 'field_name';
         $this->filename = base_path() . '/database/seeds/data/field_names.tsv';
-        $this->offset_rows = 3;
+        $this->offset_rows = 4;
         $this->csv_delimiter = "\t";
     }
 
@@ -29,8 +29,8 @@ class FieldNameSeeder extends CsvSeeder
             17 => 'ir_adc_api_query',
             18 => 'ir_adc_api_response',
             19 => 'airr_type',
-            20 => 'airr_description',
-            24 => 'airr_example',
+            21 => 'airr_description',
+            25 => 'airr_example',
             36 => 'ir_api_input_type',
         ];
 
