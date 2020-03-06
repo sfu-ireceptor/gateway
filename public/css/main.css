@@ -820,6 +820,16 @@ a.select_all_samples {
 	font-style: normal;
 }
 
+a.missing_data {
+	margin-left: 3px;
+	position: relative;
+	bottom: -1px;
+}
+
+a.missing_data span {
+	color: #dc8a14;
+}
+
 /* @end */
 
 /* @group sequences page */
@@ -830,7 +840,7 @@ a.select_all_samples {
 
 .sequence_count {
 	font-size: 15px;
-	margin-left: 3px;
+	margin-left: 1px;
 }
 
 a.download_sequences {

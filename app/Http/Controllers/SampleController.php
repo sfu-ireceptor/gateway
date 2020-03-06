@@ -158,6 +158,14 @@ class SampleController extends Controller
 
         $data['filtered_repositories_names'] = implode(', ', $sample_data['filtered_repositories']);
 
+        // list of repositories that didn't respond
+        $rs_list_no_response = $sample_data['rs_list_no_response'];
+        $rs_list_no_response_str = [];
+        foreach ($rs_list_no_response as $rs) {
+            $rs_list_no_response_str[] = $rs->name;
+        }
+        $data['rs_list_no_response_str'] = $rs_list_no_response_str;
+
         // create copy of filters for display
         $filter_fields = [];
         foreach ($params as $k => $v) {

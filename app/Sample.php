@@ -83,8 +83,22 @@ class Sample
             $sample_list_all = array_merge($sample_list_all, $sample_list);
         }
 
+        // build list of services which didn't respond
+        $rs_list_no_response = [];
+        foreach ($response_list as $i => $response) {
+            $rs = $response['rs'];
+
+            if ($response['status'] == 'error') {
+                $rs->error_type = $response['error_type'];
+                $rs_list_no_response[] = $rs;
+            }
+        }
+
         // return the statistics about that list of samples
-        return self::stats($sample_list_all);
+        $data = self::stats($sample_list_all);
+        $data['rs_list_no_response'] = $rs_list_no_response;
+
+        return $data;
     }
 
     // convert/complete sample list

@@ -259,8 +259,14 @@
 							<a href="#" data-toggle="modal" data-target="#myModal">
 								{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},
 								{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}},
-								{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
-							</a>
+								{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}</a>
+
+							@if ( ! empty($rs_list_no_response_str))
+								<a role="button" class="missing_data" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Incomplete data" data-content="No response was received from: {{ implode(', ', $rs_list_no_response_str) }}." data-trigger="hover" tabindex="0">
+									<span class="glyphicon glyphicon-exclamation-sign"></span>								
+								</a>
+							@endif
+
 						</p>
 
 						<!-- repos/labs/studies details popup -->
