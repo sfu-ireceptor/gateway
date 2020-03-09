@@ -48,8 +48,10 @@ function showData(json, graphFields, graphNames, countField, htmlBase, internalL
         var aggregateData = [];
         var i = 0;
         for (field in valuesCount) {
-            aggregateData[i] = {name:field, count:valuesCount[field]};   
-            i++;
+            if(valuesCount[field] > 0) {
+                aggregateData[i] = {name:field, count:valuesCount[field]};   
+                i++;                
+            }
         }
 
         // Build the chart data structure.
