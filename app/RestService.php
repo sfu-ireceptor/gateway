@@ -344,7 +344,7 @@ class RestService extends Model
 
             $sample_list_filtered = [];
             foreach ($sample_list as $sample) {
-                if($sample->ir_filtered_sequence_count > 0) {
+                if ($sample->ir_filtered_sequence_count > 0) {
                     $sample_list_filtered[] = $sample;
                 }
             }
