@@ -165,9 +165,8 @@ class SampleController extends Controller
             $rs_list_no_response_names[] = $rs->name;
         }
         if (! empty($rs_list_no_response_names)) {
-            $data['rs_list_no_response_str'] = 'No response was received from <strong>' . implode(', ', $rs_list_no_response_names) . '</strong>.';            
-        }
-        else {
+            $data['rs_list_no_response_str'] = 'No response was received from <strong>' . implode(', ', $rs_list_no_response_names) . '</strong>.';
+        } else {
             $data['rs_list_no_response_str'] = '';
         }
 
@@ -179,8 +178,7 @@ class SampleController extends Controller
         }
         if (! empty($rs_list_sequence_count_error_names)) {
             $data['rs_list_sequence_count_error_str'] = 'The statistics don\'t include <strong>' . implode(', ', $rs_list_sequence_count_error_names) . '</strong> because the number of sequences was not received.';
-        }
-        else {
+        } else {
             $data['rs_list_sequence_count_error_str'] = '';
         }
 
