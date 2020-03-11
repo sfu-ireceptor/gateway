@@ -204,8 +204,14 @@ class RestService extends Model
                 if ($count_sequences) {
                     // do sequence count query and add them to the samples
                     $sequence_count = self::sequence_count($rs->id, $sample_id_list);
+
                     foreach ($sample_list as $sample) {
                         $sample->ir_sequence_count = $sequence_count[$sample->repertoire_id];
+                    }
+
+                    // if there was an error
+                    if($sequence_count == NULL) {
+                        $response['sequence_count_error'] = true;
                     }
                 }
 
@@ -277,6 +283,12 @@ class RestService extends Model
 
         // do request
         $response_list = self::doRequests([$t]);
+
+        // if error, return NULL
+        if($response_list[0]['status'] == 'error') {
+            return NULL;
+        }
+
         $facet_list = data_get($response_list, '0.data.Facet', []);
 
         $sequence_count = [];

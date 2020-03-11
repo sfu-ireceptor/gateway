@@ -160,11 +160,29 @@ class SampleController extends Controller
 
         // list of repositories that didn't respond
         $rs_list_no_response = $sample_data['rs_list_no_response'];
-        $rs_list_no_response_str = [];
+        $rs_list_no_response_names = [];
         foreach ($rs_list_no_response as $rs) {
-            $rs_list_no_response_str[] = $rs->name;
+            $rs_list_no_response_names[] = $rs->name;
         }
-        $data['rs_list_no_response_str'] = $rs_list_no_response_str;
+        if (! empty($rs_list_no_response_names)) {
+            $data['rs_list_no_response_str'] = 'No response was received from <strong>' . implode(', ', $rs_list_no_response_names) . '</strong>.';            
+        }
+        else {
+            $data['rs_list_no_response_str'] = '';
+        }
+
+        // list of repositories that didn't return the sequence counts
+        $rs_list_sequence_count_error = $sample_data['rs_list_sequence_count_error'];
+        $rs_list_sequence_count_error_names = [];
+        foreach ($rs_list_sequence_count_error as $rs) {
+            $rs_list_sequence_count_error_names[] = $rs->name;
+        }
+        if (! empty($rs_list_sequence_count_error_names)) {
+            $data['rs_list_sequence_count_error_str'] = 'The statistics don\'t include <strong>' . implode(', ', $rs_list_sequence_count_error_names) . '</strong> because the number of sequences was not received.';
+        }
+        else {
+            $data['rs_list_sequence_count_error_str'] = '';
+        }
 
         // create copy of filters for display
         $filter_fields = [];

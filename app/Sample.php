@@ -94,9 +94,20 @@ class Sample
             }
         }
 
+        // build list of services which didn't return the sequence counts
+        $rs_list_sequence_count_error = [];
+        foreach ($response_list as $i => $response) {
+            $rs = $response['rs'];
+
+            if (isset($response['sequence_count_error'])) {
+                $rs_list_sequence_count_error[] = $rs;
+            }
+        }
+
         // return the statistics about that list of samples
         $data = self::stats($sample_list_all);
         $data['rs_list_no_response'] = $rs_list_no_response;
+        $data['rs_list_sequence_count_error'] = $rs_list_sequence_count_error;
 
         return $data;
     }
