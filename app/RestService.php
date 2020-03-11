@@ -342,9 +342,16 @@ class RestService extends Model
                 $sample->ir_filtered_sequence_count = $sample_list_filtered_count[$sample_id];
             }
 
+            $sample_list_filtered = [];
+            foreach ($sample_list as $sample) {
+                if($sample->ir_filtered_sequence_count > 0) {
+                    $sample_list_filtered[] = $sample;
+                }
+            }
+
             $t = [];
             $t['rs'] = $rs;
-            $t['data'] = $sample_list;
+            $t['data'] = $sample_list_filtered;
             if ($success) {
                 $t['status'] = 'success';
             } else {
