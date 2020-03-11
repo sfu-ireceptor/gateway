@@ -178,7 +178,7 @@ class SampleController extends Controller
             $rs_list_sequence_count_error_names[] = $rs->name;
         }
         if (! empty($rs_list_sequence_count_error_names)) {
-            $data['rs_list_sequence_count_error_str'] = 'The statistics don\'t include <strong>' . implode(', ', $rs_list_sequence_count_error_names) . '</strong> because the number of sequences was not received.';
+            $data['rs_list_sequence_count_error_str'] = 'The number of sequences and the charts below don\'t include <strong>' . implode(', ', $rs_list_sequence_count_error_names) . '</strong> because the number of sequences was not received.';
         }
         else {
             $data['rs_list_sequence_count_error_str'] = '';
