@@ -210,7 +210,7 @@ class RestService extends Model
                     }
 
                     // if there was an error
-                    if($sequence_count == NULL) {
+                    if ($sequence_count == null) {
                         $response['sequence_count_error'] = true;
                     }
                 }
@@ -285,8 +285,8 @@ class RestService extends Model
         $response_list = self::doRequests([$t]);
 
         // if error, return NULL
-        if($response_list[0]['status'] == 'error') {
-            return NULL;
+        if ($response_list[0]['status'] == 'error') {
+            return;
         }
 
         $facet_list = data_get($response_list, '0.data.Facet', []);
