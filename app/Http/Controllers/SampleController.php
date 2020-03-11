@@ -165,9 +165,8 @@ class SampleController extends Controller
             $rs_list_no_response_names[] = $rs->name;
         }
         if (! empty($rs_list_no_response_names)) {
-            $data['rs_list_no_response_str'] = 'No response was received from <strong>' . implode(', ', $rs_list_no_response_names) . '</strong>.';            
-        }
-        else {
+            $data['rs_list_no_response_str'] = 'No response was received from <strong>' . implode(', ', $rs_list_no_response_names) . '</strong>.';
+        } else {
             $data['rs_list_no_response_str'] = '';
         }
 
