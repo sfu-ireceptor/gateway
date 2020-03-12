@@ -248,6 +248,10 @@
 													<span title="{{ json_encode($s->{$field['ir_id']}) }}">
 														{{ json_encode($s->{$field['ir_id']}) }}												
 													</span>
+												@elseif (is_array($s->{$field['ir_id']}))
+													<span title="{{ implode(', ', $s->{$field['ir_id']}) }}">
+														{{ str_limit(implode(', ', $s->{$field['ir_id']}), $limit = 25, $end = '‥') }}									
+													</span>			
 												@else
 													<span title="{{ $s->{$field['ir_id']} }}">
 														@if (is_bool($s->{$field['ir_id']}))
