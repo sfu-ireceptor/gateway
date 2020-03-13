@@ -118,7 +118,7 @@ Route::middleware('auth')->group(function () {
         Route::get('edit-news/{id}', 'AdminController@getEditNews');
         Route::post('edit-news', 'AdminController@postEditNews');
         Route::get('delete-news/{id}', 'AdminController@getDeleteNews');
-        Route::get('users', 'AdminController@getUsers');
+        Route::get('users/{sort?}', 'AdminController@getUsers');
         Route::get('add-user', 'AdminController@getAddUser');
         Route::post('add-user', 'AdminController@postAddUser');
         Route::get('edit-user/{username}', 'AdminController@getEditUser');
