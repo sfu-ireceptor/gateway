@@ -245,6 +245,7 @@ class RestService extends Model
                     // merge response status
                     if ($r2['status'] != 'success') {
                         $r1['status'] = $r2['status'];
+                        $r1['error_message'] = $r2['error_message'];
                     }
                     // merge list of samples
                     $r1['data'] = array_merge($r1['data'], $r2['data']);
