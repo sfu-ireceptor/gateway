@@ -279,6 +279,7 @@ class Sample
             $rs_data['total_labs'] = count($lab_list);
             $rs_data['total_studies'] = count($study_list);
             $rs_data['total_sequences'] = $total_sequences;
+            $rs_data['total_filtered_sequences'] = $total_sequences;
             $data['rs_list'][] = $rs_data;
 
             // sample data
