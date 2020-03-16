@@ -25,7 +25,7 @@
 						     			{{ $rs_data['rs']->display_name }}
 						     		@endisset
 						     	</span>
-						     	<em>{{ human_number($rs_data['total_sequences']) }} sequences</em>
+						     	<em>{{ human_number($rs_data['total_filtered_sequences']) }} sequences</em>
 							    <ul>
 						 			@foreach ($rs_data['study_tree'] as $lab)
 										<li class="lab_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-education"}'>
