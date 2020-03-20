@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\SequenceCount;
 use Facades\App\RestService;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +19,8 @@ class Sample
         return CachedSample::metadata();
     }
 
-    public static function cache_sequence_counts($username) {
+    public static function cache_sequence_counts($username)
+    {
         $response_list = RestService::samples([], $username, false);
         foreach ($response_list as $i => $response) {
             $rest_service_id = $response['rs']->id;
