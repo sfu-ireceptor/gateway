@@ -19,6 +19,21 @@ class Sample
         return CachedSample::metadata();
     }
 
+    public static function cache_sequence_counts($username) {
+        $response_list = RestService::samples([], $username, false);
+        foreach ($response_list as $i => $response) {
+            $rs = $response['rs'];
+            $sample_list = $response['data'];
+
+            foreach ($sample_list as $sample) {
+                $sample_id = $sample->repertoire_id;
+                $sequence_count_array = RestService::sequence_count($rs->id, [$sample_id]);
+                $sequence_count = $sequence_count_array[$sample_id];
+                Log::debug('sample id=' . $sample_id . ', count=' . $sequence_count);
+            }
+        }
+    }
+
     public static function find_sample_id_list($filters, $username)
     {
         // get samples

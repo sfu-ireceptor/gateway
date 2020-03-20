@@ -51,6 +51,14 @@ class TestController extends Controller
 
     public function getIndex(Request $request)
     {
+        // $s = "5";
+        // $t = [$s];
+        // dd($t);
+        // die();
+        $username = auth()->user()->username;
+        Sample::cache_sequence_counts($username);
+
+        die();
         $s = 'V Gene and Allele (paired)';
         $s = snake_case($s);
         echo $s;
