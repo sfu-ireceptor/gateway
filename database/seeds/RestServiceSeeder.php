@@ -63,20 +63,6 @@ class RestServiceSeeder extends Seeder
                 'version' => 2,
             ],
             [
-                'url' => 'http://206.12.91.5/',
-                'name' => 'Genoa Scratch',
-                'username' => '',
-                'password' => '',
-                'version' => 2,
-            ],
-            [
-                'url' => 'http://206.12.88.104/',
-                'name' => 'Genoa Turnkey',
-                'username' => '',
-                'password' => '',
-                'version' => 2,
-            ],
-            [
                 'url' => 'http://142.150.76.132/',
                 'name' => 'Sidhu-UoT',
                 'username' => '',
