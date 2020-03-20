@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\SequenceCount;
 use Facades\App\RestService;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -22,15 +23,21 @@ class Sample
     public static function cache_sequence_counts($username) {
         $response_list = RestService::samples([], $username, false);
         foreach ($response_list as $i => $response) {
-            $rs = $response['rs'];
+            $rest_service_id = $response['rs']->id;
             $sample_list = $response['data'];
+
+            $t = [];
+            $t['rest_service_id'] = $rest_service_id;
+            $t['sequence_counts'] = [];
 
             foreach ($sample_list as $sample) {
                 $sample_id = $sample->repertoire_id;
-                $sequence_count_array = RestService::sequence_count($rs->id, [$sample_id]);
+                $sequence_count_array = RestService::sequence_count($rest_service_id, [$sample_id]);
                 $sequence_count = $sequence_count_array[$sample_id];
-                Log::debug('sample id=' . $sample_id . ', count=' . $sequence_count);
+                $t['sequence_counts'][$sample_id] = $sequence_count;
             }
+
+            SequenceCount::create($t);
         }
     }
 
