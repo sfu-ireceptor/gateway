@@ -1,10 +1,10 @@
 @extends('template')
 
-@section('title', 'Databases')
+@section('title', 'Repositories')
 
 @section('content')
 <div class="container">
-	<h1>Databases <small>Choose those available to <strong>all</strong> users of this gateway</small></h1>
+	<h1>Repositories <small>Choose those available to <strong>all</strong> users of <strong>this</strong> gateway</small></h1>
 
 	@if (isset($notification))
 	<div class="alert alert-warning alert-dismissible" role="alert">
@@ -25,7 +25,7 @@
 						<th>URL</th>
 						<th>Nb repertoires</th>
 						<th>Nb sequences</th>
-						<th>Last cached</th>
+						<th>Last cached*</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -61,6 +61,8 @@
 					@endforeach
 				</tbody>
 			</table>
+
+<p>* what's cached: repertoire metadata (used only to populate the filters dropdowns, the queries are actually sent to the repositories) and the total rearrangement count for each repertoire.</p>
 
 			<p>
 				<a href="/admin/samples/update-cache">

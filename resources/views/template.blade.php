@@ -112,7 +112,7 @@
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">admin<span class="caret"></span></a>
 								<ul class="dropdown-menu" role="menu">
 								  <li><a href="/admin/news"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> News</a></li>
-								  <li><a href="/admin/databases"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Databases</a></li>
+								  <li><a href="/admin/databases"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Repositories</a></li>
 								  <li><a href="/admin/users"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Users</a></li>
 								  <li role="separator" class="divider"></li>
 								  <li><a href="/admin/queries"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> User queries</a></li>
