@@ -285,6 +285,14 @@ class RestService extends Model
 
     public static function sequence_count($rest_service_id, $sample_id_list, $filters = [])
     {
+        // clean filters
+        $filters = self::clean_filters($filters);
+
+        // hack: use cached total counts if there are no sequence filters
+        if(count($filters)==0) {
+            return self::sequence_count_from_cache($rest_service_id, $sample_id_list);
+        } 
+
         // force all sample ids to string
         foreach ($sample_id_list as $k => $v) {
             $sample_id_list[$k] = (string) $v;
