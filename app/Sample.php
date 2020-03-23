@@ -6,6 +6,7 @@ use Facades\App\RestService;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use ZipArchive;
+use Carbon\Carbon;
 
 class Sample
 {
@@ -30,14 +31,23 @@ class Sample
             $t['rest_service_id'] = $rest_service_id;
             $t['sequence_counts'] = [];
 
+            $total_sequence_count = 0;
             foreach ($sample_list as $sample) {
                 $sample_id = $sample->repertoire_id;
                 $sequence_count_array = RestService::sequence_count($rest_service_id, [$sample_id]);
                 $sequence_count = $sequence_count_array[$sample_id];
                 $t['sequence_counts'][$sample_id] = $sequence_count;
+                $total_sequence_count += $sequence_count;
             }
 
             SequenceCount::create($t);
+
+            // cache total counts
+            $rs = RestService::find($rest_service_id);
+            $rs->nb_samples = count($sample_list);
+            $rs->nb_sequences = $total_sequence_count;
+            $rs->last_cached = new Carbon('now');
+            $rs->save();
         }
     }
 

@@ -23,6 +23,9 @@
 						<th>Name</th>
 						<th>Visible Name</th>
 						<th>URL</th>
+						<th>Nb repertoires</th>
+						<th>Nb sequences</th>
+						<th>Last cached</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -33,8 +36,27 @@
 							<td>{{ $rs->name }}</td>	
 							<td>{{ $rs->display_name }}</td>	
 							<td><a href="{{ $rs->url }}">{{ $rs->url }}</a></td>					
-							<td><a href="{{ $rs->url }}v2/samples?username={{ Auth::user()->username }}">/v2/samples</a></td>
-							<td><a href="{{ $rs->url }}v2/sequences_summary?username={{ Auth::user()->username }}">/v2/sequences_summary</a></td>
+							<td>{{ $rs->nb_samples }}</a></td>
+							<td>
+								<span title="{{ number_format($rs->nb_sequences) }}">
+									{{ human_number($rs->nb_sequences) }}
+								</span>
+							</td>
+							<td class="text-nowrap">
+								@if ($rs->last_cached)
+									<span class="minor">{{ human_date_time($rs->last_cached, 'D') }}</span>
+									{{ human_date_time($rs->last_cached, 'M j') }}
+									<span class="minor">{{ human_date_time($rs->last_cached, 'H:i') }}</span>
+								@endif
+							</td>
+							<td>
+								<a href="/admin/samples/update-cache">
+									<button type="button" class="btn btn-default" aria-label="Edit">
+										<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+										Refresh
+									</button>
+								</a>
+							</td>
 						</tr>
 					@endforeach
 				</tbody>
