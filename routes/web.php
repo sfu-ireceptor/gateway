@@ -126,6 +126,7 @@ Route::middleware('auth')->group(function () {
         Route::post('edit-user', 'AdminController@postEditUser');
         Route::get('delete-user/{username}', 'AdminController@getDeleteUser');
         Route::get('samples/update-cache', 'AdminController@getUpdateSampleCache');
+        Route::get('samples/update-sequence_count/{rest_service_id}', 'AdminController@getUpdateSequenceCount');
         Route::get('field-names', 'AdminController@getFieldNames');
         Route::get('queries', 'AdminController@queries');
         Route::get('queries/months/{n}', 'AdminController@queriesMonths');

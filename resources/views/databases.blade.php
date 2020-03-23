@@ -25,7 +25,7 @@
 						<th>URL</th>
 						<th>Nb repertoires</th>
 						<th>Nb sequences</th>
-						<th>Last cached*</th>
+						<th>Last refreshed</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -50,10 +50,10 @@
 								@endif
 							</td>
 							<td>
-								<a href="/admin/samples/update-cache">
+								<a href="/admin/samples/update-cache/{{ $rs->id }}">
 									<button type="button" class="btn btn-default" aria-label="Edit">
 										<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
-										Refresh
+										Refresh cached sequence counts
 									</button>
 								</a>
 							</td>
@@ -62,13 +62,11 @@
 				</tbody>
 			</table>
 
-<p>* what's cached: repertoire metadata (used only to populate the filters dropdowns, the queries are actually sent to the repositories) and the total rearrangement count for each repertoire.</p>
-
 			<p>
 				<a href="/admin/samples/update-cache">
 					<button type="button" class="btn btn-default" aria-label="Edit">
 						<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
-						Refresh cached samples
+						Refresh cached repertoire metadata
 					</button>
 				</a>
 			</p>

@@ -303,6 +303,17 @@ class AdminController extends Controller
         return redirect('admin/databases')->with('notification', $message);
     }
 
+    public function getUpdateSequenceCount($rest_service_id)
+    {
+        
+        $username = auth()->user()->username;
+        $n = CachedSample::cache();
+
+        $message = "$n samples have been retrieved and cached.";
+
+        return redirect('admin/databases')->with('notification', $message);
+    }
+
     public function getFieldNames()
     {
         $data = [];
