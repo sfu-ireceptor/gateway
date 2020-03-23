@@ -309,7 +309,7 @@ class RestService extends Model
         // do request
         $response_list = self::doRequests([$t]);
 
-        // if error, return NULL
+        // if error, return null
         if ($response_list[0]['status'] == 'error') {
             return;
         }
