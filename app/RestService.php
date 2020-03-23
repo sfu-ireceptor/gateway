@@ -5,7 +5,6 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
-use App\SequenceCount;
 
 class RestService extends Model
 {
@@ -259,11 +258,12 @@ class RestService extends Model
         return $response_list_grouped;
     }
 
-    public static function sequence_count_from_cache($rest_service_id, $sample_id_list = []) {
+    public static function sequence_count_from_cache($rest_service_id, $sample_id_list = [])
+    {
         $l = SequenceCount::where('rest_service_id', $rest_service_id)->orderBy('updated_at', 'desc')->take(1)->get();
-        
-        if(count($l) == 0) {
-            return NULL;
+
+        if (count($l) == 0) {
+            return;
         }
 
         $all_sequence_counts = $l[0]->sequence_counts;
@@ -273,17 +273,15 @@ class RestService extends Model
 
         $sequence_counts = [];
         foreach ($sample_id_list as $sample_id) {
-            if(isset($all_sequence_counts[$sample_id])) {
+            if (isset($all_sequence_counts[$sample_id])) {
                 $sequence_counts[$sample_id] = $all_sequence_counts[$sample_id];
-            }
-            else {
-                $sequence_counts[$sample_id] = NULL;
+            } else {
+                $sequence_counts[$sample_id] = null;
             }
         }
 
         return $sequence_counts;
     }
-
 
     public static function sequence_count($rest_service_id, $sample_id_list, $filters = [])
     {
