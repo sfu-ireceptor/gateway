@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
+use App\SequenceCount;
 
 class RestService extends Model
 {
@@ -202,15 +203,14 @@ class RestService extends Model
                 }
 
                 if ($count_sequences) {
-                    // do sequence count query and add them to the samples
-                    $sequence_count = self::sequence_count($rs->id, $sample_id_list);
+                    $sequence_counts = self::sequence_count_from_cache($rs->id, $sample_id_list);
 
                     foreach ($sample_list as $sample) {
-                        $sample->ir_sequence_count = $sequence_count[$sample->repertoire_id];
+                        $sample->ir_sequence_count = $sequence_counts[$sample->repertoire_id];
                     }
 
                     // if there was an error
-                    if ($sequence_count == null) {
+                    if ($sequence_counts == null) {
                         $response['sequence_count_error'] = true;
                     }
                 }
@@ -258,6 +258,32 @@ class RestService extends Model
 
         return $response_list_grouped;
     }
+
+    public static function sequence_count_from_cache($rest_service_id, $sample_id_list = []) {
+        $l = SequenceCount::where('rest_service_id', $rest_service_id)->orderBy('updated_at', 'desc')->take(1)->get();
+        
+        if(count($l) == 0) {
+            return NULL;
+        }
+
+        $all_sequence_counts = $l[0]->sequence_counts;
+        if (count($sample_id_list) == 0) {
+            return $all_sequence_counts;
+        }
+
+        $sequence_counts = [];
+        foreach ($sample_id_list as $sample_id) {
+            if(isset($all_sequence_counts[$sample_id])) {
+                $sequence_counts[$sample_id] = $all_sequence_counts[$sample_id];
+            }
+            else {
+                $sequence_counts[$sample_id] = NULL;
+            }
+        }
+
+        return $sequence_counts;
+    }
+
 
     public static function sequence_count($rest_service_id, $sample_id_list, $filters = [])
     {
