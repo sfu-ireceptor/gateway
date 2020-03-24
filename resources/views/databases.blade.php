@@ -50,7 +50,7 @@
 								@endif
 							</td>
 							<td>
-								<a href="/admin/samples/update-cache/{{ $rs->id }}">
+								<a href="/admin/samples/update-sequence_count/{{ $rs->id }}">
 									<button type="button" class="btn btn-default" aria-label="Edit">
 										<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
 										Refresh cached sequence counts

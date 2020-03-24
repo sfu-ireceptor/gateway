@@ -20,9 +20,9 @@ class Sample
         return CachedSample::metadata();
     }
 
-    public static function cache_sequence_counts($username)
+    public static function cache_sequence_counts($username, $rest_service_id = null)
     {
-        $response_list = RestService::samples([], $username, false);
+        $response_list = RestService::samples([], $username, false, $rest_service_id);
         foreach ($response_list as $i => $response) {
             $rest_service_id = $response['rs']->id;
             $sample_list = $response['data'];
@@ -34,7 +34,7 @@ class Sample
             $total_sequence_count = 0;
             foreach ($sample_list as $sample) {
                 $sample_id = $sample->repertoire_id;
-                $sequence_count_array = RestService::sequence_count($rest_service_id, [$sample_id]);
+                $sequence_count_array = RestService::sequence_count($rest_service_id, [$sample_id], [], true);
                 $sequence_count = $sequence_count_array[$sample_id];
                 $t['sequence_counts'][$sample_id] = $sequence_count;
                 $total_sequence_count += $sequence_count;
@@ -66,12 +66,12 @@ class Sample
         return $sample_id_list;
     }
 
-    public static function find($filters, $username, $count_sequences = true)
+    public static function find($filters, $username, $count_sequences = true, $rest_service_id = null)
     {
         $service_filters = $filters;
 
         // do requests
-        $response_list = RestService::samples($service_filters, $username, $count_sequences);
+        $response_list = RestService::samples($service_filters, $username, $count_sequences, $rest_service_id);
 
         // if error, update gateway query status
         $gw_query_log_id = request()->get('query_log_id');

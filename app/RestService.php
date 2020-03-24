@@ -160,8 +160,17 @@ class RestService extends Model
     }
 
     // do samples request to all enabled services
-    public static function samples($filters, $username = '', $count_sequences = true)
+    public static function samples($filters, $username = '', $count_sequences = true, $rest_service_id = null)
     {
+        $rest_service_list = [];
+        if($rest_service_id == null) {
+            $rest_service_list = self::findEnabled();
+        }
+        else {
+            $rs = self::find($rest_service_id);
+            $rest_service_list[] = $rs;
+        }
+
         // clean filters for services
         $filters = self::clean_filters($filters);
 
@@ -170,7 +179,7 @@ class RestService extends Model
 
         // prepare request parameters for all services
         $request_params_all = [];
-        foreach (self::findEnabled() as $rs) {
+        foreach ($rest_service_list as $rs) {
             $t = [];
             $t['url'] = $rs->url . 'repertoire';
             $t['params'] = $filters_json;
@@ -283,13 +292,13 @@ class RestService extends Model
         return $sequence_counts;
     }
 
-    public static function sequence_count($rest_service_id, $sample_id_list, $filters = [])
+    public static function sequence_count($rest_service_id, $sample_id_list, $filters = [], $no_cache = false)
     {
         // clean filters
         $filters = self::clean_filters($filters);
 
         // hack: use cached total counts if there are no sequence filters
-        if (count($filters) == 0) {
+        if (count($filters) == 0 && ! $no_cache) {
             return self::sequence_count_from_cache($rest_service_id, $sample_id_list);
         }
 

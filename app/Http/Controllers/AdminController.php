@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Agave;
 use App\CachedSample;
+use App\Sample;
 use App\FieldName;
 use App\LocalJob;
 use App\News;
@@ -305,11 +306,10 @@ class AdminController extends Controller
 
     public function getUpdateSequenceCount($rest_service_id)
     {
-        
         $username = auth()->user()->username;
-        $n = CachedSample::cache();
+        Sample::cache_sequence_counts($username, $rest_service_id);
 
-        $message = "$n samples have been retrieved and cached.";
+        $message = 'Sequence count caching of rest service ' . $rest_service_id . ' is done';
 
         return redirect('admin/databases')->with('notification', $message);
     }
