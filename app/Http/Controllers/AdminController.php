@@ -317,7 +317,7 @@ class AdminController extends Controller
         $localJobId = $lj->id;
         CountSequences::dispatch($username, $rest_service_id, $localJobId);
 
-        $message = 'Queued sequence count job for  ' . $rs->name;
+        $message = 'Sequence count job for  ' . $rs->name . ' has been queued';
 
         return redirect('admin/databases')->with('notification', $message);
     }
