@@ -163,10 +163,9 @@ class RestService extends Model
     public static function samples($filters, $username = '', $count_sequences = true, $rest_service_id = null)
     {
         $rest_service_list = [];
-        if($rest_service_id == null) {
+        if ($rest_service_id == null) {
             $rest_service_list = self::findEnabled();
-        }
-        else {
+        } else {
             $rs = self::find($rest_service_id);
             $rest_service_list[] = $rs;
         }
