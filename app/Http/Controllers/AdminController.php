@@ -5,17 +5,16 @@ namespace App\Http\Controllers;
 use App\Agave;
 use App\CachedSample;
 use App\FieldName;
+use App\Jobs\CountSequences;
 use App\LocalJob;
 use App\News;
 use App\QueryLog;
 use App\RestService;
-use App\Sample;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use App\Jobs\CountSequences;
 
 class AdminController extends Controller
 {
@@ -319,6 +318,7 @@ class AdminController extends Controller
         CountSequences::dispatch($username, $rest_service_id, $localJobId);
 
         $message = 'Queued sequence count job for  ' . $rs->name;
+
         return redirect('admin/databases')->with('notification', $message);
     }
 
