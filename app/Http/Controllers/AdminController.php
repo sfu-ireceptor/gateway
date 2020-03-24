@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use App\Jobs\CountSequences;
 
 class AdminController extends Controller
 {
@@ -306,11 +307,18 @@ class AdminController extends Controller
 
     public function getUpdateSequenceCount($rest_service_id)
     {
+        $rs = RestService::find($rest_service_id);
+
+        $lj = new LocalJob();
+        $lj->description = 'Sequence count for  ' . $rs->name;
+        $lj->save();
+
+        // queue as a job
         $username = auth()->user()->username;
-        Sample::cache_sequence_counts($username, $rest_service_id);
+        $localJobId = $lj->id;
+        CountSequences::dispatch($username, $rest_service_id, $localJobId);
 
-        $message = 'Sequence count caching of rest service ' . $rest_service_id . ' is done';
-
+        $message = 'Queued sequence count job for  ' . $rs->name;
         return redirect('admin/databases')->with('notification', $message);
     }
 
