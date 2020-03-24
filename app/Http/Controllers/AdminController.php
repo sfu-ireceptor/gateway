@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Agave;
 use App\CachedSample;
-use App\Sample;
 use App\FieldName;
 use App\LocalJob;
 use App\News;
 use App\QueryLog;
 use App\RestService;
+use App\Sample;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
