@@ -37,13 +37,13 @@ class CountSequences implements ShouldQueue
         $localJob->setRunning();
 
         try {
-			Sample::cache_sequence_counts($this->username, $this->rest_service_id);
-			$localJob->setFinished();
-		} catch (Exception $e) {
-		        Log::error($e->getMessage());
-		        Log::error($e);
+            Sample::cache_sequence_counts($this->username, $this->rest_service_id);
+            $localJob->setFinished();
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            Log::error($e);
 
-		        $localJob->setFailed();
-		    }
-		}
+            $localJob->setFailed();
+        }
+    }
 }
