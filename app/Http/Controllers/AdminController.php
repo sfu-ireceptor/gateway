@@ -307,17 +307,18 @@ class AdminController extends Controller
     public function getUpdateSequenceCount($rest_service_id)
     {
         $rs = RestService::find($rest_service_id);
+        $username = auth()->user()->username;
 
         $lj = new LocalJob();
+        $lj->user = $username;
         $lj->description = 'Sequence count for  ' . $rs->name;
         $lj->save();
 
         // queue as a job
-        $username = auth()->user()->username;
         $localJobId = $lj->id;
         CountSequences::dispatch($username, $rest_service_id, $localJobId);
 
-        $message = 'Sequence count job for  ' . $rs->name . ' has been queued';
+        $message = 'Sequence count job for  ' . $rs->name . ' has been <a href="/admin/queues">queued</a>';
 
         return redirect('admin/databases')->with('notification', $message);
     }
