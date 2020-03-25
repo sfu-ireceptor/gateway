@@ -105,7 +105,7 @@ class RestServiceSeeder extends Seeder
                 'version' => 2,
             ],
             [
-                'url' => 'http://adc-turnkey.ireceptor.org',
+                'url' => 'http://adc-turnkey.ireceptor.org/',
                 'name' => 'ADC turnkey',
                 'username' => '',
                 'password' => '',
