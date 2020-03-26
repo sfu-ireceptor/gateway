@@ -70,7 +70,7 @@
 					</button>
 				</a>
 			</p>
-
+			<p>Used by login/home pages (for the numbers and charts) and to populate search forms widgets.</p>
 		</div>
 	</div>
 </div>
