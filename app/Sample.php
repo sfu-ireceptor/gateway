@@ -38,6 +38,9 @@ class Sample
                 $sequence_count = $sequence_count_array[$sample_id];
                 $t['sequence_counts'][$sample_id] = $sequence_count;
                 $total_sequence_count += $sequence_count;
+
+                // HACK: to avoid hitting throttling limits
+                sleep(1);
             }
 
             SequenceCount::create($t);
