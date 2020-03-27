@@ -385,7 +385,7 @@ class RestService extends Model
             // keep only needed samples
             $sample_list = [];
             foreach ($sample_list_all as $sample) {
-                if(in_array($sample->repertoire_id, $sample_id_list)) {
+                if (in_array($sample->repertoire_id, $sample_id_list)) {
                     $sample_list[] = $sample;
                 }
             }
@@ -487,7 +487,7 @@ class RestService extends Model
                 }
             }
 
-            $service_filters['repertoire_id'] = array_slice($service_filters['ir_project_sample_id_list'], 0 , 20);
+            $service_filters['repertoire_id'] = array_slice($service_filters['ir_project_sample_id_list'], 0, 20);
             unset($service_filters['ir_project_sample_id_list']);
 
             // prepare parameters for each service
