@@ -374,17 +374,12 @@ class RestService extends Model
             }
 
             // retrieve list of samples
-            $sample_data = self::samples(['repertoire_id' => $sample_id_list]);
-            $sample_list = [];
-            foreach ($sample_data as $rs_data) {
-                if ($rs->id == $rs_data['rs']->id) {
-                    $sample_list = data_get($rs_data, 'data', []);
-                    $query_status = data_get($rs_data, 'status', 'success');
-                    if ($query_status == 'error') {
-                        $success = false;
-                    }
-                    break;
-                }
+            $sample_data = self::samples(['repertoire_id' => $sample_id_list], $username, true, $rs->id);
+            $rs_data = $sample_data[0];
+            $sample_list = data_get($rs_data, 'data', []);
+            $query_status = data_get($rs_data, 'status', 'success');
+            if ($query_status == 'error') {
+                $success = false;
             }
 
             // get filtered sequence count for each sample
