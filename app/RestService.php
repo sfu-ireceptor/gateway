@@ -487,16 +487,8 @@ class RestService extends Model
                 }
             }
 
-            // TODO simpler way to do this?
-            $service_filters['repertoire_id'] = $service_filters['ir_project_sample_id_list'];
+            $service_filters['repertoire_id'] = array_slice($service_filters['ir_project_sample_id_list'], 0 , 20);
             unset($service_filters['ir_project_sample_id_list']);
-
-            // $sample_id_list = $service_filters['repertoire_id'];
-            // unset($service_filters['repertoire_id']);
-            // $c = self::sequence_count($rs->id, $sample_id_list, $service_filters);
-            // dd($c);
-            // // die();
-            // // dd($filters);
 
             // prepare parameters for each service
             $t = [];
