@@ -291,6 +291,84 @@ class RestService extends Model
         return $sequence_counts;
     }
 
+
+    // $rest_service_list: list of rest services
+    // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
+    public static function sequence_count2($rest_service_list, $sample_id_list_by_rs, $filters = [], $no_cache = false)
+    {
+        // clean filters
+        $filters = self::clean_filters($filters);
+
+        // // hack: use cached total counts if there are no sequence filters
+        // if (count($filters) == 0 && ! $no_cache) {
+        //     return self::sequence_count_from_cache($rest_service_id, $sample_id_list);
+        // }
+
+        // prepare request parameters for each service
+        $request_params = [];
+        foreach ($rest_service_list as $rs) {
+            $service_filters = $filters;
+
+            $sample_id_list = $sample_id_list_by_rs[$rs->id];
+
+            // force all sample ids to string
+            foreach ($sample_id_list as $k => $v) {
+                $sample_id_list[$k] = (string) $v;
+            }
+
+            // generate JSON query
+            $service_filters['repertoire_id'] = $sample_id_list;
+
+            $query_parameters = [];
+            $query_parameters['facets'] = 'repertoire_id';
+
+            $filters_json = self::generate_json_query($service_filters, $query_parameters);
+
+            // prepare parameters for each service
+            $t = [];
+
+            $t['rs'] = $rs;
+            $t['url'] = $rs->url . 'rearrangement';
+
+            $t['params'] = $filters_json;
+            $t['timeout'] = config('ireceptor.service_request_timeout');
+
+            $request_params[] = $t;
+        }
+
+        // do requests
+        $response_list = self::doRequests($request_params);
+
+        // build list of sequence count for each sample grouped by repository id 
+        $counts_by_rs = [];
+        foreach ($response_list as $response) {
+            $rest_service_id = $response['rs']->id;
+
+            if($response['status'] == 'error') {
+                $counts_by_rs[$rest_service_id] = null;
+                continue;
+            }
+
+            $facet_list = data_get($response, 'data.Facet', []);
+            $sequence_count = [];
+            foreach ($facet_list as $facet) {
+                $sequence_count[$facet->repertoire_id] = $facet->count;
+            }
+  
+             // TODO might not be needed because of IR-1484
+            // add count = 0
+            foreach ($sample_id_list_by_rs[$rest_service_id] as $sample_id) {
+                if (! isset($sequence_count[$sample_id])) {
+                    $sequence_count[$sample_id] = 0;
+                }
+            }
+
+            $counts_by_rs[$rest_service_id] = $sequence_count;
+        }
+
+        return $counts_by_rs;
+    }
+    
     public static function sequence_count($rest_service_id, $sample_id_list, $filters = [], $no_cache = false)
     {
         // clean filters
@@ -348,9 +426,42 @@ class RestService extends Model
         return $sequence_count;
     }
 
-    // send "/sequences_summary" request to all enabled services
     public static function sequences_summary($filters, $username = '', $group_by_rest_service = true)
     {
+        // get all samples from all repositories
+        // (so we don't send the full list of samples ids,
+        // because VDJServer can't handle it)
+        $response_list_all = self::samples([], $username, true);
+
+
+        // filter repositories responses to only requested samples
+        $response_list_requested = [];
+        foreach ($response_list_all as $response) {
+            $rs = $response['rs'];
+
+            // build requested list of sample ids for this repository
+            $sample_id_list = [];
+            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+            if (isset($filters[$sample_id_list_key])) {
+                $sample_id_list = $filters[$sample_id_list_key];
+            } else {
+                // if no sample id requested for this service, skip it
+                continue;
+            }
+
+            // filter samples
+            $sample_list_requested = [];
+            foreach ($response['data'] as $sample) {
+                if (in_array($sample->repertoire_id, $sample_id_list)) {
+                    $sample_list_requested[] = $sample;
+                }
+            }
+
+            // update repository response
+            $response['data'] = $sample_list_requested;
+            $response_list_requested[] = $response;
+        }
+
         // build list of sequence filters only (remove sample id filters)
         $sequence_filters = $filters;
         unset($sequence_filters['project_id_list']);
@@ -359,63 +470,47 @@ class RestService extends Model
             unset($sequence_filters[$sample_id_list_key]);
         }
 
-        // query each service one by one
-        $response_list = [];
-        foreach (self::findEnabled() as $rs) {
-            $success = true;
-            $sample_id_list = [];
+        // build list of repositories to query
+        // with their list of samples ids to query
+        $rs_to_query = [];
+        $sample_id_list_by_rs = [];
+        foreach ($response_list_requested as $response) {
+            $rs_to_query[] = $response['rs'];
 
-            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-            if (isset($filters[$sample_id_list_key])) {
-                $sample_id_list = $filters[$sample_id_list_key];
-            } else {
-                // if no sample id for this service, don't query it.
-                continue;
+            $sample_id_list_requested = [];
+            foreach ($response['data'] as $sample) {
+                $sample_id_list_requested[] = $sample->repertoire_id;
             }
 
-            // retrieve all samples
-            $sample_data = self::samples([], $username, true, $rs->id);
-            $rs_data = $sample_data[0];
-            $sample_list_all = data_get($rs_data, 'data', []);
-            $query_status = data_get($rs_data, 'status', 'success');
-            if ($query_status == 'error') {
-                $success = false;
-            }
+            $sample_id_list_by_rs[$response['rs']->id] = $sample_id_list_requested;
+        }
 
-            // keep only needed samples
-            $sample_list = [];
-            foreach ($sample_list_all as $sample) {
-                if (in_array($sample->repertoire_id, $sample_id_list)) {
-                    $sample_list[] = $sample;
-                }
-            }
+        // count sequences for each requested sample
+        $counts_by_rs = self::sequence_count2($rs_to_query, $sample_id_list_by_rs, $sequence_filters);
 
-            // get filtered sequence count for each sample
-            $sample_list_filtered_count = self::sequence_count($rs->id, $sample_id_list, $sequence_filters);
-
-            foreach ($sample_list as $sample) {
-                $sample_id = $sample->repertoire_id;
-                $sample->ir_filtered_sequence_count = $sample_list_filtered_count[$sample_id];
-            }
+        // add sequences count to samples
+        $response_list_filtered = [];
+        foreach ($response_list_requested as $response) {
+            $rs = $response['rs'];
 
             $sample_list_filtered = [];
-            foreach ($sample_list as $sample) {
-                if ($sample->ir_filtered_sequence_count > 0) {
+            foreach ($response['data'] as $sample) {
+                $sample_count = $counts_by_rs[$rs->id][$sample->repertoire_id];
+                // include sample only if it has sequences matching the query
+                if ($sample_count > 0) {
+                    $sample->ir_filtered_sequence_count = $sample_count;
                     $sample_list_filtered[] = $sample;
                 }
             }
 
-            $t = [];
-            $t['rs'] = $rs;
-            $t['data'] = $sample_list_filtered;
-            if ($success) {
-                $t['status'] = 'success';
-            } else {
-                $t['status'] = 'error';
-                $t['error_type'] = 'service';
+            // include repository only if it has samples with sequences matching the query
+            if(count($sample_list_filtered) > 0) {
+                $response['data'] = $sample_list_filtered;
+                $response_list_filtered[] = $response;
             }
-            $response_list[] = $t;
         }
+
+        $response_list = $response_list_filtered;
 
         if ($group_by_rest_service) {
             // merge service responses belonging to the same group
