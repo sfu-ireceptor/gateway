@@ -9,7 +9,7 @@ use Tests\TestCase;
 class SampleTest extends TestCase
 {
     protected static $repertoire_data = [];
-    
+
     private $rs = [
         'id' => 1,
         'name' => 'Fake Rest Service',
