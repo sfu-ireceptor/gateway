@@ -297,10 +297,15 @@ class RestService extends Model
         // clean filters
         $filters = self::clean_filters($filters);
 
-        // // hack: use cached total counts if there are no sequence filters
-        // if (count($filters) == 0 && ! $no_cache) {
-        //     return self::sequence_count_from_cache($rest_service_id, $sample_id_list);
-        // }
+        // hack: use cached total counts if there are no sequence filters
+        if (count($filters) == 0 && ! $no_cache) {
+            $counts_by_rs = [];
+            foreach ($sample_id_list_by_rs as $rs_id => $sample_id_list) {
+                $sequence_count = self::sequence_count_from_cache($rs_id, $sample_id_list);
+                $counts_by_rs[$rs_id] = $sequence_count;
+            }
+            return $counts_by_rs;
+        }
 
         // prepare request parameters for each service
         $request_params = [];
