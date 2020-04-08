@@ -292,13 +292,13 @@ class RestService extends Model
     }
 
     // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
-    public static function sequence_count2($sample_id_list_by_rs, $filters = [], $no_cache = false)
+    public static function sequence_count2($sample_id_list_by_rs, $filters = [])
     {
         // clean filters
         $filters = self::clean_filters($filters);
 
         // hack: use cached total counts if there are no sequence filters
-        if (count($filters) == 0 && ! $no_cache) {
+        if (count($filters) == 0) {
             $counts_by_rs = [];
             foreach ($sample_id_list_by_rs as $rs_id => $sample_id_list) {
                 $sequence_count = self::sequence_count_from_cache($rs_id, $sample_id_list);
