@@ -87,14 +87,14 @@ class RestServiceSeeder extends Seeder
                 'username' => '',
                 'password' => '',
             ],
-            [
-                'url' => 'http://adc-turnkey.ireceptor.org/',
-                'name' => 'ADC turnkey',
+           [
+                'url' => 'http://airr-gold.ireceptor.org/airr/v1/',
+                'name' => 'AIRR Gold',
                 'username' => '',
                 'password' => '',
-                'version' => 2,
             ],
-        ];
+
+         ];
 
         foreach ($l as $t) {
             RestService::firstOrCreate(['url' => $t['url']], $t);
