@@ -292,9 +292,8 @@ class RestService extends Model
     }
 
 
-    // $rest_service_list: list of rest services
     // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
-    public static function sequence_count2($rest_service_list, $sample_id_list_by_rs, $filters = [], $no_cache = false)
+    public static function sequence_count2($sample_id_list_by_rs, $filters = [], $no_cache = false)
     {
         // clean filters
         $filters = self::clean_filters($filters);
@@ -306,10 +305,9 @@ class RestService extends Model
 
         // prepare request parameters for each service
         $request_params = [];
-        foreach ($rest_service_list as $rs) {
-            $service_filters = $filters;
 
-            $sample_id_list = $sample_id_list_by_rs[$rs->id];
+        foreach ($sample_id_list_by_rs as $rs_id => $sample_id_list) {
+            $service_filters = $filters;
 
             // force all sample ids to string
             foreach ($sample_id_list as $k => $v) {
@@ -327,6 +325,7 @@ class RestService extends Model
             // prepare parameters for each service
             $t = [];
 
+            $rs = $rs = self::find($rs_id);
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'rearrangement';
 
@@ -470,13 +469,9 @@ class RestService extends Model
             unset($sequence_filters[$sample_id_list_key]);
         }
 
-        // build list of repositories to query
-        // with their list of samples ids to query
-        $rs_to_query = [];
+        // build list of samples ids to query for each repository
         $sample_id_list_by_rs = [];
         foreach ($response_list_requested as $response) {
-            $rs_to_query[] = $response['rs'];
-
             $sample_id_list_requested = [];
             foreach ($response['data'] as $sample) {
                 $sample_id_list_requested[] = $sample->repertoire_id;
@@ -486,7 +481,7 @@ class RestService extends Model
         }
 
         // count sequences for each requested sample
-        $counts_by_rs = self::sequence_count2($rs_to_query, $sample_id_list_by_rs, $sequence_filters);
+        $counts_by_rs = self::sequence_count2($sample_id_list_by_rs, $sequence_filters);
 
         // add sequences count to samples
         $response_list_filtered = [];
