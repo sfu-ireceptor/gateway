@@ -291,7 +291,6 @@ class RestService extends Model
         return $sequence_counts;
     }
 
-
     // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
     public static function sequence_count2($sample_id_list_by_rs, $filters = [], $no_cache = false)
     {
@@ -338,12 +337,12 @@ class RestService extends Model
         // do requests
         $response_list = self::doRequests($request_params);
 
-        // build list of sequence count for each sample grouped by repository id 
+        // build list of sequence count for each sample grouped by repository id
         $counts_by_rs = [];
         foreach ($response_list as $response) {
             $rest_service_id = $response['rs']->id;
 
-            if($response['status'] == 'error') {
+            if ($response['status'] == 'error') {
                 $counts_by_rs[$rest_service_id] = null;
                 continue;
             }
@@ -353,8 +352,8 @@ class RestService extends Model
             foreach ($facet_list as $facet) {
                 $sequence_count[$facet->repertoire_id] = $facet->count;
             }
-  
-             // TODO might not be needed because of IR-1484
+
+            // TODO might not be needed because of IR-1484
             // add count = 0
             foreach ($sample_id_list_by_rs[$rest_service_id] as $sample_id) {
                 if (! isset($sequence_count[$sample_id])) {
@@ -367,7 +366,7 @@ class RestService extends Model
 
         return $counts_by_rs;
     }
-    
+
     public static function sequence_count($rest_service_id, $sample_id_list, $filters = [], $no_cache = false)
     {
         // clean filters
@@ -431,7 +430,6 @@ class RestService extends Model
         // (so we don't send the full list of samples ids,
         // because VDJServer can't handle it)
         $response_list_all = self::samples([], $username, true);
-
 
         // filter repositories responses to only requested samples
         $response_list_requested = [];
@@ -499,7 +497,7 @@ class RestService extends Model
             }
 
             // include repository only if it has samples with sequences matching the query
-            if(count($sample_list_filtered) > 0) {
+            if (count($sample_list_filtered) > 0) {
                 $response['data'] = $sample_list_filtered;
                 $response_list_filtered[] = $response;
             }
