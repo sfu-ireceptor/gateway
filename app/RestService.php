@@ -304,6 +304,7 @@ class RestService extends Model
                 $sequence_count = self::sequence_count_from_cache($rs_id, $sample_id_list);
                 $counts_by_rs[$rs_id] = $sequence_count;
             }
+
             return $counts_by_rs;
         }
 
