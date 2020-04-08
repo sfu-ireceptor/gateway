@@ -292,13 +292,13 @@ class RestService extends Model
     }
 
     // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
-    public static function sequence_count2($sample_id_list_by_rs, $filters = [])
+    public static function sequence_count($sample_id_list_by_rs, $filters = [], $use_cache_if_possible = true)
     {
         // clean filters
         $filters = self::clean_filters($filters);
 
         // hack: use cached total counts if there are no sequence filters
-        if (count($filters) == 0) {
+        if (count($filters) == 0 && $use_cache_if_possible) {
             $counts_by_rs = [];
             foreach ($sample_id_list_by_rs as $rs_id => $sample_id_list) {
                 $sequence_count = self::sequence_count_from_cache($rs_id, $sample_id_list);
@@ -372,63 +372,6 @@ class RestService extends Model
         return $counts_by_rs;
     }
 
-    public static function sequence_count($rest_service_id, $sample_id_list, $filters = [], $no_cache = false)
-    {
-        // clean filters
-        $filters = self::clean_filters($filters);
-
-        // hack: use cached total counts if there are no sequence filters
-        if (count($filters) == 0 && ! $no_cache) {
-            return self::sequence_count_from_cache($rest_service_id, $sample_id_list);
-        }
-
-        // force all sample ids to string
-        foreach ($sample_id_list as $k => $v) {
-            $sample_id_list[$k] = (string) $v;
-        }
-
-        // generate JSON query
-        $filters['repertoire_id'] = $sample_id_list;
-
-        $query_parameters = [];
-        $query_parameters['facets'] = 'repertoire_id';
-
-        $filters_json = self::generate_json_query($filters, $query_parameters);
-
-        // prepare parameters array
-        $t = [];
-        $rs = self::find($rest_service_id);
-        $t['url'] = $rs->url . 'rearrangement';
-        $t['params'] = $filters_json;
-        $t['rs'] = $rs;
-        $t['timeout'] = config('ireceptor.service_request_timeout');
-
-        // do request
-        $response_list = self::doRequests([$t]);
-
-        // if error, return null
-        if ($response_list[0]['status'] == 'error') {
-            return;
-        }
-
-        $facet_list = data_get($response_list, '0.data.Facet', []);
-
-        $sequence_count = [];
-        foreach ($facet_list as $facet) {
-            $sequence_count[$facet->repertoire_id] = $facet->count;
-        }
-
-        // TODO might not be needed because of IR-1484
-        // add count = 0
-        foreach ($sample_id_list as $sample_id) {
-            if (! isset($sequence_count[$sample_id])) {
-                $sequence_count[$sample_id] = 0;
-            }
-        }
-
-        return $sequence_count;
-    }
-
     public static function sequences_summary($filters, $username = '', $group_by_rest_service = true)
     {
         // get all samples from all repositories
@@ -484,7 +427,7 @@ class RestService extends Model
         }
 
         // count sequences for each requested sample
-        $counts_by_rs = self::sequence_count2($sample_id_list_by_rs, $sequence_filters);
+        $counts_by_rs = self::sequence_count($sample_id_list_by_rs, $sequence_filters);
 
         // add sequences count to samples
         $response_list_filtered = [];
