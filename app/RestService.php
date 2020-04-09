@@ -103,7 +103,7 @@ class RestService extends Model
             } elseif ($field_type == 'number') {
                 $filter->op = '=';
                 $v = (float) $v;
-            } elseif ($k == 'subject.sex' || $k == 'v_call' || $k == 'j_call' || $k == 'd_call' || $k == 'v_gene' || $k == 'j_gene' || $k == 'd_gene' || $k == 'v_family' || $k == 'j_family' || $k == 'd_family') {
+            } elseif ($k == 'subject.sex' || $k == 'v_call' || $k == 'j_call' || $k == 'd_call' || $k == 'v_gene' || $k == 'j_gene' || $k == 'd_gene' || $k == 'v_subgroup' || $k == 'j_subgroup' || $k == 'd_subgroup') {
                 $filter->op = '=';
             }
 
@@ -160,7 +160,7 @@ class RestService extends Model
                 } elseif (str_contains($v, '-')) {
                     $filters[$t . '_gene'] = $v;
                 } else {
-                    $filters[$t . '_family'] = $v;
+                    $filters[$t . '_subgroup'] = $v;
                 }
             }
         }
