@@ -149,6 +149,24 @@ class RestService extends Model
             }
         }
 
+        // convert VDJ filters
+        foreach (['v', 'd', 'j'] as $t) {
+            if(isset($filters[$t . '_call'])) {
+                $v = $filters[$t . '_call'];
+                unset($filters[$t . '_call']);
+                
+                if (str_contains($v, '*')) {
+                    $filters[$t . '_call'] = $v;
+                }
+                else if (str_contains($v, '-')) {
+                    $filters[$t . '_gene'] = $v;
+                }
+                else {
+                    $filters[$t . '_family'] = $v;
+                }
+            }
+        }
+
         // remove gateway-specific filters
         unset($filters['cols']);
         unset($filters['open_filter_panel_list']);
