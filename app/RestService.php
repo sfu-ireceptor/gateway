@@ -103,7 +103,7 @@ class RestService extends Model
             } elseif ($field_type == 'number') {
                 $filter->op = '=';
                 $v = (float) $v;
-            } elseif ($k == 'subject.sex' || $k == 'v_call' || $k == 'j_call' || $k == 'd_call') {
+            } elseif ($k == 'subject.sex' || $k == 'v_call' || $k == 'j_call' || $k == 'd_call' || $k == 'v_gene' || $k == 'j_gene' || $k == 'd_gene' || $k == 'v_family' || $k == 'j_family' || $k == 'd_family') {
                 $filter->op = '=';
             }
 
