@@ -45,6 +45,14 @@ class SampleController extends Controller
             return redirect('samples?query_id=' . $new_query_id);
         }
 
+        // if there's a "page" parameter, generate new query_id and redirect to it
+        if ($request->has('page')) {
+            $filters = Query::getParams($request->input('query_id'));
+            $filters['page'] = $request->input('page');
+            $new_query_id = Query::saveParams($filters, 'samples');
+            return redirect('samples?query_id=' . $new_query_id);
+        }
+
         $username = auth()->user()->username;
 
         /*************************************************
@@ -133,6 +141,13 @@ class SampleController extends Controller
 
         $data['sample_query_id'] = $query_id;
 
+        // get page parameter
+        $page = 1;
+        if(isset($params['page'])) {
+            $page = $params['page'];
+            unset($params['page']);
+        }
+
         /*************************************************
         * get filtered sample list and related statistics */
 
@@ -146,7 +161,31 @@ class SampleController extends Controller
             $query_log->save();
         }
 
-        $data['sample_list'] = $sample_data['items'];
+        // TODO put in config
+        $max_per_page = 10;
+
+        $nb_samples = count($sample_data['items']);
+
+        // nb of pages
+        $nb_pages = (int)ceil($nb_samples/$max_per_page);
+        // dd($nb_pages);
+
+        // current page
+
+        // TODO check page is valid
+
+        $sample_list = $sample_data['items'];
+        // dd(count($sample_data['items']));
+
+        // TODO sort sample list
+
+        $sample_list = array_slice($sample_list, ($page - 1) * $max_per_page, $max_per_page);
+        // dd(count($sample_list));
+
+        $data['sample_list'] = $sample_list;
+        $data['nb_samples'] = $nb_samples;
+        $data['nb_pages'] = $nb_pages;
+        $data['page'] = $page;
         $data['rest_service_list'] = $sample_data['rs_list'];
         $data['sample_list_json'] = json_encode($sample_data['items']);
 

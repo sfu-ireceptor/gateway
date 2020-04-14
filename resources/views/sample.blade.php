@@ -430,6 +430,25 @@
 
 					<input type="hidden" name="project_id_list" />
 					<input type="hidden" name="sample_query_id" value="{{ $sample_query_id }}" />
+					<p>
+						<nav aria-label="Individual Repertoires">
+							<ul class="pagination">
+								@for ($i = 1; $i <= $nb_pages; $i++)
+									@if ($i == $page)
+										<li class="active">
+											<span>{{ $i }} <span class="sr-only">(current)</span></span>
+									    </li>										
+									@else
+									<li>
+										<a href="/samples?query_id={{$sample_query_id}}&amp;page={{ $i }}">
+											{{ $i }}
+										</a>
+									</li>
+									@endif
+								@endfor
+							</ul>
+						</nav>
+					</p>
 					<p class="pull-right">
 					{{ Form::submit('Browse sequences from selected repertoires →', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
 					</p>

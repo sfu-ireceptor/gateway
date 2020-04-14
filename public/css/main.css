@@ -1256,3 +1256,14 @@ form.column_selector {
 }
 
 /* @end */
+
+/* @group pagination */
+
+.pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    color: #000;
+    background-color: #ddd;
+    border-color: #ddd;
+	font-weight: bold;
+}
+
+/* @end */
