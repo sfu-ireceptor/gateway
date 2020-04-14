@@ -50,6 +50,7 @@ class SampleController extends Controller
             $filters = Query::getParams($request->input('query_id'));
             $filters['page'] = $request->input('page');
             $new_query_id = Query::saveParams($filters, 'samples');
+
             return redirect('samples?query_id=' . $new_query_id);
         }
 
@@ -143,7 +144,7 @@ class SampleController extends Controller
 
         // get page parameter
         $page = 1;
-        if(isset($params['page'])) {
+        if (isset($params['page'])) {
             $page = $params['page'];
             unset($params['page']);
         }
@@ -167,7 +168,7 @@ class SampleController extends Controller
         $nb_samples = count($sample_data['items']);
 
         // nb of pages
-        $nb_pages = (int)ceil($nb_samples/$max_per_page);
+        $nb_pages = (int) ceil($nb_samples / $max_per_page);
         // dd($nb_pages);
 
         // current page
