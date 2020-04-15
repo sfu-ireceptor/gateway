@@ -21,6 +21,7 @@ class SampleController extends Controller
 
     public function index(Request $request)
     {
+        $username = auth()->user()->username;
 
         // if "remove one filter" request, generate new query_id and redirect to it
         if ($request->has('remove_filter')) {
@@ -54,7 +55,30 @@ class SampleController extends Controller
             return redirect('samples?query_id=' . $new_query_id);
         }
 
-        $username = auth()->user()->username;
+        // if there's a "browse_sequences" parameter, redirect to appropriate sequences URL
+        if ($request->has('browse_sequences')) {
+            $samples_query_id = $request->input('query_id');
+            $samples_filters = Query::getParams($samples_query_id);
+            if(isset($samples_filters['page'])) {
+                unset($samples_filters['page']);
+            }
+            $sample_data = Sample::find($samples_filters, $username);
+
+            $sequence_filters = [];
+            $sequence_filters['sample_query_id'] = $samples_query_id;
+            foreach ($sample_data['items'] as $sample) {
+                $rs_id = $sample->rest_service_id;
+                $rs_param = 'ir_project_sample_id_list_' . $rs_id;
+                if( ! isset($sequence_filters[$rs_param])) {
+                    $sequence_filters[$rs_param] = [];
+                }
+                $sequence_filters[$rs_param][] = $sample->repertoire_id;
+            }
+
+            $sequences_query_id = Query::saveParams($sequence_filters, 'sequences');
+
+            return redirect('sequences?query_id=' . $sequences_query_id);
+        }
 
         /*************************************************
         * prepare form data */
