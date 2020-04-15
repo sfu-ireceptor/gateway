@@ -145,7 +145,7 @@ class SampleController extends Controller
         // get page parameter
         $page = 1;
         if (isset($params['page'])) {
-            $page = $params['page'];
+            $page = (int)$params['page'];
             unset($params['page']);
         }
 
@@ -171,7 +171,15 @@ class SampleController extends Controller
         $nb_pages = (int) ceil($nb_samples / $max_per_page);
         // dd($nb_pages);
 
-        // current page
+        // adjust current page number if necessary
+        if($page < 1) {
+            $page = 1;
+        }
+        if($page > $nb_pages) {
+            $page = $nb_pages;
+        }
+
+
 
         // TODO check page is valid
 
