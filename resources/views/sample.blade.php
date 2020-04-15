@@ -285,9 +285,7 @@
 					</div>
 				@endif
 
-
 				@if (! empty($sample_list))
-
 				<!-- table column selector -->
 				<div class="collapse" id="column_selector">
 					<div class="panel panel-default">
@@ -316,143 +314,144 @@
 					</div>
 				</div>
 
-				{{ Form::open(array('url' => 'sequences', 'role' => 'form', 'method' => 'post', 'class' => 'sample_form show_loading_message')) }}
 
-					<h3>Individual Repertoires</h3>
-					<p class="table_info">
-						<span class="nb_selected_samples">{{ count($sample_list) }}</span> repertoires selected
-						<a class="unselect_all_samples" href="#">Unselect All</a>
-						<a class="select_all_samples" href="#">Select All</a>
-
-						{{ Form::submit('Browse sequences from selected repertoires →', array('class' => 'btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load', 'disabled' => 'disabled')) }}
+				<h3>Individual Repertoires</h3>
+				<p class="table_info">
+					<span class="nb_selected_samples">{{ count($sample_list) }}</span> repertoires selected
+					<a class="unselect_all_samples" href="#">Unselect All</a>
+					<a class="select_all_samples" href="#">Select All</a>
 					
-						<a href="/samples/tsv?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as TSV">
-							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-							<span class="text">TSV</span>
-						</a>
+					<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/samples?query_id={{$sample_query_id}}&amp;browse_sequences=true">
+						Browse sequences from these repertoires →
+					</a>
+				
+					<a href="/samples/tsv?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as TSV">
+						<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+						<span class="text">TSV</span>
+					</a>
 
-						<a href="/samples/json?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as JSON">
-							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-							<span class="text">JSON</span>
-						</a>
-					</p>
-					
-					<!-- sample data -->
-					<table class="table table-striped sample_list table-condensed much_data table-bordered">
-						<thead> 
-							<tr>
-								<th class="checkbox_cell">
-									<a class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
-									  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-									</a>
+					<a href="/samples/json?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as JSON">
+						<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+						<span class="text">JSON</span>
+					</a>
+				</p>
+				
+				<!-- sample data -->
+				<table class="table table-striped sample_list table-condensed much_data table-bordered">
+					<thead> 
+						<tr>
+							<th class="checkbox_cell">
+								<a class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
+								  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+								</a>
+							</th>
+
+							@foreach ($field_list as $field)
+								<th class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
+									@lang('short.' . $field['ir_id'])
+									@include('help', ['id' => $field['ir_id']])
 								</th>
+							@endforeach
+						</tr>
+					</thead>
+					<tbody>
+						@foreach ($sample_list as $sample)
+						<tr>
+							<td class="checkbox_cell">
+							</td>
 
-								@foreach ($field_list as $field)
-									<th class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
-										@lang('short.' . $field['ir_id'])
-										@include('help', ['id' => $field['ir_id']])
-									</th>
-								@endforeach
-							</tr>
-						</thead>
-						<tbody>
-							@foreach ($sample_list as $sample)
-							<tr>
-								<td class="checkbox_cell">
-									<input type="checkbox" name="{{ 'ir_project_sample_id_list_' . $sample->real_rest_service_id . '[]' }}" value="{{ $sample->repertoire_id }}" checked="checked" autocomplete="off"/>
-								</td>
-
-								@foreach ($field_list as $field)
-									<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
-										@isset($sample->{$field['ir_id']})
-											@if($field['ir_id'] == 'ir_sequence_count')
-												@if ($sample->ir_sequence_count > 0)
-													<a href="sequences?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
-														<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
-													</a>
-												@endif
-											@elseif($field['ir_id'] == 'study_id')
-												@isset($sample->ncbi_url)
-													<a href="{{ $sample->ncbi_url }}" title="{{ $sample->ncbi_url }}" target="_blank">
-														{{ str_limit($sample->study_id, $limit = 20, $end = '‥') }}
-													</a>
+							@foreach ($field_list as $field)
+								<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
+									@isset($sample->{$field['ir_id']})
+										@if($field['ir_id'] == 'ir_sequence_count')
+											@if ($sample->ir_sequence_count > 0)
+												<a href="sequences?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
+													<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
+												</a>
+											@endif
+										@elseif($field['ir_id'] == 'study_id')
+											@isset($sample->ncbi_url)
+												<a href="{{ $sample->ncbi_url }}" title="{{ $sample->ncbi_url }}" target="_blank">
+													{{ str_limit($sample->study_id, $limit = 20, $end = '‥') }}
+												</a>
+											@else
+												<span title="{{ $sample->{$field['ir_id']} }}">
+													{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+												</span>						
+											@endisset
+										@elseif($field['ir_id'] == 'study_title')
+											@isset($sample->study_url)
+												<a href="{{ $sample->study_url }}" title="{{ $sample->study_title }}" target="_blank">
+													{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
+												</a>
+											@else
+												<span title="{{ $sample->study_title }}">
+													{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
+												</span>							
+											@endisset
+										@elseif($field['ir_id'] == 'pub_ids')
+											@isset($sample->study_url)
+												<a href="{{ $sample->study_url }}" title="{{ $sample->study_url }}" target="_blank">
+													{{ str_limit(remove_url_prefix($sample->study_url), $limit = 25, $end = '‥') }}
+												</a>
+											@else
+												<span title="{{ $sample->{$field['ir_id']} }}">
+													{{ $sample->{$field['ir_id']} }}
+												</span>							
+											@endisset
+										@else
+											@if (is_bool($sample->{$field['ir_id']}))
+												{{ $sample->{$field['ir_id']} ? 'Yes' : 'No' }}
+											@else
+												@if (is_object($sample->{$field['ir_id']}))
+													<span title="{{ json_encode($sample->{$field['ir_id']}) }}">
+														{{ str_limit(json_encode($sample->{$field['ir_id']}), $limit = 20, $end = '‥') }}									
+													</span>			
+												@elseif (is_array($sample->{$field['ir_id']}))
+													<span title="{{ implode(', ', $sample->{$field['ir_id']}) }}">
+														{{ str_limit(implode(', ', $sample->{$field['ir_id']}), $limit = 25, $end = '‥') }}									
+													</span>			
 												@else
 													<span title="{{ $sample->{$field['ir_id']} }}">
 														{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
-													</span>						
-												@endisset
-											@elseif($field['ir_id'] == 'study_title')
-												@isset($sample->study_url)
-													<a href="{{ $sample->study_url }}" title="{{ $sample->study_title }}" target="_blank">
-														{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
-													</a>
-												@else
-													<span title="{{ $sample->study_title }}">
-														{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
-													</span>							
-												@endisset
-											@elseif($field['ir_id'] == 'pub_ids')
-												@isset($sample->study_url)
-													<a href="{{ $sample->study_url }}" title="{{ $sample->study_url }}" target="_blank">
-														{{ str_limit(remove_url_prefix($sample->study_url), $limit = 25, $end = '‥') }}
-													</a>
-												@else
-													<span title="{{ $sample->{$field['ir_id']} }}">
-														{{ $sample->{$field['ir_id']} }}
-													</span>							
-												@endisset
-											@else
-												@if (is_bool($sample->{$field['ir_id']}))
-													{{ $sample->{$field['ir_id']} ? 'Yes' : 'No' }}
-												@else
-													@if (is_object($sample->{$field['ir_id']}))
-														<span title="{{ json_encode($sample->{$field['ir_id']}) }}">
-															{{ str_limit(json_encode($sample->{$field['ir_id']}), $limit = 20, $end = '‥') }}									
-														</span>			
-													@elseif (is_array($sample->{$field['ir_id']}))
-														<span title="{{ implode(', ', $sample->{$field['ir_id']}) }}">
-															{{ str_limit(implode(', ', $sample->{$field['ir_id']}), $limit = 25, $end = '‥') }}									
-														</span>			
-													@else
-														<span title="{{ $sample->{$field['ir_id']} }}">
-															{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
-														</span>
-													@endif
+													</span>
 												@endif
-										@endif
-										@endif
-									</td>
-								@endforeach
-							</tr>
-							@endforeach
-						</tbody>
-					</table>
-
-					<input type="hidden" name="project_id_list" />
-					<input type="hidden" name="sample_query_id" value="{{ $sample_query_id }}" />
-					<p>
-						<nav aria-label="Individual Repertoires">
-							<ul class="pagination">
-								@for ($i = 1; $i <= $nb_pages; $i++)
-									@if ($i == $page)
-										<li class="active">
-											<span>{{ $i }} <span class="sr-only">(current)</span></span>
-									    </li>										
-									@else
-									<li>
-										<a href="/samples?query_id={{$sample_query_id}}&amp;page={{ $i }}">
-											{{ $i }}
-										</a>
-									</li>
+											@endif
 									@endif
-								@endfor
-							</ul>
-						</nav>
-					</p>
-					<p class="pull-right">
-					{{ Form::submit('Browse sequences from selected repertoires →', array('class' => 'btn btn-primary browse-seq-data-button', 'disabled' => 'disabled')) }}
-					</p>
-				{{ Form::close() }}
+									@endif
+								</td>
+							@endforeach
+						</tr>
+						@endforeach
+					</tbody>
+				</table>
+
+				<input type="hidden" name="project_id_list" />
+				<input type="hidden" name="sample_query_id" value="{{ $sample_query_id }}" />
+				<p>
+					<nav aria-label="Individual Repertoires">
+						<ul class="pagination">
+							@for ($i = 1; $i <= $nb_pages; $i++)
+								@if ($i == $page)
+									<li class="active">
+										<span>{{ $i }} <span class="sr-only">(current)</span></span>
+								    </li>										
+								@else
+								<li>
+									<a href="/samples?query_id={{$sample_query_id}}&amp;page={{ $i }}">
+										{{ $i }}
+									</a>
+								</li>
+								@endif
+							@endfor
+						</ul>
+					</nav>
+				</p>
+				<p class="pull-right">
+					<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/samples?query_id={{$sample_query_id}}&amp;browse_sequences=true">
+						Browse sequences from these repertoires →
+					</a>
+				</p>
 				@endif
 
 			</div>

@@ -38,40 +38,6 @@ $(document).ready(function() {
   		html: true
 	});
 
-	// update UI elements related to the current sample selection
-	function update_sample_selection_info(){
-		var n = $('table.sample_list tbody input[type=checkbox]:checked').length;
-		var total = $('table.sample_list tbody tr').length;
-
-		// update "5 samples selected" text
-		$('span.nb_selected_samples').text(n);
-
-		// update "Select All" link
-		if (n == 0) {
-			$('a.unselect_all_samples').hide();
-			$('a.select_all_samples').show();
-		}
-
-		if (n == total) {
-			$('a.select_all_samples').hide();
-			$('a.unselect_all_samples').show();
-		}
-
-		// enable/disable "browse seq data" button
-		if(n > 0) {
-			$('.browse-seq-data-button').removeAttr('disabled');
-		}
-		else {
-			$('.browse-seq-data-button').attr('disabled','disabled');
-		}
-	}
-
-	update_sample_selection_info();
-
-	$('table.sample_list tbody input[type=checkbox]').change(function(){
-		update_sample_selection_info();
-	});
-
 	// make table sortable
 	$('table.sample_list').DataTable({
 		paging: false,
@@ -93,23 +59,6 @@ $(document).ready(function() {
 			// (otherwise the links default behaviour is overrided by jstree)
 	   		$('.jstree-anchor').addClass('jstree-anchor-simple').removeClass('jstree-anchor');
   	}).jstree();
-
-	// table select/unselect all rows
-	$('a.select_all_samples').click(function(){
-		$('input:checkbox', $('table.sample_list tbody')).prop('checked', true);
-		$(this).hide();
-		$('a.unselect_all_samples').show();
-		update_sample_selection_info();
-		return false;
-	});
-
-	$('a.unselect_all_samples').click(function(){
-		$('input:checkbox', $('table.sample_list tbody')).prop('checked', false);
-		$(this).hide();
-		$('a.select_all_samples').show();
-		update_sample_selection_info();
-		return false;
-	});
 	
 	// save filters panels state when submitting form
 	$('form.sample_search, form.sequence_search').submit(function(){
