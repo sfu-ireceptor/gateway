@@ -213,10 +213,25 @@ class SampleController extends Controller
         $sample_list = array_slice($sample_list, ($page - 1) * $max_per_page, $max_per_page);
         // dd(count($sample_list));
 
+        // generate query id for sequences page
+        $sequence_filters = [];
+        $sequence_filters['sample_query_id'] = $query_id;
+        foreach ($sample_data['items'] as $sample) {
+            $rs_id = $sample->rest_service_id;
+            $rs_param = 'ir_project_sample_id_list_' . $rs_id;
+            if (! isset($sequence_filters[$rs_param])) {
+                $sequence_filters[$rs_param] = [];
+            }
+            $sequence_filters[$rs_param][] = $sample->repertoire_id;
+        }
+        $sequences_query_id = Query::saveParams($sequence_filters, 'sequences');
+
+
         $data['sample_list'] = $sample_list;
         $data['nb_samples'] = $nb_samples;
         $data['nb_pages'] = $nb_pages;
         $data['page'] = $page;
+        $data['sequences_query_id'] = $sequences_query_id;
         $data['rest_service_list'] = $sample_data['rs_list'];
         $data['sample_list_json'] = json_encode($sample_data['items']);
 

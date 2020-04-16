@@ -321,7 +321,7 @@
 					<a class="unselect_all_samples" href="#">Unselect All</a>
 					<a class="select_all_samples" href="#">Select All</a>
 					
-					<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/samples?query_id={{$sample_query_id}}&amp;browse_sequences=true">
+					<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
 						Browse sequences from these repertoires →
 					</a>
 				
@@ -448,7 +448,7 @@
 					</nav>
 				</p>
 				<p class="pull-right">
-					<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/samples?query_id={{$sample_query_id}}&amp;browse_sequences=true">
+					<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
 						Browse sequences from these repertoires →
 					</a>
 				</p>
