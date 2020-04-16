@@ -59,7 +59,7 @@ class SampleController extends Controller
         if ($request->has('browse_sequences')) {
             $samples_query_id = $request->input('query_id');
             $samples_filters = Query::getParams($samples_query_id);
-            if(isset($samples_filters['page'])) {
+            if (isset($samples_filters['page'])) {
                 unset($samples_filters['page']);
             }
             $sample_data = Sample::find($samples_filters, $username);
@@ -69,7 +69,7 @@ class SampleController extends Controller
             foreach ($sample_data['items'] as $sample) {
                 $rs_id = $sample->rest_service_id;
                 $rs_param = 'ir_project_sample_id_list_' . $rs_id;
-                if( ! isset($sequence_filters[$rs_param])) {
+                if (! isset($sequence_filters[$rs_param])) {
                     $sequence_filters[$rs_param] = [];
                 }
                 $sequence_filters[$rs_param][] = $sample->repertoire_id;
