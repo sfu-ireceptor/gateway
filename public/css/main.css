@@ -42,6 +42,11 @@ h3 {
 	margin-bottom: 5px;
 }
 
+h3 small {
+	font-size: 14px;
+	margin-left: 1px;	
+}
+
 h3.first {
 	margin-top: 0px;	
 }
@@ -790,34 +795,19 @@ footer a:hover {
 }
 
 .browse_sequences {
-	margin-top: -20px;
-	float: right;
 }
 
 .download_repertoires {
-	margin-top: -20px;
 	margin-right: 7px;
+}
+
+.repertoires_button_container {
+	padding-top: 10px;
+	overflow: hidden;
+}
+
+.repertoires_button_container a {
 	float: right;
-}
-
-a.unselect_all_samples, a.select_all_samples, a.unselect_all_samples:hover, a.select_all_samples:hover {
-	text-decoration: none;
-}
-
-
-a.select_all_samples {
-	display: none;
-}
-
-.table_info {
-	font-size: 12px;
-	margin-bottom: 5px;
-	font-weight: bold;
-}
-
-.table_info a {
-	font-weight: normal;
-	font-style: normal;
 }
 
 a.missing_data {
@@ -828,6 +818,14 @@ a.missing_data {
 
 a.missing_data span {
 	color: #dc8a14;
+}
+
+table.sample_list {
+	margin-bottom: 0;
+}
+
+.pagination {
+	margin-top: 10px;
 }
 
 /* @end */

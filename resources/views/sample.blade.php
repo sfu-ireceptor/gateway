@@ -315,11 +315,30 @@
 				</div>
 
 
-				<h3>Individual Repertoires</h3>
+					<div class="row">
+						<div class="col-md-6">
+							<h3>Individual Repertoires <small>{{ $nb_samples }} found</small></h3>
+						</div>
+						<div class="col-md-6 repertoires_button_container">
+							<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
+								Browse sequences from {{ $nb_samples }} repertoires →
+							</a>
+						
+							<a href="/samples/tsv?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as TSV">
+								<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+								<span class="text">TSV</span>
+							</a>
+
+							<a href="/samples/json?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as JSON">
+								<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+								<span class="text">JSON</span>
+							</a>							
+						</div>
+					</div>
+
+
+<!-- 				<h3>Individual Repertoires <small>{{ $nb_samples }} found</small></h3>
 				<p class="table_info">
-					<span class="nb_selected_samples">{{ count($sample_list) }}</span> repertoires selected
-					<a class="unselect_all_samples" href="#">Unselect All</a>
-					<a class="select_all_samples" href="#">Select All</a>
 					
 					<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
 						Browse sequences from these repertoires →
@@ -335,7 +354,7 @@
 						<span class="text">JSON</span>
 					</a>
 				</p>
-				
+ -->				
 				<!-- sample data -->
 				<table class="table table-striped sample_list table-condensed much_data table-bordered">
 					<thead> 
@@ -426,32 +445,33 @@
 					</tbody>
 				</table>
 
-				<input type="hidden" name="project_id_list" />
-				<input type="hidden" name="sample_query_id" value="{{ $sample_query_id }}" />
-				<p>
-					<nav aria-label="Individual Repertoires">
-						<ul class="pagination">
-							@for ($i = 1; $i <= $nb_pages; $i++)
-								@if ($i == $page)
-									<li class="active">
-										<span>{{ $i }} <span class="sr-only">(current)</span></span>
-								    </li>										
-								@else
-								<li>
-									<a href="/samples?query_id={{$sample_query_id}}&amp;page={{ $i }}">
-										{{ $i }}
-									</a>
-								</li>
-								@endif
-							@endfor
-						</ul>
-					</nav>
-				</p>
-				<p class="pull-right">
-					<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
-						Browse sequences from these repertoires →
-					</a>
-				</p>
+				<div class="row">
+					<div class="col-md-6">
+						<nav aria-label="Individual Repertoires">
+							<ul class="pagination">
+								@for ($i = 1; $i <= $nb_pages; $i++)
+									@if ($i == $page)
+										<li class="active">
+											<span>{{ $i }} <span class="sr-only">(current)</span></span>
+									    </li>										
+									@else
+									<li>
+										<a href="/samples?query_id={{$sample_query_id}}&amp;page={{ $i }}">
+											{{ $i }}
+										</a>
+									</li>
+									@endif
+								@endfor
+							</ul>
+						</nav>
+					</div>
+					<div class="col-md-6 repertoires_button_container">
+						<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
+							Browse sequences from {{ $nb_samples }} repertoires →
+						</a>
+					</div>
+				</div>
+
 				@endif
 
 			</div>
