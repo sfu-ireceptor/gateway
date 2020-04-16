@@ -226,7 +226,6 @@ class SampleController extends Controller
         }
         $sequences_query_id = Query::saveParams($sequence_filters, 'sequences');
 
-
         $data['sample_list'] = $sample_list;
         $data['nb_samples'] = $nb_samples;
         $data['nb_pages'] = $nb_pages;
