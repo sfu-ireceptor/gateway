@@ -205,8 +205,14 @@ class SampleController extends Controller
             }
             $sequence_filters[$rs_param][] = $sample->repertoire_id;
         }
+
+        if (isset($sequence_filters['page'])) {
+            unset($sequence_filters['page']);
+        }
+
         $sequences_query_id = Query::saveParams($sequence_filters, 'sequences');
 
+        // prepare view data
         $data['sample_list'] = $sample_list;
         $data['nb_samples'] = $nb_samples;
         $data['nb_pages'] = $nb_pages;
