@@ -114,6 +114,7 @@ class SequenceController extends Controller
             // remove gateway-specific params
             unset($sample_filter_fields['open_filter_panel_list']);
             unset($sample_filter_fields['cols']);
+            unset($sample_filter_fields['page']);
         }
         $data['sample_filter_fields'] = $sample_filter_fields;
 

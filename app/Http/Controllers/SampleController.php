@@ -168,30 +168,23 @@ class SampleController extends Controller
         }
 
         $max_per_page = config('ireceptor.nb_samples_per_page');
-
         $nb_samples = count($sample_data['items']);
-
-        // nb of pages
         $nb_pages = (int) ceil($nb_samples / $max_per_page);
-        // dd($nb_pages);
 
         // adjust current page number if necessary
         if ($page < 1) {
             $page = 1;
         }
+
         if ($page > $nb_pages) {
             $page = $nb_pages;
         }
 
-        // TODO check page is valid
-
         $sample_list = $sample_data['items'];
-        // dd(count($sample_data['items']));
 
         // TODO sort sample list
 
         $sample_list = array_slice($sample_list, ($page - 1) * $max_per_page, $max_per_page);
-        // dd(count($sample_list));
 
         // generate query id for sequences page
         $sequence_filters = [];
