@@ -444,6 +444,7 @@ class SequenceController extends Controller
             }
             // remove gateway-specific params
             unset($sample_filter_fields['open_filter_panel_list']);
+            unset($sample_filter_fields['page']);
         }
 
         $t = Sequence::sequencesTSV($filters, $username, $request->fullUrl(), $sample_filter_fields);

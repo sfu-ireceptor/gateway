@@ -167,7 +167,6 @@ class SampleController extends Controller
             $query_log->save();
         }
 
-        // TODO put in config
         $max_per_page = config('ireceptor.nb_samples_per_page');
 
         $nb_samples = count($sample_data['items']);
@@ -205,11 +204,6 @@ class SampleController extends Controller
             }
             $sequence_filters[$rs_param][] = $sample->repertoire_id;
         }
-
-        if (isset($sequence_filters['page'])) {
-            unset($sequence_filters['page']);
-        }
-
         $sequences_query_id = Query::saveParams($sequence_filters, 'sequences');
 
         // prepare view data
