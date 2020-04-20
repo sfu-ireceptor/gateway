@@ -187,7 +187,7 @@ class SampleController extends Controller
         }
 
         // TODO put in config
-        $max_per_page = 10;
+        $max_per_page = config('ireceptor.nb_samples_per_page');
 
         $nb_samples = count($sample_data['items']);
 

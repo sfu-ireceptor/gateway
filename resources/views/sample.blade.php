@@ -447,23 +447,25 @@
 
 				<div class="row">
 					<div class="col-md-6">
-						<nav aria-label="Individual Repertoires">
-							<ul class="pagination">
-								@for ($i = 1; $i <= $nb_pages; $i++)
-									@if ($i == $page)
-										<li class="active">
-											<span>{{ $i }} <span class="sr-only">(current)</span></span>
-									    </li>										
-									@else
-									<li>
-										<a href="/samples?query_id={{$sample_query_id}}&amp;page={{ $i }}">
-											{{ $i }}
-										</a>
-									</li>
-									@endif
-								@endfor
-							</ul>
-						</nav>
+						@if ($nb_pages > 1)
+							<nav aria-label="Individual Repertoires">
+								<ul class="pagination">
+									@for ($i = 1; $i <= $nb_pages; $i++)
+										@if ($i == $page)
+											<li class="active">
+												<span>{{ $i }} <span class="sr-only">(current)</span></span>
+										    </li>										
+										@else
+										<li>
+											<a href="/samples?query_id={{$sample_query_id}}&amp;page={{ $i }}">
+												{{ $i }}
+											</a>
+										</li>
+										@endif
+									@endfor
+								</ul>
+							</nav>
+						@endif
 					</div>
 					<div class="col-md-6 repertoires_button_container">
 						<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">

@@ -67,4 +67,15 @@ return [
 
     'display_all_ir_fields' => env('IRECEPTOR_IR_FIELDS', false),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Number of samples displayed by default
+    |--------------------------------------------------------------------------
+    |
+    | Number of samples displayed by default on the samples page
+    | Ex: 100
+    |
+    */
+
+   'nb_samples_per_page' => env('NB_SAMPLES_PER_PAGE', 100),
 ];
