@@ -14,6 +14,7 @@
 					<tr>
 						<th>Start</th>
 						<th>URL</th>
+						<th>Parameters</th>
 						<th>Type</th>
 						<th>Result Size</th>
 						<th>Duration</th>
@@ -29,12 +30,14 @@
 								<span class="minor">{{ human_date_time($q->start_time, 'H:i') }}</span>
 							</td>
 							<td>
-								<a href="/admin/queries/{{ $q->id }}" title="{{ $q->url }}">{{ str_limit(url_path($q->url), $limit = 70, $end = '‥') }}</a>
-
+								<a href="{{ $q->url}}" title="{{ $q->url }}">
+									{{ str_limit(url_path($q->url), $limit = 70, $end = '‥') }}
+								</a>
+							</td>
+							<td>
 								@if(isset($q->params) && ! empty($q->params))
 									<p><code>{{ json_encode($q->params, JSON_PRETTY_PRINT) }}</code></p>
 								@endif
-							
 							</td>
 							<td class="text-nowrap">
 								{{ $q->type }}
