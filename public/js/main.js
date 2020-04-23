@@ -38,21 +38,6 @@ $(document).ready(function() {
   		html: true
 	});
 
-	// make table sortable
-	$('table.sample_list').DataTable({
-		paging: false,
-		searching: false,
-		info: false,
-		stateSave: true,
-		order: [[ 5, 'desc' ]],
-		columnDefs: [
-						{
-							'orderable': false,
-							'targets': 0
-						}
-					],
-	});
-
 	// jstree: rest services -> labs -> projects tree
 	$('#rest_service_list').on('ready.jstree', function (e, data) {
 			// hack to make links work

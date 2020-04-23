@@ -356,7 +356,7 @@
 				</p>
  -->				
 				<!-- sample data -->
-				<table class="table table-striped sample_list table-condensed much_data table-bordered">
+				<table class="table table-striped sample_list table-condensed much_data table-bordered dataTable">
 					<thead> 
 						<tr>
 							<th class="checkbox_cell">

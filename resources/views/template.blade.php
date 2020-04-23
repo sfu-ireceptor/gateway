@@ -178,7 +178,6 @@
 		<script src="https://code.highcharts.com/modules/data.js"></script>
 		<script src="https://code.highcharts.com/modules/drilldown.js"></script>
 		<script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>  
-		<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
 		<script src="/js/bootstrap-multiselect.js"></script>
 		<script src="/js/pluralize.js"></script>
 
