@@ -370,7 +370,15 @@
 									<a class="sort_column" role="button" href="">
 										@lang('short.' . $field['ir_id'])
 										@include('help', ['id' => $field['ir_id']])
-										<span class="glyphicon sort_icon sorted_desc"></span>
+										@if ($field['ir_id'] == $sort_column)
+											@if ($sort_order == 'asc')
+												<span class="glyphicon sort_icon sorted_asc"></span>
+											@else
+												<span class="glyphicon sort_icon sorted_desc"></span>
+											@endif
+										@else
+											<span class="glyphicon sort_icon"></span>
+										@endif
 									</a>
 								</th>
 							@endforeach

@@ -183,6 +183,13 @@ class SampleController extends Controller
         $sample_list = $sample_data['items'];
 
         // TODO sort sample list
+        $default_sort_column = 'ir_sequence_count';
+        $default_sort_order = 'desc';
+
+        $sort_column = $default_sort_column;
+        $sort_order = $default_sort_order;
+
+        // TODO do actual sort
 
         $sample_list = array_slice($sample_list, ($page - 1) * $max_per_page, $max_per_page);
 
@@ -204,6 +211,8 @@ class SampleController extends Controller
         $data['nb_samples'] = $nb_samples;
         $data['nb_pages'] = $nb_pages;
         $data['page'] = $page;
+        $data['sort_column'] = $sort_column;
+        $data['sort_order'] = $sort_order;
         $data['sequences_query_id'] = $sequences_query_id;
         $data['rest_service_list'] = $sample_data['rs_list'];
         $data['sample_list_json'] = json_encode($sample_data['items']);
