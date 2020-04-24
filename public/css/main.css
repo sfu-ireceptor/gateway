@@ -319,31 +319,44 @@ table.much_data > tbody > tr > td.checkbox_cell {
 	width: 34px;
 }
 
-table.dataTable thead .sorting,
-table.dataTable thead .sorting_asc,
-table.dataTable thead .sorting_desc,
-table.dataTable thead .sorting_asc_disabled,
-table.dataTable thead .sorting_desc_disabled {
-  cursor: pointer;
-  *cursor: hand;
-  background-repeat: no-repeat;
-  background-position: center right;
+table.sortable > thead > tr > th.sort {
+	padding-right: 5px;
 }
-table.dataTable thead .sorting {
-  background-image: url("../images/sort_both.png");
+
+table.sortable > thead > tr > th.sort > a {
+	color: #424242;
 }
-table.dataTable thead .sorting_asc {
-  background-image: url("../images/sort_asc.png");
+
+table.sortable > thead > tr > th.sort > a .sorted_asc,
+table.sortable > thead > tr > th.sort > a .sorted_desc {
+	color: green;
 }
-table.dataTable thead .sorting_desc {
-  background-image: url("../images/sort_desc.png");
+
+a.sort_column .sort_icon {
+	position: absolute;
+	top: 3px;
+	right: 0;
+	color: #2c658e;
 }
-table.dataTable thead .sorting_asc_disabled {
-  background-image: url("../images/sort_asc_disabled.png");
+
+a.sort_column .sort_icon::before {
+content: "\e150";
 }
-table.dataTable thead .sorting_desc_disabled {
-  background-image: url("../images/sort_desc_disabled.png");
+
+table.sortable > thead > tr > th.sort > a .sorted_asc::before {
+	content: "\e155";
 }
+
+table.sortable > thead > tr > th.sort > a .sorted_desc::before {
+	content: "\e156";
+}
+
+a.sort_column {
+	position: relative;
+	padding-right: 25px;
+	display: block;
+}
+
 
 /* @end */
 

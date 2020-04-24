@@ -356,7 +356,7 @@
 				</p>
  -->				
 				<!-- sample data -->
-				<table class="table table-striped sample_list table-condensed much_data table-bordered dataTable">
+				<table class="table table-striped sample_list table-condensed much_data table-bordered sortable">
 					<thead> 
 						<tr>
 							<th class="checkbox_cell">
@@ -366,9 +366,12 @@
 							</th>
 
 							@foreach ($field_list as $field)
-								<th class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
-									@lang('short.' . $field['ir_id'])
-									@include('help', ['id' => $field['ir_id']])
+								<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
+									<a class="sort_column" role="button" href="">
+										@lang('short.' . $field['ir_id'])
+										@include('help', ['id' => $field['ir_id']])
+										<span class="glyphicon sort_icon sorted_desc"></span>
+									</a>
 								</th>
 							@endforeach
 						</tr>
