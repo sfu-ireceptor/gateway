@@ -207,8 +207,16 @@ class SampleController extends Controller
 
         $sample_list = $sample_data['items'];
 
-        // TODO sort sample list
-        // TODO do actual sort
+        // sort sample list
+        usort($sample_list, function ($a, $b) use ($sort_column, $sort_order) {
+            if($sort_order == 'asc') {
+                            return strcmp($a->{$sort_column}, $b->{$sort_column});
+            }
+            else {
+                return strcmp($b->{$sort_column}, $a->{$sort_column});
+
+            }
+        });
 
         $sample_list = array_slice($sample_list, ($page - 1) * $max_per_page, $max_per_page);
 
