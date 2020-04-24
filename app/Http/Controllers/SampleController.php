@@ -61,6 +61,16 @@ class SampleController extends Controller
             return redirect('samples?query_id=' . $new_query_id);
         }
 
+        // if there's a "sort_column" parameter, generate new query_id and redirect to it
+        if ($request->has('sort_column')) {
+            $filters = Query::getParams($request->input('query_id'));
+            $filters['sort_column'] = $request->input('sort_column');
+            $filters['sort_order'] = $request->input('sort_order', 'asc');
+            $new_query_id = Query::saveParams($filters, 'samples');
+
+            return redirect('samples?query_id=' . $new_query_id);
+        }
+
         /*************************************************
         * prepare form data */
 
@@ -154,6 +164,21 @@ class SampleController extends Controller
             unset($params['page']);
         }
 
+        // get sorting parameters
+        $default_sort_column = 'ir_sequence_count';
+        $default_sort_order = 'desc';
+
+        $sort_column = $default_sort_column;
+        $sort_order = $default_sort_order;
+
+        if (isset($params['sort_column'])) {
+            $sort_column = $params['sort_column'];
+            $sort_order = $params['sort_order'];
+
+            unset($params['sort_column']);
+            unset($params['sort_order']);
+        }
+
         /*************************************************
         * get filtered sample list and related statistics */
 
@@ -183,12 +208,6 @@ class SampleController extends Controller
         $sample_list = $sample_data['items'];
 
         // TODO sort sample list
-        $default_sort_column = 'ir_sequence_count';
-        $default_sort_order = 'desc';
-
-        $sort_column = $default_sort_column;
-        $sort_order = $default_sort_order;
-
         // TODO do actual sort
 
         $sample_list = array_slice($sample_list, ($page - 1) * $max_per_page, $max_per_page);
