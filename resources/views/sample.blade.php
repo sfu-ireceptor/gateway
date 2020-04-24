@@ -367,19 +367,27 @@
 
 							@foreach ($field_list as $field)
 								<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
-									<a class="sort_column" role="button" href="">
-										@lang('short.' . $field['ir_id'])
-										@include('help', ['id' => $field['ir_id']])
 										@if ($field['ir_id'] == $sort_column)
 											@if ($sort_order == 'asc')
-												<span class="glyphicon sort_icon sorted_asc"></span>
+												<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=desc">
+													@lang('short.' . $field['ir_id'])
+													@include('help', ['id' => $field['ir_id']])
+													<span class="glyphicon sort_icon sorted_asc"></span>
+												</a>
 											@else
-												<span class="glyphicon sort_icon sorted_desc"></span>
+												<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
+													@lang('short.' . $field['ir_id'])
+													@include('help', ['id' => $field['ir_id']])
+													<span class="glyphicon sort_icon sorted_desc"></span>
+												</a>
 											@endif
 										@else
-											<span class="glyphicon sort_icon"></span>
+											<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
+												@lang('short.' . $field['ir_id'])
+												@include('help', ['id' => $field['ir_id']])
+												<span class="glyphicon sort_icon"></span>
+											</a>
 										@endif
-									</a>
 								</th>
 							@endforeach
 						</tr>
