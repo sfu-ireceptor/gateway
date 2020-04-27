@@ -115,6 +115,8 @@ class SequenceController extends Controller
             unset($sample_filter_fields['open_filter_panel_list']);
             unset($sample_filter_fields['cols']);
             unset($sample_filter_fields['page']);
+            unset($sample_filter_fields['sort_column']);
+            unset($sample_filter_fields['sort_order']);
         }
         $data['sample_filter_fields'] = $sample_filter_fields;
 

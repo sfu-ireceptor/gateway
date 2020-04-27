@@ -335,26 +335,7 @@
 							</a>							
 						</div>
 					</div>
-
-
-<!-- 				<h3>Individual Repertoires <small>{{ $nb_samples }} found</small></h3>
-				<p class="table_info">
-					
-					<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
-						Browse sequences from these repertoires →
-					</a>
-				
-					<a href="/samples/tsv?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as TSV">
-						<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-						<span class="text">TSV</span>
-					</a>
-
-					<a href="/samples/json?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as JSON">
-						<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-						<span class="text">JSON</span>
-					</a>
-				</p>
- -->				
+		
 				<!-- sample data -->
 				<table class="table table-striped sample_list table-condensed much_data table-bordered sortable">
 					<thead> 
