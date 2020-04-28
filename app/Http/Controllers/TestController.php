@@ -53,7 +53,7 @@ class TestController extends Controller
     {
         // dd(1 < 2);
 
-        dd(strcmp('a','b'));
+        dd(strcmp('a', 'b'));
 
         // $s = "5";
         // $t = [$s];
