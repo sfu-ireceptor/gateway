@@ -51,6 +51,10 @@ class TestController extends Controller
 
     public function getIndex(Request $request)
     {
+        // dd(1 < 2);
+
+        dd(strcmp('a','b'));
+
         // $s = "5";
         // $t = [$s];
         // dd($t);

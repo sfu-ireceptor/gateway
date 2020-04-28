@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use Facades\App\RestService;
+use Facades\App\FieldName;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use ZipArchive;
@@ -498,4 +499,39 @@ class Sample
 
         return $t;
     }
+    public static function sort_sample_list($sample_list, $sort_column, $sort_order)
+    {
+        $field_type = FieldName::getFieldType($sort_column);
+        if ($sort_column == 'ir_sequence_count') {
+            $field_type = 'integer';
+        }
+
+        usort($sample_list, function ($a, $b) use ($sort_column, $sort_order, $field_type) {
+            $comparison_result = 0;
+
+            if($field_type == 'integer' || $field_type == 'number') {
+                if($a->{$sort_column} == $b->{$sort_column}) {
+                    $comparison_result = 0;    
+                }
+                else if($a->{$sort_column} < $b->{$sort_column}) {
+                    $comparison_result = -1;    
+                }
+                else {
+                    $comparison_result = 1;
+                }
+            }
+            else {
+                $comparison_result = strcasecmp($a->{$sort_column}, $b->{$sort_column});                
+            }
+
+            if($sort_order == 'desc') {
+                $comparison_result = -1 * $comparison_result;
+            }
+
+            return $comparison_result;
+        });
+
+        return $sample_list;
+    }
+
 }
