@@ -317,7 +317,14 @@
 
 					<div class="row">
 						<div class="col-md-6">
-							<h3>Individual Repertoires <small>{{ $nb_samples }} found</small></h3>
+							<h3>
+								Individual Repertoires
+								<small>{{ $nb_samples }} found</small>
+								<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
+								  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+								  Customize columns
+								</a>
+							</h3>
 						</div>
 						<div class="col-md-6 repertoires_button_container">
 							<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
@@ -340,12 +347,6 @@
 				<table class="table table-striped sample_list table-condensed much_data table-bordered sortable">
 					<thead> 
 						<tr>
-							<th class="checkbox_cell">
-								<a class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
-								  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-								</a>
-							</th>
-
 							@foreach ($field_list as $field)
 								<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 										@if ($field['ir_id'] == $sort_column)
@@ -376,9 +377,6 @@
 					<tbody>
 						@foreach ($sample_list as $sample)
 						<tr>
-							<td class="checkbox_cell">
-							</td>
-
 							@foreach ($field_list as $field)
 								<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 									@isset($sample->{$field['ir_id']})
