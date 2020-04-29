@@ -77,5 +77,5 @@ return [
     |
     */
 
-    'nb_samples_per_page' => env('NB_SAMPLES_PER_PAGE', 100),
+    'nb_samples_per_page' => env('NB_SAMPLES_PER_PAGE', 120),
 ];
