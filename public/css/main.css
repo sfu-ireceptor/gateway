@@ -1197,7 +1197,7 @@ form.column_selector {
 }
 
 #column_selector .panel-heading button {
-	margin-top: -3px;
+	margin-left: 10px;
 }
 
 #column_selector .panel-heading .panel-title {
