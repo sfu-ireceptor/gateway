@@ -151,15 +151,11 @@ class Sample
     // convert/complete sample list
     public static function convert_sample_list($sample_list, $rs)
     {
-        if (! is_array($sample_list)) {
-            $sample_list = [];
-        }
+        $new_sample_list = [];
 
         foreach ($sample_list as $sample) {
-            // add rest service id/name
-            $sample->rest_service_id = $rs->id;
-            $sample->rest_service_name = $rs->display_name;
-
+            $new_sample = new \stdClass();
+            
             $sample_field_list = FieldName::getSampleFields();
             foreach ($sample_field_list as $sample_field) {
                 // Log::debug($sample_field);
@@ -169,15 +165,29 @@ class Sample
                     // if(is_object($field_value)) {
                     //     dd($field_value);
                     // }
-                    $sample->{$field_name} = $field_value;
+                    $new_sample->{$field_name} = $field_value;
                 }
             }
 
+            // add extra fields (not defined in mapping file)
+            $fields = ['repertoire_id', 'real_rest_service_id', 'ir_sequence_count'];
+            foreach ($fields as $field_name) {
+                if(isset($sample->{$field_name})) {
+                    $new_sample->{$field_name} = $sample->{$field_name};                    
+                }
+            }
+
+            // add rest service id/name
+            $new_sample->rest_service_id = $rs->id;
+            $new_sample->rest_service_name = $rs->display_name;
+
             // add study URL
-            $sample = self::generate_study_urls($sample);
+            $new_sample = self::generate_study_urls($new_sample);
+
+            $new_sample_list[] = $new_sample;
         }
 
-        return $sample_list;
+        return $new_sample_list;
     }
 
     public static function stats($sample_list)
