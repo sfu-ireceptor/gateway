@@ -170,7 +170,7 @@ class Sample
             }
 
             // add extra fields (not defined in mapping file)
-            $fields = ['repertoire_id', 'real_rest_service_id', 'ir_sequence_count'];
+            $fields = ['repertoire_id', 'real_rest_service_id', 'ir_sequence_count', 'ir_filtered_sequence_count'];
             foreach ($fields as $field_name) {
                 if(isset($sample->{$field_name})) {
                     $new_sample->{$field_name} = $sample->{$field_name};                    
