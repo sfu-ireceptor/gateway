@@ -97,7 +97,7 @@
 <script>
 	
 	var graphFields = [
-	        "study_description", 
+	        "study_type", 
 	        "organism",
 	        "disease_state_sample", 
 	        "tissue",
@@ -106,7 +106,7 @@
 	    ];
 	
 	var graphNames = [
-	        "@lang('short.study_description')",
+	        "@lang('short.study_type')",
 	        "@lang('short.organism')", 
 	        "@lang('short.disease_state_sample')",
 	        "@lang('short.tissue')", 
