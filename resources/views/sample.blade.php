@@ -290,12 +290,12 @@
 				<div class="collapse" id="column_selector">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<h4 class="panel-title">Edit Individual Repertoires Columns
-							<button class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
-								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-					  			Close
-							</button>
-
+							<h4 class="panel-title">
+								Edit Individual Repertoires Columns
+								<button class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
+									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+						  			Close
+								</button>
 							</h4>
 						</div>
 				  		<div class="panel-body">

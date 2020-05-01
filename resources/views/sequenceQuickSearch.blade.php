@@ -201,10 +201,13 @@
 					<div class="collapse" id="column_selector">
 						<div class="panel panel-default">
 							<div class="panel-heading">
-								<button class="btn btn-primary btn-xs pull-right" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
-						  			Done
-								</button>
-								<h4 class="panel-title">Edit Individual Sequences Columns</h4>
+								<h4 class="panel-title">
+									Edit Individual Sequences Columns
+									<button class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
+										<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+						  				Close
+									</button>
+								</h4>
 							</div>
 					  		<div class="panel-body">
 								<form class="column_selector">
