@@ -256,6 +256,11 @@
 								{{ human_number($total_filtered_sequences) }} results
 							</span>
 						</small>
+
+						<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
+						  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+						  Customize columns
+						</a>
 					</h3>
 
 					<!-- table column selector -->
@@ -290,11 +295,6 @@
 					<table class="table table-striped table-condensed much_data table-bordered">
 						<thead>
 							<tr>
-								<th class="checkbox_cell">
-									<a class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
-									  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-									</a>
-								</th>
 								@foreach ($field_list as $field)
 									<th class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 										@lang('short.' . $field['ir_id'])
@@ -306,7 +306,6 @@
 						<tbody>
 							@foreach ($sequence_list as $s)
 							<tr>
-								<td></td>
 								@foreach ($field_list as $field)
 									<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 										@isset($s->{$field['ir_id']})
