@@ -250,7 +250,11 @@
 					<h3> 
 						Individual Sequences
 						<small class="sequence_count">
-							1-{{ count($sequence_list) }} of {{number_format($total_filtered_sequences)}}
+							{{ count($sequence_list) }}
+							from
+							<span title="{{ number_format($total_filtered_sequences) }}">
+								{{ human_number($total_filtered_sequences) }} results
+							</span>
 						</small>
 					</h3>
 

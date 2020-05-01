@@ -326,7 +326,7 @@
 									@if ($page != 1)
 										page {{ $page }} of
 									@endif
-									{{ $nb_samples }} found
+									{{ $nb_samples }} results
 								</small>
 								<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
 								  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
