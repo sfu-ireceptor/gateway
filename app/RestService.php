@@ -540,8 +540,16 @@ class RestService extends Model
                 }
             }
 
-            $service_filters['repertoire_id'] = array_slice($service_filters['ir_project_sample_id_list'], 0, 20);
+            // clean filters
+            $service_filters = self::clean_filters($service_filters);
+
+            $service_filters['repertoire_id'] = $service_filters['ir_project_sample_id_list'];
             unset($service_filters['ir_project_sample_id_list']);
+
+            // if no sequence filters, query only subset of repertoires
+            if(count($service_filters) == 1) {
+                $service_filters['repertoire_id'] = array_slice($service_filters['repertoire_id'], 0, 20);
+            }
 
             // prepare parameters for each service
             $t = [];
