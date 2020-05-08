@@ -118,7 +118,7 @@ Route::middleware('auth')->group(function () {
         Route::get('edit-news/{id}', 'AdminController@getEditNews');
         Route::post('edit-news', 'AdminController@postEditNews');
         Route::get('delete-news/{id}', 'AdminController@getDeleteNews');
-        Route::get('users', 'AdminController@getUsers');
+        Route::get('users/{sort?}', 'AdminController@getUsers');
         Route::get('add-user', 'AdminController@getAddUser');
         Route::post('add-user', 'AdminController@postAddUser');
         Route::get('edit-user/{username}', 'AdminController@getEditUser');
@@ -127,7 +127,9 @@ Route::middleware('auth')->group(function () {
         Route::get('samples/update-cache', 'AdminController@getUpdateSampleCache');
         Route::get('field-names', 'AdminController@getFieldNames');
         Route::get('queries', 'AdminController@queries');
+        Route::get('queries2', 'AdminController@queries2');
         Route::get('queries/months/{n}', 'AdminController@queriesMonths');
+        Route::get('queries2/months/{n}', 'AdminController@queriesMonths2');
         Route::get('queries/{id}', 'AdminController@query');
     });
 });
