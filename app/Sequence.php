@@ -227,8 +227,8 @@ class Sequence
             $obj->summary = array_map('convert_arrays_to_strings', $obj->summary);
             $obj->items = array_map('convert_arrays_to_strings', $obj->items);
 
-            $data['summary'] = $data['summary'] + $obj->summary;
-            $data['items'] = $data['items'] + $obj->items;
+            $data['summary'] = array_merge($data['summary'], $obj->summary);
+            $data['items'] = array_merge($data['items'], $obj->items);
 
             $rs_data = self::stats($obj, $data);
             $rs_data['rs'] = $rs;
