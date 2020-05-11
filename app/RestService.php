@@ -451,7 +451,7 @@ class RestService extends Model
         foreach ($response_list_requested as $response) {
             $rs = $response['rs'];
 
-            if($counts_by_rs[$rs->id] == null) {
+            if ($counts_by_rs[$rs->id] == null) {
                 $response['status'] = 'error';
                 $response['error_type'] = 'error';
 
