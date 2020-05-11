@@ -315,6 +315,7 @@ class SequenceController extends Controller
         $download_query_id = Query::saveParams($download_filters, 'sequences');
         $data['download_query_id'] = $download_query_id;
 
+        $data['rest_service_list_no_response'] = $sequence_data['rs_list_no_response'];
         $data['sequence_list'] = $sequence_data['items'];
         $data['sample_list_json'] = json_encode($sequence_data['summary']);
         $data['rest_service_list'] = $sequence_data['rs_list'];

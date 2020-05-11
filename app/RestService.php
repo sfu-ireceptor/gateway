@@ -451,6 +451,16 @@ class RestService extends Model
         foreach ($response_list_requested as $response) {
             $rs = $response['rs'];
 
+            if($counts_by_rs[$rs->id] == null) {
+                $response['status'] = 'error';
+                $response['error_type'] = 'error';
+
+                // include this response so the error is reported
+                $response_list_filtered[] = $response;
+
+                continue;
+            }
+
             $sample_list_filtered = [];
             foreach ($response['data'] as $sample) {
                 $sample_count = $counts_by_rs[$rs->id][$sample->repertoire_id];

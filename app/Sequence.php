@@ -37,10 +37,28 @@ class Sequence
         // merge responses
         $sequence_list = [];
         foreach ($response_list as $response) {
-            // dd($response);
             $rs = $response['rs'];
-            $obj = $response['data'];
+            
+            // if error, add to list of problematic repositories
+            // (if not already there) 
+            if($response['status'] == 'error') {
+                $is_no_response = false;
+    
+                foreach ($data['rs_list_no_response'] as $rs_no_response) {
+                    if($rs_no_response->id == $rs->id) {
+                        $is_no_response = true;
+                    }
+                }
 
+                if($is_no_response) {
+                    continue;
+                }
+                else {
+                    $data['rs_list_no_response'][] = $rs;                    
+                }
+            }
+
+            $obj = $response['data'];
             $sequence_list = array_merge($sequence_list, data_get($obj, 'Rearrangement', []));
         }
 

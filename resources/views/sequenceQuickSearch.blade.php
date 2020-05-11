@@ -72,18 +72,24 @@
 
 		<div class="col-md-10">
 			<div class="reloading_contents">
+
 				<!-- Services which didn't respond -->
 				@if ( ! empty($rest_service_list_no_response))
 					<div class="alert alert-warning" role="alert">
-						<p>Sorry, data is incomplete. No response from:</p>
+						<p>Sorry, data is incomplete:</p>
 						<ul>
 							@foreach ($rest_service_list_no_response as $rs)
-								<li>{{ $rs->name }}</li>
+								@if($rs->error_type == 'timeout')
+									<li>{{ $rs->display_name }} didn't return complete data before the allotted time of {{ config('ireceptor.service_request_timeout') }} sec  </li>
+								@else
+									<li>{{ $rs->display_name }} returned incomplete data (an error occured) </li>
+								@endif
+
 							@endforeach
 						</ul>
-						<p>Try again later.</p>
-					</div>
+				</div>
 				@endif
+
 
 				<!-- Active filters -->
 				@if ( ! empty($filter_fields))
