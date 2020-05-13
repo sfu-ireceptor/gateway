@@ -176,14 +176,16 @@ class RestService extends Model
     }
 
     // do samples request to all enabled services
-    public static function samples($filters, $username = '', $count_sequences = true, $rest_service_id = null)
+    public static function samples($filters, $username = '', $count_sequences = true, $rest_service_id_list = null)
     {
         $rest_service_list = [];
-        if ($rest_service_id == null) {
+        if ($rest_service_id_list == null) {
             $rest_service_list = self::findEnabled();
         } else {
-            $rs = self::find($rest_service_id);
-            $rest_service_list[] = $rs;
+            foreach ($rest_service_id_list as $rest_service_id) {
+                $rs = self::find($rest_service_id);
+                $rest_service_list[] = $rs;
+            }
         }
 
         // clean filters for services
@@ -391,10 +393,19 @@ class RestService extends Model
 
     public static function sequences_summary($filters, $username = '', $group_by_rest_service = true)
     {
-        // get all samples from all repositories
-        // (so we don't send the full list of samples ids,
-        // because VDJServer can't handle it)
-        $response_list_all = self::samples([], $username, true);
+        // build list of repository ids to query
+        $rest_service_id_list = [];
+        foreach (self::findEnabled() as $rs) {
+            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+            if (isset($filters[$sample_id_list_key])) {
+                $rest_service_id_list[] = $rs->id;
+            }
+        }
+
+        // get ALL samples from repositories
+        // so we don't have to send the FULL list of samples ids
+        // because VDJServer can't handle it
+        $response_list_all = self::samples([], $username, true, $rest_service_id_list);
 
         // filter repositories responses to only requested samples
         $response_list_requested = [];

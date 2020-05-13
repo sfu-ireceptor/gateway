@@ -23,7 +23,7 @@ class Sample
 
     public static function cache_sequence_counts($username, $rest_service_id = null)
     {
-        $response_list = RestService::samples([], $username, false, $rest_service_id);
+        $response_list = RestService::samples([], $username, false, [$rest_service_id]);
         foreach ($response_list as $i => $response) {
             $rest_service_id = $response['rs']->id;
             $sample_list = $response['data'];
@@ -75,7 +75,7 @@ class Sample
         $service_filters = $filters;
 
         // do requests
-        $response_list = RestService::samples($service_filters, $username, $count_sequences, $rest_service_id);
+        $response_list = RestService::samples($service_filters, $username, $count_sequences, [$rest_service_id]);
 
         // if error, update gateway query status
         $gw_query_log_id = request()->get('query_log_id');
