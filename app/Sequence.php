@@ -13,12 +13,22 @@ class Sequence
     // ([sample filters] -> (sample query) => [sample id list]) + [sequence filters] -> (sequence_summary query)
     public static function full_search($sample_filters, $sequence_filters, $username)
     {
-        // get list of sample ids
-        $sample_id_filters = Sample::find_sample_id_list($sample_filters, $username);
+        // get filtered samples
+        $sample_data = Sample::find($sample_filters, $username, false);
+        $sample_list = $sample_data['items'];
+
+        // generate list of sample ids filters
+        $sample_id_filters = [];
+        foreach ($sample_list as $sample) {
+            $sample_id_filters['ir_project_sample_id_list_' . $sample->real_rest_service_id][] = $sample->repertoire_id;
+        }
 
         // get sequences summary
         $sequence_filters = array_merge($sequence_filters, $sample_id_filters);
         $sequence_data = self::summary($sequence_filters, $username);
+
+        // include repositories which failed to return samples
+        $sequence_data['rs_list_no_response'] = array_merge($sequence_data['rs_list_no_response'], $sample_data['rs_list_no_response']);
 
         return $sequence_data;
     }
