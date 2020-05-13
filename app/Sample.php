@@ -523,12 +523,11 @@ class Sample
             $val1 = $a->{$sort_column};
             $val2 = $b->{$sort_column};
 
-            if(is_array($val1) || is_object($val1) || is_array($val2) || is_object($val2)) {
+            if (is_array($val1) || is_object($val1) || is_array($val2) || is_object($val2)) {
                 $val1 = json_encode($val1);
                 $val2 = json_encode($val2);
                 $comparison_result = strcasecmp($val1, $val2);
-            }
-            else if ($field_type == 'integer' || $field_type == 'number') {
+            } elseif ($field_type == 'integer' || $field_type == 'number') {
                 if ($val1 == $val2) {
                     $comparison_result = 0;
                 } elseif ($val1 < $val2) {
