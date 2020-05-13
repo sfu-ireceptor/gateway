@@ -14,6 +14,26 @@ class RestService extends Model
         'url', 'name', 'username', 'password', 'enabled', 'version',
     ];
 
+ public function __call($method, $parameters)
+    {
+        if ($method == 'find') {   
+            $rs = parent::__call($method, $parameters);            
+            $display_name = self::getDisplayName($rs);
+            $rs->display_name = $display_name;
+            return $rs;
+        }
+        else {
+            return parent::__call($method, $parameters);            
+        }
+
+    }   
+
+    public static function getDisplayName($rs) {
+        $group_name = RestServiceGroup::nameForCode($rs->rest_service_group_code);
+        $display_name = $group_name ? $group_name : $rs->name;        
+        return $display_name;
+    }
+
     /**
      * Returns the services which are enabled.
      *
@@ -455,6 +475,13 @@ class RestService extends Model
         $response_list_filtered = [];
         foreach ($response_list_requested as $response) {
             $rs = $response['rs'];
+
+            // if there was an error with the repertoire query
+            // include this response so the error is reported
+            if($response['status'] == 'error') {
+                $response_list_filtered[] = $response;
+                continue;
+            }   
 
             if ($counts_by_rs[$rs->id] == null) {
                 $response['status'] = 'error';
