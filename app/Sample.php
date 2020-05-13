@@ -520,16 +520,24 @@ class Sample
         usort($sample_list, function ($a, $b) use ($sort_column, $sort_order, $field_type) {
             $comparison_result = 0;
 
-            if ($field_type == 'integer' || $field_type == 'number') {
-                if ($a->{$sort_column} == $b->{$sort_column}) {
+            $val1 = $a->{$sort_column};
+            $val2 = $b->{$sort_column};
+
+            if(is_array($val1) || is_object($val1) || is_array($val2) || is_object($val2)) {
+                $val1 = json_encode($val1);
+                $val2 = json_encode($val2);
+                $comparison_result = strcasecmp($val1, $val2);
+            }
+            else if ($field_type == 'integer' || $field_type == 'number') {
+                if ($val1 == $val2) {
                     $comparison_result = 0;
-                } elseif ($a->{$sort_column} < $b->{$sort_column}) {
+                } elseif ($val1 < $val2) {
                     $comparison_result = -1;
                 } else {
                     $comparison_result = 1;
                 }
             } else {
-                $comparison_result = strcasecmp($a->{$sort_column}, $b->{$sort_column});
+                $comparison_result = strcasecmp($val1, $val2);
             }
 
             if ($sort_order == 'desc') {
