@@ -70,12 +70,12 @@ class Sample
         return $sample_id_list;
     }
 
-    public static function find($filters, $username, $count_sequences = true, $rest_service_id = null)
+    public static function find($filters, $username, $count_sequences = true)
     {
         $service_filters = $filters;
 
         // do requests
-        $response_list = RestService::samples($service_filters, $username, $count_sequences, [$rest_service_id]);
+        $response_list = RestService::samples($service_filters, $username, $count_sequences);
 
         // if error, update gateway query status
         $gw_query_log_id = request()->get('query_log_id');
