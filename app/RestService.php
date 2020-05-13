@@ -413,14 +413,8 @@ class RestService extends Model
             $rs = $response['rs'];
 
             // build requested list of sample ids for this repository
-            $sample_id_list = [];
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-            if (isset($filters[$sample_id_list_key])) {
-                $sample_id_list = $filters[$sample_id_list_key];
-            } else {
-                // if no sample id requested for this service, skip it
-                continue;
-            }
+            $sample_id_list = $filters[$sample_id_list_key];
 
             // filter samples
             $sample_list_requested = [];
