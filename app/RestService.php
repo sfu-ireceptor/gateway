@@ -14,6 +14,8 @@ class RestService extends Model
         'url', 'name', 'username', 'password', 'enabled', 'version',
     ];
 
+    public $display_name = '';
+
     public function __call($method, $parameters)
     {
         if ($method == 'find') {
