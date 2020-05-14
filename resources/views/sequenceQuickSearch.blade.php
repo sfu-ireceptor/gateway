@@ -191,7 +191,7 @@
 
 						<small class="sequence_count">
 							{{ count($sequence_list) }}
-							from
+							of
 							<span title="{{ number_format($total_filtered_sequences) }}">
 								{{ human_number($total_filtered_sequences) }} results
 							</span>
