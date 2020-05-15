@@ -105,6 +105,12 @@ class RestServiceSeeder extends Seeder
                 'username' => '',
                 'password' => '',
             ],
+            [
+                'url' => 'http://covid19-2.ireceptor.org/airr/v1/',
+                'name' => 'COVID 19-2',
+                'username' => '',
+                'password' => '',
+            ],
 
         ];
 
