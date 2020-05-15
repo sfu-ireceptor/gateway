@@ -102,6 +102,12 @@ class SampleController extends Controller
             $subject_ethnicity_list[$v] = $v;
         }
 
+        // target locus for PCR
+        $pcr_target_locus_list = [];
+        foreach ($metadata['pcr_target_locus'] as $v) {
+            $pcr_target_locus_list[$v] = $v;
+        }
+
         // cell type
         $cell_type_list = [];
         foreach ($metadata['cell_subset'] as $v) {
@@ -126,6 +132,7 @@ class SampleController extends Controller
         $data['subject_gender_list'] = $subject_gender_list;
         $data['subject_ethnicity_list'] = $subject_ethnicity_list;
         $data['subject_organism_list'] = $subject_organism_list;
+        $data['pcr_target_locus_list'] = $pcr_target_locus_list;
         $data['cell_type_list'] = $cell_type_list;
         $data['sample_source_list'] = $sample_source_list;
         $data['dna_type_list'] = $dna_type_list;
