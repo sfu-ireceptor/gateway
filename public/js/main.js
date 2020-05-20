@@ -160,6 +160,15 @@ $(document).ready(function() {
 	// on page load, update table columns visibity 
 	show_hide_columns();
 
+	// send current columns when sorting table
+	$('a.sort_column').click(function() {
+        var old_url = this.href,
+        	cols = $('input[name=cols]').val();
+            new_url      = old_url + '&cols=' + cols;
+        window.location = new_url;
+        return false;
+   });
+
     // reloading message
     function show_reloading_message() {
     	$('.reloading_contents').after($('.reloading_message'));

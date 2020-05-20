@@ -66,6 +66,12 @@ class SampleController extends Controller
             $filters = Query::getParams($request->input('query_id'));
             $filters['sort_column'] = $request->input('sort_column');
             $filters['sort_order'] = $request->input('sort_order', 'asc');
+
+            // keep current columns
+            if ($request->has('cols')) {
+                $filters['cols'] = $request->input('cols');
+            }
+
             $new_query_id = Query::saveParams($filters, 'samples');
 
             return redirect('samples?query_id=' . $new_query_id);
