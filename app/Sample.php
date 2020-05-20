@@ -520,13 +520,13 @@ class Sample
         usort($sample_list, function ($a, $b) use ($sort_column, $sort_order, $field_type) {
             $comparison_result = 0;
 
-            if($sort_column == 'ir_sequence_count') {
-                if( ! isset($a->{$sort_column})) {
+            if ($sort_column == 'ir_sequence_count') {
+                if (! isset($a->{$sort_column})) {
                     $a->{$sort_column} = 0;
-                }                
-                if( ! isset($b->{$sort_column})) {
+                }
+                if (! isset($b->{$sort_column})) {
                     $b->{$sort_column} = 0;
-                }                
+                }
             }
 
             $val1 = $a->{$sort_column};
