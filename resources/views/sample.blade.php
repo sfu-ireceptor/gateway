@@ -17,6 +17,8 @@
 			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'post', 'class' => 'sample_search show_reloading_message')) }}
 				<input type="hidden" name="project_id_list" />
 				<input type="hidden" name="cols" value="{{ $current_columns_str }}">
+				<input type="hidden" name="sort_column" value="{{ $sort_column }}">
+				<input type="hidden" name="sort_order" value="{{ $sort_order }}">
 
 			    <div class="form-group full_text_search">
 					{{ Form::label('full_text_search', __('short.full_text_search')) }}
