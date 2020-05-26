@@ -53,7 +53,7 @@ class TestController extends Controller
     {
         $s = 'DOI: 10.1111/imr.12666';
         if (! (stripos($s, 'DOI') === false)) {
-        $s = str_replace('DOI: ', '', $s);            
+            $s = str_replace('DOI: ', '', $s);
         }
 
         echo $s;
