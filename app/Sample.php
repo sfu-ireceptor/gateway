@@ -381,12 +381,10 @@ class Sample
                 // remove any character which is not a digit
                 $pmid = preg_replace('~\D~', '', $sample->pub_ids);
                 $sample->study_url = 'https://www.ncbi.nlm.nih.gov/pubmed/' . $pmid;
-            }
-            else if (! (stripos($sample->pub_ids, 'DOI') === false)) {
-                $doi = str_replace('DOI: ', '', $s);;
+            } elseif (! (stripos($sample->pub_ids, 'DOI') === false)) {
+                $doi = str_replace('DOI: ', '', $s);
                 $sample->study_url = 'http://doi.org/' . $doi;
-            }
-            elseif (is_url($sample->pub_ids)) {
+            } elseif (is_url($sample->pub_ids)) {
                 $sample->study_url = $sample->pub_ids;
             }
         }
