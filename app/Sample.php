@@ -378,9 +378,15 @@ class Sample
         // generate study URL
         if (isset($sample->pub_ids)) {
             if (! (stripos($sample->pub_ids, 'PMID') === false)) {
+                // remove any character which is not a digit
                 $pmid = preg_replace('~\D~', '', $sample->pub_ids);
                 $sample->study_url = 'https://www.ncbi.nlm.nih.gov/pubmed/' . $pmid;
-            } elseif (is_url($sample->pub_ids)) {
+            }
+            else if (! (stripos($sample->pub_ids, 'DOI') === false)) {
+                $doi = str_replace('DOI: ', '', $s);;
+                $sample->study_url = 'http://doi.org/' . $doi;
+            }
+            elseif (is_url($sample->pub_ids)) {
                 $sample->study_url = $sample->pub_ids;
             }
         }
