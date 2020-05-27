@@ -332,10 +332,7 @@
 								Individual Repertoires
 
 								<small>
-									@if ($page != 1)
-										page {{ $page }} of
-									@endif
-									{{ $nb_samples }} results
+									{{ $page_first_element_index }}-{{ $page_last_element_index }} of {{ $nb_samples }}
 								</small>
 
 								<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">

@@ -244,6 +244,9 @@ class SampleController extends Controller
         $data['nb_samples'] = $nb_samples;
         $data['nb_pages'] = $nb_pages;
         $data['page'] = $page;
+        $data['page_first_element_index'] = ($page - 1) * $max_per_page + 1;
+        $data['page_last_element_index'] = $data['page_first_element_index'] + count($sample_list) - 1;
+
         $data['sort_column'] = $sort_column;
         $data['sort_order'] = $sort_order;
         $data['sequences_query_id'] = $sequences_query_id;
