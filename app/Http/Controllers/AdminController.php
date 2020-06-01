@@ -346,6 +346,28 @@ class AdminController extends Controller
         return view('queries', $data);
     }
 
+    public function queries2($nb_months = null)
+    {
+        $data = [];
+        $data['nb_months'] = $nb_months;
+        $query_list = QueryLog::find_gateway_queries($nb_months);
+
+        $l = [];
+        foreach ($query_list as $q) {
+            if ($q->username != 'titi' && $q->username != 'bcorrie' && $q->username != 'frances_breden' && $q->username != 'bojanz' && $q->username != 'scott_christley') {
+                $l[] = $q;
+            }
+        }
+        $data['queries'] = $l;
+
+        return view('queries2', $data);
+    }
+
+    public function queriesMonths2($n)
+    {
+        return $this->queries2($n);
+    }
+
     public function queriesMonths($n)
     {
         return $this->queries($n);
