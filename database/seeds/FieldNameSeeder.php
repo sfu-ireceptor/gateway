@@ -20,8 +20,8 @@ class FieldNameSeeder extends CsvSeeder
 
         $this->mapping = [
             0 => 'ir_id',
-            2 => 'ir_short',
             1 => 'ir_full',
+            2 => 'ir_short',
             14 => 'airr',
             15 => 'airr_full',
             18  => 'ir_class',
@@ -30,8 +30,8 @@ class FieldNameSeeder extends CsvSeeder
             21 => 'ir_adc_api_response',
             23 => 'airr_type',
             24 => 'airr_description',
-            26 => 'airr_example',
-            40 => 'ir_api_input_type',
+            29 => 'airr_example',
+            41 => 'ir_api_input_type',
         ];
 
         parent::run();
