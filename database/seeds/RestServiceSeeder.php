@@ -63,18 +63,22 @@ class RestServiceSeeder extends Seeder
             [
                 'url' => 'http://covid19.ireceptor.org/airr/v1/',
                 'name' => 'COVID 19',
+                'rest_service_group_code' => 'c19',
             ],
             [
                 'url' => 'http://covid19-1.ireceptor.org/airr/v1/',
                 'name' => 'COVID 19-1',
+                'rest_service_group_code' => 'c19',
             ],
             [
                 'url' => 'http://covid19-2.ireceptor.org/airr/v1/',
                 'name' => 'COVID 19-2',
+                'rest_service_group_code' => 'c19',
             ],
             [
                 'url' => 'http://covid19-3.ireceptor.org/airr/v1/',
                 'name' => 'COVID 19-3',
+                'rest_service_group_code' => 'c19',
             ],
         ];
 

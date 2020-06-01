@@ -12,6 +12,10 @@ class RestServiceGroupSeeder extends Seeder
                 'code' => 'ipa',
                 'name' => 'iReceptor Public Archive',
             ],
+            [
+                'code' => 'c19',
+                'name' => 'AIRR COVID-19',
+            ],
         ];
 
         foreach ($l as $t) {
