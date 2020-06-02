@@ -9,56 +9,49 @@ class RestServiceSeeder extends Seeder
     {
         $l = [
             [
-                'url' => 'https://vdjserver.org/airr/v1/',
-                'name' => 'VDJServer ADC',
+                'url' => 'https://ipa1.ireceptor.org/airr/v1/',
+                'name' => 'IPA 1',
+                'rest_service_group_code' => 'ipa',
             ],
             [
-                'url' => 'https://airr-api.ireceptor.org/airr/v1/',
-                'name' => 'IPA ADC Test (small)',
+                'url' => 'https://ipa2.ireceptor.org/airr/v1/',
+                'name' => 'IPA 2',
+                'rest_service_group_code' => 'ipa',
             ],
             [
-                'url' => 'https://airr-api2.ireceptor.org/airr/v1/',
-                'name' => 'IPA ADC Test 2 (big)',
+                'url' => 'https://ipa3.ireceptor.org/airr/v1/',
+                'name' => 'IPA 3',
+                'rest_service_group_code' => 'ipa',
             ],
             [
-                'url' => 'http://192.168.87.62/airr/v1/',
-                'name' => 'IPA ADC Staging 2',
+                'url' => 'https://ipa4.ireceptor.org/airr/v1/',
+                'name' => 'IPA 4',
+                'rest_service_group_code' => 'ipa',
             ],
             [
-                'url' => 'http://adc-turnkey.ireceptor.org/airr/v1/',
-                'name' => 'ADC Turnkey',
-            ],
-            [
-                'url' => 'http://turnkey-test2.ireceptor.org/airr/v1/',
-                'name' => 'ADC Turnkey 2',
-            ],
-            [
-                'url' => 'http://i3.ireceptor.org/airr/v1/',
-                'name' => 'i3 (Sorbonne) local',
+                'url' => 'https://ipa5.ireceptor.org/airr/v1/',
+                'name' => 'IPA 5',
+                'rest_service_group_code' => 'ipa',
             ],
             [
                 'url' => 'https://ipa1-staging.ireceptor.org/airr/v1/',
-                'name' => 'Staging IPA 1 ADC',
+                'name' => 'IPA 1 Staging',
             ],
             [
                 'url' => 'https://ipa2-staging.ireceptor.org/airr/v1/',
-                'name' => 'Staging IPA 2 ADC',
+                'name' => 'IPA 2 Staging',
             ],
             [
                 'url' => 'https://ipa3-staging.ireceptor.org/airr/v1/',
-                'name' => 'Staging IPA 3 ADC',
+                'name' => 'IPA 3 Staging',
             ],
             [
                 'url' => 'https://ipa4-staging.ireceptor.org/airr/v1/',
-                'name' => 'Staging IPA 4 ADC',
+                'name' => 'IPA 4 Staging',
             ],
             [
                 'url' => 'http://206.12.89.162/airr/v1/',
-                'name' => 'IPA5 ADC',
-            ],
-            [
-                'url' => 'http://airr-gold.ireceptor.org/airr/v1/',
-                'name' => 'AIRR Gold',
+                'name' => 'IPA 5 Staging',
             ],
             [
                 'url' => 'http://covid19.ireceptor.org/airr/v1/',
@@ -79,6 +72,10 @@ class RestServiceSeeder extends Seeder
                 'url' => 'http://covid19-3.ireceptor.org/airr/v1/',
                 'name' => 'COVID 19-3',
                 'rest_service_group_code' => 'c19',
+            ],
+            [
+                'url' => 'https://vdjserver.org/airr/v1/',
+                'name' => 'VDJServer ADC',
             ],
         ];
 
