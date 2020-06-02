@@ -80,7 +80,7 @@ class RestServiceSeeder extends Seeder
         ];
 
         foreach ($l as $t) {
-            RestService::firstOrCreate(['url' => $t['url']], $t);
+            RestService::updateOrCreate(['url' => $t['url']], $t);
         }
     }
 }
