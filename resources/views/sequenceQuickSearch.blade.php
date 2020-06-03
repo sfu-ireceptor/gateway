@@ -296,7 +296,7 @@
 	        "study_title",
 	        "subject_id",
 	        "sample_id",
-	        "disease_state_sample", 
+	        "disease_diagnosis", 
 	        "tissue",
 	        "cell_subset"
 	    ];
@@ -304,7 +304,7 @@
 	        "@lang('short.study_title')", 
 	        "@lang('short.subject_id')",
 	        "@lang('short.sample_id')",
-	        "@lang('short.disease_state_sample')",
+	        "@lang('short.disease_diagnosis')",
 	        "@lang('short.tissue')", 
 	        "@lang('short.cell_subset')"
 	    ];

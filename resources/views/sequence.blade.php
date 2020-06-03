@@ -475,7 +475,7 @@
 	var graphFields = [
 	        "subject_id",
 	        "sample_id",
-	        "disease_state_sample", 
+	        "disease_diagnosis", 
 	        "tissue",
 	        "cell_subset",
 	        "sequencing_platform"
@@ -483,7 +483,7 @@
 	var graphNames = [
 	        "@lang('short.subject_id')",
 	        "@lang('short.sample_id')",
-	        "@lang('short.disease_state_sample')",
+	        "@lang('short.disease_diagnosis')",
 	        "@lang('short.tissue')", 
 	        "@lang('short.cell_subset')",
 	        "@lang('short.sequencing_platform')"
