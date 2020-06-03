@@ -131,6 +131,12 @@
 									</div>
 								</div>
 
+							    <div class="form-group">
+									{{ Form::label('disease_diagnosis', __('short.disease_diagnosis')) }}
+									@include('help', ['id' => 'disease_diagnosis'])
+									{{ Form::select('disease_diagnosis', $subject_disease_diagnosis_list, '', array('class' => 'form-control')) }}
+								</div>
+
 								<p class="button_container">
 									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 								</p>
@@ -182,12 +188,6 @@
 									{{ Form::label('cell_phenotype', __('short.cell_phenotype')) }}
 									@include('help', ['id' => 'cell_phenotype'])
 									{{ Form::text('cell_phenotype', '', array('class' => 'form-control')) }}
-								</div>
-
-								<div class="form-group">
-									{{ Form::label('disease_state_sample', __('short.disease_state_sample')) }}
-									@include('help', ['id' => 'disease_state_sample'])
-									{{ Form::text('disease_state_sample', '', array('class' => 'form-control')) }}
 								</div>
 
 								<div class="form-group">

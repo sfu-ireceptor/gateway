@@ -40,7 +40,7 @@ class CachedSample extends Model
         $t = [];
 
         // distinct values for simple sample fields
-        $fields = ['study_type', 'template_class', 'ethnicity', 'tissue', 'sex', 'pcr_target_locus', 'cell_subset', 'organism'];
+        $fields = ['study_type', 'template_class', 'ethnicity', 'tissue', 'sex', 'pcr_target_locus', 'cell_subset', 'organism', 'disease_diagnosis'];
         foreach ($fields as $field) {
             $t[$field] = self::distinctValues($field);
         }

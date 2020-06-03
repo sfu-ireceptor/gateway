@@ -132,12 +132,20 @@ class SampleController extends Controller
             $dna_type_list[$v] = $v;
         }
 
+        // disease_diagnosis
+        $subject_disease_diagnosis_list = [];
+        $subject_disease_diagnosis_list[''] = 'Any';
+        foreach ($metadata['disease_diagnosis'] as $v) {
+            $subject_disease_diagnosis_list[$v] = $v;
+        }
+
         // data
         $data = [];
         $data['study_type_list'] = $study_type_list;
         $data['subject_gender_list'] = $subject_gender_list;
         $data['subject_ethnicity_list'] = $subject_ethnicity_list;
         $data['subject_organism_list'] = $subject_organism_list;
+        $data['subject_disease_diagnosis_list'] = $subject_disease_diagnosis_list;
         $data['pcr_target_locus_list'] = $pcr_target_locus_list;
         $data['cell_type_list'] = $cell_type_list;
         $data['sample_source_list'] = $sample_source_list;
