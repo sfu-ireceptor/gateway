@@ -37,3 +37,4 @@ php artisan -q storage:link
 
 # stop maintenance mode
 php artisan up
+
