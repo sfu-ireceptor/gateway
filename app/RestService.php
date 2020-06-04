@@ -277,7 +277,7 @@ class RestService extends Model
             $response_list[$i] = $response;
         }
 
-        if($grouped) {
+        if ($grouped) {
             // group responses belonging to the same group
             $response_list_grouped = [];
             foreach ($response_list as $response) {
@@ -304,12 +304,11 @@ class RestService extends Model
                     }
                 }
             }
-            return $response_list_grouped;            
-        }
-        else {
+
+            return $response_list_grouped;
+        } else {
             return $response_list;
         }
-
     }
 
     public static function sequence_count_from_cache($rest_service_id, $sample_id_list = [])
