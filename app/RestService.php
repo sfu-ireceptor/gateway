@@ -199,7 +199,7 @@ class RestService extends Model
     }
 
     // do samples request to all enabled services
-    public static function samples($filters, $username = '', $count_sequences = true, $rest_service_id_list = null)
+    public static function samples($filters, $username = '', $count_sequences = true, $rest_service_id_list = null, $grouped = true)
     {
         $rest_service_list = [];
         if ($rest_service_id_list === null) {
@@ -277,34 +277,39 @@ class RestService extends Model
             $response_list[$i] = $response;
         }
 
-        // group responses belonging to the same group
-        $response_list_grouped = [];
-        foreach ($response_list as $response) {
-            $group = $response['rs']->rest_service_group_code;
+        if($grouped) {
+            // group responses belonging to the same group
+            $response_list_grouped = [];
+            foreach ($response_list as $response) {
+                $group = $response['rs']->rest_service_group_code;
 
-            // service doesn't belong to a group -> just add response
-            if ($group == '') {
-                $response_list_grouped[] = $response;
-            } else {
-                // a response with that group already exists? -> merge
-                if (isset($response_list_grouped[$group])) {
-                    $r1 = $response_list_grouped[$group];
-                    $r2 = $response;
-                    // merge response status
-                    if ($r2['status'] != 'success') {
-                        $r1['status'] = $r2['status'];
-                        $r1['error_message'] = $r2['error_message'];
-                    }
-                    // merge list of samples
-                    $r1['data'] = array_merge($r1['data'], $r2['data']);
-                    $response_list_grouped[$group] = $r1;
+                // service doesn't belong to a group -> just add response
+                if ($group == '') {
+                    $response_list_grouped[] = $response;
                 } else {
-                    $response_list_grouped[$group] = $response;
+                    // a response with that group already exists? -> merge
+                    if (isset($response_list_grouped[$group])) {
+                        $r1 = $response_list_grouped[$group];
+                        $r2 = $response;
+                        // merge response status
+                        if ($r2['status'] != 'success') {
+                            $r1['status'] = $r2['status'];
+                            $r1['error_message'] = $r2['error_message'];
+                        }
+                        // merge list of samples
+                        $r1['data'] = array_merge($r1['data'], $r2['data']);
+                        $response_list_grouped[$group] = $r1;
+                    } else {
+                        $response_list_grouped[$group] = $response;
+                    }
                 }
             }
+            return $response_list_grouped;            
+        }
+        else {
+            return $response_list;
         }
 
-        return $response_list_grouped;
     }
 
     public static function sequence_count_from_cache($rest_service_id, $sample_id_list = [])
@@ -428,7 +433,7 @@ class RestService extends Model
         // get ALL samples from repositories
         // so we don't have to send the FULL list of samples ids
         // because VDJServer can't handle it
-        $response_list_all = self::samples([], $username, true, $rest_service_id_list);
+        $response_list_all = self::samples([], $username, true, $rest_service_id_list, false);
 
         // filter repositories responses to only requested samples
         $response_list_requested = [];
