@@ -93,7 +93,7 @@
 							    <div class="form-group">
 									{{ Form::label('organism', __('short.organism')) }}
 									@include('help', ['id' => 'organism'])
-									{{ Form::select('organism', $subject_organism_list, '', array('class' => 'form-control')) }}
+									{{ Form::select('organism[]', $subject_organism_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 								<div class="form-group">
@@ -134,7 +134,7 @@
 							    <div class="form-group">
 									{{ Form::label('disease_diagnosis', __('short.disease_diagnosis')) }}
 									@include('help', ['id' => 'disease_diagnosis'])
-									{{ Form::select('disease_diagnosis', $subject_disease_diagnosis_list, '', array('class' => 'form-control')) }}
+									{{ Form::select('disease_diagnosis[]', $subject_disease_diagnosis_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 								<p class="button_container">
