@@ -298,7 +298,7 @@
 	        "sample_id",
 	        "disease_diagnosis", 
 	        "tissue",
-	        "cell_subset"
+	        "pcr_target_locus"
 	    ];
 	var graphNames = [
 	        "@lang('short.study_title')", 
@@ -306,7 +306,7 @@
 	        "@lang('short.sample_id')",
 	        "@lang('short.disease_diagnosis')",
 	        "@lang('short.tissue')", 
-	        "@lang('short.cell_subset')"
+	        "@lang('short.pcr_target_locus')"
 	    ];
 
 	var graphInternalLabels = true;

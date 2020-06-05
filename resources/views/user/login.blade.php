@@ -101,7 +101,7 @@
 	        "organism",
 	        "disease_diagnosis", 
 	        "tissue",
-	        "cell_subset", 
+	        "pcr_target_locus",
 	        "template_class"
 	    ];
 	
@@ -110,7 +110,7 @@
 	        "@lang('short.organism')", 
 	        "@lang('short.disease_diagnosis')",
 	        "@lang('short.tissue')", 
-	        "@lang('short.cell_subset')", 
+	        "@lang('short.pcr_target_locus')",
 	        "@lang('short.template_class')"
 	    ];
 	
