@@ -473,20 +473,20 @@
 
 <script>
 	var graphFields = [
+	        "study_title",
 	        "subject_id",
 	        "sample_id",
 	        "disease_diagnosis", 
 	        "tissue",
-	        "cell_subset",
-	        "sequencing_platform"
+	        "pcr_target_locus"
 	    ];
 	var graphNames = [
+	        "@lang('short.study_title')",
 	        "@lang('short.subject_id')",
 	        "@lang('short.sample_id')",
 	        "@lang('short.disease_diagnosis')",
 	        "@lang('short.tissue')", 
-	        "@lang('short.cell_subset')",
-	        "@lang('short.sequencing_platform')"
+	        "@lang('short.pcr_target_locus')"
 	    ];
 
 	var graphInternalLabels = true;

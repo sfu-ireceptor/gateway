@@ -97,7 +97,6 @@ class SampleController extends Controller
 
         // organism
         $subject_organism_list = [];
-        $subject_organism_list[''] = 'Any';
         foreach ($metadata['organism'] as $v) {
             $subject_organism_list[$v] = $v;
         }
@@ -134,7 +133,6 @@ class SampleController extends Controller
 
         // disease_diagnosis
         $subject_disease_diagnosis_list = [];
-        $subject_disease_diagnosis_list[''] = 'Any';
         foreach ($metadata['disease_diagnosis'] as $v) {
             $subject_disease_diagnosis_list[$v] = $v;
         }

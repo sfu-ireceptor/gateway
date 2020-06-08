@@ -194,6 +194,9 @@ class RestService extends Model
         unset($filters['full_text_search']);
         unset($filters['filters_order']);
         unset($filters['sample_query_id']);
+        unset($filters['sort_column']);
+        unset($filters['sort_order']);
+        unset($filters['page']);
 
         return $filters;
     }

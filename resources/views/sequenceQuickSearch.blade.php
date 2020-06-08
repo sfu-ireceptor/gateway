@@ -190,10 +190,10 @@
 						Individual Sequences
 
 						<small class="sequence_count">
-							{{ count($sequence_list) }}
+							1-{{ count($sequence_list) }}
 							of
 							<span title="{{ number_format($total_filtered_sequences) }}">
-								{{ human_number($total_filtered_sequences) }} results
+								{{ human_number($total_filtered_sequences) }}
 							</span>
 						</small>
 
@@ -298,7 +298,7 @@
 	        "sample_id",
 	        "disease_diagnosis", 
 	        "tissue",
-	        "cell_subset"
+	        "pcr_target_locus"
 	    ];
 	var graphNames = [
 	        "@lang('short.study_title')", 
@@ -306,7 +306,7 @@
 	        "@lang('short.sample_id')",
 	        "@lang('short.disease_diagnosis')",
 	        "@lang('short.tissue')", 
-	        "@lang('short.cell_subset')"
+	        "@lang('short.pcr_target_locus')"
 	    ];
 
 	var graphInternalLabels = true;
