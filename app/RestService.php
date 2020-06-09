@@ -709,10 +709,10 @@ class RestService extends Model
         $rs_list = [];
         $response_list = self::samples($filters, $username, false);
         foreach ($response_list as $i => $response) {
-            $rs = $response['rs'];
             $sample_list = $response['data'];
-
-            if (count($sample_list) > 0) {
+            foreach ($sample_list as $sample) {
+                $rest_service_id = $sample->real_rest_service_id;
+                $rs = self::find($rest_service_id);
                 $rs_list[$rs->id] = $rs;
             }
         }
