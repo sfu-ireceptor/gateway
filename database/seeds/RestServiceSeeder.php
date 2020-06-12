@@ -74,8 +74,8 @@ class RestServiceSeeder extends Seeder
                 'rest_service_group_code' => 'c19',
             ],
             [
-                'url' => 'https://vdjserver.org/airr/v1/',
-                'name' => 'VDJServer ADC',
+                'url' => 'https://vdj-staging.tacc.utexas.edu/airr/v1/',
+                'name' => 'VDJServer',
             ],
         ];
 
