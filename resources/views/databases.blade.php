@@ -19,21 +19,48 @@
 			<table class="table table-bordered table-striped rs_list">
 				<thead>
 					<tr>
-						<th>Enabled</th>
-						<th>Name</th>
-						<th>Visible Name</th>
+						<th>Private Name</th>
+						<th>Public Group Name</th>
 						<th>URL</th>
-						<th>Nb repertoires</th>
-						<th>Nb sequences</th>
-						<th>Last refreshed</th>
-						<th></th>
+						<th>Repertoires</th>
+						<th>Sequences</th>
+						<th>Last Refresh</th>
 					</tr>
 				</thead>
 				<tbody>
 					@foreach ($rs_list as $rs)
 						<tr>
-							<td>{{ Form::checkbox('rs_enabled', $rs->id, $rs->enabled) }}</td>					
-							<td>{{ $rs->name }}</td>	
+							<td>
+								<div class="btn-group">
+									<button type="button" class="btn {{ $rs->enabled ? 'btn-success' : 'btn-default'}} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										{{ $rs->name }}
+										<span class="caret"></span>
+									</button>  
+									<ul class="dropdown-menu">
+										@if ($rs->enabled)
+										    <li>
+										    	<a href="/admin/update-database/{{ $rs->id }}/0">
+										    		<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+										    		Disable
+										    	</a>
+										    </li>
+										@else
+										    <li>
+										    	<a href="/admin/update-database/{{ $rs->id }}/1">
+										    		<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										    		Enable
+										    	</a>
+										    </li>
+										@endif		
+										<li>
+											<a href="/admin/samples/update-sequence_count/{{ $rs->id }}">
+												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+												Refresh cached sequence counts
+											</a>
+										</li>
+									</ul>
+								</div>
+							</td>					
 							<td>{{ $rs->display_name }}</td>	
 							<td><a href="{{ $rs->url }}">{{ $rs->url }}</a></td>					
 							<td>{{ $rs->nb_samples }}</a></td>
@@ -48,14 +75,6 @@
 									{{ human_date_time($rs->last_cached, 'M j') }}
 									<span class="minor">{{ human_date_time($rs->last_cached, 'H:i') }}</span>
 								@endif
-							</td>
-							<td>
-								<a href="/admin/samples/update-sequence_count/{{ $rs->id }}">
-									<button type="button" class="btn btn-default" aria-label="Edit">
-										<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
-										Refresh cached sequence counts
-									</button>
-								</a>
 							</td>
 						</tr>
 					@endforeach

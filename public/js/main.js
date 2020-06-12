@@ -345,18 +345,4 @@ $(document).ready(function() {
 
 		var timer = setInterval(refreshJobList, 5000);
 	});	
-
-	/**********************************************************
-	* Databases
-	**********************************************************/
-
-	// on checkbox change
-	$('.rs_list input[type=checkbox]').change(function() {
-		var checkbox = $(this);
-		var rs_id = checkbox.val();
-		var enabled = checkbox.is(":checked");
-
-		$.post("/admin/update-database", {id: rs_id, enabled: enabled});
-	});
-
 });

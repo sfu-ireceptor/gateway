@@ -41,14 +41,18 @@ class AdminController extends Controller
         return view('databases', $data);
     }
 
-    public function postUpdateDatabase(Request $request)
+    public function getUpdateDatabase($id, $enabled)
     {
-        $id = $request->get('id');
-        $enabled = filter_var($request->get('enabled'), FILTER_VALIDATE_BOOLEAN);
+        $enabled = filter_var($enabled, FILTER_VALIDATE_BOOLEAN);
 
         $rs = RestService::find($id);
         $rs->enabled = $enabled;
         $rs->save();
+
+        $message = $rs->name . ' was successfully ';
+        $message.= $enabled ? 'enabled' : 'disabled';
+        
+        return redirect('admin/databases')->with('notification', $message);
     }
 
     public function getNews()

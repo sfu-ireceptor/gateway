@@ -402,6 +402,10 @@ a.external:after {
 	margin: 0 0 0 4px;
 }
 
+.dropdown-menu a {
+	text-decoration: none;
+}
+
 /* @end */
 
 /* @group top navigation */
