@@ -16,5 +16,10 @@ class AlterRestServiceDeleteUsernamePasswordVersionFields extends Migration
 
     public function down()
     {
+        Schema::table('rest_service', function ($table) {
+            $table->text('username');
+            $table->text('password');
+            $table->integer('version')->default(1);  
+        });
     }
 }
