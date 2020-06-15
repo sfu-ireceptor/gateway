@@ -32,7 +32,7 @@
 						<tr>
 							<td>
 								<div class="btn-group">
-									<button type="button" class="btn {{ $rs->enabled ? 'btn-success' : 'btn-default'}} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<button type="button" class="btn btn-sm {{ $rs->enabled ? 'btn-success' : 'btn-default'}} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 										{{ $rs->name }}
 										<span class="caret"></span>
 									</button>  
