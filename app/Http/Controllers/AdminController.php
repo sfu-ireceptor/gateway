@@ -50,8 +50,8 @@ class AdminController extends Controller
         $rs->save();
 
         $message = $rs->name . ' was successfully ';
-        $message.= $enabled ? 'enabled' : 'disabled';
-        
+        $message .= $enabled ? 'enabled' : 'disabled';
+
         return redirect('admin/databases')->with('notification', $message);
     }
 
