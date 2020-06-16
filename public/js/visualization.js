@@ -160,7 +160,7 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels
     colors[black_level] = '#4a4a4a';
 
     // if no values, don't display a chart
-    if(data.length == 1 && data[0]['name'] == 'No data') {
+    if(data.length == 1 && data[0]['name'] == 'None') {
         colors = ['transparent'];
         truncateLabels = 15;
         labelDistance = -58;
@@ -379,7 +379,7 @@ function irAggregateData(field, objList, aggregateBySequence = true, sequenceCou
             var value = obj[field];
 
             if(value === null) {
-                value = 'No data';
+                value = 'None';
             }
 
             count = 1;
