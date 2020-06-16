@@ -44,7 +44,7 @@ class RestService extends Model
      *
      * @return array List of RestService objects
      */
-    public static function findEnabled($field_list = null)
+    public static function findEnabled($field_list = ['*'])
     {
         $l = static::where('hidden', false)->where('enabled', true)->orderBy('name', 'asc')->get($field_list);
 
@@ -65,7 +65,7 @@ class RestService extends Model
      *
      * @return array List of RestService objects
      */
-    public static function findAvailable($field_list = null)
+    public static function findAvailable($field_list = ['*'])
     {
         $l = static::where('hidden', false)->orderBy('name', 'asc')->get($field_list);
 
