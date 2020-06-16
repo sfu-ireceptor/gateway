@@ -59,21 +59,20 @@
 			<div class="intro">
 				<p>
 					A <strong>science gateway</strong>
-					to independent repositories of<br>
-					“Next Generation” sequence data from immune responses,<br>
-					enabling unified exploration, analysis and download.
+					that enables the discovery, analysis and download
+					of <a href="https://www.antibodysociety.org/the-airr-community/">AIRR-seq data</a> (antibody/B-cell and T-cell receptor repertoires)
+					<br>from multiple independent repositories					
 				</p>
 			</div>
 
 			<div class="intro2">
 
 				<p>
-					<strong>{{ human_number($total_sequences) }} sequences</strong> and
-					<strong>{{ $total_samples }} repertoires</strong> are currently available,<br>
-					from
-					{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}},
-					{{ $total_labs }} research {{ str_plural('lab', $total_labs)}} and
-					{{ $total_projects }} {{ str_plural('study', $total_projects)}}.
+					Search study metadata and sequence features from
+					<strong>{{ human_number($total_sequences) }} {{ str_plural('sequence', $total_sequences)}}</strong>,
+					<strong>{{ $total_samples }} {{ str_plural('repertoire', $total_samples)}}</strong>, and
+					<strong>{{ $total_studies }} {{ str_plural('study', $total_studies)}}</strong>
+					across {{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}.
 				</p>
 
 				<div id="charts">
