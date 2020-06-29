@@ -23,7 +23,7 @@
 	</head>
 
 	<body class="{{ Auth::check() ? 'logged-in' : 'not-logged-in'}}">
-    	@if(Auth::check())
+		@if (! isset($is_login_page))
 			<nav class="navbar navbar-default" role="navigation">
 			  <div class="container-fluid">
 			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -33,67 +33,70 @@
 							<img src="/images/logos/ireceptor.png">
 				      	</a>
 					</li>
-			    	@if(Request::is('sequences-quick-search*'))
-			    		<li role="presentation" class="dropdown active search">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-								Search
-								<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-							  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
-							  <li><a href="/samples">Repertoire Metadata Search</a></li>
-							</ul>
-						</li>
-						<li role="presentation" class="active sequences">
-							<a href="/samples" class="active inactive">Sequence Quick Search</a>
-						</li>
-			    	@elseif(Request::is('samples*'))
-						<li role="presentation" class="dropdown active search">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-								Search
-								<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-							  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
-							  <li><a href="/samples">Repertoire Metadata Search</a></li>
-							</ul>
-						</li>
-						<li role="presentation" class="active samples">
-							<a href="#" class="active inactive">
-								1. Repertoire Metadata
-							</a>
-						</li>
-						<li role="presentation" class="sequences">
-							<a href="#" class="inactive">2. Sequences</a>
-						</li>
-					@elseif(Request::is('sequences*'))
-						<li role="presentation" class="dropdown active search">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-								Search
-								<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-							  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
-							  <li><a href="/samples">Repertoire Metadata Search</a></li>
-							</ul>
-						</li>
-						<li role="presentation" class="active samples">
-							<a href="/samples?query_id=@yield('sample_query_id', '')">
-								1. Repertoire Metadata
-							</a>
-						</li>
-						<li role="presentation" class="active sequences">
-							<a href="#" class="active inactive">2. Sequences</a>
-						</li>
-					@else
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Search<span class="caret"></span></a>
-							<ul class="dropdown-menu" role="menu">
-							  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
-							  <li><a href="/samples">Repertoire Metadata Search</a></li>
-							</ul>
-						</li>
-					@endif
+
+			    	@if(Auth::check())
+				    	@if(Request::is('sequences-quick-search*'))
+				    		<li role="presentation" class="dropdown active search">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+									Search
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+								  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
+								  <li><a href="/samples">Repertoire Metadata Search</a></li>
+								</ul>
+							</li>
+							<li role="presentation" class="active sequences">
+								<a href="/samples" class="active inactive">Sequence Quick Search</a>
+							</li>
+				    	@elseif(Request::is('samples*'))
+							<li role="presentation" class="dropdown active search">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+									Search
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+								  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
+								  <li><a href="/samples">Repertoire Metadata Search</a></li>
+								</ul>
+							</li>
+							<li role="presentation" class="active samples">
+								<a href="#" class="active inactive">
+									1. Repertoire Metadata
+								</a>
+							</li>
+							<li role="presentation" class="sequences">
+								<a href="#" class="inactive">2. Sequences</a>
+							</li>
+						@elseif(Request::is('sequences*'))
+							<li role="presentation" class="dropdown active search">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+									Search
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+								  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
+								  <li><a href="/samples">Repertoire Metadata Search</a></li>
+								</ul>
+							</li>
+							<li role="presentation" class="active samples">
+								<a href="/samples?query_id=@yield('sample_query_id', '')">
+									1. Repertoire Metadata
+								</a>
+							</li>
+							<li role="presentation" class="active sequences">
+								<a href="#" class="active inactive">2. Sequences</a>
+							</li>
+						@else
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Search<span class="caret"></span></a>
+								<ul class="dropdown-menu" role="menu">
+								  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
+								  <li><a href="/samples">Repertoire Metadata Search</a></li>
+								</ul>
+							</li>
+						@endif
+					  @endif
 			      </ul>
 
 			      <ul class="nav navbar-nav navbar-right">

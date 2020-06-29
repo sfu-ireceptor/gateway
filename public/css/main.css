@@ -10,10 +10,6 @@ h1 {
 	font-size: 24px;
 }
 
-.not-logged-in h1 {
-	margin-top: 20px;
-}
-
 h1 small {
 	margin-left: 10px;
 	font-size: 14px;

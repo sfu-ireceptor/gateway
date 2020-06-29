@@ -31,6 +31,7 @@ class UserController extends Controller
         $data['total_sequences'] = $metadata['total_sequences'];
 
         $data['news'] = News::orderBy('created_at', 'desc')->first();
+        $data['is_login_page'] = true;
 
         return view('user/login', $data);
     }
