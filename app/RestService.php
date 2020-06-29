@@ -598,10 +598,6 @@ class RestService extends Model
             $service_filters['repertoire_id'] = $service_filters['ir_project_sample_id_list'];
             unset($service_filters['ir_project_sample_id_list']);
 
-            // if productive filter is not set, set it to true
-            if (! isset($service_filters['productive'])) {
-                $service_filters['productive'] = true;
-            }
 
             // if no sequence filters, query only subset of repertoires
             if (count($service_filters) == 1) {
