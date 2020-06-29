@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\FieldName;
+use App\News;
 use App\Sample;
 use Illuminate\Http\Request;
-use App\News;
 
 class HomeController extends Controller
 {
