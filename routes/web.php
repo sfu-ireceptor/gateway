@@ -27,6 +27,9 @@ Route::get('user/reset-password-confirmation', 'UserController@getResetPasswordC
 // about
 Route::get('about', 'HomeController@about')->name('about');
 
+// news
+Route::get('news', 'HomeController@news')->name('news');
+
 // fields definitions
 Route::get('/fields-definitions', 'HomeController@fieldsDefinitions')->name('fields-definitions');
 

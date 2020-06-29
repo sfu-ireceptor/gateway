@@ -13,7 +13,7 @@
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
 		<link href="/css/bootstrap-multiselect.css" rel="stylesheet" />
 		<link href="/css/jstree/default/style.min.css" rel="stylesheet" />
-		<link href="/css/main.css?v=40" rel="stylesheet">
+		<link href="/css/main.css?v=41" rel="stylesheet">
 
 		<!-- IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -22,7 +22,7 @@
 		<![endif]-->
 	</head>
 
-	<body>
+	<body class="{{ Auth::check() ? 'logged-in' : 'not-logged-in'}}">
     	@if(Auth::check())
 			<nav class="navbar navbar-default" role="navigation">
 			  <div class="container-fluid">

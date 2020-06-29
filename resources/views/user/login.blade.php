@@ -43,10 +43,13 @@
 				@isset($news)
 					<div class="panel panel-warning beta_version">
 						<div class="panel-heading">
-							<h3 class="panel-title">What's New</h3>
+							<h3 class="panel-title">What's New</h3>							
 						</div>
 						<div class="panel-body">
 							{!! $news->message !!}
+						</div>
+						<div class="panel-footer">
+							<a href="/news">Read all news →</a>
 						</div>
 					</div>
 				@endisset
