@@ -161,6 +161,7 @@
 							<div class="mini_footer">
 								<p class="text-right">
 									<a href="/about">About iReceptor</a> |
+									<a href="/news">News</a> |
 									<a href="/fields-definitions">Data elements definitions</a> |								
 									<a href="http://ireceptor.org/platform/doc" class="external" target="_blank">Documentation</a>								
 								</p>
