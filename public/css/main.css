@@ -1304,3 +1304,18 @@ form.column_selector {
 }
 
 /* @end */
+
+/* @group news */
+
+.news_item {
+	margin-bottom: 30px;
+}
+
+.news_date {
+	margin-bottom: 0;
+	color: gray;
+}
+
+
+
+/* @end */
