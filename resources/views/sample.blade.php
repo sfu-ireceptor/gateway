@@ -105,14 +105,7 @@
 							    <div class="form-group">
 									{{ Form::label('ethnicity', __('short.ethnicity')) }}
 									@include('help', ['id' => 'ethnicity'])
-									@foreach ($subject_ethnicity_list as $id => $name)
-									<div class="checkbox">
-										<label>
-										{{ Form::checkbox('ethnicity[]', $id) }}
-										{{ $name }}
-										</label>
-									</div>
-									@endforeach
+									{{ Form::select('ethnicity[]', $subject_ethnicity_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 								<div class="form-group">
