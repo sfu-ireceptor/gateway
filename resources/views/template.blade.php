@@ -96,6 +96,13 @@
 								</ul>
 							</li>
 						@endif
+					  @else
+						  <li>
+							<a class="login" href="/login">
+								<span class="glyphicon glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+								Home
+							</a>
+						  </li>
 					  @endif
 			      </ul>
 
