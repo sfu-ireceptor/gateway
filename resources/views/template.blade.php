@@ -103,7 +103,7 @@
 						  <li><a href="http://ireceptor.org/platform/doc/faq" class="external" target="_blank"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Frequently Asked Questions</a></li>  						  
 						  <li><a href="/fields-definitions"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Data elements definitions</a></li>
 						  <li><a href="http://ireceptor.org/platform/doc" class="external" target="_blank"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Documentation</a></li>
-						  <li><a href="/about"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> About iReceptor</a></li>
+						  <li><a href="http://ireceptor.org/" class="external" target="_blank"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> About iReceptor</a></li>
 						</ul>
 					</li>
 			    	@if(Auth::check())
@@ -157,7 +157,7 @@
 						@section('footer')
 							<div class="mini_footer">
 								<p class="text-right">
-									<a href="/about">About iReceptor</a> |
+									<a href="http://ireceptor.org/" class="external" target="_blank">About iReceptor</a> |
 									<a href="/fields-definitions">Data elements definitions</a> |								
 									<a href="http://ireceptor.org/platform/doc" class="external" target="_blank">Documentation</a>								
 								</p>
