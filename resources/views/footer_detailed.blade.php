@@ -2,17 +2,23 @@
 	<div class="col-md-6">
 		<div class="login_about_box">
 			<h3>About iReceptor</h3>
+			<h5>Our Mission</h5>
+			<p>iReceptor facilitates the curation, analysis and sharing of antibody/B-cell and T-cell receptor repertoires (Adaptive Immune Receptor Repertoire or AIRR-seq data) from multiple labs and institutions. We are committed to providing a platform for researchers to increase the value of their data through sharing with the community.  This will greatly increase the amount of data available to answer complex questions about the adaptive immune response, accelerating the development of vaccines, therapeutic antibodies against autoimmune diseases, and cancer immunotherapies.</p>
+			<h5>Our Approach</h5>
 			<p>
-				iReceptor is a science gateway to independent repositories of “Next Generation” sequence data from immune responses, enabling unified exploration, analysis and download.  It is aimed to aid immune genetics researchers who need to federate large, distributed, immune genetics data repositories in order to answer complex questions about the immune response across international data repositories. 
+				The iReceptor gateway integrates large, distributed, AIRR-seq data repositories, following standards for sharing and interoperability developed by the
+				<a href="http://airr-community.org/">Adaptive Immune Receptor Repertoire (AIRR) Community</a>.
+				The main goal of iReceptor is to connect this distributed network of AIRR-seq repositories into an AIRR Data Commons, allowing queries across multiple projects, labs, and institutions.
 			</p>
-
-			<p>
-				iReceptor works with the <a href="http://airr-community.org">Adaptive Immune Receptor Repertoire (AIRR) Community</a> to create standards for data of antibody (Ab)/B-cell and T-cell receptor (TcR) repertoires. We call this AIRR-seq data. The main goal of iReceptor is to connect a distributed network of AIRR-seq repositories (the AIRR Data Commons), allowing queries across multiple projects, labs, and institutions. Integrating these important AIRR-seq repositories will result in improvements to the design of vaccines, therapeutic antibodies and cancer immunotherapies. 
-			</p>
-
-			<p>
-				For more information, see the <a href="http://www.ireceptor.org" target="_blank">iReceptor public website</a>.
-			</p>
+			<p>Present functionalities include:</p>
+			<ul>
+				<li>Search for repertoires satisfying certain metadata (e.g. find all AIRR-seq repertoires from ovarian cancer studies)</li>
+				<li>Search for all repertoires that contain specific CDR sequences</li>
+				<li>Search identified repertoires for sequences derived from particular V, D, and J genes and alleles</li>
+				<li>Download sequences from these repertoires in AIRR.tsv format, easily importable to other AIRR-seq analysis tools</li>
+			</ul>
+			<p>iReceptor is a member of the <a href="http://www.ireceptor-plus.com/">iReceptor Plus Consortium</a>. This project will expand the analysis tools available on the Gateway, including for single cell or Systems Immunology approaches, and add security for iReceptor Plus repositories.</p>
+			<p>For more information, see the <a href="http://www.ireceptor.org/">iReceptor public website</a>.  To sign up for an account and explore AIRR-seq data on the Gateway, to host a data repository, or to provide feedback on this developing community resource, email <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
 		</div>
 	</div>
 	<div class="col-md-2"></div>
