@@ -6,7 +6,7 @@
 			<p>iReceptor facilitates the curation, analysis and sharing of antibody/B-cell and T-cell receptor repertoires (Adaptive Immune Receptor Repertoire or AIRR-seq data) from multiple labs and institutions. We are committed to providing a platform for researchers to increase the value of their data through sharing with the community.  This will greatly increase the amount of data available to answer complex questions about the adaptive immune response, accelerating the development of vaccines, therapeutic antibodies against autoimmune diseases, and cancer immunotherapies.</p>
 			<h5>Our Approach</h5>
 			<p>
-				iReceptor is a science gateway that integrates large, distributed, AIRR-seq data repositories, following standards for sharing and interoperability developed by the
+				The iReceptor gateway integrates large, distributed, AIRR-seq data repositories, following standards for sharing and interoperability developed by the
 				<a href="http://airr-community.org/">Adaptive Immune Receptor Repertoire (AIRR) Community</a>.
 				The main goal of iReceptor is to connect this distributed network of AIRR-seq repositories into an AIRR Data Commons, allowing queries across multiple projects, labs, and institutions.
 			</p>
