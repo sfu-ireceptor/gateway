@@ -13,7 +13,7 @@
 			<p>Present functionalities include:</p>
 			<ul>
 				<li>Search for repertoires satisfying certain metadata (e.g. find all AIRR-seq repertoires from ovarian cancer studies)</li>
-				<li>Search for all repertoires that contain specific CDR sequences</li>
+				<li>Search for all repertoires that contain specific CDR3 sequences</li>
 				<li>Search identified repertoires for sequences derived from particular V, D, and J genes and alleles</li>
 				<li>Download sequences from these repertoires in AIRR.tsv format, easily importable to other AIRR-seq analysis tools</li>
 			</ul>
