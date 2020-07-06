@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Bookmark;
 use App\FieldName;
+use App\Jobs\DownloadSequences;
+use App\LocalJob;
 use App\QueryLog;
 use App\Sample;
 use App\Sequence;
@@ -12,8 +14,6 @@ use Facades\App\Query;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use App\LocalJob;
-use App\Jobs\DownloadSequences;
 
 class SequenceController extends Controller
 {
@@ -452,8 +452,6 @@ class SequenceController extends Controller
             unset($sample_filter_fields['page']);
         }
 
-
-
         $lj = new LocalJob();
         $lj->user = $username;
         $lj->description = 'Sequences download';
@@ -464,6 +462,7 @@ class SequenceController extends Controller
         DownloadSequences::dispatchNow($username, $localJobId, $filters, $request->fullUrl(), $sample_filter_fields);
 
         $message = 'Your download successfully been queued.';
+
         return redirect('/downloads')->with('notification', $message);
     }
 
