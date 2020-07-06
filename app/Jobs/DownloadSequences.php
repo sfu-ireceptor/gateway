@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Download;
 use App\LocalJob;
 use App\Sequence;
 use Illuminate\Bus\Queueable;
@@ -10,7 +11,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use App\Download;
 
 class DownloadSequences implements ShouldQueue
 {
@@ -35,7 +35,7 @@ class DownloadSequences implements ShouldQueue
         $d->status = 'Queued';
         $d->page_url = $url;
         $d->save();
- 
+
         // initialize this job
         $this->username = $username;
         $this->localJobId = $localJobId;
