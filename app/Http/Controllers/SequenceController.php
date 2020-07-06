@@ -12,6 +12,8 @@ use Facades\App\Query;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use App\LocalJob;
+use App\Jobs\DownloadSequences;
 
 class SequenceController extends Controller
 {
@@ -450,31 +452,19 @@ class SequenceController extends Controller
             unset($sample_filter_fields['page']);
         }
 
-        $t = Sequence::sequencesTSV($filters, $username, $request->fullUrl(), $sample_filter_fields);
-        $tsvFilePath = $t['public_path'];
 
-        // log result
-        $query_log_id = $request->get('query_log_id');
-        if ($query_log_id != null) {
-            $query_log = QueryLog::find($query_log_id);
-            $query_log->result_size = $t['size'];
-            $query_log->save();
-        }
 
-        if ($request->ajax()) {
-            $data = [];
+        $lj = new LocalJob();
+        $lj->user = $username;
+        $lj->description = 'Sequences download';
+        $lj->save();
 
-            $data['file_path'] = $tsvFilePath;
+        // queue as a job
+        $localJobId = $lj->id;
+        DownloadSequences::dispatchNow($username, $localJobId, $filters, $request->fullUrl(), $sample_filter_fields);
 
-            if ($t['is_download_incomplete']) {
-                $data['incomplete'] = $t['is_download_incomplete'];
-                $data['file_stats'] = $t['file_stats'];
-            }
-
-            return response()->json($data);
-        } else {
-            return redirect($tsvFilePath);
-        }
+        $message = 'Your download successfully been queued.';
+        return redirect('/downloads')->with('notification', $message);
     }
 
     public function removeFilter(Request $request)
