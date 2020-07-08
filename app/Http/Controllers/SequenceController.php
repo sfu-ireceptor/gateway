@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Bookmark;
+use App\Download;
 use App\FieldName;
 use App\Jobs\DownloadSequences;
 use App\LocalJob;
@@ -12,9 +13,7 @@ use App\Sequence;
 use App\System;
 use Facades\App\Query;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use App\Download;
 
 class SequenceController extends Controller
 {
