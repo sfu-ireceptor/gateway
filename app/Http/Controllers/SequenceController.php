@@ -14,6 +14,7 @@ use Facades\App\Query;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use App\Download;
 
 class SequenceController extends Controller
 {
@@ -401,35 +402,14 @@ class SequenceController extends Controller
     public function download(Request $request)
     {
         $query_id = $request->input('query_id');
-        $nb_sequences = $request->input('n');
-        $time_estimate_max = '24 hours';
+        $filters = Query::getParams($query_id);
 
-        if ($nb_sequences < 500000) {
-            $time_estimate_max = '20 min';
-        }
+        $page = $request->input('page');
+        $page_url = route($page, ['query_id' => $query_id], false);
 
-        if ($nb_sequences < 100000) {
-            $time_estimate_max = '5 min';
-        }
-
-        $data = [];
-        $data['query_id'] = $query_id;
-        $data['time_estimate_max'] = $time_estimate_max;
-
-        // display view
-        return view('sequenceDownload', $data);
-    }
-
-    public function downloadDirect(Request $request, Response $response)
-    {
         $username = auth()->user()->username;
 
-        $query_id = $request->input('query_id');
-        if ($query_id) {
-            $filters = Query::getParams($query_id);
-        } else {
-            $filters = $request->all();
-        }
+        $nb_sequences = $request->input('n');
 
         $sample_filter_fields = [];
         if (isset($filters['sample_query_id'])) {
@@ -459,7 +439,7 @@ class SequenceController extends Controller
 
         // queue as a job
         $localJobId = $lj->id;
-        DownloadSequences::dispatchNow($username, $localJobId, $filters, $request->fullUrl(), $sample_filter_fields);
+        DownloadSequences::dispatchNow($username, $localJobId, $filters, $page_url, $sample_filter_fields, $nb_sequences);
 
         $message = 'Your download successfully been queued.';
 

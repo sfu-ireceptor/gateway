@@ -75,7 +75,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/sequences-quick-search', 'SequenceController@quickSearch')->name('sequences-quick-search')->middleware('log_query');
     Route::post('/sequences-quick-search', 'SequenceController@postQuickSearch')->name('sequences-quick-search-post');
     Route::get('/sequences-download', 'SequenceController@download')->name('sequences-download');
-    Route::get('/sequences-download-direct', 'SequenceController@downloadDirect')->name('sequences-download')->middleware('log_query');
 
     Route::prefix('user')->group(function () {
         Route::get('account', 'UserController@getAccount');
@@ -92,6 +91,10 @@ Route::middleware('auth')->group(function () {
         Route::post('add', 'BookmarkController@postAdd');
         Route::post('delete', 'BookmarkController@postDelete');
         Route::get('delete/{id}', 'BookmarkController@getDelete');
+    });
+
+    Route::prefix('downloads')->group(function () {
+        Route::get('', 'DownloadController@getIndex');
     });
 
     Route::prefix('systems')->group(function () {

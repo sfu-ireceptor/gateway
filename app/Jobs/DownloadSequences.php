@@ -25,15 +25,17 @@ class DownloadSequences implements ShouldQueue
     protected $url;
     protected $sample_filters;
     protected $download;
+    protected $nb_sequences;
 
     // create job instance
-    public function __construct($username, $localJobId, $filters, $url, $sample_filters)
+    public function __construct($username, $localJobId, $filters, $url, $sample_filters, $nb_sequences)
     {
         // create new Download object
         $d = new Download();
         $d->username = $username;
         $d->status = 'Queued';
         $d->page_url = $url;
+        $d->nb_sequences = $nb_sequences;
         $d->save();
 
         // initialize this job
