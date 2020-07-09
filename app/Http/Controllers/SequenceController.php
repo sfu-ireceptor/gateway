@@ -222,6 +222,9 @@ class SequenceController extends Controller
 
         $data['system'] = System::getCurrentSystem(auth()->user()->id);
 
+        // download time estimate
+        $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_sequences']);
+
         // display view
         return view('sequence', $data);
     }
@@ -394,8 +397,26 @@ class SequenceController extends Controller
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
 
+        // download time estimate
+        $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_sequences']);
+
+
         // display view
         return view('sequenceQuickSearch', $data);
+    }
+
+    public function timeEstimate($nb_sequences) {
+        $time_estimate_max = '24 hours';
+
+        if ($nb_sequences < 500000) {
+            $time_estimate_max = '20 min';
+        }
+
+        if ($nb_sequences < 100000) {
+            $time_estimate_max = '';
+        }
+
+        return $time_estimate_max;
     }
 
     public function download(Request $request)

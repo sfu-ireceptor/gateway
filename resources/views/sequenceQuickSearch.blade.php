@@ -182,7 +182,7 @@
 					@else
 						<a href="/sequences-download?query_id={{ $download_query_id }}&amp;n={{ $total_filtered_sequences }}&amp;page=sequences-quick-search" class="btn btn-primary pull-right download_sequences">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
+							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences <strong>{{ $download_time_estimate ? '(will take up to ' . $download_time_estimate . ')' : ''}}</strong></span>
 						</a>
 					@endif
 
