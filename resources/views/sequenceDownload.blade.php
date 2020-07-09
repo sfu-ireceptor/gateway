@@ -15,7 +15,7 @@
 			<div class="col-md-11">
 				<h3>We're preparing your data...</h3>
 				<p>
-					This can take a while, please don't close this window.
+					This can take a while, please don't refresh or close this window.
 					<a href="/sequences-download-direct?query_id={{ $query_id }}" class="download_sequences_direct"></a>
 				</p>
 				<p>
