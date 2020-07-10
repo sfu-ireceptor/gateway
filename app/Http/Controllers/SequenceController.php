@@ -400,12 +400,12 @@ class SequenceController extends Controller
         // download time estimate
         $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_sequences']);
 
-
         // display view
         return view('sequenceQuickSearch', $data);
     }
 
-    public function timeEstimate($nb_sequences) {
+    public function timeEstimate($nb_sequences)
+    {
         $time_estimate_max = '24 hours';
 
         if ($nb_sequences < 500000) {

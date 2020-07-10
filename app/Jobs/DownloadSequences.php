@@ -54,8 +54,9 @@ class DownloadSequences implements ShouldQueue
         $localJob->setRunning();
 
         // if download was canceled, don't do anything
-        if($this->download->isCanceled()) {
+        if ($this->download->isCanceled()) {
             $localJob->setFinished();
+
             return;
         }
 
