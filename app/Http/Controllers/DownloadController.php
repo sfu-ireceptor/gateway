@@ -19,7 +19,7 @@ class DownloadController extends Controller
         return view('downloadList', $data);
     }
 
-       public function getCancel($id)
+    public function getCancel($id)
     {
         $d = Download::find($id);
 
@@ -36,4 +36,5 @@ class DownloadController extends Controller
         $d->save();
 
         return redirect('downloads')->with('notification', 'The job was successfully cancelled.');
+    }
 }
