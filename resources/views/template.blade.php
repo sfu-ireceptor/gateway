@@ -141,6 +141,7 @@
 								<li><a href="/user/account"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> My account</a></li>
 								  <li role="separator" class="divider"></li>
 								<li><a href="/bookmarks"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Bookmarks</a></li>
+								<li><a href="/downloads"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Downloads</a></li>
 								@if(config('services.agave.enabled'))
 									<li><a href="/jobs"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Jobs</a></li>
 									<li><a href="/systems"><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> Systems</a></li>
