@@ -16,46 +16,55 @@ class Download extends Model
     protected $table = 'download';
     protected $guarded = ['id'];
 
-    public function setQueued() {
+    public function setQueued()
+    {
         $this->status = self::STATUS_QUEUED;
     }
 
-    public function setRunning() {
+    public function setRunning()
+    {
         $this->status = self::STATUS_RUNNING;
     }
 
-    public function setCanceled() {
+    public function setCanceled()
+    {
         $this->status = self::STATUS_CANCELED;
     }
 
-    public function setDone() {
+    public function setDone()
+    {
         $this->status = self::STATUS_DONE;
     }
 
-    public function setFailed() {
+    public function setFailed()
+    {
         $this->status = self::STATUS_FAILED;
     }
 
-    public function isQueued() {
+    public function isQueued()
+    {
         return $this->status == self::STATUS_QUEUED;
     }
 
-    public function isRunning() {
+    public function isRunning()
+    {
         return $this->status == self::STATUS_RUNNING;
     }
 
-    public function isCanceled() {
+    public function isCanceled()
+    {
         return $this->status == self::STATUS_CANCELED;
     }
 
-    public function isDone() {
+    public function isDone()
+    {
         return $this->status == self::STATUS_DONE;
     }
 
-    public function isFailed() {
+    public function isFailed()
+    {
         return $this->status == self::STATUS_FAILED;
     }
-
 
     public function createdAt()
     {
