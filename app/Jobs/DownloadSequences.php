@@ -33,7 +33,7 @@ class DownloadSequences implements ShouldQueue
         // create new Download object
         $d = new Download();
         $d->username = $username;
-        $d->status = 'Queued';
+        $d->setQueued();
         $d->page_url = $url;
         $d->nb_sequences = $nb_sequences;
         $d->save();
@@ -53,8 +53,14 @@ class DownloadSequences implements ShouldQueue
         $localJob = LocalJob::find($this->localJobId);
         $localJob->setRunning();
 
+        // if download was canceled, don't do anything
+        if($this->download->isCanceled()) {
+            $localJob->setFinished();
+            return;
+        }
+
         try {
-            $this->download->status = 'Running';
+            $this->download->setRunning();
             $this->download->save();
 
             $t = Sequence::sequencesTSV($this->filters, $this->username, $this->url, $this->sample_filters);
@@ -63,7 +69,7 @@ class DownloadSequences implements ShouldQueue
 
             // TODO send notification email
 
-            $this->download->status = 'Done';
+            $this->download->setDone();
             $this->download->save();
 
             $localJob->setFinished();
@@ -73,7 +79,7 @@ class DownloadSequences implements ShouldQueue
 
             // TODO send notification email
 
-            $this->download->status = 'Error';
+            $this->download->setFailed();
             $this->download->save();
 
             $localJob->setFailed();

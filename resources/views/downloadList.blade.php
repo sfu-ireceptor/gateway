@@ -32,8 +32,10 @@
 				</td>
 				<td>
 					{{ $d->status }}
-					@if($d->status == 'Done')
+					@if($d->isDone())
 						| <a href="{{ $d->file_url }}">Download</a>
+					@elseif($d->isQueued())
+						| <a href="/downloads/cancel/{{ $d->id }}">Cancel</a>						
 					@endif
 				</td>
 				<td>

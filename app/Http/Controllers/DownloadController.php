@@ -18,4 +18,22 @@ class DownloadController extends Controller
 
         return view('downloadList', $data);
     }
+
+       public function getCancel($id)
+    {
+        $d = Download::find($id);
+
+		$username = auth()->user()->username;
+	   if($d->username != $username) {
+        	abort(403, 'Unauthorized action.');
+        }
+
+        if($d->status != Download::STATUS_QUEUED) {
+        	abort(403, 'Unauthorized action.');
+        }
+
+        $d->setCanceled();
+        $d->save();
+
+        return redirect('downloads')->with('notification', 'The job was successfully cancelled.');
 }
