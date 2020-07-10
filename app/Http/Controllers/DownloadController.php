@@ -23,13 +23,13 @@ class DownloadController extends Controller
     {
         $d = Download::find($id);
 
-		$username = auth()->user()->username;
-	   if($d->username != $username) {
-        	abort(403, 'Unauthorized action.');
+        $username = auth()->user()->username;
+        if ($d->username != $username) {
+            abort(403, 'Unauthorized action.');
         }
 
-        if($d->status != Download::STATUS_QUEUED) {
-        	abort(403, 'Unauthorized action.');
+        if ($d->status != Download::STATUS_QUEUED) {
+            abort(403, 'Unauthorized action.');
         }
 
         $d->setCanceled();
