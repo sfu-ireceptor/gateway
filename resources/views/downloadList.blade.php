@@ -19,6 +19,7 @@
 		<thead>
 			<th>Date</th>
 			<th>Status</th>
+			<th>Duration</th>
 			<th>Nb sequences</th>
 			<th>Page URL</th>
 		</thead>
@@ -37,6 +38,9 @@
 					@elseif($d->isQueued())
 						| <a href="/downloads/cancel/{{ $d->id }}">Cancel</a>						
 					@endif
+				</td>
+				<td>
+					{{ $d->durationHuman() }}
 				</td>
 				<td>
 					{{ $d->nb_sequences }}

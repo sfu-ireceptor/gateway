@@ -11,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class DownloadSequences implements ShouldQueue
 {
@@ -62,15 +63,18 @@ class DownloadSequences implements ShouldQueue
 
         try {
             $this->download->setRunning();
+            $this->download->start_date = Carbon::now();
             $this->download->save();
 
             $t = Sequence::sequencesTSV($this->filters, $this->username, $this->url, $this->sample_filters);
-            $tsvFilePath = $t['public_path'];
-            Log::debug('Download was sucessful: ' . $tsvFilePath);
+            $file_path = $t['public_path'];
+            $this->download->file_url = $file_path;
+            Log::debug('Download was sucessful: ' . $file_path);
 
             // TODO send notification email
 
             $this->download->setDone();
+            $this->download->end_date = Carbon::now();
             $this->download->save();
 
             $localJob->setFinished();
@@ -81,6 +85,7 @@ class DownloadSequences implements ShouldQueue
             // TODO send notification email
 
             $this->download->setFailed();
+            $this->download->end_date = Carbon::now();
             $this->download->save();
 
             $localJob->setFailed();
