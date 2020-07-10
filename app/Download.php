@@ -87,12 +87,12 @@ class Download extends Model
         return $this->end_date->diff($this->start_date);
     }
 
-     public function durationHuman()
+    public function durationHuman()
     {
         $to = Carbon::parse($this->end_date);
-        if ($to == NULL) {
+        if ($to == null) {
             $to = Carbon::now();
-        } 
+        }
 
         return $to->diffForHumans($this->start_date, true);
     }
