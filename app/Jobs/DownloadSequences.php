@@ -20,6 +20,8 @@ class DownloadSequences implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    const DAYS_AVAILABLE = 5;
+
     // number of times the job may be attempted.
     public $tries = 1;
 
@@ -74,6 +76,8 @@ class DownloadSequences implements ShouldQueue
 
         $this->download->setDone();
         $this->download->end_date = Carbon::now();
+        $this->download->file_url_expiration = Carbon::now()->addDays(self::DAYS_AVAILABLE);
+
         $this->download->save();
 
         // send notification email
@@ -86,6 +90,7 @@ class DownloadSequences implements ShouldQueue
         $t['page_url'] = config('app.url') . $this->download->page_url;
         $t['file_url'] = config('app.url') . '/' . $this->download->file_url;
         $t['download_page_url'] = config('app.url') . '/downloads';
+        $t['download_days_available'] = self::DAYS_AVAILABLE;
 
         Mail::send(['text' => 'emails.download_successful'], $t, function ($message) use ($email) {
             $message->to($email)->subject('Your download is ready');

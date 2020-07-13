@@ -1,6 +1,6 @@
 Your sequences download is ready:
 {{ $file_url }}
-Note: this URL will expire in 7 days.
+Note: this URL will expire in {{ $download_days_available }} days.
 
 Original page:
 {{ $page_url }}

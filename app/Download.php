@@ -96,4 +96,11 @@ class Download extends Model
 
         return $to->diffForHumans($this->start_date, true);
     }
+
+    public function isExpired()
+    {
+        $now = Carbon::now();
+        $diff_seconds = $now->diffInSeconds($this->file_url_expiration);                    
+        return $diff_seconds < 0;
+    }    
 }
