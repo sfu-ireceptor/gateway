@@ -2,11 +2,10 @@
 
 namespace App\Jobs;
 
-use App\Download;
 use App\Agave;
+use App\Download;
 use App\LocalJob;
 use App\Sequence;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -105,8 +104,8 @@ class DownloadSequences implements ShouldQueue
         Log::error($e);
 
         $localJob = LocalJob::find($this->localJobId);
-        $localJob->setFailed();    
-        
+        $localJob->setFailed();
+
         $this->download->setFailed();
         $this->download->end_date = Carbon::now();
         $this->download->save();
