@@ -446,6 +446,7 @@ class Agave
 
         return $user;
     }
+
     public function generateSSHKeys()
     {
         $rsa = new RSA();
