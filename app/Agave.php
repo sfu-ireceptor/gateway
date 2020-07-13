@@ -433,6 +433,19 @@ class Agave
         return $user;
     }
 
+    public function getUserWithUsername($username, $token)
+    {
+        $user = null;
+
+        $user_list = $this->getUsers($token);
+        foreach ($user_list as $u) {
+            if ($u->username == $username) {
+                $user = $u;
+            }
+        }
+
+        return $user;
+    }
     public function generateSSHKeys()
     {
         $rsa = new RSA();

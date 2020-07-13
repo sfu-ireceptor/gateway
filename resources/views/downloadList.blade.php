@@ -44,6 +44,8 @@
 						({{ $d->durationHuman() }})
 					@elseif($d->isQueued())
 						| <a href="/downloads/cancel/{{ $d->id }}">Cancel</a>						
+					@elseif($d->isFailed())
+						({{ $d->durationHuman() }})
 					@endif
 				</td>
 				<td>

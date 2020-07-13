@@ -3,8 +3,10 @@
 namespace App\Jobs;
 
 use App\Download;
+use App\Agave;
 use App\LocalJob;
 use App\Sequence;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,6 +14,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class DownloadSequences implements ShouldQueue
 {
@@ -61,34 +64,61 @@ class DownloadSequences implements ShouldQueue
             return;
         }
 
-        try {
-            $this->download->setRunning();
-            $this->download->start_date = Carbon::now();
-            $this->download->save();
+        $this->download->setRunning();
+        $this->download->start_date = Carbon::now();
+        $this->download->save();
 
-            $t = Sequence::sequencesTSV($this->filters, $this->username, $this->url, $this->sample_filters);
-            $file_path = $t['public_path'];
-            $this->download->file_url = $file_path;
-            Log::debug('Download was sucessful: ' . $file_path);
+        $t = Sequence::sequencesTSV($this->filters, $this->username, $this->url, $this->sample_filters);
+        $file_path = $t['public_path'];
+        $this->download->file_url = $file_path;
 
-            // TODO send notification email
+        $this->download->setDone();
+        $this->download->end_date = Carbon::now();
+        $this->download->save();
 
-            $this->download->setDone();
-            $this->download->end_date = Carbon::now();
-            $this->download->save();
+        // send notification email
+        $agave = new Agave;
+        $token = $agave->getAdminToken();
+        $user = $agave->getUserWithUsername($this->username, $token);
+        $email = $user->email;
 
-            $localJob->setFinished();
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
-            Log::error($e);
+        $t = [];
+        $t['page_url'] = config('app.url') . $this->download->page_url;
+        $t['file_url'] = config('app.url') . '/' . $this->download->file_url;
+        $t['download_page_url'] = config('app.url') . '/downloads';
 
-            // TODO send notification email
+        Mail::send(['text' => 'emails.download_successful'], $t, function ($message) use ($email) {
+            $message->to($email)->subject('Your download is ready');
+        });
 
-            $this->download->setFailed();
-            $this->download->end_date = Carbon::now();
-            $this->download->save();
+        $localJob->setFinished();
+    }
 
-            $localJob->setFailed();
-        }
+    public function failed(\Exception $e)
+    {
+        Log::error($e->getMessage());
+        Log::error($e);
+
+        $localJob = LocalJob::find($this->localJobId);
+        $localJob->setFailed();    
+        
+        $this->download->setFailed();
+        $this->download->end_date = Carbon::now();
+        $this->download->save();
+
+        // send notification email
+        $agave = new Agave;
+        $token = $agave->getAdminToken();
+        $user = $agave->getUserWithUsername($this->username, $token);
+        $email = $user->email;
+
+        $t = [];
+        $t['page_url'] = config('app.url') . $this->download->page_url;
+        $t['download_page_url'] = config('app.url') . '/downloads';
+        $t['support_email'] = config('ireceptor.email_support');
+
+        Mail::send(['text' => 'emails.download_failed'], $t, function ($message) use ($email) {
+            $message->to($email)->subject('Download error');
+        });
     }
 }
