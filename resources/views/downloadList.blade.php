@@ -7,13 +7,20 @@
 	
 	<h1>Sequence Downloads</h1>
 
-	@if (isset($notification))
-	<div class="alert alert-warning alert-dismissible" role="alert">
+	@if (session('download_page'))
+	<div class="alert alert-success alert-dismissible" role="alert">
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		{!! $notification !!}
+		<p>
+			Your download has been successfully queued.<br>
+			You'll receive an email when your data is ready for download.
+		</p>
+		<p>
+			<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="{!! session('download_page') !!}">
+				← Back to Sequence Search
+			</a>
+		</p>
 	</div>
 	@endif
-
 
 	<table class="table table-striped download_list">
 		<thead>

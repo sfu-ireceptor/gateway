@@ -460,9 +460,8 @@ class SequenceController extends Controller
         // queue as a job
         $localJobId = $lj->id;
         DownloadSequences::dispatch($username, $localJobId, $filters, $page_url, $sample_filter_fields, $nb_sequences);
-        $message = 'Your download successfully been queued.';
 
-        return redirect('/downloads')->with('notification', $message);
+        return redirect('downloads')->with('download_page', $page_url);
     }
 
     public function removeFilter(Request $request)
