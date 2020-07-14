@@ -47,15 +47,18 @@
 					{{ $d->nb_sequences }}
 				</td>
 				<td>
-					{{ $d->status }}
 					@if($d->isQueued())
+						<span class="label label-info">{{ $d->status }}</span>
 					@elseif($d->isRunning())
-
+						<span class="label label-warning">{{ $d->status }}</span>
 					@elseif($d->isDone())
+						<span class="label label-success">{{ $d->status }}</span>
 						({{ $d->durationHuman() }})
 					@elseif($d->isFailed())
+						<span class="label label-danger">{{ $d->status }}</span>
 						({{ $d->durationHuman() }})
 					@elseif($d->isCanceled())
+						<span class="label label-default">{{ $d->status }}</span>
 					@endif
 				</td>
 				<td>
