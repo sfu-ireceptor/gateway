@@ -18,7 +18,8 @@
 				<li>Download sequences from these repertoires in AIRR.tsv format, easily importable to other AIRR-seq analysis tools</li>
 			</ul>
 			<p>iReceptor is a member of the <a href="http://www.ireceptor-plus.com/">iReceptor Plus Consortium</a>. This project will expand the analysis tools available on the Gateway, including for single cell or systems immunology approaches, and add security for iReceptor Plus repositories.</p>
-			<p>For more information, see the <a href="http://www.ireceptor.org/">iReceptor public website</a>.  To sign up for an account and explore AIRR-seq data on the Gateway, to host a data repository, or to provide feedback on this developing community resource, email <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
+
+			<p>For more information, see the <a href="http://www.ireceptor.org/">iReceptor public website</a> or refer to the paper <a href="http://doi.org/10.1111/imr.12666">iReceptor: a platform for querying and analyzing antibody/B-cell and T-cell receptor repertoire data across federated repositories</a>.  To sign up for an account and explore AIRR-seq data on the Gateway, to host a data repository, or to provide feedback on this developing community resource, email <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
 
 			<h5>Acknowledging iReceptor</h5>
 			<p>If you find iReceptor useful in your research, please acknowledge the iReceptor Platform's contribution by citing the iReceptor paper by Corrie et al. <a href="http://doi.org/10.1111/imr.12666">iReceptor: a platform for querying and analyzing antibody/B-cell and T-cell receptor repertoire data across federated repositories</a>, Immunological Reviews, Volume 284:24-41 (2018).</p>
