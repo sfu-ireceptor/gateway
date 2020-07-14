@@ -28,6 +28,7 @@
 			<th>Page URL</th>
 			<th>Nb sequences</th>
 			<th>Status</th>
+			<th></th>
 		</thead>
 		<tbody>
 			@foreach ($download_list as $d)
@@ -48,7 +49,6 @@
 				<td>
 					{{ $d->status }}
 					@if($d->isQueued())
-						| <a href="/downloads/cancel/{{ $d->id }}">Cancel</a>		
 					@elseif($d->isRunning())
 
 					@elseif($d->isDone())
@@ -59,8 +59,12 @@
 					@endif
 				</td>
 				<td>
-					{{ $d->isExpired() }}
-					@if($d->isDone() && ($d->file_url != '') && $d->isExpired())
+					@if($d->isQueued())
+						<a href="/downloads/cancel/{{ $d->id }}" class="btn btn-warning" type="button" title="Cancel Download">
+							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							<span class="text">Cancel Download</span>
+						</a>
+					@elseif($d->isDone() && ($d->file_url != '') && $d->isExpired())
 						<em>Expired</em>
 						<span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Your download has expired" data-content="<p>Your file is no longer available, but you can go the original page and generate a new download.</p>" data-trigger="hover" tabindex="0">
 							<span class="glyphicon glyphicon-question-sign"></span>
@@ -69,10 +73,14 @@
 					@elseif($d->isDone())
 							<a href="{{ $d->file_url }}" class="btn btn-primary download_repertoires" type="button" title="Download">
 								<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-								<span class="text">Download</span>
+								<span class="text">
+									Download
+									({{ human_filesize(filesize($d->file_url)) }})
+								</span>
 							</a>
 					@endif
 				</td>
+
 			</tr>
 			@endforeach
 		</tbody>
