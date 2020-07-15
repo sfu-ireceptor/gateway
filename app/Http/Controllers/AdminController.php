@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Agave;
 use App\CachedSample;
+use App\Download;
 use App\FieldName;
 use App\Jobs\CountSequences;
 use App\LocalJob;
@@ -15,7 +16,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use App\Download;
 
 class AdminController extends Controller
 {
