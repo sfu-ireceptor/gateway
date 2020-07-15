@@ -4,7 +4,14 @@
 
 @section('content')
 <div class="container-fluid">
-	<h1>User Queries <small>From metadata and sequences pages</small></h1>
+	<h1>User activity</h1>
+
+	<ul class="nav nav-tabs">
+	  <li role="presentation" class="active"><a href="/admin/queries">Queries</a></li>
+	  <li role="presentation"><a href="/admin/downloads">Sequence Downloads</a></li>
+	</ul>
+
+	<p></p>
 
 	<div class="row">
 		<div class="col-md-10">
@@ -12,17 +19,18 @@
 			<table class="table table-bordered table-striped table-condensed">
 				<thead>
 					<tr>
+						<th>User</th>
 						<th>Start</th>
 						<th>URL</th>
 						<th>Type</th>
 						<th>Result Size</th>
 						<th>Duration</th>
-						<th>User</th>
 					</tr>
 				</thead>
 				<tbody>
 					@foreach ($queries as $q)
 						<tr>
+							<td>{{ $q->username }}</td>
 							<td class="text-nowrap">
 								<span class="minor">{{ human_date_time($q->start_time, 'D') }}</span>
 								{{ human_date_time($q->start_time, 'M j') }}
@@ -84,7 +92,6 @@
 									<span class="{{ $q->duration <= 5 ? 'minor2' : ''}}">{{ secondsToTime($q->duration) }}</span>
 								@endif
 							</td>
-							<td>{{ $q->username }}</td>
 						</tr>
 					@endforeach
 				</tbody>

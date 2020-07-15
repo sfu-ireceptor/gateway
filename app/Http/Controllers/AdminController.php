@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use App\Download;
 
 class AdminController extends Controller
 {
@@ -385,5 +386,15 @@ class AdminController extends Controller
         $data['node_queries'] = QueryLog::find_node_queries($id);
 
         return view('query', $data);
+    }
+
+    public function downloads()
+    {
+        $download_list = Download::orderBy('id', 'desc')->get();
+
+        $data = [];
+        $data['download_list'] = $download_list;
+
+        return view('allDownloads', $data);
     }
 }

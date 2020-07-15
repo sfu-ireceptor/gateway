@@ -136,6 +136,7 @@ Route::middleware('auth')->group(function () {
         Route::get('samples/update-sequence_count/{rest_service_id}', 'AdminController@getUpdateSequenceCount');
         Route::get('field-names', 'AdminController@getFieldNames');
         Route::get('queries', 'AdminController@queries');
+        Route::get('downloads', 'AdminController@downloads');
         Route::get('queries2', 'AdminController@queries2');
         Route::get('queries/months/{n}', 'AdminController@queriesMonths');
         Route::get('queries2/months/{n}', 'AdminController@queriesMonths2');

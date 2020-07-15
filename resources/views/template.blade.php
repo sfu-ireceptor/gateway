@@ -125,7 +125,7 @@
 								  <li><a href="/admin/databases"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Repositories</a></li>
 								  <li><a href="/admin/users"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Users</a></li>
 								  <li role="separator" class="divider"></li>
-								  <li><a href="/admin/queries"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> User queries</a></li>
+								  <li><a href="/admin/queries"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> User Activity</a></li>
 								  <li><a href="/cgi-bin/awstats.pl"><span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Stats</a></li>
 								  <li role="separator" class="divider"></li>
 								  <li><a href="/admin/queues"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Queues</a></li>
