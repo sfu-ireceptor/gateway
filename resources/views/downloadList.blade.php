@@ -28,6 +28,7 @@
 			<th>Page URL</th>
 			<th>Nb sequences</th>
 			<th>Status</th>
+			<th>Duration</th>
 			<th></th>
 		</thead>
 		<tbody>
@@ -47,18 +48,23 @@
 					{{ $d->nb_sequences }}
 				</td>
 				<td>
-					@if($d->isQueued())
-						<span class="label label-info">{{ $d->status }}</span>
-					@elseif($d->isRunning())
-						<span class="label label-warning">{{ $d->status }}</span>
-					@elseif($d->isDone())
-						<span class="label label-success">{{ $d->status }}</span>
-						({{ $d->durationHuman() }})
-					@elseif($d->isFailed())
-						<span class="label label-danger">{{ $d->status }}</span>
-						({{ $d->durationHuman() }})
-					@elseif($d->isCanceled())
-						<span class="label label-default">{{ $d->status }}</span>
+					<h4>
+						@if($d->isQueued())
+							<span class="label label-info">{{ $d->status }}</span>
+						@elseif($d->isRunning())
+							<span class="label label-warning">{{ $d->status }}</span>
+						@elseif($d->isDone())
+							<span class="label label-success">Finished</span>
+						@elseif($d->isFailed())
+							<span class="label label-danger">{{ $d->status }}</span>
+						@elseif($d->isCanceled())
+							<span class="label label-default">{{ $d->status }}</span>
+						@endif
+					</h4>
+				</td>
+				<td>
+					@if($d->isDone() || $d->isFailed())
+						{{ $d->durationHuman() }}
 					@endif
 				</td>
 				<td>
