@@ -51,6 +51,7 @@ class TestController extends Controller
 
     public function getIndex(Request $request)
     {
+        
         $s = 'DOI: 10.1111/imr.12666';
         if (! (stripos($s, 'DOI') === false)) {
             $s = str_replace('DOI: ', '', $s);
