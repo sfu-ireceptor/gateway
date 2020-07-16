@@ -397,6 +397,9 @@ class Sample
             $total_filtered_sequences += $rs_data['total_sequences'];
         }
 
+        // sort alphabetically repositories/labs/studies
+        $data['rs_list'] = self::sort_rest_service_list($data['rs_list']);
+
         $data['total_filtered_samples'] = $total_filtered_samples;
         $data['total_filtered_repositories'] = $total_filtered_repositories;
         $data['total_filtered_labs'] = $total_filtered_labs;
