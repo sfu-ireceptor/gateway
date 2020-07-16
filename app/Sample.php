@@ -21,6 +21,19 @@ class Sample
         return CachedSample::metadata();
     }
 
+    public static function sort_rest_service_list($l)
+    {
+        // sort rest services by name
+        usort($l, function ($a, $b) {
+            $a_name = isset($a['rs_name']) ? $a['rs_name'] : $a['rs']->display_name;
+            $b_name = isset($b['rs_name']) ? $b['rs_name'] : $b['rs']->display_name;
+
+            return strcasecmp($a_name, $b_name);
+        });
+
+        return $l;
+    }
+
     public static function cache_sequence_counts($username, $rest_service_id = null)
     {
         $response_list = RestService::samples([], $username, false, [$rest_service_id]);

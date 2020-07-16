@@ -22,7 +22,7 @@ class HomeController extends Controller
 
         // generate statistics
         $sample_data = Sample::stats($sample_list);
-        $data['rest_service_list'] = $sample_data['rs_list'];
+        $data['rest_service_list'] = Sample::sort_rest_service_list($sample_data['rs_list']);
 
         // cell type
         $cell_type_list = [];
