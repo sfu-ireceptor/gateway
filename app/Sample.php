@@ -21,17 +21,32 @@ class Sample
         return CachedSample::metadata();
     }
 
-    public static function sort_rest_service_list($l)
+    public static function sort_rest_service_list($rs_list)
     {
-        // sort rest services by name
-        usort($l, function ($a, $b) {
+        // sort rest services alphabetically
+        usort($rs_list, function ($a, $b) {
             $a_name = isset($a['rs_name']) ? $a['rs_name'] : $a['rs']->display_name;
             $b_name = isset($b['rs_name']) ? $b['rs_name'] : $b['rs']->display_name;
 
             return strcasecmp($a_name, $b_name);
         });
 
-        return $l;
+        // sort labs alphabetically
+        $rs_list_sorted = [];
+        foreach ($rs_list as $rs) {
+            $lab_list = $rs['study_tree'];
+            usort($lab_list, function ($a, $b) {
+                $a_name = $a['name'];
+                $b_name = $b['name'];
+
+                return strcasecmp($a_name, $b_name);
+            });
+
+            $rs['study_tree'] = $lab_list;
+            $rs_list_sorted[] = $rs;
+        }
+
+        return $rs_list_sorted;
     }
 
     public static function cache_sequence_counts($username, $rest_service_id = null)
