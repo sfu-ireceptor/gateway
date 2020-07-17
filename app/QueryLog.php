@@ -14,11 +14,13 @@ class QueryLog extends Model
     protected $guarded = [];
     protected $dates = ['start_time', 'end_time'];
 
-    public static function get_query_log_id() {
+    public static function get_query_log_id()
+    {
         $query_log_id = request()->get('query_log_id');
-        if($query_log_id == null) {
+        if ($query_log_id == null) {
             $query_log_id = session()->get('query_log_id');
         }
+
         return $query_log_id;
     }
 
