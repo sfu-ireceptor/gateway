@@ -16,7 +16,7 @@
 	<table class="table table-bordered table-striped table-condensed download_list">
 		<thead>
 			<th>User</th>
-			<th>Date</th>
+			<th>Queued on</th>
 			<th>Page URL</th>
 			<th>Nb sequences</th>
 			<th>Duration (running)</th>
@@ -28,9 +28,10 @@
 			<tr>
 				<td>{{ $d->username }}</td>
 				<td class="text-nowrap">
-					{{ $d->createdAt() }}
-					</a>
-				</td>
+					<span class="minor">{{ human_date_time($d->created_at, 'D') }}</span>
+					{{ human_date_time($d->created_at, 'M j') }}
+					<span class="minor">{{ human_date_time($d->created_at, 'H:i') }}</span>
+				</td>				
 				<td>
 					<a href="{{ $d->page_url }}">
 						{{ str_replace('&', ', ', urldecode($d->page_url)) }}

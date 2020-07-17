@@ -14,6 +14,65 @@ class QueryLog extends Model
     protected $guarded = [];
     protected $dates = ['start_time', 'end_time'];
 
+    public static function get_query_log_id() {
+        $query_log_id = request()->get('query_log_id');
+        if($query_log_id == null) {
+            $query_log_id = session()->get('query_log_id');
+        }
+        return $query_log_id;
+    }
+
+    public static function start_job($page_url, $filters, $nb_sequences, $username)
+    {
+        Log::debug('start job');
+        $t = [];
+
+        $now = Carbon::now();
+        $now = new \MongoDB\BSON\UTCDateTime($now->timestamp * 1000);
+
+        $t['start_time'] = $now;
+
+        $t['level'] = 'job';
+
+        $t['url'] = $page_url;
+        $t['params'] = $filters;
+        $t['result_size'] = $nb_sequences;
+
+        $t['type'] = 'job';
+
+        $t['status'] = 'running';
+        $t['username'] = $username;
+
+        $ql = self::create($t);
+
+        session()->put('query_log_id', $ql->id);
+
+        return $ql->id;
+    }
+
+    public static function end_job($query_log_id, $status = 'done', $message = null)
+    {
+        $ql = self::find($query_log_id);
+
+        $now = Carbon::now();
+        $now_mongo = new \MongoDB\BSON\UTCDateTime($now->timestamp * 1000);
+        $ql->end_time = $now_mongo;
+
+        $start_time = Carbon::instance($ql->start_time);
+        $duration = $start_time->diffInSeconds($now);
+        $ql->duration = $duration;
+
+        // update query status only if there is a job error (more important than service error)
+        // or no service error (in which case the status will be set to 'done')
+        if ($status != 'done' || $ql->status == 'running') {
+            $ql->status = $status;
+            $ql->message = $message;
+        }
+
+        $ql->save();
+        Log::debug('end job query');
+    }
+
     public static function start_gateway_query($request)
     {
         Log::debug('start gateway query');
@@ -54,7 +113,6 @@ class QueryLog extends Model
             $type = 'combined';
         } elseif (str_contains($url, '/sequences-download')) {
             $type = 'sequence';
-            $t['file'] = 'tsv';
         } elseif (str_contains($url, '/sequences')) {
             $type = 'sequence';
         } else {
@@ -159,7 +217,7 @@ class QueryLog extends Model
 
         $t['status'] = 'running';
 
-        $t['parent_id'] = request()->get('query_log_id');
+        $t['parent_id'] = self::get_query_log_id();
 
         $t['rest_service_id'] = $rest_service_id;
         $t['rest_service_name'] = $rest_service_name;

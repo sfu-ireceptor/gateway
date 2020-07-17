@@ -4,7 +4,9 @@
 
 @section('content')
 <div class="container">
-	<h1>User Query</h1>
+	<h1>
+		{{ $q->type == 'job' ? 'Sequence Download' : 'User Query'}}
+	</h1>
 
 	<table class="table table-bordered table-striped">
 		<thead>

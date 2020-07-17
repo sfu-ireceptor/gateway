@@ -110,7 +110,7 @@ class Download extends Model
     public function isExpired()
     {
         $now = Carbon::now();
-        $diff_seconds = $now->diffInSeconds($this->file_url_expiration);
+        $diff_seconds = $now->diffInSeconds($this->file_url_expiration, false);
 
         return $diff_seconds < 0;
     }

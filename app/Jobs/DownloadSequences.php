@@ -6,6 +6,7 @@ use App\Agave;
 use App\Download;
 use App\LocalJob;
 use App\Sequence;
+use App\QueryLog;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -31,6 +32,7 @@ class DownloadSequences implements ShouldQueue
     protected $sample_filters;
     protected $download;
     protected $nb_sequences;
+    protected $query_log_id;
 
     // create job instance
     public function __construct($username, $localJobId, $filters, $url, $sample_filters, $nb_sequences)
@@ -50,11 +52,14 @@ class DownloadSequences implements ShouldQueue
         $this->url = $url;
         $this->sample_filters = $sample_filters;
         $this->download = $d;
+        $this->nb_sequences = $nb_sequences;
     }
 
     // execute job
     public function handle()
     {
+        $this->query_log_id = QueryLog::start_job($this->url, $this->filters, $this->nb_sequences, $this->username);
+        
         $localJob = LocalJob::find($this->localJobId);
         $localJob->setRunning();
 
@@ -96,6 +101,8 @@ class DownloadSequences implements ShouldQueue
         });
 
         $localJob->setFinished();
+
+        QueryLog::end_gateway_query($this->query_log_id);
     }
 
     public function failed(\Exception $e)
@@ -124,5 +131,9 @@ class DownloadSequences implements ShouldQueue
         Mail::send(['text' => 'emails.download_failed'], $t, function ($message) use ($email) {
             $message->to($email)->subject('[iReceptor] Download error');
         });
+
+        $error_message = $e->getMessage();
+        QueryLog::end_gateway_query($this->query_log_id, 'error', $error_message);
+
     }
 }

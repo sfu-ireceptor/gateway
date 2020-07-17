@@ -75,7 +75,7 @@
 							<span class="text">Cancel Download</span>
 						</a>
 					@elseif($d->isDone() && ($d->file_url != '') && $d->isExpired())
-						<em>Expired</em>
+						Expired
 						<span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Your download has expired" data-content="<p>Your file is no longer available, but you can go the original page and generate a new download.</p>" data-trigger="hover" tabindex="0">
 							<span class="glyphicon glyphicon-question-sign"></span>
 						</span>
