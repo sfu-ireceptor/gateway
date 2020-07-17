@@ -92,7 +92,7 @@ class DownloadSequences implements ShouldQueue
         $t['download_days_available'] = self::DAYS_AVAILABLE;
 
         Mail::send(['text' => 'emails.download_successful'], $t, function ($message) use ($email) {
-            $message->to($email)->subject('Your download is ready');
+            $message->to($email)->subject('[iReceptor] Your download is ready');
         });
 
         $localJob->setFinished();
@@ -122,7 +122,7 @@ class DownloadSequences implements ShouldQueue
         $t['support_email'] = config('ireceptor.email_support');
 
         Mail::send(['text' => 'emails.download_failed'], $t, function ($message) use ($email) {
-            $message->to($email)->subject('Download error');
+            $message->to($email)->subject('[iReceptor] Download error');
         });
     }
 }
