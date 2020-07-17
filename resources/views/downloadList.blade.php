@@ -30,13 +30,14 @@
 			<th>Status</th>
 			<th>Duration</th>
 			<th></th>
+			<th>Expiration date</th>
 		</thead>
 		<tbody>
 			@foreach ($download_list as $d)
 			<tr>
 				<td class="text-nowrap">
 					{{ $d->createdAt() }}
-					</a><br />
+					<br />
 					<em class="dateRelative">{{ $d->createdAtRelative() }}</em>
 				</td>
 				<td>
@@ -89,7 +90,11 @@
 							</a>
 					@endif
 				</td>
-
+				<td class="text-nowrap">
+					@if($d->isDone() && ! $d->isExpired())
+						{{ $d->expiresAt() }}
+					@endif
+				</td>
 			</tr>
 			@endforeach
 		</tbody>

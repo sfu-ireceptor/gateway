@@ -82,6 +82,16 @@ class Download extends Model
         return Carbon::parse($this->created_at)->diffForHumans();
     }
 
+    public function expiresAt()
+    {
+        return Carbon::parse($this->file_url_expiration)->format('M j');
+    }
+
+    public function expiresAtRelative()
+    {
+        return Carbon::parse($this->file_url_expiration)->diffForHumans();
+    }
+
     public function duration()
     {
         return $this->end_date->diff($this->start_date);
