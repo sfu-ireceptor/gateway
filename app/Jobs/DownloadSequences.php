@@ -5,8 +5,8 @@ namespace App\Jobs;
 use App\Agave;
 use App\Download;
 use App\LocalJob;
-use App\Sequence;
 use App\QueryLog;
+use App\Sequence;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -59,7 +59,7 @@ class DownloadSequences implements ShouldQueue
     public function handle()
     {
         $this->query_log_id = QueryLog::start_job($this->url, $this->filters, $this->nb_sequences, $this->username);
-        
+
         $localJob = LocalJob::find($this->localJobId);
         $localJob->setRunning();
 
@@ -134,6 +134,5 @@ class DownloadSequences implements ShouldQueue
 
         $error_message = $e->getMessage();
         QueryLog::end_gateway_query($this->query_log_id, 'error', $error_message);
-
     }
 }
