@@ -35,6 +35,7 @@ class TestController extends Controller
     {
         echo 'hi there 3';
         // trigger_error('var must be numeric');
+        // trigger_error('var must be numeric');
 
         flush();
         ob_flush();
