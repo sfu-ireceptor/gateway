@@ -58,8 +58,8 @@ class DownloadSequences implements ShouldQueue
     // execute job
     public function handle()
     {
-        $this->query_log_id = QueryLog::start_job($this->url, $this->filters, $this->nb_sequences, $this->username);
-
+        $this->query_log_id = QueryLog::start_job($this->url, $this->filters, $this->nb_sequences, $this->username);        
+ 
         $localJob = LocalJob::find($this->localJobId);
         $localJob->setRunning();
 
@@ -72,6 +72,7 @@ class DownloadSequences implements ShouldQueue
 
         $this->download->setRunning();
         $this->download->start_date = Carbon::now();
+        $this->download->query_log_id = $this->query_log_id;
         $this->download->save();
 
         $t = Sequence::sequencesTSV($this->filters, $this->username, $this->url, $this->sample_filters);

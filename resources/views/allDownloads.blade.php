@@ -33,9 +33,13 @@
 					<span class="minor">{{ human_date_time($d->created_at, 'H:i') }}</span>
 				</td>				
 				<td>
-					<a href="{{ $d->page_url }}">
+					@if($d->query_log_id)
+						<a href="/admin/queries/{{ $d->query_log_id }}" title="{{ $d->page_url }}">
+							{{ str_limit(url_path($d->page_url), $limit = 70, $end = '‥') }}
+						</a>					
+					@else
 						{{ str_replace('&', ', ', urldecode($d->page_url)) }}
-					</a>
+					@endif
 				</td>
 				<td>
 					{{ $d->nb_sequences }}
