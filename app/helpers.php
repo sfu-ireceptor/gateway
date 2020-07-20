@@ -113,7 +113,7 @@ if (! function_exists('human_number')) {
     // from https://stackoverflow.com/a/36365553/91225
     function human_number($num)
     {
-        if(is_numeric($num)) {        
+        if (is_numeric($num)) {
             $x = round($num);
             if ($x != null) {
                 $x_number_format = number_format($x);

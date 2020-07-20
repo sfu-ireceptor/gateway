@@ -58,8 +58,8 @@ class DownloadSequences implements ShouldQueue
     // execute job
     public function handle()
     {
-        $this->query_log_id = QueryLog::start_job($this->url, $this->filters, $this->nb_sequences, $this->username);        
- 
+        $this->query_log_id = QueryLog::start_job($this->url, $this->filters, $this->nb_sequences, $this->username);
+
         $localJob = LocalJob::find($this->localJobId);
         $localJob->setRunning();
 
