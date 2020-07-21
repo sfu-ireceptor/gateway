@@ -34,7 +34,7 @@
 		</thead>
 		<tbody>
 			@foreach ($download_list as $d)
-			<tr>
+			<tr class="{{ (session('download_page') && $loop->iteration == 1) ? 'new-item' : ''}}">
 				<td class="text-nowrap">
 					{{ $d->createdAt() }}
 					<br />

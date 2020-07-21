@@ -406,6 +406,16 @@ a.external:after {
 	text-decoration: none;
 }
 
+@keyframes yellowfade {
+    from { background: rgb(223, 240, 216); }
+    to { background: transparent; }
+}
+
+.new-item {
+    animation-name: yellowfade;
+    animation-duration: 4s;
+}
+
 /* @end */
 
 /* @group top navigation */

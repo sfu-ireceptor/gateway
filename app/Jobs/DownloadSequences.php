@@ -78,6 +78,10 @@ class DownloadSequences implements ShouldQueue
         $file_path = $t['public_path'];
         $this->download->file_url = $file_path;
 
+        if($t['is_download_incomplete']) {
+            throw new \Exception('Incomplete download');
+        }
+
         $this->download->setDone();
         $this->download->end_date = Carbon::now();
         $this->download->file_url_expiration = Carbon::now()->addDays(self::DAYS_AVAILABLE);
