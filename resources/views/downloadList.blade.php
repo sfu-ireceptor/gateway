@@ -79,7 +79,15 @@
 						<span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Your download has expired" data-content="<p>Your file is no longer available, but you can go the original page and generate a new download.</p>" data-trigger="hover" tabindex="0">
 							<span class="glyphicon glyphicon-question-sign"></span>
 						</span>
-
+					@elseif($d->isFailed())
+						<em>
+							Sorry, an error occured.<br>
+							Please
+							<a href="{{ $d->page_url }}">try again</a>
+							or
+							<a href="mailto:{{ config('ireceptor.email_support') }}">contact us</a>
+							.
+						</em>
 					@elseif($d->isDone())
 							<a href="{{ $d->file_url }}" class="btn btn-primary download_repertoires" type="button" title="Download">
 								<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
