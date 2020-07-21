@@ -82,11 +82,9 @@
 					@elseif($d->isFailed())
 						<em>
 							Sorry, an error occured.<br>
-							Please
-							<a href="{{ $d->page_url }}">try again</a>
+							<a href="{{ $d->page_url }}">Try again</a>
 							or
-							<a href="mailto:{{ config('ireceptor.email_support') }}">contact us</a>
-							.
+							<a href="mailto:{{ config('ireceptor.email_support') }}">let us know</a> so we can help.
 						</em>
 					@elseif($d->isDone())
 							<a href="{{ $d->file_url }}" class="btn btn-primary download_repertoires" type="button" title="Download">

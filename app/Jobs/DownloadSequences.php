@@ -32,7 +32,6 @@ class DownloadSequences implements ShouldQueue
     protected $sample_filters;
     protected $download;
     protected $nb_sequences;
-    protected $query_log_id;
 
     // create job instance
     public function __construct($username, $localJobId, $filters, $url, $sample_filters, $nb_sequences)
@@ -58,7 +57,7 @@ class DownloadSequences implements ShouldQueue
     // execute job
     public function handle()
     {
-        $this->query_log_id = QueryLog::start_job($this->url, $this->filters, $this->nb_sequences, $this->username);
+        $query_log_id = QueryLog::start_job($this->url, $this->filters, $this->nb_sequences, $this->username);
 
         $localJob = LocalJob::find($this->localJobId);
         $localJob->setRunning();
@@ -72,7 +71,7 @@ class DownloadSequences implements ShouldQueue
 
         $this->download->setRunning();
         $this->download->start_date = Carbon::now();
-        $this->download->query_log_id = $this->query_log_id;
+        $this->download->query_log_id = $query_log_id;
         $this->download->save();
 
         $t = Sequence::sequencesTSV($this->filters, $this->username, $this->url, $this->sample_filters);
@@ -103,7 +102,7 @@ class DownloadSequences implements ShouldQueue
 
         $localJob->setFinished();
 
-        QueryLog::end_gateway_query($this->query_log_id);
+        QueryLog::end_job($query_log_id);
     }
 
     public function failed(\Exception $e)
@@ -134,6 +133,7 @@ class DownloadSequences implements ShouldQueue
         });
 
         $error_message = $e->getMessage();
-        QueryLog::end_gateway_query($this->query_log_id, 'error', $error_message);
+        $query_log_id = QueryLog::get_query_log_id();
+        QueryLog::end_job($query_log_id, 'error', $error_message);
     }
 }
