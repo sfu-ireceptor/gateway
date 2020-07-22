@@ -25,17 +25,23 @@
 			<p>If you find iReceptor useful in your research, please acknowledge the iReceptor Platform's contribution by citing the iReceptor paper by Corrie et al. <a href="http://doi.org/10.1111/imr.12666">iReceptor: a platform for querying and analyzing antibody/B-cell and T-cell receptor repertoire data across federated repositories</a>, Immunological Reviews, Volume 284:24-41 (2018).</p>
 		</div>
 	</div>
-	<div class="col-md-2"></div>
-	<div class="col-md-3">
+	<div class="col-md-1"></div>
+	<div class="col-md-5">
 	<div class="login_about_box">
+		<h3>Getting Started</h3>
+			<ul class="small_padding">
+				<li><a href="http://ireceptor.irmacs.sfu.ca/node/153" class="external" target="_blank">Finding COVID-19 data</a></li>
+				<!-- <li><a href="" class="external" target="_blank">Finding B-cell or T-cell Repertoires</a></li> -->
+				<li><a href="http://ireceptor.irmacs.sfu.ca/node/154" class="external" target="_blank">Finding sequences using a specific V-Gene</a></li>
+				<li><a href="http://ireceptor.irmacs.sfu.ca/node/97" class="external" target="_blank">Downloading sequences</a></li>
+				<li>For more, see the <a href="http://ireceptor.org/platform/doc" class="external" target="_blank">iReceptor documentation</a></li>
+			</ul>
+
 		<h3>Contact</h3>
 		<p>
-			To ask questions or get involved, email:<br>
-			<a href="mailto:support@ireceptor.org">support@ireceptor.org</a>
-		</p>
-		<h3 class="help">Help</h3>
-		<p>
-			For more information about using the iReceptor Gateway, have a look at the <a href="http://ireceptor.org/platform/doc" class="external" target="_blank">iReceptor documentation</a>
+			To ask questions or get involved,<br>
+			email
+			<a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.
 		</p>
 	</div>
 	</div>
