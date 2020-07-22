@@ -60,8 +60,6 @@ class TestController extends Controller
         echo $s;
         die();
 
-        // dd(1 < 2);
-
         dd(strcmp('a', 'b'));
 
         // $s = "5";
