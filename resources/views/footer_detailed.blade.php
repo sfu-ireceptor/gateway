@@ -39,7 +39,7 @@
 			</ul>
 			<ul class="small_padding">
 				<li><a href="http://ireceptor.irmacs.sfu.ca/node/99" class="external" target="_blank">Frequently Asked Questions</a></li>
-				<li>For more, see the <a href="http://ireceptor.org/platform/doc" class="external" target="_blank">iReceptor documentation</a></li>
+				<li>For more, see the <a href="http://ireceptor.org/platform/doc" class="external" target="_blank">iReceptor Gateway documentation</a></li>
 			</ul>
 
 		<h3>Contact</h3>
