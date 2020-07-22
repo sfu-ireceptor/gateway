@@ -28,12 +28,17 @@
 	<div class="col-md-1"></div>
 	<div class="col-md-5">
 	<div class="login_about_box">
+
 		<h3>Getting Started</h3>
 			<ul class="small_padding">
 				<li><a href="http://ireceptor.irmacs.sfu.ca/node/153" class="external" target="_blank">Finding COVID-19 data</a></li>
 				<!-- <li><a href="" class="external" target="_blank">Finding B-cell or T-cell Repertoires</a></li> -->
 				<li><a href="http://ireceptor.irmacs.sfu.ca/node/154" class="external" target="_blank">Finding sequences using a specific V-Gene</a></li>
 				<li><a href="http://ireceptor.irmacs.sfu.ca/node/97" class="external" target="_blank">Downloading sequences</a></li>
+
+			</ul>
+			<ul class="small_padding">
+				<li><a href="http://ireceptor.irmacs.sfu.ca/node/99" class="external" target="_blank">Frequently Asked Questions</a></li>
 				<li>For more, see the <a href="http://ireceptor.org/platform/doc" class="external" target="_blank">iReceptor documentation</a></li>
 			</ul>
 
