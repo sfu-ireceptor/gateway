@@ -13,7 +13,7 @@
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
 		<link href="/css/bootstrap-multiselect.css" rel="stylesheet" />
 		<link href="/css/jstree/default/style.min.css" rel="stylesheet" />
-		<link href="/css/main.css?v=42" rel="stylesheet">
+		<link href="/css/main.css?v=43" rel="stylesheet">
 
 		<!-- IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -107,15 +107,19 @@
 			      </ul>
 
 			      <ul class="nav navbar-nav navbar-right">
+
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Help<span class="caret"></span></a>
 						<ul class="dropdown-menu" role="menu">
-						  <li><a href="http://ireceptor.org/platform/doc/faq" class="external" target="_blank"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Frequently Asked Questions</a></li>  						  
-						  <li><a href="/fields-definitions"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Data elements definitions</a></li>
-						  <li><a href="http://ireceptor.org/platform/doc" class="external" target="_blank"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Documentation</a></li>
-						  <li><a href="http://ireceptor.org/" class="external" target="_blank"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> iReceptor public website</a></li>
+<!-- 							<li><a href="http://ireceptor.irmacs.sfu.ca/node/97" class="external" target="_blank"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Downloading sequences</a></li> -->
+							<li><a href="http://ireceptor.org/platform/doc/faq" class="external" target="_blank"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Frequently Asked Questions</a></li>
+							<li><a href="http://ireceptor.org/platform/doc" class="external" target="_blank"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> iReceptor Gateway documentation</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="/fields-definitions"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Data elements definitions</a></li>
 						</ul>
 					</li>
+
+
 			    	@if(Auth::check())
 				    	@if(Auth::user()->isAdmin())		    	
 							<li class="dropdown">
