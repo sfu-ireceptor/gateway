@@ -39,6 +39,14 @@
 	</div>
 	@endif
 
+	@if (session('bookmarked'))
+	<div class="alert alert-warning alert-dismissible" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		Your Sequence Search has been added to your bookmarks.<br>
+		<a href="/bookmarks">Go to your bookmarks</a>.
+	</div>
+	@endif
+
 	<p>Note: this page will automatically refresh every {{ config('ireceptor.sequences_downloads_refresh_interval') }} seconds.<br></p>
 
 	<table class="table table-striped download_list">
@@ -136,7 +144,7 @@
 									</a>
 								</li>
 								<li>
-									<a href="/downloads/delete/{{ $d->id }}">
+									<a href="/downloads/bookmark/{{ $d->id }}">
 										<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
 										<span class="text">Bookmark Sequence Search Page</span>
 									</a>
