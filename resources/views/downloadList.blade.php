@@ -26,11 +26,11 @@
 
 	<table class="table table-striped download_list">
 		<thead>
-			<th>Date</th>
-			<th>Page URL</th>
-			<th>Nb sequences</th>
+			<th>Creation Date</th>
 			<th>Status</th>
 			<th>Duration</th>
+			<th>Page URL</th>
+			<th>Nb sequences</th>
 			<th></th>
 			<th>Expiration date</th>
 		</thead>
@@ -38,17 +38,9 @@
 			@foreach ($download_list as $d)
 			<tr class="{{ (session('download_page') && $loop->iteration == 1) ? 'new-item' : ''}}">
 				<td class="text-nowrap">
-					{{ $d->createdAt() }}
+					{{ $d->createdAtShort() }}
 					<br />
 					<em class="dateRelative">{{ $d->createdAtRelative() }}</em>
-				</td>
-				<td>
-					<a href="{{ $d->page_url }}">
-						{{ str_replace('&', ', ', urldecode($d->page_url)) }}
-					</a>
-				</td>
-				<td>
-					{{ $d->nb_sequences }}
 				</td>
 				<td>
 					<h4>
@@ -66,9 +58,18 @@
 					</h4>
 				</td>
 				<td>
-					@if($d->isDone() || $d->isFailed())
+					@if($d->isQueued())
+						<em>0 seconds</em>
+					@elseif($d->isDone() || $d->isFailed())
 						{{ $d->durationHuman() }}
 					@endif
+				</td>				<td>
+					<a href="{{ $d->page_url }}">
+						{{ str_replace('&', ', ', urldecode($d->page_url)) }}
+					</a>
+				</td>
+				<td>
+					{{ $d->nb_sequences }}
 				</td>
 				<td>
 					@if($d->isQueued())

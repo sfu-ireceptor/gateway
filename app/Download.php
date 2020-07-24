@@ -73,7 +73,7 @@ class Download extends Model
 
     public function createdAtShort()
     {
-        return Carbon::parse($this->created_at)->format('M j');
+        return Carbon::parse($this->created_at)->format('F j');
     }
 
     public function createdAtFull()
@@ -89,7 +89,7 @@ class Download extends Model
 
     public function expiresAt()
     {
-        return Carbon::parse($this->file_url_expiration)->format('M j');
+        return Carbon::parse($this->file_url_expiration)->format('F j');
     }
 
     public function expiresAtRelative()

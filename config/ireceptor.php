@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'sequences_downloads_refresh_interval' => env('IRECEPTOR_SEQUENCES_REFRESH_INTERVAL', 15),
+    'sequences_downloads_refresh_interval' => env('IRECEPTOR_SEQUENCES_REFRESH_INTERVAL', 20),
 
     /*
     |--------------------------------------------------------------------------
