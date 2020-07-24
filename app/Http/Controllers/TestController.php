@@ -33,10 +33,7 @@ class TestController extends Controller
 
     public function printBody()
     {
-
         $d = Carbon::now();
-        
-
 
         echo 'hi there 3';
         // trigger_error('var must be numeric');

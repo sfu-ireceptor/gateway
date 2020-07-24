@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Download;
 use App\Bookmark;
-use Illuminate\Support\Facades\Log;
+use App\Download;
 
 class DownloadController extends Controller
 {
