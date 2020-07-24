@@ -22,6 +22,13 @@
 	</div>
 	@endif
 
+	@if (session('notification'))
+	<div class="alert alert-warning alert-dismissible" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		{!! session('notification') !!}
+	</div>
+	@endif
+
 	<p>Note: this page will automatically refresh every {{ config('ireceptor.sequences_downloads_refresh_interval') }} seconds.<br></p>
 
 	<table class="table table-striped download_list">
@@ -97,6 +104,12 @@
 									({{ human_filesize(filesize($d->file_url)) }})
 								</span>
 							</a>
+
+						<a href="/downloads/delete/{{ $d->id }}" class="btn btn-warning" type="button" title="Delete Download">
+							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							<span class="text">Delete Download</span>
+						</a>
+
 					@endif
 				</td>
 				<td class="text-nowrap">

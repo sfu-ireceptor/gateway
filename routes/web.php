@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('downloads')->group(function () {
         Route::get('', 'DownloadController@getIndex');
         Route::get('cancel/{id}', 'DownloadController@getCancel');
+        Route::get('delete/{id}', 'DownloadController@getDelete');
     });
 
     Route::prefix('systems')->group(function () {
