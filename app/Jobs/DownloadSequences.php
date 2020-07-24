@@ -93,15 +93,17 @@ class DownloadSequences implements ShouldQueue
         $token = $agave->getAdminToken();
         $user = $agave->getUserWithUsername($this->username, $token);
         $email = $user->email;
+        $date_str = $this->download->createdAtShort();
 
         $t = [];
         $t['page_url'] = config('app.url') . $this->download->page_url;
         $t['file_url'] = config('app.url') . '/' . $this->download->file_url;
         $t['download_page_url'] = config('app.url') . '/downloads';
         $t['download_days_available'] = self::DAYS_AVAILABLE;
+        $t['date_str'] = $date_str;
 
-        Mail::send(['text' => 'emails.download_successful'], $t, function ($message) use ($email) {
-            $message->to($email)->subject('[iReceptor] Your download is ready');
+        Mail::send(['text' => 'emails.download_successful'], $t, function ($message) use ($email, $date_str) {
+            $message->to($email)->subject('[iReceptor] Your download from ' . $date_str . ' is ready');
         });
 
         $localJob->setFinished();

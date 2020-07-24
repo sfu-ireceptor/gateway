@@ -71,6 +71,11 @@ class Download extends Model
         return Carbon::parse($this->created_at)->format('D M j, Y');
     }
 
+    public function createdAtShort()
+    {
+        return Carbon::parse($this->created_at)->format('M j');
+    }
+
     public function createdAtFull()
     {
         // March 11 2015, 16:28
