@@ -60,7 +60,7 @@ return [
     | Sequence downloads page refresh interval
     |--------------------------------------------------------------------------
     |
-    | The number of seconds after which the sequence downloads page will reload 
+    | The number of seconds after which the sequence downloads page will reload
     | Ex: 30
     |
     */
