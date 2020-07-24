@@ -11,8 +11,9 @@
 	<div class="alert alert-success alert-dismissible" role="alert">
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 		<p>
-			Your download has been successfully queued.<br>
-			You'll receive an email when your data is ready for download.
+			Your data is being assembled. <strong>You will get an email when it's ready to be downloaded.</strong><br>
+			This page will automatically refresh every 20 seconds.<br>
+			It is safe to leave this page. You can return to it at any time by selecting <code>Downloads</code> under the top-right <code>{{ auth()->user()->username }}</code> menu.
 		</p>
 		<p>
 			<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="{!! session('download_page') !!}">
