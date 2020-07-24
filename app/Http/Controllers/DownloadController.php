@@ -45,10 +45,25 @@ class DownloadController extends Controller
         if ($d->username != $username) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         $d->hidden = 1;
         $d->save();
 
-        return redirect('downloads')->with('notification', 'Your download has been deleted.');
+        return redirect('downloads')->with('deleted_id', $id);
+    }
+
+    public function getUndoDelete($id)
+    {
+        $d = Download::find($id);
+
+        $username = auth()->user()->username;
+        if ($d->username != $username) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $d->hidden = 0;
+        $d->save();
+
+        return redirect('downloads')->with('undo_deleted_id', $id);
     }
 }

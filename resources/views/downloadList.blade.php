@@ -22,10 +22,20 @@
 	</div>
 	@endif
 
-	@if (session('notification'))
+	@if (session('deleted_id'))
 	<div class="alert alert-warning alert-dismissible" role="alert">
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		{!! session('notification') !!}
+		Your download has been deleted
+		<a class="btn btn-default btn-xs" type="button" href="/downloads/undo-delete/{!! session('deleted_id') !!}">
+			Undo
+		</a>
+	</div>
+	@endif
+
+	@if (session('undo_deleted_id'))
+	<div class="alert alert-warning alert-dismissible" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		Your download has been restored.
 	</div>
 	@endif
 
