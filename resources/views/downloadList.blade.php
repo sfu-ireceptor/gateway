@@ -50,6 +50,7 @@
 			<th>Nb sequences</th>
 			<th></th>
 			<th>Expiration Date</th>
+			<th></th>
 		</thead>
 		<tbody>
 			@foreach ($download_list as $d)
@@ -75,10 +76,10 @@
 					</h4>
 				</td>
 				<td>
-					@if($d->isQueued())
-						<em>0 seconds</em>
-					@elseif($d->isDone() || $d->isFailed())
+					@if($d->isDone() || $d->isFailed())
 						{{ $d->durationHuman() }}
+					@else
+						<em>0 seconds</em>
 					@endif
 				</td>				<td>
 					<a href="{{ $d->page_url }}">
@@ -114,12 +115,6 @@
 									({{ human_filesize(filesize($d->file_url)) }})
 								</span>
 							</a>
-
-						<a href="/downloads/delete/{{ $d->id }}" class="btn btn-warning" type="button" title="Delete Download">
-							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-							<span class="text">Delete Download</span>
-						</a>
-
 					@endif
 				</td>
 				<td class="text-nowrap">
@@ -127,7 +122,29 @@
 						{{ $d->expiresAt() }}
 					@endif
 				</td>
-			</tr>
+				<td>
+					@if($d->isDone() || $d->isFailed() || $d->isCanceled())
+						<div class="dropdown">
+							<button class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								<span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li>
+									<a href="/downloads/delete/{{ $d->id }}">
+										<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+										<span class="text">Delete Download</span>
+									</a>
+								</li>
+								<li>
+									<a href="/downloads/delete/{{ $d->id }}">
+										<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+										<span class="text">Bookmark Sequence Search Page</span>
+									</a>
+								</li>
+							</ul>
+						</div>
+					@endif
+				</td>			</tr>
 			@endforeach
 		</tbody>
 	</table>	
