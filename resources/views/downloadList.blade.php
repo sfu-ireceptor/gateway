@@ -29,10 +29,10 @@
 			<th>Creation Date</th>
 			<th>Status</th>
 			<th>Duration</th>
-			<th>Page URL</th>
+			<th>Sequence Search Page</th>
 			<th>Nb sequences</th>
 			<th></th>
-			<th>Expiration date</th>
+			<th>Expiration Date</th>
 		</thead>
 		<tbody>
 			@foreach ($download_list as $d)
