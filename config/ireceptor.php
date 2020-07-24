@@ -57,6 +57,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Sequence downloads page refresh interval
+    |--------------------------------------------------------------------------
+    |
+    | The number of seconds after which the sequence downloads page will reload 
+    | Ex: 30
+    |
+    */
+
+    'sequences_downloads_refresh_interval' => env('IRECEPTOR_SEQUENCES_REFRESH_INTERVAL', 15),
+
+    /*
+    |--------------------------------------------------------------------------
     | Display all ir_ fields
     |--------------------------------------------------------------------------
     |

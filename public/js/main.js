@@ -345,4 +345,16 @@ $(document).ready(function() {
 
 		var timer = setInterval(refreshJobList, 5000);
 	});	
+
+	/**********************************************************
+	* Downloads
+	**********************************************************/
+
+	// download list - refresh
+	$('.page-refresh').each(function(){
+		var refresh_interval = $(this).attr('data-page-refresh-interval');
+		setTimeout(function(){
+			window.location.reload(true);
+		}, refresh_interval * 1000);
+	});	
 });

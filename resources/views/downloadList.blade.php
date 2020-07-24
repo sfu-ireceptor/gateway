@@ -3,7 +3,7 @@
 @section('title', 'Downloads')
 
 @section('content')
-<div class="container">
+<div class="container page-refresh" data-page-refresh-interval="{{ config('ireceptor.sequences_downloads_refresh_interval') }}">
 	
 	<h1>Sequence Downloads</h1>
 
@@ -12,7 +12,6 @@
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 		<p>
 			Your data is being assembled. <strong>You will get an email when it's ready to be downloaded.</strong><br>
-			This page will automatically refresh every 20 seconds.<br>
 			It is safe to leave this page. You can return to it at any time by selecting <code>Downloads</code> under the top-right <code>{{ auth()->user()->username }}</code> menu.
 		</p>
 		<p>
@@ -22,6 +21,8 @@
 		</p>
 	</div>
 	@endif
+
+	<p>Note: this page will automatically refresh every {{ config('ireceptor.sequences_downloads_refresh_interval') }} seconds.<br></p>
 
 	<table class="table table-striped download_list">
 		<thead>
