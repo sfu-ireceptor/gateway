@@ -95,6 +95,7 @@ class FieldName extends Model
     {
         $l = [];
 
+        $l['Repertoire'] = 'Repertoire';
         $l['Study'] = 'Study';
         $l['Subject'] = 'Subject';
         $l['Sample'] = 'Sample';
@@ -107,6 +108,8 @@ class FieldName extends Model
         $l['SampleProcessing'] = 'Sample Processing';
         $l['RawSequenceData'] = 'Raw Sequence Data';
         $l['PCRTarget'] = 'PCR Target';
+
+        $l['Rearrangement'] = 'Rearrangement';
 
         $l['ir_metadata'] = 'iReceptor Metadata';
         $l['ir_parameter'] = 'iReceptor Parameter';
