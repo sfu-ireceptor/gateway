@@ -98,6 +98,7 @@ Route::middleware('auth')->group(function () {
         Route::get('cancel/{id}', 'DownloadController@getCancel');
         Route::get('delete/{id}', 'DownloadController@getDelete');
         Route::get('undo-delete/{id}', 'DownloadController@getUndoDelete');
+        Route::get('bookmark/{id}', 'DownloadController@getBookmark');
     });
 
     Route::prefix('systems')->group(function () {
