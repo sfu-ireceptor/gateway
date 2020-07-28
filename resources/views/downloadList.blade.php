@@ -84,7 +84,7 @@
 					</h4>
 				</td>
 				<td>
-					@if($d->isDone() || $d->isFailed())
+					@if($d->isDone() || $d->isFailed() || $d->isRunning())
 						{{ $d->durationHuman() }}
 					@else
 						<em>0 seconds</em>
