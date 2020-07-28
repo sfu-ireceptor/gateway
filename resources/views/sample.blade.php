@@ -404,6 +404,8 @@
 													{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
 												</span>						
 											@endisset
+										@elseif($field['ir_id'] == 'repertoire_id')
+											{{ $sample->{$field['ir_id']} }}
 										@elseif($field['ir_id'] == 'study_title')
 											@isset($sample->study_url)
 												<a href="{{ $sample->study_url }}" title="{{ $sample->study_title }}" target="_blank">
