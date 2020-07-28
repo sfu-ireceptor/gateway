@@ -60,7 +60,7 @@ class TestController extends Controller
         }
 
         echo $s;
-        die();
+        exit();
 
         dd(strcmp('a', 'b'));
 
@@ -71,11 +71,11 @@ class TestController extends Controller
         $username = auth()->user()->username;
         Sample::cache_sequence_counts($username);
 
-        die();
+        exit();
         $s = 'V Gene and Allele (paired)';
         $s = snake_case($s);
         echo $s;
-        die();
+        exit();
 
         // header("Content-type: text/csv");
         // header("Content-Disposition: attachment; filename=file.csv");
@@ -95,23 +95,23 @@ class TestController extends Controller
         ]);
 
         echo 'aa';
-        die();
+        exit();
 
         $f = FieldName::getFieldType('sequencing_platform');
         dd($f);
 
         echo $request->route()->uri;
-        die();
+        exit();
 
         dd(RestService::sequence_count([], 37, '7'));
-        die();
+        exit();
 
         echo App::environment();
-        die();
+        exit();
         // throw new \Exception('Yet another error: why??');
 
         echo starts_with('This is my name', 'Thisf');
-        die();
+        exit();
 
         $str = 'pmid: 25100740"';
         if (! (stripos($str, 'PMID') === false)) {
@@ -126,7 +126,7 @@ class TestController extends Controller
         //     echo 'doest not exist';
         // }
 
-        die();
+        exit();
 
         // return response($this->printBody())
         //     ->header('Content-Type', 'text/tsv')
@@ -134,7 +134,7 @@ class TestController extends Controller
 
         // return response(Sequence::airr_data($params))->header('Content-Type', 'text/tsv')->header('Content-Disposition', 'attachment;filename="data.tsv"');
 
-        die();
+        exit();
 
         // echo "fdsafads";
 
@@ -193,11 +193,11 @@ class TestController extends Controller
             dump($request->input());
         });
 
-        die();
+        exit();
 
         echo RestServiceGroup::nameForCode('ipa');
 
-        die();
+        exit();
 
         $o = new \stdClass();
         $o->titi = 'aa';
@@ -215,16 +215,16 @@ class TestController extends Controller
         // }
         dd($o);
 
-        die();
+        exit();
 
         echo human_filesize('/var/www/ireceptor_gateway/storage/app/public/ir_2018-04-03_2239_5ac402badc061/scott-lab.tsv');
 
-        die();
+        exit();
 
         foreach (RestService::all() as $rs) {
             echo str_slug($rs->name) . ' - ';
         }
-        die();
+        exit();
 
         // create receiving folder
         $storage_folder = storage_path() . '/app/public/';
@@ -242,7 +242,7 @@ class TestController extends Controller
         $file = $folder_path . '/info.txt';
         // file_put_contents($file, "test");
 
-        die();
+        exit();
 
         // // Initialize the Client
         // $client = new \GuzzleHttp\Client(['base_uri' => 'http://gw.local/test2']);

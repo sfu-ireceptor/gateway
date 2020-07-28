@@ -265,7 +265,7 @@ class UserController extends Controller
         $t = [];
         $t['reset_link'] = config('app.url') . '/user/reset-password/' . $token;
         $t['first_name'] = $user->first_name;
-        Mail::send(['text' => 'emails.auth.resetPasswordLink'], $t, function ($message) use ($t, $email) {
+        Mail::send(['text' => 'emails.auth.resetPasswordLink'], $t, function ($message) use ($email) {
             $message->to($email)->subject('Reset your password');
         });
 
@@ -322,7 +322,7 @@ class UserController extends Controller
         $t['username'] = $user->username;
         $t['password'] = $new_password;
         $t['login_link'] = config('app.url') . '/login';
-        Mail::send(['text' => 'emails.auth.newPassword'], $t, function ($message) use ($t, $email) {
+        Mail::send(['text' => 'emails.auth.newPassword'], $t, function ($message) use ($email) {
             $message->to($email)->subject('Your new password');
         });
 
