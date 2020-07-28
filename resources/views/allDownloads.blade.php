@@ -45,7 +45,7 @@
 					{{ $d->nb_sequences }}
 				</td>
 				<td>
-					@if($d->isDone() || $d->isFailed())
+					@if($d->isDone() || $d->isFailed() || $d->isRunning())
 						{{ $d->durationHuman() }}
 					@endif
 				</td>
