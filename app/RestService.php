@@ -812,11 +812,12 @@ class RestService extends Model
         foreach ($rs_list as $rs) {
             $rs_filters = $filters;
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-            // rename service id filter and remove other services' filters
+
+            // rename sample id filter for this service:
             // ir_project_sample_id_list_2 -> repertoire_id
             $rs_filters['repertoire_id'] = $filters[$sample_id_list_key];
 
-            // remove extra ir_project_sample_id_list_ fields
+            // remove "ir_project_sample_id_list_*" filters
             foreach ($rs_filters as $key => $value) {
                 if (starts_with($key, 'ir_project_sample_id_list_')) {
                     unset($rs_filters[$key]);
@@ -835,7 +836,7 @@ class RestService extends Model
             $t['params'] = $rs_filters_json;
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
-            // add number suffix for rest services belonging to the same group
+            // add number suffix for rest services belonging to a group
             $file_suffix = '';
             $group = $rs->rest_service_group_code;
             if ($group && $group_list[$group] >= 1) {
