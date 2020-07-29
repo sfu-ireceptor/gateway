@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Bookmark;
 use App\Download;
 use App\FieldName;
-use App\Jobs\DownloadSequences;
-use App\LocalJob;
 use App\QueryLog;
 use App\Sample;
 use App\Sequence;

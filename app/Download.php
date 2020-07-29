@@ -2,9 +2,9 @@
 
 namespace App;
 
+use App\Jobs\DownloadSequences;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use App\Jobs\DownloadSequences;
 use Illuminate\Support\Facades\Log;
 
 class Download extends Model
@@ -122,7 +122,8 @@ class Download extends Model
         return $diff_seconds < 0;
     }
 
-    public static function start_download($query_id, $username, $page_url, $nb_sequences) {
+    public static function start_download($query_id, $username, $page_url, $nb_sequences)
+    {
         // create new local job
         $lj = new LocalJob();
         $lj->user = $username;
@@ -140,8 +141,9 @@ class Download extends Model
         // queue local job
         $localJobId = $lj->id;
         try {
-            DownloadSequences::dispatch($username, $localJobId, $query_id, $page_url, $nb_sequences, $d);        
-        } catch (\Exception $e) {\
+            DownloadSequences::dispatch($username, $localJobId, $query_id, $page_url, $nb_sequences, $d);
+        } catch (\Exception $e) {
+            \
             Log::error('Download could not be queued:');
             Log::error($e);
             $lj->setFailed();
