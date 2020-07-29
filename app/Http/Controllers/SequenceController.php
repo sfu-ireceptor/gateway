@@ -452,14 +452,7 @@ class SequenceController extends Controller
             unset($sample_filter_fields['page']);
         }
 
-        $lj = new LocalJob();
-        $lj->user = $username;
-        $lj->description = 'Sequences download';
-        $lj->save();
-
-        // queue as a job
-        $localJobId = $lj->id;
-        DownloadSequences::dispatch($username, $localJobId, $filters, $page_url, $sample_filter_fields, $nb_sequences);
+        Download::start_download($username, $filters, $page_url, $sample_filter_fields, $nb_sequences);
 
         return redirect('downloads')->with('download_page', $page_url);
     }
