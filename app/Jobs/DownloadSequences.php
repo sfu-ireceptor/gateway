@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Agave;
 use App\Download;
 use App\LocalJob;
+use App\Query;
 use App\QueryLog;
 use App\Sequence;
 use Carbon\Carbon;
@@ -27,20 +28,18 @@ class DownloadSequences implements ShouldQueue
 
     protected $username;
     protected $localJobId;
-    protected $filters;
     protected $url;
-    protected $sample_filters;
     protected $download;
     protected $nb_sequences;
+    protected $query_id;
 
     // create job instance
-    public function __construct($username, $localJobId, $filters, $url, $sample_filters, $nb_sequences, $download)
+    public function __construct($username, $localJobId, $query_id, $url, $nb_sequences, $download)
     {
         $this->username = $username;
         $this->localJobId = $localJobId;
-        $this->filters = $filters;
+        $this->query_id = $query_id;
         $this->url = $url;
-        $this->sample_filters = $sample_filters;
         $this->download = $download;
         $this->nb_sequences = $nb_sequences;
     }
@@ -48,7 +47,31 @@ class DownloadSequences implements ShouldQueue
     // execute job
     public function handle()
     {
-        $query_log_id = QueryLog::start_job($this->url, $this->filters, $this->nb_sequences, $this->username);
+        $filters = Query::getParams($this->query_id);
+
+        // get sample filters
+        $sample_filter_fields = [];
+        if (isset($filters['sample_query_id'])) {
+            $sample_query_id = $filters['sample_query_id'];
+
+            // sample filters
+            $sample_filters = Query::getParams($sample_query_id);
+            $sample_filter_fields = [];
+            foreach ($sample_filters as $k => $v) {
+                if ($v) {
+                    if (is_array($v)) {
+                        $sample_filter_fields[$k] = implode(', ', $v);
+                    } else {
+                        $sample_filter_fields[$k] = $v;
+                    }
+                }
+            }
+            // remove gateway-specific params
+            unset($sample_filter_fields['open_filter_panel_list']);
+            unset($sample_filter_fields['page']);
+        }
+
+        $query_log_id = QueryLog::start_job($this->url, $filters, $this->nb_sequences, $this->username);
 
         $localJob = LocalJob::find($this->localJobId);
         $localJob->setRunning();
@@ -65,7 +88,7 @@ class DownloadSequences implements ShouldQueue
         $this->download->query_log_id = $query_log_id;
         $this->download->save();
 
-        $t = Sequence::sequencesTSV($this->filters, $this->username, $this->url, $this->sample_filters);
+        $t = Sequence::sequencesTSV($filters, $this->username, $this->url, $sample_filter_fields);
         $file_path = $t['public_path'];
         $this->download->file_url = $file_path;
 

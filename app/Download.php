@@ -122,7 +122,7 @@ class Download extends Model
         return $diff_seconds < 0;
     }
 
-    public static function start_download($username, $filters, $page_url, $sample_filter_fields, $nb_sequences) {
+    public static function start_download($query_id, $username, $page_url, $nb_sequences) {
         // create new local job
         $lj = new LocalJob();
         $lj->user = $username;
@@ -140,7 +140,7 @@ class Download extends Model
         // queue local job
         $localJobId = $lj->id;
         try {
-            DownloadSequences::dispatch($username, $localJobId, $filters, $page_url, $sample_filter_fields, $nb_sequences, $d);        
+            DownloadSequences::dispatch($username, $localJobId, $query_id, $page_url, $nb_sequences, $d);        
         } catch (\Exception $e) {\
             Log::error('Download could not be queued:');
             Log::error($e);

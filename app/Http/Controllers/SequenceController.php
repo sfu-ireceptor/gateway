@@ -422,37 +422,14 @@ class SequenceController extends Controller
     public function download(Request $request)
     {
         $query_id = $request->input('query_id');
-        $filters = Query::getParams($query_id);
+        $username = auth()->user()->username;
 
         $page = $request->input('page');
         $page_url = route($page, ['query_id' => $query_id], false);
 
-        $username = auth()->user()->username;
-
         $nb_sequences = $request->input('n');
 
-        $sample_filter_fields = [];
-        if (isset($filters['sample_query_id'])) {
-            $sample_query_id = $filters['sample_query_id'];
-
-            // sample filters
-            $sample_filters = Query::getParams($sample_query_id);
-            $sample_filter_fields = [];
-            foreach ($sample_filters as $k => $v) {
-                if ($v) {
-                    if (is_array($v)) {
-                        $sample_filter_fields[$k] = implode(', ', $v);
-                    } else {
-                        $sample_filter_fields[$k] = $v;
-                    }
-                }
-            }
-            // remove gateway-specific params
-            unset($sample_filter_fields['open_filter_panel_list']);
-            unset($sample_filter_fields['page']);
-        }
-
-        Download::start_download($username, $filters, $page_url, $sample_filter_fields, $nb_sequences);
+        Download::start_download($query_id, $username, $page_url, $nb_sequences);
 
         return redirect('downloads')->with('download_page', $page_url);
     }
