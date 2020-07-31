@@ -323,7 +323,7 @@ class AdminController extends Controller
 
         // queue as a job
         $localJobId = $lj->id;
-        CountSequences::dispatch($username, $rest_service_id, $localJobId)->onQueue('admin');;
+        CountSequences::dispatch($username, $rest_service_id, $localJobId)->onQueue('admin');
 
         $message = 'Sequence count job for  ' . $rs->name . ' has been <a href="/admin/queues">queued</a>';
 
