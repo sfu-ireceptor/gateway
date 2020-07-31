@@ -24,6 +24,7 @@ class AdminController extends Controller
         $jobs = [];
         $jobs['default'] = LocalJob::findLast('default');
         $jobs['agave'] = LocalJob::findLast('agave');
+        $jobs['admin'] = LocalJob::findLast('admin');
 
         $data = [];
         $data['jobs'] = $jobs;
@@ -316,12 +317,13 @@ class AdminController extends Controller
 
         $lj = new LocalJob();
         $lj->user = $username;
+        $lj->queue = 'admin';
         $lj->description = 'Sequence count for  ' . $rs->name;
         $lj->save();
 
         // queue as a job
         $localJobId = $lj->id;
-        CountSequences::dispatch($username, $rest_service_id, $localJobId);
+        CountSequences::dispatch($username, $rest_service_id, $localJobId)->onQueue('admin');;
 
         $message = 'Sequence count job for  ' . $rs->name . ' has been <a href="/admin/queues">queued</a>';
 
