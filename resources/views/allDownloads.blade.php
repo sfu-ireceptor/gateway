@@ -42,7 +42,7 @@
 					@endif
 				</td>
 				<td>
-					{{ $d->nb_sequences }}
+					{{ number_format($d->nb_sequences) }}
 				</td>
 				<td>
 					@if($d->isDone() || $d->isFailed() || $d->isRunning())
