@@ -1,6 +1,6 @@
 $(document).ready(function() {
     var graphDIV = "chart";
-    var graphLabelLength = 10;
+    var graphLabelLength = 20;
 
     $('#charts').each(function() {
         showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels, graphLabelLength);
