@@ -811,7 +811,7 @@ class RestService extends Model
     //   },
     //   "format": "tsv"
     // }
-    public static function sequences_data($filters, $folder_path, $username = '')
+    public static function sequences_data($filters, $folder_path, $username = '', $expected_nb_sequences_by_rs)
     {
         $now = time();
 
@@ -838,6 +838,8 @@ class RestService extends Model
 
         // prepare request parameters for each service
         $request_params = [];
+        $request_params_chunking = [];
+        
         $group_list_count = [];
         foreach ($rs_list as $rs) {
             $rs_filters = $filters;
@@ -857,94 +859,41 @@ class RestService extends Model
             $query_parameters = [];
             $query_parameters['format'] = 'tsv';
 
-            // generate JSON query
-            $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
 
-            $t = [];
-            $t['rs'] = $rs;
-            $t['url'] = $rs->url . 'rearrangement';
-            $t['params'] = $rs_filters_json;
-            $t['timeout'] = config('ireceptor.service_file_request_timeout');
+            if(isset($rs->chunk_size) && ($rs->chunk_size != NULL)) {
+                $chunk_size = $rs->chunk_size;
+                $nb_results = $expected_nb_sequences_by_rs[$rs->id];
+                $nb_chunks = (int) ceil($nb_results / $chunk_size);
+                for ($i = 0; $i < $nb_chunks; $i++) {
+                    $from = $i * $chunk_size;
+                    $size = min($chunk_size, $nb_results - ($i * $chunk_size));
+                    $query_parameters['from'] = $from;
+                    $query_parameters['size'] = $size;
 
-            // add number suffix for rest services belonging to a group
-            $file_suffix = '';
-            $group = $rs->rest_service_group_code;
-            if ($group && $group_list[$group] >= 1) {
-                if (! isset($group_list_count[$group])) {
-                    $group_list_count[$group] = 0;
-                }
-                $group_list_count[$group] += 1;
-                $file_suffix = '-' . $group_list_count[$group];
-            }
-            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
-            $request_params[] = $t;
-        }
+                    // generate JSON query
+                    $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
 
-        // do requests, write tsv data to files
-        Log::debug('Do TSV requests...');
-        $response_list = self::doRequests($request_params);
+                    $t = [];
+                    $t['rs'] = $rs;
+                    $t['url'] = $rs->url . 'rearrangement';
+                    $t['params'] = $rs_filters_json;
+                    $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
-        return $response_list;
-    }
-
-    public static function sequences_data_chunked($filters, $folder_path, $username = '', $expected_nb_sequences_by_rs)
-    {
-        $chunk_size = 1000;
-
-        $now = time();
-
-        // build list of services to query
-        $rs_list = [];
-        foreach (self::findEnabled() as $rs) {
-            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-            if (array_key_exists($sample_id_list_key, $filters) && ! empty($filters[$sample_id_list_key])) {
-                $rs_list[$rs->id] = $rs;
-            }
-        }
-
-        // count services in each service group
-        $group_list = [];
-        foreach ($rs_list as $rs) {
-            $group = $rs->rest_service_group_code;
-            if ($group) {
-                if (! isset($group_list[$group])) {
-                    $group_list[$group] = 0;
-                }
-                $group_list[$group] += 1;
-            }
-        }
-
-        // prepare request parameters for each service
-        $group_list_count = [];
-        $final_response_list = [];
-        foreach ($rs_list as $rs) {
-            $request_params = [];
-
-            $rs_filters = $filters;
-            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-
-            // rename sample id filter for this service:
-            // ir_project_sample_id_list_2 -> repertoire_id
-            $rs_filters['repertoire_id'] = $filters[$sample_id_list_key];
-
-            // remove "ir_project_sample_id_list_*" filters
-            foreach ($rs_filters as $key => $value) {
-                if (starts_with($key, 'ir_project_sample_id_list_')) {
-                    unset($rs_filters[$key]);
+                    // add number suffix for rest services belonging to a group
+                    $file_suffix = '';
+                    $group = $rs->rest_service_group_code;
+                    if ($group && $group_list[$group] >= 1) {
+                        if (! isset($group_list_count[$group])) {
+                            $group_list_count[$group] = 0;
+                        }
+                        $group_list_count[$group] += 1;
+                        $file_suffix = '-' . $group_list_count[$group];
+                    }
+                    $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '_' . $i . '_' . '.tsv';
+                    $request_params_chunking[] = $t;
                 }
             }
-
-            $query_parameters = [];
-            $query_parameters['format'] = 'tsv';
-
-            $nb_results = $expected_nb_sequences_by_rs[$rs->id];
-            $nb_chunks = (int) ceil($nb_results / $chunk_size);
-            for ($i = 0; $i < $nb_chunks; $i++) {
-                $from = $i * $chunk_size;
-                $size = min($chunk_size, $nb_results - ($i * $chunk_size));
-                $query_parameters['from'] = $from;
-                $query_parameters['size'] = $size;
-
+            else {
                 // generate JSON query
                 $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
 
@@ -964,13 +913,21 @@ class RestService extends Model
                     $group_list_count[$group] += 1;
                     $file_suffix = '-' . $group_list_count[$group];
                 }
-                $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '_' . $i . '_' . '.tsv';
-                $request_params[] = $t;
+                $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
+                $request_params[] = $t;            
             }
+        }
 
-            Log::debug('Do TSV requests...');
-            $response_list = [];
-            $request_params_chunked = array_chunk($request_params, 3);
+        $final_response_list = [];
+        // do requests, write tsv data to files
+        if(count($request_params) > 0) {
+            Log::debug('Do not-chunked TSV requests...');
+            $final_response_list = self::doRequests($request_params);
+        }
+       
+        if(count($request_params_chunking) > 0) {
+            Log::debug('Do chunked TSV requests...');
+            $request_params_chunked = array_chunk($request_params_chunking, 3);
             foreach ($request_params_chunked as $requests) {
                 $response_list[] = self::doRequests($requests);
             }
@@ -987,6 +944,7 @@ class RestService extends Model
 
             $out = [];
             $return = 0;
+            Log::debug('Merging chunked files...');
             exec('../util/scripts/airr-tsv-merge.py -i ' . $output_files_str . ' -o ' . $file_path_merged . ' 2>&1', $out, $return);
             if ($return == 0) {
                 // echo "ok: " . $file_path_merged;
@@ -994,6 +952,7 @@ class RestService extends Model
                 // echo $return;
             }
 
+            Log::debug('Deleting chunked files...');
             foreach ($output_files as $output_file_path) {
                 if (File::exists($output_file_path)) {
                     File::delete($output_file_path);
