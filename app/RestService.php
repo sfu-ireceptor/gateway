@@ -30,6 +30,33 @@ class RestService extends Model
         }
     }
 
+    public function refreshChunkSize() {
+
+        $defaults = [];
+        $defaults['base_uri'] = $this->url;
+        $defaults['verify'] = false;    // accept self-signed SSL certificates
+        
+        try {
+            $client = new \GuzzleHttp\Client($defaults);
+
+            $response = $client->get('info');
+            $body = $response->getBody();
+            $json = json_decode($body);
+            
+            if(isset($json->max_size)) {
+                $this->chunk_size = $json->max_size;
+                $this->save();
+                return $this->chunk_size;
+            }
+    
+            return NULL;
+        } catch (\Exception $e) {
+            $error_message = $exception->getMessage();
+            Log::error($error_message);
+            return $error_message;
+        }
+    }
+
     public static function getDisplayName($rs)
     {
         $group_name = RestServiceGroup::nameForCode($rs->rest_service_group_code);

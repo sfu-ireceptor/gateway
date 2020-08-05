@@ -331,12 +331,17 @@ class AdminController extends Controller
     public function getUpdateChunkSize($id)
     {
         $rs = RestService::find($id);
+        $chunk_size = $rs->refreshChunkSize();
 
-        $chunk_size = 0;
-        $rs->chunk_size = $chunk_size;
-        $rs->save();
-
-        $message = $rs->name . ' max_size was successfully updated to ' . $chunk_size;
+        if($chunk_size == NULL) {
+            $message = $rs->name . ' does not have a max_size :)';
+        }
+        else if(is_string($chunk_size)) {
+            $message = 'An error occured when trying to retrieve max_size from ' . $rs->name . ': ' . $chunk_size;            
+        }
+        else {
+            $message = $rs->name . ' max_size was successfully updated to ' . $chunk_size;
+        }
 
         return redirect('admin/databases')->with('notification', $message);
     }
