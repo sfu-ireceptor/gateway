@@ -3,9 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
-use Illuminate\Support\Facades\File;
 
 class RestService extends Model
 {
@@ -909,12 +909,12 @@ class RestService extends Model
             $query_parameters['format'] = 'tsv';
 
             $nb_results = $expected_nb_sequences_by_rs[$rs->id];
-            $nb_chunks = (int)ceil($nb_results / $chunk_size);
-            for ($i=0; $i < $nb_chunks; $i++) { 
+            $nb_chunks = (int) ceil($nb_results / $chunk_size);
+            for ($i = 0; $i < $nb_chunks; $i++) {
                 $from = $i * $chunk_size;
                 $size = min($chunk_size, $nb_results - ($i * $chunk_size));
                 $query_parameters['from'] = $from;
-                $query_parameters['size'] = $size;                  
+                $query_parameters['size'] = $size;
 
                 // generate JSON query
                 $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
@@ -957,13 +957,12 @@ class RestService extends Model
             $file_path_merged = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
 
             $out = [];
-            $return = 0;            
+            $return = 0;
             exec('../util/scripts/airr-tsv-merge.py -i ' . $output_files_str . ' -o ' . $file_path_merged . ' 2>&1', $out, $return);
-            if($return == 0) {
+            if ($return == 0) {
                 // echo "ok: " . $file_path_merged;
-            }
-            else {
-                // echo $return;                
+            } else {
+                // echo $return;
             }
 
             foreach ($output_files as $output_file_path) {
