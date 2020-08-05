@@ -839,7 +839,7 @@ class RestService extends Model
         // prepare request parameters for each service
         $request_params = [];
         $request_params_chunking = [];
-        
+
         $group_list_count = [];
         foreach ($rs_list as $rs) {
             $rs_filters = $filters;
@@ -859,8 +859,7 @@ class RestService extends Model
             $query_parameters = [];
             $query_parameters['format'] = 'tsv';
 
-
-            if(isset($rs->chunk_size) && ($rs->chunk_size != NULL)) {
+            if (isset($rs->chunk_size) && ($rs->chunk_size != null)) {
                 $chunk_size = $rs->chunk_size;
                 $nb_results = $expected_nb_sequences_by_rs[$rs->id];
                 $nb_chunks = (int) ceil($nb_results / $chunk_size);
@@ -892,8 +891,7 @@ class RestService extends Model
                     $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '_' . $i . '_' . '.tsv';
                     $request_params_chunking[] = $t;
                 }
-            }
-            else {
+            } else {
                 // generate JSON query
                 $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
 
@@ -914,18 +912,18 @@ class RestService extends Model
                     $file_suffix = '-' . $group_list_count[$group];
                 }
                 $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
-                $request_params[] = $t;            
+                $request_params[] = $t;
             }
         }
 
         $final_response_list = [];
         // do requests, write tsv data to files
-        if(count($request_params) > 0) {
+        if (count($request_params) > 0) {
             Log::debug('Do not-chunked TSV requests...');
             $final_response_list = self::doRequests($request_params);
         }
-       
-        if(count($request_params_chunking) > 0) {
+
+        if (count($request_params_chunking) > 0) {
             Log::debug('Do chunked TSV requests...');
             $request_params_chunked = array_chunk($request_params_chunking, 3);
             foreach ($request_params_chunked as $requests) {
