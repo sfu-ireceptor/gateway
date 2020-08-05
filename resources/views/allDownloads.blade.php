@@ -42,7 +42,7 @@
 					@endif
 				</td>
 				<td>
-					{{ $d->nb_sequences }}
+					{{ number_format($d->nb_sequences) }}
 				</td>
 				<td>
 					@if($d->isDone() || $d->isFailed() || $d->isRunning())
@@ -72,7 +72,7 @@
 						<em>Expired</em>
 
 					@elseif($d->isDone())
-							<a href="{{ $d->file_url }}" class="btn btn-primary download_repertoires btn-xs" type="button" title="Download">
+							<a href="/{{ $d->file_url }}" class="btn btn-primary download_repertoires btn-xs" type="button" title="Download">
 								<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 								<span class="text">
 									Download
