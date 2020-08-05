@@ -333,13 +333,11 @@ class AdminController extends Controller
         $rs = RestService::find($id);
         $chunk_size = $rs->refreshChunkSize();
 
-        if($chunk_size == NULL) {
+        if ($chunk_size == null) {
             $message = $rs->name . ' does not have a max_size :)';
-        }
-        else if(is_string($chunk_size)) {
-            $message = 'An error occured when trying to retrieve max_size from ' . $rs->name . ': ' . $chunk_size;            
-        }
-        else {
+        } elseif (is_string($chunk_size)) {
+            $message = 'An error occured when trying to retrieve max_size from ' . $rs->name . ': ' . $chunk_size;
+        } else {
             $message = $rs->name . ' max_size was successfully updated to ' . $chunk_size;
         }
 
