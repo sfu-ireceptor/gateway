@@ -123,6 +123,7 @@ Route::middleware('auth')->group(function () {
         Route::get('queues', 'AdminController@getQueues');
         Route::get('databases', 'AdminController@getDatabases');
         Route::get('update-database/{id}/{enabled}', 'AdminController@getUpdateDatabase');
+        Route::get('update-chunk-size/{id}', 'AdminController@getUpdateChunkSize');
         Route::get('news', 'AdminController@getNews');
         Route::get('add-news', 'AdminController@getAddNews');
         Route::post('add-news', 'AdminController@postAddNews');
