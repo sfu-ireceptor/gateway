@@ -54,6 +54,16 @@ class TestController extends Controller
 
     public function getIndex(Request $request)
     {
+        $out = [];
+        $return = 0;
+        // exec('pwd', $out, $return);
+        
+        exec('../util/scripts/airr-tsv-merge.py -i ./storage/f1.tsv ./storage/f2.tsv -o ./storage/o1.tsv 2>&1', $out, $return);
+        echo $return;
+        print_r($out);
+        // echo "aaa";
+        die();
+
         $s = 'DOI: 10.1111/imr.12666';
         if (! (stripos($s, 'DOI') === false)) {
             $s = str_replace('DOI: ', '', $s);

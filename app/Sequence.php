@@ -122,7 +122,7 @@ class Sequence
         File::makeDirectory($folder_path, 0777, true, true);
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filters, $folder_path, $username);
-        $response_list = RestService::sequences_data($filters, $folder_path, $username);
+        $response_list = RestService::sequences_data_chunked($filters, $folder_path, $username, $expected_nb_sequences_by_rs);
         $file_stats = self::file_stats($response_list, $expected_nb_sequences_by_rs);
 
         // if some files are incomplete, log it
