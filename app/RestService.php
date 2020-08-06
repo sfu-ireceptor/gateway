@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Process\Process;
 
 class RestService extends Model
 {
@@ -888,7 +889,7 @@ class RestService extends Model
                         $group_list_count[$group] += 1;
                         $file_suffix = '-' . $group_list_count[$group];
                     }
-                    $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '_' . $i . '_' . '.tsv';
+                    $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '_' . $i . '.tsv';
                     $request_params_chunking[] = $t;
                 }
             } else {
@@ -919,12 +920,12 @@ class RestService extends Model
         $final_response_list = [];
         // do requests, write tsv data to files
         if (count($request_params) > 0) {
-            Log::debug('Do not-chunked TSV requests...');
+            Log::debug('Do TSV requests... (not-chunked)');
             $final_response_list = self::doRequests($request_params);
         }
 
         if (count($request_params_chunking) > 0) {
-            Log::debug('Do chunked TSV requests...');
+            Log::debug('Do TSV requests... (chunked)');
             $request_params_chunked = array_chunk($request_params_chunking, 3);
             foreach ($request_params_chunked as $requests) {
                 $response_list[] = self::doRequests($requests);
@@ -940,15 +941,13 @@ class RestService extends Model
             $output_files_str = implode(' ', $output_files);
             $file_path_merged = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
 
-            $out = [];
-            $return = 0;
             Log::debug('Merging chunked files...');
-            exec('../util/scripts/airr-tsv-merge.py -i ' . $output_files_str . ' -o ' . $file_path_merged . ' 2>&1', $out, $return);
-            if ($return == 0) {
-                // echo "ok: " . $file_path_merged;
-            } else {
-                // echo $return;
-            }
+            $cmd = base_path() . '/util/scripts/airr-tsv-merge.py -i ' . $output_files_str . ' -o ' . $file_path_merged . ' 2>&1';
+            Log::debug($cmd);
+            $process = new Process($cmd);
+            $process->mustRun(function ($type, $buffer) {
+                Log::debug($buffer);
+            });
 
             Log::debug('Deleting chunked files...');
             foreach ($output_files as $output_file_path) {
