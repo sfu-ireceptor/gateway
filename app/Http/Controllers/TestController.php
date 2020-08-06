@@ -54,6 +54,7 @@ class TestController extends Controller
 
     public function getIndex(Request $request)
     {
+        
         $out = [];
         $return = 0;
         // exec('pwd', $out, $return);
