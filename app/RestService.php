@@ -945,6 +945,7 @@ class RestService extends Model
             $cmd = base_path() . '/util/scripts/airr-tsv-merge.py -i ' . $output_files_str . ' -o ' . $file_path_merged . ' 2>&1';
             Log::debug($cmd);
             $process = new Process($cmd);
+            $process->setTimeout(3600 * 24);
             $process->mustRun(function ($type, $buffer) {
                 Log::debug($buffer);
             });
