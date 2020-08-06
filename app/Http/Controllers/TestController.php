@@ -26,8 +26,7 @@ class TestController extends Controller
     public function getIndex(Request $request)
     {
         echo base_path() . '/util/scripts/airr-tsv-merge.py -i ';
-        die;
-
+        exit;
 
         $out = [];
         $return = 0;
@@ -797,7 +796,7 @@ class TestController extends Controller
         echo "I waited $seconds sec!";
     }
 
-        public function email()
+    public function email()
     {
         Mail::send(['text' => 'emails.test'], [], function ($message) {
             $message->to('jlj7@sfu.ca')->subject('Test Email');
@@ -825,5 +824,4 @@ class TestController extends Controller
 
         echo 'hi there 40';
     }
-
 }
