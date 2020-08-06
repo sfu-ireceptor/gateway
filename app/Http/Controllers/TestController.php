@@ -23,37 +23,12 @@ use Symfony\Component\Process\Process;
 
 class TestController extends Controller
 {
-    public function email()
-    {
-        Mail::send(['text' => 'emails.test'], [], function ($message) {
-            $message->to('jlj7@sfu.ca')->subject('Test Email');
-        });
-        echo 'done';
-    }
-
-    public function printBody()
-    {
-        $d = Carbon::now();
-
-        echo 'hi there 3';
-        // trigger_error('var must be numeric');
-        // trigger_error('var must be numeric');
-
-        flush();
-        ob_flush();
-        sleep(10);
-        exit(1);
-        // header('HTTP/1.1 500 Internal Server Error');
-        // die();
-        // abort(500, 'yoooooo');
-        // header('X-Error-Message: Incorrect username', true, 500);
-        // die('Incorrect username');
-
-        echo 'hi there 40';
-    }
-
     public function getIndex(Request $request)
     {
+        echo base_path() . '/util/scripts/airr-tsv-merge.py -i ';
+        die;
+
+
         $out = [];
         $return = 0;
         // exec('pwd', $out, $return);
@@ -821,4 +796,34 @@ class TestController extends Controller
         sleep($seconds);
         echo "I waited $seconds sec!";
     }
+
+        public function email()
+    {
+        Mail::send(['text' => 'emails.test'], [], function ($message) {
+            $message->to('jlj7@sfu.ca')->subject('Test Email');
+        });
+        echo 'done';
+    }
+
+    public function printBody()
+    {
+        $d = Carbon::now();
+
+        echo 'hi there 3';
+        // trigger_error('var must be numeric');
+        // trigger_error('var must be numeric');
+
+        flush();
+        ob_flush();
+        sleep(10);
+        exit(1);
+        // header('HTTP/1.1 500 Internal Server Error');
+        // die();
+        // abort(500, 'yoooooo');
+        // header('X-Error-Message: Incorrect username', true, 500);
+        // die('Incorrect username');
+
+        echo 'hi there 40';
+    }
+
 }
