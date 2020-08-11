@@ -926,7 +926,7 @@ class RestService extends Model
 
         if (count($request_params_chunking) > 0) {
             Log::debug('Do TSV requests... (chunked)');
-            $request_params_chunked = array_chunk($request_params_chunking, 3);
+            $request_params_chunked = array_chunk($request_params_chunking, 15);
             foreach ($request_params_chunked as $requests) {
                 $response_list[] = self::doRequests($requests);
             }
