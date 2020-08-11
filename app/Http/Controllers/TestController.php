@@ -27,6 +27,7 @@ class TestController extends Controller
     {
         echo base_path() . '/util/scripts/airr-tsv-merge.py -i ';
         exit;
+        exit;
 
         $out = [];
         $return = 0;
