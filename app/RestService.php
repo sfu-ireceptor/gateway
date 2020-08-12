@@ -942,7 +942,7 @@ class RestService extends Model
             $file_path_merged = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
 
             Log::debug('Merging chunked files...');
-            $cmd = base_path() . '/util/scripts/airr-tsv-merge.py -i ' . $output_files_str . ' -o ' . $file_path_merged . ' 2>&1';
+            $cmd = base_path() . '/util/scripts/airr-tsv-merge.py -i ' . $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '_*.tsv' . ' -o ' . $file_path_merged . ' 2>&1';
             Log::debug($cmd);
             $process = new Process($cmd);
             $process->setTimeout(3600 * 24);
