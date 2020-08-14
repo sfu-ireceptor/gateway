@@ -211,11 +211,14 @@
 								({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
 							</strong>
 							returned from
-							<a href="#" data-toggle="modal" data-target="#myModal">
-								{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},
-								{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}},
-								{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}
+
+							<a href="#" class="toggle_modal_rest_service_list_folded">
+								{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},</a>
+							<a href="#" class="toggle_modal_rest_service_list_expanded">
+								{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}} and
+								{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}.
 							</a>
+							
 						</p>
 						
 						<!-- repos/labs/studies details popup -->
