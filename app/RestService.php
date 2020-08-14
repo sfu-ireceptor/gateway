@@ -957,7 +957,6 @@ class RestService extends Model
                 }
             }
 
-            // TODO improve to check if there was an error..
             $response = $response_list[0][0];
             $response['data']['file_path'] = $file_path_merged;
             $final_response_list[] = $response;
