@@ -28,7 +28,7 @@
 						     	<em>{{ human_number($rs_data['total_filtered_sequences']) }} sequences</em>
 							    <ul>
 						 			@foreach ($rs_data['study_tree'] as $lab)
-										<li class="lab_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-education"}'>
+										<li class="lab_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-folder-open"}'>
 											<span title="{{ $lab['name'] }}" class="lab_name">
 												Lab:
 												@if(isset($lab['name']) && $lab['name'] != '')
@@ -43,7 +43,7 @@
 										    <ul>
 										    	@isset($lab['studies'])
 								 					@foreach ($lab['studies'] as $study)
-								 						<li data-jstree='{"icon":"glyphicon glyphicon-book", "disabled":true}'>
+								 						<li data-jstree='{"icon":"glyphicon glyphicon-file", "disabled":true}'>
 								 							<span>
 																Study:
 																@if (isset($study['study_url']))

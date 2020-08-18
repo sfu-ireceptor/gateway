@@ -256,11 +256,13 @@
 								({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
 							</strong>
 							returned from
-
-							<a href="#" data-toggle="modal" data-target="#myModal">
-								{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},
-								{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}},
-								{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}</a>
+		
+							<a href="#" class="toggle_modal_rest_service_list_folded">
+								{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},</a>
+							<a href="#" class="toggle_modal_rest_service_list_expanded">
+								{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}} and
+								{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}.
+							</a>
 
 							@if ( ($rs_list_no_response_str != '') || ($rs_list_sequence_count_error_str != ''))
 								<a role="button" class="missing_data" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Incomplete data" data-content="{{ $rs_list_no_response_str }}{{ $rs_list_sequence_count_error_str }}" data-trigger="hover" tabindex="0">

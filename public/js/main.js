@@ -44,6 +44,26 @@ $(document).ready(function() {
 			// (otherwise the links default behaviour is overrided by jstree)
 	   		$('.jstree-anchor').addClass('jstree-anchor-simple').removeClass('jstree-anchor');
   	}).jstree();
+
+	// rest services modal
+	$('.toggle_modal_rest_service_list_folded').click(function () {
+		$('#rest_service_list .rs_node').each(function(){
+			$('#rest_service_list').jstree('close_node', $(this));
+		});
+
+		$('#myModal').modal('toggle');
+		return false;
+	});
+
+	$('.toggle_modal_rest_service_list_expanded').click(function () {
+		$('#rest_service_list .rs_node').each(function(){
+			$('#rest_service_list').jstree('open_node', $(this));
+		});
+
+		$('#myModal').modal('toggle');
+		return false;
+	});
+
 	
 	// save filters panels state when submitting form
 	$('form.sample_search, form.sequence_search').submit(function(){
