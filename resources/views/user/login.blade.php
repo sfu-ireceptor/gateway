@@ -74,8 +74,10 @@
 					Search study metadata and sequence features from
 					<strong>{{ human_number($total_sequences) }} {{ str_plural('sequence', $total_sequences)}}</strong>,
 					<strong>{{ $total_samples }} {{ str_plural('repertoire', $total_samples)}}</strong>, and
-					<strong>{{ $total_studies }} {{ str_plural('study', $total_studies)}}</strong>
+					<a href="#" class="toggle_modal_rest_service_list_expanded"><strong>{{ $total_studies }} {{ str_plural('study', $total_studies)}}</strong></a>
 					across {{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}.
+					<!-- repos/labs/studies popup -->
+					@include('rest_service_list')
 				</p>
 
 				<div id="charts">

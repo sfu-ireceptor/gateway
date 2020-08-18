@@ -18,10 +18,17 @@ class UserController extends Controller
 {
     public function getLogin(Request $request)
     {
-        $data = Sample::metadata();
+        // get count of available data (sequences, samples)
+        $username = 'titi';
+        $metadata = Sample::metadata($username);
+        $data = $metadata;
 
         $sample_list = Sample::public_samples();
         $data['sample_list_json'] = json_encode($sample_list);
+
+        // generate statistics
+        $sample_data = Sample::stats($sample_list);
+        $data['rest_service_list'] = $sample_data['rs_list'];
 
         $metadata = Sample::metadata();
         $data['total_repositories'] = $metadata['total_repositories'];
