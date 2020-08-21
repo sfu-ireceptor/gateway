@@ -196,6 +196,30 @@
 							</div>
 						</div>
 					</div>
+					<br>
+					<div class="panel panel-default">
+						<div class="panel-heading" role="tab" id="headingFour">
+							<h4 class="panel-title">
+								<a class="{{ in_array('3', $open_filter_panel_list) ? '' : 'collapsed' }}" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+									More Filters
+								</a>
+							</h4>
+						</div>
+						<div id="collapseFour" class="panel-collapse collapse {{ in_array('3', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingFour">
+							<div class="panel-body">
+								<div class="form-group">
+									{{ Form::label('sample_id', __('short.sample_id')) }}
+									@include('help', ['id' => 'sample_id'])
+									{{ Form::text('sample_id', '', array('class' => 'form-control')) }}
+								</div>
+
+								<p class="button_container">
+									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
+								</p>
+
+							</div>
+						</div>
+					</div>
 				</div>
 			    
 			{{ Form::close() }}
