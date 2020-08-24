@@ -431,6 +431,7 @@ class SampleController extends Controller
 
         $data = [];
         $data['field'] = $field;
+
         return view('field', $data);
     }
 }
