@@ -198,6 +198,10 @@ class SampleController extends Controller
             unset($params['sort_order']);
         }
 
+        if (isset($params['extra_filter'])) {
+            unset($params['extra_filter']);
+        }
+
         /*************************************************
         * get filtered sample list and related statistics */
 
