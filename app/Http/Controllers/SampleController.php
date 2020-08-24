@@ -328,6 +328,17 @@ class SampleController extends Controller
         $field_list_grouped = FieldName::getSampleFieldsGrouped();
         $data['field_list_grouped'] = $field_list_grouped;
 
+        // get extra filters
+        $extra_filters = [];
+        foreach ($field_list_grouped as $group) {
+            $group_name = $group['name'];
+            foreach ($group['fields'] as $field) {
+                $extra_filters[$field['ir_id']] = $group_name . ' | ' . $field['ir_short'];
+            }
+        }
+        // TODO remove filters already there and those not appropriate/useful
+        $data['extra_filters'] = $extra_filters;
+
         // table columns to display
         if (isset($params['cols'])) {
             $current_columns = explode(',', $params['cols']);

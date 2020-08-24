@@ -79,6 +79,22 @@ $(document).ready(function() {
 		return true;
 	});
 
+	// add new filter
+	$('.add_filter button').click(function() {
+		var filter = $('.add_filter select[name=extra_filter]').val();
+		var filter_html = '';
+
+		// TODO ajax call to get full HTML for that filter
+		filter_html = '<div class="form-group"><label for="sample_id">Sample ID</label><span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Sample ID" data-content="<p>Sample ID assigned by submitter, unique within study</p> Example: <em>SUP52415</em>" data-trigger="hover" tabindex="0"><span class="glyphicon glyphicon-question-sign"></span></span><input class="form-control" name="sample_id" type="text" value="" id="sample_id"></div>';
+
+		// TODO remove item from select
+
+		$('.extra_filters').removeClass('hidden');
+		$('.extra_filters_list').append($(filter_html));
+
+		console.debug(filter);
+	});
+
 	/**********************************************************
 	* Sequences
 	**********************************************************/

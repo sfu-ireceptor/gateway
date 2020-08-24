@@ -196,28 +196,36 @@
 							</div>
 						</div>
 					</div>
+
 					<br>
+
 					<div class="panel panel-default">
-						<div class="panel-heading" role="tab" id="headingFour">
-							<h4 class="panel-title">
-								<a class="{{ in_array('3', $open_filter_panel_list) ? '' : 'collapsed' }}" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-									More Filters
-								</a>
-							</h4>
+						<div class="panel-heading">
+							<h3 class="panel-title">Extra filters</h3>
 						</div>
-						<div id="collapseFour" class="panel-collapse collapse {{ in_array('3', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingFour">
-							<div class="panel-body">
-								<div class="form-group">
-									{{ Form::label('sample_id', __('short.sample_id')) }}
-									@include('help', ['id' => 'sample_id'])
-									{{ Form::text('sample_id', '', array('class' => 'form-control')) }}
+						<div class="panel-body">
+							<div class="extra_filters hidden">
+								<div class="extra_filters_list">
 								</div>
 
 								<p class="button_container">
 									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
 								</p>
-
+								<hr>								
 							</div>
+
+							<div class="add_filter">
+								<div class="form-group">
+									{{ Form::select('extra_filter', $extra_filters, '', array('class' => 'form-control')) }}
+								</div>
+
+								<p class="button_container">
+									<button type="button" class="btn btn-default" aria-label="Add filter">
+										<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add filter
+									</button>
+								</p>
+							</div>				 	
+
 						</div>
 					</div>
 				</div>
