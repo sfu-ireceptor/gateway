@@ -68,6 +68,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
     Route::post('/samples', 'SampleController@postIndex')->name('samples-post');
     Route::get('/samples', 'SampleController@index')->name('samples')->middleware('log_query');
+    Route::get('/samples/filter/{id}', 'SampleController@filter')->name('samples-filter');
     Route::get('/samples/json', 'SampleController@json')->name('samples-json')->middleware('log_query');
     Route::get('/samples/tsv', 'SampleController@tsv')->name('samples-tsv')->middleware('log_query');
     Route::post('/sequences', 'SequenceController@postIndex')->name('sequences-post');

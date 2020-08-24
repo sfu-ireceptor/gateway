@@ -424,4 +424,13 @@ class SampleController extends Controller
 
         return redirect($file_path);
     }
+
+    public function filter($id)
+    {
+        $field = FieldName::getField($id);
+
+        $data = [];
+        $data['field'] = $field;
+        return view('field', $data);
+    }
 }
