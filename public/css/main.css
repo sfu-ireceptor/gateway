@@ -694,8 +694,8 @@ footer a:hover {
 	margin-top: 20px;
 	background-color: transparent;
 	border-radius: 6px;
-	font: 200 24px/32px "Helvetica Neue",Helvetica,Arial,sans-serif;
-	padding: 0 60px 0 20px;
+	font: 24px/32px "Helvetica Neue",Helvetica,Arial,sans-serif;
+	padding: 0 60px 0 0;
 }
 
 .intro2 {
