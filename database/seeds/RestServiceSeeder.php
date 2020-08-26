@@ -84,6 +84,16 @@ class RestServiceSeeder extends Seeder
                 'rest_service_group_code' => 'c19',
             ],
             [
+                'url' => 'http://covid19-4.ireceptor.org/airr/v1/',
+                'name' => 'COVID 19-4',
+                'rest_service_group_code' => 'c19',
+            ],
+            [
+                'url' => 'http://covid19-4-staging.ireceptor.org/airr/v1/',
+                'name' => 'COVID 19-4 Staging',
+                'rest_service_group_code' => 'c19',
+            ],
+            [
                 'url' => 'https://vdj-staging.tacc.utexas.edu/airr/v1/',
                 'name' => 'VDJServer',
             ],
