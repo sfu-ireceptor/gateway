@@ -766,7 +766,6 @@ footer a:hover {
 
 .beta_version .panel-body p {
 	margin-bottom: 6px;
-	font-size: 12px;
 }
 
 .beta_version > .panel-heading {
@@ -784,7 +783,6 @@ footer a:hover {
 	background-color: #f4a45a;
 	color: black;
 	padding-bottom: 4px;
-	font-size: 12px;
 	text-align: right;
 }
 
