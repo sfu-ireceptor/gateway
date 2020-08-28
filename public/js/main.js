@@ -79,16 +79,14 @@ $(document).ready(function() {
 		return true;
 	});
 
-	// add new filter
-	$('.add_filter button').click(function() {
-		var filter = $('.add_filter select[name=extra_filter]').val();
-		var filter_url = '/samples/filter/' + filter;
+	// add new field
+	$('.add_field button').click(function() {
+		var field = $('.add_field select[name=extra_field]').val();
+		var field_url = '/samples/field/' + field;
 		
-		console.debug(filter);
-
-		$.get(filter_url, function(data) {
-			$('.extra_filters_list').append($(data));
-			$('.extra_filters').removeClass('hidden');
+		$.get(field_url, function(data) {
+			$('.extra_fields_list').append($(data));
+			$('.extra_fields').removeClass('hidden');
 		})
 		.fail(function(jqXHR, status, message) {
 			console.log(status + ': ' + message);

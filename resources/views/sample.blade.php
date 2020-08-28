@@ -204,8 +204,15 @@
 							<h3 class="panel-title">Extra filters</h3>
 						</div>
 						<div class="panel-body">
-							<div class="extra_filters hidden">
-								<div class="extra_filters_list">
+							<div class="extra_fields {{ empty($extra_params) ? 'hidden' : '' }}">
+								<div class="extra_fields_list">
+									@foreach($extra_params as $param)
+										<div class="form-group">
+											{{ Form::label($param, __('short.' . $param)) }}
+											@include('help', ['id' => $param])
+											{{ Form::text($param, '', array('class' => 'form-control')) }}
+										</div>										
+									@endforeach
 								</div>
 
 								<p class="button_container">
@@ -214,9 +221,9 @@
 								<hr>								
 							</div>
 
-							<div class="add_filter">
+							<div class="add_field">
 								<div class="form-group">
-									{{ Form::select('extra_filter', $extra_filters, '', array('class' => 'form-control')) }}
+									{{ Form::select('extra_field', $extra_fields, '', array('class' => 'form-control')) }}
 								</div>
 
 								<p class="button_container">

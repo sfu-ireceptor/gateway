@@ -198,8 +198,8 @@ class SampleController extends Controller
             unset($params['sort_order']);
         }
 
-        if (isset($params['extra_filter'])) {
-            unset($params['extra_filter']);
+        if (isset($params['extra_field'])) {
+            unset($params['extra_field']);
         }
 
         /*************************************************
@@ -332,16 +332,33 @@ class SampleController extends Controller
         $field_list_grouped = FieldName::getSampleFieldsGrouped();
         $data['field_list_grouped'] = $field_list_grouped;
 
-        // get extra filters
-        $extra_filters = [];
+        // retrieve all fields
+        $all_fieds = [];
         foreach ($field_list_grouped as $group) {
             $group_name = $group['name'];
             foreach ($group['fields'] as $field) {
-                $extra_filters[$field['ir_id']] = $group_name . ' | ' . $field['ir_short'];
+                $all_fieds[$field['ir_id']] = $group_name . ' | ' . $field['ir_short'];
             }
         }
-        // TODO remove filters already there and those not appropriate/useful
-        $data['extra_filters'] = $extra_filters;
+
+        // build list of extra fields: remvove fields already hard coded in the view 
+        $hard_coded_field_ids = ['full_text_search','study_id','study_title','study_type', 'study_group_description', 'lab_name', 'subject_id', 'organism', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis', 'sample_id', 'pcr_target_locus', 'cell_subset', 'tissue', 'template_class', 'cell_phenotype', 'sequencing_platform'];
+        $extra_fieds = [];
+        foreach ($all_fieds as $k => $v) {
+            if( ! in_array($k, $hard_coded_field_ids)) {
+                $extra_fieds[$k] = $v;
+            }
+        }
+        $data['extra_fields'] = $extra_fieds;
+
+        // build list of extra parameters (list extra fields actually used)
+        $extra_params = [];
+        foreach ($extra_fieds as $k => $v) {
+            if(isset($params[$k])) {
+                $extra_params[] = $k;
+            }
+        }
+        $data['extra_params'] = $extra_params;
 
         // table columns to display
         if (isset($params['cols'])) {
@@ -429,7 +446,7 @@ class SampleController extends Controller
         return redirect($file_path);
     }
 
-    public function filter($id)
+    public function field($id)
     {
         $field = FieldName::getField($id);
 
