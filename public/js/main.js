@@ -87,6 +87,8 @@ $(document).ready(function() {
 		$.get(field_url, function(data) {
 			$('.extra_fields_list').append($(data));
 			$('.extra_fields').removeClass('hidden');
+			$('.column_selector input.' + field).prop("checked", true);
+			$('.column_selector input.' + field).change();
 		})
 		.fail(function(jqXHR, status, message) {
 			console.log(status + ': ' + message);
