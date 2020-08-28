@@ -85,10 +85,17 @@ $(document).ready(function() {
 		var field_url = '/samples/field/' + field;
 		
 		$.get(field_url, function(data) {
+			// add form field
 			$('.extra_fields_list').append($(data));
 			$('.extra_fields').removeClass('hidden');
+
+			// add corresponding table column
 			$('.column_selector input.' + field).prop("checked", true);
 			$('.column_selector input.' + field).change();
+
+			// remove that option from the dropdown
+			$('.add_field select[name=extra_field] option[value=' + field + ']').remove();
+
 		})
 		.fail(function(jqXHR, status, message) {
 			console.log(status + ': ' + message);
