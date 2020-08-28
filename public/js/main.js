@@ -95,7 +95,6 @@ $(document).ready(function() {
 
 			// remove that option from the dropdown
 			$('.add_field select[name=extra_field] option[value=' + field + ']').remove();
-
 		})
 		.fail(function(jqXHR, status, message) {
 			console.log(status + ': ' + message);

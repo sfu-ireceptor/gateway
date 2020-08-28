@@ -343,22 +343,28 @@ class SampleController extends Controller
 
         // build list of extra fields: remvove fields already hard coded in the view
         $hard_coded_field_ids = ['full_text_search', 'study_id', 'study_title', 'study_type', 'study_group_description', 'lab_name', 'subject_id', 'organism', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis', 'sample_id', 'pcr_target_locus', 'cell_subset', 'tissue', 'template_class', 'cell_phenotype', 'sequencing_platform'];
-        $extra_fieds = [];
+        $extra_fields = [];
         foreach ($all_fieds as $k => $v) {
             if (! in_array($k, $hard_coded_field_ids)) {
-                $extra_fieds[$k] = $v;
+                $extra_fields[$k] = $v;
             }
         }
-        $data['extra_fields'] = $extra_fieds;
+        $data['extra_fields'] = $extra_fields;
 
         // build list of extra parameters (list extra fields actually used)
         $extra_params = [];
-        foreach ($extra_fieds as $k => $v) {
+        foreach ($extra_fields as $k => $v) {
             if (isset($params[$k])) {
                 $extra_params[] = $k;
             }
         }
         $data['extra_params'] = $extra_params;
+
+        // remove extra parameters from extra fields
+        foreach ($extra_params as $k => $v) {
+            unset($extra_fields[$v]);
+        }
+        $data['extra_fields'] = $extra_fields;
 
         // table columns to display
         if (isset($params['cols'])) {
