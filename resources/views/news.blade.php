@@ -25,10 +25,7 @@
 			    <h3 class="panel-title">Twitter</h3>
 			  </div>
 			  <div class="panel-body">
-				You can 
-				<a href="https://twitter.com/ireceptorgw">
-					follow us on Twitter 
-				</a>
+				<a href="https://twitter.com/ireceptorgw">Follow us on Twitter</a>
 				to keep up with the latest news.
 			  </div>
 			</div>
