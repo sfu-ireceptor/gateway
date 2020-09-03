@@ -929,6 +929,12 @@ class RestService extends Model
             $request_params_chunked = array_chunk($request_params_chunking, 15);
             foreach ($request_params_chunked as $requests) {
                 $response_list[] = self::doRequests($requests);
+
+                foreach ($response_list as $response) {
+                    if($response['status'] == 'error') {
+                        throw new \Exception('Service request error');
+                    }
+                }
             }
 
             $output_files = [];
