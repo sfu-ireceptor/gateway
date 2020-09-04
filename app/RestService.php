@@ -931,7 +931,7 @@ class RestService extends Model
                 $response_list[] = self::doRequests($requests);
 
                 foreach ($response_list as $response) {
-                    if($response['status'] == 'error') {
+                    if ($response['status'] == 'error') {
                         throw new \Exception('Service request error');
                     }
                 }
