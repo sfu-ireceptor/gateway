@@ -49,7 +49,7 @@ class CountSequences implements ShouldQueue
         Log::error($e->getMessage());
         Log::error($e);
 
-        $localJob = LocalJob::find($this->localJobId);  
+        $localJob = LocalJob::find($this->localJobId);
         $localJob->setFailed();
     }
 }
