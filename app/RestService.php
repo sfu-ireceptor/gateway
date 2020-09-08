@@ -927,14 +927,17 @@ class RestService extends Model
         if (count($request_params_chunking) > 0) {
             Log::debug('Do TSV requests... (chunked)');
             $request_params_chunked = array_chunk($request_params_chunking, 15);
+            $response_list = [];
             foreach ($request_params_chunked as $requests) {
-                $response_list[] = self::doRequests($requests);
+                $response_list_chunk = self::doRequests($requests);
 
-                foreach ($response_list as $response) {
+                foreach ($response_list_chunk as $response) {
                     if ($response['status'] == 'error') {
                         throw new \Exception('Service request error');
                     }
                 }
+
+                $response_list[] = $response_list_chunk;
             }
 
             $output_files = [];
