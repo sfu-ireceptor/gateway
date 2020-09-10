@@ -81,8 +81,14 @@ $(document).ready(function() {
 
 	// add new field
 	$('.add_field button').click(function() {
+		var button = $(this);
 		var field = $('.add_field select[name=extra_field]').val();
 		var field_url = '/samples/field/' + field;
+
+		// disable button
+		button.prop('disabled', true);
+		$('span.glyphicon', button).removeClass('glyphicon-plus');
+		$('span.text', button).text('adding filter..');
 		
 		$.get(field_url, function(data) {
 			// add form field
@@ -95,9 +101,19 @@ $(document).ready(function() {
 
 			// remove that option from the dropdown
 			$('.add_field select[name=extra_field] option[value=' + field + ']').remove();
+
+			// re-enable button
+			button.prop('disabled', false);
+			$('span.glyphicon', button).addClass('glyphicon-plus');
+			$('span.text', button).text('Add filter');
 		})
 		.fail(function(jqXHR, status, message) {
 			console.log(status + ': ' + message);
+
+			// re-enable button
+			button.prop('disabled', false);
+			$('span.glyphicon', button).addClass('glyphicon-plus');
+			$('span.text', button).text('Add filter');
 		});
 	});
 

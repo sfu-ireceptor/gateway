@@ -228,7 +228,7 @@
 
 								<p class="button_container">
 									<button type="button" class="btn btn-default" aria-label="Add filter">
-										<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add filter
+										<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> <span class="text">Add filter</span>
 									</button>
 								</p>
 							</div>				 	
