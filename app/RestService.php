@@ -877,7 +877,7 @@ class RestService extends Model
                     $t['rs'] = $rs;
                     $t['url'] = $rs->url . 'rearrangement';
                     $t['params'] = $rs_filters_json;
-                    $t['timeout'] = config('ireceptor.service_file_request_timeout');
+                    $t['timeout'] = config('ireceptor.service_file_request_chunked_timeout');
 
                     // add number suffix for rest services belonging to a group
                     $file_suffix = '';
