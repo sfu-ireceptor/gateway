@@ -929,11 +929,25 @@ class RestService extends Model
             $request_params_chunked = array_chunk($request_params_chunking, 15);
             $response_list = [];
             foreach ($request_params_chunked as $requests) {
-                $response_list_chunk = self::doRequests($requests);
 
-                foreach ($response_list_chunk as $response) {
-                    if ($response['status'] == 'error') {
-                        throw new \Exception('Service request error');
+                // try each group of queries up to 3 times
+                for ($i=1; $i <= 3; $i++) { 
+                    $response_list_chunk = self::doRequests($requests);
+
+                    $has_errors = false;
+                    
+                    foreach ($response_list_chunk as $response) {
+                        if ($response['status'] == 'error') {
+                            $has_errors = true;
+                        }
+                    }
+
+                    if(! $has_errors) {
+                        break;
+                    }
+
+                    if ($has_errors && $i==3) {
+                        throw new \Exception('Service request error');                        
                     }
                 }
 
