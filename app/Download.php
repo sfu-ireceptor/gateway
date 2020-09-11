@@ -124,8 +124,13 @@ class Download extends Model
 
     public static function start_download($query_id, $username, $page_url, $nb_sequences)
     {
+        $queue = 'default';
+        if($nb_sequences > 2000000) {
+            $queue = 'long';
+        }
+
         // create new local job
-        $lj = new LocalJob();
+        $lj = new LocalJob($queue);
         $lj->user = $username;
         $lj->description = 'Sequences download';
         $lj->save();
@@ -141,7 +146,7 @@ class Download extends Model
         // queue local job
         $localJobId = $lj->id;
         try {
-            DownloadSequences::dispatch($username, $localJobId, $query_id, $page_url, $nb_sequences, $d);
+            DownloadSequences::dispatch($username, $localJobId, $query_id, $page_url, $nb_sequences, $d)->onQueue($queue);
         } catch (\Exception $e) {
             \
             Log::error('Download could not be queued:');
