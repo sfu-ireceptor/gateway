@@ -125,7 +125,7 @@ class Download extends Model
     public static function start_download($query_id, $username, $page_url, $nb_sequences)
     {
         $queue = 'default';
-        if($nb_sequences > 2000000) {
+        if ($nb_sequences > 2000000) {
             $queue = 'long';
         }
 
