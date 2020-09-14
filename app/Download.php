@@ -116,7 +116,7 @@ class Download extends Model
 
     public function queuePosition()
     {
-        $n = static::where('id', '>', $this->id)->whereIn('status', [self::STATUS_QUEUED, self::STATUS_RUNNING])->count();
+        $n = static::where('id', '<', $this->id)->whereIn('status', [self::STATUS_QUEUED])->count();
 
         return $n + 1;
     }

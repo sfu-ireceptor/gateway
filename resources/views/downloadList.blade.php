@@ -71,9 +71,9 @@
 				<td>
 					<h4 class="text-nowrap">
 						@if($d->isQueued())
-							<span class="label label-info">{{ $d->status }}</span>
+							<span class="label label-info">{{ $d->status }} ({{ $d->queuePosition() }})</span>
 
-							<span class="help help_queue_position" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Position in queue: {{ $d->queuePosition() }}" data-content="<p>There are {{ $d->queuePosition() }} other downloads before this one.</p>" data-trigger="hover" tabindex="0">
+							<span class="help help_queue_position" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Position in queue: {{ $d->queuePosition() }}" data-content="<p>There are {{ $d->queuePosition() }} other downloads before this one will start.</p>" data-trigger="hover" tabindex="0">
 								<span class="glyphicon glyphicon-question-sign"></span>
 							</span>
 
