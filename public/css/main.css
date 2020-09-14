@@ -1365,3 +1365,13 @@ form.column_selector {
 
 
 /* @end */
+
+/* @group downloads */
+
+.help_queue_position span.glyphicon {
+	top: 4px;
+}
+
+
+
+/* @end */

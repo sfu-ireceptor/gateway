@@ -114,6 +114,13 @@ class Download extends Model
         return $to->diffForHumans($this->start_date, true);
     }
 
+    public function queuePosition()
+    {
+        $n = static::where('id', '>', $this->id)->whereIn('status', [self::STATUS_QUEUED, self::STATUS_RUNNING])->count();
+
+        return $n + 1;
+    }
+
     public function isExpired()
     {
         $now = Carbon::now();
