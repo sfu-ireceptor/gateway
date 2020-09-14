@@ -1355,3 +1355,13 @@ form.column_selector {
 
 
 /* @end */
+
+/* @group queues */
+
+.queues_tabs {
+	margin-bottom: -1px;
+}
+
+
+
+/* @end */
