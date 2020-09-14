@@ -26,9 +26,9 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
-
         $d = Download::find(5);
-        echo $d->queuePosition();die();
+        echo $d->queuePosition();
+        exit();
         dd($d);
 
         echo base_path() . '/util/scripts/airr-tsv-merge.py -i ';
