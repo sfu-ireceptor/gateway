@@ -130,7 +130,7 @@
 	        "@lang('short.template_class')"
 	    ];
 	
-	var graphInternalLabels = false;
+	var graphInternalLabels = true;
 	var graphCountField = "ir_sequence_count";
 	var graphData = {!! $sample_list_json !!};
 </script>
