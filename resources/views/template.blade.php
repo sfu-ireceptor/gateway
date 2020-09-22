@@ -13,7 +13,7 @@
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
 		<link href="/css/bootstrap-multiselect.css" rel="stylesheet" />
 		<link href="/css/jstree/default/style.min.css" rel="stylesheet" />
-		<link href="/css/main.css?v=40" rel="stylesheet">
+		<link href="/css/main.css?v=46" rel="stylesheet">
 
 		<!-- IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -22,8 +22,8 @@
 		<![endif]-->
 	</head>
 
-	<body>
-    	@if(Auth::check())
+	<body class="{{ Auth::check() ? 'logged-in' : 'not-logged-in'}}">
+		@if (! isset($is_login_page))
 			<nav class="navbar navbar-default" role="navigation">
 			  <div class="container-fluid">
 			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -33,79 +33,93 @@
 							<img src="/images/logos/ireceptor.png">
 				      	</a>
 					</li>
-			    	@if(Request::is('sequences-quick-search*'))
-			    		<li role="presentation" class="dropdown active search">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-								Search
-								<span class="caret"></span>
+
+			    	@if(Auth::check())
+				    	@if(Request::is('sequences-quick-search*'))
+				    		<li role="presentation" class="dropdown active search">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+									Search
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+								  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
+								  <li><a href="/samples">Repertoire Metadata Search</a></li>
+								</ul>
+							</li>
+							<li role="presentation" class="active sequences">
+								<a href="/samples" class="active inactive">Sequence Quick Search</a>
+							</li>
+				    	@elseif(Request::is('samples*'))
+							<li role="presentation" class="dropdown active search">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+									Search
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+								  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
+								  <li><a href="/samples">Repertoire Metadata Search</a></li>
+								</ul>
+							</li>
+							<li role="presentation" class="active samples">
+								<a href="#" class="active inactive">
+									1. Repertoire Metadata
+								</a>
+							</li>
+							<li role="presentation" class="sequences">
+								<a href="#" class="inactive">2. Sequences</a>
+							</li>
+						@elseif(Request::is('sequences*'))
+							<li role="presentation" class="dropdown active search">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+									Search
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+								  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
+								  <li><a href="/samples">Repertoire Metadata Search</a></li>
+								</ul>
+							</li>
+							<li role="presentation" class="active samples">
+								<a href="/samples?query_id=@yield('sample_query_id', '')">
+									1. Repertoire Metadata
+								</a>
+							</li>
+							<li role="presentation" class="active sequences">
+								<a href="#" class="active inactive">2. Sequences</a>
+							</li>
+						@else
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Search<span class="caret"></span></a>
+								<ul class="dropdown-menu" role="menu">
+								  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
+								  <li><a href="/samples">Repertoire Metadata Search</a></li>
+								</ul>
+							</li>
+						@endif
+					  @else
+						  <li>
+							<a class="login" href="/login">
+								<span class="glyphicon glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+								Home
 							</a>
-							<ul class="dropdown-menu" role="menu">
-							  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
-							  <li><a href="/samples">Repertoire Metadata Search</a></li>
-							</ul>
-						</li>
-						<li role="presentation" class="active sequences">
-							<a href="/samples" class="active inactive">Sequence Quick Search</a>
-						</li>
-			    	@elseif(Request::is('samples*'))
-						<li role="presentation" class="dropdown active search">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-								Search
-								<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-							  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
-							  <li><a href="/samples">Repertoire Metadata Search</a></li>
-							</ul>
-						</li>
-						<li role="presentation" class="active samples">
-							<a href="#" class="active inactive">
-								1. Repertoire Metadata
-							</a>
-						</li>
-						<li role="presentation" class="sequences">
-							<a href="#" class="inactive">2. Sequences</a>
-						</li>
-					@elseif(Request::is('sequences*'))
-						<li role="presentation" class="dropdown active search">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-								Search
-								<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-							  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
-							  <li><a href="/samples">Repertoire Metadata Search</a></li>
-							</ul>
-						</li>
-						<li role="presentation" class="active samples">
-							<a href="/samples?query_id=@yield('sample_query_id', '')">
-								1. Repertoire Metadata
-							</a>
-						</li>
-						<li role="presentation" class="active sequences">
-							<a href="#" class="active inactive">2. Sequences</a>
-						</li>
-					@else
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Search<span class="caret"></span></a>
-							<ul class="dropdown-menu" role="menu">
-							  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
-							  <li><a href="/samples">Repertoire Metadata Search</a></li>
-							</ul>
-						</li>
-					@endif
+						  </li>
+					  @endif
 			      </ul>
 
 			      <ul class="nav navbar-nav navbar-right">
+
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Help<span class="caret"></span></a>
 						<ul class="dropdown-menu" role="menu">
-						  <li><a href="http://ireceptor.org/platform/doc/faq" class="external" target="_blank"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Frequently Asked Questions</a></li>  						  
-						  <li><a href="/fields-definitions"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Data elements definitions</a></li>
-						  <li><a href="http://ireceptor.org/platform/doc" class="external" target="_blank"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Documentation</a></li>
-						  <li><a href="/about"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> About iReceptor</a></li>
+<!-- 							<li><a href="http://ireceptor.irmacs.sfu.ca/node/97" class="external" target="_blank"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Downloading sequences</a></li> -->
+							<li><a href="http://ireceptor.org/platform/doc/faq" class="external" target="_blank"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Frequently Asked Questions</a></li>
+							<li><a href="http://ireceptor.org/platform/doc" class="external" target="_blank"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> iReceptor Gateway documentation</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="/fields-definitions"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Data elements definitions</a></li>
 						</ul>
 					</li>
+
+
 			    	@if(Auth::check())
 				    	@if(Auth::user()->isAdmin())		    	
 							<li class="dropdown">
@@ -115,7 +129,7 @@
 								  <li><a href="/admin/databases"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Repositories</a></li>
 								  <li><a href="/admin/users"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Users</a></li>
 								  <li role="separator" class="divider"></li>
-								  <li><a href="/admin/queries"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> User queries</a></li>
+								  <li><a href="/admin/queries"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> User Activity</a></li>
 								  <li><a href="/cgi-bin/awstats.pl"><span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Stats</a></li>
 								  <li role="separator" class="divider"></li>
 								  <li><a href="/admin/queues"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Queues</a></li>
@@ -131,6 +145,7 @@
 								<li><a href="/user/account"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> My account</a></li>
 								  <li role="separator" class="divider"></li>
 								<li><a href="/bookmarks"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Bookmarks</a></li>
+								<li><a href="/downloads"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Downloads</a></li>
 								@if(config('services.agave.enabled'))
 									<li><a href="/jobs"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Jobs</a></li>
 									<li><a href="/systems"><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> Systems</a></li>
@@ -157,7 +172,8 @@
 						@section('footer')
 							<div class="mini_footer">
 								<p class="text-right">
-									<a href="/about">About iReceptor</a> |
+									<a href="http://ireceptor.org/" class="external" target="_blank">iReceptor public website</a> |
+									<a href="/news">News</a> |
 									<a href="/fields-definitions">Data elements definitions</a> |								
 									<a href="http://ireceptor.org/platform/doc" class="external" target="_blank">Documentation</a>								
 								</p>
@@ -181,8 +197,8 @@
 		<script src="/js/bootstrap-multiselect.js"></script>
 		<script src="/js/pluralize.js"></script>
 
-		<script src="/js/main.js?v=29"></script>
-		<script src="/js/visualization.js?v=16"></script>
+		<script src="/js/main.js?v=31"></script>
+		<script src="/js/visualization.js?v=17"></script>
 	</body>
 
 </html>

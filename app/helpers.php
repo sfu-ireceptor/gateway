@@ -113,29 +113,31 @@ if (! function_exists('human_number')) {
     // from https://stackoverflow.com/a/36365553/91225
     function human_number($num)
     {
-        $x = round($num);
-        if ($x != null) {
-            $x_number_format = number_format($x);
-            $x_array = explode(',', $x_number_format);
-            $x_count_parts = count($x_array) - 1;
-            $x_parts = ['thousand', 'million', 'billion', 'trillion'];
+        if (is_numeric($num)) {
+            $x = round($num);
+            if ($x != null) {
+                $x_number_format = number_format($x);
+                $x_array = explode(',', $x_number_format);
+                $x_count_parts = count($x_array) - 1;
+                $x_parts = ['thousand', 'million', 'billion', 'trillion'];
 
-            $n = $x_array[0];
-            $x_display = $n;
-            if ($num > 1000000) {
-                $n2 = (int) $x_array[1][0] !== 0 ? '.' . $x_array[1][0] : '';
-                $x_display .= $n2;
+                $n = $x_array[0];
+                $x_display = $n;
+                if ($num > 1000000) {
+                    $n2 = (int) $x_array[1][0] !== 0 ? '.' . $x_array[1][0] : '';
+                    $x_display .= $n2;
+                }
+
+                // Catch the case where the number is less that 1000
+                if ($x_count_parts > 0) {
+                    $x_display .= ' ';
+                    $x_display .= $x_parts[$x_count_parts - 1];
+                }
+
+                return $x_display;
+            } else {
+                return $num;
             }
-
-            // Catch the case where the number is less that 1000
-            if ($x_count_parts > 0) {
-                $x_display .= ' ';
-                $x_display .= $x_parts[$x_count_parts - 1];
-            }
-
-            return $x_display;
-        } else {
-            return $num;
         }
     }
 }

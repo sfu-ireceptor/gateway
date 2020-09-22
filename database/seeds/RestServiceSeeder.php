@@ -54,13 +54,13 @@ class RestServiceSeeder extends Seeder
                 'name' => 'IPA 5 Staging',
             ],
             [
-                'url' => 'http://covid19.ireceptor.org/airr/v1/',
-                'name' => 'COVID 19',
+                'url' => 'http://covid19-1.ireceptor.org/airr/v1/',
+                'name' => 'COVID 19-1',
                 'rest_service_group_code' => 'c19',
             ],
             [
-                'url' => 'http://covid19-1.ireceptor.org/airr/v1/',
-                'name' => 'COVID 19-1',
+                'url' => 'http://covid19-1-staging.ireceptor.org/airr/v1/',
+                'name' => 'COVID 19-1 Staging',
                 'rest_service_group_code' => 'c19',
             ],
             [
@@ -69,12 +69,36 @@ class RestServiceSeeder extends Seeder
                 'rest_service_group_code' => 'c19',
             ],
             [
+                'url' => 'http://covid19-2-staging.ireceptor.org/airr/v1/',
+                'name' => 'COVID 19-2 Staging',
+                'rest_service_group_code' => 'c19',
+            ],
+            [
                 'url' => 'http://covid19-3.ireceptor.org/airr/v1/',
                 'name' => 'COVID 19-3',
                 'rest_service_group_code' => 'c19',
             ],
             [
+                'url' => 'http://covid19-3-staging.ireceptor.org/airr/v1/',
+                'name' => 'COVID 19-3 Staging',
+                'rest_service_group_code' => 'c19',
+            ],
+            [
+                'url' => 'http://covid19-4.ireceptor.org/airr/v1/',
+                'name' => 'COVID 19-4',
+                'rest_service_group_code' => 'c19',
+            ],
+            [
+                'url' => 'http://covid19-4-staging.ireceptor.org/airr/v1/',
+                'name' => 'COVID 19-4 Staging',
+                'rest_service_group_code' => 'c19',
+            ],
+            [
                 'url' => 'https://vdj-staging.tacc.utexas.edu/airr/v1/',
+                'name' => 'VDJServer Staging',
+            ],
+            [
+                'url' => 'https://vdjserver.org/airr/v1/',
                 'name' => 'VDJServer',
             ],
         ];

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Agave;
 use App\CachedSample;
+use App\Download;
 use App\FieldName;
 use App\Jobs\CountSequences;
 use App\LocalJob;
@@ -22,7 +23,9 @@ class AdminController extends Controller
     {
         $jobs = [];
         $jobs['default'] = LocalJob::findLast('default');
+        $jobs['long'] = LocalJob::findLast('long');
         $jobs['agave'] = LocalJob::findLast('agave');
+        $jobs['admin'] = LocalJob::findLast('admin');
 
         $data = [];
         $data['jobs'] = $jobs;
@@ -315,14 +318,31 @@ class AdminController extends Controller
 
         $lj = new LocalJob();
         $lj->user = $username;
+        $lj->queue = 'admin';
         $lj->description = 'Sequence count for  ' . $rs->name;
         $lj->save();
 
         // queue as a job
         $localJobId = $lj->id;
-        CountSequences::dispatch($username, $rest_service_id, $localJobId);
+        CountSequences::dispatch($username, $rest_service_id, $localJobId)->onQueue('admin');
 
         $message = 'Sequence count job for  ' . $rs->name . ' has been <a href="/admin/queues">queued</a>';
+
+        return redirect('admin/databases')->with('notification', $message);
+    }
+
+    public function getUpdateChunkSize($id)
+    {
+        $rs = RestService::find($id);
+        $chunk_size = $rs->refreshChunkSize();
+
+        if ($chunk_size == null) {
+            $message = $rs->name . ' does not have a max_size :)';
+        } elseif (is_string($chunk_size)) {
+            $message = 'An error occured when trying to retrieve max_size from ' . $rs->name . ': ' . $chunk_size;
+        } else {
+            $message = $rs->name . ' max_size was successfully updated to ' . $chunk_size;
+        }
 
         return redirect('admin/databases')->with('notification', $message);
     }
@@ -385,5 +405,15 @@ class AdminController extends Controller
         $data['node_queries'] = QueryLog::find_node_queries($id);
 
         return view('query', $data);
+    }
+
+    public function downloads()
+    {
+        $download_list = Download::orderBy('id', 'desc')->get();
+
+        $data = [];
+        $data['download_list'] = $download_list;
+
+        return view('allDownloads', $data);
     }
 }

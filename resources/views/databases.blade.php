@@ -24,6 +24,7 @@
 						<th>URL</th>
 						<th>Repertoires</th>
 						<th>Sequences</th>
+						<th>max_size</th>
 						<th>Last Refresh</th>
 					</tr>
 				</thead>
@@ -58,6 +59,12 @@
 												Refresh cached sequence counts
 											</a>
 										</li>
+										<li>
+											<a href="/admin/update-chunk-size/{{ $rs->id }}">
+												<span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+												Refresh max_size
+											</a>
+										</li>
 									</ul>
 								</div>
 							</td>					
@@ -69,6 +76,7 @@
 									{{ human_number($rs->nb_sequences) }}
 								</span>
 							</td>
+							<td>{{ $rs->chunk_size }}</td>
 							<td class="text-nowrap">
 								@if ($rs->last_cached)
 									<span class="minor">{{ human_date_time($rs->last_cached, 'D') }}</span>

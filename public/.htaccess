@@ -22,4 +22,4 @@
 
 # necessary to deal with the big number of samples on the sequences page
 # otherwise: some samples and filters are truncated
-php_value max_input_vars 5000
+php_value max_input_vars 15000

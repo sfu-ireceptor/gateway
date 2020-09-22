@@ -27,6 +27,9 @@ Route::get('user/reset-password-confirmation', 'UserController@getResetPasswordC
 // about
 Route::get('about', 'HomeController@about')->name('about');
 
+// news
+Route::get('news', 'HomeController@news')->name('news');
+
 // fields definitions
 Route::get('/fields-definitions', 'HomeController@fieldsDefinitions')->name('fields-definitions');
 
@@ -52,6 +55,7 @@ Route::get('computation/service/{page}', 'CanarieController@linkPage');
 // just for dev
 Route::get('test', 'TestController@getIndex')->name('test-page');
 Route::any('test2', 'TestController@index2');
+Route::any('phpinfo', 'TestController@phpinfo');
 Route::any('wait/{seconds}', 'TestController@wait');
 Route::get('email', 'TestController@email');
 
@@ -72,7 +76,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/sequences-quick-search', 'SequenceController@quickSearch')->name('sequences-quick-search')->middleware('log_query');
     Route::post('/sequences-quick-search', 'SequenceController@postQuickSearch')->name('sequences-quick-search-post');
     Route::get('/sequences-download', 'SequenceController@download')->name('sequences-download');
-    Route::get('/sequences-download-direct', 'SequenceController@downloadDirect')->name('sequences-download')->middleware('log_query');
 
     Route::prefix('user')->group(function () {
         Route::get('account', 'UserController@getAccount');
@@ -89,6 +92,14 @@ Route::middleware('auth')->group(function () {
         Route::post('add', 'BookmarkController@postAdd');
         Route::post('delete', 'BookmarkController@postDelete');
         Route::get('delete/{id}', 'BookmarkController@getDelete');
+    });
+
+    Route::prefix('downloads')->group(function () {
+        Route::get('', 'DownloadController@getIndex');
+        Route::get('cancel/{id}', 'DownloadController@getCancel');
+        Route::get('delete/{id}', 'DownloadController@getDelete');
+        Route::get('undo-delete/{id}', 'DownloadController@getUndoDelete');
+        Route::get('bookmark/{id}', 'DownloadController@getBookmark');
     });
 
     Route::prefix('systems')->group(function () {
@@ -113,6 +124,7 @@ Route::middleware('auth')->group(function () {
         Route::get('queues', 'AdminController@getQueues');
         Route::get('databases', 'AdminController@getDatabases');
         Route::get('update-database/{id}/{enabled}', 'AdminController@getUpdateDatabase');
+        Route::get('update-chunk-size/{id}', 'AdminController@getUpdateChunkSize');
         Route::get('news', 'AdminController@getNews');
         Route::get('add-news', 'AdminController@getAddNews');
         Route::post('add-news', 'AdminController@postAddNews');
@@ -129,6 +141,7 @@ Route::middleware('auth')->group(function () {
         Route::get('samples/update-sequence_count/{rest_service_id}', 'AdminController@getUpdateSequenceCount');
         Route::get('field-names', 'AdminController@getFieldNames');
         Route::get('queries', 'AdminController@queries');
+        Route::get('downloads', 'AdminController@downloads');
         Route::get('queries2', 'AdminController@queries2');
         Route::get('queries/months/{n}', 'AdminController@queriesMonths');
         Route::get('queries2/months/{n}', 'AdminController@queriesMonths2');

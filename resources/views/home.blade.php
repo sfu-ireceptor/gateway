@@ -13,8 +13,9 @@
 					<strong>{{ human_number($total_sequences) }} sequences</strong> and
 					<strong>{{ $total_samples }} repertoires</strong> are currently available,<br>
 					from
-					<a href="#" data-toggle="modal" data-target="#myModal">
-						{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}},
+					<a href="#" class="toggle_modal_rest_service_list_folded">
+						{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}},</a>
+					<a href="#" class="toggle_modal_rest_service_list_expanded">
 						{{ $total_labs }} research {{ str_plural('lab', $total_labs)}} and
 						{{ $total_projects }} {{ str_plural('study', $total_projects)}}.
 					</a>
@@ -129,7 +130,7 @@
 	        "@lang('short.template_class')"
 	    ];
 	
-	var graphInternalLabels = false;
+	var graphInternalLabels = true;
 	var graphCountField = "ir_sequence_count";
 	var graphData = {!! $sample_list_json !!};
 </script>

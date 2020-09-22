@@ -26,6 +26,9 @@ return [
     // allow more time for file queries
     'service_file_request_timeout' => env('IRECEPTOR_SERVICE_FILE_REQUEST_TIMEOUT', 24 * 60 * 60),
 
+    // chunked file queries need less time
+    'service_file_request_chunked_timeout' => env('IRECEPTOR_SERVICE_FILE_REQUEST_CHUNKED_TIMEOUT', 10 * 60),
+
     // allow less time for samples queries
     'service_request_timeout_samples' => env('IRECEPTOR_SERVICE_REQUEST_TIMEOUT_SAMPLES', 10),
 
@@ -54,6 +57,18 @@ return [
     */
 
     'sequences_download_limit' => env('IRECEPTOR_SEQUENCES_DOWNLOAD_LIMIT', 500000000),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Sequence downloads page refresh interval
+    |--------------------------------------------------------------------------
+    |
+    | The number of seconds after which the sequence downloads page will reload
+    | Ex: 30
+    |
+    */
+
+    'sequences_downloads_refresh_interval' => env('IRECEPTOR_SEQUENCES_REFRESH_INTERVAL', 20),
 
     /*
     |--------------------------------------------------------------------------

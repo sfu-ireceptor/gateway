@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Agave;
+use App\Download;
 use App\FieldName;
 use App\Job;
 use App\RestService;
@@ -23,43 +24,34 @@ use Symfony\Component\Process\Process;
 
 class TestController extends Controller
 {
-    public function email()
-    {
-        Mail::send(['text' => 'emails.test'], [], function ($message) {
-            $message->to('jlj7@sfu.ca')->subject('Test Email');
-        });
-        echo 'done';
-    }
-
-    public function printBody()
-    {
-        echo 'hi there 3';
-        // trigger_error('var must be numeric');
-
-        flush();
-        ob_flush();
-        sleep(10);
-        exit(1);
-        // header('HTTP/1.1 500 Internal Server Error');
-        // die();
-        // abort(500, 'yoooooo');
-        // header('X-Error-Message: Incorrect username', true, 500);
-        // die('Incorrect username');
-
-        echo 'hi there 40';
-    }
-
     public function getIndex(Request $request)
     {
+        $d = Download::find(5);
+        echo $d->queuePosition();
+        exit();
+        dd($d);
+
+        echo base_path() . '/util/scripts/airr-tsv-merge.py -i ';
+        exit;
+        exit;
+
+        $out = [];
+        $return = 0;
+        // exec('pwd', $out, $return);
+
+        exec('../util/scripts/airr-tsv-merge.py -i ./storage/f1.tsv ./storage/f2.tsv -o ./storage/o1.tsv 2>&1', $out, $return);
+        echo $return;
+        print_r($out);
+        // echo "aaa";
+        exit();
+
         $s = 'DOI: 10.1111/imr.12666';
         if (! (stripos($s, 'DOI') === false)) {
             $s = str_replace('DOI: ', '', $s);
         }
 
         echo $s;
-        die();
-
-        // dd(1 < 2);
+        exit();
 
         dd(strcmp('a', 'b'));
 
@@ -70,11 +62,11 @@ class TestController extends Controller
         $username = auth()->user()->username;
         Sample::cache_sequence_counts($username);
 
-        die();
+        exit();
         $s = 'V Gene and Allele (paired)';
         $s = snake_case($s);
         echo $s;
-        die();
+        exit();
 
         // header("Content-type: text/csv");
         // header("Content-Disposition: attachment; filename=file.csv");
@@ -94,23 +86,23 @@ class TestController extends Controller
         ]);
 
         echo 'aa';
-        die();
+        exit();
 
         $f = FieldName::getFieldType('sequencing_platform');
         dd($f);
 
         echo $request->route()->uri;
-        die();
+        exit();
 
         dd(RestService::sequence_count([], 37, '7'));
-        die();
+        exit();
 
         echo App::environment();
-        die();
+        exit();
         // throw new \Exception('Yet another error: why??');
 
         echo starts_with('This is my name', 'Thisf');
-        die();
+        exit();
 
         $str = 'pmid: 25100740"';
         if (! (stripos($str, 'PMID') === false)) {
@@ -125,7 +117,7 @@ class TestController extends Controller
         //     echo 'doest not exist';
         // }
 
-        die();
+        exit();
 
         // return response($this->printBody())
         //     ->header('Content-Type', 'text/tsv')
@@ -133,7 +125,7 @@ class TestController extends Controller
 
         // return response(Sequence::airr_data($params))->header('Content-Type', 'text/tsv')->header('Content-Disposition', 'attachment;filename="data.tsv"');
 
-        die();
+        exit();
 
         // echo "fdsafads";
 
@@ -192,11 +184,11 @@ class TestController extends Controller
             dump($request->input());
         });
 
-        die();
+        exit();
 
         echo RestServiceGroup::nameForCode('ipa');
 
-        die();
+        exit();
 
         $o = new \stdClass();
         $o->titi = 'aa';
@@ -214,16 +206,16 @@ class TestController extends Controller
         // }
         dd($o);
 
-        die();
+        exit();
 
         echo human_filesize('/var/www/ireceptor_gateway/storage/app/public/ir_2018-04-03_2239_5ac402badc061/scott-lab.tsv');
 
-        die();
+        exit();
 
         foreach (RestService::all() as $rs) {
             echo str_slug($rs->name) . ' - ';
         }
-        die();
+        exit();
 
         // create receiving folder
         $storage_folder = storage_path() . '/app/public/';
@@ -241,7 +233,7 @@ class TestController extends Controller
         $file = $folder_path . '/info.txt';
         // file_put_contents($file, "test");
 
-        die();
+        exit();
 
         // // Initialize the Client
         // $client = new \GuzzleHttp\Client(['base_uri' => 'http://gw.local/test2']);
@@ -809,5 +801,39 @@ class TestController extends Controller
     {
         sleep($seconds);
         echo "I waited $seconds sec!";
+    }
+
+    public function email()
+    {
+        Mail::send(['text' => 'emails.test'], [], function ($message) {
+            $message->to('jlj7@sfu.ca')->subject('Test Email');
+        });
+        echo 'done';
+    }
+
+    public function phpinfo()
+    {
+        phpinfo();
+    }
+
+    public function printBody()
+    {
+        $d = Carbon::now();
+
+        echo 'hi there 3';
+        // trigger_error('var must be numeric');
+        // trigger_error('var must be numeric');
+
+        flush();
+        ob_flush();
+        sleep(10);
+        exit(1);
+        // header('HTTP/1.1 500 Internal Server Error');
+        // die();
+        // abort(500, 'yoooooo');
+        // header('X-Error-Message: Incorrect username', true, 500);
+        // die('Incorrect username');
+
+        echo 'hi there 40';
     }
 }

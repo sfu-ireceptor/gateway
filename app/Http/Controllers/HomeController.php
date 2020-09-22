@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\FieldName;
+use App\News;
 use App\Sample;
 use Illuminate\Http\Request;
 
@@ -47,6 +48,16 @@ class HomeController extends Controller
     public function about()
     {
         return view('about');
+    }
+
+    public function news()
+    {
+        $news_list = News::orderBy('created_at', 'desc')->get();
+
+        $data = [];
+        $data['news_list'] = $news_list;
+
+        return view('news', $data);
     }
 
     public function fieldsDefinitions()

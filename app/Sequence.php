@@ -122,7 +122,7 @@ class Sequence
         File::makeDirectory($folder_path, 0777, true, true);
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filters, $folder_path, $username);
-        $response_list = RestService::sequences_data($filters, $folder_path, $username);
+        $response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_sequences_by_rs);
         $file_stats = self::file_stats($response_list, $expected_nb_sequences_by_rs);
 
         // if some files are incomplete, log it
@@ -369,6 +369,9 @@ class Sequence
             $total_filtered_studies += $rs_data['total_studies'];
             $total_filtered_sequences += $rs_data['total_filtered_sequences'];
         }
+
+        // sort alphabetically repositories/labs/studies
+        $data['rs_list'] = Sample::sort_rest_service_list($data['rs_list']);
 
         $data['total_filtered_samples'] = $total_filtered_samples;
         $data['total_filtered_repositories'] = $total_filtered_repositories;

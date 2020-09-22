@@ -43,10 +43,13 @@
 				@isset($news)
 					<div class="panel panel-warning beta_version">
 						<div class="panel-heading">
-							<h3 class="panel-title">What's New</h3>
+							<h3 class="panel-title">What's New</h3>							
 						</div>
 						<div class="panel-body">
 							{!! $news->message !!}
+						</div>
+						<div class="panel-footer">
+							<a href="/news">Read all news →</a>
 						</div>
 					</div>
 				@endisset
@@ -67,12 +70,15 @@
 
 			<div class="intro2">
 
-				<p>
+				<p class="intro_login">
 					Search study metadata and sequence features from
 					<strong>{{ human_number($total_sequences) }} {{ str_plural('sequence', $total_sequences)}}</strong>,
 					<strong>{{ $total_samples }} {{ str_plural('repertoire', $total_samples)}}</strong>, and
-					<strong>{{ $total_studies }} {{ str_plural('study', $total_studies)}}</strong>
-					across {{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}.
+					<a href="#" class="toggle_modal_rest_service_list_expanded">{{ $total_studies }} {{ str_plural('study', $total_studies)}}</a>
+					across
+					<a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}</a>.
+					<!-- repos/labs/studies popup -->
+					@include('rest_service_list')
 				</p>
 
 				<div id="charts">
@@ -114,7 +120,7 @@
 	    ];
 	
 	var graphDIV = "landing_chart";
-	var graphInternalLabels = false;
+	var graphInternalLabels = true;
 	var graphLabelLength = 10;
 	var graphCountField = "ir_sequence_count";
 	var graphData = {!! $sample_list_json !!};

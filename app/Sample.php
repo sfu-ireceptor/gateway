@@ -21,6 +21,50 @@ class Sample
         return CachedSample::metadata();
     }
 
+    public static function sort_rest_service_list($rs_list)
+    {
+        // sort rest services alphabetically
+        usort($rs_list, function ($a, $b) {
+            $a_name = isset($a['rs_name']) ? $a['rs_name'] : $a['rs']->display_name;
+            $b_name = isset($b['rs_name']) ? $b['rs_name'] : $b['rs']->display_name;
+
+            return strcasecmp($a_name, $b_name);
+        });
+
+        // sort labs and studies alphabetically
+        $rs_list_sorted = [];
+        foreach ($rs_list as $rs) {
+            $lab_list = $rs['study_tree'];
+
+            // sort labs
+            usort($lab_list, function ($a, $b) {
+                $a_name = $a['name'];
+                $b_name = $b['name'];
+
+                return strcasecmp($a_name, $b_name);
+            });
+
+            // sort studies
+            $lab_list_sorted = [];
+            foreach ($lab_list as $lab) {
+                $studies_sorted = [];
+                usort($lab['studies'], function ($a, $b) {
+                    $a_name = $a['study_title'];
+                    $b_name = $b['study_title'];
+
+                    return strcasecmp($a_name, $b_name);
+                });
+                $studies_sorted[] = $lab['studies'];
+                $lab_list_sorted[] = $lab;
+            }
+
+            $rs['study_tree'] = $lab_list_sorted;
+            $rs_list_sorted[] = $rs;
+        }
+
+        return $rs_list_sorted;
+    }
+
     public static function cache_sequence_counts($username, $rest_service_id = null)
     {
         $response_list = RestService::samples([], $username, false, [$rest_service_id]);
@@ -352,6 +396,9 @@ class Sample
             $total_filtered_studies += $rs_data['total_studies'];
             $total_filtered_sequences += $rs_data['total_sequences'];
         }
+
+        // sort alphabetically repositories/labs/studies
+        $data['rs_list'] = self::sort_rest_service_list($data['rs_list']);
 
         $data['total_filtered_samples'] = $total_filtered_samples;
         $data['total_filtered_repositories'] = $total_filtered_repositories;

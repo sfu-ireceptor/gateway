@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Bookmark;
+use App\Download;
 use App\FieldName;
 use App\QueryLog;
 use App\Sample;
@@ -10,7 +11,6 @@ use App\Sequence;
 use App\System;
 use Facades\App\Query;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
 class SequenceController extends Controller
@@ -220,6 +220,9 @@ class SequenceController extends Controller
 
         $data['system'] = System::getCurrentSystem(auth()->user()->id);
 
+        // download time estimate
+        $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_sequences']);
+
         // display view
         return view('sequence', $data);
     }
@@ -392,14 +395,15 @@ class SequenceController extends Controller
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
 
+        // download time estimate
+        $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_sequences']);
+
         // display view
         return view('sequenceQuickSearch', $data);
     }
 
-    public function download(Request $request)
+    public function timeEstimate($nb_sequences)
     {
-        $query_id = $request->input('query_id');
-        $nb_sequences = $request->input('n');
         $time_estimate_max = '24 hours';
 
         if ($nb_sequences < 500000) {
@@ -407,74 +411,25 @@ class SequenceController extends Controller
         }
 
         if ($nb_sequences < 100000) {
-            $time_estimate_max = '5 min';
+            $time_estimate_max = '';
         }
 
-        $data = [];
-        $data['query_id'] = $query_id;
-        $data['time_estimate_max'] = $time_estimate_max;
-
-        // display view
-        return view('sequenceDownload', $data);
+        return $time_estimate_max;
     }
 
-    public function downloadDirect(Request $request, Response $response)
+    public function download(Request $request)
     {
+        $query_id = $request->input('query_id');
         $username = auth()->user()->username;
 
-        $query_id = $request->input('query_id');
-        if ($query_id) {
-            $filters = Query::getParams($query_id);
-        } else {
-            $filters = $request->all();
-        }
+        $page = $request->input('page');
+        $page_url = route($page, ['query_id' => $query_id], false);
 
-        $sample_filter_fields = [];
-        if (isset($filters['sample_query_id'])) {
-            $sample_query_id = $filters['sample_query_id'];
+        $nb_sequences = $request->input('n');
 
-            // sample filters
-            $sample_filters = Query::getParams($sample_query_id);
-            $sample_filter_fields = [];
-            foreach ($sample_filters as $k => $v) {
-                if ($v) {
-                    if (is_array($v)) {
-                        $sample_filter_fields[$k] = implode(', ', $v);
-                    } else {
-                        $sample_filter_fields[$k] = $v;
-                    }
-                }
-            }
-            // remove gateway-specific params
-            unset($sample_filter_fields['open_filter_panel_list']);
-            unset($sample_filter_fields['page']);
-        }
+        Download::start_download($query_id, $username, $page_url, $nb_sequences);
 
-        $t = Sequence::sequencesTSV($filters, $username, $request->fullUrl(), $sample_filter_fields);
-        $tsvFilePath = $t['public_path'];
-
-        // log result
-        $query_log_id = $request->get('query_log_id');
-        if ($query_log_id != null) {
-            $query_log = QueryLog::find($query_log_id);
-            $query_log->result_size = $t['size'];
-            $query_log->save();
-        }
-
-        if ($request->ajax()) {
-            $data = [];
-
-            $data['file_path'] = $tsvFilePath;
-
-            if ($t['is_download_incomplete']) {
-                $data['incomplete'] = $t['is_download_incomplete'];
-                $data['file_stats'] = $t['file_stats'];
-            }
-
-            return response()->json($data);
-        } else {
-            return redirect($tsvFilePath);
-        }
+        return redirect('downloads')->with('download_page', $page_url);
     }
 
     public function removeFilter(Request $request)
