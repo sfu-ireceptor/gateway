@@ -22,7 +22,7 @@ class SequenceTest extends TestCase
     protected static $repertoire_data = [];
     protected static $sequence_list = [];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass():void
     {
         self::$repertoire_data = [
             (object) [

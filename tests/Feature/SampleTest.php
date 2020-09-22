@@ -103,7 +103,7 @@ class SampleTest extends TestCase
         'real_rest_service_id' => 1,
     ];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass():void
     {
         self::$repertoire_data = [
             (object) [
