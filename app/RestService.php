@@ -288,7 +288,10 @@ class RestService extends Model
                     $sequence_counts = self::sequence_count_from_cache($rs->id, $sample_id_list);
 
                     foreach ($sample_list as $sample) {
-                        $sample->ir_sequence_count = $sequence_counts[$sample->repertoire_id];
+                        $sample->ir_sequence_count = 0;
+                        if(isset($sequence_counts[$sample->repertoire_id])) {
+                            $sample->ir_sequence_count = $sequence_counts[$sample->repertoire_id];
+                        }
                     }
 
                     // if there was an error
