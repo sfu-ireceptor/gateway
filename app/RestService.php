@@ -289,7 +289,7 @@ class RestService extends Model
 
                     foreach ($sample_list as $sample) {
                         $sample->ir_sequence_count = 0;
-                        if(isset($sequence_counts[$sample->repertoire_id])) {
+                        if (isset($sequence_counts[$sample->repertoire_id])) {
                             $sample->ir_sequence_count = $sequence_counts[$sample->repertoire_id];
                         }
                     }
