@@ -134,7 +134,7 @@ class FieldName extends Model
             foreach ($l as $t) {
                 // if ir_subclass is not known, log warning and override it to 'other'
                 if (! isset($groups[$t['ir_subclass']])) {
-                    Log::warn($t['ir_subclass'] . ' ir_subclass needs to be defined as a group in ' . static::class);
+                    Log::warning($t['ir_subclass'] . ' ir_subclass needs to be defined as a group in ' . static::class);
                     $t['ir_subclass'] = 'other';
                 }
 
