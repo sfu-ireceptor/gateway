@@ -24,7 +24,7 @@ echo "Done"
 # MySQL backup
 date
 echo "Backing up MYSQL database into ${DUMP_FOLDER}"
-MYSQL_DUMP_FILE=${TIME}_mysql.bz2
+MYSQL_DUMP_FILE=${TIME}_mysql.dump
 MYSQL_DATABASE="$DB_DATABASE"
 MYSQL_USER="$DB_USERNAME"
 MYSQL_PASSWORD="$DB_PASSWORD"
