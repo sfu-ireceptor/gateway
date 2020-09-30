@@ -26,8 +26,6 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
-        // just a test
-
         $d = Download::find(5);
         echo $d->queuePosition();
         exit();
