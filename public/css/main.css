@@ -698,6 +698,11 @@ footer a:hover {
 	padding: 0 60px 0 0;
 }
 
+.intro .repositories {
+	font-size: 18px;
+	line-height: 1.5;
+}
+
 .intro2 {
 	margin-bottom: 20px;
 	margin-top: 30px;

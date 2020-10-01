@@ -64,8 +64,29 @@
 					A <strong>science gateway</strong>
 					that enables the discovery, analysis and download
 					of <a href="https://www.antibodysociety.org/the-airr-community/">AIRR-seq data</a> (antibody/B-cell and T-cell receptor repertoires)
-					<br>from multiple independent repositories					
+					<br>from multiple independent repositories, including:		
 				</p>
+				<div class="row">
+					<div class="col-md-5">
+						<ul class="repositories">
+							<li>
+								<a href="http://ireceptor.org" class="external" target="_blank">iReceptor Public Archive</a>
+							</li>
+							<li>
+								<a href="http://ireceptor.org/covid19" class="external" target="_blank">AIRR COVID-19</a>
+							</li>
+							<li>
+								<a href="https://vdjserver.org/" class="external" target="_blank">VDJServer</a>
+							</li>
+						</ul>
+					</div>
+					@if (env('APP_ENV') != 'production')
+						<div class="col-md-6">
+							<ul class="repositories">
+							</ul>
+						</div>
+					@endif
+				</div>
 			</div>
 
 			<div class="intro2">
