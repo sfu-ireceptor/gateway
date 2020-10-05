@@ -506,7 +506,6 @@ class RestService extends Model
         Log::debug('Filtered to requested samples only:');
         Log::debug($response_list_requested);
 
-
         // build list of sequence filters only (remove sample id filters)
         $sequence_filters = $filters;
         unset($sequence_filters['project_id_list']);

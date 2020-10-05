@@ -33,12 +33,11 @@ class Sequence
         // split list of servers which didn't respond by "timeout" or "error"
         $sequence_data['rs_list_no_response_timeout'] = [];
         $sequence_data['rs_list_no_response_error'] = [];
-        
+
         foreach ($sequence_data['rs_list_no_response'] as $rs) {
-            if($rs->error_type == 'timeout') {
+            if ($rs->error_type == 'timeout') {
                 $sequence_data['rs_list_no_response_timeout'][] = $rs;
-            }
-            else {
+            } else {
                 $sequence_data['rs_list_no_response_error'][] = $rs;
             }
         }
@@ -94,12 +93,11 @@ class Sequence
         // split list of servers which didn't respond by "timeout" or "error"
         $data['rs_list_no_response_timeout'] = [];
         $data['rs_list_no_response_error'] = [];
-        
+
         foreach ($data['rs_list_no_response'] as $rs) {
-            if($rs->error_type == 'timeout') {
+            if ($rs->error_type == 'timeout') {
                 $data['rs_list_no_response_timeout'][] = $rs;
-            }
-            else {
+            } else {
                 $data['rs_list_no_response_error'][] = $rs;
             }
         }
