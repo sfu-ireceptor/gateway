@@ -76,6 +76,8 @@ class SequenceController extends Controller
         $data['sample_list_json'] = json_encode($sequence_data['summary']);
         $data['rest_service_list'] = $sequence_data['rs_list'];
         $data['rest_service_list_no_response'] = $sequence_data['rs_list_no_response'];
+        $data['rest_service_list_no_response_timeout'] = $sequence_data['rs_list_no_response_timeout'];
+        $data['rest_service_list_no_response_error'] = $sequence_data['rs_list_no_response_error'];
 
         // Pass on the summary data from the sequence_data returned.
         $data['total_filtered_samples'] = $sequence_data['total_filtered_samples'];
@@ -322,7 +324,9 @@ class SequenceController extends Controller
         $data['sample_list_json'] = json_encode($sequence_data['summary']);
         $data['rest_service_list'] = $sequence_data['rs_list'];
         $data['rest_service_list_no_response'] = $sequence_data['rs_list_no_response'];
-
+        $data['rest_service_list_no_response_timeout'] = $sequence_data['rs_list_no_response_timeout'];
+        $data['rest_service_list_no_response_error'] = $sequence_data['rs_list_no_response_error'];
+        
         // Pass on the summary data from the sequence_data returned.
         $data['total_filtered_samples'] = $sequence_data['total_filtered_samples'];
         $data['total_filtered_repositories'] = $sequence_data['total_filtered_repositories'];
