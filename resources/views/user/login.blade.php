@@ -60,12 +60,35 @@
 		<div class="col-md-9">
 
 			<div class="intro">
-				<p>
-					A <strong>science gateway</strong>
-					that enables the discovery, analysis and download
-					of <a href="https://www.antibodysociety.org/the-airr-community/">AIRR-seq data</a> (antibody/B-cell and T-cell receptor repertoires)
-					<br>from multiple independent repositories					
+				<p class="tagline">
+					<span>A <strong>science gateway</strong></span>
+					<span>that enables the discovery, analysis and download</span>
+					<span>of <a href="https://www.antibodysociety.org/the-airr-community/">AIRR-seq data</a> (antibody/B-cell and T-cell receptor repertoires)</span>
+					<span>from multiple independent repositories (the <a href="https://docs.airr-community.org/en/stable/api/adc.html">AIRR Data Commons</a>), including:</span>
 				</p>
+				<div class="row">
+					<div class="col-md-1">
+					</div>
+					<div class="col-md-5">
+						<ul class="repositories">
+							<li>
+								<a href="http://ireceptor.org" class="external" target="_blank">iReceptor Public Archive</a>
+							</li>
+							<li>
+								<a href="http://ireceptor.org/covid19" class="external" target="_blank">AIRR COVID-19</a>
+							</li>
+							<li>
+								<a href="https://vdjserver.org/" class="external" target="_blank">VDJServer</a>
+							</li>
+						</ul>
+					</div>
+					@if (env('APP_ENV') != 'production')
+						<div class="col-md-5">
+							<ul class="repositories">
+							</ul>
+						</div>
+					@endif
+				</div>
 			</div>
 
 			<div class="intro2">

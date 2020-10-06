@@ -30,6 +30,18 @@ class Sequence
         // include repositories which failed to return samples
         $sequence_data['rs_list_no_response'] = array_merge($sequence_data['rs_list_no_response'], $sample_data['rs_list_no_response']);
 
+        // split list of servers which didn't respond by "timeout" or "error"
+        $sequence_data['rs_list_no_response_timeout'] = [];
+        $sequence_data['rs_list_no_response_error'] = [];
+
+        foreach ($sequence_data['rs_list_no_response'] as $rs) {
+            if ($rs->error_type == 'timeout') {
+                $sequence_data['rs_list_no_response_timeout'][] = $rs;
+            } else {
+                $sequence_data['rs_list_no_response_error'][] = $rs;
+            }
+        }
+
         return $sequence_data;
     }
 
@@ -77,6 +89,18 @@ class Sequence
 
         // add to stats data
         $data['items'] = $sequence_list;
+
+        // split list of servers which didn't respond by "timeout" or "error"
+        $data['rs_list_no_response_timeout'] = [];
+        $data['rs_list_no_response_error'] = [];
+
+        foreach ($data['rs_list_no_response'] as $rs) {
+            if ($rs->error_type == 'timeout') {
+                $data['rs_list_no_response_timeout'][] = $rs;
+            } else {
+                $data['rs_list_no_response_error'][] = $rs;
+            }
+        }
 
         return $data;
     }

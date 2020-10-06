@@ -457,6 +457,11 @@ class RestService extends Model
 
     public static function sequences_summary($filters, $username = '', $group_by_rest_service = true)
     {
+        Log::debug('RestService::sequences_summary()');
+
+        Log::debug('Filters:');
+        Log::debug($filters);
+
         // build list of repository ids to query
         $rest_service_id_list = [];
         foreach (self::findEnabled() as $rs) {
@@ -466,10 +471,15 @@ class RestService extends Model
             }
         }
 
+        Log::debug('List of repositories (ids) to query:');
+        Log::debug($rest_service_id_list);
+
         // get ALL samples from repositories
         // so we don't have to send the FULL list of samples ids
         // because VDJServer can't handle it
         $response_list_all = self::samples([], $username, true, $rest_service_id_list, false);
+        Log::debug('All samples from those repositories:');
+        Log::debug($response_list_all);
 
         // filter repositories responses to only requested samples
         $response_list_requested = [];
@@ -493,6 +503,9 @@ class RestService extends Model
             $response_list_requested[] = $response;
         }
 
+        Log::debug('Filtered to requested samples only:');
+        Log::debug($response_list_requested);
+
         // build list of sequence filters only (remove sample id filters)
         $sequence_filters = $filters;
         unset($sequence_filters['project_id_list']);
@@ -500,6 +513,9 @@ class RestService extends Model
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             unset($sequence_filters[$sample_id_list_key]);
         }
+
+        Log::debug('Sequence filters (only):');
+        Log::debug($sequence_filters);
 
         // build list of samples ids to query for each repository
         $sample_id_list_by_rs = [];
@@ -512,8 +528,14 @@ class RestService extends Model
             $sample_id_list_by_rs[$response['rs']->id] = $sample_id_list_requested;
         }
 
+        Log::debug('Sample ids for each repository:');
+        Log::debug($sample_id_list_by_rs);
+
         // count sequences for each requested sample
         $counts_by_rs = self::sequence_count($sample_id_list_by_rs, $sequence_filters);
+
+        Log::debug('Sequence count for each requested sample (by repository):');
+        Log::debug($counts_by_rs);
 
         // add sequences count to samples
         $response_list_filtered = [];

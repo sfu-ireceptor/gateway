@@ -120,17 +120,25 @@
 				<!-- Services which didn't respond -->
 				@if ( ! empty($rest_service_list_no_response))
 					<div class="alert alert-warning" role="alert">
-						<p>Sorry, data is incomplete:</p>
-						<ul>
-							@foreach ($rest_service_list_no_response as $rs)
-								@if($rs->error_type == 'timeout')
-									<li>{{ $rs->display_name }} didn't return complete data before the allotted time of {{ config('ireceptor.service_request_timeout') }} sec  </li>
-								@else
-									<li>{{ $rs->display_name }} returned incomplete data (an error occured) </li>
-								@endif
+						<p>Sorry, only partial results are currently displayed.</p>
+						@if ( ! empty($rest_service_list_no_response_timeout))
+							<p>These repositories were not able to respond to this query before our time limit of {{ config('ireceptor.service_request_timeout') }} sec:</p>
+							<ul>
+								@foreach ($rest_service_list_no_response_timeout as $rs)
+										<li>{{ $rs->display_name }}</li>
+								@endforeach
+							</ul>
+							<p>Try to reduce the size of the data you're exploring, or download the data and perform the operation offline.</p>
+						@endif
 
-							@endforeach
-						</ul>
+						@if ( ! empty($rest_service_list_no_response_error))
+							<p>These repositories returned incomplete data (an error occured):</p>
+							<ul>
+								@foreach ($rest_service_list_no_response_error as $rs)
+										<li>{{ $rs->display_name }}</li>
+								@endforeach
+							</ul>
+						@endif
 				</div>
 				@endif
 
