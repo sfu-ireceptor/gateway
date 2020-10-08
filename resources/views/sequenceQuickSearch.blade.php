@@ -76,9 +76,9 @@
 				<!-- Services which didn't respond -->
 				@if ( ! empty($rest_service_list_no_response))
 					<div class="alert alert-warning" role="alert">
-						<p>Sorry, only partial results are currently displayed.</p>
+						<p>Sorry, some results from your query might be missing.</p>
 						@if ( ! empty($rest_service_list_no_response_timeout))
-							<p>These repositories were not able to respond to this query before our time limit of {{ config('ireceptor.service_request_timeout') }} sec:</p>
+							<p>The following repositories didn't respond before our time limit of {{ config('ireceptor.service_request_timeout') }} sec:</p>
 							<ul>
 								@foreach ($rest_service_list_no_response_timeout as $rs)
 										<li>{{ $rs->display_name }}</li>
@@ -88,12 +88,13 @@
 						@endif
 
 						@if ( ! empty($rest_service_list_no_response_error))
-							<p>These repositories returned incomplete data (an error occured):</p>
+							<p>An unexpected error occurred when querying the following repositories:</p>
 							<ul>
 								@foreach ($rest_service_list_no_response_error as $rs)
 										<li>{{ $rs->display_name }}</li>
 								@endforeach
 							</ul>
+							<p>Please try again later.</p>
 						@endif
 				</div>
 				@endif
