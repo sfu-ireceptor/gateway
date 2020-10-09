@@ -122,7 +122,7 @@
 					<div class="alert alert-warning" role="alert">
 						<p>Sorry, some results from your query might be missing.</p>
 						@if ( ! empty($rest_service_list_no_response_timeout))
-							<p>The following repositories didn't respond before our time limit of {{ config('ireceptor.service_request_timeout') }} sec:</p>
+							<p>The following repositories were unable to complete the query before the Gateway time limit of {{ config('ireceptor.service_request_timeout') }} sec:</p>
 							<ul>
 								@foreach ($rest_service_list_no_response_timeout as $rs)
 										<li>{{ $rs->display_name }}</li>
