@@ -195,12 +195,12 @@ class Sample
     // convert/complete sample list
     public static function convert_sample_list($sample_list, $rs)
     {
-        $new_sample_list = [];
+        $sample_field_list = FieldName::getSampleFields();
 
+        $new_sample_list = [];
         foreach ($sample_list as $sample) {
             $new_sample = new \stdClass();
 
-            $sample_field_list = FieldName::getSampleFields();
             foreach ($sample_field_list as $sample_field) {
                 // Log::debug($sample_field);
                 if (isset($sample_field['ir_adc_api_response'])) {
