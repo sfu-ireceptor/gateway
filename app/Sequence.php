@@ -148,6 +148,7 @@ class Sequence
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filters, $folder_path, $username);
         $response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_sequences_by_rs);
+
         $file_stats = self::file_stats($response_list, $expected_nb_sequences_by_rs);
 
         // if some files are incomplete, log it
@@ -165,24 +166,37 @@ class Sequence
             }
         }
 
-        // generate info.txt
-        $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now);
+        $is_download_incomplete = false;
 
-        // is download incomplete?
+        // did the download failed for some services?
+        $failed_rs = [];
+        foreach ($response_list as $response) {
+            if($response['status'] == 'error') {
+                $failed_rs[] = $response['rs'];
+                $is_download_incomplete = true;
+            }
+        }
+
+        // are some files incomplete?
         $nb_sequences_total = 0;
         $expected_nb_sequences_total = 0;
         foreach ($file_stats as $t) {
             $nb_sequences_total += $t['nb_sequences'];
             $expected_nb_sequences_total += $t['expected_nb_sequences'];
         }
-        $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
+        if($nb_sequences_total < $expected_nb_sequences_total) {
+            $is_download_incomplete = true;
+        }
 
         // if download is incomplete, update gateway query status
         if ($is_download_incomplete) {
             $gw_query_log_id = request()->get('query_log_id');
-            $error_message = 'Some downloaded files appear to be incomplete';
+            $error_message = 'Download is incomplete';
             QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
         }
+
+        // generate info.txt
+        $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now);
 
         $t = [];
         $t['folder_path'] = $folder_path;
