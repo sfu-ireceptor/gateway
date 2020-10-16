@@ -5,8 +5,8 @@ namespace App;
 use Facades\App\RestService;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use ZipArchive;
 use Illuminate\Support\Facades\Storage;
+use ZipArchive;
 
 class Sequence
 {
