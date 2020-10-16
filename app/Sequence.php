@@ -6,6 +6,7 @@ use Facades\App\RestService;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use ZipArchive;
+use Illuminate\Support\Facades\Storage;
 
 class Sequence
 {
@@ -209,7 +210,7 @@ class Sequence
         $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path);
 
         // delete files
-        self::delete_files($response_list, $metadata_response_list, $info_file_path, $folder_path);
+        self::delete_files($folder_path);
 
         $zip_public_path = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
 
@@ -532,30 +533,11 @@ class Sequence
         return $zipPath;
     }
 
-    public static function delete_files($response_list, $metadata_response_list, $info_file_path, $folder_path)
+    public static function delete_files($folder_path)
     {
         Log::debug('Deleting downloaded files...');
-        foreach ($response_list as $response) {
-            $file_path = $response['data']['file_path'];
-            if (File::exists($file_path)) {
-                File::delete($file_path);
-            }
-        }
-
-        foreach ($metadata_response_list as $response) {
-            $file_path = $response['data']['file_path'];
-            if (File::exists($file_path)) {
-                File::delete($file_path);
-            }
-        }
-
-        if (File::exists($info_file_path)) {
-            File::delete($info_file_path);
-        }
-
-        // delete containing folder
         if (File::exists($folder_path)) {
-            rmdir($folder_path);
+            Storage::deleteDirectory($folder_path);
         }
     }
 
