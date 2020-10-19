@@ -196,7 +196,7 @@ class Sequence
         }
 
         // generate info.txt
-        $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now);
+        $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
 
         $t = [];
         $t['folder_path'] = $folder_path;
@@ -422,7 +422,7 @@ class Sequence
         return $data;
     }
 
-    public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now)
+    public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
         $s = '';
         $s .= '* Summary *' . "\n";
@@ -433,9 +433,10 @@ class Sequence
             $nb_sequences_total += $t['nb_sequences'];
             $expected_nb_sequences_total += $t['expected_nb_sequences'];
         }
+
         $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
         if ($is_download_incomplete) {
-            $s .= 'Warning: download appears to be incomplete:' . "\n";
+            $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
             $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "\n";
         } else {
             $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
@@ -448,6 +449,16 @@ class Sequence
                 $s .= $t['name'] . ': ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
             }
         }
+        $s .= "\n";
+
+        if ( ! empty($failed_rs)) {
+            $s .= 'Warning: some files are missing because an error occured while downloading sequences from these repositories:' . "\n";
+            foreach ($failed_rs as $rs) {
+                # code...
+            }
+            $s .= $rs->name . "\n";
+        } 
+
         $s .= "\n";
 
         $s .= '* Metadata filters *' . "\n";
