@@ -93,7 +93,8 @@ class DownloadSequences implements ShouldQueue
         $this->download->file_url = $file_path;
 
         if ($t['is_download_incomplete']) {
-            throw new \Exception('Incomplete download');
+            $this->download->incomplete = true;
+            $this->download->save();
         }
 
         $this->download->setDone();
