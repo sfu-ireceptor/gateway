@@ -171,7 +171,7 @@ class Sequence
         // did the download failed for some services?
         $failed_rs = [];
         foreach ($response_list as $response) {
-            if($response['status'] == 'error') {
+            if ($response['status'] == 'error') {
                 $failed_rs[] = $response['rs'];
                 $is_download_incomplete = true;
             }
@@ -184,7 +184,7 @@ class Sequence
             $nb_sequences_total += $t['nb_sequences'];
             $expected_nb_sequences_total += $t['expected_nb_sequences'];
         }
-        if($nb_sequences_total < $expected_nb_sequences_total) {
+        if ($nb_sequences_total < $expected_nb_sequences_total) {
             $is_download_incomplete = true;
         }
 
@@ -451,13 +451,13 @@ class Sequence
         }
         $s .= "\n";
 
-        if ( ! empty($failed_rs)) {
+        if (! empty($failed_rs)) {
             $s .= 'Warning: some files are missing because an error occured while downloading sequences from these repositories:' . "\n";
             foreach ($failed_rs as $rs) {
-                # code...
+                // code...
             }
             $s .= $rs->name . "\n";
-        } 
+        }
 
         $s .= "\n";
 
