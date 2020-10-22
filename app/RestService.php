@@ -980,15 +980,14 @@ class RestService extends Model
 
                 $response_list[] = $response_list_chunk;
 
-                if($failed) {
+                if ($failed) {
                     break;
                 }
             }
 
             if ($failed) {
                 $response = $response_list[0][0];
-            }
-            else {
+            } else {
                 $output_files = [];
                 foreach ($response_list as $response_group) {
                     foreach ($response_group as $response) {
@@ -1016,9 +1015,9 @@ class RestService extends Model
                 }
 
                 $response = $response_list[0][0];
-                $response['data']['file_path'] = $file_path_merged;                
+                $response['data']['file_path'] = $file_path_merged;
             }
-    
+
             $final_response_list[] = $response;
         }
 
