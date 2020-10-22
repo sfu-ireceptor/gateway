@@ -95,6 +95,10 @@ class RestServiceSeeder extends Seeder
             ],
             [
                 'url' => 'https://vdj-staging.tacc.utexas.edu/airr/v1/',
+                'name' => 'VDJServer Staging',
+            ],
+            [
+                'url' => 'https://vdjserver.org/airr/v1/',
                 'name' => 'VDJServer',
             ],
         ];

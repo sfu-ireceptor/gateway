@@ -69,13 +69,24 @@
 					<em class="dateRelative">{{ $d->createdAtRelative() }}</em>
 				</td>
 				<td>
-					<h4>
+					<h4 class="text-nowrap">
 						@if($d->isQueued())
-							<span class="label label-info">{{ $d->status }}</span>
+							<span class="label label-info">{{ $d->status }} ({{ $d->queuePosition() }})</span>
+
+							<span class="help help_queue_position" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Position in queue: {{ $d->queuePosition() }}" data-content="<p>There are {{ $d->queuePosition() }} other downloads before this one will start.</p>" data-trigger="hover" tabindex="0">
+								<span class="glyphicon glyphicon-question-sign"></span>
+							</span>
+
 						@elseif($d->isRunning())
 							<span class="label label-warning">{{ $d->status }}</span>
 						@elseif($d->isDone())
 							<span class="label label-success">Finished</span>
+
+							@if($d->isIncomplete())
+								<span class="help help_queue_position text-danger" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Download incomplete" data-content="<p>See the file info.txt for details.</p>" data-trigger="hover" tabindex="0">
+									<span class="glyphicon glyphicon-warning-sign"></span>
+								</span>
+							@endif
 						@elseif($d->isFailed())
 							<span class="label label-danger">{{ $d->status }}</span>
 						@elseif($d->isCanceled())

@@ -23,6 +23,7 @@ class AdminController extends Controller
     {
         $jobs = [];
         $jobs['default'] = LocalJob::findLast('default');
+        $jobs['long'] = LocalJob::findLast('long');
         $jobs['agave'] = LocalJob::findLast('agave');
         $jobs['admin'] = LocalJob::findLast('admin');
 

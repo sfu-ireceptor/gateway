@@ -76,20 +76,28 @@
 				<!-- Services which didn't respond -->
 				@if ( ! empty($rest_service_list_no_response))
 					<div class="alert alert-warning" role="alert">
-						<p>Sorry, data is incomplete:</p>
-						<ul>
-							@foreach ($rest_service_list_no_response as $rs)
-								@if($rs->error_type == 'timeout')
-									<li>{{ $rs->display_name }} didn't return complete data before the allotted time of {{ config('ireceptor.service_request_timeout') }} sec  </li>
-								@else
-									<li>{{ $rs->display_name }} returned incomplete data (an error occured) </li>
-								@endif
+						@if ( ! empty($rest_service_list_no_response_timeout))
+							<p>Sorry, the statistics below are incomplete. These repositories did not return statistics before the Gateway time limit of {{ config('ireceptor.service_request_timeout') }} sec:</p>
+							<ul>
+								@foreach ($rest_service_list_no_response_timeout as $rs)
+										<li>{{ $rs->display_name }}</li>
+								@endforeach
+							</ul>
+							<p>But the sequence data can still be downloaded.</p>
+							<p>For complete statistics, reduce the size of the data you're exploring, or download the sequence data and perform statistics offline.</p>
+						@endif
 
-							@endforeach
-						</ul>
-				</div>
+						@if ( ! empty($rest_service_list_no_response_error))
+							<p>Sorry, the statistics below may be incomplete. An unexpected error occurred when querying the following repositories:</p>
+							<ul>
+								@foreach ($rest_service_list_no_response_error as $rs)
+										<li>{{ $rs->display_name }}</li>
+								@endforeach
+							</ul>
+							<p>Please try again later.</p>
+						@endif
+					</div>
 				@endif
-
 
 				<!-- Active filters -->
 				@if ( ! empty($filter_fields))

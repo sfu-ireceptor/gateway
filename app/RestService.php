@@ -75,7 +75,7 @@ class RestService extends Model
      *
      * @return array List of RestService objects
      */
-    public static function findEnabled($field_list = null)
+    public static function findEnabled($field_list = ['*'])
     {
         $l = static::where('hidden', false)->where('enabled', true)->orderBy('name', 'asc')->get($field_list);
 
@@ -96,7 +96,7 @@ class RestService extends Model
      *
      * @return array List of RestService objects
      */
-    public static function findAvailable($field_list = null)
+    public static function findAvailable($field_list = ['*'])
     {
         $l = static::where('hidden', false)->orderBy('name', 'asc')->get($field_list);
 
@@ -288,7 +288,10 @@ class RestService extends Model
                     $sequence_counts = self::sequence_count_from_cache($rs->id, $sample_id_list);
 
                     foreach ($sample_list as $sample) {
-                        $sample->ir_sequence_count = $sequence_counts[$sample->repertoire_id];
+                        $sample->ir_sequence_count = 0;
+                        if (isset($sequence_counts[$sample->repertoire_id])) {
+                            $sample->ir_sequence_count = $sequence_counts[$sample->repertoire_id];
+                        }
                     }
 
                     // if there was an error
@@ -454,6 +457,11 @@ class RestService extends Model
 
     public static function sequences_summary($filters, $username = '', $group_by_rest_service = true)
     {
+        Log::debug('RestService::sequences_summary()');
+
+        Log::debug('Filters:');
+        Log::debug($filters);
+
         // build list of repository ids to query
         $rest_service_id_list = [];
         foreach (self::findEnabled() as $rs) {
@@ -463,10 +471,15 @@ class RestService extends Model
             }
         }
 
+        Log::debug('List of repositories (ids) to query:');
+        Log::debug($rest_service_id_list);
+
         // get ALL samples from repositories
         // so we don't have to send the FULL list of samples ids
         // because VDJServer can't handle it
         $response_list_all = self::samples([], $username, true, $rest_service_id_list, false);
+        Log::debug('All samples from those repositories:');
+        Log::debug($response_list_all);
 
         // filter repositories responses to only requested samples
         $response_list_requested = [];
@@ -490,6 +503,9 @@ class RestService extends Model
             $response_list_requested[] = $response;
         }
 
+        Log::debug('Filtered to requested samples only:');
+        Log::debug($response_list_requested);
+
         // build list of sequence filters only (remove sample id filters)
         $sequence_filters = $filters;
         unset($sequence_filters['project_id_list']);
@@ -497,6 +513,9 @@ class RestService extends Model
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             unset($sequence_filters[$sample_id_list_key]);
         }
+
+        Log::debug('Sequence filters (only):');
+        Log::debug($sequence_filters);
 
         // build list of samples ids to query for each repository
         $sample_id_list_by_rs = [];
@@ -509,8 +528,14 @@ class RestService extends Model
             $sample_id_list_by_rs[$response['rs']->id] = $sample_id_list_requested;
         }
 
+        Log::debug('Sample ids for each repository:');
+        Log::debug($sample_id_list_by_rs);
+
         // count sequences for each requested sample
         $counts_by_rs = self::sequence_count($sample_id_list_by_rs, $sequence_filters);
+
+        Log::debug('Sequence count for each requested sample (by repository):');
+        Log::debug($counts_by_rs);
 
         // add sequences count to samples
         $response_list_filtered = [];
@@ -877,7 +902,7 @@ class RestService extends Model
                     $t['rs'] = $rs;
                     $t['url'] = $rs->url . 'rearrangement';
                     $t['params'] = $rs_filters_json;
-                    $t['timeout'] = config('ireceptor.service_file_request_timeout');
+                    $t['timeout'] = config('ireceptor.service_file_request_chunked_timeout');
 
                     // add number suffix for rest services belonging to a group
                     $file_suffix = '';
@@ -920,45 +945,79 @@ class RestService extends Model
         $final_response_list = [];
         // do requests, write tsv data to files
         if (count($request_params) > 0) {
-            Log::debug('Do TSV requests... (not-chunked)');
+            Log::info('Do TSV requests... (not-chunked)');
             $final_response_list = self::doRequests($request_params);
         }
 
         if (count($request_params_chunking) > 0) {
-            Log::debug('Do TSV requests... (chunked)');
+            Log::info('Do TSV requests... (chunked)');
             $request_params_chunked = array_chunk($request_params_chunking, 15);
+            $response_list = [];
+            $failed = false;
             foreach ($request_params_chunked as $requests) {
-                $response_list[] = self::doRequests($requests);
-            }
 
-            $output_files = [];
-            foreach ($response_list as $response_group) {
-                foreach ($response_group as $response) {
-                    $file_path = $response['data']['file_path'];
-                    $output_files[] = $file_path;
+                // try each group of queries up to 3 times
+                for ($i = 1; $i <= 3; $i++) {
+                    $response_list_chunk = self::doRequests($requests);
+
+                    $has_errors = false;
+
+                    foreach ($response_list_chunk as $response) {
+                        if ($response['status'] == 'error') {
+                            $has_errors = true;
+                        }
+                    }
+
+                    if (! $has_errors) {
+                        break;
+                    }
+
+                    if ($has_errors && $i == 3) {
+                        $failed = true;
+                        break;
+                    }
+                }
+
+                $response_list[] = $response_list_chunk;
+
+                if ($failed) {
+                    break;
                 }
             }
-            $output_files_str = implode(' ', $output_files);
-            $file_path_merged = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
 
-            Log::debug('Merging chunked files...');
-            $cmd = base_path() . '/util/scripts/airr-tsv-merge.py -i ' . $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '_*.tsv' . ' -o ' . $file_path_merged . ' 2>&1';
-            Log::debug($cmd);
-            $process = new Process($cmd);
-            $process->setTimeout(3600 * 24);
-            $process->mustRun(function ($type, $buffer) {
-                Log::debug($buffer);
-            });
-
-            Log::debug('Deleting chunked files...');
-            foreach ($output_files as $output_file_path) {
-                if (File::exists($output_file_path)) {
-                    File::delete($output_file_path);
+            if ($failed) {
+                $response = $response_list[0][0];
+            } else {
+                $output_files = [];
+                foreach ($response_list as $response_group) {
+                    foreach ($response_group as $response) {
+                        $file_path = $response['data']['file_path'];
+                        $output_files[] = $file_path;
+                    }
                 }
+                $output_files_str = implode(' ', $output_files);
+                $file_path_merged = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
+
+                Log::info('Merging chunked files...');
+                $cmd = base_path() . '/util/scripts/airr-tsv-merge.py -i ' . $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '_*.tsv' . ' -o ' . $file_path_merged . ' 2>&1';
+                Log::info($cmd);
+                $process = new Process($cmd);
+                $process->setTimeout(3600 * 24);
+                $process->mustRun(function ($type, $buffer) {
+                    Log::info($buffer);
+                });
+
+                Log::info('Deleting chunked files...');
+                foreach ($output_files as $output_file_path) {
+                    if (File::exists($output_file_path)) {
+                        File::delete($output_file_path);
+                    }
+                }
+
+                $response = $response_list[0][0];
+                $response['data']['file_path'] = $file_path_merged;
             }
 
-            $response = $response_list[0][0];
-            $response['data']['file_path'] = $file_path_merged;
             $final_response_list[] = $response;
         }
 

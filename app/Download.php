@@ -68,6 +68,11 @@ class Download extends Model
         return $this->status == self::STATUS_FAILED;
     }
 
+    public function isIncomplete()
+    {
+        return $this->incomplete;
+    }
+
     public function createdAt()
     {
         return Carbon::parse($this->created_at)->format('D M j, Y');
@@ -114,6 +119,13 @@ class Download extends Model
         return $to->diffForHumans($this->start_date, true);
     }
 
+    public function queuePosition()
+    {
+        $n = static::where('id', '<', $this->id)->whereIn('status', [self::STATUS_QUEUED])->count();
+
+        return $n + 1;
+    }
+
     public function isExpired()
     {
         $now = Carbon::now();
@@ -124,8 +136,13 @@ class Download extends Model
 
     public static function start_download($query_id, $username, $page_url, $nb_sequences)
     {
+        $queue = 'default';
+        if ($nb_sequences > 2000000) {
+            $queue = 'long';
+        }
+
         // create new local job
-        $lj = new LocalJob();
+        $lj = new LocalJob($queue);
         $lj->user = $username;
         $lj->description = 'Sequences download';
         $lj->save();
@@ -141,7 +158,7 @@ class Download extends Model
         // queue local job
         $localJobId = $lj->id;
         try {
-            DownloadSequences::dispatch($username, $localJobId, $query_id, $page_url, $nb_sequences, $d);
+            DownloadSequences::dispatch($username, $localJobId, $query_id, $page_url, $nb_sequences, $d)->onQueue($queue);
         } catch (\Exception $e) {
             \
             Log::error('Download could not be queued:');

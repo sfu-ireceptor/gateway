@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Agave;
+use App\Download;
 use App\FieldName;
 use App\Job;
 use App\RestService;
@@ -25,6 +26,13 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
+        // just a test
+
+        $d = Download::find(5);
+        echo $d->queuePosition();
+        exit();
+        dd($d);
+
         echo base_path() . '/util/scripts/airr-tsv-merge.py -i ';
         exit;
         exit;
@@ -803,6 +811,11 @@ class TestController extends Controller
             $message->to('jlj7@sfu.ca')->subject('Test Email');
         });
         echo 'done';
+    }
+
+    public function phpinfo()
+    {
+        phpinfo();
     }
 
     public function printBody()

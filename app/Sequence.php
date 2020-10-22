@@ -5,6 +5,7 @@ namespace App;
 use Facades\App\RestService;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
 class Sequence
@@ -29,6 +30,18 @@ class Sequence
 
         // include repositories which failed to return samples
         $sequence_data['rs_list_no_response'] = array_merge($sequence_data['rs_list_no_response'], $sample_data['rs_list_no_response']);
+
+        // split list of servers which didn't respond by "timeout" or "error"
+        $sequence_data['rs_list_no_response_timeout'] = [];
+        $sequence_data['rs_list_no_response_error'] = [];
+
+        foreach ($sequence_data['rs_list_no_response'] as $rs) {
+            if ($rs->error_type == 'timeout') {
+                $sequence_data['rs_list_no_response_timeout'][] = $rs;
+            } else {
+                $sequence_data['rs_list_no_response_error'][] = $rs;
+            }
+        }
 
         return $sequence_data;
     }
@@ -78,6 +91,18 @@ class Sequence
         // add to stats data
         $data['items'] = $sequence_list;
 
+        // split list of servers which didn't respond by "timeout" or "error"
+        $data['rs_list_no_response_timeout'] = [];
+        $data['rs_list_no_response_error'] = [];
+
+        foreach ($data['rs_list_no_response'] as $rs) {
+            if ($rs->error_type == 'timeout') {
+                $data['rs_list_no_response_timeout'][] = $rs;
+            } else {
+                $data['rs_list_no_response_error'][] = $rs;
+            }
+        }
+
         return $data;
     }
 
@@ -123,6 +148,7 @@ class Sequence
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filters, $folder_path, $username);
         $response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_sequences_by_rs);
+
         $file_stats = self::file_stats($response_list, $expected_nb_sequences_by_rs);
 
         // if some files are incomplete, log it
@@ -130,7 +156,7 @@ class Sequence
             if ($t['nb_sequences'] != $t['expected_nb_sequences']) {
                 $delta = ($t['expected_nb_sequences'] - $t['nb_sequences']);
                 $str = 'expected ' . $t['expected_nb_sequences'] . ' sequences, got ' . $t['nb_sequences'] . ' sequences (difference=' . $delta . ' sequences)';
-                Log::warn($t['rest_service_name'] . ': ' . $str);
+                Log::warning($t['rest_service_name'] . ': ' . $str);
 
                 $query_log_id = $t['query_log_id'];
                 $ql = QueryLog::find($query_log_id);
@@ -140,24 +166,37 @@ class Sequence
             }
         }
 
-        // generate info.txt
-        $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now);
+        $is_download_incomplete = false;
 
-        // is download incomplete?
+        // did the download failed for some services?
+        $failed_rs = [];
+        foreach ($response_list as $response) {
+            if ($response['status'] == 'error') {
+                $failed_rs[] = $response['rs'];
+                $is_download_incomplete = true;
+            }
+        }
+
+        // are some files incomplete?
         $nb_sequences_total = 0;
         $expected_nb_sequences_total = 0;
         foreach ($file_stats as $t) {
             $nb_sequences_total += $t['nb_sequences'];
             $expected_nb_sequences_total += $t['expected_nb_sequences'];
         }
-        $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
+        if ($nb_sequences_total < $expected_nb_sequences_total) {
+            $is_download_incomplete = true;
+        }
 
         // if download is incomplete, update gateway query status
         if ($is_download_incomplete) {
             $gw_query_log_id = request()->get('query_log_id');
-            $error_message = 'Some downloaded files appear to be incomplete';
+            $error_message = 'Download is incomplete';
             QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
         }
+
+        // generate info.txt
+        $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
 
         $t = [];
         $t['folder_path'] = $folder_path;
@@ -185,7 +224,7 @@ class Sequence
         $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path);
 
         // delete files
-        self::delete_files($response_list, $metadata_response_list, $info_file_path, $folder_path);
+        self::delete_files($folder_path);
 
         $zip_public_path = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
 
@@ -383,7 +422,7 @@ class Sequence
         return $data;
     }
 
-    public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now)
+    public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
         $s = '';
         $s .= '* Summary *' . "\n";
@@ -394,9 +433,10 @@ class Sequence
             $nb_sequences_total += $t['nb_sequences'];
             $expected_nb_sequences_total += $t['expected_nb_sequences'];
         }
+
         $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
         if ($is_download_incomplete) {
-            $s .= 'Warning: download appears to be incomplete:' . "\n";
+            $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
             $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "\n";
         } else {
             $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
@@ -409,6 +449,16 @@ class Sequence
                 $s .= $t['name'] . ': ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
             }
         }
+        $s .= "\n";
+
+        if (! empty($failed_rs)) {
+            $s .= 'Warning: some files are missing because an error occured while downloading sequences from these repositories:' . "\n";
+            foreach ($failed_rs as $rs) {
+                // code...
+            }
+            $s .= $rs->name . "\n";
+        }
+
         $s .= "\n";
 
         $s .= '* Metadata filters *' . "\n";
@@ -508,30 +558,11 @@ class Sequence
         return $zipPath;
     }
 
-    public static function delete_files($response_list, $metadata_response_list, $info_file_path, $folder_path)
+    public static function delete_files($folder_path)
     {
         Log::debug('Deleting downloaded files...');
-        foreach ($response_list as $response) {
-            $file_path = $response['data']['file_path'];
-            if (File::exists($file_path)) {
-                File::delete($file_path);
-            }
-        }
-
-        foreach ($metadata_response_list as $response) {
-            $file_path = $response['data']['file_path'];
-            if (File::exists($file_path)) {
-                File::delete($file_path);
-            }
-        }
-
-        if (File::exists($info_file_path)) {
-            File::delete($info_file_path);
-        }
-
-        // delete containing folder
         if (File::exists($folder_path)) {
-            rmdir($folder_path);
+            Storage::deleteDirectory($folder_path);
         }
     }
 
