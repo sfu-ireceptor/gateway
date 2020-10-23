@@ -127,8 +127,8 @@
 										<li>{{ $rs->display_name }}</li>
 								@endforeach
 							</ul>
-							<p>But the sequence data can still be downloaded.</p>
-							<p>For complete statistics, reduce the size of the data you're exploring, or download the sequence data and perform statistics offline.</p>
+							<p>For accurate statistics, try to reduce the size of the data you're exploring.</p>
+							<p>You can also download the sequences and perform complex analyses offline.</p>
 						@endif
 
 						@if ( ! empty($rest_service_list_no_response_error))
