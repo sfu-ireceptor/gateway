@@ -92,7 +92,7 @@ $(document).ready(function() {
 		}).length;
 
 		if(nb_fields > 1) {
-			if (! confirm('This might take up to 3 min, and some repositories might not respond, because using multiple filters is computationally expensive.')) {
+			if (! confirm('This may take up to 3 min, and some repositories might not respond, because queries with multiple filters are computationally expensive.')) {
 				event.stopImmediatePropagation();
 				return false;
 			}
