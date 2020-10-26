@@ -120,8 +120,9 @@
 				<!-- Services which didn't respond -->
 				@if ( ! empty($rest_service_list_no_response))
 					<div class="alert alert-warning" role="alert">
+						<p>Sorry, the statistics below are incomplete.</p>
 						@if ( ! empty($rest_service_list_no_response_timeout))
-							<p>Sorry, the statistics below are incomplete. These repositories did not return statistics before the Gateway time limit of {{ config('ireceptor.service_request_timeout') }} sec:</p>
+							<p>These repositories did not return statistics before the Gateway time limit of {{ config('ireceptor.service_request_timeout') }} sec:</p>
 							<ul>
 								@foreach ($rest_service_list_no_response_timeout as $rs)
 										<li>{{ $rs->display_name }}</li>
@@ -132,7 +133,7 @@
 						@endif
 
 						@if ( ! empty($rest_service_list_no_response_error))
-							<p>Sorry, the statistics below may be incomplete. An unexpected error occurred when querying the following repositories:</p>
+							<p>An unexpected error occurred when querying the following repositories:</p>
 							<ul>
 								@foreach ($rest_service_list_no_response_error as $rs)
 										<li>{{ $rs->display_name }}</li>
