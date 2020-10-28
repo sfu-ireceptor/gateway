@@ -384,7 +384,7 @@ class RestService extends Model
             $counts_by_rs = [];
             foreach ($sample_id_list_by_rs as $rs_id => $sample_id_list) {
                 $sequence_count = self::sequence_count_from_cache($rs_id, $sample_id_list);
-                $counts_by_rs[$rs_id] = $sequence_count;
+                $counts_by_rs[$rs_id]['samples'] = $sequence_count;
             }
 
             return $counts_by_rs;
@@ -431,7 +431,8 @@ class RestService extends Model
             $rest_service_id = $response['rs']->id;
 
             if ($response['status'] == 'error') {
-                $counts_by_rs[$rest_service_id] = null;
+                $counts_by_rs[$rest_service_id]['samples'] = null;
+                $counts_by_rs[$rest_service_id]['error_type'] = $response['error_type'];
                 continue;
             }
 
@@ -449,7 +450,7 @@ class RestService extends Model
                 }
             }
 
-            $counts_by_rs[$rest_service_id] = $sequence_count;
+            $counts_by_rs[$rest_service_id]['samples'] = $sequence_count;
         }
 
         return $counts_by_rs;
@@ -479,7 +480,7 @@ class RestService extends Model
         // because VDJServer can't handle it
         $response_list_all = self::samples([], $username, true, $rest_service_id_list, false);
         Log::debug('All samples from those repositories:');
-        Log::debug($response_list_all);
+        // Log::debug($response_list_all);
 
         // filter repositories responses to only requested samples
         $response_list_requested = [];
@@ -504,7 +505,7 @@ class RestService extends Model
         }
 
         Log::debug('Filtered to requested samples only:');
-        Log::debug($response_list_requested);
+        // Log::debug($response_list_requested);
 
         // build list of sequence filters only (remove sample id filters)
         $sequence_filters = $filters;
@@ -549,9 +550,9 @@ class RestService extends Model
                 continue;
             }
 
-            if ($counts_by_rs[$rs->id] == null) {
+            if ( $counts_by_rs[$rs->id]['samples'] == null) {
                 $response['status'] = 'error';
-                $response['error_type'] = 'error';
+                $response['error_type'] = $counts_by_rs[$rs->id]['error_type'];
 
                 // include this response so the error is reported
                 $response_list_filtered[] = $response;
@@ -561,7 +562,7 @@ class RestService extends Model
 
             $sample_list_filtered = [];
             foreach ($response['data'] as $sample) {
-                $sample_count = $counts_by_rs[$rs->id][$sample->repertoire_id];
+                $sample_count = $counts_by_rs[$rs->id]['samples'][$sample->repertoire_id];
                 // include sample only if it has sequences matching the query
                 if ($sample_count > 0) {
                     $sample->ir_filtered_sequence_count = $sample_count;
