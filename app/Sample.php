@@ -169,10 +169,9 @@ class Sample
             $rs = $response['rs'];
 
             if ($response['status'] == 'error') {
-                if(isset($response['error_type'])) {
-                    $rs->error_type = $response['error_type'];   
-                }
-                else {
+                if (isset($response['error_type'])) {
+                    $rs->error_type = $response['error_type'];
+                } else {
                     $rs->error_type = 'error';
                 }
                 $rs->error_type = $response['error_type'];
