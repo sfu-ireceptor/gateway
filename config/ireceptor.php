@@ -30,7 +30,7 @@ return [
     'service_file_request_chunked_timeout' => env('IRECEPTOR_SERVICE_FILE_REQUEST_CHUNKED_TIMEOUT', 10 * 60),
 
     // allow less time for samples queries
-    'service_request_timeout_samples' => env('IRECEPTOR_SERVICE_REQUEST_TIMEOUT_SAMPLES', 10),
+    'service_request_timeout_samples' => env('IRECEPTOR_SERVICE_REQUEST_TIMEOUT_SAMPLES', 20),
 
     /*
     |--------------------------------------------------------------------------
