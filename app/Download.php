@@ -68,6 +68,11 @@ class Download extends Model
         return $this->status == self::STATUS_FAILED;
     }
 
+    public function isIncomplete()
+    {
+        return $this->incomplete;
+    }
+
     public function createdAt()
     {
         return Carbon::parse($this->created_at)->format('D M j, Y');

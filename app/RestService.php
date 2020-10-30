@@ -946,14 +946,15 @@ class RestService extends Model
         $final_response_list = [];
         // do requests, write tsv data to files
         if (count($request_params) > 0) {
-            Log::debug('Do TSV requests... (not-chunked)');
+            Log::info('Do TSV requests... (not-chunked)');
             $final_response_list = self::doRequests($request_params);
         }
 
         if (count($request_params_chunking) > 0) {
-            Log::debug('Do TSV requests... (chunked)');
+            Log::info('Do TSV requests... (chunked)');
             $request_params_chunked = array_chunk($request_params_chunking, 15);
             $response_list = [];
+            $failed = false;
             foreach ($request_params_chunked as $requests) {
 
                 // try each group of queries up to 3 times
@@ -973,41 +974,51 @@ class RestService extends Model
                     }
 
                     if ($has_errors && $i == 3) {
-                        throw new \Exception('Service request error');
+                        $failed = true;
+                        break;
                     }
                 }
 
                 $response_list[] = $response_list_chunk;
-            }
 
-            $output_files = [];
-            foreach ($response_list as $response_group) {
-                foreach ($response_group as $response) {
-                    $file_path = $response['data']['file_path'];
-                    $output_files[] = $file_path;
-                }
-            }
-            $output_files_str = implode(' ', $output_files);
-            $file_path_merged = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
-
-            Log::debug('Merging chunked files...');
-            $cmd = base_path() . '/util/scripts/airr-tsv-merge.py -i ' . $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '_*.tsv' . ' -o ' . $file_path_merged . ' 2>&1';
-            Log::debug($cmd);
-            $process = new Process($cmd);
-            $process->setTimeout(3600 * 24);
-            $process->mustRun(function ($type, $buffer) {
-                Log::debug($buffer);
-            });
-
-            Log::debug('Deleting chunked files...');
-            foreach ($output_files as $output_file_path) {
-                if (File::exists($output_file_path)) {
-                    File::delete($output_file_path);
+                if ($failed) {
+                    break;
                 }
             }
 
-            $response = $response_list[0][0];
-            $response['data']['file_path'] = $file_path_merged;
+            if ($failed) {
+                $response = $response_list[0][0];
+            } else {
+                $output_files = [];
+                foreach ($response_list as $response_group) {
+                    foreach ($response_group as $response) {
+                        $file_path = $response['data']['file_path'];
+                        $output_files[] = $file_path;
+                    }
+                }
+                $output_files_str = implode(' ', $output_files);
+                $file_path_merged = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
+
+                Log::info('Merging chunked files...');
+                $cmd = base_path() . '/util/scripts/airr-tsv-merge.py -i ' . $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '_*.tsv' . ' -o ' . $file_path_merged . ' 2>&1';
+                Log::info($cmd);
+                $process = new Process($cmd);
+                $process->setTimeout(3600 * 24);
+                $process->mustRun(function ($type, $buffer) {
+                    Log::info($buffer);
+                });
+
+                Log::info('Deleting chunked files...');
+                foreach ($output_files as $output_file_path) {
+                    if (File::exists($output_file_path)) {
+                        File::delete($output_file_path);
+                    }
+                }
+
+                $response = $response_list[0][0];
+                $response['data']['file_path'] = $file_path_merged;
+            }
+
             $final_response_list[] = $response;
         }
 
