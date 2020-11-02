@@ -80,7 +80,7 @@ class Sample
             foreach ($sample_list as $sample) {
                 $sample_id = $sample->repertoire_id;
                 $sequence_count_array = RestService::sequence_count([$rest_service_id =>[$sample_id]], [], false);
-                $sequence_count = $sequence_count_array[$rest_service_id][$sample_id];
+                $sequence_count = $sequence_count_array[$rest_service_id]['samples'][$sample_id];
                 $t['sequence_counts'][$sample_id] = $sequence_count;
                 $total_sequence_count += $sequence_count;
 
@@ -169,6 +169,11 @@ class Sample
             $rs = $response['rs'];
 
             if ($response['status'] == 'error') {
+                if (isset($response['error_type'])) {
+                    $rs->error_type = $response['error_type'];
+                } else {
+                    $rs->error_type = 'error';
+                }
                 $rs->error_type = $response['error_type'];
                 $rs_list_no_response[] = $rs;
             }

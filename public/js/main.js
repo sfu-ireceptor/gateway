@@ -130,7 +130,7 @@ $(document).ready(function() {
 		}).length;
 
 		if(nb_fields > 1) {
-			if (! confirm('This may take a while (up to 2 min) and return incomplete data (but you will be notified) because using multiple sequence filters on a significant amount of data can be computationally expensive and time out on some of the remote repositories.')) {
+			if (! confirm('This may take up to 3 min, and some repositories might not respond, because queries with multiple filters are computationally expensive.')) {
 				event.stopImmediatePropagation();
 				return false;
 			}
