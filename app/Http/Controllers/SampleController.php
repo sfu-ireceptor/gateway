@@ -198,7 +198,7 @@ class SampleController extends Controller
             unset($params['sort_order']);
         }
 
-        // remove value from dropdown to pick an extra field 
+        // remove value from dropdown to pick an extra field
         if (isset($params['extra_field'])) {
             unset($params['extra_field']);
         }
