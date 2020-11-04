@@ -209,7 +209,13 @@
 									@foreach($extra_params as $param)
 										<div class="form-group">
 											{{ Form::label($param, __('short.' . $param)) }}
+
 											@include('help', ['id' => $param])
+
+											<span class="remove_field" role="button" data-container="body" title="Remove filter">
+												<span class="glyphicon glyphicon-remove"></span>
+											</span>
+
 											{{ Form::text($param, '', array('class' => 'form-control')) }}
 										</div>										
 									@endforeach
@@ -223,6 +229,7 @@
 
 							<div class="add_field">
 								<div class="form-group">
+									<label for="extra_field">Add a filter</label>
 									{{ Form::select('extra_field', $extra_fields, '', array('class' => 'form-control')) }}
 								</div>
 

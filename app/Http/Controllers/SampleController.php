@@ -462,4 +462,14 @@ class SampleController extends Controller
 
         return view('field', $data);
     }
+
+    public function field_data($id)
+    {
+        $field = FieldName::getField($id);
+
+        $data = [];
+        $data['field'] = $field;
+
+        return $data;
+    }
 }

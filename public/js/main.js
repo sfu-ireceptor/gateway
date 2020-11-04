@@ -106,6 +106,11 @@ $(document).ready(function() {
 			button.prop('disabled', false);
 			$('span.glyphicon', button).addClass('glyphicon-plus');
 			$('span.text', button).text('Add filter');
+
+			// add help text for new form fields
+			$('[data-toggle="popover_form_field"]', $('.extra_fields_list')).popover({
+				html: true
+			});
 		})
 		.fail(function(jqXHR, status, message) {
 			console.log(status + ': ' + message);
@@ -114,6 +119,28 @@ $(document).ready(function() {
 			button.prop('disabled', false);
 			$('span.glyphicon', button).addClass('glyphicon-plus');
 			$('span.text', button).text('Add filter');
+		});
+	});
+
+
+	// remove extra field
+	$('.extra_fields').on('click', '.remove_field', function() {
+		var field_group = $(this).closest('div.form-group');
+		var field_name = $('label', field_group).attr('for');
+		var field_data_url = '/samples/field-data/' + field_name;
+
+		$.get(field_data_url, function(data) {
+			var field = data['field'];
+			var field_drowpdown_name = field['ir_subclass'] + ' | ' + field['ir_short'];
+
+			// add field to dropdown
+			$('.add_field select[name=extra_field]').append(new Option(field_drowpdown_name, field_name));
+
+			// remove field from form
+			field_group.remove();
+		})
+		.fail(function(jqXHR, status, message) {
+			console.log(status + ': ' + message);
 		});
 	});
 
