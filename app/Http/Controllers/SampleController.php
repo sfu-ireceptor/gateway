@@ -361,11 +361,12 @@ class SampleController extends Controller
         }
         $data['extra_params'] = $extra_params;
 
-        // remove extra parameters from extra fields
+        // build list of disabled fields for extra fields dropdown
+        $extra_fields_options_attributes = [];
         foreach ($extra_params as $k => $v) {
-            unset($extra_fields[$v]);
+            $extra_fields_options_attributes[$v] = ['disabled' => 'disabled'];
         }
-        $data['extra_fields'] = $extra_fields;
+        $data['extra_fields_options_attributes'] = $extra_fields_options_attributes;
 
         // table columns to display
         if (isset($params['cols'])) {

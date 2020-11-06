@@ -230,7 +230,7 @@
 							<div class="add_field">
 								<div class="form-group">
 									<label for="extra_field">Add a filter</label>
-									{{ Form::select('extra_field', $extra_fields, '', array('class' => 'form-control')) }}
+									{{ Form::select('extra_field', $extra_fields, '', array('class' => 'form-control'), $extra_fields_options_attributes) }}
 								</div>
 
 								<p class="button_container">
