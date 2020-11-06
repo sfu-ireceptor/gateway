@@ -99,8 +99,12 @@ $(document).ready(function() {
 			$('.column_selector input.' + field).prop("checked", true);
 			$('.column_selector input.' + field).change();
 
-			// remove that option from the dropdown
-			$('.add_field select[name=extra_field] option[value=' + field + ']').remove();
+			// disable this option in the dropdown
+			$('.add_field select[name=extra_field] option[value=' + field + ']').attr('disabled','disabled');
+
+			// change dropdown selection to first not-disabled option
+			var first_not_disabled_option_value = $('.add_field select[name=extra_field] option:enabled:first').val();
+			$('.add_field select[name=extra_field]').val(first_not_disabled_option_value);
 
 			// re-enable button
 			button.prop('disabled', false);
@@ -133,8 +137,8 @@ $(document).ready(function() {
 			var field = data['field'];
 			var field_drowpdown_name = field['ir_subclass'] + ' | ' + field['ir_short'];
 
-			// add field to dropdown
-			$('.add_field select[name=extra_field]').append(new Option(field_drowpdown_name, field_name));
+			// enable field in dropdown
+			$('.add_field select[name=extra_field] option[value=' + field_name + ']').removeAttr('disabled');
 
 			// remove field from form
 			field_group.remove();
