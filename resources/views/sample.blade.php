@@ -197,49 +197,52 @@
 						</div>
 					</div>
 
-					<br>
-
 					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title">Extra filters</h3>
+						<div class="panel-heading" role="tab" id="headingFour">
+							<h4 class="panel-title">
+								<a class="{{ in_array('3', $open_filter_panel_list) ? '' : 'collapsed' }}" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+									More filters
+								</a>
+							</h4>
 						</div>
-						<div class="panel-body">
-							<div class="extra_fields {{ empty($extra_params) ? 'hidden' : '' }}">
-								<div class="extra_fields_list">
-									@foreach($extra_params as $param)
-										<div class="form-group">
-											{{ Form::label($param, __('short.' . $param)) }}
+						<div id="collapseFour" class="panel-collapse collapse {{ in_array('3', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingFour">
+							<div class="panel-body">
+								<div class="extra_fields {{ empty($extra_params) ? 'hidden' : '' }}">
+									<div class="extra_fields_list">
+										@foreach($extra_params as $param)
+											<div class="form-group">
+												{{ Form::label($param, __('short.' . $param)) }}
 
-											@include('help', ['id' => $param])
+												@include('help', ['id' => $param])
 
-											<span class="remove_field" role="button" data-container="body" title="Remove filter">
-												<span class="glyphicon glyphicon-remove"></span>
-											</span>
+												<span class="remove_field" role="button" data-container="body" title="Remove filter">
+													<span class="glyphicon glyphicon-remove"></span>
+												</span>
 
-											{{ Form::text($param, '', array('class' => 'form-control')) }}
-										</div>										
-									@endforeach
+												{{ Form::text($param, '', array('class' => 'form-control')) }}
+											</div>										
+										@endforeach
+									</div>
+
+									<p class="button_container">
+										{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
+									</p>
+									<hr>								
 								</div>
 
-								<p class="button_container">
-									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
-								</p>
-								<hr>								
+								<div class="add_field">
+									<div class="form-group">
+										<label for="extra_field">Add a filter</label>
+										{{ Form::select('extra_field', $extra_fields, '', array('class' => 'form-control'), $extra_fields_options_attributes) }}
+									</div>
+
+									<p class="button_container">
+										<button type="button" class="btn btn-default" aria-label="Add filter">
+											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> <span class="text">Add filter</span>
+										</button>
+									</p>
+								</div>				 	
 							</div>
-
-							<div class="add_field">
-								<div class="form-group">
-									<label for="extra_field">Add a filter</label>
-									{{ Form::select('extra_field', $extra_fields, '', array('class' => 'form-control'), $extra_fields_options_attributes) }}
-								</div>
-
-								<p class="button_container">
-									<button type="button" class="btn btn-default" aria-label="Add filter">
-										<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> <span class="text">Add filter</span>
-									</button>
-								</p>
-							</div>				 	
-
 						</div>
 					</div>
 				</div>
