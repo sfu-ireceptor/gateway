@@ -197,7 +197,7 @@
 		<script src="/js/bootstrap-multiselect.js"></script>
 		<script src="/js/pluralize.js"></script>
 
-		<script src="/js/main.js?v=35"></script>
+		<script src="/js/main.js?v=36"></script>
 		<script src="/js/visualization.js?v=17"></script>
 	</body>
 
