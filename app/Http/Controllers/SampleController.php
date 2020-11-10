@@ -24,10 +24,11 @@ class SampleController extends Controller
             if (! in_array($field_id, self::DEFAULT_FIELDS)) {
                 $this->extra_fields[] = $field_id;
             }
-        }  
+        }
     }
 
-    public function is_extra_field($field_id) {
+    public function is_extra_field($field_id)
+    {
         return in_array($field_id, $this->extra_fields);
     }
 
@@ -53,18 +54,16 @@ class SampleController extends Controller
                 foreach ($filters as $name => $value) {
                     if ($name == 'cols') {
                         $new_filters[$name] = $value;
-                    }
-                    else if($this->is_extra_field($name)) {
-                        $new_filters[$name] = null;   
+                    } elseif ($this->is_extra_field($name)) {
+                        $new_filters[$name] = null;
                     }
                 }
             } else {
                 // remove only that filter
-                if($this->is_extra_field($filter_to_remove)) {
-                        $filters[$filter_to_remove] = null;   
-                }
-                else {
-                    unset($filters[$filter_to_remove]);                    
+                if ($this->is_extra_field($filter_to_remove)) {
+                    $filters[$filter_to_remove] = null;
+                } else {
+                    unset($filters[$filter_to_remove]);
                 }
                 $new_filters = $filters;
             }
