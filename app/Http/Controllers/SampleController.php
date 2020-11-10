@@ -12,6 +12,25 @@ use Illuminate\Support\Facades\Log;
 
 class SampleController extends Controller
 {
+    protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type', 'study_group_description', 'lab_name', 'subject_id', 'organism', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis', 'sample_id', 'pcr_target_locus', 'cell_subset', 'tissue', 'template_class', 'cell_phenotype', 'sequencing_platform'];
+    protected $extra_fields = [];
+
+    public function __construct()
+    {
+        // init $extra_fields
+        $all_fields = FieldName::getSampleFields();
+        foreach ($all_fields as $field) {
+            $field_id = $field['ir_id'];
+            if (! in_array($field_id, self::DEFAULT_FIELDS)) {
+                $this->extra_fields[] = $field_id;
+            }
+        }  
+    }
+
+    public function is_extra_field($field_id) {
+        return in_array($field_id, $this->extra_fields);
+    }
+
     public function postIndex(Request $request)
     {
         $query_id = Query::saveParams($request->except(['_token']), 'samples');
@@ -29,16 +48,24 @@ class SampleController extends Controller
             $filter_to_remove = $request->input('remove_filter');
 
             if ($filter_to_remove == 'all') {
-                // remove all filters but columns filters
+                // remove all filters but columns filters and extra filters values
                 $new_filters = [];
                 foreach ($filters as $name => $value) {
                     if ($name == 'cols') {
                         $new_filters[$name] = $value;
                     }
+                    else if($this->is_extra_field($name)) {
+                        $new_filters[$name] = null;   
+                    }
                 }
             } else {
                 // remove only that filter
-                unset($filters[$filter_to_remove]);
+                if($this->is_extra_field($filter_to_remove)) {
+                        $filters[$filter_to_remove] = null;   
+                }
+                else {
+                    unset($filters[$filter_to_remove]);                    
+                }
                 $new_filters = $filters;
             }
 
@@ -343,10 +370,9 @@ class SampleController extends Controller
         }
 
         // build list of extra fields: remvove fields already hard coded in the view
-        $hard_coded_field_ids = ['full_text_search', 'study_id', 'study_title', 'study_type', 'study_group_description', 'lab_name', 'subject_id', 'organism', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis', 'sample_id', 'pcr_target_locus', 'cell_subset', 'tissue', 'template_class', 'cell_phenotype', 'sequencing_platform'];
         $extra_fields = [];
         foreach ($all_fieds as $k => $v) {
-            if (! in_array($k, $hard_coded_field_ids)) {
+            if (! in_array($k, self::DEFAULT_FIELDS)) {
                 $extra_fields[$k] = $v;
             }
         }
