@@ -101,6 +101,10 @@ class RestServiceSeeder extends Seeder
                 'url' => 'https://vdjserver.org/airr/v1/',
                 'name' => 'VDJServer',
             ],
+            [
+                'url' => 'http://irec.i3lab.fr/airr/v1/',
+                'name' => 'Sorbonne University',
+            ],
         ];
 
         foreach ($l as $t) {
