@@ -69,6 +69,10 @@ class DownloadSequences implements ShouldQueue
             // remove gateway-specific params
             unset($sample_filter_fields['open_filter_panel_list']);
             unset($sample_filter_fields['page']);
+            unset($sample_filter_fields['cols']);
+            unset($sample_filter_fields['sort_column']);
+            unset($sample_filter_fields['sort_order']);
+            unset($sample_filter_fields['extra_field']);
         }
 
         $query_log_id = QueryLog::start_job($this->url, $filters, $this->nb_sequences, $this->username);

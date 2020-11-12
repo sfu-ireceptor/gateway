@@ -228,6 +228,7 @@ class RestService extends Model
         unset($filters['sort_column']);
         unset($filters['sort_order']);
         unset($filters['page']);
+        unset($filters['extra_field']);
 
         return $filters;
     }
