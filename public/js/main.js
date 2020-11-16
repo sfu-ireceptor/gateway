@@ -148,6 +148,27 @@ $(document).ready(function() {
 		});
 	});
 
+	// repertoire statistics popup
+	$('#statsModal').on('show.bs.modal', function (event) {
+		var button = $(event.relatedTarget); // button that triggered the modal
+		var repertoire_id = button.data('repertoireId'); // extract info from data-* attributes
+		var stats_url = button.data('url');
+
+		// update modal contents
+		$.get(stats_url, function(data){
+		    var d = airrvisualization.createImmuneDbCloneCountResult();
+		    d.setData(data);
+			var vars = airrvisualization.createProperties().setId("modal_stats").setXLabel("Category");
+			var chart = airrvisualization.createChart(vars).setResult(d).plot();
+
+		});
+
+		// update modal title
+		var modal = $(this);
+		modal.find('.modal-title').text('Repertoire: ' + repertoire_id);
+	});
+
+
 	/**********************************************************
 	* Sequences
 	**********************************************************/

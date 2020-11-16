@@ -406,6 +406,7 @@
 				<table class="table table-striped sample_list table-condensed much_data table-bordered sortable">
 					<thead> 
 						<tr>
+							<th></th>
 							@foreach ($field_list as $field)
 								<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 										@if ($field['ir_id'] == $sort_column)
@@ -436,6 +437,14 @@
 					<tbody>
 						@foreach ($sample_list as $sample)
 						<tr>
+							<td>
+								<a href="#modal_stats" data-url="/test/response_fraction_10.json" data-repertoire-id="{{ $sample->repertoire_id }}" data-toggle="modal" data-target="#statsModal">
+									<span class="label label-primary">
+										<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+										Statistics
+									</span>
+								</a>							
+							</td>
 							@foreach ($field_list as $field)
 								<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 									@isset($sample->{$field['ir_id']})
@@ -533,6 +542,23 @@
 					</div>
 				</div>
 
+				<!-- Repertoire Statistics Modal -->
+				<div class="modal fade" id="statsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								<h4 class="modal-title" id="statsModalLabel">Modal title</h4>
+							</div>
+							<div class="modal-body" id="modal_stats">
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				
 				@endif
 
 			</div>
