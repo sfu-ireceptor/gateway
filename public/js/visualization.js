@@ -286,6 +286,9 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels
                     id: 'OtherDetails',
                     data: otherData
                 }]
+            },
+            exporting: {
+                enabled: false
             }
         };
 
