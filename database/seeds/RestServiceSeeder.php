@@ -108,10 +108,10 @@ class RestServiceSeeder extends Seeder
         ];
 
         // remove service grouping on not-production gateways
-        if(config('app.env') != 'production') {
+        if (config('app.env') != 'production') {
             foreach ($l as $k => $v) {
-                $l[$k]['rest_service_group_code'] = NULL;
-            }            
+                $l[$k]['rest_service_group_code'] = null;
+            }
         }
 
         foreach ($l as $t) {
