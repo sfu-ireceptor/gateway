@@ -150,17 +150,19 @@ $(document).ready(function() {
 
 	// repertoire statistics popup
 	$('#statsModal').on('show.bs.modal', function (event) {
-		var button = $(event.relatedTarget); // button that triggered the modal
-		var repertoire_id = button.data('repertoireId'); // extract info from data-* attributes
-		var stats_url = button.data('url');
+		var button = $(event.relatedTarget),
+			repertoire_id = button.data('repertoireId'),
+			stats_url = button.data('url'),
+			gene = button.data('gene'),
+			x_label = button.data('xLabel'),
+			y_label = button.data('yLabel');
 
 		// update modal contents
 		$.get(stats_url, function(data){
-		    var d = airrvisualization.createImmuneDbCloneCountResult();
+		    var d = airrvisualization.createVGeneStatsResult();
 		    d.setData(data);
-			var vars = airrvisualization.createProperties().setId("modal_stats").setXLabel("Category");
+			var vars = airrvisualization.createProperties().setId("modal_stats").setXLabel(x_label).setYLabel(y_label);
 			var chart = airrvisualization.createChart(vars).setResult(d).plot();
-
 		});
 
 		// update modal title

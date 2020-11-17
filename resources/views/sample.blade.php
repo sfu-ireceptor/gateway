@@ -438,7 +438,7 @@
 						@foreach ($sample_list as $sample)
 						<tr>
 							<td>
-								<a href="#modal_stats" data-url="/test_data/response_fraction_10.json" data-repertoire-id="{{ $sample->repertoire_id }}" data-toggle="modal" data-target="#statsModal">
+								<a href="#modal_stats" data-url="/test_data/gene_usage_response-v_call_unique_drilldown.json" data-gene="v" data-x-label="Category" data-y-label="Count" data-url="" data-repertoire-id="{{ $sample->repertoire_id }}" data-toggle="modal" data-target="#statsModal">
 									<span class="label label-primary">
 										<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
 										Statistics
