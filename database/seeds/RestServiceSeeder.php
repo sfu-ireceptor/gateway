@@ -107,6 +107,13 @@ class RestServiceSeeder extends Seeder
             ],
         ];
 
+        // remove service grouping on not-production gateways
+        if(config('app.env') != 'production') {
+            foreach ($l as $k => $v) {
+                $l[$k]['rest_service_group_code'] = NULL;
+            }            
+        }
+
         foreach ($l as $t) {
             RestService::updateOrCreate(['url' => $t['url']], $t);
         }
