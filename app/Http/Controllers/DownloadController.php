@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Bookmark;
 use App\Download;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class DownloadController extends Controller
 {
@@ -20,9 +19,9 @@ class DownloadController extends Controller
 
             $user->galaxy_url = $galaxy_url;
             $user->galaxy_tool_id = $tool_id;
-            $user->save();    
-            
-            return redirect('downloads')->with('notification', 'You can now send your downloads to Galaxy with the "Send to Galaxy" buttons.');        
+            $user->save();
+
+            return redirect('downloads')->with('notification', 'You can now send your downloads to Galaxy with the "Send to Galaxy" buttons.');
         }
 
         $username = $user->username;
@@ -32,7 +31,7 @@ class DownloadController extends Controller
         $data['download_list'] = $download_list;
 
         // if galaxy is enabled
-        if(isset($user->galaxy_url)) {
+        if (isset($user->galaxy_url)) {
             $data['galaxy_enabled'] = true;
             $data['galaxy_tool_id'] = $user->galaxy_tool_id;
             $data['galaxy_url'] = $user->galaxy_url;

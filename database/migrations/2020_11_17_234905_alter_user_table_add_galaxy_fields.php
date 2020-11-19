@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class AlterUserTableAddGalaxyFields extends Migration
@@ -10,7 +9,7 @@ class AlterUserTableAddGalaxyFields extends Migration
     {
         Schema::table('user', function ($table) {
             $table->text('galaxy_url')->nullable();
-            $table->text('galaxy_tool_id')->nullable();            
+            $table->text('galaxy_tool_id')->nullable();
         });
     }
 
