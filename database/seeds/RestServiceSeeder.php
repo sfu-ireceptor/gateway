@@ -103,7 +103,7 @@ class RestServiceSeeder extends Seeder
             ],
             [
                 'url' => 'http://irec.i3lab.fr/airr/v1/',
-                'name' => 'Sorbonne University',
+                'name' => 'i3 AIRR',
             ],
         ];
 
