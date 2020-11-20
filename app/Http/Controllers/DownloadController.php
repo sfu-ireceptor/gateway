@@ -31,6 +31,7 @@ class DownloadController extends Controller
         $data['download_list'] = $download_list;
 
         // if galaxy is enabled
+        $data['galaxy_enabled'] = false;
         if (isset($user->galaxy_url)) {
             $data['galaxy_enabled'] = true;
             $data['galaxy_tool_id'] = $user->galaxy_tool_id;
