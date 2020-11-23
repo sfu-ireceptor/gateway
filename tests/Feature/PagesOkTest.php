@@ -86,6 +86,13 @@ class PagesOkTest extends TestCase
     }
 
     /** @test */
+    public function downloads()
+    {
+        $u = factory(\App\User::class)->make();
+        $this->actingAs($u)->get('/downloads')->assertOk();
+    }
+
+    /** @test */
     // public function account()
     // {
     //     $u = factory(\App\User::class)->make();
