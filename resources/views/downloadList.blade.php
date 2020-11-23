@@ -7,6 +7,14 @@
 	
 	<h1>Sequence Downloads</h1>
 
+	@if (session('notification'))
+	<div class="alert alert-warning alert-dismissible" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		{!! session('notification') !!}
+	</div>
+	@endif
+	
+
 	@if (session('download_page'))
 	<div class="alert alert-success alert-dismissible" role="alert">
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -108,7 +116,7 @@
 				<td>
 					{{ number_format($d->nb_sequences) }}
 				</td>
-				<td>
+				<td class="text-nowrap">
 					@if($d->isQueued())
 						<a href="/downloads/cancel/{{ $d->id }}" class="btn btn-warning" type="button" title="Cancel Download">
 							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -127,13 +135,21 @@
 							<a href="mailto:{{ config('ireceptor.email_support') }}">let us know</a> so we can help.
 						</em>
 					@elseif($d->isDone())
-							<a href="{{ $d->file_url }}" class="btn btn-primary download_repertoires" type="button" title="Download">
-								<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-								<span class="text">
-									Download
-									({{ human_filesize(filesize($d->file_url)) }})
-								</span>
-							</a>
+						<a href="{{ $d->file_url }}" class="btn btn-primary download_repertoires" type="button" title="Download">
+							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+							<span class="text">
+								Download
+								({{ human_filesize(filesize($d->file_url)) }})
+							</span>
+						</a>
+
+						@if($galaxy_enabled)
+							{{ Form::open(array('url' => $galaxy_url, 'role' => 'form', 'method' => 'post', 'class' => 'galaxy_form')) }}
+									<input type="hidden" name="URL"  value="{{ config('app.url') . '/'  . $d->file_url }}" />
+									<input type="hidden" name="tool_id"  value="{{ $galaxy_tool_id }}" />
+									{{ Form::submit('Send to Galaxy →', array('class' => 'btn btn-primary')) }}
+							{{ Form::close() }}
+						@endif
 					@endif
 				</td>
 				<td class="text-nowrap">

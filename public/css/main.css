@@ -1385,3 +1385,13 @@ form.column_selector {
 
 
 /* @end */
+
+/* @group galaxy */
+
+.galaxy_form {
+	display: inline;
+}
+
+
+
+/* @end */
