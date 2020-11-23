@@ -92,5 +92,17 @@ return [
     |
     */
 
-    'nb_samples_per_page' => env('NB_SAMPLES_PER_PAGE', 120),
+    'nb_samples_per_page' => env('IRECEPTOR_NB_SAMPLES_PER_PAGE', 120),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Allow repository grouping
+    |--------------------------------------------------------------------------
+    |
+    | If false, the repository group will be removed when running RestServiceSeeder 
+    | Ex: false
+    |
+    */
+
+    'group_repositories' => env('IRECEPTOR_GROUP_REPOSITORIES', true),
 ];
