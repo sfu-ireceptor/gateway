@@ -160,8 +160,7 @@ class Download extends Model
         try {
             DownloadSequences::dispatch($username, $localJobId, $query_id, $page_url, $nb_sequences, $d)->onQueue($queue);
         } catch (\Exception $e) {
-            \
-            Log::error('Download could not be queued:');
+            \Log::error('Download could not be queued:');
             Log::error($e);
             $lj->setFailed();
             $d->setFailed();
