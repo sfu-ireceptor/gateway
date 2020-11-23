@@ -108,7 +108,7 @@ class RestServiceSeeder extends Seeder
         ];
 
         // if grouping is disabled, remove group code
-        if ( ! config('ireceptor.group_repositories')) {
+        if (! config('ireceptor.group_repositories')) {
             foreach ($l as $k => $v) {
                 $l[$k]['rest_service_group_code'] = null;
             }

@@ -99,7 +99,7 @@ return [
     | Allow repository grouping
     |--------------------------------------------------------------------------
     |
-    | If false, the repository group will be removed when running RestServiceSeeder 
+    | If false, the repository group will be removed when running RestServiceSeeder
     | Ex: false
     |
     */
