@@ -708,7 +708,7 @@ class RestService extends Model
         $defaults['verify'] = false;    // accept self-signed SSL certificates
         $defaults['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
         $client = new \GuzzleHttp\Client($defaults);
-        
+
         $response = $client->request('POST', $url, [
             'body' => '{"repertoires":[{"repertoire":{"repertoire_id":"322"}},{"repertoire":{"repertoire_id": "279"}}],"statistics":["v_call_unique", "v_gene_unique", "v_subgroup_unique"]}',
         ]);
