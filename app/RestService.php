@@ -690,13 +690,12 @@ class RestService extends Model
         // $str = file_get_contents("/home/vagrant/ireceptor_gateway/public/test_data/gene2.json");
         // return $str;
 
+        // build stats URL to query
         $rs = self::find($rest_service_id);
-
-        $url = 'https://stats-staging.ireceptor.org/irplus/v1/stats/rearrangement/' . $stat;
-
-        Log::debug($url);
-
-        // http://gw_homestead.local/samples/stats/69/338/gene_usage
+        $rs_base_url = str_replace('airr/v1/', '', $rs->url);
+        $rs_stats_url = $rs_base_url . 'irplus/v1/stats/rearrangement/';
+        $url = $rs_stats_url . $stat;
+        Log::debug('Stats URL:' . $url);
 
         // curl -i https://stats-staging.ireceptor.org/irplus/v1/stats/rearrangement/gene_usage
         // {
@@ -708,9 +707,8 @@ class RestService extends Model
         $defaults = [];
         $defaults['verify'] = false;    // accept self-signed SSL certificates
         $defaults['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
-
         $client = new \GuzzleHttp\Client($defaults);
-
+        
         $response = $client->request('POST', $url, [
             'body' => '{"repertoires":[{"repertoire":{"repertoire_id":"322"}},{"repertoire":{"repertoire_id": "279"}}],"statistics":["v_call_unique", "v_gene_unique", "v_subgroup_unique"]}',
         ]);

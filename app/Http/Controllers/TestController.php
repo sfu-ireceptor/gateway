@@ -26,6 +26,12 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
+        $rs = RestService::find(69);
+        $rs_url = $rs->url;
+        $rs_base_url = str_replace('airr/v1/', '', $rs_url);
+        $rs_stats_url = $rs_base_url . 'v1/stats/rearrangement/';
+
+        dd($rs_stats_url);
         // just a test
 
         $d = Download::find(5);
