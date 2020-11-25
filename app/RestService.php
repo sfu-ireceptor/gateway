@@ -685,6 +685,11 @@ class RestService extends Model
         return $response_list;
     }
 
+    // curl -i https://stats-staging.ireceptor.org/irplus/v1/stats/rearrangement/gene_usage
+    // {
+    //     "repertoires":[{"repertoire":{"repertoire_id":"322"}},{"repertoire":{"repertoire_id": "279"}}],
+    //     "statistics":["v_call_unique", "v_gene_unique", "v_subgroup_unique"]
+    // }
     public static function stats($rest_service_id, $repertoire_id, $stat)
     {
         // $str = file_get_contents("/home/vagrant/ireceptor_gateway/public/test_data/gene2.json");
@@ -695,22 +700,34 @@ class RestService extends Model
         $rs_base_url = str_replace('airr/v1/', '', $rs->url);
         $rs_stats_url = $rs_base_url . 'irplus/v1/stats/rearrangement/';
         $url = $rs_stats_url . $stat;
-        Log::debug('Stats URL:' . $url);
-
-        // curl -i https://stats-staging.ireceptor.org/irplus/v1/stats/rearrangement/gene_usage
-        // {
-        //     "repertoires":[{"repertoire":{"repertoire_id":"322"}},{"repertoire":{"repertoire_id": "279"}}],
-        //     "statistics":["v_call_unique", "v_gene_unique", "v_subgroup_unique"]
-        // }
+        Log::debug('Stats URL :' . $url);
 
         // create Guzzle client
         $defaults = [];
         $defaults['verify'] = false;    // accept self-signed SSL certificates
         $defaults['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
         $client = new \GuzzleHttp\Client($defaults);
-        
+
+        $repertoire_object = new \stdClass();
+        $repertoire_object->repertoire = new \stdClass();
+        $repertoire_object->repertoire->repertoire_id = $repertoire_id;
+        $repertoire_list = [];
+        $repertoire_list[] = $repertoire_object;
+
+        $statistics_list = [];
+        $statistics_list[] = 'v_call_unique';
+        $statistics_list[] = 'v_gene_unique';
+        $statistics_list[] = 'v_subgroup_unique';
+
+        $filter_object = new \stdClass();
+        $filter_object->repertoires = $repertoire_list;
+        $filter_object->statistics = $statistics_list;
+
+        $filter_object_json = json_encode($filter_object);
+        Log::debug('Stats JSON request: ' . json_encode($filter_object, JSON_PRETTY_PRINT));
+
         $response = $client->request('POST', $url, [
-            'body' => '{"repertoires":[{"repertoire":{"repertoire_id":"322"}},{"repertoire":{"repertoire_id": "279"}}],"statistics":["v_call_unique", "v_gene_unique", "v_subgroup_unique"]}',
+            'body' => $filter_object_json,
         ]);
 
         return $response->getBody();
