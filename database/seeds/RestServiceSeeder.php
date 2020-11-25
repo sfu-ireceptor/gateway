@@ -105,6 +105,10 @@ class RestServiceSeeder extends Seeder
                 'url' => 'http://irec.i3lab.fr/airr/v1/',
                 'name' => 'i3 AIRR',
             ],
+            [
+                'url' => 'https://stats-staging.ireceptor.org/airr/v1/',
+                'name' => 'Stats Demo',
+            ],
         ];
 
         // if grouping is disabled, remove group code

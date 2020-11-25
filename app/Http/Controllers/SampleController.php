@@ -7,6 +7,7 @@ use App\FieldName;
 use App\Query;
 use App\QueryLog;
 use App\Sample;
+use App\RestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -413,16 +414,9 @@ class SampleController extends Controller
         return view('sample', $data);
     }
 
-    public function stats(Request $request)
+    public function stats($rest_service_id, $repertoire_id, $stat, Request $request)
     {
-        // get sample list
-        $params = $request->all();
-        $params['ajax'] = true;
-
-        $sample_data = Sample::find($params);
-        $sample_list = $sample_data['items'];
-
-        return json_encode($sample_list);
+        return RestService::stats($rest_service_id, $repertoire_id, $stat);    
     }
 
     public function json(Request $request)

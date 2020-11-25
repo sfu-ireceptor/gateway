@@ -413,7 +413,7 @@ class RestService extends Model
             // prepare parameters for each service
             $t = [];
 
-            $rs = $rs = self::find($rs_id);
+            $rs = self::find($rs_id);
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'rearrangement';
 
@@ -684,6 +684,40 @@ class RestService extends Model
 
         return $response_list;
     }
+
+    public static function stats($rest_service_id, $repertoire_id, $stat)
+    {
+        // $str = file_get_contents("/home/vagrant/ireceptor_gateway/public/test_data/gene2.json");
+        // return $str;
+
+        $rs = self::find($rest_service_id);
+
+        $url = 'https://stats-staging.ireceptor.org/irplus/v1/stats/rearrangement/' . $stat;
+
+        Log::debug($url);
+
+        // http://gw_homestead.local/samples/stats/69/338/gene_usage
+
+        // curl -i https://stats-staging.ireceptor.org/irplus/v1/stats/rearrangement/gene_usage 
+        // {
+        //     "repertoires":[{"repertoire":{"repertoire_id":"322"}},{"repertoire":{"repertoire_id": "279"}}],
+        //     "statistics":["v_call_unique", "v_gene_unique", "v_subgroup_unique"]
+        // }
+
+        // create Guzzle client
+        $defaults = [];
+        $defaults['verify'] = false;    // accept self-signed SSL certificates
+        $defaults['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
+
+        $client = new \GuzzleHttp\Client($defaults);
+
+        $response = $client->request('POST', $url, [
+            'body' => '{"repertoires":[{"repertoire":{"repertoire_id":"322"}},{"repertoire":{"repertoire_id": "279"}}],"statistics":["v_call_unique", "v_gene_unique", "v_subgroup_unique"]}'
+        ]);
+
+        return $response->getBody();
+    }
+
 
     public static function sample_list_repertoire_data($filters, $folder_path, $username = '')
     {

@@ -34,7 +34,7 @@ Route::get('news', 'HomeController@news')->name('news');
 Route::get('/fields-definitions', 'HomeController@fieldsDefinitions')->name('fields-definitions');
 
 // public stats
-Route::get('/samples/stats', 'SampleController@stats')->name('samples-stats');
+Route::get('/samples/stats/{rest_service_id}/{repertoire_id}/{stat}', 'SampleController@stats')->name('samples-stats');
 
 // CANARIE monitoring - dynamic pages
 Route::get('platform/info', 'CanarieController@platformInfo');

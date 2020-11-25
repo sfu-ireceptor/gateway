@@ -153,13 +153,14 @@ $(document).ready(function() {
 		var button = $(event.relatedTarget),
 			repertoire_id = button.data('repertoireId'),
 			stats_url = button.data('url'),
+			stat = button.data('stat'),
 			gene = button.data('gene'),
 			x_label = button.data('xLabel'),
 			y_label = button.data('yLabel');
 
 		// update modal contents
-		$.get(stats_url, function(data){
-		    var d = airrvisualization.createVGeneStatsResult();
+		$.get(stats_url + '/' +  stat, function(data){
+		    var d = airrvisualization.createVGeneUsageStatsResult();
 		    d.setData(data);
 			var vars = airrvisualization.createProperties().setId("modal_stats").setXLabel(x_label).setYLabel(y_label);
 			var chart = airrvisualization.createChart(vars).setResult(d).plot();
