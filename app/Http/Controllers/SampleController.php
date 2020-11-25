@@ -6,8 +6,8 @@ use App\Bookmark;
 use App\FieldName;
 use App\Query;
 use App\QueryLog;
-use App\Sample;
 use App\RestService;
+use App\Sample;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -416,7 +416,7 @@ class SampleController extends Controller
 
     public function stats($rest_service_id, $repertoire_id, $stat, Request $request)
     {
-        return RestService::stats($rest_service_id, $repertoire_id, $stat);    
+        return RestService::stats($rest_service_id, $repertoire_id, $stat);
     }
 
     public function json(Request $request)

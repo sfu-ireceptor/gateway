@@ -698,7 +698,7 @@ class RestService extends Model
 
         // http://gw_homestead.local/samples/stats/69/338/gene_usage
 
-        // curl -i https://stats-staging.ireceptor.org/irplus/v1/stats/rearrangement/gene_usage 
+        // curl -i https://stats-staging.ireceptor.org/irplus/v1/stats/rearrangement/gene_usage
         // {
         //     "repertoires":[{"repertoire":{"repertoire_id":"322"}},{"repertoire":{"repertoire_id": "279"}}],
         //     "statistics":["v_call_unique", "v_gene_unique", "v_subgroup_unique"]
@@ -712,12 +712,11 @@ class RestService extends Model
         $client = new \GuzzleHttp\Client($defaults);
 
         $response = $client->request('POST', $url, [
-            'body' => '{"repertoires":[{"repertoire":{"repertoire_id":"322"}},{"repertoire":{"repertoire_id": "279"}}],"statistics":["v_call_unique", "v_gene_unique", "v_subgroup_unique"]}'
+            'body' => '{"repertoires":[{"repertoire":{"repertoire_id":"322"}},{"repertoire":{"repertoire_id": "279"}}],"statistics":["v_call_unique", "v_gene_unique", "v_subgroup_unique"]}',
         ]);
 
         return $response->getBody();
     }
-
 
     public static function sample_list_repertoire_data($filters, $folder_path, $username = '')
     {
