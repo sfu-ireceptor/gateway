@@ -438,7 +438,7 @@
 						@foreach ($sample_list as $sample)
 						<tr>
 							<td>
-								<a href="#modal_stats" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-stat="gene_usage" data-gene="v" data-x-label="Category" data-y-label="Count" data-repertoire-id="{{ $sample->repertoire_id }}" data-toggle="modal" data-target="#statsModal">
+								<a href="#modal_stats" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-id="{{ $sample->repertoire_id }}" data-toggle="modal" data-target="#statsModal">
 									<span class="label label-primary">
 										<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
 										Statistics
@@ -553,16 +553,16 @@
 							<div class="modal-body" id="">
 								<!-- Nav tabs -->
 								<ul class="nav nav-tabs" role="tablist">
-									<li role="presentation" class="active"><a href="#modal_stats" aria-controls="home" role="tab" data-toggle="tab">V-gene</a></li>
-									<li role="presentation"><a href="#tab2" aria-controls="profile" role="tab" data-toggle="tab">D-gene</a></li>
-									<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">J-gene</a></li>
+									<li role="presentation" class="active"><a href="#stats_vgene" data-stat="v_gene_usage" role="tab" data-toggle="tab">V-gene</a></li>
+									<li role="presentation"><a href="#stats_dgene" data-stat="d_gene_usage"role="tab" data-toggle="tab">D-gene</a></li>
+									<li role="presentation"><a href="#stats_jgene" data-stat="j_gene_usage" role="tab" data-toggle="tab">J-gene</a></li>
 								</ul>
 
 								<!-- Tab panes -->
 								<div class="tab-content">
-									<div role="tabpanel" class="tab-pane active" id="modal_stats">...</div>
-									<div role="tabpanel" class="tab-pane" id="tab2">D-Gene graph coming soon..</div>
-									<div role="tabpanel" class="tab-pane" id="messages">J-Gene graph coming soon..</div>
+									<div role="tabpanel" class="tab-pane active" id="stats_vgene">loading..</div>
+									<div role="tabpanel" class="tab-pane" id="stats_dgene">loading..</div>
+									<div role="tabpanel" class="tab-pane" id="stats_jgene">loading..</div>
 								</div>
 							</div>
 							<div class="modal-footer">

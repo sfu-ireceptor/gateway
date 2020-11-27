@@ -699,8 +699,6 @@ class RestService extends Model
         $rs = self::find($rest_service_id);
         $rs_base_url = str_replace('airr/v1/', '', $rs->url);
         $rs_stats_url = $rs_base_url . 'irplus/v1/stats/rearrangement/';
-        $url = $rs_stats_url . $stat;
-        Log::debug('Stats URL :' . $url);
 
         // create Guzzle client
         $defaults = [];
@@ -715,9 +713,30 @@ class RestService extends Model
         $repertoire_list[] = $repertoire_object;
 
         $statistics_list = [];
-        $statistics_list[] = 'v_call_unique';
-        $statistics_list[] = 'v_gene_unique';
-        $statistics_list[] = 'v_subgroup_unique';
+
+        if($stat == 'v_gene_usage') {
+            $url = $rs_stats_url . 'gene_usage';
+            $statistics_list[] = 'v_call_unique';
+            $statistics_list[] = 'v_gene_unique';
+            $statistics_list[] = 'v_subgroup_unique';            
+        }
+        else if ($stat == 'd_gene_usage') {
+            $url = $rs_stats_url . 'gene_usage';
+            $statistics_list[] = 'd_call_unique';
+            $statistics_list[] = 'd_gene_unique';
+            $statistics_list[] = 'd_subgroup_unique';                        
+        }
+        else if ($stat == 'j_gene_usage') {
+            $url = $rs_stats_url . 'gene_usage';
+            $statistics_list[] = 'j_call_unique';
+            $statistics_list[] = 'j_gene_unique';
+            $statistics_list[] = 'j_subgroup_unique';                        
+        }
+        else {
+            Log::error('Unknown stat:' . $stat);
+        }
+
+        Log::debug('Stats URL :' . $url);
 
         $filter_object = new \stdClass();
         $filter_object->repertoires = $repertoire_list;

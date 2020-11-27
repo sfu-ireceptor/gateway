@@ -150,24 +150,28 @@ $(document).ready(function() {
 
 	// repertoire statistics popup
 	$('#statsModal').on('show.bs.modal', function (event) {
-		var button = $(event.relatedTarget),
+		var modal = $(this),
+			button = $(event.relatedTarget),
 			repertoire_id = button.data('repertoireId'),
-			stats_url = button.data('url'),
-			stat = button.data('stat'),
-			gene = button.data('gene'),
-			x_label = button.data('xLabel'),
-			y_label = button.data('yLabel');
+			stats_url = button.data('url');
 
-		// update modal contents
-		$.get(stats_url + '/' +  stat, function(data){
-		    var d = airrvisualization.createVGeneUsageStatsResult();
-		    d.setData(data);
-			var vars = airrvisualization.createProperties().setId("modal_stats").setXLabel(x_label).setYLabel(y_label);
-			var chart = airrvisualization.createChart(vars).setResult(d).plot();
-		});
+			$('ul.nav-tabs li a', modal).each(function() {
+				var link = $(this),
+					stat = link.data('stat'),
+					target_id = link.attr('href').substring(1);
 
-		// update modal title
-		var modal = $(this);
+					console.log(target_id);
+					// TODO clear div
+
+					// update modal contents
+					$.get(stats_url + '/' +  stat, function(data){
+					    var d = airrvisualization.createVGeneUsageStatsResult();
+					    d.setData(data);
+						var vars = airrvisualization.createProperties().setId(target_id);
+						var chart = airrvisualization.createChart(vars).setResult(d).plot();
+					});
+			});
+		
 		modal.find('.modal-title').text('Repertoire: ' + repertoire_id);
 	});
 
