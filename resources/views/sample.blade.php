@@ -556,6 +556,8 @@
 									<li role="presentation" class="active"><a href="#stats_vgene" data-stat="v_gene_usage" role="tab" data-toggle="tab">V-gene</a></li>
 									<li role="presentation"><a href="#stats_dgene" data-stat="d_gene_usage"role="tab" data-toggle="tab">D-gene</a></li>
 									<li role="presentation"><a href="#stats_jgene" data-stat="j_gene_usage" role="tab" data-toggle="tab">J-gene</a></li>
+									<li role="presentation"><a href="#stats_junction_length" data-stat="junction_length_stats" role="tab" data-toggle="tab">Junction Length</a></li>
+									<li role="presentation"><a href="#stats_count" data-stat="count_stats" role="tab" data-toggle="tab">Rearrangement Count</a></li>
 								</ul>
 
 								<!-- Tab panes -->
@@ -563,6 +565,8 @@
 									<div role="tabpanel" class="tab-pane active" id="stats_vgene">loading..</div>
 									<div role="tabpanel" class="tab-pane" id="stats_dgene">loading..</div>
 									<div role="tabpanel" class="tab-pane" id="stats_jgene">loading..</div>
+									<div role="tabpanel" class="tab-pane" id="stats_junction_length">loading..</div>
+									<div role="tabpanel" class="tab-pane" id="stats_count">loading..</div>
 								</div>
 							</div>
 							<div class="modal-footer">

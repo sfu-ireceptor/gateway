@@ -732,6 +732,20 @@ class RestService extends Model
             $statistics_list[] = 'j_gene_unique';
             $statistics_list[] = 'j_subgroup_unique';                        
         }
+        else if ($stat == 'junction_length_stats') {
+            $url = $rs_stats_url . 'junction_length';
+            $statistics_list[] = 'junction_length';
+            $statistics_list[] = 'junction_aa_length';
+            $statistics_list[] = 'junction_length_productive';                        
+            $statistics_list[] = 'junction_aa_length_productive';                        
+        }
+        else if ($stat == 'count_stats') {
+            $url = $rs_stats_url . 'count';
+            $statistics_list[] = 'rearrangement_count';
+            $statistics_list[] = 'rearrangement_count_productive';
+            $statistics_list[] = 'duplicate_count';                        
+            $statistics_list[] = 'duplicate_count_productive';                        
+        }
         else {
             Log::error('Unknown stat:' . $stat);
         }

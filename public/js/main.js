@@ -160,13 +160,28 @@ $(document).ready(function() {
 					stat = link.data('stat'),
 					target_id = link.attr('href').substring(1);
 
-					console.log(target_id);
 					// TODO clear div
 
 					// update modal contents
 					$.get(stats_url + '/' +  stat, function(data){
-					    var d = airrvisualization.createVGeneUsageStatsResult();
+					    var d;
+					    if(stat == 'v_gene_usage') {
+						    d = airrvisualization.createVGeneUsageStatsResult();
+					    }
+					    else if(stat == 'd_gene_usage') {
+						    d = airrvisualization.createDGeneUsageStatsResult();					    	
+					    }
+					    else if(stat == 'j_gene_usage') {
+						    d = airrvisualization.createJGeneUsageStatsResult();					    	
+					    }
+					    else if(stat == 'count_stats') {
+						    d = airrvisualization.createCountStatsResult();					    	
+					    }
+					    else if(stat == 'junction_length_stats') {
+						    d = airrvisualization.createJunctionLengthStatsResult();					    	
+					    }					    
 					    d.setData(data);
+
 						var vars = airrvisualization.createProperties().setId(target_id);
 						var chart = airrvisualization.createChart(vars).setResult(d).plot();
 					});
