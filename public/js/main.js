@@ -164,15 +164,18 @@ $(document).ready(function() {
 
 					// update modal contents
 					$.get(stats_url + '/' +  stat, function(data){
-					    var d;
+					    let d;
 					    if(stat == 'v_gene_usage') {
 						    d = airrvisualization.createVGeneUsageStatsResult();
+						    d.setDrilldown(true);
 					    }
 					    else if(stat == 'd_gene_usage') {
-						    d = airrvisualization.createDGeneUsageStatsResult();					    	
+						    d = airrvisualization.createDGeneUsageStatsResult();
+						    d.setDrilldown(true);
 					    }
 					    else if(stat == 'j_gene_usage') {
 						    d = airrvisualization.createJGeneUsageStatsResult();					    	
+						    d.setDrilldown(true);
 					    }
 					    else if(stat == 'count_stats') {
 						    d = airrvisualization.createCountStatsResult();					    	
