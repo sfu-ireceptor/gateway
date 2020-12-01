@@ -158,9 +158,11 @@ $(document).ready(function() {
 			$('ul.nav-tabs li a', modal).each(function() {
 				var link = $(this),
 					stat = link.data('stat'),
-					target_id = link.attr('href').substring(1);
+					anchor = link.attr('href'),
+					target_id = anchor.substring(1);
 
-					// TODO clear div
+					// clear div
+					$(anchor).empty();
 
 					// update modal contents
 					$.get(stats_url + '/' +  stat, function(data){
