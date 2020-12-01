@@ -152,7 +152,7 @@ $(document).ready(function() {
 	$('#statsModal').on('show.bs.modal', function (event) {
 		var modal = $(this),
 			button = $(event.relatedTarget),
-			repertoire_id = button.data('repertoireId'),
+			repertoire_name = button.data('repertoireName'),
 			stats_url = button.data('url');
 
 			$('ul.nav-tabs li a', modal).each(function() {
@@ -190,7 +190,7 @@ $(document).ready(function() {
 					});
 			});
 		
-		modal.find('.modal-title').text('Repertoire: ' + repertoire_id);
+		modal.find('.modal-title').text('Repertoire: ' + repertoire_name);
 	});
 
 
