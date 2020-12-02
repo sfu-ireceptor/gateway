@@ -274,6 +274,15 @@ class RestService extends Model
             // if well-formed response
             if (isset($response['data']->Repertoire)) {
                 $sample_list = $response['data']->Repertoire;
+                
+                // ignore samples which are not objects
+                foreach ($sample_list as $j => $sample) {
+                    if(! is_object($sample)) {
+                        unset($sample_list[$j]);
+                        continue;
+                    }
+                }
+
                 $sample_id_list = [];
                 foreach ($sample_list as $sample) {
                     // add rest_service_id to each sample
