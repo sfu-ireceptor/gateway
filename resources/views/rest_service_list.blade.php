@@ -48,7 +48,7 @@
 																Study:
 																@if (isset($study['study_url']))
 																	<a href="{{ $study['study_url'] }}" title="{{ $study['study_title'] }}" target="_blank">
-																		{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }} (NCBI)
+																		{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
 																	</a>
 																@else
 																	<span title="{{ $study['study_title'] }}">
