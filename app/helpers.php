@@ -347,12 +347,11 @@ if (! function_exists('data_set_object')) {
         } elseif (Arr::accessible($target)) {
             if ($segments) {
                 if (! Arr::exists($target, $segment)) {
-                     if(is_numeric($segment)) {
+                    if (is_numeric($segment)) {
                         $target[$segment] = new \stdClass();
-                     }
-                     else {
+                    } else {
                         $target->{$segment} = new \stdClass();
-                     }
+                    }
                 }
 
                 data_set_object($target[$segment], $segments, $value, $overwrite);
@@ -365,19 +364,20 @@ if (! function_exists('data_set_object')) {
             if ($segments) {
                 // Log::debug('Assigning to ' . json_encode($segment) . ': ' . json_encode($value));
                 // Log::debug(json_encode($target));
-                if(is_numeric($segment)) {
+                if (is_numeric($segment)) {
                     $target = [];
                     $target[$segment] = new \stdClass();
                     data_set_object($target[$segment], $segments, $value, $overwrite);
+
                     return $target;
                     // if (! isset($target[$segment])) {
                     //     $target[$segment] = new \stdClass();
-                    // }                    
+                    // }
                 }
 
                 if (! isset($target->{$segment})) {
                     $target->{$segment} = new \stdClass();
-                }                    
+                }
 
                 data_set_object($target->{$segment}, $segments, $value, $overwrite);
             } elseif ($overwrite || ! isset($target->{$segment})) {

@@ -7,7 +7,6 @@ use Facades\App\FieldName;
 use Facades\App\RestService;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use ZipArchive;
 
 class Sample
 {
@@ -459,7 +458,7 @@ class Sample
 
         // build json structure
         $obj = new \stdClass();
- 
+
         $obj->Info = new \stdClass();
         $obj->Info->title = 'AIRR Data Commons API';
         $obj->Info->description = 'API response for repertoire query';
@@ -480,10 +479,10 @@ class Sample
                         $airr_name = $sample_field['ir_adc_api_response'];
                         data_set_object($airr_sample, $airr_name, $field_value);
                         $is_airr_field = true;
-                        break;   
+                        break;
                     }
                 }
-                if(! $is_airr_field) {
+                if (! $is_airr_field) {
                     $airr_sample->{'ir_' . $field_name} = $field_value;
                 }
             }
