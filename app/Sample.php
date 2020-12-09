@@ -484,7 +484,7 @@ class Sample
 
         // generate JSON string from JSON structure
         $json = json_encode($obj, JSON_PRETTY_PRINT);
-        
+
         // generate file name
         $storage_folder = storage_path() . '/app/public/';
         $now = time();
