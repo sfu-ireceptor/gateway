@@ -449,14 +449,7 @@ class Sample
         $sample_data = self::find($filters, $username);
         $sample_list = $sample_data['items'];
 
-        // generate file name
-        $storage_folder = storage_path() . '/app/public/';
-        $now = time();
-        $time_str = date('Y-m-d_Hi', $now);
-        $file_name = 'ir_' . $time_str . '_' . uniqid() . '.json';
-        $file_path = $storage_folder . $file_name;
-
-        // build json structure
+        // build JSON structure
         $obj = new \stdClass();
 
         $obj->Info = new \stdClass();
@@ -467,9 +460,8 @@ class Sample
         $obj->Info->contact->name = 'AIRR Community';
         $obj->Info->contact->url = 'https://github.com/airr-community';
 
-        $obj->Repertoire = [];
-
         $sample_field_list = FieldName::getSampleFields();
+        $obj->Repertoire = [];
         foreach ($sample_list as $sample) {
             $airr_sample = new \stdClass();
             foreach ($sample as $field_name => $field_value) {
@@ -490,7 +482,17 @@ class Sample
             $obj->Repertoire[] = $airr_sample;
         }
 
+        // generate JSON string from JSON structure
         $json = json_encode($obj, JSON_PRETTY_PRINT);
+        
+        // generate file name
+        $storage_folder = storage_path() . '/app/public/';
+        $now = time();
+        $time_str = date('Y-m-d_Hi', $now);
+        $file_name = 'ir_' . $time_str . '_' . uniqid() . '.json';
+        $file_path = $storage_folder . $file_name;
+
+        // write JSON string to file
         file_put_contents($file_path, $json);
 
         $public_path = 'storage' . str_after($file_path, storage_path('app/public'));
