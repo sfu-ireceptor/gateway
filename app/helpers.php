@@ -357,10 +357,9 @@ if (! function_exists('data_set_object')) {
 
                 data_set_object($target[$segment], $segments, $value, $overwrite);
             } elseif ($overwrite || ! Arr::exists($target, $segment)) {
-                if(is_object($target)) {
+                if (is_object($target)) {
                     $target->{$segment} = $value;
-                }
-                else {
+                } else {
                     $target[$segment] = $value;
                 }
             }
