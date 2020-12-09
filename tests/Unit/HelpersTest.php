@@ -6,9 +6,10 @@ use PHPUnit\Framework\TestCase;
 
 class HelpersTest extends TestCase
 {
-	// copied from Laravel test for data_set()
+    // copied from Laravel test for data_set()
+
     /** @test */
-	public function dataSetObject()
+    public function dataSetObject()
     {
         $data = ['foo' => 'bar'];
 
@@ -36,12 +37,12 @@ class HelpersTest extends TestCase
     /** @test */
     public function dataSetObjectWithObject()
     {
-    	// setting an object property
+        // setting an object property
         $obj = new \stdClass();
         data_set_object($obj, 'foo', 'bar');
         $this->assertSame($obj->foo, 'bar');
 
-    	// setting a nested object property
+        // setting a nested object property
         $obj = new \stdClass();
         $obj->foo = new \stdClass();
         data_set_object($obj, 'foo.bar', 'baz');
@@ -60,5 +61,5 @@ class HelpersTest extends TestCase
         $obj = new \stdClass();
         data_set_object($obj, 'foo.0.bar', 'baz');
         $this->assertSame($obj->foo[0]->bar, 'baz');
-	}
+    }
 }
