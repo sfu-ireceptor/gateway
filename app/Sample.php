@@ -7,7 +7,6 @@ use Facades\App\FieldName;
 use Facades\App\RestService;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use ZipArchive;
 
 class Sample
 {
@@ -118,8 +117,23 @@ class Sample
     {
         $service_filters = $filters;
 
+        // rest service filter
+        $rest_service_id_list = null;
+        if (isset($service_filters['rest_service_name'])) {
+            $str = $service_filters['rest_service_name'];
+            $rest_service_id_list = [];
+
+            foreach (RestService::findEnabled() as $rs) {
+                $name = $rs->display_name;
+                if (strpos($name, $str) !== false) {
+                    $rest_service_id_list[] = $rs->id;
+                }
+            }
+            unset($service_filters['rest_service_name']);
+        }
+
         // do requests
-        $response_list = RestService::samples($service_filters, $username, $count_sequences);
+        $response_list = RestService::samples($service_filters, $username, $count_sequences, $rest_service_id_list);
 
         // if error, update gateway query status
         $gw_query_log_id = request()->get('query_log_id');
@@ -446,62 +460,62 @@ class Sample
 
     public static function samplesJSON($filters, $username)
     {
-        // create folder
+        // get samples
+        $sample_data = self::find($filters, $username);
+        $sample_list = $sample_data['items'];
+
+        // build JSON structure
+        $obj = new \stdClass();
+
+        $obj->Info = new \stdClass();
+        $obj->Info->title = 'AIRR Data Commons API';
+        $obj->Info->description = 'API response for repertoire query';
+        $obj->Info->version = 1.3;
+        $obj->Info->contact = new \stdClass();
+        $obj->Info->contact->name = 'AIRR Community';
+        $obj->Info->contact->url = 'https://github.com/airr-community';
+
+        $sample_field_list = FieldName::getSampleFields();
+        $obj->Repertoire = [];
+        foreach ($sample_list as $sample) {
+            $airr_sample = new \stdClass();
+            foreach ($sample as $field_name => $field_value) {
+                $is_airr_field = false;
+                foreach ($sample_field_list as $sample_field) {
+                    if ($sample_field['ir_id'] == $field_name && isset($sample_field['ir_adc_api_response'])) {
+                        $airr_name = $sample_field['ir_adc_api_response'];
+                        data_set_object($airr_sample, $airr_name, $field_value);
+                        $is_airr_field = true;
+                        break;
+                    }
+                }
+                if (! $is_airr_field) {
+                    $airr_sample->{'ir_' . $field_name} = $field_value;
+                }
+            }
+
+            $obj->Repertoire[] = $airr_sample;
+        }
+
+        // generate JSON string from JSON structure
+        $json = json_encode($obj, JSON_PRETTY_PRINT);
+
+        // generate file name
         $storage_folder = storage_path() . '/app/public/';
         $now = time();
         $time_str = date('Y-m-d_Hi', $now);
-        $folder_name = 'ir_' . $time_str . '_' . uniqid();
-        $folder_path = $storage_folder . $folder_name;
-        File::makeDirectory($folder_path, 0777, true, true);
+        $file_name = 'ir_' . $time_str . '_' . uniqid() . '.json';
+        $file_path = $storage_folder . $file_name;
 
-        // download json into files
-        $metadata_response_list = RestService::repertoire_data($filters, $folder_path, $username);
+        // write JSON string to file
+        file_put_contents($file_path, $json);
 
-        // create zip file from folder
-        $zip_path = $folder_path . '.zip';
-        Log::info('Zip files to ' . $zip_path);
-        $zip = new ZipArchive();
-        $zip->open($zip_path, ZipArchive::CREATE);
+        $public_path = 'storage' . str_after($file_path, storage_path('app/public'));
 
-        foreach ($metadata_response_list as $response) {
-            if (isset($response['data']['file_path'])) {
-                $file_path = $response['data']['file_path'];
-
-                // try to prettify json
-                $json_data = file_get_contents($file_path);
-                $json_data_pretty = json_encode(json_decode($json_data), JSON_PRETTY_PRINT);
-                if ($json_data_pretty != null) {
-                    $json_data = $json_data_pretty;
-                }
-
-                file_put_contents($file_path, $json_data);
-
-                Log::debug('Adding to ZIP: ' . $file_path);
-                $zip->addFile($file_path, basename($file_path));
-            }
-        }
-
-        $zip->close();
-
-        // delete files
-        Log::debug('Deleting downloaded files...');
-        foreach ($metadata_response_list as $response) {
-            $file_path = $response['data']['file_path'];
-            if (File::exists($file_path)) {
-                File::delete($file_path);
-            }
-        }
-
-        // delete folder
-        if (File::exists($folder_path)) {
-            rmdir($folder_path);
-        }
-
-        $zip_public_path = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
         $t = [];
-        $t['size'] = filesize($zip_path);
-        $t['system_path'] = $zip_path;
-        $t['public_path'] = $zip_public_path;
+        $t['size'] = filesize($file_path);
+        $t['system_path'] = $file_path;
+        $t['public_path'] = $public_path;
 
         return $t;
     }

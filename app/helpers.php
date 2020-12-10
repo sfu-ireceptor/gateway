@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 
 if (! function_exists('dir_to_array')) {
     function dir_to_array($dir)
@@ -311,5 +312,85 @@ if (! function_exists('get_data_fields')) {
         }
 
         return $keys;
+    }
+}
+
+// add data to an object using dot notation.
+// create objects from any intermediate structure (instead of arrays)
+if (! function_exists('data_set_object')) {
+    /**
+     * Set an item on an object using dot notation.
+     *
+     * @param  mixed  $target
+     * @param  string|array  $key
+     * @param  mixed  $value
+     * @param  bool  $overwrite
+     * @return mixed
+     */
+    function data_set_object(&$target, $key, $value, $overwrite = true)
+    {
+        $segments = is_array($key) ? $key : explode('.', $key);
+
+        if (($segment = array_shift($segments)) === '*') {
+            if (! Arr::accessible($target)) {
+                $target = [];
+            }
+
+            if ($segments) {
+                foreach ($target as &$inner) {
+                    data_set($inner, $segments, $value, $overwrite);
+                }
+            } elseif ($overwrite) {
+                foreach ($target as &$inner) {
+                    $inner = $value;
+                }
+            }
+        } elseif (Arr::accessible($target)) {
+            if ($segments) {
+                if (! Arr::exists($target, $segment)) {
+                    if (is_numeric($segment)) {
+                        $target[$segment] = new \stdClass();
+                    } else {
+                        $target->{$segment} = new \stdClass();
+                    }
+                }
+
+                data_set_object($target[$segment], $segments, $value, $overwrite);
+            } elseif ($overwrite || ! Arr::exists($target, $segment)) {
+                if (is_object($target)) {
+                    $target->{$segment} = $value;
+                } else {
+                    $target[$segment] = $value;
+                }
+            }
+        } elseif (is_object($target)) {
+            if ($segments) {
+                if (is_numeric($segment)) {
+                    $target = [];
+                    $target[$segment] = new \stdClass();
+                    data_set_object($target[$segment], $segments, $value, $overwrite);
+
+                    return $target;
+                }
+
+                if (! isset($target->{$segment})) {
+                    $target->{$segment} = new \stdClass();
+                }
+
+                data_set_object($target->{$segment}, $segments, $value, $overwrite);
+            } elseif ($overwrite || ! isset($target->{$segment})) {
+                $target->{$segment} = $value;
+            }
+        } else {
+            $target = new \stdClass();
+
+            if ($segments) {
+                data_set_object($target[$segment], $segments, $value, $overwrite);
+            } elseif ($overwrite) {
+                $target[$segment] = $value;
+            }
+        }
+
+        return $target;
     }
 }
