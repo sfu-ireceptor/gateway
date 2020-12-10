@@ -117,8 +117,24 @@ class Sample
     {
         $service_filters = $filters;
 
+        // rest service filter
+        $rest_service_id_list = null;
+        if(isset($service_filters['rest_service_name'])) {
+            $str = $service_filters['rest_service_name'];
+            $rest_service_id_list = [];
+
+            foreach (RestService::findEnabled() as $rs) {
+                $name = $rs->display_name;
+                if (strpos($name, $str) !== false) {
+                    $rest_service_id_list[] = $rs->id;
+                }
+            }
+            unset($service_filters['rest_service_name']);
+        }
+
+
         // do requests
-        $response_list = RestService::samples($service_filters, $username, $count_sequences);
+        $response_list = RestService::samples($service_filters, $username, $count_sequences, $rest_service_id_list);
 
         // if error, update gateway query status
         $gw_query_log_id = request()->get('query_log_id');
