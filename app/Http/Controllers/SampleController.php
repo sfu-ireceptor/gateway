@@ -443,7 +443,7 @@ class SampleController extends Controller
             $query_log->save();
         }
 
-        return redirect($file_path);
+        return response()->download($file_path);
     }
 
     public function tsv(Request $request)
@@ -470,7 +470,7 @@ class SampleController extends Controller
             $query_log->save();
         }
 
-        return redirect($file_path);
+        return response()->download($file_path);
     }
 
     public function field($id)
