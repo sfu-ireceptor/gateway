@@ -105,6 +105,10 @@ class RestServiceSeeder extends Seeder
                 'url' => 'https://pangaea.scireptor.net/airr/v1/',
                 'name' => 'sciReptor',
             ],
+            [
+                'url' => 'https://ireceptor-us.medgenome.com/airr/v1/',
+                'name' => 'MedGenome',
+            ],
         ];
 
         // if grouping is disabled, remove group code
