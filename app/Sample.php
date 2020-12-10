@@ -119,7 +119,7 @@ class Sample
 
         // rest service filter
         $rest_service_id_list = null;
-        if(isset($service_filters['rest_service_name'])) {
+        if (isset($service_filters['rest_service_name'])) {
             $str = $service_filters['rest_service_name'];
             $rest_service_id_list = [];
 
@@ -131,7 +131,6 @@ class Sample
             }
             unset($service_filters['rest_service_name']);
         }
-
 
         // do requests
         $response_list = RestService::samples($service_filters, $username, $count_sequences, $rest_service_id_list);
