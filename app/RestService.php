@@ -1193,7 +1193,9 @@ class RestService extends Model
                             $t['error_type'] = 'error';
                             $error_class = get_class_name($exception);
                             if ($error_class == 'ConnectException') {
-                                $t['error_type'] = 'timeout';
+                                if (strpos($response, 'error 28') !== false) {
+                                    $t['error_type'] = 'timeout';
+                                }
                             }
 
                             // update gateway user query status
