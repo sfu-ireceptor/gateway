@@ -125,7 +125,7 @@ class Sample
 
             foreach (RestService::findEnabled() as $rs) {
                 $name = $rs->display_name;
-                if (strpos($name, $str) !== false) {
+                if (stripos($name, $str) !== false) {
                     $rest_service_id_list[] = $rs->id;
                 }
             }
