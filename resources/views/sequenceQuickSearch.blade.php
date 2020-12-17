@@ -211,7 +211,7 @@
 
 						<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
 						  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-						  Customize columns
+						  Customize displayed columns
 						</a>						
 					</h3>
 					
@@ -220,7 +220,7 @@
 						<div class="panel panel-default">
 							<div class="panel-heading">
 								<h4 class="panel-title">
-									Edit Individual Sequences Columns
+									Customize displayed columns
 									<button class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
 										<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 						  				Close
