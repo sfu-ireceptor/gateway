@@ -339,7 +339,7 @@ class AdminController extends Controller
         if ($chunk_size == null) {
             $message = $rs->name . ' does not have a max_size :)';
         } elseif (is_string($chunk_size)) {
-            $message = 'An error occured when trying to retrieve max_size from ' . $rs->name . ': ' . $chunk_size;
+            $message = 'An error occurred when trying to retrieve max_size from ' . $rs->name . ': ' . $chunk_size;
         } else {
             $message = $rs->name . ' max_size was successfully updated to ' . $chunk_size;
         }

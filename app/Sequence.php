@@ -452,7 +452,7 @@ class Sequence
         $s .= "\n";
 
         if (! empty($failed_rs)) {
-            $s .= 'Warning: some files are missing because an error occured while downloading sequences from these repositories:' . "\n";
+            $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "\n";
             foreach ($failed_rs as $rs) {
                 // code...
             }
