@@ -168,9 +168,17 @@ class Sequence
 
         $is_download_incomplete = false;
 
-        // did the download failed for some services?
+        // did the download fail for some services?
         $failed_rs = [];
         foreach ($response_list as $response) {
+            if ($response['status'] == 'error') {
+                $failed_rs[] = $response['rs'];
+                $is_download_incomplete = true;
+            }
+        }
+
+        // did the repertoire query fail for some services?
+        foreach ($metadata_response_list as $response) {
             if ($response['status'] == 'error') {
                 $failed_rs[] = $response['rs'];
                 $is_download_incomplete = true;
