@@ -166,29 +166,36 @@ $(document).ready(function() {
 
 					// update modal contents
 					$.get(stats_url + '/' +  stat, function(data){
-					    let d;
+
+					    let properties = airrvisualization.createProperties();
+
 					    if(stat == 'v_gene_usage') {
-						    d = airrvisualization.createVGeneUsageStatsResult();
-						    d.setDrilldown(true);
+						    properties.setDataType('VGeneUsage');
+						    properties.setDataDrilldown(true);
 					    }
 					    else if(stat == 'd_gene_usage') {
-						    d = airrvisualization.createDGeneUsageStatsResult();
-						    d.setDrilldown(true);
+						    properties.setDataType('DGeneUsage');
+						    properties.setDataDrilldown(true);
 					    }
 					    else if(stat == 'j_gene_usage') {
-						    d = airrvisualization.createJGeneUsageStatsResult();					    	
-						    d.setDrilldown(true);
+						    properties.setDataType('JGeneUsage');
+						    properties.setDataDrilldown(true);
 					    }
 					    else if(stat == 'count_stats') {
-						    d = airrvisualization.createCountStatsResult();					    	
+						    // properties.setDataType('JGeneUsage');
+							properties.setDataType('CloneCount');
+
+						    // d = airrvisualization.createCountStatsResult();					    	
 					    }
 					    else if(stat == 'junction_length_stats') {
-						    d = airrvisualization.createJunctionLengthStatsResult();					    	
+						    // d = airrvisualization.createJunctionLengthStatsResult();					    	
+							properties.setDataType('CloneCount');
 					    }					    
-					    d.setData(data);
 
-						var vars = airrvisualization.createProperties().setId(target_id);
-						var chart = airrvisualization.createChart(vars).setResult(d).plot();
+	                    // properties.setId(target_id).setXLabel("X Axis Title Example").setSort(true).setTitle("My title").setDataType('VGeneUsage').setData(data);
+						properties.setId(target_id).setSort(true).setData(data).setTitle(' ');
+						let chart = airrvisualization.createChart(properties);
+	                    chart.plot();
 					});
 			});
 		
