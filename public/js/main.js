@@ -199,7 +199,7 @@ $(document).ready(function() {
 					});
 			});
 		
-		modal.find('.modal-title').text('Repertoire: ' + repertoire_name);
+		modal.find('.modal-title').text(repertoire_name);
 	});
 
 
