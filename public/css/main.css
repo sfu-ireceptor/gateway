@@ -191,6 +191,10 @@ fieldset {
 	margin-bottom: 5px;
 }
 
+.sample_stats_info {
+	text-align: left;
+}
+
 .filter_box {
 	list-style-type: none;
 	padding-left: 3px;

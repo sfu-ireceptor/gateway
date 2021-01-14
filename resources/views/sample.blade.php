@@ -557,7 +557,6 @@
 									<li role="presentation"><a href="#stats_dgene" data-stat="d_gene_usage"role="tab" data-toggle="tab">D-gene</a></li>
 									<li role="presentation"><a href="#stats_jgene" data-stat="j_gene_usage" role="tab" data-toggle="tab">J-gene</a></li>
 									<li role="presentation"><a href="#stats_junction_length" data-stat="junction_length_stats" role="tab" data-toggle="tab">Junction Length</a></li>
-									<li role="presentation"><a href="#stats_count" data-stat="count_stats" role="tab" data-toggle="tab">Rearrangement Count</a></li>
 								</ul>
 
 								<!-- Tab panes -->
@@ -566,7 +565,40 @@
 									<div role="tabpanel" class="tab-pane" id="stats_dgene">loading..</div>
 									<div role="tabpanel" class="tab-pane" id="stats_jgene">loading..</div>
 									<div role="tabpanel" class="tab-pane" id="stats_junction_length">loading..</div>
-									<div role="tabpanel" class="tab-pane" id="stats_count">loading..</div>
+								</div>
+							</div>
+							<div class="modal-footer sample_stats_info">
+								<div class="row">
+									<div class="col-md-4">
+										<p>
+											<strong>Rearrangement Count:</strong>
+											<span class="ir_sequence_count"></span>
+										</p>
+										<p>
+											<strong>Subject ID:</strong>
+											<span class="subject_id"></span>
+										</p>
+									</div>
+									<div class="col-md-4">
+										<p>
+											<strong>PCR target:</strong>
+											<span class="pcr_target_locus"></span>
+										</p>
+										<p>
+											<strong>Field 3:</strong>
+											<span class=""></span>
+										</p>
+									</div>
+									<div class="col-md-4">
+										<p>
+											<strong>Field 4:</strong>
+											<span class=""></span>
+										</p>
+										<p>
+											<strong>Field:</strong>
+											<span class=""></span>
+										</p>
+									</div>
 								</div>
 							</div>
 							<div class="modal-footer">
