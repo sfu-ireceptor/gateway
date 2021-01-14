@@ -418,7 +418,7 @@ class SampleController extends Controller
     {
         $sample_list = RestService::samples(['repertoire_id' => $repertoire_id], '', true, [$rest_service_id], false);
         $sample = $sample_list[0]['data'][0];
-     
+
         $stats = RestService::stats($rest_service_id, $repertoire_id, $stat);
 
         $t = [];
