@@ -201,7 +201,7 @@
 		<script src="/js/pluralize.js"></script>
 
 		<script src="/js/airrvisualization.js?v=5"></script>
-		<script src="/js/main.js?v=43"></script>
+		<script src="/js/main.js?v=44"></script>
 		<script src="/js/visualization.js?v=17"></script>
 	</body>
 

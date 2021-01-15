@@ -155,6 +155,12 @@ $(document).ready(function() {
 			repertoire_name = button.data('repertoireName'),
 			stats_url = button.data('url');
 
+			// un-highlight any highlighted table rows
+			$('tr.info', button.parents('table')).removeClass('info');
+
+			// highlight this table row
+			button.parents('tr').addClass('info');
+
 			$('ul.nav-tabs li a', modal).each(function() {
 				var link = $(this),
 					stat = link.data('stat'),
@@ -166,7 +172,7 @@ $(document).ready(function() {
 
 					// update modal contents
 					$.get(stats_url + '/' +  stat, function(data){
-						
+
 					    let properties = airrvisualization.createProperties();
 
 					    if(stat == 'v_gene_usage') {
