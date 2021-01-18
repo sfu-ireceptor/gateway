@@ -53,11 +53,41 @@ class RestService extends Model
 
             return null;
         } catch (\Exception $e) {
-            $error_message = $exception->getMessage();
+            $error_message = $e->getMessage();
             Log::error($error_message);
 
             return $error_message;
         }
+    }
+
+    public function refreshStatsCapability()
+    {
+        $rs_base_url = str_replace('airr/v1/', '', $this->url);
+        $rs_stats_url = $rs_base_url . 'irplus/v1/';
+
+
+        $defaults = [];
+        $defaults['base_uri'] = $rs_stats_url;
+        $defaults['verify'] = false;    // accept self-signed SSL certificates
+
+        try {
+            $client = new \GuzzleHttp\Client($defaults);
+
+            $response = $client->get('stats');
+            $body = $response->getBody();
+            $json = json_decode($body);
+
+            if (isset($json->result)) {
+                $this->stats = true;
+                $this->save();
+                return true;
+            }
+        } catch (\Exception $e) {
+            $error_message = $e->getMessage();
+            Log::error($error_message);
+        }
+
+        return false;
     }
 
     public static function getDisplayName($rs)
@@ -289,6 +319,7 @@ class RestService extends Model
                     // done here so it's the real service id (not the group id)
                     // so any subsequent query is sent to the right service
                     $sample->real_rest_service_id = $rs->id;
+                    $sample->stats = $rs->stats;
 
                     // build list of sample ids
                     $sample_id_list[] = $sample->repertoire_id;

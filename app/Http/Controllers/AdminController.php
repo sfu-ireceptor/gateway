@@ -337,11 +337,19 @@ class AdminController extends Controller
         $chunk_size = $rs->refreshChunkSize();
 
         if ($chunk_size == null) {
-            $message = $rs->name . ' does not have a max_size :)';
+            $message = $rs->name . ' doesn\'t have a max_size';
         } elseif (is_string($chunk_size)) {
             $message = 'An error occured when trying to retrieve max_size from ' . $rs->name . ': ' . $chunk_size;
         } else {
             $message = $rs->name . ' max_size was successfully updated to ' . $chunk_size;
+        }
+
+        $stats = $rs->refreshStatsCapability();
+        if($stats) {
+            $message .= '. Stats are available.';
+        }
+        else {
+            $message .= '. Stats are not available.';
         }
 
         return redirect('admin/databases')->with('notification', $message);
