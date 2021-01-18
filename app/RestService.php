@@ -65,7 +65,6 @@ class RestService extends Model
         $rs_base_url = str_replace('airr/v1/', '', $this->url);
         $rs_stats_url = $rs_base_url . 'irplus/v1/';
 
-
         $defaults = [];
         $defaults['base_uri'] = $rs_stats_url;
         $defaults['verify'] = false;    // accept self-signed SSL certificates
@@ -80,6 +79,7 @@ class RestService extends Model
             if (isset($json->result)) {
                 $this->stats = true;
                 $this->save();
+
                 return true;
             }
         } catch (\Exception $e) {

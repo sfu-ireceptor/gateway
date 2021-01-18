@@ -345,10 +345,9 @@ class AdminController extends Controller
         }
 
         $stats = $rs->refreshStatsCapability();
-        if($stats) {
+        if ($stats) {
             $message .= '. Stats are available.';
-        }
-        else {
+        } else {
             $message .= '. Stats are not available.';
         }
 
