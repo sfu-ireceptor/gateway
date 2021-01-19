@@ -1071,6 +1071,7 @@ class RestService extends Model
             $request_params_chunked = array_chunk($request_params_chunking, 15);
             $response_list = [];
             $failed = false;
+            $failed_response = null;
             foreach ($request_params_chunked as $requests) {
 
                 // try each group of queries up to 3 times
@@ -1082,6 +1083,7 @@ class RestService extends Model
                     foreach ($response_list_chunk as $response) {
                         if ($response['status'] == 'error') {
                             $has_errors = true;
+                            $failed_response = $response;
                         }
                     }
 
@@ -1103,7 +1105,7 @@ class RestService extends Model
             }
 
             if ($failed) {
-                $response = $response_list[0][0];
+                $response = $failed_response;
             } else {
                 $output_files = [];
                 foreach ($response_list as $response_group) {

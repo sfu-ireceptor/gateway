@@ -168,9 +168,17 @@ class Sequence
 
         $is_download_incomplete = false;
 
-        // did the download failed for some services?
+        // did the download fail for some services?
         $failed_rs = [];
         foreach ($response_list as $response) {
+            if ($response['status'] == 'error') {
+                $failed_rs[] = $response['rs'];
+                $is_download_incomplete = true;
+            }
+        }
+
+        // did the repertoire query fail for some services?
+        foreach ($metadata_response_list as $response) {
             if ($response['status'] == 'error') {
                 $failed_rs[] = $response['rs'];
                 $is_download_incomplete = true;
@@ -452,7 +460,7 @@ class Sequence
         $s .= "\n";
 
         if (! empty($failed_rs)) {
-            $s .= 'Warning: some files are missing because an error occured while downloading sequences from these repositories:' . "\n";
+            $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "\n";
             foreach ($failed_rs as $rs) {
                 // code...
             }

@@ -5,7 +5,7 @@ DOWNLOADS_FOLDER=${SCRIPT_FOLDER}'/../../storage/app/public/'
 
 date
 echo "Deleting old files in $DOWNLOADS_FOLDER"
-find $DOWNLOADS_FOLDER  -type f  -name '[!.]*' -mtime +6 -delete
+sudo find $DOWNLOADS_FOLDER  -type f  -name '[!.]*' -mtime +6 -delete
 
 # Reference
 # https://stackoverflow.com/questions/59895/getting-the-source-directory-of-a-bash-script-from-within
