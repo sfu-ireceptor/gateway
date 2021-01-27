@@ -202,7 +202,7 @@
 
 		<script src="/js/airrvisualization.js?v=6"></script>
 		<script src="/js/main.js?v=44"></script>
-		<script src="/js/visualization.js?v=17"></script>
+		<script src="/js/visualization.js?v=18"></script>
 	</body>
 
 </html>

@@ -1,5 +1,5 @@
 /*!
- * AIRR Visualization Library v0.4.0 (2021-01-25)
+ * AIRR Visualization Library v0.4.0 (2021-01-27)
  * 
  * Build Charts for AIIR Data Commons
  * 
