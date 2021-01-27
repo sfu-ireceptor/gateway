@@ -771,10 +771,7 @@ class RestService extends Model
             $statistics_list[] = 'j_subgroup_unique';
         } elseif ($stat == 'junction_length_stats') {
             $url = $rs_stats_url . 'junction_length';
-            $statistics_list[] = 'junction_length';
             $statistics_list[] = 'junction_aa_length';
-            $statistics_list[] = 'junction_length_productive';
-            $statistics_list[] = 'junction_aa_length_productive';
         } elseif ($stat == 'count_stats') {
             $url = $rs_stats_url . 'count';
             $statistics_list[] = 'rearrangement_count';
@@ -798,6 +795,7 @@ class RestService extends Model
             'body' => $filter_object_json,
         ]);
 
+        Log::debug('Stats JSON response: ' . $response->getBody());
         return $response->getBody();
     }
 
