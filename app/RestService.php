@@ -796,6 +796,7 @@ class RestService extends Model
         ]);
 
         Log::debug('Stats JSON response: ' . $response->getBody());
+
         return $response->getBody();
     }
 
