@@ -188,7 +188,7 @@ $(document).ready(function() {
 						    properties.setDataDrilldown(true);
 					    }
 					    else if(stat == 'junction_length_stats') {
-							properties.setDataType('CloneCount');
+							properties.setDataType('JunctionLength');
 					    }					    
 
 	                    // properties.setId(target_id).setXLabel("X Axis Title Example").setSort(true).setTitle("My title").setDataType('VGeneUsage').setData(data);
