@@ -178,14 +178,17 @@ $(document).ready(function() {
 					    if(stat == 'v_gene_usage') {
 						    properties.setDataType('VGeneUsage');
 						    properties.setDataDrilldown(true);
+						    properties.setSubtitle(["Subgroup/Family", "Gene", "Allele"]);
 					    }
 					    else if(stat == 'd_gene_usage') {
 						    properties.setDataType('DGeneUsage');
 						    properties.setDataDrilldown(true);
+						    properties.setSubtitle(["Subgroup/Family", "Gene", "Allele"]);
 					    }
 					    else if(stat == 'j_gene_usage') {
 						    properties.setDataType('JGeneUsage');
 						    properties.setDataDrilldown(true);
+						    properties.setSubtitle(["Subgroup/Family", "Gene", "Allele"]);
 					    }
 					    else if(stat == 'junction_length_stats') {
 							properties.setDataType('JunctionLength');
