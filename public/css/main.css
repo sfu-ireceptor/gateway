@@ -142,7 +142,7 @@ fieldset {
 
 .active_filters h3 {
 	margin-top: 0px;
-	margin-bottom: 7px;
+	margin-bottom: 0px;
 }
 .active_filters a.label, .active_filters span.label {
 	margin-right: 3px;
