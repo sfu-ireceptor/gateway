@@ -192,6 +192,7 @@ $(document).ready(function() {
 					    }
 					    else if(stat == 'junction_length_stats') {
 							properties.setDataType('JunctionLength');
+							properties.setPercentage(true);
 					    }					    
 
 	                    // properties.setId(target_id).setXLabel("X Axis Title Example").setSort(true).setTitle("My title").setDataType('VGeneUsage').setData(data);

@@ -200,8 +200,8 @@
 		<script src="/js/bootstrap-multiselect.js"></script>
 		<script src="/js/pluralize.js"></script>
 
-		<script src="/js/airrvisualization.js?v=7"></script>
-		<script src="/js/main.js?v=47"></script>
+		<script src="/js/airrvisualization.js?v=8"></script>
+		<script src="/js/main.js?v=48"></script>
 		<script src="/js/visualization.js?v=19"></script>
 	</body>
 
