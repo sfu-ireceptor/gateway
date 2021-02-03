@@ -199,15 +199,24 @@ $(document).ready(function() {
 						let chart = airrvisualization.createChart(properties);
 	                    chart.plot();
 
-	                    // TODO reset values BEFORE ajax query
-	                    // console.log(data.sample);
-	                    $('.ir_sequence_count', modal).text(data.sample.ir_sequence_count);
-	                    $('.pcr_target_locus', modal).text(data.sample.sample[0].pcr_target[0].pcr_target_locus);
-	                    $('.subject_id', modal).text(data.sample.subject.subject_id);
+						// TODO reset values BEFORE ajax query
+						// console.log(data.sample);
+						$('.ir_sequence_count', modal).text(data.sample.ir_sequence_count);
+						$('.pcr_target_locus', modal).text(data.sample.pcr_target_locus);
+						$('.subject_id', modal).text(data.sample.subject_id);
+						$('.study_title', modal).text(data.sample.study_title);
+						$('.study_group_description', modal).text(data.sample.study_group_description);
+						$('.disease_diagnosis', modal).text(data.sample.disease_diagnosis);
+						$('.sex', modal).text(data.sample.sex);
+						$('.ir_subject_age_min', modal).text(data.sample.ir_subject_age_min);
+						$('.ir_subject_age_max', modal).text(data.sample.ir_subject_age_max);
+						$('.age_unit', modal).text(data.sample.age_unit);
+						$('.sample_id', modal).text(data.sample.sample_id);
+						$('.cell_subset', modal).text(data.sample.cell_subset);
 					});
 			});
 		
-		modal.find('.modal-title').text(repertoire_name);
+		modal.find('.modal-title').text('Repertoire: ' + repertoire_name);
 	});
 
 

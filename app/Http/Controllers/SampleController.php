@@ -416,8 +416,11 @@ class SampleController extends Controller
 
     public function stats($rest_service_id, $repertoire_id, $stat, Request $request)
     {
-        $sample_list = RestService::samples(['repertoire_id' => $repertoire_id], '', true, [$rest_service_id], false);
-        $sample = $sample_list[0]['data'][0];
+        $rs = RestService::find($rest_service_id);
+
+        $response = RestService::samples(['repertoire_id' => $repertoire_id], '', true, [$rest_service_id], false);
+        $sample_list = Sample::convert_sample_list($response[0]['data'], $rs);
+        $sample = $sample_list[0];
 
         $stats = RestService::stats($rest_service_id, $repertoire_id, $stat);
 
