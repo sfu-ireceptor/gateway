@@ -116,7 +116,7 @@ class RestServiceSeeder extends Seeder
             [
                 'url' => 'https://gur-irplus.ireceptor.org/airr/v1/',
                 'name' => 'Gur IR+',
-            ], 
+            ],
         ];
 
         // if grouping is disabled, remove group code
