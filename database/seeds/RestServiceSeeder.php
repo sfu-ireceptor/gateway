@@ -110,7 +110,7 @@ class RestServiceSeeder extends Seeder
                 'name' => 'MedGenome',
             ],
             [
-                'url' => 'https://gur-irplus.ireceptor.org/airr/v1/',
+                'url' => 'http://gur-irplus.ireceptor.org/airr/v1/',
                 'name' => 'Gur IR+',
             ], 
         ];
