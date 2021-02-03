@@ -376,6 +376,18 @@ a.sort_column {
 	display: block;
 }
 
+table.much_data > thead > tr > th.stats {
+	padding-right: 10px;
+}
+
+table.much_data > tbody > tr > td.stats {
+	padding: 2px 3px;
+}
+
+table.much_data > tbody > tr > td.stats span.label {
+	padding: 3px 18px;
+}
+
 
 /* @end */
 

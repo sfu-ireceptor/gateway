@@ -406,7 +406,7 @@
 				<table class="table table-striped sample_list table-condensed much_data table-bordered sortable">
 					<thead> 
 						<tr>
-							<th>Statistics</th>
+							<th class="stats">Stats</th>
 							@foreach ($field_list as $field)
 								<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 										@if ($field['ir_id'] == $sort_column)
@@ -437,12 +437,11 @@
 					<tbody>
 						@foreach ($sample_list as $sample)
 						<tr>
-							<td>
+							<td class="stats">
 								@if(isset($sample->stats) && $sample->stats)
-									<a href="#modal_stats" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-name="{{ $sample->subject_id }} - {{ $sample->sample_id }} - {{ $sample->pcr_target_locus }}" data-toggle="modal" data-target="#statsModal">
+									<a href="#modal_stats" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-name="{{ $sample->subject_id }} - {{ $sample->sample_id }} - {{ $sample->pcr_target_locus }}" data-toggle="modal" data-target="#statsModal" title="Repertoire statistics">
 										<span class="label label-primary">
 											<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
-											Statistics
 										</span>
 									</a>
 								@endif						
