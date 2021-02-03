@@ -179,20 +179,24 @@ $(document).ready(function() {
 						    properties.setDataType('VGeneUsage');
 						    properties.setDataDrilldown(true);
 						    properties.setSubtitle(["Subgroup/Family", "Gene", "Allele"]);
+						    properties.setSeriesColors(["rgb(124,181,226)"]);
 					    }
 					    else if(stat == 'd_gene_usage') {
 						    properties.setDataType('DGeneUsage');
 						    properties.setDataDrilldown(true);
 						    properties.setSubtitle(["Subgroup/Family", "Gene", "Allele"]);
+						    properties.setSeriesColors(["rgb(244,164,90)"]);
 					    }
 					    else if(stat == 'j_gene_usage') {
 						    properties.setDataType('JGeneUsage');
 						    properties.setDataDrilldown(true);
 						    properties.setSubtitle(["Subgroup/Family", "Gene", "Allele"]);
+						    properties.setSeriesColors(["rgb(107,194,135)"]);
 					    }
 					    else if(stat == 'junction_length_stats') {
 							properties.setDataType('JunctionLength');
 							properties.setPercentage(true);
+						    properties.setSeriesColors(["rgb(158,123,196)"]);
 					    }					    
 
 	                    // properties.setId(target_id).setXLabel("X Axis Title Example").setSort(true).setTitle("My title").setDataType('VGeneUsage').setData(data);
