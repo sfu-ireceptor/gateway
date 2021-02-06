@@ -756,19 +756,19 @@ class RestService extends Model
 
         if ($stat == 'v_gene_usage') {
             $url = $rs_stats_url . 'gene_usage';
-            $statistics_list[] = 'v_call_unique';
-            $statistics_list[] = 'v_gene_unique';
-            $statistics_list[] = 'v_subgroup_unique';
+            $statistics_list[] = 'v_call_exists';
+            $statistics_list[] = 'v_gene_exists';
+            $statistics_list[] = 'v_subgroup_exists';
         } elseif ($stat == 'd_gene_usage') {
             $url = $rs_stats_url . 'gene_usage';
-            $statistics_list[] = 'd_call_unique';
-            $statistics_list[] = 'd_gene_unique';
-            $statistics_list[] = 'd_subgroup_unique';
+            $statistics_list[] = 'd_call_exists';
+            $statistics_list[] = 'd_gene_exists';
+            $statistics_list[] = 'd_subgroup_exists';
         } elseif ($stat == 'j_gene_usage') {
             $url = $rs_stats_url . 'gene_usage';
-            $statistics_list[] = 'j_call_unique';
-            $statistics_list[] = 'j_gene_unique';
-            $statistics_list[] = 'j_subgroup_unique';
+            $statistics_list[] = 'j_call_exists';
+            $statistics_list[] = 'j_gene_exists';
+            $statistics_list[] = 'j_subgroup_exists';
         } elseif ($stat == 'junction_length_stats') {
             $url = $rs_stats_url . 'junction_length';
             $statistics_list[] = 'junction_aa_length';
