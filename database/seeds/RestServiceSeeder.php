@@ -110,9 +110,9 @@ class RestServiceSeeder extends Seeder
                 'name' => 'MedGenome',
             ],
             [
-                'url' => 'http://gur-irplus.ireceptor.org/airr/v1/',
-                'name' => 'Gur IR+',
-            ], 
+                'url' => 'http://airr-seq.vdjbase.org/airr/v1/',
+                'name' => 'VDJBase',
+            ],
         ];
 
         // if grouping is disabled, remove group code
