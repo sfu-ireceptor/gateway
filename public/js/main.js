@@ -162,7 +162,11 @@ $(document).ready(function() {
 			button.parents('tr').addClass('info');
 
 			// clear previous data
-			$('.sample_stats_info', modal).text('loading...');
+			$('.sample_stats_info', modal).html('<p class="loading">Loading repertoire metadata...</p>');
+			$('#stats_vgene', modal).html('<p>Loading V-gene graph...</p>');
+			$('#stats_dgene', modal).html('<p>Loading D-gene graph...</p>');
+			$('#stats_jgene', modal).html('<p>Loading J-gene graph...</p>');
+			$('#stats_junction_length', modal).html('<p>Loading Junction Length graph...</p>');
 
 			// load repertoire info div
 			$.get(stats_url, function(html){

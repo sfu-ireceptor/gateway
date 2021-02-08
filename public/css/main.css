@@ -929,6 +929,15 @@ table.sample_list {
 	margin-top: 10px;
 }
 
+#statsModal .tab-pane p {
+	margin-top: 20px;
+	font-style: italic;
+}
+
+#statsModal .sample_stats_info p.loading {
+	font-style: italic;
+}
+
 /* @end */
 
 /* @group sequences page */
