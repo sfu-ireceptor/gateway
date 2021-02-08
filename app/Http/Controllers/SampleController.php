@@ -434,7 +434,7 @@ class SampleController extends Controller
 
         $data = [];
         $data['sample'] = $sample;
-    
+
         return view('stats_sample_info', $data);
     }
 
