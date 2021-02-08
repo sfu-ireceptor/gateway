@@ -161,6 +161,15 @@ $(document).ready(function() {
 			// highlight this table row
 			button.parents('tr').addClass('info');
 
+			// clear previous data
+			$('.sample_stats_info', modal).text('loading...');
+
+			// load repertoire info div
+			$.get(stats_url, function(html){
+				$('.sample_stats_info', modal).html(html);
+			});
+
+			// load graphs
 			$('ul.nav-tabs li a', modal).each(function() {
 				var link = $(this),
 					stat = link.data('stat'),
@@ -199,25 +208,9 @@ $(document).ready(function() {
 						    properties.setSeriesColors(["rgb(158,123,196)"]);
 					    }					    
 
-	                    // properties.setId(target_id).setXLabel("X Axis Title Example").setSort(true).setTitle("My title").setDataType('VGeneUsage').setData(data);
 						properties.setId(target_id).setSort(true).setData(data.stats).setTitle(' ');
 						let chart = airrvisualization.createChart(properties);
 	                    chart.plot();
-
-						// TODO reset values BEFORE ajax query
-						// console.log(data.sample);
-						$('.ir_sequence_count', modal).text(data.sample.ir_sequence_count);
-						$('.pcr_target_locus', modal).text(data.sample.pcr_target_locus);
-						$('.subject_id', modal).text(data.sample.subject_id);
-						$('.study_title', modal).text(data.sample.study_title);
-						$('.study_group_description', modal).text(data.sample.study_group_description);
-						$('.disease_diagnosis', modal).text(data.sample.disease_diagnosis);
-						$('.sex', modal).text(data.sample.sex);
-						$('.ir_subject_age_min', modal).text(data.sample.ir_subject_age_min);
-						$('.ir_subject_age_max', modal).text(data.sample.ir_subject_age_max);
-						$('.age_unit', modal).text(data.sample.age_unit);
-						$('.sample_id', modal).text(data.sample.sample_id);
-						$('.cell_subset', modal).text(data.sample.cell_subset);
 					});
 			});
 		
