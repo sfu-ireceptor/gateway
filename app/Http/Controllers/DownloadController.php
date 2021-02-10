@@ -45,8 +45,8 @@ class DownloadController extends Controller
     {
         $d = Download::find($id);
 
-        $username = auth()->user()->username;
-        if ($d->username != $username) {
+        $user = auth()->user();
+        if (($d->username != $user->username) && ( ! $user->isAdmin())) {
             abort(403, 'Unauthorized action.');
         }
 
