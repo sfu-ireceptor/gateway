@@ -49,6 +49,11 @@
 			<strong>@lang('short.pcr_target_locus'):</strong>
 			{{ $sample->pcr_target_locus }}
 		</p>
+		<p>
+			<strong>@lang('short.tissue'):</strong>
+			{{ $sample->tissue }}
+		</p>
+
 	</div>
 	<div class="col-md-3">
 		<h4>Sequences</h4>
