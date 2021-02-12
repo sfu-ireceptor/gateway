@@ -11,6 +11,7 @@ use App\LocalJob;
 use App\News;
 use App\QueryLog;
 use App\RestService;
+use App\Sample;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -56,6 +57,18 @@ class AdminController extends Controller
         $message .= $enabled ? 'enabled' : 'disabled';
 
         return redirect('admin/databases')->with('notification', $message);
+    }
+
+    public function getDatabasesStats()
+    {
+        $sample_data = Sample::find([], 'titi');
+        $sample_list = $sample_data['items'];
+
+        // dd($sample_list);
+
+        $data['sample_list'] = $sample_list;
+
+        return view('databasesStats', $data);
     }
 
     public function getNews()
