@@ -185,6 +185,8 @@ function testStats(nb_samples, stat_list) {
 				stats_url = tr.data('url');
 
 			$.get(stats_url + '/' +  stat, function(data){
+				$('.' + stat + ' button',tr).removeClass('btn-default').addClass('btn-warning').text('Running');
+
 				try {
 					let properties = airrvisualization.createProperties();
 
@@ -211,10 +213,10 @@ function testStats(nb_samples, stat_list) {
 							throw "Too big";
 						}
 
-					$('.' + stat + ' button',tr).removeClass('btn-default').addClass('btn-success').text('Success');
+					$('.' + stat + ' button',tr).removeClass('btn-warning').addClass('btn-success').text('Success');
 				}
 				catch(err) {
-					$('.' + stat + ' button',tr).removeClass('btn-default').addClass('btn-danger').text('Failed');
+					$('.' + stat + ' button',tr).removeClass('btn-warning').addClass('btn-danger').text('Failed');
 					// message.innerHTML = "Input " + err;
 				}				
 			});
