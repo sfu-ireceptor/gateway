@@ -126,7 +126,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('admin')->group(function () {
         Route::get('queues', 'AdminController@getQueues');
         Route::get('databases', 'AdminController@getDatabases');
-        Route::get('databases/stats', 'AdminController@getDatabasesStats');
+        Route::get('database-stats/{id}', 'AdminController@getDatabaseStats');
         Route::get('update-database/{id}/{enabled}', 'AdminController@getUpdateDatabase');
         Route::get('update-chunk-size/{id}', 'AdminController@getUpdateChunkSize');
         Route::get('news', 'AdminController@getNews');

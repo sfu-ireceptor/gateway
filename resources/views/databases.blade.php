@@ -77,7 +77,12 @@
 									{{ human_number($rs->nb_sequences) }}
 								</span>
 							</td>
-							<td>{{ $rs->stats ? 'Yes' : '' }}</td>
+							<td>
+								@if($rs->stats)
+									<a href="/admin/database-stats/{{ $rs->id }}" class="text-nowrap external" target="_blank">Yes</a>
+								@endif
+
+							</td>
 							<td>{{ $rs->chunk_size }}</td>
 							<td class="text-nowrap">
 								@if ($rs->last_cached)

@@ -59,14 +59,20 @@ class AdminController extends Controller
         return redirect('admin/databases')->with('notification', $message);
     }
 
-    public function getDatabasesStats()
+    public function getDatabaseStats($id)
     {
-        $sample_data = Sample::find([], 'titi');
-        $sample_list = $sample_data['items'];
+        $response_list = RestService::samples([], 'titi', true, [$id]);
 
-        // dd($sample_list);
+        $sample_list = [];
+        $rs = [];
+        foreach ($response_list as $i => $response) {
+            $rs = $response['rs'];
+            $sample_list = $response['data'];
+            $sample_list = Sample::convert_sample_list($sample_list, $rs);
+        }
 
         $data['sample_list'] = $sample_list;
+        $data['rs'] = $rs;
 
         return view('databasesStats', $data);
     }
