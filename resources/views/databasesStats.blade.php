@@ -14,7 +14,7 @@
 					<tr>
 						<th>Repository</th>
 						<th>Study</th>
-						<th>Repertoire ID</th>
+						<th>Rep. ID</th>
 						<th>Repertoire Name</th>
 						<th>V-Gene</th>
 						<th>D-Gene</th>
@@ -26,7 +26,7 @@
 					@foreach ($sample_list as $sample)
 						@if(isset($sample->stats) && $sample->stats)
 						<tr data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}">
-							<td>
+							<td class="text-nowrap">
 								{{ $sample->rest_service_name }}
 							</td>
 							<td>
