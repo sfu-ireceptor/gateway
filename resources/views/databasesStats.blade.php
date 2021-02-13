@@ -13,6 +13,7 @@
 				<thead>
 					<tr>
 						<th>Repository</th>
+						<th>Study</th>
 						<th>Repertoire ID</th>
 						<th>Repertoire Name</th>
 						<th>V-Gene</th>
@@ -27,6 +28,9 @@
 						<tr data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}">
 							<td>
 								{{ $sample->rest_service_name }}
+							</td>
+							<td>
+								{{ $sample->study_title }}
 							</td>
 							<td>
 								{{ $sample->repertoire_id }}
