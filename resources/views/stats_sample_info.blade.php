@@ -22,12 +22,12 @@
 		</p>										
 		<p>
 			<strong>Age:</strong>
-			@if($sample->ir_subject_age_min == $sample->ir_subject_age_max)
+			@if(isset($sample->ir_subject_age_min) && isset($sample->ir_subject_age_max) && isset($sample->age_unit) && ($sample->ir_subject_age_min == $sample->ir_subject_age_max))
 				{{ $sample->ir_subject_age_min }}
 				{{ str_plural($sample->age_unit, $sample->ir_subject_age_min) }}
-			@else
+			@elseif(isset($sample->age_unit))
 				{{ $sample->ir_subject_age_min }}-{{ $sample->ir_subject_age_max }}
-				{{ str_plural($sample->age_unit, $sample->ir_subject_age_max) }}
+				{{ isset($sample->age_unit) ? str_plural($sample->age_unit, $sample->ir_subject_age_max) : ''}}
 			@endif
 		</p>
 		<p>
