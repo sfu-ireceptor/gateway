@@ -30,7 +30,7 @@
 								{{ $sample->rest_service_name }}
 							</td>
 							<td>
-								{{ str_limit($sample->study_title, $limit = 30, $end = '‥') }}
+								{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
 							</td>
 							<td>
 								{{ $sample->repertoire_id }}
