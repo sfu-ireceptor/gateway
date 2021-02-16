@@ -562,10 +562,10 @@
 
 								<!-- Tab panes -->
 								<div class="tab-content">
-									<div role="tabpanel" class="tab-pane active" id="stats_vgene">loading..</div>
-									<div role="tabpanel" class="tab-pane" id="stats_dgene">loading..</div>
-									<div role="tabpanel" class="tab-pane" id="stats_jgene">loading..</div>
-									<div role="tabpanel" class="tab-pane" id="stats_junction_length">loading..</div>
+									<div role="tabpanel" class="tab-pane active" id="stats_vgene"><p>Loading V-gene graph...</p></div>
+									<div role="tabpanel" class="tab-pane" id="stats_dgene"><p>Loading D-gene graph...</p></div>
+									<div role="tabpanel" class="tab-pane" id="stats_jgene"><p>Loading J-gene graph...</p></div>
+									<div role="tabpanel" class="tab-pane" id="stats_junction_length"><p>Loading Junction Length graph...</p></div>
 								</div>
 							</div>
 
