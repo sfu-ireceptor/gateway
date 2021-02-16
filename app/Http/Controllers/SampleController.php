@@ -421,7 +421,7 @@ class SampleController extends Controller
 
         $data_cleaned = [];
         foreach ($stats->Result[0]->statistics[0]->data as $obj) {
-            if($obj->key != "") {
+            if ($obj->key != '') {
                 $data_cleaned[] = $obj;
             }
         }
