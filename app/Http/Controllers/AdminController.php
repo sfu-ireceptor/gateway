@@ -203,7 +203,7 @@ class AdminController extends Controller
 
         return view('user/list2', $data);
     }
-    
+
     public function getAddUser()
     {
         $data = [];
