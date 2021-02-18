@@ -312,9 +312,16 @@ function testStats(nb_samples, stat_list) {
 						    properties.setSeriesColors(["rgb(158,123,196)"]);
 					    }					    
 
-						properties.setId(target_id).setSort(true).setData(data.stats).setTitle(' ');
-						let chart = airrvisualization.createChart(properties);
-	                    chart.plot();
+						try {
+							properties.setId(target_id).setSort(true).setData(data.stats).setTitle(' ');
+							let chart = airrvisualization.createChart(properties);
+							chart.plot();
+						}
+						catch(err) {
+							$('#' + target_id).html('<p>Sorry, an error occurred while generating this graph.</p>');
+						}
+					}).fail(function() {
+						$('#' + target_id).html('<p>Sorry, an error occurred while generating this graph.</p>');
 					});
 			});
 		

@@ -115,7 +115,7 @@ class RestServiceSeeder extends Seeder
             ],
             [
                 'url' => 'http://airr-seq.vdjbase.org/airr/v1/',
-                'name' => 'VDJBase',
+                'name' => 'VDJbase',
             ],
         ];
 

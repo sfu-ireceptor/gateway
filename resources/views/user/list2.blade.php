@@ -32,29 +32,24 @@
 						<th class="text-nowrap">Added</th>
 						<th class="text-nowrap">First Name</th>
 						<th class="text-nowrap">Last Name</th>
+						<th class="text-nowrap">Email</th>
 					</tr>
 				</thead>
 				<tbody>
 					@foreach ($l as $t)
 						<tr>
-							<td class="text-muted text-nowrap" title="">
-{{ Carbon\Carbon::createFromFormat('YmdGisZ', $t->create_time)->format('M j, Y') }}
+							<td class="text-muted text-nowrap" title="{{ Carbon\Carbon::createFromFormat('YmdGisZ', $t->create_time)->format('M j, Y') }}">
+								{{ Carbon\Carbon::createFromFormat('YmdGisZ', $t->create_time)->format('M d, Y') }}
 							</td>			
 							<td class="text-nowrap">
 								{{ $t->first_name }}
 							</td>
-							<td class="text-nowrap">
+							<td>
 								{{ $t->last_name }}
 							</td>
 							<td class="text-nowrap">
 								<a href="mailto:{{ $t->email }}">{{ $t->email }}</a>
-								<!-- <a href="/admin/delete-user/{{ $t->username }}">
-									<button type="button" class="btn btn-default" aria-label="Delete">
-									  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
-									</button>
-								</a>-->
 							</td>
-							
 						</tr>
 					@endforeach
 				</tbody>

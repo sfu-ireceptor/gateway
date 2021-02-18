@@ -205,6 +205,24 @@ class AdminController extends Controller
         return view('user/list', $data);
     }
 
+    public function getUsers2($sort = 'create_time')
+    {
+        // retrieve users from Agave
+        $agave = new Agave;
+        $token = auth()->user()->password;
+        $l = $agave->getUsers($token);
+
+        // sort by creation date desc
+        usort($l, function ($a, $b) use ($sort) {
+            return strcmp($b->{$sort}, $a->{$sort});
+        });
+
+        $data = [];
+        $data['l'] = $l;
+
+        return view('user/list2', $data);
+    }
+
     public function getAddUser()
     {
         $data = [];
