@@ -28,7 +28,7 @@
 						@if(isset($sample->stats) && $sample->stats)
 						<tr data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}">
 							<td>
-								{{ str_limit($sample->study_title, $limit = 70, $end = '‥') }}
+								{{ str_limit($sample->study_title, $limit = 50, $end = '‥') }}
 							</td>
 							<td>
 								{{ $sample->sample_id }}
