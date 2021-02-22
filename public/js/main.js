@@ -156,6 +156,12 @@ $(document).ready(function() {
 			repertoire_name = button.data('repertoireName'),
 			stats_url = button.data('url');
 
+			// hide popover
+			$('.stats_available_notification').popover('destroy');
+
+			// notify server popover has been seen
+			$.get('/samples/disable-stats-notification');		
+
 			// un-highlight any highlighted table rows
 			$('tr.info', button.parents('table')).removeClass('info');
 
@@ -229,6 +235,17 @@ $(document).ready(function() {
 		modal.find('.modal-title').text('Repertoire: ' + repertoire_name);
 	});
 
+	// display "stats available" popover
+	$('.stats_available_notification').popover({
+		'placement': 'left',
+		'content': 'Repertoire statistics are now available.',
+		'trigger': 'click',
+		'container': 'body'
+	});
+
+	setTimeout(function() {
+			$('.stats_available_notification').popover('show');
+	}, 500);
 
 	/**********************************************************
 	* Sequences

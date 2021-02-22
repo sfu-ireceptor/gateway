@@ -264,6 +264,14 @@ class SampleController extends Controller
         // keep only samples to display on the current page
         $sample_list = array_slice($sample_list, ($page - 1) * $max_per_page, $max_per_page);
 
+        // add flag to first sample with stats for stats info popup
+        foreach ($sample_list as $sample) {
+            if(isset($sample->stats) && $sample->stats) {
+                $sample->first_with_stats = true;
+                break;
+            }
+        }
+
         // generate query id for sequences page
         $sequence_filters = [];
         $sequence_filters['sample_query_id'] = $query_id;
@@ -519,5 +527,12 @@ class SampleController extends Controller
         $data['field'] = $field;
 
         return $data;
+    }
+
+    public function disableStatsNotification(Request $request)
+    {
+        $user = auth()->user();
+        $user->stats_notification_dismissed = true;
+        $user->save();
     }
 }
