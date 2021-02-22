@@ -31,13 +31,14 @@
 
 		<h3>Getting Started</h3>
 			<ul class="small_padding">
-				<li><a href="http://ireceptor.irmacs.sfu.ca/node/153" class="external" target="_blank">Finding COVID-19 data</a></li>
-				<li><a href="http://ireceptor.irmacs.sfu.ca/node/155" class="external" target="_blank">Finding B-cell or T-cell Repertoires</a></li>
-				<li><a href="http://ireceptor.irmacs.sfu.ca/node/154" class="external" target="_blank">Finding sequences using a specific V-Gene</a></li>
-				<li><a href="http://ireceptor.irmacs.sfu.ca/node/97" class="external" target="_blank">Downloading sequences</a></li>
-				<li><a href="http://ireceptor.irmacs.sfu.ca/node/99" class="external" target="_blank">Frequently Asked Questions</a></li>
+				<li><a href="https://ireceptor.org/node/153" class="external" target="_blank">Finding COVID-19 data</a></li>
+				<li><a href="https://ireceptor.org/node/155" class="external" target="_blank">Finding B-cell or T-cell repertoires</a></li>
+				<li><a href="https://ireceptor.org/node/154" class="external" target="_blank">Finding sequences using a specific V-Gene</a></li>
+				<li><a href="https://ireceptor.org/node/97" class="external" target="_blank">Downloading sequences</a></li>
+				<li><a href="https://ireceptor.org/node/177" class="external" target="_blank">Displaying repertoire statistics</a></li>
+				<li><a href="https://ireceptor.org/node/99" class="external" target="_blank">Frequently Asked Questions</a></li>
 			</ul>
-			<p>See the <a href="http://ireceptor.org/platform/doc" class="external" target="_blank">iReceptor Gateway documentation</a> for more.</p>
+			<p>See the <a href="https://ireceptor.org/platform/doc" class="external" target="_blank">iReceptor Gateway documentation</a> for more.</p>
 
 		<h3>Contact</h3>
 		<p>
