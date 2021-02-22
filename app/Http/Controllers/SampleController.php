@@ -266,7 +266,7 @@ class SampleController extends Controller
 
         // add flag to first sample with stats for stats info popup
         foreach ($sample_list as $sample) {
-            if(isset($sample->stats) && $sample->stats) {
+            if (isset($sample->stats) && $sample->stats) {
                 $sample->first_with_stats = true;
                 break;
             }
