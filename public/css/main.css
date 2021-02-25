@@ -177,6 +177,8 @@ fieldset {
 	margin-bottom: 10px;
 }
 
+
+
 .samples_filters {
 	list-style-type: none;
 	padding-top: 5px;
@@ -936,6 +938,11 @@ table.sample_list {
 
 #statsModal .sample_stats_info p.loading {
 	font-style: italic;
+}
+
+#statsModal .highcharts-subtitle {
+	font-size: 18px;
+	color: black;
 }
 
 /* @end */
