@@ -240,6 +240,7 @@ $(document).ready(function() {
 		'placement': 'left',
 		'content': 'Repertoire statistics are now available.',
 		'trigger': 'click',
+		'sanitize': 'false',
 		'container': 'body'
 	});
 
