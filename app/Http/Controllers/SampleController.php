@@ -266,6 +266,7 @@ class SampleController extends Controller
 
         // add flag to first sample with stats for stats info popup
         if (auth()->user()->stats_popup_count <= 0) {
+            Log::debug('stat popup notification will show for ' . auth()->user()->username);
             foreach ($sample_list as $sample) {
                 if (isset($sample->stats) && $sample->stats) {
                     $sample->show_stats_notification = true;
