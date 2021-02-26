@@ -180,9 +180,6 @@ $(document).ready(function() {
 				$('.sample_stats_info', modal).html(html);
 			});
 
-			// disable AIRR visualization library debug mode
-			airrvisualization.setDebugLevel(90);
-
 			// load graphs
 			$('ul.nav-tabs li a', modal).each(function() {
 				var link = $(this),
