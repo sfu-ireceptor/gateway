@@ -439,7 +439,7 @@
 						<tr>
 							<td class="stats">
 								@if(isset($sample->stats) && $sample->stats)
-									<a href="#modal_stats" class="{{ isset($sample->first_with_stats) && $sample->first_with_stats && ! auth()->user()->stats_notification_dismissed ? 'stats_available_notification' : ''}}" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-name="{{ $sample->subject_id }} - {{ $sample->sample_id }} - {{ $sample->pcr_target_locus }}" data-toggle="modal" data-target="#statsModal">
+									<a href="#modal_stats" class="{{ isset($sample->show_stats_notification) ? 'stats_available_notification' : ''}}" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-name="{{ $sample->subject_id }} - {{ $sample->sample_id }} - {{ $sample->pcr_target_locus }}" data-toggle="modal" data-target="#statsModal">
 										<span class="label label-primary">
 											<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
 										</span>

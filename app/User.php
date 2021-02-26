@@ -14,7 +14,7 @@ class User extends Authenticatable
 
     // attributes that are mass assignable.
     protected $fillable = [
-        'name', 'email', 'password', 'username', 'admin', 'galaxy_url', 'galaxy_tool_id',
+        'name', 'email', 'password', 'username', 'admin', 'galaxy_url', 'galaxy_tool_id', 'stats_popup_count'
     ];
 
     // attributes that should be hidden for arrays.

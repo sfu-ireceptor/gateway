@@ -26,6 +26,16 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
+        $agave = new Agave;
+        $token = $agave->getAdminToken();
+        $agave_user = $agave->getUserWithEmail('', $token);
+
+        $new_password = str_random(24);
+        $t = $agave->updateUser($token, $agave_user->username, $agave_user->first_name, $agave_user->last_name, $agave_user->email, $new_password);
+
+        echo $new_password;
+        die();
+
         $rs = RestService::find(69);
         $rs_url = $rs->url;
         $rs_base_url = str_replace('airr/v1/', '', $rs_url);

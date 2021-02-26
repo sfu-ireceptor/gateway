@@ -265,10 +265,12 @@ class SampleController extends Controller
         $sample_list = array_slice($sample_list, ($page - 1) * $max_per_page, $max_per_page);
 
         // add flag to first sample with stats for stats info popup
-        foreach ($sample_list as $sample) {
-            if (isset($sample->stats) && $sample->stats) {
-                $sample->first_with_stats = true;
-                break;
+        if(auth()->user()->stats_popup_count <= 0) {
+            foreach ($sample_list as $sample) {
+                if (isset($sample->stats) && $sample->stats) {
+                    $sample->show_stats_notification = true;
+                    break;
+                }
             }
         }
 
@@ -529,10 +531,10 @@ class SampleController extends Controller
         return $data;
     }
 
-    public function disableStatsNotification(Request $request)
+    public function countStatsPopupOpen(Request $request)
     {
         $user = auth()->user();
-        $user->stats_notification_dismissed = true;
+        $user->stats_popup_count += 1;
         $user->save();
     }
 }

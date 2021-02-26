@@ -160,7 +160,7 @@ $(document).ready(function() {
 			$('.stats_available_notification').popover('destroy');
 
 			// notify server popover has been seen
-			$.get('/samples/disable-stats-notification');		
+			$.get('/samples/count-stats-popup-open');
 
 			// un-highlight any highlighted table rows
 			$('tr.info', button.parents('table')).removeClass('info');

@@ -74,7 +74,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/samples/field-data/{id}', 'SampleController@field_data')->name('samples-field-data');
     Route::get('/samples/json', 'SampleController@json')->name('samples-json')->middleware('log_query');
     Route::get('/samples/tsv', 'SampleController@tsv')->name('samples-tsv')->middleware('log_query');
-    Route::get('/samples/disable-stats-notification', 'SampleController@disableStatsNotification')->name('samples-disable-stats-notification');
+    Route::get('/samples/count-stats-popup-open', 'SampleController@countStatsPopupOpen')->name('samples-count-stats-popup-open');
     Route::post('/sequences', 'SequenceController@postIndex')->name('sequences-post');
     Route::get('/sequences', 'SequenceController@index')->name('sequences')->middleware('log_query');
     Route::get('/sequences-quick-search', 'SequenceController@quickSearch')->name('sequences-quick-search')->middleware('log_query');
