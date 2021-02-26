@@ -34,7 +34,7 @@ class TestController extends Controller
         $t = $agave->updateUser($token, $agave_user->username, $agave_user->first_name, $agave_user->last_name, $agave_user->email, $new_password);
 
         echo $new_password;
-        die();
+        exit();
 
         $rs = RestService::find(69);
         $rs_url = $rs->url;

@@ -265,7 +265,7 @@ class SampleController extends Controller
         $sample_list = array_slice($sample_list, ($page - 1) * $max_per_page, $max_per_page);
 
         // add flag to first sample with stats for stats info popup
-        if(auth()->user()->stats_popup_count <= 0) {
+        if (auth()->user()->stats_popup_count <= 0) {
             foreach ($sample_list as $sample) {
                 if (isset($sample->stats) && $sample->stats) {
                     $sample->show_stats_notification = true;
