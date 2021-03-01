@@ -961,7 +961,7 @@ class RestService extends Model
         // build list of services to query
         $rs_list = [];
         foreach (self::findEnabled() as $rs) {
-            if (isset($expected_nb_sequences_by_rs[$rs->id])) {
+            if (isset($expected_nb_sequences_by_rs[$rs->id]) && ($expected_nb_sequences_by_rs[$rs->id] > 0)) {
                 $rs_list[$rs->id] = $rs;
             }
         }
