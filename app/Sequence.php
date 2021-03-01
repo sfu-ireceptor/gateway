@@ -143,7 +143,7 @@ class Sequence
         foreach ($expected_nb_sequences_by_rs as $rs => $count) {
             $total_expected_nb_sequences += $count;
         }
-        if($total_expected_nb_sequences <= 0) {
+        if ($total_expected_nb_sequences <= 0) {
             throw new \Exception('No sequences to download');
         }
 
