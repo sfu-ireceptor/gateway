@@ -138,6 +138,15 @@ class Sequence
         // for sanity check after download
         $expected_nb_sequences_by_rs = self::expectedSequencesByRestSevice($filters, $username);
 
+        // if total expected nb sequences is 0, immediately fail download
+        $total_expected_nb_sequences = 0;
+        foreach ($expected_nb_sequences_by_rs as $rs => $count) {
+            $total_expected_nb_sequences += $count;
+        }
+        if($total_expected_nb_sequences <= 0) {
+            throw new \Exception('No sequences to download');
+        }
+
         // create receiving folder
         $storage_folder = storage_path() . '/app/public/';
         $now = time();
