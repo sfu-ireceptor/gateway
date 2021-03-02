@@ -1020,6 +1020,8 @@ class RestService extends Model
                     $t['params'] = $rs_filters_json;
                     $t['timeout'] = config('ireceptor.service_file_request_chunked_timeout');
 
+                    $t['params_array'] = $query_parameters;
+
                     // add number suffix for rest services belonging to a group
                     $file_suffix = '';
                     $group = $rs->rest_service_group_code;
@@ -1086,6 +1088,34 @@ class RestService extends Model
                         }
                     }
 
+                    // check nb of sequences in each chunk
+                    if (! $has_errors) {
+                        foreach ($response_list_chunk as $k => $response) {
+                            $file_path = $response['data']['file_path'];
+
+                            // count number of lines
+                            $n = 0;
+                            $f = fopen($file_path, 'r');
+                            while (! feof($f)) {
+                                $line = fgets($f);
+                                if (! empty(trim($line))) {
+                                    $n++;
+                                }
+                            }
+                            fclose($f);
+
+                            // if number of sequences is unexpected, mark this chunk as error
+                            $expected_nb_sequences = $requests[$k]['params_array']['size'] + 1;
+                            if( ! $n == $expected_nb_sequences) {
+                                Log::error('Expected ' . $expected_nb_sequences . ' sequences, but received ' . $n);
+                                $has_errors = true;
+                                $failed_response = $response;
+                                break;
+                            }
+                        }
+                    }
+
+                    // no errors -> no retry
                     if (! $has_errors) {
                         break;
                     }
