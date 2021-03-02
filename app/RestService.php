@@ -1106,7 +1106,7 @@ class RestService extends Model
 
                             // if number of sequences is unexpected, mark this chunk as error
                             $expected_nb_sequences = $requests[$k]['params_array']['size'] + 1;
-                            if( ! $n == $expected_nb_sequences) {
+                            if (! $n == $expected_nb_sequences) {
                                 Log::error('Expected ' . $expected_nb_sequences . ' sequences, but received ' . $n);
                                 $has_errors = true;
                                 $failed_response = $response;
