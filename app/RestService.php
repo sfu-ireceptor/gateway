@@ -1077,7 +1077,7 @@ class RestService extends Model
 
                 // try each group of queries up to 3 times
                 for ($i = 1; $i <= 3; $i++) {
-                    if($i > 1) {
+                    if ($i > 1) {
                         Log::debug('Retrying chunk, attempt ' . $i);
                     }
 
@@ -1110,7 +1110,7 @@ class RestService extends Model
 
                             // if number of sequences is unexpected, mark this chunk as error
                             $expected_nb_sequences = $requests[$k]['params_array']['size'] + 1;
-                            if($n != $expected_nb_sequences) {
+                            if ($n != $expected_nb_sequences) {
                                 Log::error('Expected ' . $expected_nb_sequences . ' sequences, but received ' . $n . ' sequences');
                                 $has_errors = true;
                                 $failed_response = $response;
