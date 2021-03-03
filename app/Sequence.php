@@ -147,6 +147,12 @@ class Sequence
             throw new \Exception('No sequences to download');
         }
 
+        // if total expected nb sequences > download limit, immediately fail download
+        $sequences_download_limit = config('ireceptor.sequences_download_limit');
+        if($total_expected_nb_sequences > $sequences_download_limit) {
+            throw new \Exception('Trying to download to many sequences: ' . $total_expected_nb_sequences . ' > ' . $sequences_download_limit);
+        }
+
         // create receiving folder
         $storage_folder = storage_path() . '/app/public/';
         $now = time();
