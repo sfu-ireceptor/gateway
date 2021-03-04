@@ -185,11 +185,13 @@ class AdminController extends Controller
         foreach ($l as $u) {
             $u->updated_at = '';
             $u->admin = false;
+            $u->stats_popup_count = 0;
 
             if (isset($db_users[$u->username])) {
                 $db_user = $db_users[$u->username];
                 $u->updated_at = $db_user->updated_at;
                 $u->admin = $db_user->admin;
+                $u->stats_popup_count = $db_user->stats_popup_count;
             }
         }
 
