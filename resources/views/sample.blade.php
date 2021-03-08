@@ -557,7 +557,7 @@
 									<li role="presentation" class="active"><a href="#stats_vgene" data-stat="v_gene_usage" role="tab" data-toggle="tab">V-gene</a></li>
 									<li role="presentation"><a href="#stats_dgene" data-stat="d_gene_usage"role="tab" data-toggle="tab">D-gene</a></li>
 									<li role="presentation"><a href="#stats_jgene" data-stat="j_gene_usage" role="tab" data-toggle="tab">J-gene</a></li>
-									<li role="presentation"><a href="#stats_junction_length" data-stat="junction_length_stats" role="tab" data-toggle="tab">Junction Length</a></li>
+									<li role="presentation"><a href="#stats_junction_length" data-stat="junction_length_stats" role="tab" data-toggle="tab">Junction Length (AA)</a></li>
 								</ul>
 
 								<!-- Tab panes -->
