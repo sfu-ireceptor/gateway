@@ -229,7 +229,7 @@ class Sequence
                     $rs_name_list[] = $rs->name;
                 }
                 $rs_name_list_str = implode(',', $rs_name_list);
-                $download_incomplete_info .= $rs_name_list_str . "\n";
+                $download_incomplete_info .= $rs_name_list_str . ".\n";
             } else {
                 $download_incomplete_info .= 'Some files appear to be incomplete. See the included info.txt file for more details.';
             }
