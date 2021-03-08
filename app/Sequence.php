@@ -211,11 +211,26 @@ class Sequence
             $is_download_incomplete = true;
         }
 
-        // if download is incomplete, update gateway query status
+        // if download is incomplete
+        $download_incomplete_info = '';
         if ($is_download_incomplete) {
+            // update gateway query status
             $gw_query_log_id = request()->get('query_log_id');
             $error_message = 'Download is incomplete';
             QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
+
+            // generate info message
+            $download_incomplete_info = '';
+            if (! empty($failed_rs)) {
+                $download_incomplete_info .= 'An error occured when trying to download from these repositories:' . "\n";
+                foreach ($failed_rs as $rs) {
+                    $download_incomplete_info .= $rs->name . "\n";
+                }
+            }
+            else {
+                $download_incomplete_info .= 'Some files appear to be incomplete. See the included info.txt file for more details.'
+            }
+
         }
 
         // generate info.txt
@@ -227,6 +242,7 @@ class Sequence
         $t['metadata_response_list'] = $metadata_response_list;
         $t['info_file_path'] = $info_file_path;
         $t['is_download_incomplete'] = $is_download_incomplete;
+        $t['download_incomplete_info'] = $download_incomplete_info;
         $t['file_stats'] = $file_stats;
 
         return $t;
@@ -477,9 +493,8 @@ class Sequence
         if (! empty($failed_rs)) {
             $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "\n";
             foreach ($failed_rs as $rs) {
-                // code...
+                $s .= $rs->name . "\n";
             }
-            $s .= $rs->name . "\n";
         }
 
         $s .= "\n";

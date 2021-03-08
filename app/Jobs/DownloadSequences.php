@@ -98,6 +98,7 @@ class DownloadSequences implements ShouldQueue
 
         if ($t['is_download_incomplete']) {
             $this->download->incomplete = true;
+            $this->download->incomplete_info = $t['download_incomplete_info'];
             $this->download->save();
         }
 
