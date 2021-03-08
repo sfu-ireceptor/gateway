@@ -80,8 +80,7 @@ class UserController extends Controller
 
             // save Agave OAuth token in local DB
             $user->updateToken($t);
-        }
-        else {
+        } else {
             $user = User::where('username', $username)->first();
             if ($user == null) {
                 return redirect()->back()->withErrors(["User doesn't exist"]);
