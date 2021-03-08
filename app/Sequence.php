@@ -226,11 +226,9 @@ class Sequence
                 foreach ($failed_rs as $rs) {
                     $download_incomplete_info .= $rs->name . "\n";
                 }
-            }
-            else {
+            } else {
                 $download_incomplete_info .= 'Some files appear to be incomplete. See the included info.txt file for more details.';
             }
-
         }
 
         // generate info.txt
