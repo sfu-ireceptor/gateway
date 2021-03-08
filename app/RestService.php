@@ -1069,7 +1069,7 @@ class RestService extends Model
 
         if (count($request_params_chunking) > 0) {
             Log::info('Do TSV requests... (chunked)');
-            $request_params_chunked = array_chunk($request_params_chunking, 15);
+            $request_params_chunked = array_chunk($request_params_chunking, 4);
             $response_list = [];
             $failed = false;
             $failed_response = null;

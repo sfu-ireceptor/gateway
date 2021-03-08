@@ -147,6 +147,12 @@ class Sequence
             throw new \Exception('No sequences to download');
         }
 
+        // if total expected nb sequences > download limit, immediately fail download
+        $sequences_download_limit = config('ireceptor.sequences_download_limit');
+        if ($total_expected_nb_sequences > $sequences_download_limit) {
+            throw new \Exception('Trying to download to many sequences: ' . $total_expected_nb_sequences . ' > ' . $sequences_download_limit);
+        }
+
         // create receiving folder
         $storage_folder = storage_path() . '/app/public/';
         $now = time();
@@ -205,11 +211,28 @@ class Sequence
             $is_download_incomplete = true;
         }
 
-        // if download is incomplete, update gateway query status
+        // if download is incomplete
+        $download_incomplete_info = '';
         if ($is_download_incomplete) {
+            // update gateway query status
             $gw_query_log_id = request()->get('query_log_id');
             $error_message = 'Download is incomplete';
             QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
+
+            // generate info message
+            $download_incomplete_info = '';
+            if (! empty($failed_rs)) {
+                $download_incomplete_info .= 'An error occured when trying to download from these repositories:' . "\n";
+
+                $rs_name_list = [];
+                foreach ($failed_rs as $rs) {
+                    $rs_name_list[] = $rs->name;
+                }
+                $rs_name_list_str = implode(',', $rs_name_list);
+                $download_incomplete_info .= $rs_name_list_str . ".\n";
+            } else {
+                $download_incomplete_info .= 'Some files appear to be incomplete. See the included info.txt file for more details.';
+            }
         }
 
         // generate info.txt
@@ -221,6 +244,7 @@ class Sequence
         $t['metadata_response_list'] = $metadata_response_list;
         $t['info_file_path'] = $info_file_path;
         $t['is_download_incomplete'] = $is_download_incomplete;
+        $t['download_incomplete_info'] = $download_incomplete_info;
         $t['file_stats'] = $file_stats;
 
         return $t;
@@ -235,6 +259,7 @@ class Sequence
         $metadata_response_list = $t['metadata_response_list'];
         $info_file_path = $t['info_file_path'];
         $is_download_incomplete = $t['is_download_incomplete'];
+        $download_incomplete_info = $t['download_incomplete_info'];
         $file_stats = $t['file_stats'];
 
         // zip files
@@ -250,6 +275,7 @@ class Sequence
         $t['system_path'] = $zip_path;
         $t['public_path'] = $zip_public_path;
         $t['is_download_incomplete'] = $is_download_incomplete;
+        $t['download_incomplete_info'] = $download_incomplete_info;
         $t['file_stats'] = $file_stats;
 
         return $t;
@@ -471,9 +497,8 @@ class Sequence
         if (! empty($failed_rs)) {
             $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "\n";
             foreach ($failed_rs as $rs) {
-                // code...
+                $s .= $rs->name . "\n";
             }
-            $s .= $rs->name . "\n";
         }
 
         $s .= "\n";

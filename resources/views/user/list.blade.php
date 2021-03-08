@@ -33,6 +33,7 @@
 						<th class="text-nowrap">Name / Username</th>
 						<th class="text-nowrap">Email</th>
 						<th class="text-nowrap">Last Login</th>
+						<th class="text-nowrap">Stats Pop-up Usage</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -58,7 +59,9 @@
 							<td class="text-muted text-nowrap">
 								{{ $t->updated_at ? Carbon\Carbon::parse($t->updated_at)->format('M d, Y') : '' }}
 							</td>
-							
+							<td class="text-nowrap">
+								{{ $t->stats_popup_count > 0 ? $t->stats_popup_count : '' }}
+							</td>
 						</tr>
 					@endforeach
 				</tbody>

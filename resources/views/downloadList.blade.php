@@ -91,7 +91,7 @@
 							<span class="label label-success">Finished</span>
 
 							@if($d->isIncomplete())
-								<span class="help help_queue_position text-danger" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Download is incomplete" data-content="<p>See the file info.txt for details.</p>" data-trigger="hover" tabindex="0">
+								<span class="help help_queue_position text-danger" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Incomplete download" data-content="<p>{{ $d->incomplete_info ? $d->incomplete_info : 'See the included info.txt file for more details.'}}</p>" data-trigger="hover" tabindex="0">
 									<span class="glyphicon glyphicon-warning-sign"></span>
 								</span>
 							@endif
