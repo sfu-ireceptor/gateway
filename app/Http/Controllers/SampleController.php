@@ -278,7 +278,7 @@ class SampleController extends Controller
         // generate query id for sequences page
         $sequence_filters = [];
         $sequence_filters['sample_query_id'] = $query_id;
-        foreach ($sample_data['items'] as $sample) {
+        foreach ($sample_list as $sample) {
             $rs_id = $sample->real_rest_service_id;
             $rs_param = 'ir_project_sample_id_list_' . $rs_id;
             if (! isset($sequence_filters[$rs_param])) {

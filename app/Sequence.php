@@ -223,9 +223,13 @@ class Sequence
             $download_incomplete_info = '';
             if (! empty($failed_rs)) {
                 $download_incomplete_info .= 'An error occured when trying to download from these repositories:' . "\n";
+
+                $rs_name_list = [];
                 foreach ($failed_rs as $rs) {
-                    $download_incomplete_info .= $rs->name . "\n";
+                    $rs_name_list[] = $rs->name;
                 }
+                $rs_name_list_str = implode(',', $rs_name_list);
+                $download_incomplete_info .= $rs_name_list_str . "\n";
             } else {
                 $download_incomplete_info .= 'Some files appear to be incomplete. See the included info.txt file for more details.';
             }
