@@ -255,6 +255,7 @@ class Sequence
         $metadata_response_list = $t['metadata_response_list'];
         $info_file_path = $t['info_file_path'];
         $is_download_incomplete = $t['is_download_incomplete'];
+        $download_incomplete_info = $t['download_incomplete_info'];
         $file_stats = $t['file_stats'];
 
         // zip files
@@ -270,6 +271,7 @@ class Sequence
         $t['system_path'] = $zip_path;
         $t['public_path'] = $zip_public_path;
         $t['is_download_incomplete'] = $is_download_incomplete;
+        $t['download_incomplete_info'] = $download_incomplete_info;
         $t['file_stats'] = $file_stats;
 
         return $t;
