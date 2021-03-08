@@ -228,7 +228,7 @@ class Sequence
                 }
             }
             else {
-                $download_incomplete_info .= 'Some files appear to be incomplete. See the included info.txt file for more details.'
+                $download_incomplete_info .= 'Some files appear to be incomplete. See the included info.txt file for more details.';
             }
 
         }
