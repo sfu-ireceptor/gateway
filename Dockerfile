@@ -39,3 +39,9 @@ RUN chown -R www-data:www-data /var/www/html/storage && \
 # Create MySQL tables
 RUN php artisan migrate
 
+# Seed required tables
+RUN php artisan db:seed
+
+# Add fake users
+RUN php artisan db:seed --class=UserSeeder
+
