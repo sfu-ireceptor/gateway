@@ -9,7 +9,7 @@ RUN apt-get update && \
 	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # install mysql driver
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+RUN docker-php-ext-install mysqli pdo_mysql
 
 # Apache setup
 RUN a2dismod cgi
