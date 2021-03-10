@@ -35,3 +35,7 @@ RUN chown -R www-data:www-data /var/www/html/storage && \
         find storage -name .gitignore | xargs chmod 0644 && \
         cp .env.example .env && \
         php artisan key:generate
+
+# Create MySQL tables
+RUN php artisan migrate
+
