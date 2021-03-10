@@ -6,8 +6,10 @@ RUN pecl install mongodb && echo "extension=mongodb.so" > /usr/local/etc/php/con
 # install zip, composer
 RUN apt-get update && \
 	apt-get install -y zip && \ 
-	apt-get install -y php7.4-mysql && \ 
 	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# install mysql driver
+RUN docker-php-ext-install mysqli pdo pdo_mysql
 
 # Apache setup
 RUN a2dismod cgi
