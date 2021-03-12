@@ -14,6 +14,7 @@ class UserSeeder extends Seeder
                 'first_name' => 'Mercury',
                 'last_name' => 'Planet',
                 'email' => 'mercury@solarsystem.uni',
+                'admin' => true,
             ],
         ];
 
