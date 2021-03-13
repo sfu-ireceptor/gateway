@@ -70,7 +70,7 @@
 										<li>
 											<a href="/admin/database-stats/{{ $rs->id }}" class="text-nowrap external" target="_blank">
 												<span class="glyphicon glyphicon-check" aria-hidden="true"></span>
-												Test Stats
+												Test stats
 											</a>
 										</li>
 									</ul>
