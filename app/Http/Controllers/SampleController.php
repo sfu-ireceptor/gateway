@@ -430,14 +430,6 @@ class SampleController extends Controller
         $stats_str = RestService::stats($rest_service_id, $repertoire_id, $stat);
         $stats = json_decode($stats_str);
 
-        $data_cleaned = [];
-        foreach ($stats->Result[0]->statistics[0]->data as $obj) {
-            if ($obj->key != '') {
-                $data_cleaned[] = $obj;
-            }
-        }
-        $stats->Result[0]->statistics[0]->data = $data_cleaned;
-
         $t = [];
         $t['stats'] = $stats;
 
