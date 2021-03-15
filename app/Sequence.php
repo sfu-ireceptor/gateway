@@ -247,7 +247,7 @@ class Sequence
                             break;
                         }
                     }
-                    if(! $is_failed) {
+                    if (! $is_failed) {
                         $success_rs[] = $rs;
                     }
                 }
