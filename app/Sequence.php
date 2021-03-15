@@ -222,14 +222,48 @@ class Sequence
             // generate info message
             $download_incomplete_info = '';
             if (! empty($failed_rs)) {
-                $download_incomplete_info .= 'An error occured when trying to download from these repositories:' . "\n";
-
+                // list failed repositories
                 $rs_name_list = [];
                 foreach ($failed_rs as $rs) {
                     $rs_name_list[] = $rs->name;
                 }
                 $rs_name_list_str = implode(',', $rs_name_list);
-                $download_incomplete_info .= $rs_name_list_str . ".\n";
+
+                if(count($failed_rs == 1)) {
+                    $download_incomplete_info .= 'An error occured when trying to download from the repository ' . $rs_name_list_str .  ".\n";
+                }
+                else {
+                    $download_incomplete_info .= 'An error occured when trying to download from the repositories ' . $rs_name_list_str .  ".\n";
+                }
+
+                // list successful repositories
+                $success_rs = [];
+                foreach ($response_list as $response) {
+                    $rs = $response['rs'];
+                    $is_failed = false;
+                    foreach ($failed_rs as $rs_failed) {
+                        if($rs->id == $failed_rs->id) {
+                            $is_failed = true;
+                            break;
+                        }
+                    }
+                    if(! $is_failed) {
+                        $success_rs[] = $rs;
+                    }
+                }
+
+                $rs_name_list = [];
+                foreach ($success_rs as $rs) {
+                    $rs_name_list[] = $rs->name;
+                }
+                $rs_name_list_str = implode(',', $rs_name_list);
+
+                if(count($success_rs == 1)) {
+                    $download_incomplete_info .= 'But the download from the repository ' . $rs_name_list_str .  " finished successfully.\n";
+                }
+                else {
+                    $download_incomplete_info .= 'But downloads from the repositories ' . $rs_name_list_str .  " finished successfully.\n";
+                }
             } else {
                 $download_incomplete_info .= 'Some files appear to be incomplete. See the included info.txt file for more details.';
             }
