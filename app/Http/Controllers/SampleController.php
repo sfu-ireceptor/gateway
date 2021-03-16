@@ -261,7 +261,7 @@ class SampleController extends Controller
         $sample_list2 = [];
         foreach ($sample_list as $sample) {
             // PRJNA330606-268
-            if($sample->repertoire_id == '17' || $sample->repertoire_id == 'PRJNA330606-268') {
+            if ($sample->repertoire_id == '17' || $sample->repertoire_id == 'PRJNA330606-268') {
                 $sample_list2[] = $sample;
             }
         }
