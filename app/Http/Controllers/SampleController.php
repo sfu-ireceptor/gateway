@@ -258,6 +258,16 @@ class SampleController extends Controller
 
         $sample_list = $sample_data['items'];
 
+        // $sample_list2 = [];
+        // foreach ($sample_list as $sample) {
+        //     // PRJNA330606-268
+        //     if($sample->repertoire_id == '17' || $sample->repertoire_id == 'PRJNA330606-268' || $sample->repertoire_id == '5890931441127648790-242ac113-0001-012') {
+        //         $sample_list2[] = $sample;
+        //     }
+        // }
+
+        // $sample_list = $sample_list2;
+
         // sort sample list
         $sample_list = Sample::sort_sample_list($sample_list, $sort_column, $sort_order);
 
