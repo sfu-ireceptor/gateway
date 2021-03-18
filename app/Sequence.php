@@ -519,9 +519,9 @@ class Sequence
 
         foreach ($file_stats as $t) {
             if ($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
-                $s .= $t['name'] . ' (' . $t['rs_url'] . ') (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences): ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences) (from ' . $t['rs_url'] . ')' . "\n";
             } else {
-                $s .= $t['name'] . ' (' . $t['rs_url'] . '): ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (from ' . $t['rs_url'] . ')' . "\n";
             }
         }
         $s .= "\n";
