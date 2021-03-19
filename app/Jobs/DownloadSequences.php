@@ -2,13 +2,12 @@
 
 namespace App\Jobs;
 
-use App\Agave;
-use App\User;
 use App\Download;
 use App\LocalJob;
 use App\Query;
 use App\QueryLog;
 use App\Sequence;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
