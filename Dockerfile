@@ -5,11 +5,11 @@ RUN pecl install mongodb && echo "extension=mongodb.so" > /usr/local/etc/php/con
 
 # install zip, composer
 RUN apt-get update && \
-	apt-get install -y zip && \ 
+	apt-get install -y zip libzip-dev && \
 	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # install mysql driver
-RUN docker-php-ext-install mysqli pdo_mysql
+RUN docker-php-ext-install mysqli pdo_mysql zip
 
 # Apache setup
 RUN a2dismod cgi
@@ -34,4 +34,7 @@ RUN chown -R www-data:www-data /var/www/html/storage && \
         find /var/www -perm 0777 | xargs chmod 0755 && \
         find storage -name .gitignore | xargs chmod 0644 && \
         cp .env.example .env && \
-        php artisan key:generate
+        php artisan key:generate && \
+        php artisan migrate && \
+        php artisan db:seed && \
+        php artisan -q storage:link
