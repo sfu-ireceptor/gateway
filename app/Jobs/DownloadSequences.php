@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Agave;
+use App\User;
 use App\Download;
 use App\LocalJob;
 use App\Query;
@@ -109,9 +110,7 @@ class DownloadSequences implements ShouldQueue
         $this->download->save();
 
         // send notification email
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $user = $agave->getUserWithUsername($this->username, $token);
+        $user = User::where('username', $this->username)->first();
         $email = $user->email;
         $date_str = $this->download->createdAtShort();
 
@@ -144,9 +143,7 @@ class DownloadSequences implements ShouldQueue
         $this->download->save();
 
         // send notification email
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $user = $agave->getUserWithUsername($this->username, $token);
+        $user = User::where('username', $this->username)->first();
         $email = $user->email;
 
         $t = [];
