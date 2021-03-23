@@ -558,7 +558,19 @@ class Sample
                 $value = ' ';
                 if (isset($sample->{$field['ir_id']})) {
                     $value = $sample->{$field['ir_id']};
-                    if (is_object($value) || is_array($value)) {
+
+                    // if field is boolean
+                    if(isset($field['airr_type']) && ($field['airr_type'] == 'boolean')) {
+                        if($value) {
+                            $value= 'T';
+                        }
+                        else {
+                            $value= 'F';
+                        }
+                    }
+
+                    // if value is object/array
+                    elseif (is_object($value) || is_array($value)) {
                         $value = json_encode($value);
                     }
 
