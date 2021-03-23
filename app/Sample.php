@@ -560,12 +560,11 @@ class Sample
                     $value = $sample->{$field['ir_id']};
 
                     // if field is boolean
-                    if(isset($field['airr_type']) && ($field['airr_type'] == 'boolean')) {
-                        if($value) {
-                            $value= 'T';
-                        }
-                        else {
-                            $value= 'F';
+                    if (isset($field['airr_type']) && ($field['airr_type'] == 'boolean')) {
+                        if ($value) {
+                            $value = 'T';
+                        } else {
+                            $value = 'F';
                         }
                     }
 
