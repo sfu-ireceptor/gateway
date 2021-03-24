@@ -743,7 +743,7 @@ class RestService extends Model
         // create Guzzle client
         $defaults = [];
         $defaults['verify'] = false;    // accept self-signed SSL certificates
-        $defaults['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
+        $defaults['headers'] = ['Content-Type' => 'application/json'];
         $client = new \GuzzleHttp\Client($defaults);
 
         $repertoire_object = new \stdClass();
@@ -1201,7 +1201,7 @@ class RestService extends Model
                 $options['auth'] = [$rs->username, $rs->password];
                 $options['timeout'] = $timeout;
 
-                $options['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
+                $options['headers'] = ['Content-Type' => 'application/json'];
                 $options['body'] = $params_str;
 
                 if ($file_path != '') {
