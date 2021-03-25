@@ -1201,7 +1201,7 @@ class RestService extends Model
                 $options['auth'] = [$rs->username, $rs->password];
                 $options['timeout'] = $timeout;
 
-                $options['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
+                $options['headers'] = ['Content-Type' => 'application/json'];
                 $options['body'] = $params_str;
 
                 if ($file_path != '') {
