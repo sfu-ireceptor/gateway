@@ -594,10 +594,9 @@ class RestService extends Model
             if ($counts_by_rs[$rs->id]['samples'] == null) {
                 $response['status'] = 'error';
 
-                if(isset($counts_by_rs[$rs->id]['error_type'])) {
+                if (isset($counts_by_rs[$rs->id]['error_type'])) {
                     $response['error_type'] = $counts_by_rs[$rs->id]['error_type'];
-                }
-                else {
+                } else {
                     $response['error_type'] = 'error';
                 }
 
