@@ -1041,32 +1041,43 @@ class RestService extends Model
 
                 $t = [];
                 $t['rs'] = $rs;
-                $t['url'] = $rs->url . 'rearrangement';
                 $t['params'] = $rs_filters_json;
-                $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
-                // add number suffix for rest services belonging to a group
-                $file_suffix = '';
-                $group = $rs->rest_service_group_code;
-                if ($group && $group_list[$group] > 1) {
-                    if (! isset($group_list_count[$group])) {
-                        $group_list_count[$group] = 0;
+                 // change URL for repositories acceptiong async queries
+                 if($rs->async) {
+                    // TODO generate URL from repository URL
+                    $t['url'] = 'https://vdj-staging.tacc.utexas.edu/airr/async/v1/rearrangement';
+                 }
+                 else {
+                    $t['url'] = $rs->url . 'rearrangement';
+                    $t['timeout'] = config('ireceptor.service_file_request_timeout');
+
+                    // add number suffix for rest services belonging to a group
+                    $file_suffix = '';
+                    $group = $rs->rest_service_group_code;
+                    if ($group && $group_list[$group] > 1) {
+                        if (! isset($group_list_count[$group])) {
+                            $group_list_count[$group] = 0;
+                        }
+                        $group_list_count[$group] += 1;
+                        $file_suffix = '_part' . $group_list_count[$group];
                     }
-                    $group_list_count[$group] += 1;
-                    $file_suffix = '_part' . $group_list_count[$group];
-                }
-                $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
+                    $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
+                 }
+
                 $request_params[] = $t;
             }
         }
 
         $final_response_list = [];
-        // do requests, write tsv data to files
+
+        // do standard requests
         if (count($request_params) > 0) {
             Log::info('Do TSV requests... (not-chunked)');
             $final_response_list = self::doRequests($request_params);
         }
 
+        // do chunked requests
         if (count($request_params_chunking) > 0) {
             Log::info('Do TSV requests... (chunked)');
             $request_params_chunked = array_chunk($request_params_chunking, 4);
@@ -1173,7 +1184,78 @@ class RestService extends Model
             $final_response_list[] = $response;
         }
 
-        return $final_response_list;
+        $final_response_list2 = [];
+        // if any async download, poll until ready then download
+        foreach ($final_response_list as $response) {
+            $rs = $response['rs'];
+            if($rs->async) {
+                $query_id = $response['data']->query_id;
+
+                $defaults = [];
+                $defaults['base_uri'] = 'https://vdj-staging.tacc.utexas.edu/airr/async/v1/status/';
+                $defaults['verify'] = false;    // accept self-signed SSL certificates
+
+                $status = 'SUBMITTED';
+                $download_url = '';
+
+                while ($status != 'FINISHED' && $status != 'ERROR') {
+                    try {
+                        $client = new \GuzzleHttp\Client($defaults);
+
+                        $response_polling = $client->get($query_id);
+                        $body = $response_polling->getBody();
+                        $json = json_decode($body);
+
+                        if (isset($json->status)) {
+                            $status = $json->status;
+                        }
+
+                        if($status == 'FINISHED') {
+                            $download_url = $json->download_url;
+                            break;
+                        }
+
+                        if($status == 'ERROR') {
+                            Log::error($json);
+                            break;
+                        }
+
+                        sleep(10);
+                    } catch (\Exception $e) {
+                        $status = 'ERROR';
+                        $error_message = $e->getMessage();
+                        Log::error($error_message);
+                    }
+                    Log::debug('status=' . $status);
+                }
+
+                if($status == 'FINISHED') {
+                    Log::debug('status=' . $status);
+                    Log::debug('download_url=' . $download_url);
+
+                    $defaults = [];
+                    $defaults['verify'] = false;    // accept self-signed SSL certificates
+
+                    $client = new \GuzzleHttp\Client($defaults);
+
+                    $response_download = $client->get($download_url);
+                    $tsv = $response_download->getBody();
+
+                    $file_path = $folder_path . '/' . str_slug($rs->display_name) . '.tsv';
+                    file_put_contents($file_path, $tsv);
+
+                    unset($response['data']);
+                    $response['data'] = [];
+                    $response['data']['file_path'] = $file_path;
+                    $final_response_list2[] = $response;
+                }
+            }
+            else {
+                $final_response_list2[] = $response;
+            }
+        }
+
+        return $final_response_list2;
     }
 
     // do requests (in parallel)
