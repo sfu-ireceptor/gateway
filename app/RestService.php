@@ -1043,12 +1043,11 @@ class RestService extends Model
                 $t['rs'] = $rs;
                 $t['params'] = $rs_filters_json;
 
-                 // change URL for repositories acceptiong async queries
-                 if($rs->async) {
+                // change URL for repositories acceptiong async queries
+                if ($rs->async) {
                     // TODO generate URL from repository URL
                     $t['url'] = 'https://vdj-staging.tacc.utexas.edu/airr/async/v1/rearrangement';
-                 }
-                 else {
+                } else {
                     $t['url'] = $rs->url . 'rearrangement';
                     $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
@@ -1063,7 +1062,7 @@ class RestService extends Model
                         $file_suffix = '_part' . $group_list_count[$group];
                     }
                     $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
-                 }
+                }
 
                 $request_params[] = $t;
             }
@@ -1188,7 +1187,7 @@ class RestService extends Model
         // if any async download, poll until ready then download
         foreach ($final_response_list as $response) {
             $rs = $response['rs'];
-            if($rs->async) {
+            if ($rs->async) {
                 $query_id = $response['data']->query_id;
 
                 $defaults = [];
@@ -1210,12 +1209,12 @@ class RestService extends Model
                             $status = $json->status;
                         }
 
-                        if($status == 'FINISHED') {
+                        if ($status == 'FINISHED') {
                             $download_url = $json->download_url;
                             break;
                         }
 
-                        if($status == 'ERROR') {
+                        if ($status == 'ERROR') {
                             Log::error($json);
                             break;
                         }
@@ -1229,7 +1228,7 @@ class RestService extends Model
                     Log::debug('status=' . $status);
                 }
 
-                if($status == 'FINISHED') {
+                if ($status == 'FINISHED') {
                     Log::debug('status=' . $status);
                     Log::debug('download_url=' . $download_url);
 
@@ -1249,8 +1248,7 @@ class RestService extends Model
                     $response['data']['file_path'] = $file_path;
                     $final_response_list2[] = $response;
                 }
-            }
-            else {
+            } else {
                 $final_response_list2[] = $response;
             }
         }
