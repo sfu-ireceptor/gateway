@@ -1427,3 +1427,12 @@ form.column_selector {
 
 
 /* @end */
+
+/* @group test */
+
+.stats_available_notification {
+	background-color: red;
+	padding: 10px;
+}
+
+/* @end */
