@@ -13,6 +13,7 @@ class RestServicePublicSeeder extends Seeder
                 'name' => 'IPA 1',
                 'nb_samples' => 527,
                 'nb_sequences' => 239596233,
+                'stats' => true,
                 'rest_service_group_code' => 'ipa',
             ],
             [
@@ -20,6 +21,7 @@ class RestServicePublicSeeder extends Seeder
                 'name' => 'IPA 2',
                 'nb_samples' => 48,
                 'nb_sequences' => 312157920,
+                'stats' => true,
                 'rest_service_group_code' => 'ipa',
             ],
             [
@@ -27,6 +29,7 @@ class RestServicePublicSeeder extends Seeder
                 'name' => 'IPA 3',
                 'nb_samples' => 99,
                 'nb_sequences' => 452383378,
+                'stats' => true,
                 'rest_service_group_code' => 'ipa',
             ],
             [
@@ -34,6 +37,7 @@ class RestServicePublicSeeder extends Seeder
                 'name' => 'IPA 4',
                 'nb_samples' => 241,
                 'nb_sequences' => 388707880,
+                'stats' => true,
                 'rest_service_group_code' => 'ipa',
             ],
             [
@@ -41,6 +45,7 @@ class RestServicePublicSeeder extends Seeder
                 'name' => 'IPA 5',
                 'nb_samples' => 155,
                 'nb_sequences' => 465253902,
+                'stats' => true,
                 'rest_service_group_code' => 'ipa',
             ],
             [
@@ -48,6 +53,7 @@ class RestServicePublicSeeder extends Seeder
                 'name' => 'COVID 19-1',
                 'nb_samples' => 513,
                 'nb_sequences' => 49373265,
+                'stats' => true,
                 'rest_service_group_code' => 'c19',
             ],
             [
@@ -55,6 +61,7 @@ class RestServicePublicSeeder extends Seeder
                 'name' => 'COVID 19-2',
                 'nb_samples' => 118,
                 'nb_sequences' => 154106183,
+                'stats' => true,
                 'rest_service_group_code' => 'c19',
             ],
             [
@@ -62,6 +69,7 @@ class RestServicePublicSeeder extends Seeder
                 'name' => 'COVID 19-3',
                 'nb_samples' => 614,
                 'nb_sequences' => 168683398,
+                'stats' => true,
                 'rest_service_group_code' => 'c19',
             ],
             [
@@ -69,6 +77,7 @@ class RestServicePublicSeeder extends Seeder
                 'name' => 'COVID 19-4',
                 'nb_samples' => 800,
                 'nb_sequences' => 374743217,
+                'stats' => true,
                 'rest_service_group_code' => 'c19',
             ],
             [
