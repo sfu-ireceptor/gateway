@@ -64,7 +64,7 @@
 					<span>A <strong>science gateway</strong></span>
 					<span>that enables the discovery, analysis and download</span>
 					<span>of <a href="https://www.antibodysociety.org/the-airr-community/">AIRR-seq data</a> (antibody/B-cell and T-cell receptor repertoires)</span>
-					<span>from multiple independent repositories (the <a href="https://docs.airr-community.org/en/stable/api/adc.html">AIRR Data Commons</a>), including:</span>
+					<span>from multiple independent repositories (the <a href="https://www.antibodysociety.org/the-airr-community/airr-data-commons/">AIRR Data Commons</a>), including:</span>
 				</p>
 				<div class="row">
 					<div class="col-md-1">

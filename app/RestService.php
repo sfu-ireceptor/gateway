@@ -593,7 +593,12 @@ class RestService extends Model
 
             if ($counts_by_rs[$rs->id]['samples'] == null) {
                 $response['status'] = 'error';
-                $response['error_type'] = $counts_by_rs[$rs->id]['error_type'];
+
+                if (isset($counts_by_rs[$rs->id]['error_type'])) {
+                    $response['error_type'] = $counts_by_rs[$rs->id]['error_type'];
+                } else {
+                    $response['error_type'] = 'error';
+                }
 
                 // include this response so the error is reported
                 $response_list_filtered[] = $response;
@@ -856,12 +861,12 @@ class RestService extends Model
             // add number suffix for rest services belonging to the same group
             $file_suffix = '';
             $group = $rs->rest_service_group_code;
-            if ($group && $group_list[$group] >= 1) {
+            if ($group && $group_list[$group] > 1) {
                 if (! isset($group_list_count[$group])) {
                     $group_list_count[$group] = 0;
                 }
                 $group_list_count[$group] += 1;
-                $file_suffix = '-' . $group_list_count[$group];
+                $file_suffix = '_part' . $group_list_count[$group];
             }
             $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '-metadata.json';
             $request_params[] = $t;
@@ -920,12 +925,12 @@ class RestService extends Model
             // add number suffix for rest services belonging to the same group
             $file_suffix = '';
             $group = $rs->rest_service_group_code;
-            if ($group && $group_list[$group] >= 1) {
+            if ($group && $group_list[$group] > 1) {
                 if (! isset($group_list_count[$group])) {
                     $group_list_count[$group] = 0;
                 }
                 $group_list_count[$group] += 1;
-                $file_suffix = '-' . $group_list_count[$group];
+                $file_suffix = '_part' . $group_list_count[$group];
             }
             $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '-metadata.json';
             $request_params[] = $t;
@@ -1025,12 +1030,12 @@ class RestService extends Model
                     // add number suffix for rest services belonging to a group
                     $file_suffix = '';
                     $group = $rs->rest_service_group_code;
-                    if ($group && $group_list[$group] >= 1) {
+                    if ($group && $group_list[$group] > 1) {
                         if (! isset($group_list_count[$group])) {
                             $group_list_count[$group] = 0;
                         }
                         $group_list_count[$group] += 1;
-                        $file_suffix = '-' . $group_list_count[$group];
+                        $file_suffix = '_part' . $group_list_count[$group];
                     }
                     $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '_' . $i . '.tsv';
                     $request_params_chunking[] = $t;
@@ -1048,12 +1053,12 @@ class RestService extends Model
                 // add number suffix for rest services belonging to a group
                 $file_suffix = '';
                 $group = $rs->rest_service_group_code;
-                if ($group && $group_list[$group] >= 1) {
+                if ($group && $group_list[$group] > 1) {
                     if (! isset($group_list_count[$group])) {
                         $group_list_count[$group] = 0;
                     }
                     $group_list_count[$group] += 1;
-                    $file_suffix = '-' . $group_list_count[$group];
+                    $file_suffix = '_part' . $group_list_count[$group];
                 }
                 $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
                 $request_params[] = $t;
@@ -1201,7 +1206,7 @@ class RestService extends Model
                 $options['auth'] = [$rs->username, $rs->password];
                 $options['timeout'] = $timeout;
 
-                $options['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
+                $options['headers'] = ['Content-Type' => 'application/json'];
                 $options['body'] = $params_str;
 
                 if ($file_path != '') {

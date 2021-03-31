@@ -157,7 +157,7 @@ $(document).ready(function() {
 			stats_url = button.data('url');
 
 			// hide popover
-			$('.stats_available_notification').popover('destroy');
+			$('.stats_available_notification').tooltip('destroy');
 
 			// notify server popover has been seen
 			$.get('/samples/count-stats-popup-open');
@@ -236,17 +236,17 @@ $(document).ready(function() {
 	});
 
 	// display "stats available" popover
-	$('.stats_available_notification').popover({
+	$('.stats_available_notification').tooltip({
 		'placement': 'left',
-		'content': 'Repertoire statistics are now available.',
+		'title': 'Repertoire statistics<br>are now available.',
 		'trigger': 'click',
-		'sanitize': 'false',
-		'container': 'body'
+		'container': 'body',
+		'html': true
 	});
 
 	setTimeout(function() {
-			$('.stats_available_notification').popover('show');
-	}, 500);
+			$('.stats_available_notification').tooltip('show');
+	}, 1000);
 
 	/**********************************************************
 	* Sequences

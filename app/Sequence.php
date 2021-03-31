@@ -222,14 +222,46 @@ class Sequence
             // generate info message
             $download_incomplete_info = '';
             if (! empty($failed_rs)) {
-                $download_incomplete_info .= 'An error occured when trying to download from these repositories:' . "\n";
-
+                // list failed repositories
                 $rs_name_list = [];
                 foreach ($failed_rs as $rs) {
                     $rs_name_list[] = $rs->name;
                 }
                 $rs_name_list_str = implode(',', $rs_name_list);
-                $download_incomplete_info .= $rs_name_list_str . ".\n";
+
+                if (count($failed_rs) == 1) {
+                    $download_incomplete_info .= 'An error occured when trying to download from the repository ' . $rs_name_list_str . ".\n\n";
+                } else {
+                    $download_incomplete_info .= 'An error occured when trying to download from the repositories ' . $rs_name_list_str . ".\n\n";
+                }
+
+                // list successful repositories
+                $success_rs = [];
+                foreach ($response_list as $response) {
+                    $rs = $response['rs'];
+                    $is_failed = false;
+                    foreach ($failed_rs as $rs_failed) {
+                        if ($rs->id == $rs_failed->id) {
+                            $is_failed = true;
+                            break;
+                        }
+                    }
+                    if (! $is_failed) {
+                        $success_rs[] = $rs;
+                    }
+                }
+
+                $rs_name_list = [];
+                foreach ($success_rs as $rs) {
+                    $rs_name_list[] = $rs->name;
+                }
+                $rs_name_list_str = implode(',', $rs_name_list);
+
+                if (count($success_rs) == 1) {
+                    $download_incomplete_info .= 'The download from the repository ' . $rs_name_list_str . " finished successfully.\n";
+                } else {
+                    $download_incomplete_info .= 'Downloads from the following repositories finished successfully: ' . $rs_name_list_str . ".\n";
+                }
             } else {
                 $download_incomplete_info .= 'Some files appear to be incomplete. See the included info.txt file for more details.';
             }
@@ -487,9 +519,9 @@ class Sequence
 
         foreach ($file_stats as $t) {
             if ($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
-                $s .= $t['name'] . ' (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences): ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences) (from ' . $t['rs_url'] . ')' . "\n";
             } else {
-                $s .= $t['name'] . ': ' . $t['nb_sequences'] . ' sequences (' . $t['size'] . ')' . "\n";
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (from ' . $t['rs_url'] . ')' . "\n";
             }
         }
         $s .= "\n";
@@ -619,6 +651,7 @@ class Sequence
                 $t = [];
                 $file_path = $response['data']['file_path'];
                 $t['name'] = basename($file_path);
+                $t['rs_url'] = $response['rs']->url;
                 $t['size'] = human_filesize($file_path);
 
                 // count number of lines

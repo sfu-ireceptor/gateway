@@ -12,6 +12,7 @@
 			<table class="table table-bordered table-striped table-condensed rs_stats">
 				<thead>
 					<tr>
+						<th></th>
 						<th>Study</th>
 						<th>Repertoire</th>
 						<th>ID</th>
@@ -27,6 +28,7 @@
 					@foreach ($sample_list as $sample)
 						@if(isset($sample->stats) && $sample->stats)
 						<tr data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}">
+							<td>{{ $loop->iteration }}</td>
 							<td>
 								{{ str_limit($sample->study_title, $limit = 50, $end = '‥') }}
 							</td>

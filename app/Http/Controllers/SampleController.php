@@ -258,6 +258,16 @@ class SampleController extends Controller
 
         $sample_list = $sample_data['items'];
 
+        // $sample_list2 = [];
+        // foreach ($sample_list as $sample) {
+        //     // PRJNA330606-268
+        //     if($sample->repertoire_id == '17' || $sample->repertoire_id == 'PRJNA330606-268' || $sample->repertoire_id == '5890931441127648790-242ac113-0001-012') {
+        //         $sample_list2[] = $sample;
+        //     }
+        // }
+
+        // $sample_list = $sample_list2;
+
         // sort sample list
         $sample_list = Sample::sort_sample_list($sample_list, $sort_column, $sort_order);
 
@@ -278,7 +288,7 @@ class SampleController extends Controller
         // generate query id for sequences page
         $sequence_filters = [];
         $sequence_filters['sample_query_id'] = $query_id;
-        foreach ($sample_list as $sample) {
+        foreach ($sample_data['items'] as $sample) {
             $rs_id = $sample->real_rest_service_id;
             $rs_param = 'ir_project_sample_id_list_' . $rs_id;
             if (! isset($sequence_filters[$rs_param])) {
@@ -429,14 +439,6 @@ class SampleController extends Controller
     {
         $stats_str = RestService::stats($rest_service_id, $repertoire_id, $stat);
         $stats = json_decode($stats_str);
-
-        $data_cleaned = [];
-        foreach ($stats->Result[0]->statistics[0]->data as $obj) {
-            if ($obj->key != '') {
-                $data_cleaned[] = $obj;
-            }
-        }
-        $stats->Result[0]->statistics[0]->data = $data_cleaned;
 
         $t = [];
         $t['stats'] = $stats;

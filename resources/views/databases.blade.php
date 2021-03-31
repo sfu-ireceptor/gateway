@@ -53,7 +53,8 @@
 										    		Enable
 										    	</a>
 										    </li>
-										@endif		
+										@endif
+										<li role="separator" class="divider"></li>
 										<li>
 											<a href="/admin/samples/update-sequence_count/{{ $rs->id }}">
 												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
@@ -62,8 +63,14 @@
 										</li>
 										<li>
 											<a href="/admin/update-chunk-size/{{ $rs->id }}">
-												<span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
 												Refresh max_size, stats
+											</a>
+										</li>
+										<li>
+											<a href="/admin/database-stats/{{ $rs->id }}" class="text-nowrap external" target="_blank">
+												<span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+												Test stats
 											</a>
 										</li>
 									</ul>
@@ -79,9 +86,8 @@
 							</td>
 							<td>
 								@if($rs->stats)
-									<a href="/admin/database-stats/{{ $rs->id }}" class="text-nowrap external" target="_blank">Yes</a>
+									<a href="/admin/database-stats/{{ $rs->id }}" class="text-nowrap external" target="_blank" title="Test Stats">Yes</a>
 								@endif
-
 							</td>
 							<td>{{ $rs->chunk_size }}</td>
 							<td class="text-nowrap">

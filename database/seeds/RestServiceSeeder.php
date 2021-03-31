@@ -117,6 +117,14 @@ class RestServiceSeeder extends Seeder
                 'url' => 'http://airr-seq.vdjbase.org/airr/v1/',
                 'name' => 'VDJbase',
             ],
+            [
+                'url' => 'https://pangaea.scireptor.net:51431/airr/v1/',
+                'name' => 'sciReptor Staging',
+            ],
+            [
+                'url' => 'http://secure.ireceptor.org/middleware/airr/v1/',
+                'name' => 'Secure IPA1',
+            ],
         ];
 
         // if grouping is disabled, remove group code
