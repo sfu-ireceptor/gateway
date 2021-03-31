@@ -27,12 +27,7 @@ WORKDIR /var/www/html
 RUN composer install
 
 # Laravel setup
-RUN chown -R www-data:www-data /var/www/html/storage && \
-        chown root:root /var/www/html && \
-        chmod go-w /var/www/html && \
-        chmod u+w /var/www/html && \
-        find /var/www -perm 0777 | xargs chmod 0755 && \
-        find storage -name .gitignore | xargs chmod 0644 && \
+RUN chmod -R 777 /var/www/html/storage && \
         cp .env.example .env && \
         php artisan key:generate && \
         php artisan -q storage:link
