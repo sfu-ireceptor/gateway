@@ -9,6 +9,7 @@ class RestServicePublicSeeder extends Seeder
     {
         $l = [
             [
+                'id' => 19,
                 'url' => 'https://ipa1.ireceptor.org/airr/v1/',
                 'name' => 'IPA 1',
                 'nb_samples' => 527,
@@ -18,6 +19,7 @@ class RestServicePublicSeeder extends Seeder
                 'rest_service_group_code' => 'ipa',
             ],
             [
+                'id' => 13,
                 'url' => 'https://ipa2.ireceptor.org/airr/v1/',
                 'name' => 'IPA 2',
                 'nb_samples' => 48,
@@ -27,6 +29,7 @@ class RestServicePublicSeeder extends Seeder
                 'rest_service_group_code' => 'ipa',
             ],
             [
+                'id' => 14,
                 'url' => 'https://ipa3.ireceptor.org/airr/v1/',
                 'name' => 'IPA 3',
                 'nb_samples' => 99,
@@ -36,6 +39,7 @@ class RestServicePublicSeeder extends Seeder
                 'rest_service_group_code' => 'ipa',
             ],
             [
+                'id' => 20,
                 'url' => 'https://ipa4.ireceptor.org/airr/v1/',
                 'name' => 'IPA 4',
                 'nb_samples' => 241,
@@ -45,6 +49,7 @@ class RestServicePublicSeeder extends Seeder
                 'rest_service_group_code' => 'ipa',
             ],
             [
+                'id' => 22,
                 'url' => 'http://ipa5.ireceptor.org/airr/v1/',
                 'name' => 'IPA 5',
                 'nb_samples' => 155,
@@ -54,6 +59,7 @@ class RestServicePublicSeeder extends Seeder
                 'rest_service_group_code' => 'ipa',
             ],
             [
+                'id' => 41,
                 'url' => 'http://covid19-1.ireceptor.org/airr/v1/',
                 'name' => 'COVID 19-1',
                 'nb_samples' => 513,
@@ -63,6 +69,7 @@ class RestServicePublicSeeder extends Seeder
                 'rest_service_group_code' => 'c19',
             ],
             [
+                'id' => 42,
                 'url' => 'http://covid19-2.ireceptor.org/airr/v1/',
                 'name' => 'COVID 19-2',
                 'nb_samples' => 118,
@@ -72,6 +79,7 @@ class RestServicePublicSeeder extends Seeder
                 'rest_service_group_code' => 'c19',
             ],
             [
+                'id' => 43,
                 'url' => 'http://covid19-3.ireceptor.org/airr/v1/',
                 'name' => 'COVID 19-3',
                 'nb_samples' => 614,
@@ -81,6 +89,7 @@ class RestServicePublicSeeder extends Seeder
                 'rest_service_group_code' => 'c19',
             ],
             [
+                'id' => 49,
                 'url' => 'http://covid19-4.ireceptor.org/airr/v1/',
                 'name' => 'COVID 19-4',
                 'nb_samples' => 800,
@@ -90,6 +99,7 @@ class RestServicePublicSeeder extends Seeder
                 'rest_service_group_code' => 'c19',
             ],
             [
+                'id' => 45,
                 'url' => 'https://vdjserver.org/airr/v1/',
                 'nb_samples' => 2949,
                 'nb_sequences' => 1428100943,
@@ -97,6 +107,7 @@ class RestServicePublicSeeder extends Seeder
                 'name' => 'VDJServer',
             ],
             [
+                'id' => 54,
                 'url' => 'http://airr-seq.vdjbase.org/airr/v1/',
                 'nb_samples' => 42,
                 'nb_sequences' => 212547,
