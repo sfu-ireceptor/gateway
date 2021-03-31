@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\CachedSample;
+use Illuminate\Console\Command;
 
 class UpdateSampleCache extends Command
 {
