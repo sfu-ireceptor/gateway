@@ -38,6 +38,9 @@ class UpdateSampleCache extends Command
      */
     public function handle()
     {
+        // needed here because .htaccess is not used by Artisan commands
+        ini_set('memory_limit','800M');
+
         $n = CachedSample::cache();
         $message = "$n samples have been retrieved and cached.";
         echo $message;
