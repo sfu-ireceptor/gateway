@@ -9,7 +9,7 @@ class RestServicePrivateSeeder extends Seeder
     public function __construct()
     {
         $this->table = 'rest_service';
-        $this->filename = base_path() . '/database/seeds/data/private_rest_services.tsv';
+        $this->filename = config('ireceptor.seeders_data_folder') . '/private_rest_services.tsv';
         $this->offset_rows = 1;
         $this->csv_delimiter = "\t";
     }	

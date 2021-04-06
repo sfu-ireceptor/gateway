@@ -129,4 +129,16 @@ return [
     */
 
     'group_repositories' => env('IRECEPTOR_GROUP_REPOSITORIES', true),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Seeders data folder
+    |--------------------------------------------------------------------------
+    |
+    | To allow override for Docker
+    | Ex: database/seeds/data
+    |
+    */
+
+    'seeders_data_folder' => env('IRECEPTOR_SEEDERS_DATA_FOLDER', base_path() . '/database/seeds/data'),
 ];
