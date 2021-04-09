@@ -1428,11 +1428,228 @@ form.column_selector {
 
 /* @end */
 
-/* @group test */
 
-.stats_available_notification {
-	background-color: red;
-	padding: 10px;
+/* @group ir_tooltip */
+
+.ir_tooltip {
+	position: absolute;
+	z-index: 1070;
+	display: block;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 1.42857143;
+	line-break: auto;
+	text-align: left;
+	text-align: start;
+	text-decoration: none;
+	text-shadow: none;
+	text-transform: none;
+	letter-spacing: normal;
+	word-break: normal;
+	word-spacing: normal;
+	word-wrap: normal;
+	white-space: normal;
+	font-size: 12px;
+	filter: alpha(opacity=0);
+	opacity: 0;
+}
+
+.ir_tooltip.in {
+	filter: alpha(opacity=90);
+	opacity: 0.9;
+}
+
+.ir_tooltip.top {
+	padding: 5px 0;
+	margin-top: -3px;
+}
+
+.ir_tooltip.right {
+	padding: 0 5px;
+	margin-left: 3px;
+}
+
+.ir_tooltip.bottom {
+	padding: 5px 0;
+	margin-top: 3px;
+}
+
+.ir_tooltip.left {
+	padding: 0 5px;
+	margin-left: -3px;
+}
+
+.ir_tooltip.top .ir_tooltip-arrow {
+	bottom: 0;
+	left: 50%;
+	margin-left: -5px;
+	border-width: 5px 5px 0;
+	border-top-color: #000;
+}
+
+.ir_tooltip.top-left .ir_tooltip-arrow {
+	right: 5px;
+	bottom: 0;
+	margin-bottom: -5px;
+	border-width: 5px 5px 0;
+	border-top-color: #000;
+}
+
+.ir_tooltip.top-right .ir_tooltip-arrow {
+	bottom: 0;
+	left: 5px;
+	margin-bottom: -5px;
+	border-width: 5px 5px 0;
+	border-top-color: #000;
+}
+
+.ir_tooltip.right .ir_tooltip-arrow {
+	top: 50%;
+	left: 0;
+	margin-top: -5px;
+	border-width: 5px 5px 5px 0;
+	border-right-color: #000;
+}
+
+.ir_tooltip.left .ir_tooltip-arrow {
+	top: 50%;
+	right: 0;
+	margin-top: -5px;
+	border-width: 5px 0 5px 5px;
+	border-left-color: #000;
+}
+
+.ir_tooltip.bottom .ir_tooltip-arrow {
+	top: 0;
+	left: 50%;
+	margin-left: -5px;
+	border-width: 0 5px 5px;
+	border-bottom-color: #000;
+}
+
+.ir_tooltip.bottom-left .ir_tooltip-arrow {
+	top: 0;
+	right: 5px;
+	margin-top: -5px;
+	border-width: 0 5px 5px;
+	border-bottom-color: #000;
+}
+
+.ir_tooltip.bottom-right .ir_tooltip-arrow {
+	top: 0;
+	left: 5px;
+	margin-top: -5px;
+	border-width: 0 5px 5px;
+	border-bottom-color: #000;
+}
+
+.ir_tooltip-inner {
+	max-width: 200px;
+	padding: 3px 8px;
+	color: #fff;
+	text-align: center;
+	background-color: #000;
+	border-radius: 4px;
+}
+
+.ir_tooltip-arrow {
+	position: absolute;
+	width: 0;
+	height: 0;
+	border-color: transparent;
+	border-style: solid;
+}
+
+/* @end */
+
+/* @group tipsy */
+
+/* jQuery.tipsy
+ * Copyright (c) 2014 CreativeDream
+ * Version: 1.0 (18-11-2014) */
+ 
+.tipsy {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 6px 8px;
+    font-family: sans-serif;
+    font-size: 12px;
+    line-height: normal;
+    color: white;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    background-color: rgba(0,0,0,1);
+    z-index: 9999;
+}
+
+.tipsy:before {
+    position: absolute;
+    bottom: -5px;
+    left: 5px;
+    display: inline-block;
+    content: '';
+    border-right: 5px solid transparent;
+    border-top: 5px solid rgba(0,0,0,0.75);
+    border-bottom: 0 solid rgba(0,0,0,0.75);
+    border-left: 5px solid transparent;
+}
+
+.tipsy.arrow-top:before {
+    bottom: auto;
+    top: -5px;
+    border-top-width: 0;
+    border-bottom-width: 5px;
+}
+
+.tipsy.arrow-bottom:before {
+    bottom: -5px;
+    top: auto;
+    border-top-width: 5px;
+    border-bottom-width: 0;
+}
+
+.tipsy.arrow-left:before {
+    left: 5px;
+    right: auto;
+}
+
+.tipsy.arrow-center:before {
+    left: 50%;
+    right: auto;
+    margin-left: -5px;
+}
+
+.tipsy.arrow-right:before {
+    right: 5px;
+    left: auto;
+}
+
+.tipsy.arrow-side-left:before {
+    top: 50%;
+    bottom: auto;
+    left: 0;
+    right: auto;
+    margin-top: -5px;
+    margin-left: -5px;
+    border-right-color: rgba(0,0,0,0.75);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 0;
+}
+
+.tipsy.arrow-side-right:before {
+    top: 50%;
+    bottom: auto;
+    right: 0;
+    left: auto;
+    margin-top: -5px;
+    margin-right: -5px;
+    border-left-color: rgba(0,0,0,0.75);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-right: 0;
 }
 
 /* @end */

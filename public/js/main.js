@@ -235,17 +235,20 @@ $(document).ready(function() {
 		modal.find('.modal-title').text('Repertoire: ' + repertoire_name);
 	});
 
-	// display "stats available" popover
-	$('.stats_available_notification').tooltip({
-		'placement': 'left',
-		'title': 'Repertoire statistics<br>are now available.',
-		'trigger': 'click',
-		'container': 'body',
-		'html': true
+	$('a.stats_available_notification').tipsy({
+	      arrowWidth: 10, //arrow css border-width + margin-(left|right), default is 5 + 5
+	      attr: 'data-tipsy', //default attributes for tipsy - data-tipsy-position | data-tipsy-offset | data-tipsy-disabled
+	      cls: null, //tipsy custom class
+	      duration: 150, //tipsy fadeIn, fadeOut duration
+	      offset: 7, //tipsy offset from element
+	      position: 'left', //tipsy position - top-left | top-center | top-right | bottom-left | bottom-center | bottom-right | left | right
+	      trigger: 'manual', // how tooltip is triggered - hover | focus | click | manual
+	      onShow: null, //onShow event
+	      onHide: null //onHide event
 	});
 
 	setTimeout(function() {
-			$('.stats_available_notification').tooltip('show');
+			$('.stats_available_notification').tipsy("show");
 	}, 1000);
 
 	/**********************************************************
