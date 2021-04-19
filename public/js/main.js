@@ -235,19 +235,6 @@ $(document).ready(function() {
 		modal.find('.modal-title').text('Repertoire: ' + repertoire_name);
 	});
 
-	// display "stats available" popover
-	$('.stats_available_notification').tooltip({
-		'placement': 'left',
-		'title': 'Repertoire statistics<br>are now available.',
-		'trigger': 'click',
-		'container': 'body',
-		'html': true
-	});
-
-	setTimeout(function() {
-			$('.stats_available_notification').tooltip('show');
-	}, 1000);
-
 	/**********************************************************
 	* Sequences
 	**********************************************************/
