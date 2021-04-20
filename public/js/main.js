@@ -157,7 +157,7 @@ $(document).ready(function() {
 			stats_url = button.data('url');
 
 			// hide popover
-			$('.stats_available_notification').tooltip('destroy');
+			$('.stats_notification_container').remove();
 
 			// notify server popover has been seen
 			$.get('/samples/count-stats-popup-open');
