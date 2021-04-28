@@ -1,4 +1,4 @@
-@extends('template')
+ @extends('template')
 
 @section('title', 'User Sequence Downloads')
 
@@ -21,6 +21,7 @@
 			<th>Nb sequences</th>
 			<th>Duration (running)</th>
 			<th>Status</th>
+			<th>Size</th>
 			<th>File</th>
 		</thead>
 		<tbody>
@@ -69,6 +70,9 @@
 					@endif
 				</td>
 				<td>
+					{{ human_filesize($d->file_size) }}
+				</td>
+				<td>
 					@if($d->isQueued())
 						<a href="/downloads/cancel/{{ $d->id }}" class="btn btn-warning btn-xs" type="button" title="Cancel Download">
 							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -82,7 +86,6 @@
 								<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 								<span class="text">
 									Download
-									({{ human_filesize(filesize($d->file_url)) }})
 								</span>
 							</a>
 					@endif
