@@ -233,7 +233,7 @@ class Sample
             }
 
             // add extra fields (not defined in mapping file)
-            $fields = ['repertoire_id', 'real_rest_service_id', 'ir_sequence_count', 'ir_filtered_sequence_count', 'stats'];
+            $fields = ['repertoire_id', 'real_rest_service_id', 'ir_sequence_count', 'ir_clone_count', 'ir_filtered_sequence_count', 'stats'];
             foreach ($fields as $field_name) {
                 if (isset($sample->{$field_name})) {
                     $new_sample->{$field_name} = $sample->{$field_name};
@@ -594,14 +594,14 @@ class Sample
     public static function sort_sample_list($sample_list, $sort_column, $sort_order)
     {
         $field_type = FieldName::getFieldType($sort_column);
-        if ($sort_column == 'ir_sequence_count') {
+        if ($sort_column == 'ir_sequence_count' || $sort_column == 'ir_clone_count') {
             $field_type = 'integer';
         }
 
         usort($sample_list, function ($a, $b) use ($sort_column, $sort_order, $field_type) {
             $comparison_result = 0;
 
-            if ($sort_column == 'ir_sequence_count') {
+            if ($sort_column == 'ir_sequence_count' || $sort_column == 'ir_clone_count') {
                 if (! isset($a->{$sort_column})) {
                     $a->{$sort_column} = 0;
                 }

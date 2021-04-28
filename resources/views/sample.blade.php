@@ -394,7 +394,7 @@
 								</div>
 								<div class="col-md-6 repertoires_button_container">
 									<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
-										Browse sequences from {{ $nb_samples }} repertoires →
+										Browse clones from {{ $nb_samples }} repertoires →
 									</a>
 								
 									<a href="/samples/tsv?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as TSV">
@@ -468,6 +468,12 @@
 														@if ($sample->ir_sequence_count > 0)
 															<a href="sequences?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
 																<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
+															</a>
+														@endif
+													@elseif($field['ir_id'] == 'ir_clone_count')
+														@if ($sample->ir_clone_count > 0)
+															<a href="clones?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
+																<span class="label label-primary">{{number_format($sample->ir_clone_count, 0 ,'.' ,',') }}</span>
 															</a>
 														@endif
 													@elseif($field['ir_id'] == 'study_id')
@@ -554,7 +560,7 @@
 
 								<div class="col-md-6 repertoires_button_container">
 									<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
-										Browse sequences from {{ $nb_samples }} repertoires →
+										Browse clones from {{ $nb_samples }} repertoires →
 									</a>
 								</div>
 							</div>
@@ -727,6 +733,12 @@
 														@if ($sample->ir_sequence_count > 0)
 															<a href="sequences?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
 																<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
+															</a>
+														@endif
+													@elseif($field['ir_id'] == 'ir_clone_count')
+														@if ($sample->ir_clone_count > 0)
+															<a href="clones?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
+																<span class="label label-primary">{{number_format($sample->ir_clone_count, 0 ,'.' ,',') }}</span>
 															</a>
 														@endif
 													@elseif($field['ir_id'] == 'study_id')

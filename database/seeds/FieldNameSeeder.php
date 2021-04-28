@@ -74,6 +74,13 @@ class FieldNameSeeder extends CsvSeeder
             'ir_subclass' => 'other',
         ];
 
+        $l[] = [
+            'ir_id' => 'ir_clone_count',
+            'ir_short' => 'Clones',
+            'ir_class' => 'Repertoire',
+            'ir_subclass' => 'other',
+        ];
+
         // HACK: override ir_class from from "ir_rearrangement" to "rearrangement", so this field is displayed by default
         $l[] = [
             'ir_id' => 'ir_junction_aa_length',
@@ -96,6 +103,7 @@ class FieldNameSeeder extends CsvSeeder
         $l[] = ['id' => 'disease_diagnosis', 'visible' => true];
         $l[] = ['id' => 'study_group_description', 'visible' => true];
         $l[] = ['id' => 'ir_sequence_count', 'visible' => true];
+        $l[] = ['id' => 'ir_clone_count', 'visible' => true];
         $l[] = ['id' => 'lab_name', 'visible' => true];
         $l[] = ['id' => 'tissue', 'visible' => true];
         $l[] = ['id' => 'pcr_target_locus', 'visible' => true];

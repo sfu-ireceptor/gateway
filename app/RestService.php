@@ -341,6 +341,11 @@ class RestService extends Model
                     }
                 }
 
+                // TODO fake clone count for now
+                foreach ($sample_list as $sample) {
+                    $sample->ir_clone_count = (int)ceil($sample->ir_sequence_count/4);
+                }
+
                 // replace Info/Repertoire by simple list of samples
                 $response['data'] = $sample_list;
             } elseif (isset($response['data']->success) && ! $response['data']->success) {
