@@ -96,11 +96,10 @@ class DownloadSequences implements ShouldQueue
         $file_path = $t['public_path'];
         $this->download->file_url = $file_path;
         Log::debug($file_path);
-        $cwd = getcwd() ;
+        $cwd = getcwd();
         Log::debug($cwd);
         $this->download->file_size = filesize($file_path);
         Log::debug(filesize($file_path));
-
 
         if ($t['is_download_incomplete']) {
             $this->download->incomplete = true;
