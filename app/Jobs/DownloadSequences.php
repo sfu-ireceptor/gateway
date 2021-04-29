@@ -95,7 +95,12 @@ class DownloadSequences implements ShouldQueue
         $t = Sequence::sequencesTSV($filters, $this->username, $this->url, $sample_filter_fields);
         $file_path = $t['public_path'];
         $this->download->file_url = $file_path;
+        Log::debug($file_path);
+        $cwd = getcwd() ;
+        Log::debug($cwd);
         $this->download->file_size = filesize($file_path);
+        Log::debug(filesize($file_path));
+
 
         if ($t['is_download_incomplete']) {
             $this->download->incomplete = true;
