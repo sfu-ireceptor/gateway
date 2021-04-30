@@ -394,7 +394,7 @@
 								</div>
 								<div class="col-md-6 repertoires_button_container">
 									<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
-										Browse clones from {{ $nb_samples }} repertoires →
+										Browse sequences from {{ $nb_samples }} repertoires →
 									</a>
 								
 									<a href="/samples/tsv?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as TSV">
@@ -560,7 +560,7 @@
 
 								<div class="col-md-6 repertoires_button_container">
 									<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
-										Browse clones from {{ $nb_samples }} repertoires →
+										Browse sequences from {{ $nb_samples }} repertoires →
 									</a>
 								</div>
 							</div>
@@ -659,7 +659,7 @@
 								</div>
 								<div class="col-md-6 repertoires_button_container">
 									<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
-										Browse sequences from {{ $nb_samples }} repertoires →
+										Browse clones from {{ $nb_samples }} repertoires →
 									</a>
 								
 									<a href="/samples/tsv?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as TSV">
@@ -825,7 +825,7 @@
 
 								<div class="col-md-6 repertoires_button_container">
 									<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
-										Browse sequences from {{ $nb_samples }} repertoires →
+										Browse clones from {{ $nb_samples }} repertoires →
 									</a>
 								</div>
 							</div>
