@@ -84,6 +84,14 @@ a.btn {
 	text-decoration: none;
 }
 
+a.number {
+	text-decoration: none;
+}
+
+a.number:hover {
+	text-decoration: underline;
+}
+
 /* disable click (but not hover) on disabled links */
 a[disabled=disabled]:active {
 	pointer-events: none;

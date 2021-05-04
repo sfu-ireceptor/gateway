@@ -466,14 +466,14 @@
 												@isset($sample->{$field['ir_id']})
 													@if($field['ir_id'] == 'ir_sequence_count')
 														@if ($sample->ir_sequence_count > 0)
-															<a href="sequences?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
-																<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
+															<a class="number" href="sequences?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
+																{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}
 															</a>
 														@endif
 													@elseif($field['ir_id'] == 'ir_clone_count')
 														@if ($sample->ir_clone_count > 0)
-															<a href="clones?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
-																<span class="label label-primary">{{number_format($sample->ir_clone_count, 0 ,'.' ,',') }}</span>
+															<a class="number" href="clones?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
+																{{number_format($sample->ir_clone_count, 0 ,'.' ,',') }}
 															</a>
 														@endif
 													@elseif($field['ir_id'] == 'study_id')
@@ -731,14 +731,14 @@
 												@isset($sample->{$field['ir_id']})
 													@if($field['ir_id'] == 'ir_sequence_count')
 														@if ($sample->ir_sequence_count > 0)
-															<a href="sequences?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
-																<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
+															<a class="number" href="sequences?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
+																{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}
 															</a>
 														@endif
 													@elseif($field['ir_id'] == 'ir_clone_count')
 														@if ($sample->ir_clone_count > 0)
-															<a href="clones?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
-																<span class="label label-primary">{{number_format($sample->ir_clone_count, 0 ,'.' ,',') }}</span>
+															<a class="number" href="clones?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
+																{{number_format($sample->ir_clone_count, 0 ,'.' ,',') }}
 															</a>
 														@endif
 													@elseif($field['ir_id'] == 'study_id')
