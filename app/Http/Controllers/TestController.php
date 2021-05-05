@@ -153,7 +153,8 @@ class TestController extends Controller
         //     protected $except = ['field2'];
         // };
 
-        $middleware = new class extends \App\Http\Middleware\TrimStrings {
+        $middleware = new class extends \App\Http\Middleware\TrimStrings
+        {
             protected $except = ['field2'];
         };
 
