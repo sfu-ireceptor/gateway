@@ -27,7 +27,8 @@ WORKDIR /var/www/html
 RUN composer install
 
 # Laravel setup
-RUN chmod -R 777 /var/www/html/storage && \
+RUN touch /var/www/html/storage/logs/laravel.log && \
+        chmod -R 777 /var/www/html/storage && \
         cp .env.example .env && \
         php artisan key:generate && \
         php artisan -q storage:link
