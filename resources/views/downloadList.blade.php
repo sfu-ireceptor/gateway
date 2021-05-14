@@ -64,7 +64,7 @@
 			<th>Duration</th>
 			<th>Sequence Search Page</th>
 			<th>Nb sequences</th>
-			<th></th>
+			<th>File</th>
 			<th>Expiration Date</th>
 			<th></th>
 		</thead>
@@ -113,7 +113,7 @@
 						{{ str_replace('&', ', ', urldecode($d->page_url)) }}
 					</a>
 				</td>
-				<td>
+				<td class="text-nowrap">
 					{{ number_format($d->nb_sequences) }}
 				</td>
 				<td class="text-nowrap">
@@ -123,7 +123,10 @@
 							<span class="text">Cancel Download</span>
 						</a>
 					@elseif($d->isDone() && ($d->file_url != '') && $d->isExpired())
-						Expired
+						@if($d->file_size > 0)
+							{{ human_filesize($d->file_size) }} -
+						@endif
+						<em>expired</em>
 						<span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Your download has expired" data-content="<p>Your file is no longer available, but you can go the original page and generate a new download.</p>" data-trigger="hover" tabindex="0">
 							<span class="glyphicon glyphicon-question-sign"></span>
 						</span>
