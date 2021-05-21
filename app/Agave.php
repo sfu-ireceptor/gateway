@@ -208,7 +208,7 @@ class Agave
                 [
                     'name' => 'default',
                     'maxRequestedTime' => '48:00:00',
-                    'customDirectives' => "--mem-per-cpu=4G",
+                    'customDirectives' => '--mem-per-cpu=4G',
                 ],
             ],
             'login' => [
