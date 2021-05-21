@@ -203,12 +203,12 @@ class Agave
             'name' => $name,
             'type' => 'EXECUTION',
             'executionType' => 'HPC',
-            'scheduler' => 'CUSTOM_SLURM',
+            'scheduler' => 'SLURM',
             'queues' => [
                 [
                     'name' => 'default',
-                    'maxRequestedTime' => '06:00:00',
-                    'customDirectives' => "#SBATCH -t \${AGAVE_JOB_MAX_RUNTIME}\n#SBATCH -N \${AGAVE_JOB_NODE_COUNT} -n \${AGAVE_JOB_PROCESSORS_PER_NODE}\n#SBATCH --account=rpp-breden-ab\n",
+                    'maxRequestedTime' => '48:00:00',
+                    'customDirectives' => "--mem-per-cpu=4G",
                 ],
             ],
             'login' => [
@@ -239,7 +239,7 @@ class Agave
         return $t;
     }
 
-    public function getStorageSystemConfig($name, $host, $port, $auth, $rootDir)
+    public function getStorageSystemConfig($name, $host, $port, $username, $privateKey, $publicKey, $rootDir)
     {
         $t = [
             'id' => $name,
@@ -249,7 +249,12 @@ class Agave
                 'protocol' => 'SFTP',
                 'host' => $host,
                 'port' => $port,
-                'auth' => $auth,
+                'auth' => [
+                    'type' => 'SSHKEYS',
+                    'username' => $username,
+                    'publicKey' => $publicKey,
+                    'privateKey' => $privateKey,
+                ],
                 'rootDir' => $rootDir,
             ],
         ];
@@ -458,17 +463,17 @@ class Agave
 
     private function doGETRequest($url, $token, $raw_json = false)
     {
-        return $this->doHTTPRequest('GET', $url, $token, [], [], $raw_json);
+        return $this->doHTTPRequest('GET', $url, $token, [], null, $raw_json);
     }
 
-    public function doPOSTRequest($url, $token, $variables = [], $files = [])
+    public function doPOSTRequest($url, $token, $variables = [], $body = null)
     {
-        return $this->doHTTPRequest('POST', $url, $token, $variables, $files);
+        return $this->doHTTPRequest('POST', $url, $token, $variables, $body);
     }
 
-    public function doPUTRequest($url, $token, $variables = [], $files = [])
+    public function doPUTRequest($url, $token, $variables = [])
     {
-        return $this->doHTTPRequest('PUT', $url, $token, $variables, $files);
+        return $this->doHTTPRequest('PUT', $url, $token, $variables);
     }
 
     public function doDELETERequest($url, $token)
@@ -482,7 +487,7 @@ class Agave
         $json = json_encode($config, JSON_PRETTY_PRINT);
         Log::info('json request -> ' . $json);
 
-        return $this->doPOSTRequest($url, $token, [], ['fileToUpload' => $json]);
+        return $this->doPOSTRequest($url, $token, [], $json);
     }
 
     private function initGuzzleRESTClient()
@@ -499,27 +504,19 @@ class Agave
         $this->client = new \GuzzleHttp\Client($defaults);
     }
 
-    private function doHTTPRequest($method, $url, $token, $variables = [], $files = [], $raw_json = false)
+    private function doHTTPRequest($method, $url, $token, $variables = [], $body = null, $raw_json = false)
     {
         $headers = [];
         $headers['Authorization'] = 'Bearer ' . $token;
+        Log::debug('Bearer:' . $token);
 
         $data = [];
-        if (count($files) == 0) {
+        if ($body == null) {
             $data = ['headers' => $headers, 'form_params' => $variables];
         } else {
-            $multipart = [];
-
-            foreach ($variables as $key => $value) {
-                $multipart[] = ['name' => $key, 'contents' => $value];
-            }
-
-            foreach ($files as $filename => $file_str) {
-                $multipart[] = ['filename' => $filename, 'name' => $filename, 'contents' => $file_str];
-            }
-
             $headers['Content-Type'] = 'application/json';
-            $data = ['headers' => $headers, 'multipart' => $multipart];
+            // dd($body);
+            $data = ['headers' => $headers, 'body' => $body];
         }
 
         try {

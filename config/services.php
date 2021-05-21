@@ -57,7 +57,11 @@ return [
             'name_prefix'  => env('AGAVE_SYSTEM_STAGING_NAME_PREFIX', 'staging-'),
             'host'  => env('AGAVE_SYSTEM_STAGING_HOST', 'ireceptorgw.irmacs.sfu.ca'),
             'port'  => env('AGAVE_SYSTEM_STAGING_PORT', 22),
-            'auth' => env('AGAVE_SYSTEM_STAGING_AUTH'),
+            'auth'  => [
+                'username'      => env('AGAVE_SYSTEM_STAGING_AUTH_USERNAME', 'ubuntu'),
+                'public_key'    => @file_get_contents(env('AGAVE_SYSTEM_STAGING_AUTH_PUBLIC_KEY', base_path('storage/config/agave-system-staging_public-key.txt'))),
+                'private_key'   => @file_get_contents(env('AGAVE_SYSTEM_STAGING_AUTH_PRIVATE_KEY', base_path('storage/config/agave-system-staging_private-key.txt'))),
+            ],
             'rootdir'  => env('AGAVE_SYSTEM_STAGING_ROOTDIR'),
         ],
 
@@ -65,7 +69,11 @@ return [
             'name_prefix'  => env('AGAVE_SYSTEM_DEPLOY_NAME_PREFIX', 'deploy-'),
             'host'  => env('AGAVE_SYSTEM_DEPLOY_HOST', 'ireceptorgw.irmacs.sfu.ca'),
             'port'  => env('AGAVE_SYSTEM_DEPLOY_PORT', 22),
-            'auth' => env('AGAVE_SYSTEM_DEPLOY_AUTH'),
+            'auth'  => [
+                'username'      => env('AGAVE_SYSTEM_DEPLOY_AUTH_USERNAME', 'ubuntu'),
+                'public_key'    => @file_get_contents(env('AGAVE_SYSTEM_DEPLOY_AUTH_PUBLIC_KEY', base_path('storage/config/agave-system-deploy_public-key.txt'))),
+                'private_key'   => @file_get_contents(env('AGAVE_SYSTEM_DEPLOY_AUTH_PRIVATE_KEY', base_path('storage/config/agave-system-deploy_private-key.txt'))),
+            ],
             'rootdir'  => env('AGAVE_SYSTEM_DEPLOY_ROOTDIR'),
         ],
 
