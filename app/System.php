@@ -66,10 +66,10 @@ class System extends Model
 
         // create deployment system (where the app originally is)
         $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . $defaultExecutionSystemUsername;
-        $systemDeploymentHost = $defaultExecutionSystemHost; 
+        $systemDeploymentHost = $defaultExecutionSystemHost;
         $systemDeploymentPort = $defaultExecutionSystemPort;
         $systemDeploymentUsername = $defaultExecutionSystemUsername;
-        $systemDeploymentPublicKey = $defaultExecutionSystemPublicKey ;
+        $systemDeploymentPublicKey = $defaultExecutionSystemPublicKey;
         $systemDeploymentPrivateKey = $defaultExecutionSystemPrivateKey;
         $systemDeploymentRootDir = config('services.agave.system_deploy.rootdir');
 
