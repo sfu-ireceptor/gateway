@@ -62,7 +62,7 @@ return [
                 'public_key'    => @file_get_contents(env('AGAVE_SYSTEM_STAGING_AUTH_PUBLIC_KEY', base_path('storage/config/agave-system-staging_public-key.txt'))),
                 'private_key'   => @file_get_contents(env('AGAVE_SYSTEM_STAGING_AUTH_PRIVATE_KEY', base_path('storage/config/agave-system-staging_private-key.txt'))),
             ],
-            'rootdir'  => env('AGAVE_SYSTEM_STAGING_ROOTDIR'),
+            'rootdir'  => env('AGAVE_SYSTEM_STAGING_ROOTDIR', '/tmp'),
         ],
 
         'system_deploy' => [
@@ -75,6 +75,17 @@ return [
                 'private_key'   => @file_get_contents(env('AGAVE_SYSTEM_DEPLOY_AUTH_PRIVATE_KEY', base_path('storage/config/agave-system-deploy_private-key.txt'))),
             ],
             'rootdir'  => env('AGAVE_SYSTEM_DEPLOY_ROOTDIR'),
+        ],
+
+        'default_execution_system' => [
+            'host'  => env('AGAVE_DEFAULT_EXECUTION_SYSTEM_HOST', 'cedar.computecanada.ca'),
+            'port'  => env('AGAVE_DEFAULT_EXECUTION_SYSTEM_PORT', 22),
+            'auth'  => [
+                'username'      => env('AGAVE_DEFAULT_EXECUTION_SYSTEM_AUTH_USERNAME', 'ireceptorgw'),
+                'public_key'    => @file_get_contents(env('AGAVE_DEFAULT_EXECUTION_SYSTEM_AUTH_PUBLIC_KEY', base_path('storage/config/agave-default-execution-system_public-key.txt'))),
+                'private_key'   => @file_get_contents(env('AGAVE_DEFAULT_EXECUTION_SYSTEM_AUTH_PRIVATE_KEY', base_path('storage/config/agave-default-execution-system_private-key.txt'))),
+            ],
+            'rootdir'  => env('AGAVE_DEFAULT_EXECUTION_SYSTEM_ROOTDIR', '/tmp'),
         ],
 
         'gw_notification_url' => env('AGAVE_GW_NOTIFICATION_URL', 'https://ireceptorgw.irmacs.sfu.ca'),
