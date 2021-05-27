@@ -138,7 +138,7 @@ class JobController extends Controller
             // config parameters for the job
             $executionSystem = System::getCurrentSystem(auth()->user()->id);
             $tenant_url = config('services.agave.tenant_url');
-            $systemStaging = config('services.agave.system_staging.name_prefix') . $username;
+            $systemStaging = config('services.agave.system_staging.name_prefix') . $gw_username;
             $notificationUrl = config('services.agave.gw_notification_url');
         }
 
