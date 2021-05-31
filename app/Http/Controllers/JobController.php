@@ -67,10 +67,14 @@ class JobController extends Controller
     public function postLaunchApp(Request $request)
     {
         $f = $request->all();
+
+        $gw_username = auth()->user()->username;
         $token = auth()->user()->password;
 
+        // create systems
+        System::createDefaultSystemsForUser($gw_username, $token);
+
         $appId = intval($f['app_id']);
-        $gw_username = auth()->user()->username;
 
         // 3rd-party analysis
         if ($appId == 999) {
