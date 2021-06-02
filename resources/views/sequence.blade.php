@@ -391,7 +391,7 @@
 												</div>
 											</div>
 
-											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
+											{{ Form::submit('Submit analysis job', array('class' => 'btn btn-primary')) }}
 										{{ Form::close() }}
 									</div>
 									
@@ -426,7 +426,7 @@
 											{{ Form::hidden('data_url', $url) }}
 											{{ Form::hidden('app_id', 3) }}
 
-											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
+											{{ Form::submit('Submit analysis job', array('class' => 'btn btn-primary')) }}
 										{{ Form::close() }}
 									</div>
 
@@ -447,7 +447,7 @@
 											{{ Form::hidden('app_id', 5) }}
 
 											<p>Heatmap of shared junctions.</p>
-											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
+											{{ Form::submit('Submit analysis job', array('class' => 'btn btn-primary')) }}
 										{{ Form::close() }}
 									</div>
 
