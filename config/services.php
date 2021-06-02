@@ -56,7 +56,7 @@ return [
         'system_staging' => [
             'name_prefix'  => env('AGAVE_SYSTEM_STAGING_NAME_PREFIX', 'staging-'),
             'host'  => env('AGAVE_SYSTEM_STAGING_HOST', 'ireceptorgw.irmacs.sfu.ca'),
-            'port'  => env('AGAVE_SYSTEM_STAGING_PORT', 22),
+            'port'  => intval(env('AGAVE_SYSTEM_STAGING_PORT', 22)),
             'auth'  => [
                 'username'      => env('AGAVE_SYSTEM_STAGING_AUTH_USERNAME', 'ubuntu'),
                 'public_key'    => @file_get_contents(env('AGAVE_SYSTEM_STAGING_AUTH_PUBLIC_KEY', base_path('storage/config/agave-system-staging_public-key.txt'))),
@@ -68,7 +68,7 @@ return [
         'system_deploy' => [
             'name_prefix'  => env('AGAVE_SYSTEM_DEPLOY_NAME_PREFIX', 'deploy-'),
             'host'  => env('AGAVE_SYSTEM_DEPLOY_HOST', 'ireceptorgw.irmacs.sfu.ca'),
-            'port'  => env('AGAVE_SYSTEM_DEPLOY_PORT', 22),
+            'port'  => intval(env('AGAVE_SYSTEM_DEPLOY_PORT', 22)),
             'auth'  => [
                 'username'      => env('AGAVE_SYSTEM_DEPLOY_AUTH_USERNAME', 'ubuntu'),
                 'public_key'    => @file_get_contents(env('AGAVE_SYSTEM_DEPLOY_AUTH_PUBLIC_KEY', base_path('storage/config/agave-system-deploy_public-key.txt'))),
@@ -79,7 +79,7 @@ return [
 
         'default_execution_system' => [
             'host'  => env('AGAVE_DEFAULT_EXECUTION_SYSTEM_HOST', 'cedar.computecanada.ca'),
-            'port'  => env('AGAVE_DEFAULT_EXECUTION_SYSTEM_PORT', 22),
+            'port'  => intval(env('AGAVE_DEFAULT_EXECUTION_SYSTEM_PORT', 22)),
             'auth'  => [
                 'username'      => env('AGAVE_DEFAULT_EXECUTION_SYSTEM_AUTH_USERNAME', 'ireceptorgw'),
                 'public_key'    => @file_get_contents(env('AGAVE_DEFAULT_EXECUTION_SYSTEM_AUTH_PUBLIC_KEY', base_path('storage/config/agave-default-execution-system_public-key.txt'))),
