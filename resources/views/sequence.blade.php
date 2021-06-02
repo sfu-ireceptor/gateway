@@ -465,7 +465,7 @@
 
 								</div>
 							</div>
-						@elseif($total_filtered_sequences > config('ireceptor.sequences_download_limit'))
+						@else
 							<p>Sorry, analyses of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future.</p>
 						@endif
 					@endif
