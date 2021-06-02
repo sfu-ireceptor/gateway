@@ -361,7 +361,7 @@
 						<!-- apps -->
 						<h2>Analysis Apps</h2>
 
-						@if (isset($system) && $total_filtered_sequences <= config('ireceptor.sequences_download_limit'))
+						@if ($total_filtered_sequences <= config('ireceptor.sequences_download_limit'))
 
 							<div role="tabpanel" class="analysis_apps_tabpanel">
 								<!-- Tab links -->
@@ -467,10 +467,6 @@
 							</div>
 						@elseif($total_filtered_sequences > config('ireceptor.sequences_download_limit'))
 							<p>Sorry, analyses of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future.</p>
-						@else
-							<p>
-								<a href="systems">Add a system</a> to be able to use analysis apps.
-							</p>
 						@endif
 					@endif
 				@endif
