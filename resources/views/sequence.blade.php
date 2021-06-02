@@ -416,7 +416,7 @@
 												</div>
 											</div>
 
-											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
+											{{ Form::submit('Submit analysis job', array('class' => 'btn btn-primary')) }}
 										{{ Form::close() }}
 									</div>
 
@@ -458,7 +458,7 @@
 											{{ Form::hidden('app_id', 6) }}
 
 											<p>Test analysis app.</p>
-											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
+											{{ Form::submit('Submit analysis job', array('class' => 'btn btn-primary')) }}
 										{{ Form::close() }}
 									</div> --}}
 
