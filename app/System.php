@@ -65,7 +65,7 @@ class System extends Model
         self::select($systemExecution->id);
 
         // create deployment system (where the app originally is)
-        $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . $defaultExecutionSystemUsername;
+        $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . $username . '-' . $defaultExecutionSystemUsername;
         $systemDeploymentHost = config('services.agave.system_deploy.host');
         $systemDeploymentPort = config('services.agave.system_deploy.port');
         $systemDeploymentUsername = config('services.agave.system_deploy.auth.username');

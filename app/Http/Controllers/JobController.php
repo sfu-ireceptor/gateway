@@ -86,7 +86,7 @@ class JobController extends Controller
             $executionSystem = System::getCurrentSystem(auth()->user()->id);
             $username = $executionSystem->username;
             $appExecutionSystem = $executionSystem->name;
-            $appDeploymentSystem = $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . $username;
+            $appDeploymentSystem = $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . $gw_username . '-' . $username;
             $params = [];
             $inputs = [];
             $appHumanName = '';
