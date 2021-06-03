@@ -38,6 +38,7 @@ class Agave
         $apiSecret = config('services.agave.api_token');
 
         // try to get token
+        Log::debug('Trying to get token for user: ' . $username);
         $t = $this->getToken($url, $username, $password, $apiKey, $apiSecret);
 
         // return NULL or array with token and refresh token

@@ -313,6 +313,8 @@ class UserController extends Controller
         $new_password = str_random(24);
         $t = $agave->updateUser($token, $agave_user->username, $agave_user->first_name, $agave_user->last_name, $agave_user->email, $new_password);
 
+        Log::debug('New password: ' . $new_password);
+
         // create user in local DB if necessary
         $user = User::where('username', $agave_user->username)->first();
         if ($user == null) {
