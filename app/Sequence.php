@@ -159,7 +159,10 @@ class Sequence
         $time_str = date('Y-m-d_Hi', $now);
         $folder_name = 'ir_' . $time_str . '_' . uniqid();
         $folder_path = $storage_folder . $folder_name;
-        File::makeDirectory($folder_path, 0777, true, true);
+
+        Log::debug('Creating directory: ' . $folder_path);
+        mkdir($folder_path, 0700);
+        // File::makeDirectory($folder_path, 0777, true, true);
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filters, $folder_path, $username);
         $response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_sequences_by_rs);
