@@ -363,7 +363,7 @@ class Agave
             'inputs' => $inputs,
             'maxRunTime' => '01:00:00',
             'memoryPerNode' => '4GB',
-            'archive' => true,
+            'archive' => false,
             'archiveSystem' => $storage_archiving,
             'archivePath' => $folder,
             'batchQueue' => 'default',
