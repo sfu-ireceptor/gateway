@@ -367,6 +367,8 @@ class Agave
             'archiveSystem' => $storage_archiving,
             'archivePath' => $folder,
             'batchQueue' => 'default',
+            'nodeCount' => 1,
+            'processorsOnEachNode' => 2,
             'notifications' => [
                 [
                     'url' => $notification_url . '/agave/update-status/${JOB_ID}/${JOB_STATUS}',
