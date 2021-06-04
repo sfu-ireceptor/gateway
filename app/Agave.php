@@ -208,6 +208,7 @@ class Agave
             'queues' => [
                 [
                     'default' => true,
+                    'name' => 'the_one',
                     'maxRequestedTime' => '48:00:00',
                     'maxNodes' => 1,
                     'maxProcessorsPerNode' => 8,
