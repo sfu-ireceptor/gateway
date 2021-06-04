@@ -212,9 +212,6 @@ class Agave
                     'maxRequestedTime' => '48:00:00',
                     'customDirectives' => '--mem-per-cpu=4G',
                     'maxNodes' => 1,
-                    'maxProcessorsPerNode' => 8,
-                    'maxRequestedTime' => '48:00:00',
-                    'maxMemoryPerNode' => '64GB',
                 ],
             ],
 
