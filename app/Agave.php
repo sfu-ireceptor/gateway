@@ -207,12 +207,12 @@ class Agave
             'scheduler' => 'SLURM',
             'queues' => [
                 [
-                    'name' => 'default',
                     'default' => true,
                     'maxRequestedTime' => '48:00:00',
-                    'customDirectives' => '--mem-per-cpu=4G',
                     'maxNodes' => 1,
                     'maxProcessorsPerNode' => 8,
+                    'maxMemoryPerNode' => '64GB',
+                    'customDirectives' => '--mem-per-cpu=4G',
                 ],
             ],
 
