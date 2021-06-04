@@ -161,7 +161,7 @@ class Sequence
         $folder_path = $storage_folder . $folder_name;
 
         Log::debug('Creating directory: ' . $folder_path);
-        mkdir($folder_path, 0700);
+        mkdir($folder_path, 0777);
         // File::makeDirectory($folder_path, 0777, true, true);
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filters, $folder_path, $username);
