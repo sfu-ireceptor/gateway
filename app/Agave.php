@@ -208,10 +208,19 @@ class Agave
             'queues' => [
                 [
                     'name' => 'default',
+                    'default' => true,
                     'maxRequestedTime' => '48:00:00',
                     'customDirectives' => '--mem-per-cpu=4G',
+                    'maxJobs' => 10,
+                    'maxUserJobs' => 10,
+                    'maxNodes' => 1,
+                    'maxProcessorsPerNode' => 8,
+                    'maxRequestedTime' => "48:00:00",
+                    'maxMemoryPerNode' => "64GB",
                 ],
             ],
+
+
             'login' => [
                 'protocol' => 'SSH',
                 'host' => $host,
