@@ -302,8 +302,8 @@ class Sequence
         // zip files
         $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path);
 
-        // delete files
-        self::delete_files($folder_path);
+        // delete files - TODO not working, to fix
+        // self::delete_files($folder_path);
 
         $zip_public_path = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
 
@@ -640,7 +640,7 @@ class Sequence
     public static function delete_files($folder_path)
     {
         if (File::exists($folder_path)) {
-            Log::debug('Deleting downloaded files (' . $folder_path . ')...');
+            Log::debug('Deleting folder of downloaded files: ' . $folder_path);
             Storage::deleteDirectory($folder_path);
         }
     }
