@@ -639,8 +639,8 @@ class Sequence
 
     public static function delete_files($folder_path)
     {
-        Log::debug('Deleting downloaded files...');
         if (File::exists($folder_path)) {
+            Log::debug('Deleting downloaded files (' . $folder_path . ')...');
             Storage::deleteDirectory($folder_path);
         }
     }
