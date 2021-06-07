@@ -84,10 +84,12 @@ class LaunchAgaveJob implements ShouldQueue
 
             $inputs['file1'] = 'agave://' . $this->systemStaging . '/' . basename($dataFilePath);
 
+            $storage_folder_path = storage_path() . '/app/public/';
             $archive_folder = basename($dataFilePath, '.zip') . '_output';
-            Log::debug('Creating archive folder: ' . $archive_folder);
+            $archive_folder_path = $storage_folder_path . $archive_folder;
+            Log::debug('Creating archive folder: ' . $archive_folder_path);
             $old = umask(0);
-            mkdir($archive_folder, 0777);
+            mkdir($archive_folder_path, 0777);
             umask($old);
 
             $job->input_folder = $archive_folder;
