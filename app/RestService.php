@@ -552,7 +552,7 @@ class RestService extends Model
         $sequence_filters = $filters;
         unset($sequence_filters['project_id_list']);
         foreach ($sequence_filters as $key => $value) {
-            if(starts_with($key, 'ir_project_sample_id_list_')) {
+            if (starts_with($key, 'ir_project_sample_id_list_')) {
                 unset($sequence_filters[$key]);
             }
         }
