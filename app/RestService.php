@@ -556,9 +556,10 @@ class RestService extends Model
         // build list of sequence filters only (remove sample id filters)
         $sequence_filters = $filters;
         unset($sequence_filters['project_id_list']);
-        foreach (self::findEnabled() as $rs) {
-            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-            unset($sequence_filters[$sample_id_list_key]);
+        foreach ($sequence_filters as $key => $value) {
+            if (starts_with($key, 'ir_project_sample_id_list_')) {
+                unset($sequence_filters[$key]);
+            }
         }
 
         Log::debug('Sequence filters (only):');

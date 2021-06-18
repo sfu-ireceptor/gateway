@@ -106,7 +106,7 @@ class RestServiceSeeder extends Seeder
                 'name' => 'Stats Demo',
             ],
             [
-                'url' => 'https://pangaea.scireptor.net/airr/v1/',
+                'url' => 'https://scireptor.dkfz.de/airr/v1/',
                 'name' => 'sciReptor',
             ],
             [
@@ -116,10 +116,6 @@ class RestServiceSeeder extends Seeder
             [
                 'url' => 'http://airr-seq.vdjbase.org/airr/v1/',
                 'name' => 'VDJbase',
-            ],
-            [
-                'url' => 'https://pangaea.scireptor.net:51431/airr/v1/',
-                'name' => 'sciReptor Staging',
             ],
             [
                 'url' => 'http://secure.ireceptor.org/middleware/airr/v1/',

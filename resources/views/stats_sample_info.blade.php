@@ -22,7 +22,7 @@
 					{{ $sample->study_id }}
 				</a>
 			@else
-				$sample->{$field['ir_id']}
+				{{ $sample->study_id }}
 			@endisset
 		</p>
 	</div>
