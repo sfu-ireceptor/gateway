@@ -6,8 +6,8 @@ use App\Agave;
 use App\CachedSample;
 use App\Download;
 use App\FieldName;
-use App\Jobs\CountSequences;
 use App\Jobs\CountClones;
+use App\Jobs\CountSequences;
 use App\LocalJob;
 use App\News;
 use App\QueryLog;
@@ -390,6 +390,7 @@ class AdminController extends Controller
 
         return redirect('admin/databases')->with('notification', $message);
     }
+
     public function getUpdateChunkSize($id)
     {
         $rs = RestService::find($id);
