@@ -271,13 +271,26 @@ class SampleController extends Controller
         // sort sample list
         $sample_list = Sample::sort_sample_list($sample_list, $sort_column, $sort_order);
 
+        $samples_with_clones = [];
+        $samples_with_sequences = [];
+
+        foreach ($sample_list as $sample) {
+            if(isset($sample->ir_clone_count) && $sample->ir_clone_count > 0) {
+                $samples_with_clones[] = $sample;
+            }
+            else {
+                $samples_with_sequences[] = $sample;
+            }
+        }
+
         // keep only samples to display on the current page
-        $sample_list = array_slice($sample_list, ($page - 1) * $max_per_page, $max_per_page);
+        $samples_with_sequences = array_slice($samples_with_sequences, ($page - 1) * $max_per_page, $max_per_page);
+        $samples_with_clones = array_slice($samples_with_clones, ($page - 1) * $max_per_page, $max_per_page);
 
         // add flag to first sample with stats for stats info popup
         if (auth()->user()->stats_popup_count <= 0) {
             Log::debug('stat popup notification will show for ' . auth()->user()->username);
-            foreach ($sample_list as $sample) {
+            foreach ($samples_with_sequences as $sample) {
                 if (isset($sample->stats) && $sample->stats) {
                     $sample->show_stats_notification = true;
                     break;
@@ -299,12 +312,13 @@ class SampleController extends Controller
         $sequences_query_id = Query::saveParams($sequence_filters, 'sequences');
 
         // prepare view data
-        $data['sample_list'] = $sample_list;
+        $data['samples_with_sequences'] = $samples_with_sequences;
+        $data['samples_with_clones'] = $samples_with_clones;
         $data['nb_samples'] = $nb_samples;
         $data['nb_pages'] = $nb_pages;
         $data['page'] = $page;
         $data['page_first_element_index'] = ($page - 1) * $max_per_page + 1;
-        $data['page_last_element_index'] = $data['page_first_element_index'] + count($sample_list) - 1;
+        $data['page_last_element_index'] = $data['page_first_element_index'] + count($samples_with_sequences) - 1;
 
         $data['sort_column'] = $sort_column;
         $data['sort_order'] = $sort_order;

@@ -287,7 +287,7 @@
 				@endif	
 			
 
-				@if (empty($sample_list))
+				@if (empty($samples_with_sequences) && empty($samples_with_clones))
 					<div class="no_results">
 						<h2>No Results</h2>
 						<p>Remove a filter or <a href="/samples">remove all filters</a> to return results.</p>
@@ -442,7 +442,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									@foreach ($sample_list as $sample)
+									@foreach ($samples_with_sequences as $sample)
 									<tr>
 										<td class="stats">
 											@if(isset($sample->stats) && $sample->stats)
@@ -707,7 +707,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									@foreach ($sample_list as $sample)
+									@foreach ($samples_with_clones as $sample)
 									<tr>
 										<td class="stats">
 											@if(isset($sample->stats) && $sample->stats)

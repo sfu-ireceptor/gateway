@@ -335,15 +335,20 @@ class RestService extends Model
                         }
                     }
 
+                    // count clones
+                    $clone_counts = self::clone_count_from_cache($rs->id, $sample_id_list);
+
+                    foreach ($sample_list as $sample) {
+                        $sample->ir_clone_count = 0;
+                        if (isset($clone_counts[$sample->repertoire_id])) {
+                            $sample->ir_clone_count = $clone_counts[$sample->repertoire_id];
+                        }
+                    }
+
                     // if there was an error
                     if ($sequence_counts == null) {
                         $response['sequence_count_error'] = true;
                     }
-                }
-
-                // TODO fake clone count for now
-                foreach ($sample_list as $sample) {
-                    $sample->ir_clone_count = (int) ceil($sample->ir_sequence_count / 4);
                 }
 
                 // replace Info/Repertoire by simple list of samples
