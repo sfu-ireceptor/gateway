@@ -145,6 +145,7 @@ Route::middleware('auth')->group(function () {
         Route::get('delete-user/{username}', 'AdminController@getDeleteUser');
         Route::get('samples/update-cache', 'AdminController@getUpdateSampleCache');
         Route::get('samples/update-sequence_count/{rest_service_id}', 'AdminController@getUpdateSequenceCount');
+        Route::get('samples/update-clone_count/{rest_service_id}', 'AdminController@getUpdateCloneCount');
         Route::get('field-names', 'AdminController@getFieldNames');
         Route::get('queries', 'AdminController@queries');
         Route::get('downloads', 'AdminController@downloads');

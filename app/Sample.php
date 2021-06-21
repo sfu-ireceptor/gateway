@@ -98,6 +98,40 @@ class Sample
         }
     }
 
+    public static function cache_clone_counts($username, $rest_service_id = null)
+    {
+        $response_list = RestService::samples([], $username, false, [$rest_service_id]);
+        foreach ($response_list as $i => $response) {
+            $rest_service_id = $response['rs']->id;
+            $sample_list = $response['data'];
+
+            $t = [];
+            $t['rest_service_id'] = $rest_service_id;
+            $t['clone_counts'] = [];
+
+            $total_clone_count = 0;
+            foreach ($sample_list as $sample) {
+                $sample_id = $sample->repertoire_id;
+                $clone_count_array = RestService::clone_count([$rest_service_id =>[$sample_id]], [], false);
+                $clone_count = $clone_count_array[$rest_service_id]['samples'][$sample_id];
+                $t['clone_counts'][$sample_id] = $clone_count;
+                $total_clone_count += $clone_count;
+
+                // HACK: to avoid hitting throttling limits
+                sleep(1);
+            }
+
+            cloneCount::create($t);
+
+            // cache total counts
+            $rs = RestService::find($rest_service_id);
+            $rs->nb_samples = count($sample_list);
+            $rs->nb_clones = $total_clone_count;
+            $rs->last_cached = new Carbon('now');
+            $rs->save();
+        }
+    }
+
     public static function find_sample_id_list($filters, $username)
     {
         // get samples
