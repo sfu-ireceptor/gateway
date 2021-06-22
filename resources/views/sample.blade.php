@@ -415,6 +415,12 @@
 									<tr>
 										<th class="stats">Stats</th>
 										@foreach ($field_list as $field)
+
+											{{-- skip clones column --}}
+											@if ($field['ir_id'] == 'ir_clone_count')
+												@continue
+											@endif
+
 											<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 													@if ($field['ir_id'] == $sort_column)
 														@if ($sort_order == 'asc')
@@ -468,12 +474,6 @@
 														@if ($sample->ir_sequence_count > 0)
 															<a class="number" href="sequences?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
 																{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}
-															</a>
-														@endif
-													@elseif($field['ir_id'] == 'ir_clone_count')
-														@if ($sample->ir_clone_count > 0)
-															<a class="number" href="clones?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
-																{{number_format($sample->ir_clone_count, 0 ,'.' ,',') }}
 															</a>
 														@endif
 													@elseif($field['ir_id'] == 'study_id')
@@ -680,6 +680,10 @@
 									<tr>
 										<th class="stats">Stats</th>
 										@foreach ($field_list as $field)
+											{{-- skip sequence column --}}
+											@if ($field['ir_id'] == 'ir_sequence_count')
+												@continue
+											@endif
 											<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 													@if ($field['ir_id'] == $sort_column)
 														@if ($sort_order == 'asc')
@@ -729,13 +733,7 @@
 										@foreach ($field_list as $field)
 											<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 												@isset($sample->{$field['ir_id']})
-													@if($field['ir_id'] == 'ir_sequence_count')
-														@if ($sample->ir_sequence_count > 0)
-															<a class="number" href="sequences?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
-																{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}
-															</a>
-														@endif
-													@elseif($field['ir_id'] == 'ir_clone_count')
+													@if($field['ir_id'] == 'ir_clone_count')
 														@if ($sample->ir_clone_count > 0)
 															<a class="number" href="clones?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
 																{{number_format($sample->ir_clone_count, 0 ,'.' ,',') }}
