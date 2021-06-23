@@ -14,9 +14,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\App;
 
 class DownloadSequences implements ShouldQueue
 {
@@ -129,7 +129,7 @@ class DownloadSequences implements ShouldQueue
             $message->to($email)->subject('[iReceptor] Your download from ' . $date_str . ' is ready');
         });
 
-        if($this->download->incomplete) {
+        if ($this->download->incomplete) {
             // email notification to iReceptor support
             if (App::environment() == 'production') {
                 $username = $this->username;
@@ -142,7 +142,7 @@ class DownloadSequences implements ShouldQueue
                 Mail::send(['text' => 'emails.data_query_error'], $t, function ($message) use ($username) {
                     $message->to(config('ireceptor.email_support'))->subject('Gateway Sequence Download Incomplete for ' . $username);
                 });
-            }            
+            }
         }
 
         $localJob->setFinished();
