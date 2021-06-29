@@ -681,15 +681,14 @@ class Sample
 
             // nb of sequences for that sample
             $nb_sequences = 0;
-            if(isset($sample[$count_field])) {
+            if (isset($sample[$count_field])) {
                 $nb_sequences = $sample[$count_field];
             }
 
             // if the field has a non-null value, increase that value with the nb of sequences
-            if(isset($sample[$field]) && $sample[$field] != null) {
+            if (isset($sample[$field]) && $sample[$field] != null) {
                 $value = $sample[$field];
-                if( ! isset($valuesCounts[$value]))
-                {
+                if (! isset($valuesCounts[$value])) {
                     $valuesCounts[$value] = 0;
                 }
                 $valuesCounts[$value] += $nb_sequences;
@@ -716,13 +715,14 @@ class Sample
         return $l;
     }
 
-    public static function generateChartsData($sample_list, $field_list) {
+    public static function generateChartsData($sample_list, $field_list)
+    {
         $chartsData = [];
-        
+
         foreach ($field_list as $field) {
             $chartsData[$field] = [];
             $title = __('short.' . $field);
-            if( ! ctype_upper($title[1])) {
+            if (! ctype_upper($title[1])) {
                 // make lower case except for special cases like PCR target
                 $title = strtolower($title);
             }
