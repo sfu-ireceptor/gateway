@@ -394,3 +394,12 @@ if (! function_exists('data_set_object')) {
         return $target;
     }
 }
+
+// converts object to JSON string, encoding single and double quotes
+// so the JSON can be put in an HTML attribute
+if (! function_exists('object_to_json_for_html')) {
+    function object_to_json_for_html($o)
+    {
+        return htmlentities(json_encode($o), ENT_QUOTES, 'UTF-8');
+    }
+}

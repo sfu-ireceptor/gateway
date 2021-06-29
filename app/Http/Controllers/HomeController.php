@@ -18,7 +18,9 @@ class HomeController extends Controller
 
         // get list of samples
         $sample_list = Sample::public_samples();
-        $data['sample_list_json'] = json_encode($sample_list);
+        
+        $charts_fields = ['study_type', 'organism', 'disease_diagnosis', 'tissue', 'pcr_target_locus', 'template_class'];
+        $data['charts_data'] = Sample::generateChartsData($sample_list, $charts_fields);
 
         // generate statistics
         $sample_data = Sample::stats($sample_list);

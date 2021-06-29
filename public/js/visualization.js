@@ -1,96 +1,22 @@
 $(document).ready(function() {
-    var graphDIV = "chart";
-    var graphLabelLength = 20;
-
-    $('#charts').each(function() {
-        showData(graphData, graphFields, graphNames, graphCountField, graphDIV, graphInternalLabels, graphLabelLength);
+    $('.chart').each(function() {
+        var chart = $(this),
+            chartData = chart.data('chartData'),
+            data = chartData.data,
+            title = chartData.title,
+            chartConfig = generateChartConfig(data, title);
+            console.log(title);
+        
+        chart.highcharts(chartConfig);
     });
 });
 
 
-/**********************************************************
-* Functions
-**********************************************************/
-
-// showData aggregates the json data over the fields of graphFields (array of field names)
-// renders a graph for each aggregated field into the HTML container provided
-// by the htmlBase variable with an integer index appended to the ID name. 
-// Each graph is given the title provided in the graphNames array.
-// 
-// Requisites:
-// - arrays graphFields and graphNames have the same size.
-// - valid html container for each graph with ID given by the string htmlBase with a suffix of the index
-// of the graph (starting at 1). For example, if there are N graphs and htmlBase
-// is "foo" then there should be N valid html containers with the IDs "foo1",
-// "foo2" up to "fooN".
-function showData(json, graphFields, graphNames, countField, htmlBase, internalLabels, truncateLabels=10)
+function generateChartConfig(data, fieldTitle)
 {
-    // Initial variables. These should be provided by the gateway, but they are constants for now.
-    // sequenceAPIData - Whether or not the data came from the sequence_summary API or not.
-    // The summary JSON data from the /v2/samples and /v2/sequences APIs are slightly different.
-    var aggregateBySequence = true;
-
-    // Generate the  charts for the  types of aggregated data provided. For each chart, we
-    // get the aggregated data for the field of interest, convert that aggregated data
-    // into a data structure that is appropriate for HighChart to make a chart out of,
-    // and then finally render the chart (using HighChart) in the HTML container of 
-    // choice.
-    var aggregateData; // Variable for the generated aggregate data
-    var chart; // Variable for he generated chart data
-    var containerID = ""; // Generated sting for the container ID for each graph
-    var containerNumber = 1; // The numeric suffix, containers expected to start at 1
-    for (index in graphFields)
-    {
-        // valeus count for this field.
-        valuesCount = irAggregateData(graphFields[index], json, aggregateBySequence, countField);
-
-        // transform aggregate data structure for chart
-        var aggregateData = [];
-        var i = 0;
-        for (field in valuesCount) {
-            if(valuesCount[field] > 0) {
-                aggregateData[i] = {name:field, count:valuesCount[field]};   
-                i++;                
-            }
-        }
-
-        // Build the chart data structure.
-        chart = irBuildPieChart(graphNames[index], aggregateData, 3, internalLabels, truncateLabels);
-        //chart = irBuildBarChart(graphNames[index], aggregateData, 4, internalLabels);
-        // Generate the container ID to use, we expect containers numberd at 1.
-        containerID = htmlBase + String(containerNumber);
-        // Render the chart in the container using the HighChart graph API.
-        if( $('#'+containerID).length > 0 )
-        {
-            Highcharts.chart(containerID, chart);
-        }
-        // Increment the container number
-        containerNumber++;  
-    }
-}
-
-function bubbleSort(a, b)
-{
-    var swapped;
-    do {
-        swapped = false;
-        for (var i=0; i < a.length-1; i++) {
-            if (a[i] < a[i+1]) {
-                var temp = a[i];
-                var btemp = b[i];
-                a[i] = a[i+1];
-                a[i+1] = temp;
-                b[i] = b[i+1];
-                b[i+1] = btemp;
-                swapped = true;
-            }
-        }
-    } while (swapped);
-}
-
-// Build a chart for the iReceptor aggregation data using HighCharts.
-function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels=10)
-{
+    var level = 3;
+    var internalLabels = true;
+    var truncateLabels = 10;
     // Debug level for when developing...
     var debugLevel = 0;
 
@@ -179,7 +105,7 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels
     })
 
     // display number of items
-    var fieldTitleWithNumber = n + ' ' + pluralize(fieldTitle.toUpperCase(), n);
+    var fieldTitleWithNumber = n + ' ' + pluralize(fieldTitle, n);
 
     // Generate the chart data structure for HighChart.
     var chartData;
@@ -295,114 +221,21 @@ function irBuildPieChart(fieldTitle, data, level, internalLabels, truncateLabels
     return chartData;
 }
 
-// Build a chart for the iReceptor aggregation data using HighCharts.
-function irBuildBarChart(fieldTitle, data, level)
+function bubbleSort(a, b)
 {
-    // Debug level for when developing...
-    var debugLevel = 0;
-    // Build a chart using the "HighCharts" chart, using the data provided.
-    var seriesData = [];
-    var count = 0;
-
-    // Convert iReceptor aggregate data into a form for HighChart.
-    for (d in data)
-    {
-        if (debugLevel > 0)
-        {
-            console.log("--" + data[d] + "--" + "\n");
-            console.log("--" + data[d].name + " = " + data[d].count + "--" + "\n");
+    var swapped;
+    do {
+        swapped = false;
+        for (var i=0; i < a.length-1; i++) {
+            if (a[i] < a[i+1]) {
+                var temp = a[i];
+                var btemp = b[i];
+                a[i] = a[i+1];
+                a[i+1] = temp;
+                b[i] = b[i+1];
+                b[i+1] = btemp;
+                swapped = true;
+            }
         }
-
-
-        seriesData[count] = {name:data[d].name,data:[data[d].count]};
-        count = count + 1;
-    }
-
-    // Generate the chart data structure for HighChart.
-    var chartData;
-        chartData = {
-            chart: {
-                type: 'column',
-                marginLeft: 5,
-                marginRight: 5
-            },
-            title: {
-                text: fieldTitle,
-                style: {"font-size": "12px"},
-                floating: false,
-                margin: 0
-            },
-            xAxis: {
-                labels: {enabled:false},
-                visible: false
-            },
-            yAxis: {
-                visible: false,
-                min: 0,
-                title: {
-                    text: '%'
-                }
-            },
-            tooltip: {
-                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
-                shared: true
-            },
-            plotOptions: {
-                column: {
-                    //stacking: 'percent',
-                    stacking: 'normal',
-                    borderWidth: 0
-                }
-            },
-            legend: {
-                enabled: false,
-                maxHeight: 75,
-                floating: false,
-                itemStyle: {"font-weight":"normal", "font-size": "11px"}
-            },
-            series: seriesData
-        };
-    return chartData;
-}
-
-
-// Generate array of values count for a given field 
-// 
-// field: that field
-// objList: list of objects
-// aggregateBySequence: aggregate number of sequences count instead of
-//  just incrementing value count for each object that field value
-function irAggregateData(field, objList, aggregateBySequence = true, sequenceCountField = 'ir_sequence_count')
-{        
-    var valuesCount = [];
-
-    for (i in objList) {
-        var obj = objList[i];
-        if (obj.hasOwnProperty(field)) {
-            var value = obj[field];
-
-            if(value === null) {
-                value = 'None';
-            }
-
-            count = 1;
-            if (aggregateBySequence)
-            {
-                if($.isNumeric(obj[sequenceCountField])) {
-                    count = obj[sequenceCountField];
-                }
-                else {
-                    // there is no sequence with that field value
-                    count = 0;
-                }
-            }
-
-            if( ! (value in valuesCount)) {
-                valuesCount[value] = 0;
-            }
-            valuesCount[value]+= count; 
-        }
-    }
-
-    return valuesCount;
+    } while (swapped);
 }

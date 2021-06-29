@@ -19,20 +19,20 @@
 						{{ $total_labs }} research {{ str_plural('lab', $total_labs)}} and
 						{{ $total_projects }} {{ str_plural('study', $total_projects)}}.
 					</a>
-					<!-- repos/labs/studies popup -->
+
 					@include('rest_service_list')
 				</p>
 
-				<div id="charts">
+				<div class="charts">
 					<div class="row">
-						<div class="col-md-4 chart" id="chart1"></div>
-						<div class="col-md-4 chart" id="chart2"></div>
-						<div class="col-md-4 chart" id="chart3"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['study_type']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['organism']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['disease_diagnosis']) !!}"></div>
 					</div>
 					<div class="row">
-						<div class="col-md-4 chart" id="chart4"></div>
-						<div class="col-md-4 chart" id="chart5"></div>
-						<div class="col-md-4 chart" id="chart6"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['tissue']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['pcr_target_locus']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['template_class']) !!}"></div>
 					</div>
 				</div>
 			</div>
@@ -110,31 +110,6 @@
 	</div>
 	
 </div>
-
-<script>
-	var graphFields = [
-	        "study_type", 
-	        "organism",
-	        "disease_diagnosis", 
-	        "tissue",
-	        "pcr_target_locus",
-	        "template_class"
-	    ];
-	
-	var graphNames = [
-	        "@lang('short.study_type')",
-	        "@lang('short.organism')", 
-	        "@lang('short.disease_diagnosis')",
-	        "@lang('short.tissue')", 
-	        "@lang('short.pcr_target_locus')",
-	        "@lang('short.template_class')"
-	    ];
-	
-	var graphInternalLabels = true;
-	var graphCountField = "ir_sequence_count";
-	var graphData = {!! $sample_list_json !!};
-</script>
-
 @stop
 
 @section('footer')
