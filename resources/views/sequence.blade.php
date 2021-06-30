@@ -233,16 +233,17 @@
 						<!-- repos/labs/studies details popup -->
 						@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
 
-						<div id="charts" class="charts">
+						<div class="charts">
 							<div class="row">
-								<div class="col-md-2 chart" id="chart1"></div>
-								<div class="col-md-2 chart" id="chart2"></div>
-								<div class="col-md-2 chart" id="chart3"></div>
-								<div class="col-md-2 chart" id="chart4"></div>
-								<div class="col-md-2 chart" id="chart5"></div>
-								<div class="col-md-2 chart" id="chart6"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['study_title']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['subject_id']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['sample_id']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['disease_diagnosis']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['tissue']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['pcr_target_locus']) !!}"></div>
 							</div>
-						</div>										
+						</div>
+									
 					</div>
 				@endif 
 				
@@ -482,28 +483,5 @@
 
 @include('reloadingMessage')
 @include('loadingMessage')
-
-<script>
-	var graphFields = [
-	        "study_title",
-	        "subject_id",
-	        "sample_id",
-	        "disease_diagnosis", 
-	        "tissue",
-	        "pcr_target_locus"
-	    ];
-	var graphNames = [
-	        "@lang('short.study_title')",
-	        "@lang('short.subject_id')",
-	        "@lang('short.sample_id')",
-	        "@lang('short.disease_diagnosis')",
-	        "@lang('short.tissue')", 
-	        "@lang('short.pcr_target_locus')"
-	    ];
-
-	var graphInternalLabels = true;
-	var graphCountField = "ir_filtered_sequence_count";
-	var graphData = {!! $sample_list_json !!};
-</script>
 
 @stop
