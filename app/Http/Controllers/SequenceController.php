@@ -325,7 +325,10 @@ class SequenceController extends Controller
         $data['download_query_id'] = $download_query_id;
 
         $data['sequence_list'] = $sequence_data['items'];
-        $data['sample_list_json'] = json_encode($sequence_data['summary']);
+        
+        $charts_fields = ['study_title', 'subject_id', 'sample_id', 'disease_diagnosis', 'tissue', 'pcr_target_locus'];
+        $data['charts_data'] = Sample::generateChartsData($sequence_data['summary'], $charts_fields, 'ir_filtered_sequence_count');
+
         $data['rest_service_list'] = $sequence_data['rs_list'];
         $data['rest_service_list_no_response'] = $sequence_data['rs_list_no_response'];
         $data['rest_service_list_no_response_timeout'] = $sequence_data['rs_list_no_response_timeout'];
