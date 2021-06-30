@@ -678,7 +678,6 @@ class Sample
         $valuesCounts = [];
 
         foreach ($sample_list as $sample) {
-
             $sample = json_decode(json_encode($sample), true);
 
             // nb of sequences for that sample

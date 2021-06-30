@@ -288,7 +288,6 @@ class SampleController extends Controller
         $clone_charts_fields = ['study_type', 'organism', 'disease_diagnosis', 'tissue', 'pcr_target_locus', 'template_class'];
         $data['clone_charts_data'] = Sample::generateChartsData($samples_with_clones, $clone_charts_fields, 'ir_clone_count');
 
-
         // keep only samples to display on the current page
         $samples_with_sequences = array_slice($samples_with_sequences, ($page - 1) * $max_per_page, $max_per_page);
         $samples_with_clones = array_slice($samples_with_clones, ($page - 1) * $max_per_page, $max_per_page);
