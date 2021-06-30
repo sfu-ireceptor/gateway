@@ -73,7 +73,7 @@ class SequenceController extends Controller
         $data = [];
 
         $data['sequence_list'] = $sequence_data['items'];
-        
+
         $charts_fields = ['study_title', 'subject_id', 'sample_id', 'disease_diagnosis', 'tissue', 'pcr_target_locus'];
         $data['charts_data'] = Sample::generateChartsData($sequence_data['summary'], $charts_fields, 'ir_filtered_sequence_count');
 
