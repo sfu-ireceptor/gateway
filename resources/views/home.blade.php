@@ -9,6 +9,7 @@
 
 		<div class="col-md-8">
 			<div class="intro_home">
+
 				<p>
 					<strong>{{ human_number($total_sequences) }} sequences</strong> and
 					<strong>{{ $total_samples }} repertoires</strong> are currently available,<br>
@@ -35,6 +36,7 @@
 						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['template_class']) !!}"></div>
 					</div>
 				</div>
+
 			</div>
 		</div>
 
