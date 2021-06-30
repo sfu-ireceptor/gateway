@@ -679,6 +679,8 @@ class Sample
 
         foreach ($sample_list as $sample) {
 
+            $sample = json_decode(json_encode($sample), true);
+
             // nb of sequences for that sample
             $nb_sequences = 0;
             if (isset($sample[$count_field])) {
@@ -715,7 +717,7 @@ class Sample
         return $l;
     }
 
-    public static function generateChartsData($sample_list, $field_list)
+    public static function generateChartsData($sample_list, $field_list, $count_field = 'ir_sequence_count')
     {
         $chartsData = [];
 
@@ -728,7 +730,7 @@ class Sample
             }
 
             $chartsData[$field]['title'] = $title;
-            $chartsData[$field]['data'] = Sample::generateChartData($sample_list, $field, 'ir_sequence_count');
+            $chartsData[$field]['data'] = Sample::generateChartData($sample_list, $field, $count_field);
         }
 
         return $chartsData;

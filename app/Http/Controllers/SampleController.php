@@ -282,6 +282,13 @@ class SampleController extends Controller
             }
         }
 
+        $sequence_charts_fields = ['study_type', 'organism', 'disease_diagnosis', 'tissue', 'pcr_target_locus', 'template_class'];
+        $data['sequence_charts_data'] = Sample::generateChartsData($samples_with_sequences, $sequence_charts_fields);
+
+        $clone_charts_fields = ['study_type', 'organism', 'disease_diagnosis', 'tissue', 'pcr_target_locus', 'template_class'];
+        $data['clone_charts_data'] = Sample::generateChartsData($samples_with_clones, $clone_charts_fields, 'ir_clone_count');
+
+
         // keep only samples to display on the current page
         $samples_with_sequences = array_slice($samples_with_sequences, ($page - 1) * $max_per_page, $max_per_page);
         $samples_with_clones = array_slice($samples_with_clones, ($page - 1) * $max_per_page, $max_per_page);
@@ -323,7 +330,6 @@ class SampleController extends Controller
         $data['sort_order'] = $sort_order;
         $data['sequences_query_id'] = $sequences_query_id;
         $data['rest_service_list'] = $sample_data['rs_list'];
-        $data['sample_list_json'] = json_encode($sample_data['items']);
 
         $data['total_filtered_repositories'] = $sample_data['total_filtered_repositories'];
         $data['total_filtered_labs'] = $sample_data['total_filtered_labs'];

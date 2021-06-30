@@ -333,16 +333,17 @@
 								<!-- repos/labs/studies details popup -->
 								@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
 
-								<div id="charts" class="charts">
+								<div class="charts">
 									<div class="row">
-										<div class="col-md-2 chart" id="chart1"></div>
-										<div class="col-md-2 chart" id="chart2"></div>
-										<div class="col-md-2 chart" id="chart3"></div>
-										<div class="col-md-2 chart" id="chart4"></div>
-										<div class="col-md-2 chart" id="chart5"></div>
-										<div class="col-md-2 chart" id="chart6"></div>
+										<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['study_type']) !!}"></div>
+										<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['organism']) !!}"></div>
+										<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['disease_diagnosis']) !!}"></div>
+										<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['tissue']) !!}"></div>
+										<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['pcr_target_locus']) !!}"></div>
+										<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['template_class']) !!}"></div>
 									</div>
-								</div>								
+								</div>
+
 							</div>
 
 							<!-- table column selector -->
@@ -598,16 +599,17 @@
 								<!-- repos/labs/studies details popup -->
 								@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
 
-								<div id="charts" class="charts">
+								<div class="charts">
 									<div class="row">
-										<div class="col-md-2 chart" id="chart1"></div>
-										<div class="col-md-2 chart" id="chart2"></div>
-										<div class="col-md-2 chart" id="chart3"></div>
-										<div class="col-md-2 chart" id="chart4"></div>
-										<div class="col-md-2 chart" id="chart5"></div>
-										<div class="col-md-2 chart" id="chart6"></div>
+										<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($clone_charts_data['study_type']) !!}"></div>
+										<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($clone_charts_data['organism']) !!}"></div>
+										<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($clone_charts_data['disease_diagnosis']) !!}"></div>
+										<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($clone_charts_data['tissue']) !!}"></div>
+										<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($clone_charts_data['pcr_target_locus']) !!}"></div>
+										<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($clone_charts_data['template_class']) !!}"></div>
 									</div>
-								</div>								
+								</div>
+								
 							</div>
 
 							<!-- table column selector -->
@@ -881,26 +883,4 @@
 @include('reloadingMessage')
 @include('loadingMessage')
 
-<script>
-	var graphFields = [
-	        "study_type",
-	        "organism",
-	        "disease_diagnosis",
-	        "tissue",
-	        "pcr_target_locus",
-	        "template_class"
-	    ];
-	var graphNames = [
-	        "@lang('short.study_type')",
-	        "@lang('short.organism')",
-	        "@lang('short.disease_diagnosis')",
-	        "@lang('short.tissue')",
-	        "@lang('short.pcr_target_locus')",
-	        "@lang('short.template_class')"
-	    ];
-
-	var graphInternalLabels = true;
-	var graphCountField = "ir_sequence_count";
-	var graphData = {!! $sample_list_json !!};
-</script>
 @stop
