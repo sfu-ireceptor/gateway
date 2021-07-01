@@ -8,18 +8,18 @@
 # These get set by Tapis
 
 # input files
-#singularity_image="${singularity_image}"
 #rearrangement_file="${rearrangement_file}"
-singularity_image="vdjbase_pipeline-1.1.01.sif"
+#singularity_image="vdjbase_pipeline-1.1.01.sif"
 #singularity_image="${singularity}"
+singularity_image="${singularity_image}"
 echo "Singularity image = ${singularity_image}"
 
 # app variables (will be subsituted by AGAVE). If they don't exist
 # use command line arguments.
-if [ -z "${file1}" ]; then
+if [ -z "${download_file}" ]; then
         ZIP_FILE=$1
 else
-        ZIP_FILE=${file1}
+        ZIP_FILE=${download_file}
 fi
 
 ##############################################

@@ -276,7 +276,7 @@ class Agave
         if ($id == 1) {
             $params = [
                 [
-                    'id' => 'param1',
+                    'id' => 'variable',
                     'value' => [
                         'type' => 'string',
                     ],
@@ -285,7 +285,7 @@ class Agave
 
             $inputs = [
                 [
-                    'id' => 'file1',
+                    'id' => 'download_file',
                 ],
             ];
         } elseif ($id == 2) {
@@ -318,34 +318,34 @@ class Agave
 
             $inputs = [
                 [
-                    'id' => 'file1',
+                    'id' => 'download_file',
                 ],
             ];
         } elseif ($id == 3) {
             $inputs = [
                 [
-                    'id' => 'file1',
+                    'id' => 'download_file',
                 ],
             ];
         } elseif ($id == 5) {
             $inputs = [
                 [
-                    'id' => 'file1',
+                    'id' => 'download_file',
                 ],
             ];
         } elseif ($id == 6) {
             $inputs = [
                 [
-                    'id' => 'file1',
+                    'id' => 'download_file',
                 ],
             ];
         } elseif ($id == 7) {
             $inputs = [
                 [
-                    'id' => 'file1',
+                    'id' => 'download_file',
                 ],
                 [
-                    'id' => 'singularity',
+                    'id' => 'singularity_image',
                 ],
 
             ];

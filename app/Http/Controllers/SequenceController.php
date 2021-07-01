@@ -208,16 +208,16 @@ class SequenceController extends Controller
         $app_list = [];
 
         // For Histogram app
-        $var_list = [];
-        $var_list['junction_length'] = __('short.junction_length');
-        $var_list['v_call'] = __('short.v_call');
-        $var_list['d_call'] = __('short.d_call');
-        $var_list['j_call'] = __('short.j_call');
-        $var_list = FieldName::convert($var_list, 'ir_id', 'ir_adc_api_query');
+        $choices = [];
+        $choices['junction_length'] = __('short.junction_length');
+        $choices['v_call'] = __('short.v_call');
+        $choices['d_call'] = __('short.d_call');
+        $choices['j_call'] = __('short.j_call');
+        $choices = FieldName::convert($choices, 'ir_id', 'ir_adc_api_query');
 	$variable_parameter = [];
         $variable_parameter['label'] = 'var';
         $variable_parameter['name'] = 'Variable';
-        $variable_parameter['choices'] = $var_list;
+        $variable_parameter['choices'] = $choices;
         $historgram_parameters = [];
         $historgram_parameters['var'] = $variable_parameter;
 	$histogram_app =[]; 
@@ -225,39 +225,35 @@ class SequenceController extends Controller
         $histogram_app['parameter_list'] = $historgram_parameters;
         $histogram_app['app_id'] = 1;
         $histogram_app['app_tag'] = 'app1';
-        $app_list['Histogram'] = $histogram_app;
-        #$data['amazingHistogramGeneratorColorList'] = $amazingHistogramGeneratorColorList;
 
         // for VDJBase
-        $parameter_list = [];
+	$choices = [];
+        $choices['hour_1'] = '1';
+        $choices['hour_2'] = '2';
+        $choices['hour_4'] = '4';
+        $choices['hour_8'] = '8';
+        $choices['hour_16'] = '16';
+        $choices['hour_32'] = '32';
+
 	$parameter = [];
         $parameter['label'] = 'run_time';
         $parameter['name'] = 'Run Time (hours)';
-        //$choices['hour_1'] = '1';
-        //$choices['hour_2'] = '2';
-        //$choices['hour_4'] = '4';
-        //$choices['hour_8'] = '8';
-        //$choices['hour_16'] = '16';
-        //$choices['hour_32'] = '32';
-        //$parameter['choices'] = $choices;
-        $parameter_list['run_time'] = $parameter;
-        //$vdjbase_runtime = [];
-        //$vdjbase_runtime['hour_1'] = '1';
-        //$vdjbase_runtime['hour_2'] = '2';
-        //$vdjbase_runtime['hour_4'] = '4';
-        //$vdjbase_runtime['hour_8'] = '8';
-        //$vdjbase_runtime['hour_16'] = '16';
-        //$vdjbase_runtime['hour_32'] = '32';
-        //$data['vdjbase_runtime'] = $vdjbase_runtime;
-	$app =[]; 
-        $app['name'] = 'VDJBase';
-        $app['parameter_list'] = $parameter_list;
-        $app['app_id'] = 7;
-        $app['app_tag'] = 'app7';
+        $parameter['choices'] = $choices;
 
-        $app_list['VDJBase'] = $app;
+        $parameter_list = [];
+        $parameter_list['run_time'] = $parameter;
+	$vdjbase_app =[]; 
+        $vdjbase_app['name'] = 'VDJBase';
+        $vdjbase_app['parameter_list'] = $parameter_list;
+        $vdjbase_app['app_id'] = 7;
+        $vdjbase_app['app_tag'] = 'app7';
+
+	// Add the Apps to the App list
+        $app_list['VDJBase'] = $vdjbase_app;
+        $app_list['Histogram'] = $histogram_app;
+
+	// Add the app list to the data returned to the View.
         $data['app_list'] = $app_list;
-        #$data['parameter_list'] = $parameter_list;
 
         // for histogram generator
         $var_list = [];

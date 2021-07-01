@@ -9,13 +9,12 @@
 
 # input files
 #singularity_image="${singularity_image}"
-rearrangement_file="${rearrangement_file}"
-singularity_image="vdjbase_pipeline-1.1.01.sif"
-rearrangement_file="${file1}"
+#rearrangement_file="${rearrangement_file}"
+singularity_image="${singularity_image}"
+rearrangement_file="${download_file}"
 
 # application parameters
-#sample_name=${sample_name}
-sample_name="SAMPLE"
+sample_name=${sample_name}
 
 # Agave info
 AGAVE_JOB_ID=${AGAVE_JOB_ID}

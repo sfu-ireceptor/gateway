@@ -117,7 +117,8 @@ class Job extends Model
     },
 
     "inputs":{
-        "file1":"agave://$gw_storage_staging/${inputFolder}/data.csv.zip"
+        "download_file":"agave://$gw_storage_staging/${inputFolder}/data.csv.zip"
+        "singularity_image":""
     },
 
     "maxRunTime":"00:10:00",

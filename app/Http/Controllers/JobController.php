@@ -98,7 +98,6 @@ class JobController extends Controller
                 $appName = 'app-histogram--' . $executionSystem->name;
                 $appDeploymentPath = 'histogram';
                 $params['param1'] = $f['var'];
-                // $inputs['file1'] = 'data.tsv.zip';
                 $appHumanName = 'Standard Histogram Generator';
             } elseif ($appId == 2) {
                 Log::info('2');
@@ -112,34 +111,28 @@ class JobController extends Controller
                 $params['red'] = floatval($colorArray[0]);
                 $params['green'] = floatval($colorArray[1]);
                 $params['blue'] = floatval($colorArray[2]);
-                // $inputs['file1'] = 'data.tsv.zip';
                 $appHumanName = 'Amazing Historgram Generator';
             } elseif ($appId == 3) {
                 Log::info('3');
                 $appName = 'app-stats--' . $executionSystem->name;
                 $appDeploymentPath = 'stats';
-                // $inputs['file1'] = 'data.tsv.zip';
                 $appHumanName = 'Stats';
             } elseif ($appId == 5) {
                 Log::info('5');
                 $appName = 'app-shared-junction--' . $executionSystem->name;
                 $appDeploymentPath = 'shared_junction_aa';
-                // $inputs['file1'] = 'data.tsv.zip';
                 $appHumanName = 'Shared Junction';
             } elseif ($appId == 6) {
                 Log::info('6');
                 $appName = 'app-genoa--' . $executionSystem->name;
                 $appDeploymentPath = 'genoa';
-                // $inputs['file1'] = 'data.tsv.zip';
                 $appHumanName = 'Genoa';
             } elseif ($appId == 7) {
                 Log::info('Processing App 7 job');
                 $appName = 'app-vdjbase-singularity--' . $executionSystem->name;
                 $appDeploymentPath = 'vdjbase_singularity';
-                // $inputs['file1'] = 'data.tsv.zip';
                 Log::info('Runtime = ' . $f['run_time']);
                 $params['param1'] = $f['run_time'];
-                //$inputs['singularity'] = 'agave://staging-analysis-exec-bcorrie-ireceptorgw-cedar.computecanada.ca/singularity/vdjbase/vdjbase_pipeline-1.1.01.sif';
                 $appHumanName = 'VDJBase';
             }
 

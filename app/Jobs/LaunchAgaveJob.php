@@ -87,7 +87,7 @@ class LaunchAgaveJob implements ShouldQueue
                 Log::debug('#### input1 ' . $key . ' = ' . $value);
             }
 
-            $inputs['file1'] = 'agave://' . $this->systemStaging . '/' . basename($dataFilePath);
+            $inputs['download_file'] = 'agave://' . $this->systemStaging . '/' . basename($dataFilePath);
             $executionSystem = System::getCurrentSystem($this->gw_username);
             Log::debug('#### user = ' . auth()->user());
             Log::debug('#### executionSystem = ' . $executionSystem);
