@@ -220,7 +220,7 @@ class SequenceController extends Controller
         $variable_parameter['choices'] = $choices;
         $historgram_parameters = [];
         $historgram_parameters['var'] = $variable_parameter;
-	$histogram_app =[]; 
+        $histogram_app = [];
         $histogram_app['name'] = 'Histogram';
         $histogram_app['parameter_list'] = $historgram_parameters;
         $histogram_app['app_id'] = 1;
