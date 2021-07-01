@@ -214,7 +214,7 @@ class SequenceController extends Controller
         $choices['d_call'] = __('short.d_call');
         $choices['j_call'] = __('short.j_call');
         $choices = FieldName::convert($choices, 'ir_id', 'ir_adc_api_query');
-	$variable_parameter = [];
+        $variable_parameter = [];
         $variable_parameter['label'] = 'var';
         $variable_parameter['name'] = 'Variable';
         $variable_parameter['choices'] = $choices;
@@ -227,7 +227,7 @@ class SequenceController extends Controller
         $histogram_app['app_tag'] = 'app1';
 
         // for VDJBase
-	$choices = [];
+        $choices = [];
         $choices['hour_1'] = '1';
         $choices['hour_2'] = '2';
         $choices['hour_4'] = '4';
@@ -235,24 +235,24 @@ class SequenceController extends Controller
         $choices['hour_16'] = '16';
         $choices['hour_32'] = '32';
 
-	$parameter = [];
+        $parameter = [];
         $parameter['label'] = 'run_time';
         $parameter['name'] = 'Run Time (hours)';
         $parameter['choices'] = $choices;
 
         $parameter_list = [];
         $parameter_list['run_time'] = $parameter;
-	$vdjbase_app =[]; 
+        $vdjbase_app = [];
         $vdjbase_app['name'] = 'VDJBase';
         $vdjbase_app['parameter_list'] = $parameter_list;
         $vdjbase_app['app_id'] = 7;
         $vdjbase_app['app_tag'] = 'app7';
 
-	// Add the Apps to the App list
+        // Add the Apps to the App list
         $app_list['VDJBase'] = $vdjbase_app;
         $app_list['Histogram'] = $histogram_app;
 
-	// Add the app list to the data returned to the View.
+        // Add the app list to the data returned to the View.
         $data['app_list'] = $app_list;
 
         // for histogram generator
