@@ -208,17 +208,18 @@ class SequenceController extends Controller
         $app_list = [];
 
         // For Histogram app
-        $colorList = [];
-        $colorList['1_0_0'] = 'Red';
-        $colorList['1_0.5_0'] = 'Orange';
-        $colorList['1_0_1'] = 'Pink';
-        $colorList['0.6_0.4_0.2'] = 'Brown';
-	$color_parameter = [];
-        $color_parameter['label'] = 'color';
-        $color_parameter['name'] = 'Color';
-        $color_parameter['choices'] = $colorList;
+        $var_list = [];
+        $var_list['junction_length'] = __('short.junction_length');
+        $var_list['v_call'] = __('short.v_call');
+        $var_list['d_call'] = __('short.d_call');
+        $var_list['j_call'] = __('short.j_call');
+        $var_list = FieldName::convert($var_list, 'ir_id', 'ir_adc_api_query');
+	$variable_parameter = [];
+        $variable_parameter['label'] = 'var';
+        $variable_parameter['name'] = 'Variable';
+        $variable_parameter['choices'] = $var_list;
         $historgram_parameters = [];
-        $historgram_parameters['color'] = $color_parameter;
+        $historgram_parameters['var'] = $variable_parameter;
 	$histogram_app =[]; 
         $histogram_app['name'] = 'Histogram';
         $histogram_app['parameter_list'] = $historgram_parameters;
