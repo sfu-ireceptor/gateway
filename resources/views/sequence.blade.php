@@ -6,7 +6,7 @@
 @section('content')
 <div class="container-fluid sequence_container">
 
-	<h1>2. Sequence Search</h1>
+	<h1>2. SSSSSequence Search</h1>
 	<p class="sh1">Filter by sequence and sequence annotation feature</p>
 
 	<div class="row">		
@@ -366,17 +366,23 @@
 							<div role="tabpanel" class="analysis_apps_tabpanel">
 								<!-- Tab links -->
 								<ul class="nav nav-tabs" role="tablist">
-									<li role="presentation" class="active"><a href="#app1" aria-controls="app1" role="tab" data-toggle="tab">Histogram</a></li>
+								    @foreach ($app_list as $app)
+									<!-- <li role="presentation" class="active"><a href="#app1" aria-controls="app1" role="tab" data-toggle="tab">Histogram</a></li>-->
+									<li role="presentation" class="active"><a href="#{{$app['app_tag']}}" aria-controls="{{$app['app_tag']}}" role="tab" data-toggle="tab">{{$app['name']}}</a></li>
+                                                                        <!--
+									<li role="presentation"><a href="#app7" aria-controls="app7" role="tab" data-toggle="tab">VDJBase</a></li>
 									<li role="presentation"><a href="#app3" aria-controls="app3" role="tab" data-toggle="tab">Stats</a></li>
 									<li role="presentation"><a href="#app5" aria-controls="app5" role="tab" data-toggle="tab">Shared Junction</a></li>
-{{-- 									<li role="presentation"><a href="#app6" aria-controls="app6" role="tab" data-toggle="tab">Genoa</a></li> --}}
+ 									<li role="presentation"><a href="#app6" aria-controls="app6" role="tab" data-toggle="tab">Genoa</a></li> 
 									<li role="presentation"><a href="#app4" aria-controls="app4" role="tab" data-toggle="tab">Third-party analysis</a></li>
+                                                                        -->
+                                                                    @endforeach
 								</ul>
 
 								<!-- Tab panes -->
 								<div class="tab-content">
 
-									<div role="tabpanel" class="tab-pane active" id="app1">
+{{--									<div role="tabpanel" class="tab-pane active" id="app1">
 						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
 											{{ Form::hidden('filters_json', $filters_json) }}
 											{{ Form::hidden('data_url', $url) }}
@@ -450,6 +456,7 @@
 											{{ Form::submit('Submit analysis job', array('class' => 'btn btn-primary')) }}
 										{{ Form::close() }}
 									</div>
+--}}
 
 {{-- 									<div role="tabpanel" class="tab-pane" id="app6">
 						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
@@ -460,7 +467,40 @@
 											<p>Test analysis app.</p>
 											{{ Form::submit('Submit analysis job', array('class' => 'btn btn-primary')) }}
 										{{ Form::close() }}
-									</div> --}}
+									</div>
+--}}
+									@php $count = 0 @endphp
+								        @foreach ($app_list as $app)
+						                            @if ( $count == 0)
+									      <div role="tabpanel" class="tab-pane active" id="{{$app['app_tag']}}">
+                                                                            @else
+									      <div role="tabpanel" class="tab-pane" id="{{$app['app_tag']}}">
+                                                                            @endif
+						    				{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
+											{{ Form::hidden('filters_json', $filters_json) }}
+											{{ Form::hidden('data_url', $url) }}
+											{{ Form::hidden('app_id', $app['app_id']) }}
+
+								                        @foreach ($app['parameter_list'] as $parameter)
+									  	          <div class="row">
+										             <div class="col-md-3">
+											          <div class="form-group">
+												      {{ Form::label($parameter['label'], $parameter['name']) }}
+						                                                      @if ( ! empty($parameter['choices']) )
+												        {{ Form::select($parameter['label'], $parameter['choices'], '', array('class' => 'form-control')) }}
+                                                                                                      @else
+									                                {{ Form::text($parameter['label'], '', array('class' => 'form-control')) }}
+                                                                                                      @endif
+										                  </div>
+											     </div>
+											  </div>
+							                                @endforeach
+
+											{{ Form::submit('Submit ' . $app['name'] . ' analysis job', array('class' => 'btn btn-primary')) }}
+										{{ Form::close() }}
+									    </div>
+                                                                            @php $count = $count + 1 @endphp
+                                                                        @endforeach
 
 
 								</div>
