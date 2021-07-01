@@ -227,14 +227,14 @@ class SequenceController extends Controller
         $histogram_app['app_id'] = 1;
         $histogram_app['app_tag'] = 'app1';
 
-	// For iReceptor Stats App
+        // For iReceptor Stats App
         $stats_app = [];
         $stats_app['name'] = 'Stats';
         $stats_app['app_id'] = 3;
         $stats_app['app_tag'] = 'app3';
         $parameter_list = [];
         $stats_app['parameter_list'] = $parameter_list;
-	
+
         // For VDJBase
         $choices = [];
         $choices['hour_1'] = '1';
