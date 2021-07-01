@@ -210,6 +210,7 @@ class SequenceController extends Controller
         // For Histogram app
         $choices = [];
         $choices['junction_length'] = __('short.junction_length');
+        $choices['junction_length_aa'] = __('short.junction_length_aa');
         $choices['v_call'] = __('short.v_call');
         $choices['d_call'] = __('short.d_call');
         $choices['j_call'] = __('short.j_call');
@@ -226,7 +227,15 @@ class SequenceController extends Controller
         $histogram_app['app_id'] = 1;
         $histogram_app['app_tag'] = 'app1';
 
-        // for VDJBase
+	// For iReceptor Stats App
+        $stats_app = [];
+        $stats_app['name'] = 'Stats';
+        $stats_app['app_id'] = 3;
+        $stats_app['app_tag'] = 'app3';
+        $parameter_list = [];
+        $stats_app['parameter_list'] = $parameter_list;
+	
+        // For VDJBase
         $choices = [];
         $choices['hour_1'] = '1';
         $choices['hour_2'] = '2';
@@ -251,6 +260,7 @@ class SequenceController extends Controller
         // Add the Apps to the App list
         $app_list['VDJBase'] = $vdjbase_app;
         $app_list['Histogram'] = $histogram_app;
+        $app_list['Stats'] = $stats_app;
 
         // Add the app list to the data returned to the View.
         $data['app_list'] = $app_list;

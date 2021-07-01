@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Histogram App 5.0"
+echo "iReceptor Stats App"
 
 ##############################################
 # init environment
@@ -19,7 +19,6 @@ if [ -z "${download_file}" ]; then
 else
 	ZIP_FILE=${download_file}
 	VARNAME=${variable}
-	VARNAME=junction_length
 fi
 
 function do_heatmap()
@@ -115,7 +114,7 @@ echo "Extracting files started at: `date`"
 unzip -o "$ZIP_FILE" 
 
 # Determine the files to process. We extract the .tsv files from the info.txt
-tsv_files=( `cat $INFO_FILE | awk -F":" 'BEGIN {count=0} /tsv/ {if (count>0) printf(" %s",$1); else printf("%s", $1); count++}'` )
+tsv_files=( `cat $INFO_FILE | awk -F" " 'BEGIN {count=0} /tsv/ {if (count>0) printf(" %s",$1); else printf("%s", $1); count++}'` )
 
 # Run the stats for each of the VDJ calls.
 do_histogram v_call

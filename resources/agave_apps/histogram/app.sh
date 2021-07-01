@@ -68,7 +68,7 @@ echo "Extracting files started at: `date`"
 unzip -o "$ZIP_FILE" 
 
 # Determine the files to process. We extract the .tsv files from the info.txt
-tsv_files=( `cat $INFO_FILE | awk -F":" 'BEGIN {count=0} /tsv/ {if (count>0) printf(" %s",$1); else printf("%s", $1); count++}'` )
+tsv_files=( `cat $INFO_FILE | awk -F" " 'BEGIN {count=0} /tsv/ {if (count>0) printf(" %s",$1); else printf("%s", $1); count++}'` )
 
 # Run the historgram for the variable of interest
 do_histogram $VARNAME
