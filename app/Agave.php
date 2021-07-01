@@ -344,7 +344,7 @@ class Agave
                 [
                     'id' => 'file1',
                 ],
-		[
+                [
                     'id' => 'singularity',
                 ],
 
