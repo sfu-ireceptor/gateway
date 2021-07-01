@@ -398,11 +398,11 @@ class Agave
             ],
         ];
 
-        Log::debug("size of params = " . count($params));
-	if (count($params) == 0)
-	{
-		unset($t['parameters']);
-	}
+        Log::debug('size of params = ' . count($params));
+        if (count($params) == 0) {
+            unset($t['parameters']);
+        }
+
         return $t;
     }
 
