@@ -1,0 +1,116 @@
+{
+  "name": "irplus-vdjbase-cedar-ireceptorgw",
+  "version": "0.1",
+  "label": "vdjbase",
+  "defaultQueue": "default",
+  "defaultNodeCount": 1,
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": "8GB",
+  "defaultRequestedTime": "1:00:00",
+  "shortDescription": "VDJBase (singularity) app on cedar.computecanada.ca",
+  "longDescription": "iReceptor+ VDJBase app using singularity image on Compute Canada's cedar ARC platform",
+  "executionType": "HPC",
+  "executionSystem": "cedar.computecanada.ca-compute-ireceptorgw",
+  "parallelism": "PARALLEL",
+  "checkpointable": false,
+  "deploymentPath": "/tapis/apps/vdjbase-singularity/0.1/cedar/",
+  "deploymentSystem": "cedar.computecanada.ca-storage-ireceptorgw",
+  "templatePath": "vdjbase.sh",
+  "testPath": "test/test.sh",
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "modules": [
+    "purge"
+  ],
+  "inputs": [
+    {
+      "id": "singularity_image",
+      "details": {
+        "label": "",
+        "description": "Singularity image file",
+        "showAttribute": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/Json"
+        ],
+        "fileTypes": [
+          "text-0"
+        ]
+      },
+      "value": {
+        "default": "",
+        "visible": true,
+        "required": true
+      }
+    },
+    {
+      "id": "rearrangement_file",
+      "details": {
+        "label": "",
+        "description": "Rearrangement AIRR TSV file",
+        "showAttribute": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/Json"
+        ],
+        "fileTypes": [
+          "text-0"
+        ]
+      },
+      "value": {
+        "default": "",
+        "visible": true,
+        "required": true
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "creator",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "default": ""
+      },
+      "details": {
+        "label": "Creator",
+        "description": "Username that created this job."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
+    },
+    {
+      "id": "sample_name",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "default": ""
+      },
+      "details": {
+        "label": "Sample name",
+        "description": "Sample name for the repertoire being processed."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
+    }
+  ]
+}
