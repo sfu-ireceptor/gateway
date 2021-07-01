@@ -84,18 +84,18 @@ class LaunchAgaveJob implements ShouldQueue
             // }
             Log::debug('#### HELLLOOOOOO');
             foreach ($this->inputs as $key => $value) {
-                Log::debug('#### input1 ' . $key . " = " . $value);
-	    }
+                Log::debug('#### input1 ' . $key . ' = ' . $value);
+            }
 
             $inputs['file1'] = 'agave://' . $this->systemStaging . '/' . basename($dataFilePath);
-	    $executionSystem = System::getCurrentSystem($this->gw_username);
+            $executionSystem = System::getCurrentSystem($this->gw_username);
             Log::debug('#### user = ' . auth()->user());
             Log::debug('#### executionSystem = ' . $executionSystem);
 
-	    $inputs['singularity'] = 'agave://' . $executionSystem . '/singularity/vdjbase_pipeline-1.1.01.sif';
+            $inputs['singularity'] = 'agave://' . $executionSystem . '/singularity/vdjbase_pipeline-1.1.01.sif';
             foreach ($inputs as $key => $value) {
-                Log::debug('#### input2 ' . $key . " = " . $value);
-	    }
+                Log::debug('#### input2 ' . $key . ' = ' . $value);
+            }
 
             $storage_folder_path = storage_path() . '/app/public/';
             $archive_folder = basename($dataFilePath, '.zip') . '_output';
