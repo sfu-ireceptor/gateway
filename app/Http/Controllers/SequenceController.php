@@ -204,6 +204,10 @@ class SequenceController extends Controller
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
 
+	// Get information about all of the Apps
+	//
+	$app_list = [];
+	
         // for analysis app
         $amazingHistogramGeneratorColorList = [];
         $amazingHistogramGeneratorColorList['1_0_0'] = 'Red';
@@ -211,6 +215,35 @@ class SequenceController extends Controller
         $amazingHistogramGeneratorColorList['1_0_1'] = 'Pink';
         $amazingHistogramGeneratorColorList['0.6_0.4_0.2'] = 'Brown';
         $data['amazingHistogramGeneratorColorList'] = $amazingHistogramGeneratorColorList;
+
+        // for VDJBase
+	$parameter_list = [];
+	$parameter['label'] = 'run_time';
+	$parameter['name'] = 'Run Time (hours)';
+        #$choices['hour_1'] = '1';
+        #$choices['hour_2'] = '2';
+        #$choices['hour_4'] = '4';
+        #$choices['hour_8'] = '8';
+        #$choices['hour_16'] = '16';
+        #$choices['hour_32'] = '32';
+	#$parameter['choices'] = $choices;
+	$parameter_list['run_time'] = $parameter;
+        #$vdjbase_runtime = [];
+        #$vdjbase_runtime['hour_1'] = '1';
+        #$vdjbase_runtime['hour_2'] = '2';
+        #$vdjbase_runtime['hour_4'] = '4';
+        #$vdjbase_runtime['hour_8'] = '8';
+        #$vdjbase_runtime['hour_16'] = '16';
+        #$vdjbase_runtime['hour_32'] = '32';
+        #$data['vdjbase_runtime'] = $vdjbase_runtime;
+	$app['name'] = 'VDJBase';
+	$app['parameter_list'] = $parameter_list;
+	$app['app_id'] = 7;
+	$app['app_tag'] = 'app7';
+
+	$app_list['VDJBase'] = $app;
+	$data['app_list'] = $app_list;
+	$data['parameter_list'] = $parameter_list;
 
         // for histogram generator
         $var_list = [];
