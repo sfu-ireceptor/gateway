@@ -74,6 +74,7 @@ class JobController extends Controller
         // create systems
         System::createDefaultSystemsForUser($gw_username, $token);
 
+        Log::info('Processing Job: app_id = ' . $f['app_id']);
         $appId = intval($f['app_id']);
 
         // 3rd-party analysis
@@ -132,7 +133,7 @@ class JobController extends Controller
                 // $inputs['file1'] = 'data.tsv.zip';
                 $appHumanName = 'Genoa';
             } elseif ($appId == 7) {
-                Log::info('7');
+                Log::info('Processing App 7 job');
                 $appName = 'app-vdjbase-singularity--' . $executionSystem->name;
                 $appDeploymentPath = 'vdjbase_singularity';
                 // $inputs['file1'] = 'data.tsv.zip';

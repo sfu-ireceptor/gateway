@@ -205,19 +205,31 @@ class SequenceController extends Controller
         $data['filter_fields'] = $filter_fields;
 
         // Get information about all of the Apps
-        //
         $app_list = [];
 
-        // for analysis app
-        $amazingHistogramGeneratorColorList = [];
-        $amazingHistogramGeneratorColorList['1_0_0'] = 'Red';
-        $amazingHistogramGeneratorColorList['1_0.5_0'] = 'Orange';
-        $amazingHistogramGeneratorColorList['1_0_1'] = 'Pink';
-        $amazingHistogramGeneratorColorList['0.6_0.4_0.2'] = 'Brown';
-        $data['amazingHistogramGeneratorColorList'] = $amazingHistogramGeneratorColorList;
+        // For Histogram app
+        $colorList = [];
+        $colorList['1_0_0'] = 'Red';
+        $colorList['1_0.5_0'] = 'Orange';
+        $colorList['1_0_1'] = 'Pink';
+        $colorList['0.6_0.4_0.2'] = 'Brown';
+	$color_parameter = [];
+        $color_parameter['label'] = 'color';
+        $color_parameter['name'] = 'Color';
+        $color_parameter['choices'] = $colorList;
+        $historgram_parameters = [];
+        $historgram_parameters['color'] = $color_parameter;
+	$histogram_app =[]; 
+        $histogram_app['name'] = 'Histogram';
+        $histogram_app['parameter_list'] = $historgram_parameters;
+        $histogram_app['app_id'] = 1;
+        $histogram_app['app_tag'] = 'app1';
+        $app_list['Histogram'] = $histogram_app;
+        #$data['amazingHistogramGeneratorColorList'] = $amazingHistogramGeneratorColorList;
 
         // for VDJBase
         $parameter_list = [];
+	$parameter = [];
         $parameter['label'] = 'run_time';
         $parameter['name'] = 'Run Time (hours)';
         //$choices['hour_1'] = '1';
@@ -236,6 +248,7 @@ class SequenceController extends Controller
         //$vdjbase_runtime['hour_16'] = '16';
         //$vdjbase_runtime['hour_32'] = '32';
         //$data['vdjbase_runtime'] = $vdjbase_runtime;
+	$app =[]; 
         $app['name'] = 'VDJBase';
         $app['parameter_list'] = $parameter_list;
         $app['app_id'] = 7;
@@ -243,7 +256,7 @@ class SequenceController extends Controller
 
         $app_list['VDJBase'] = $app;
         $data['app_list'] = $app_list;
-        $data['parameter_list'] = $parameter_list;
+        #$data['parameter_list'] = $parameter_list;
 
         // for histogram generator
         $var_list = [];

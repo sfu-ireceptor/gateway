@@ -92,7 +92,7 @@ class LaunchAgaveJob implements ShouldQueue
             Log::debug('#### user = ' . auth()->user());
             Log::debug('#### executionSystem = ' . $executionSystem);
 
-            $inputs['singularity'] = 'agave://' . $executionSystem . '/singularity/vdjbase_pipeline-1.1.01.sif';
+            #$inputs['singularity'] = 'agave://' . $executionSystem . '/singularity/vdjbase_pipeline-1.1.01.sif';
             foreach ($inputs as $key => $value) {
                 Log::debug('#### input2 ' . $key . ' = ' . $value);
             }

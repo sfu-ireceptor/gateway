@@ -366,10 +366,16 @@
 							<div role="tabpanel" class="analysis_apps_tabpanel">
 								<!-- Tab links -->
 								<ul class="nav nav-tabs" role="tablist">
+							            @php $count = 0 @endphp
 								    @foreach ($app_list as $app)
-									<!-- <li role="presentation" class="active"><a href="#app1" aria-controls="app1" role="tab" data-toggle="tab">Histogram</a></li>-->
-									<li role="presentation" class="active"><a href="#{{$app['app_tag']}}" aria-controls="{{$app['app_tag']}}" role="tab" data-toggle="tab">{{$app['name']}}</a></li>
+						                        @if ( $count === 0)
+									    <li role="presentation" class="active"><a href="#{{$app['app_tag']}}" aria-controls="{{$app['app_tag']}}" role="tab" data-toggle="tab">{{$app['name']}}</a></li>
+                                                                        @else
+									    <li role="presentation"><a href="#{{$app['app_tag']}}" aria-controls="{{$app['app_tag']}}" role="tab" data-toggle="tab">{{$app['name']}}</a></li>
+                                                                        @endif
+							                @php $count = $count + 1 @endphp
                                                                         <!--
+                                                                        <li role="presentation" class="active"><a href="#app1" aria-controls="app1" role="tab" data-toggle="tab">Histogram</a></li>
 									<li role="presentation"><a href="#app7" aria-controls="app7" role="tab" data-toggle="tab">VDJBase</a></li>
 									<li role="presentation"><a href="#app3" aria-controls="app3" role="tab" data-toggle="tab">Stats</a></li>
 									<li role="presentation"><a href="#app5" aria-controls="app5" role="tab" data-toggle="tab">Shared Junction</a></li>
@@ -471,7 +477,7 @@
 --}}
 									@php $count = 0 @endphp
 								        @foreach ($app_list as $app)
-						                            @if ( $count == 0)
+						                            @if ( $count === 0)
 									      <div role="tabpanel" class="tab-pane active" id="{{$app['app_tag']}}">
                                                                             @else
 									      <div role="tabpanel" class="tab-pane" id="{{$app['app_tag']}}">
@@ -499,7 +505,7 @@
 											{{ Form::submit('Submit ' . $app['name'] . ' analysis job', array('class' => 'btn btn-primary')) }}
 										{{ Form::close() }}
 									    </div>
-                                                                            @php $count = $count + 1 @endphp
+									    @php $count = $count + 1 @endphp
                                                                         @endforeach
 
 
