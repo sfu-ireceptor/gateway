@@ -18,7 +18,7 @@ if [ -z "${download_file}" ]; then
 	VARNAME=$2
 else
 	ZIP_FILE=${download_file}
-	VARNAME=${param1}
+	VARNAME=${variable}
 fi
 
 function do_histogram()

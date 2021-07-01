@@ -10,7 +10,7 @@ fi
 
 # app variables (will be subsituted by AGAVE)
 ZIP_FILE=${download_file}
-VARNAME=${param1}
+VARNAME=${variable}
 RED=${red}
 GREEN=${green}
 BLUE=${blue}

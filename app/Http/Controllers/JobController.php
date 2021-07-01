@@ -97,13 +97,13 @@ class JobController extends Controller
                 Log::info('1');
                 $appName = 'app-histogram--' . $executionSystem->name;
                 $appDeploymentPath = 'histogram';
-                $params['param1'] = $f['var'];
+                $params['variable'] = $f['var'];
                 $appHumanName = 'Standard Histogram Generator';
             } elseif ($appId == 2) {
                 Log::info('2');
                 $appName = 'app-histogram2--' . $executionSystem->name;
                 $appDeploymentPath = 'histogram2';
-                $params['param1'] = 'junction_nt_length';
+                $params['variable'] = 'junction_nt_length';
 
                 $colorStr = $f['color'];
                 $colorArray = explode('_', $colorStr);
@@ -132,7 +132,7 @@ class JobController extends Controller
                 $appName = 'app-vdjbase-singularity--' . $executionSystem->name;
                 $appDeploymentPath = 'vdjbase_singularity';
                 Log::info('Runtime = ' . $f['run_time']);
-                $params['param1'] = $f['run_time'];
+                $params['variable'] = $f['run_time'];
                 $appHumanName = 'VDJBase';
             }
 

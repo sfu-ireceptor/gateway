@@ -291,7 +291,7 @@ class Agave
         } elseif ($id == 2) {
             $params = [
                 [
-                    'id' => 'param1',
+                    'id' => 'variable',
                     'value' => [
                         'type' => 'string',
                     ],
@@ -351,7 +351,7 @@ class Agave
             ];
             $params = [
                 [
-                    'id' => 'param1',
+                    'id' => 'variable',
                     'value' => [
                         'type' => 'string',
                     ],
