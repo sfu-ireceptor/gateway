@@ -86,7 +86,7 @@ class JobController extends Controller
             $executionSystem = System::getCurrentSystem(auth()->user()->id);
             $username = $executionSystem->username;
             $appExecutionSystem = $executionSystem->name;
-            $appDeploymentSystem = $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . $gw_username . '-' . $username;
+            $appDeploymentSystem = $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . str_replace('_', '-', $gw_username) . '-' . $username;
             $params = [];
             $inputs = [];
             $appHumanName = '';
@@ -131,6 +131,15 @@ class JobController extends Controller
                 $appDeploymentPath = 'genoa';
                 // $inputs['file1'] = 'data.tsv.zip';
                 $appHumanName = 'Genoa';
+            } elseif ($appId == 7) {
+                Log::info('7');
+                $appName = 'app-vdjbase-singularity--' . $executionSystem->name;
+                $appDeploymentPath = 'vdjbase_singularity';
+                // $inputs['file1'] = 'data.tsv.zip';
+                Log::info('Runtime = ' . $f['run_time']);
+                $params['param1'] = $f['run_time'];
+                #$inputs['singularity'] = 'agave://staging-analysis-exec-bcorrie-ireceptorgw-cedar.computecanada.ca/singularity/vdjbase/vdjbase_pipeline-1.1.01.sif';
+                $appHumanName = 'VDJBase';
             }
 
             $agave = new Agave;
@@ -142,7 +151,7 @@ class JobController extends Controller
             // config parameters for the job
             $executionSystem = System::getCurrentSystem(auth()->user()->id);
             $tenant_url = config('services.agave.tenant_url');
-            $systemStaging = config('services.agave.system_staging.name_prefix') . $gw_username;
+            $systemStaging = config('services.agave.system_staging.name_prefix') . str_replace('_','-',$gw_username);
             $notificationUrl = config('services.agave.gw_notification_url');
         }
 
