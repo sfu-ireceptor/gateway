@@ -214,23 +214,23 @@ class SequenceController extends Controller
         $var_list['d_call'] = __('short.d_call');
         $var_list['j_call'] = __('short.j_call');
         $var_list = FieldName::convert($var_list, 'ir_id', 'ir_adc_api_query');
-	$variable_parameter = [];
+        $variable_parameter = [];
         $variable_parameter['label'] = 'var';
         $variable_parameter['name'] = 'Variable';
         $variable_parameter['choices'] = $var_list;
         $historgram_parameters = [];
         $historgram_parameters['var'] = $variable_parameter;
-	$histogram_app =[]; 
+        $histogram_app = [];
         $histogram_app['name'] = 'Histogram';
         $histogram_app['parameter_list'] = $historgram_parameters;
         $histogram_app['app_id'] = 1;
         $histogram_app['app_tag'] = 'app1';
         $app_list['Histogram'] = $histogram_app;
-        #$data['amazingHistogramGeneratorColorList'] = $amazingHistogramGeneratorColorList;
+        //$data['amazingHistogramGeneratorColorList'] = $amazingHistogramGeneratorColorList;
 
         // for VDJBase
         $parameter_list = [];
-	$parameter = [];
+        $parameter = [];
         $parameter['label'] = 'run_time';
         $parameter['name'] = 'Run Time (hours)';
         //$choices['hour_1'] = '1';
@@ -249,7 +249,7 @@ class SequenceController extends Controller
         //$vdjbase_runtime['hour_16'] = '16';
         //$vdjbase_runtime['hour_32'] = '32';
         //$data['vdjbase_runtime'] = $vdjbase_runtime;
-	$app =[]; 
+        $app = [];
         $app['name'] = 'VDJBase';
         $app['parameter_list'] = $parameter_list;
         $app['app_id'] = 7;
@@ -257,7 +257,7 @@ class SequenceController extends Controller
 
         $app_list['VDJBase'] = $app;
         $data['app_list'] = $app_list;
-        #$data['parameter_list'] = $parameter_list;
+        //$data['parameter_list'] = $parameter_list;
 
         // for histogram generator
         $var_list = [];
