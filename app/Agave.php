@@ -339,6 +339,24 @@ class Agave
                     'id' => 'file1',
                 ],
             ];
+        } elseif ($id == 7) {
+            $inputs = [
+                [
+                    'id' => 'file1',
+                ],
+		[
+                    'id' => 'singularity',
+                ],
+
+            ];
+            $params = [
+                [
+                    'id' => 'param1',
+                    'value' => [
+                        'type' => 'string',
+                    ],
+                ],
+            ];
         }
 
         $t = [
@@ -366,7 +384,7 @@ class Agave
             'appId' => $app_id,
             'parameters' => $params,
             'inputs' => $inputs,
-            'maxRunTime' => '01:00:00',
+            'maxRunTime' => '08:00:00',
             'memoryPerNode' => '4GB',
             'archive' => true,
             'archiveSystem' => $storage_archiving,
