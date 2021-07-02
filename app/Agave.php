@@ -359,8 +359,8 @@ class Agave
             ];
         }
 
-	#$file_path('resources/agave_apps/'.$id);
-        #$f = fopen($file_path, 'r');
+        //$file_path('resources/agave_apps/'.$id);
+        //$f = fopen($file_path, 'r');
         $t = [
             'name' => $name,
             'version' => '1.00',
