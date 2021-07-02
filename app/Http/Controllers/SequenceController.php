@@ -224,13 +224,13 @@ class SequenceController extends Controller
         $histogram_app = [];
         $histogram_app['name'] = 'Histogram';
         $histogram_app['parameter_list'] = $historgram_parameters;
-        $histogram_app['app_id'] = 1;
+        $histogram_app['app_id'] = 'histogram';
         $histogram_app['app_tag'] = 'app1';
 
         // For iReceptor Stats App
         $stats_app = [];
         $stats_app['name'] = 'Stats';
-        $stats_app['app_id'] = 3;
+        $stats_app['app_id'] = 'stats';
         $stats_app['app_tag'] = 'app3';
         $parameter_list = [];
         $stats_app['parameter_list'] = $parameter_list;
@@ -254,7 +254,7 @@ class SequenceController extends Controller
         $vdjbase_app = [];
         $vdjbase_app['name'] = 'VDJBase';
         $vdjbase_app['parameter_list'] = $parameter_list;
-        $vdjbase_app['app_id'] = 7;
+        $vdjbase_app['app_id'] = 'vdjbase-singularity';
         $vdjbase_app['app_tag'] = 'app7';
 
         // Add the Apps to the App list

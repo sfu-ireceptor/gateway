@@ -273,7 +273,7 @@ class Agave
         $params = [];
         $inputs = [];
 
-        if ($id == 1) {
+        if ($id == 'histogram') {
             $params = [
                 [
                     'id' => 'variable',
@@ -288,7 +288,7 @@ class Agave
                     'id' => 'download_file',
                 ],
             ];
-        } elseif ($id == 2) {
+        } elseif ($id == 'histogram2') {
             $params = [
                 [
                     'id' => 'variable',
@@ -321,25 +321,25 @@ class Agave
                     'id' => 'download_file',
                 ],
             ];
-        } elseif ($id == 3) {
+        } elseif ($id == 'stats') {
             $inputs = [
                 [
                     'id' => 'download_file',
                 ],
             ];
-        } elseif ($id == 5) {
+        } elseif ($id == 'shared_junction_aa') {
             $inputs = [
                 [
                     'id' => 'download_file',
                 ],
             ];
-        } elseif ($id == 6) {
+        } elseif ($id == 'genoa') {
             $inputs = [
                 [
                     'id' => 'download_file',
                 ],
             ];
-        } elseif ($id == 7) {
+        } elseif ($id == 'vdjbase-singularity') {
             $inputs = [
                 [
                     'id' => 'download_file',
@@ -359,6 +359,8 @@ class Agave
             ];
         }
 
+	#$file_path('resources/agave_apps/'.$id);
+        #$f = fopen($file_path, 'r');
         $t = [
             'name' => $name,
             'version' => '1.00',

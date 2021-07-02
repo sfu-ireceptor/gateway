@@ -75,10 +75,10 @@ class JobController extends Controller
         System::createDefaultSystemsForUser($gw_username, $token);
 
         Log::info('Processing Job: app_id = ' . $f['app_id']);
-        $appId = intval($f['app_id']);
+        $appId = $f['app_id'];
 
         // 3rd-party analysis
-        if ($appId == 999) {
+        if ($appId == '999') {
             Log::info('999');
             $appHumanName = 'Third-party analysis';
             $jobDescription = 'Data federation';
@@ -93,14 +93,14 @@ class JobController extends Controller
             $appHumanName = '';
             $jobDescription = 'Data federation + submission to AGAVE';
 
-            if ($appId == 1) {
-                Log::info('1');
+            if ($appId == 'histogram') {
+                Log::info('histogram');
                 $appName = 'app-histogram--' . $executionSystem->name;
                 $appDeploymentPath = 'histogram';
                 $params['variable'] = $f['var'];
                 $appHumanName = 'Standard Histogram Generator';
-            } elseif ($appId == 2) {
-                Log::info('2');
+            } elseif ($appId == 'histogram2') {
+                Log::info('histogram2');
                 $appName = 'app-histogram2--' . $executionSystem->name;
                 $appDeploymentPath = 'histogram2';
                 $params['variable'] = 'junction_nt_length';
@@ -112,23 +112,23 @@ class JobController extends Controller
                 $params['green'] = floatval($colorArray[1]);
                 $params['blue'] = floatval($colorArray[2]);
                 $appHumanName = 'Amazing Historgram Generator';
-            } elseif ($appId == 3) {
-                Log::info('3');
+            } elseif ($appId == 'stats') {
+                Log::info('stats');
                 $appName = 'app-stats--' . $executionSystem->name;
                 $appDeploymentPath = 'stats';
                 $appHumanName = 'Stats';
-            } elseif ($appId == 5) {
-                Log::info('5');
+            } elseif ($appId == 'shared_junction_aa') {
+                Log::info('shared_junction_aa');
                 $appName = 'app-shared-junction--' . $executionSystem->name;
                 $appDeploymentPath = 'shared_junction_aa';
                 $appHumanName = 'Shared Junction';
-            } elseif ($appId == 6) {
-                Log::info('6');
+            } elseif ($appId == 'genoa') {
+                Log::info('genoa');
                 $appName = 'app-genoa--' . $executionSystem->name;
                 $appDeploymentPath = 'genoa';
                 $appHumanName = 'Genoa';
-            } elseif ($appId == 7) {
-                Log::info('Processing App 7 job');
+            } elseif ($appId == 'vdjbase-singularity') {
+                Log::info('vdjbase_singularity');
                 $appName = 'app-vdjbase-singularity--' . $executionSystem->name;
                 $appDeploymentPath = 'vdjbase_singularity';
                 Log::info('Runtime = ' . $f['run_time']);
@@ -166,7 +166,7 @@ class JobController extends Controller
         $localJobId = $lj->id;
 
         // queue job
-        if ($appId == 999) {
+        if ($appId == '999') {
             PrepareDataForThirdPartyAnalysis::dispatch($jobId, $f, $gw_username, $localJobId);
         } else {
             LaunchAgaveJob::dispatch($jobId, $f, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $localJobId);
