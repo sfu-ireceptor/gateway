@@ -210,7 +210,7 @@ class SequenceController extends Controller
         // For Histogram app
         $choices = [];
         $choices['junction_length'] = __('short.junction_length');
-        $choices['junction_length_aa'] = __('short.junction_length_aa');
+        $choices['junction_aa_length'] = __('short.ir_junction_aa_length');
         $choices['v_call'] = __('short.v_call');
         $choices['d_call'] = __('short.d_call');
         $choices['j_call'] = __('short.j_call');
