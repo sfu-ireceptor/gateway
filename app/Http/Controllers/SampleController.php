@@ -335,6 +335,7 @@ class SampleController extends Controller
         $data['total_filtered_studies'] = $sample_data['total_filtered_studies'];
         $data['total_filtered_samples'] = $sample_data['total_filtered_samples'];
         $data['total_filtered_sequences'] = $sample_data['total_filtered_sequences'];
+        $data['total_filtered_clones'] = $sample_data['total_filtered_clones'];
 
         $data['filtered_repositories_names'] = implode(', ', $sample_data['filtered_repositories']);
 

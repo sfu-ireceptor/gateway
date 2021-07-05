@@ -332,12 +332,17 @@ class Sample
             $study_sequence_count = [];
             $study_list = [];
             $total_sequences = 0;
+            $total_clones = 0;
 
             foreach ($sample_list as $sample) {
+                $sequence_count = 0;
                 if (isset($sample->ir_sequence_count) && is_numeric($sample->ir_sequence_count)) {
                     $sequence_count = $sample->ir_sequence_count;
-                } else {
-                    $sequence_count = 0;
+                }
+
+                $clone_count = 0;
+                if (isset($sample->ir_clone_count) && is_numeric($sample->ir_clone_count)) {
+                    $clone_count = $sample->ir_clone_count;
                 }
 
                 if (isset($sample->lab_name)) {
@@ -365,6 +370,7 @@ class Sample
                 }
 
                 $total_sequences += $sequence_count;
+                $total_clones += $clone_count;
             }
 
             $study_tree = [];
@@ -422,6 +428,7 @@ class Sample
             $rs_data['total_labs'] = count($lab_list);
             $rs_data['total_studies'] = count($study_list);
             $rs_data['total_sequences'] = $total_sequences;
+            $rs_data['total_clones'] = $total_clones;
             $rs_data['total_filtered_sequences'] = $total_sequences;
             $data['rs_list'][] = $rs_data;
 
@@ -436,6 +443,7 @@ class Sample
         $total_filtered_studies = 0;
         $total_filtered_samples = 0;
         $total_filtered_sequences = 0;
+        $total_filtered_clones = 0;
         $filtered_repositories = [];
 
         foreach ($data['rs_list'] as $rs_data) {
@@ -448,6 +456,7 @@ class Sample
             $total_filtered_labs += $rs_data['total_labs'];
             $total_filtered_studies += $rs_data['total_studies'];
             $total_filtered_sequences += $rs_data['total_sequences'];
+            $total_filtered_clones += $rs_data['total_clones'];
         }
 
         // sort alphabetically repositories/labs/studies
@@ -458,6 +467,7 @@ class Sample
         $data['total_filtered_labs'] = $total_filtered_labs;
         $data['total_filtered_studies'] = $total_filtered_studies;
         $data['total_filtered_sequences'] = $total_filtered_sequences;
+        $data['total_filtered_clones'] = $total_filtered_clones;
         $data['filtered_repositories'] = $filtered_repositories;
 
         return $data;

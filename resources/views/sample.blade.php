@@ -574,8 +574,8 @@
 							<div class="statistics">
 								<p>
 									<strong>
-										<span title="{{ number_format($total_filtered_sequences) }}">
-											{{ number_format($total_filtered_sequences) }} clones
+										<span title="{{ number_format($total_filtered_clones) }}">
+											{{ number_format($total_filtered_clones) }} clones
 										</span>
 										({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
 									</strong>
