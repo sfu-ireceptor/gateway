@@ -344,14 +344,23 @@ class Agave
                 [
                     'id' => 'download_file',
                 ],
-                [
-                    'id' => 'singularity_image',
-                ],
 
             ];
             $params = [
                 [
-                    'id' => 'variable',
+                    'id' => 'run_time',
+                    'value' => [
+                        'type' => 'string',
+                    ],
+                ],
+                [
+                    'id' => 'sample_name',
+                    'value' => [
+                        'type' => 'string',
+                    ],
+                ],
+                [
+                    'id' => 'singularity_image',
                     'value' => [
                         'type' => 'string',
                     ],

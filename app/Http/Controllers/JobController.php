@@ -132,7 +132,9 @@ class JobController extends Controller
                 $appName = 'app-vdjbase-singularity--' . $executionSystem->name;
                 $appDeploymentPath = 'vdjbase_singularity';
                 Log::info('Runtime = ' . $f['run_time']);
-                $params['variable'] = $f['run_time'];
+                $params['run_time'] = $f['run_time'];
+                $params['sample_name'] = $f['sample_name'];
+                $params['singularity_image'] = 'vdjbase_pipeline-1.1.01.sif';
                 $appHumanName = 'VDJBase';
             }
 

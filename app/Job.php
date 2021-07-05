@@ -118,7 +118,6 @@ class Job extends Model
 
     "inputs":{
         "download_file":"agave://$gw_storage_staging/${inputFolder}/data.csv.zip"
-        "singularity_image":""
     },
 
     "maxRunTime":"00:10:00",

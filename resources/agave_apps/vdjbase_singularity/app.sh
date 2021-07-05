@@ -11,8 +11,6 @@
 #rearrangement_file="${rearrangement_file}"
 #singularity_image="vdjbase_pipeline-1.1.01.sif"
 #singularity_image="${singularity}"
-singularity_image="${singularity_image}"
-echo "Singularity image = ${singularity_image}"
 
 # app variables (will be subsituted by AGAVE). If they don't exist
 # use command line arguments.
@@ -38,9 +36,15 @@ tsv_files=( `cat $INFO_FILE | awk -F" " 'BEGIN {count=0} /tsv/ {if (count>0) pri
 rearrangement_file="${tsv_files}"
 echo "Processing ${rearrangement_file}"
 
-# application parameters
-#sample_name=${sample_name}
-sample_name="SAMPLE"
+# Application parameters
+# We pass a singularity image to get from the Gateway.
+singularity_image="${singularity_image}"
+echo "Singularity image = ${singularity_image}"
+
+# We provide a mechanism for the user to specify a name for the
+# processed data.
+sample_name="${sample_name}"
+echo "Sample name = ${sample_name}"
 
 # Agave info
 AGAVE_JOB_ID=${AGAVE_JOB_ID}
@@ -52,6 +56,15 @@ AGAVE_JOB_MEMORY_PER_NODE=${AGAVE_JOB_MEMORY_PER_NODE}
 # ----------------------------------------------------------------------------
 # modules
 module load singularity
+
+# Get the singularity image from the Gateway
+echo "Downloading singularity image from the Gateway"
+date
+wget https://gateway-analysis.ireceptor.org/storage/singularity/${singularity_image}
+echo -n "Singularity file downloaded = "
+ls ${singularity_image}
+echo "Done ownloading singularity image from the Gateway"
+date
 
 # bring in common functions
 source ./vdjbase_common.sh

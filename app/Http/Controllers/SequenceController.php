@@ -244,13 +244,18 @@ class SequenceController extends Controller
         $choices['hour_16'] = '16';
         $choices['hour_32'] = '32';
 
+        $parameter_list = [];
         $parameter = [];
         $parameter['label'] = 'run_time';
         $parameter['name'] = 'Run Time (hours)';
         $parameter['choices'] = $choices;
-
-        $parameter_list = [];
         $parameter_list['run_time'] = $parameter;
+
+	$parameter = [];
+        $parameter['label'] = 'sample_name';
+        $parameter['name'] = 'Sample Name';
+        $parameter_list['sample_name'] = $parameter;
+
         $vdjbase_app = [];
         $vdjbase_app['name'] = 'VDJBase';
         $vdjbase_app['parameter_list'] = $parameter_list;
