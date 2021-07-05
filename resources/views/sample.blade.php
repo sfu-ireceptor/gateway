@@ -469,6 +469,11 @@
 											@endif						
 										</td>
 										@foreach ($field_list as $field)
+											{{-- skip clones column --}}
+											@if ($field['ir_id'] == 'ir_clone_count')
+												@continue
+											@endif
+
 											<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 												@isset($sample->{$field['ir_id']})
 													@if($field['ir_id'] == 'ir_sequence_count')
@@ -653,10 +658,10 @@
 											{{ $page_first_element_index }}-{{ $page_last_element_index }} of {{ $nb_samples }}
 										</small>
 
-										<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
+<!-- 										<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
 										  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 										  Customize displayed columns
-										</a>
+										</a> -->
 									</h3>
 								</div>
 								<div class="col-md-6 repertoires_button_container">
@@ -733,6 +738,10 @@
 											@endif						
 										</td>
 										@foreach ($field_list as $field)
+											{{-- skip sequence column --}}
+											@if ($field['ir_id'] == 'ir_sequence_count')
+												@continue
+											@endif
 											<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 												@isset($sample->{$field['ir_id']})
 													@if($field['ir_id'] == 'ir_clone_count')
