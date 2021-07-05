@@ -499,7 +499,7 @@ $(document).ready(function() {
 		}
 	});	
 
-	// jow view - display images
+	// job view - display images
 	$('.result_files li a').each(function(){
 		var href = $(this).attr('href');
 		if (href.endsWith('.jpg')) {

@@ -5,7 +5,6 @@ $(document).ready(function() {
             data = chartData.data,
             title = chartData.title,
             chartConfig = generateChartConfig(data, title);
-            console.log(title);
         
         chart.highcharts(chartConfig);
     });
