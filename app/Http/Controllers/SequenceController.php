@@ -251,7 +251,7 @@ class SequenceController extends Controller
         $parameter['choices'] = $choices;
         $parameter_list['run_time'] = $parameter;
 
-	$parameter = [];
+        $parameter = [];
         $parameter['label'] = 'sample_name';
         $parameter['name'] = 'Sample Name';
         $parameter_list['sample_name'] = $parameter;
