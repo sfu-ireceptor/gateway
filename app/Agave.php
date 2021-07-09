@@ -368,51 +368,51 @@ class Agave
             ];
         }
 
-        $file_path = 'agave_apps/'.$id.'/app.json';
-        Log::debug('XXXXX Trying to open App file ' . $file_path );
-	$files = scandir(".");
-	Log::debug($files);
-	try {
-	    $app_json = file_get_contents($file_path);
-	}
-	catch (Exception $e) {
-            Log::debug('Could not open App file ' . $file_path );
-	    Log::debug('Error: ' . $e->getMessage());
-	}
-	Log::debug($app_json);
-	$app_config = json_decode($app_json, true);
-	var_dump($app_config);
-	Log::debug($app_config);
-	Log::debug($app_config['shortDescription']);
-	$params = $app_config['parameters'];
-	$inputs = $app_config['inputs'];
-	Log::debug($params);
-	
-	// We overwrite the systems and deployment paths so we know what
-	// apps are being used from where. 
-	$app_config['name'] = $name;
-	$app_config['executionSystem'] = $executionSystem;
-	$app_config['deploymentSystem'] = $deploymentSystem;
-	$app_config['deploymentPath'] = $deploymentPath;
+        $file_path = 'agave_apps/' . $id . '/app.json';
+        Log::debug('XXXXX Trying to open App file ' . $file_path);
+        $files = scandir('.');
+        Log::debug($files);
+        try {
+            $app_json = file_get_contents($file_path);
+        } catch (Exception $e) {
+            Log::debug('Could not open App file ' . $file_path);
+            Log::debug('Error: ' . $e->getMessage());
+        }
+        Log::debug($app_json);
+        $app_config = json_decode($app_json, true);
+        var_dump($app_config);
+        Log::debug($app_config);
+        Log::debug($app_config['shortDescription']);
+        $params = $app_config['parameters'];
+        $inputs = $app_config['inputs'];
+        Log::debug($params);
 
-	/*
-        $t = [
-            'name' => $name,
-            'version' => '1.00',
-            'executionSystem' => $executionSystem,
-            'parallelism' => 'SERIAL',
-            'executionType' => 'HPC',
-            'defaultMaxRequestedTime' => '06:00:00',
-            'deploymentSystem' => $deploymentSystem,
-            'deploymentPath' => $deploymentPath,
-            'templatePath' => 'app.sh',
-            'testPath' => 'test.sh',
-            'parameters' => $params,
-            'inputs' => $inputs,
-        ];
-	 */
+        // We overwrite the systems and deployment paths so we know what
+        // apps are being used from where.
+        $app_config['name'] = $name;
+        $app_config['executionSystem'] = $executionSystem;
+        $app_config['deploymentSystem'] = $deploymentSystem;
+        $app_config['deploymentPath'] = $deploymentPath;
 
-	Log::debug($app_config);
+        /*
+            $t = [
+                'name' => $name,
+                'version' => '1.00',
+                'executionSystem' => $executionSystem,
+                'parallelism' => 'SERIAL',
+                'executionType' => 'HPC',
+                'defaultMaxRequestedTime' => '06:00:00',
+                'deploymentSystem' => $deploymentSystem,
+                'deploymentPath' => $deploymentPath,
+                'templatePath' => 'app.sh',
+                'testPath' => 'test.sh',
+                'parameters' => $params,
+                'inputs' => $inputs,
+            ];
+         */
+
+        Log::debug($app_config);
+
         return $app_config;
     }
 
