@@ -245,11 +245,13 @@ class SequenceController extends Controller
         $choices['hour_32'] = '32';
 
         $parameter_list = [];
+	/*
         $parameter = [];
         $parameter['label'] = 'run_time';
         $parameter['name'] = 'Run Time (hours)';
         $parameter['choices'] = $choices;
         $parameter_list['run_time'] = $parameter;
+	 */
 
         $parameter = [];
         $parameter['label'] = 'sample_name';

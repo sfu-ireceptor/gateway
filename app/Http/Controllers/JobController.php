@@ -130,9 +130,11 @@ class JobController extends Controller
             } elseif ($appId == 'vdjbase-singularity') {
                 Log::info('vdjbase_singularity');
                 $appName = 'app-vdjbase-singularity--' . $executionSystem->name;
-                $appDeploymentPath = 'vdjbase_singularity';
+                $appDeploymentPath = 'vdjbase-singularity';
+		/*
                 Log::info('Runtime = ' . $f['run_time']);
                 $params['run_time'] = $f['run_time'];
+		 */
                 $params['sample_name'] = $f['sample_name'];
                 $params['singularity_image'] = 'vdjbase_pipeline-1.1.01.sif';
                 $appHumanName = 'VDJBase';
