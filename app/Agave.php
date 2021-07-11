@@ -9,6 +9,7 @@ use phpseclib\Crypt\RSA;
 class Agave
 {
     private $client;
+    private $appTemplates;
 
     public function __construct()
     {
@@ -109,6 +110,41 @@ class Agave
         }
 
         return $response;
+    }
+
+    public function updateAppTemplates()
+    {
+	$this->appTemplates = [];
+        $app_directories = config('services.agave.app_directories');
+	foreach ($app_directories as $app_dir)
+	{
+	    $app_info = [];
+            $file_path = 'agave_apps/' . $app_dir . '/app.json';
+            Log::debug('updateAppTemplates: Trying to open App file ' . $file_path);
+            $files = scandir('.');
+            try {
+                $app_json = file_get_contents($file_path);
+            } catch (Exception $e) {
+                Log::debug('updateAppTemplates: Could not open App file ' . $file_path);
+                Log::debug('updateAppTemplates: Error: ' . $e->getMessage());
+            }
+            //Log::debug($app_json);
+            $app_config = json_decode($app_json, true);
+            //Log::debug($app_config);
+	    $app_info['config'] = $app_config;
+	    $this->appTemplates[$app_dir] = $app_info;
+	}
+        //Log::debug($this->appTemplates);
+    }
+
+    public function getAppTemplates()
+    {
+	return $this->appTemplates;
+    }
+
+    public function getAppTemplate($app_name)
+    {
+	return $this->appTemplates[$app_name];
     }
 
     public function createSystem($token, $config)
@@ -270,9 +306,11 @@ class Agave
 
     public function getAppConfig($id, $name, $executionSystem, $deploymentSystem, $deploymentPath)
     {
+	$this->updateAppTemplates();
         $params = [];
         $inputs = [];
 
+	/*
         if ($id == 'histogram') {
             $params = [
                 [
@@ -367,9 +405,11 @@ class Agave
                 ],
             ];
         }
+	 */
 
+	/*
         $file_path = 'agave_apps/' . $id . '/app.json';
-        Log::debug('XXXXX Trying to open App file ' . $file_path);
+        Log::debug('Trying to open App file ' . $file_path);
         $files = scandir('.');
         Log::debug($files);
         try {
@@ -380,12 +420,14 @@ class Agave
         }
         Log::debug($app_json);
         $app_config = json_decode($app_json, true);
-        var_dump($app_config);
+	 */
+	$app_template = $this->getAppTemplate($id);
+	$app_config = $app_template['config'];
         Log::debug($app_config);
         Log::debug($app_config['shortDescription']);
-        $params = $app_config['parameters'];
-        $inputs = $app_config['inputs'];
-        Log::debug($params);
+        //$params = $app_config['parameters'];
+        //$inputs = $app_config['inputs'];
+        //Log::debug($params);
 
         // We overwrite the systems and deployment paths so we know what
         // apps are being used from where.
