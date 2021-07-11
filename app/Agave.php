@@ -306,128 +306,14 @@ class Agave
 
     public function getAppConfig($id, $name, $executionSystem, $deploymentSystem, $deploymentPath)
     {
+	// Update the app templates. This shouldn't be necessary every
+	// time, but for now we will update them every time an App
+	// config is requested.
 	$this->updateAppTemplates();
-        $params = [];
-        $inputs = [];
 
-	/*
-        if ($id == 'histogram') {
-            $params = [
-                [
-                    'id' => 'variable',
-                    'value' => [
-                        'type' => 'string',
-                    ],
-                ],
-            ];
-
-            $inputs = [
-                [
-                    'id' => 'download_file',
-                ],
-            ];
-        } elseif ($id == 'histogram2') {
-            $params = [
-                [
-                    'id' => 'variable',
-                    'value' => [
-                        'type' => 'string',
-                    ],
-                ],
-                [
-                    'id' => 'red',
-                    'value' => [
-                        'type' => 'number',
-                    ],
-                ],
-                [
-                    'id' => 'green',
-                    'value' => [
-                        'type' => 'number',
-                    ],
-                ],
-                [
-                    'id' => 'blue',
-                    'value' => [
-                        'type' => 'number',
-                    ],
-                ],
-            ];
-
-            $inputs = [
-                [
-                    'id' => 'download_file',
-                ],
-            ];
-        } elseif ($id == 'stats') {
-            $inputs = [
-                [
-                    'id' => 'download_file',
-                ],
-            ];
-        } elseif ($id == 'shared_junction_aa') {
-            $inputs = [
-                [
-                    'id' => 'download_file',
-                ],
-            ];
-        } elseif ($id == 'genoa') {
-            $inputs = [
-                [
-                    'id' => 'download_file',
-                ],
-            ];
-        } elseif ($id == 'vdjbase-singularity') {
-            $inputs = [
-                [
-                    'id' => 'download_file',
-                ],
-
-            ];
-            $params = [
-                [
-                    'id' => 'run_time',
-                    'value' => [
-                        'type' => 'string',
-                    ],
-                ],
-                [
-                    'id' => 'sample_name',
-                    'value' => [
-                        'type' => 'string',
-                    ],
-                ],
-                [
-                    'id' => 'singularity_image',
-                    'value' => [
-                        'type' => 'string',
-                    ],
-                ],
-            ];
-        }
-	 */
-
-	/*
-        $file_path = 'agave_apps/' . $id . '/app.json';
-        Log::debug('Trying to open App file ' . $file_path);
-        $files = scandir('.');
-        Log::debug($files);
-        try {
-            $app_json = file_get_contents($file_path);
-        } catch (Exception $e) {
-            Log::debug('Could not open App file ' . $file_path);
-            Log::debug('Error: ' . $e->getMessage());
-        }
-        Log::debug($app_json);
-        $app_config = json_decode($app_json, true);
-	 */
+	// Get the app template and its config given the App ID/name
 	$app_template = $this->getAppTemplate($id);
 	$app_config = $app_template['config'];
-        Log::debug($app_config);
-        Log::debug($app_config['shortDescription']);
-        //$params = $app_config['parameters'];
-        //$inputs = $app_config['inputs'];
-        //Log::debug($params);
 
         // We overwrite the systems and deployment paths so we know what
         // apps are being used from where.
@@ -435,24 +321,6 @@ class Agave
         $app_config['executionSystem'] = $executionSystem;
         $app_config['deploymentSystem'] = $deploymentSystem;
         $app_config['deploymentPath'] = $deploymentPath;
-
-        /*
-            $t = [
-                'name' => $name,
-                'version' => '1.00',
-                'executionSystem' => $executionSystem,
-                'parallelism' => 'SERIAL',
-                'executionType' => 'HPC',
-                'defaultMaxRequestedTime' => '06:00:00',
-                'deploymentSystem' => $deploymentSystem,
-                'deploymentPath' => $deploymentPath,
-                'templatePath' => 'app.sh',
-                'testPath' => 'test.sh',
-                'parameters' => $params,
-                'inputs' => $inputs,
-            ];
-         */
-
         Log::debug($app_config);
 
         return $app_config;
