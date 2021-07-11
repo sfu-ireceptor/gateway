@@ -114,11 +114,10 @@ class Agave
 
     public function updateAppTemplates()
     {
-	$this->appTemplates = [];
+        $this->appTemplates = [];
         $app_directories = config('services.agave.app_directories');
-	foreach ($app_directories as $app_dir)
-	{
-	    $app_info = [];
+        foreach ($app_directories as $app_dir) {
+            $app_info = [];
             $file_path = 'agave_apps/' . $app_dir . '/app.json';
             Log::debug('updateAppTemplates: Trying to open App file ' . $file_path);
             $files = scandir('.');
@@ -131,20 +130,20 @@ class Agave
             //Log::debug($app_json);
             $app_config = json_decode($app_json, true);
             //Log::debug($app_config);
-	    $app_info['config'] = $app_config;
-	    $this->appTemplates[$app_dir] = $app_info;
-	}
+            $app_info['config'] = $app_config;
+            $this->appTemplates[$app_dir] = $app_info;
+        }
         //Log::debug($this->appTemplates);
     }
 
     public function getAppTemplates()
     {
-	return $this->appTemplates;
+        return $this->appTemplates;
     }
 
     public function getAppTemplate($app_name)
     {
-	return $this->appTemplates[$app_name];
+        return $this->appTemplates[$app_name];
     }
 
     public function createSystem($token, $config)
@@ -306,14 +305,14 @@ class Agave
 
     public function getAppConfig($id, $name, $executionSystem, $deploymentSystem, $deploymentPath)
     {
-	// Update the app templates. This shouldn't be necessary every
-	// time, but for now we will update them every time an App
-	// config is requested.
-	$this->updateAppTemplates();
+        // Update the app templates. This shouldn't be necessary every
+        // time, but for now we will update them every time an App
+        // config is requested.
+        $this->updateAppTemplates();
 
-	// Get the app template and its config given the App ID/name
-	$app_template = $this->getAppTemplate($id);
-	$app_config = $app_template['config'];
+        // Get the app template and its config given the App ID/name
+        $app_template = $this->getAppTemplate($id);
+        $app_config = $app_template['config'];
 
         // We overwrite the systems and deployment paths so we know what
         // apps are being used from where.
