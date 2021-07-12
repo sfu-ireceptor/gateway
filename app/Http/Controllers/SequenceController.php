@@ -210,17 +210,17 @@ class SequenceController extends Controller
         $appTemplates = $agave->updateAppTemplates();
         $app_list = [];
 
-	// For each app, set up the info required by the UI.
+        // For each app, set up the info required by the UI.
         foreach ($appTemplates as $app_tag => $app_info) {
             $app_config = $app_info['config'];
             $app_ui_info = [];
             Log::debug('Processing app ' . $app_tag);
-	    // Process the parameters.
+            // Process the parameters.
             $parameter_list = [];
             foreach ($app_config['parameters'] as $parameter_info) {
-		// We only want the visible parameters to be visible. The
-		// UI uses the Tapis ID as a label and the Tapis paramenter
-		// "label" as the human readable name of the parameter.
+                // We only want the visible parameters to be visible. The
+                // UI uses the Tapis ID as a label and the Tapis paramenter
+                // "label" as the human readable name of the parameter.
                 if ($parameter_info['value']['visible']) {
                     $parameter = [];
                     Log::debug('   Processing parameter ' . $parameter_info['id']);
@@ -232,8 +232,8 @@ class SequenceController extends Controller
                 }
             }
 
-	    // The name of the App is the Tapis App label. We pass the UI the short
-	    // and long descriptions as well . The UI ID and tag are the Tapis ID.
+            // The name of the App is the Tapis App label. We pass the UI the short
+            // and long descriptions as well . The UI ID and tag are the Tapis ID.
             $app_ui_info['name'] = $app_config['label'];
             $app_ui_info['description'] = $app_config['shortDescription'];
             $app_ui_info['info'] = $app_config['longDescription'];
@@ -241,7 +241,7 @@ class SequenceController extends Controller
             $app_ui_info['app_id'] = $app_tag;
             $app_ui_info['app_tag'] = $app_tag;
 
-	    // Save the info in the app list given to the UI.
+            // Save the info in the app list given to the UI.
             $app_list[$app_tag] = $app_ui_info;
         }
         // Log::debug($app_list);
