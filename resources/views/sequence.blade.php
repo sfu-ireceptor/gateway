@@ -387,94 +387,6 @@
 
 								<!-- Tab panes -->
 								<div class="tab-content">
-
-{{--									<div role="tabpanel" class="tab-pane active" id="app1">
-						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 1) }}
-
-										    <div class="row">
-										    	<div class="col-md-3">
-												    <div class="form-group">
-														{{ Form::label('var', 'Variable') }}
-														{{ Form::select('var', $var_list, '', array('class' => 'form-control')) }}
-													</div>
-												</div>
-											</div>
-
-											{{ Form::submit('Submit analysis job', array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}
-									</div>
-									
-									<div role="tabpanel" class="tab-pane" id="app2">
-						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 2) }}
-
-										    <div class="row">
-										    	<div class="col-md-3">
-												    <div class="form-group">
-														{{ Form::label('var', 'Variable') }}
-														{{ Form::select('var', $var_list, '', array('class' => 'form-control')) }}
-													</div>
-												</div>
-										    	<div class="col-md-3">
-												    <div class="form-group">
-														{{ Form::label('var', 'Color') }}
-														{{ Form::select('color', $amazingHistogramGeneratorColorList, '', array('class' => 'form-control')) }}
-													</div>
-												</div>
-											</div>
-
-											{{ Form::submit('Submit analysis job', array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}
-									</div>
-
-									<div role="tabpanel" class="tab-pane" id="app3">
-						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 3) }}
-
-											{{ Form::submit('Submit analysis job', array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}
-									</div>
-
-									<div role="tabpanel" class="tab-pane" id="app4">
-						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 999) }}
-
-											{{ Form::submit('Prepare data for third-party analysis', array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}									
-									</div>
-
-									<div role="tabpanel" class="tab-pane" id="app5">
-										{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 5) }}
-
-											<p>Heatmap of shared junctions.</p>
-											{{ Form::submit('Submit analysis job', array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}
-									</div>
---}}
-
-{{-- 									<div role="tabpanel" class="tab-pane" id="app6">
-						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 6) }}
-
-											<p>Test analysis app.</p>
-											{{ Form::submit('Submit analysis job', array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}
-									</div>
---}}
 									@php $count = 0 @endphp
 								        @foreach ($app_list as $app)
 						                            @if ( $count === 0)
@@ -511,7 +423,6 @@
 									    </div>
 									    @php $count = $count + 1 @endphp
                                                                         @endforeach
-
 
 								</div>
 							</div>

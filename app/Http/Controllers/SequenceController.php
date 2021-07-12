@@ -209,12 +209,18 @@ class SequenceController extends Controller
         $agave = new Agave;
         $appTemplates = $agave->updateAppTemplates();
         $app_list = [];
+
+	// For each app, set up the info required by the UI.
         foreach ($appTemplates as $app_tag => $app_info) {
             $app_config = $app_info['config'];
             $app_ui_info = [];
             Log::debug('Processing app ' . $app_tag);
+	    // Process the parameters.
             $parameter_list = [];
             foreach ($app_config['parameters'] as $parameter_info) {
+		// We only want the visible parameters to be visible. The
+		// UI uses the Tapis ID as a label and the Tapis paramenter
+		// "label" as the human readable name of the parameter.
                 if ($parameter_info['value']['visible']) {
                     $parameter = [];
                     Log::debug('   Processing parameter ' . $parameter_info['id']);
@@ -226,6 +232,8 @@ class SequenceController extends Controller
                 }
             }
 
+	    // The name of the App is the Tapis App label. We pass the UI the short
+	    // and long descriptions as well . The UI ID and tag are the Tapis ID.
             $app_ui_info['name'] = $app_config['label'];
             $app_ui_info['description'] = $app_config['shortDescription'];
             $app_ui_info['info'] = $app_config['longDescription'];
@@ -233,94 +241,13 @@ class SequenceController extends Controller
             $app_ui_info['app_id'] = $app_tag;
             $app_ui_info['app_tag'] = $app_tag;
 
+	    // Save the info in the app list given to the UI.
             $app_list[$app_tag] = $app_ui_info;
         }
-
-        Log::debug($app_list);
-        // For Histogram app
-        /*
-            $app_list = [];
-            $choices = [];
-            $choices['junction_length'] = __('short.junction_length');
-            $choices['junction_aa_length'] = __('short.ir_junction_aa_length');
-            $choices['v_call'] = __('short.v_call');
-            $choices['d_call'] = __('short.d_call');
-            $choices['j_call'] = __('short.j_call');
-            $choices = FieldName::convert($choices, 'ir_id', 'ir_adc_api_query');
-            $variable_parameter = [];
-            $variable_parameter['label'] = 'var';
-            $variable_parameter['name'] = 'Variable';
-            $variable_parameter['choices'] = $choices;
-            $historgram_parameters = [];
-            $historgram_parameters['var'] = $variable_parameter;
-            $histogram_app = [];
-            $histogram_app['name'] = 'Histogram';
-            $histogram_app['parameter_list'] = $historgram_parameters;
-            $histogram_app['app_id'] = 'histogram';
-            $histogram_app['app_tag'] = 'app1';
-         */
-
-        // For iReceptor Stats App
-        /*
-            $stats_app = [];
-            $stats_app['name'] = 'Stats';
-            $stats_app['app_id'] = 'stats';
-            $stats_app['app_tag'] = 'app3';
-            $parameter_list = [];
-            $stats_app['parameter_list'] = $parameter_list;
-         */
-
-        // For VDJBase
-        /*
-            $choices = [];
-            $choices['hour_1'] = '1';
-            $choices['hour_2'] = '2';
-            $choices['hour_4'] = '4';
-            $choices['hour_8'] = '8';
-            $choices['hour_16'] = '16';
-            $choices['hour_32'] = '32';
-
-            $parameter_list = [];
-         */
-        /*
-            $parameter = [];
-            $parameter['label'] = 'run_time';
-            $parameter['name'] = 'Run Time (hours)';
-            $parameter['choices'] = $choices;
-            $parameter_list['run_time'] = $parameter;
-         */
-
-        /*
-            $parameter = [];
-            $parameter['label'] = 'sample_name';
-            $parameter['name'] = 'Sample Name';
-            $parameter_list['sample_name'] = $parameter;
-
-            $vdjbase_app = [];
-            $vdjbase_app['name'] = 'VDJBase';
-            $vdjbase_app['parameter_list'] = $parameter_list;
-            $vdjbase_app['app_id'] = 'vdjbase-singularity';
-            $vdjbase_app['app_tag'] = 'app7';
-         */
-
-        // Add the Apps to the App list
-        /*
-            $app_list['VDJBase'] = $vdjbase_app;
-            $app_list['Histogram'] = $histogram_app;
-            $app_list['Stats'] = $stats_app;
-         */
+        // Log::debug($app_list);
 
         // Add the app list to the data returned to the View.
         $data['app_list'] = $app_list;
-
-        // for histogram generator
-        $var_list = [];
-        $var_list['junction_length'] = __('short.junction_length');
-        $var_list['v_call'] = __('short.v_call');
-        $var_list['d_call'] = __('short.d_call');
-        $var_list['j_call'] = __('short.j_call');
-        $var_list = FieldName::convert($var_list, 'ir_id', 'ir_adc_api_query');
-        $data['var_list'] = $var_list;
 
         $data['system'] = System::getCurrentSystem(auth()->user()->id);
 
