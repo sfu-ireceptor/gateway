@@ -9,6 +9,7 @@ use App\QueryLog;
 use App\Sample;
 use App\Sequence;
 use App\System;
+use App\Agave;
 use Facades\App\Query;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -205,9 +206,42 @@ class SequenceController extends Controller
         $data['filter_fields'] = $filter_fields;
 
         // Get information about all of the Apps
+	$agave = new Agave;
+	$appTemplates = $agave->updateAppTemplates();
         $app_list = [];
+	foreach($appTemplates as $app_tag => $app_info)
+	{
+	    $app_config = $app_info['config'];
+            $app_ui_info = [];
+	    Log::debug('Processing app ' . $app_tag);
+	    $parameter_list = [];
+	    foreach($app_config['parameters'] as $parameter_info)
+	    {
+		if ($parameter_info['value']['visible'])
+		{
+	            $parameter = [];
+	            Log::debug('   Processing parameter ' . $parameter_info['id']);
+		    $parameter['label'] = $parameter_info['id'];
+                    $parameter['name'] = $parameter_info['details']['label'];
+                    $parameter_list[$parameter_info['id']] = $parameter;
+		}
+		else Log::debug('   Not displaying invisible parameter ' . $parameter_info['id']);
+	    }
 
+            $app_ui_info['name'] = $app_config['label'];
+	    $app_ui_info['description'] = $app_config['shortDescription'];
+	    $app_ui_info['info'] = $app_config['longDescription'];
+            $app_ui_info['parameter_list'] = $parameter_list;
+            $app_ui_info['app_id'] = $app_tag;
+            $app_ui_info['app_tag'] = $app_tag;
+
+            $app_list[$app_tag] = $app_ui_info;
+	}
+
+	Log::debug($app_list);
         // For Histogram app
+	/*
+        $app_list = [];
         $choices = [];
         $choices['junction_length'] = __('short.junction_length');
         $choices['junction_aa_length'] = __('short.ir_junction_aa_length');
@@ -226,16 +260,20 @@ class SequenceController extends Controller
         $histogram_app['parameter_list'] = $historgram_parameters;
         $histogram_app['app_id'] = 'histogram';
         $histogram_app['app_tag'] = 'app1';
+	 */
 
         // For iReceptor Stats App
+	/*
         $stats_app = [];
         $stats_app['name'] = 'Stats';
         $stats_app['app_id'] = 'stats';
         $stats_app['app_tag'] = 'app3';
         $parameter_list = [];
         $stats_app['parameter_list'] = $parameter_list;
+	 */
 
         // For VDJBase
+	/*
         $choices = [];
         $choices['hour_1'] = '1';
         $choices['hour_2'] = '2';
@@ -245,6 +283,7 @@ class SequenceController extends Controller
         $choices['hour_32'] = '32';
 
         $parameter_list = [];
+	 */
         /*
             $parameter = [];
             $parameter['label'] = 'run_time';
@@ -253,6 +292,7 @@ class SequenceController extends Controller
             $parameter_list['run_time'] = $parameter;
          */
 
+	/*
         $parameter = [];
         $parameter['label'] = 'sample_name';
         $parameter['name'] = 'Sample Name';
@@ -263,11 +303,14 @@ class SequenceController extends Controller
         $vdjbase_app['parameter_list'] = $parameter_list;
         $vdjbase_app['app_id'] = 'vdjbase-singularity';
         $vdjbase_app['app_tag'] = 'app7';
+	 */
 
         // Add the Apps to the App list
+	/*
         $app_list['VDJBase'] = $vdjbase_app;
         $app_list['Histogram'] = $histogram_app;
         $app_list['Stats'] = $stats_app;
+	 */
 
         // Add the app list to the data returned to the View.
         $data['app_list'] = $app_list;

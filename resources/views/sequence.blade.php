@@ -486,7 +486,11 @@
 											{{ Form::hidden('filters_json', $filters_json) }}
 											{{ Form::hidden('data_url', $url) }}
 											{{ Form::hidden('app_id', $app['app_id']) }}
-
+                                                                                        <div class="row">
+										            <div class="col-md-10">
+											        <h3>{{$app['description']}}</h3>
+                                                                                            </div>
+                                                                                        </div>
 								                        @foreach ($app['parameter_list'] as $parameter)
 									  	          <div class="row">
 										             <div class="col-md-3">

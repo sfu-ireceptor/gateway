@@ -131,6 +131,7 @@ class Agave
             $app_info['config'] = $app_config;
             $this->appTemplates[$app_dir] = $app_info;
         }
+	return $this->appTemplates;
     }
 
     public function getAppTemplates()
@@ -140,6 +141,7 @@ class Agave
 
     public function getAppTemplate($app_name)
     {
+	Log::debug('getAppTemplate: looking for ' . $app_name);
         return $this->appTemplates[$app_name];
     }
 

@@ -1,14 +1,14 @@
 {
   "name": "irplus-vdjbase-cedar-ireceptorgw",
   "version": "0.1",
-  "label": "vdjbase",
+  "label": "VDJBase",
   "defaultQueue": "default",
   "defaultNodeCount": 1,
   "defaultProcessorsPerNode": 1,
   "defaultMemoryPerNode": "8GB",
   "defaultRequestedTime": "8:00:00",
-  "shortDescription": "VDJBase (singularity) app on cedar.computecanada.ca",
-  "longDescription": "iReceptor+ VDJBase app using singularity image on Compute Canada's cedar ARC platform",
+  "shortDescription": "Genotype inference using VDJBase",
+  "longDescription": "iReceptor+ genotype inference using VDJBase. ",
   "executionType": "HPC",
   "executionSystem": "cedar.computecanada.ca-compute-ireceptorgw",
   "parallelism": "PARALLEL",
@@ -92,10 +92,10 @@
     {
       "id": "singularity_image",
       "value": {
-        "visible": true,
+        "visible": false,
         "required": true,
         "type": "string",
-        "default": ""
+        "default": "vdjbase_pipeline-1.1.01.sif"
       },
       "details": {
         "label": "Singularity image",

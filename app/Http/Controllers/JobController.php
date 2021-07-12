@@ -88,16 +88,42 @@ class JobController extends Controller
             $username = $executionSystem->username;
             $appExecutionSystem = $executionSystem->name;
             $appDeploymentSystem = $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . str_replace('_', '-', $gw_username) . '-' . $username;
-            $params = [];
             $inputs = [];
             $appHumanName = '';
             $jobDescription = 'Data federation + submission to AGAVE';
+	    
+            // Create an Agave object to work with.
+            $agave = new Agave;
 
+	    // Get the App config for the app in question.
+	    Log::info('Processing App ' . $appId);
+	    $agave->updateAppTemplates();
+	    $app_info = $agave->getAppTemplate($appId);
+	    $app_config = $app_info['config'];
+
+            $appName = $appId . '-' . $executionSystem->name;
+            $appDeploymentPath = $appId;
+	    $appHumanName = $app_config['label'];
+
+	    // Process the parameters for the job.
+            $params = [];
+	    foreach($app_config['parameters'] as $parameter_info)
+	    {
+	        Log::debug('   Processing parameter ' . $parameter_info['id']);
+                if ($parameter_info['value']['visible'])
+		{
+                    $params[$parameter_info['id']] = $f[$parameter_info['id']];
+	            Log::debug('   Parameter value = ' . $f[$parameter_info['id']]);
+		}
+	    }
+
+
+	    /*
             if ($appId == 'histogram') {
                 Log::info('histogram');
                 $appName = 'app-histogram--' . $executionSystem->name;
                 $appDeploymentPath = 'histogram';
-                $params['variable'] = $f['var'];
+                $params[$parameter_info['id']] = $f['var'];
                 $appHumanName = 'Standard Histogram Generator';
             } elseif ($appId == 'histogram2') {
                 Log::info('histogram2');
@@ -131,16 +157,12 @@ class JobController extends Controller
                 Log::info('vdjbase_singularity');
                 $appName = 'app-vdjbase-singularity--' . $executionSystem->name;
                 $appDeploymentPath = 'vdjbase-singularity';
-                /*
-                        Log::info('Runtime = ' . $f['run_time']);
-                        $params['run_time'] = $f['run_time'];
-                 */
                 $params['sample_name'] = $f['sample_name'];
                 $params['singularity_image'] = 'vdjbase_pipeline-1.1.01.sif';
                 $appHumanName = 'VDJBase';
             }
+	     */
 
-            $agave = new Agave;
             $config = $agave->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
             $response = $agave->createApp($token, $config);
             $agaveAppId = $response->result->id;
