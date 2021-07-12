@@ -101,7 +101,7 @@ class JobController extends Controller
             $app_info = $agave->getAppTemplate($appId);
             $app_config = $app_info['config'];
 
-	    // Set up the App Tapis name, the human name, and the deployment path.
+            // Set up the App Tapis name, the human name, and the deployment path.
             $appName = $appId . '-' . $executionSystem->name;
             $appDeploymentPath = $appId;
             $appHumanName = $app_config['label'];
@@ -110,14 +110,14 @@ class JobController extends Controller
             $params = [];
             foreach ($app_config['parameters'] as $parameter_info) {
                 Log::debug('   Processing parameter ' . $parameter_info['id']);
-		// If it visible, we want to pass on the input to the job.
+                // If it visible, we want to pass on the input to the job.
                 if ($parameter_info['value']['visible']) {
                     $params[$parameter_info['id']] = $f[$parameter_info['id']];
                     Log::debug('   Parameter value = ' . $f[$parameter_info['id']]);
                 }
             }
 
-	    // Based on the above, create the Tapis App.
+            // Based on the above, create the Tapis App.
             $config = $agave->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
             $response = $agave->createApp($token, $config);
             $agaveAppId = $response->result->id;
