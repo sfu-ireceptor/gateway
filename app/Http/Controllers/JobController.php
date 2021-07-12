@@ -101,6 +101,7 @@ class JobController extends Controller
             $app_info = $agave->getAppTemplate($appId);
             $app_config = $app_info['config'];
 
+	    // Set up the App Tapis name, the human name, and the deployment path.
             $appName = $appId . '-' . $executionSystem->name;
             $appDeploymentPath = $appId;
             $appHumanName = $app_config['label'];
@@ -109,57 +110,14 @@ class JobController extends Controller
             $params = [];
             foreach ($app_config['parameters'] as $parameter_info) {
                 Log::debug('   Processing parameter ' . $parameter_info['id']);
+		// If it visible, we want to pass on the input to the job.
                 if ($parameter_info['value']['visible']) {
                     $params[$parameter_info['id']] = $f[$parameter_info['id']];
                     Log::debug('   Parameter value = ' . $f[$parameter_info['id']]);
                 }
             }
 
-            /*
-                if ($appId == 'histogram') {
-                    Log::info('histogram');
-                    $appName = 'app-histogram--' . $executionSystem->name;
-                    $appDeploymentPath = 'histogram';
-                    $params[$parameter_info['id']] = $f['var'];
-                    $appHumanName = 'Standard Histogram Generator';
-                } elseif ($appId == 'histogram2') {
-                    Log::info('histogram2');
-                    $appName = 'app-histogram2--' . $executionSystem->name;
-                    $appDeploymentPath = 'histogram2';
-                    $params['variable'] = 'junction_nt_length';
-
-                    $colorStr = $f['color'];
-                    $colorArray = explode('_', $colorStr);
-
-                    $params['red'] = floatval($colorArray[0]);
-                    $params['green'] = floatval($colorArray[1]);
-                    $params['blue'] = floatval($colorArray[2]);
-                    $appHumanName = 'Amazing Historgram Generator';
-                } elseif ($appId == 'stats') {
-                    Log::info('stats');
-                    $appName = 'app-stats--' . $executionSystem->name;
-                    $appDeploymentPath = 'stats';
-                    $appHumanName = 'Stats';
-                } elseif ($appId == 'shared_junction_aa') {
-                    Log::info('shared_junction_aa');
-                    $appName = 'app-shared-junction--' . $executionSystem->name;
-                    $appDeploymentPath = 'shared_junction_aa';
-                    $appHumanName = 'Shared Junction';
-                } elseif ($appId == 'genoa') {
-                    Log::info('genoa');
-                    $appName = 'app-genoa--' . $executionSystem->name;
-                    $appDeploymentPath = 'genoa';
-                    $appHumanName = 'Genoa';
-                } elseif ($appId == 'vdjbase-singularity') {
-                    Log::info('vdjbase_singularity');
-                    $appName = 'app-vdjbase-singularity--' . $executionSystem->name;
-                    $appDeploymentPath = 'vdjbase-singularity';
-                    $params['sample_name'] = $f['sample_name'];
-                    $params['singularity_image'] = 'vdjbase_pipeline-1.1.01.sif';
-                    $appHumanName = 'VDJBase';
-                }
-             */
-
+	    // Based on the above, create the Tapis App.
             $config = $agave->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
             $response = $agave->createApp($token, $config);
             $agaveAppId = $response->result->id;
