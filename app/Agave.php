@@ -116,10 +116,9 @@ class Agave
     {
         $this->appTemplates = [];
         $app_directories = config('services.agave.app_directories');
-	foreach ($app_directories as $app_dir)
-	{
-	    $app_info = [];
-	    $file_path = resource_path('agave_apps/' . $app_dir . '/app.json');
+        foreach ($app_directories as $app_dir) {
+            $app_info = [];
+            $file_path = resource_path('agave_apps/' . $app_dir . '/app.json');
             Log::debug('updateAppTemplates: Trying to open App file ' . $file_path);
             $files = scandir('.');
             try {
@@ -129,9 +128,9 @@ class Agave
                 Log::debug('updateAppTemplates: Error: ' . $e->getMessage());
             }
             $app_config = json_decode($app_json, true);
-	    $app_info['config'] = $app_config;
-	    $this->appTemplates[$app_dir] = $app_info;
-	}
+            $app_info['config'] = $app_config;
+            $this->appTemplates[$app_dir] = $app_info;
+        }
     }
 
     public function getAppTemplates()
@@ -318,7 +317,7 @@ class Agave
         $app_config['executionSystem'] = $executionSystem;
         $app_config['deploymentSystem'] = $deploymentSystem;
         $app_config['deploymentPath'] = $deploymentPath;
-	Log::debug('Agave::getAppConfig: App config:');
+        Log::debug('Agave::getAppConfig: App config:');
         Log::debug($app_config);
 
         return $app_config;
