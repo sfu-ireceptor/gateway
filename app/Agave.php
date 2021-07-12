@@ -114,7 +114,7 @@ class Agave
 
     public function updateAppTemplates()
     {
-	$this->appTemplates = [];
+        $this->appTemplates = [];
         $app_directories = config('services.agave.app_directories');
 	foreach ($app_directories as $app_dir)
 	{
@@ -136,12 +136,12 @@ class Agave
 
     public function getAppTemplates()
     {
-	return $this->appTemplates;
+        return $this->appTemplates;
     }
 
     public function getAppTemplate($app_name)
     {
-	return $this->appTemplates[$app_name];
+        return $this->appTemplates[$app_name];
     }
 
     public function createSystem($token, $config)
@@ -303,14 +303,14 @@ class Agave
 
     public function getAppConfig($id, $name, $executionSystem, $deploymentSystem, $deploymentPath)
     {
-	// Update the app templates. This shouldn't be necessary every
-	// time, but for now we will update them every time an App
-	// config is requested.
-	$this->updateAppTemplates();
+        // Update the app templates. This shouldn't be necessary every
+        // time, but for now we will update them every time an App
+        // config is requested.
+        $this->updateAppTemplates();
 
-	// Get the app template and its config given the App ID/name
-	$app_template = $this->getAppTemplate($id);
-	$app_config = $app_template['config'];
+        // Get the app template and its config given the App ID/name
+        $app_template = $this->getAppTemplate($id);
+        $app_config = $app_template['config'];
 
         // We overwrite the systems and deployment paths so we know what
         // apps are being used from where.
