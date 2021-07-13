@@ -108,6 +108,26 @@
           "xsd:string"
         ]
       }
+    },
+    {
+      "id": "sort_values",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "default": "TRUE"
+      },
+      "details": {
+        "label": "Sort the values?",
+        "description": "Sort the values before plotting."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
     }
   ]
 }

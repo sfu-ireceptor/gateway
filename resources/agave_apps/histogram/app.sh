@@ -17,10 +17,12 @@ if [ -z "${download_file}" ]; then
 	ZIP_FILE=$1
 	VARNAME=$2
 	NUM_VALUES=$3
+	SORT_VALUES=$4
 else
 	ZIP_FILE=${download_file}
 	VARNAME=${variable}
 	NUM_VALUES=${num_values}
+	SORT_VALUES=${sort_values}
 fi
 function do_histogram()
 # Parameters: VARNAME to process, array of input files
@@ -38,12 +40,12 @@ function do_histogram()
 	python3 preprocess.py $f $1 >> $TMP_FILE
     done
 
-    if [ $NUM_VALUES .gt 0]
-    then
-	head --lines=1 $TMP_FILE > $TMP2_FILE
-	tail --lines=+2 $TMP_FILE | sort | head --lines=$NUM_VALUES >> $TMP2_FILE
-	FINAL_FILE=$TMP2_FILE
-    fi
+    #if [ $NUM_VALUES -gt 0 ]
+    #then
+#	head --lines=1 $TMP_FILE > $TMP2_FILE
+#	tail --lines=+2 $TMP_FILE | sort | head --lines=$NUM_VALUES >> $TMP2_FILE
+#	FINAL_FILE=$TMP2_FILE
+#    fi
     ##############################################
     # Generate the image file.
     OFILE_BASE="report-$1-histogram"
@@ -56,7 +58,7 @@ function do_histogram()
 
     # Run the python histogram command
     #python histogram.py $TMP_FILE $OFILE
-    python3 airr_histogram.py $1 $FINAL_FILE $OFILE_BASE.png
+    python3 airr_histogram.py $1 $FINAL_FILE $NUM_VALUES $SORT_VALUES $OFILE_BASE.png
     #convert $OFILE_BASE.png $OFILE_BASE.jpg
 
     # change permissions
@@ -85,11 +87,11 @@ do_histogram $VARNAME
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
 echo "Removing original ZIP file $ZIP_FILE"
-rm -f $ZIP_FILE
+#rm -f $ZIP_FILE
 echo "Removing extracted files for each repository"
 for f in "${tsv_files[@]}"; do
     echo "    Removing extracted file $f"
-    rm -f $f
+#    rm -f $f
 done
 
 
