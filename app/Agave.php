@@ -114,19 +114,19 @@ class Agave
 
     public function updateAppTemplates()
     {
-	// Get the list of app directories. Note that this is the set of names/tags
-	// used for the Apps
+        // Get the list of app directories. Note that this is the set of names/tags
+        // used for the Apps
         $app_directories = config('services.agave.app_directories');
-	// Build a list of Tapis App templates.
+        // Build a list of Tapis App templates.
         $this->appTemplates = [];
         foreach ($app_directories as $app_dir) {
-	    // Tapis Apps are stored in the resources/agave_apps directory. It is
-	    // expected that each App that works on the iReceptor Gateway has an
-	    // app.json file that is the Tapis definition of the App. We use this
-	    // to determine how to submit the App to Tapis and to build the UI.
+            // Tapis Apps are stored in the resources/agave_apps directory. It is
+            // expected that each App that works on the iReceptor Gateway has an
+            // app.json file that is the Tapis definition of the App. We use this
+            // to determine how to submit the App to Tapis and to build the UI.
             $file_path = resource_path('agave_apps/' . $app_dir . '/app.json');
             Log::debug('updateAppTemplates: Trying to open App file ' . $file_path);
-	    // Open the file and convert the JSON to an object.
+            // Open the file and convert the JSON to an object.
             try {
                 $app_json = file_get_contents($file_path);
             } catch (Exception $e) {
@@ -134,12 +134,12 @@ class Agave
                 Log::debug('updateAppTemplates: Error: ' . $e->getMessage());
             }
             $app_config = json_decode($app_json, true);
-	    // Store the object in a dictionary keyed with 'config'. We do this because
-	    // we anticipate needing more information about the App that will be
-	    // separate from the Tapis App.
+            // Store the object in a dictionary keyed with 'config'. We do this because
+            // we anticipate needing more information about the App that will be
+            // separate from the Tapis App.
             $app_info = [];
             $app_info['config'] = $app_config;
-	    // Save this app template keyed by the name/tag/dir
+            // Save this app template keyed by the name/tag/dir
             $this->appTemplates[$app_dir] = $app_info;
         }
         // Return the template list.
@@ -148,7 +148,7 @@ class Agave
 
     public function getAppTemplates()
     {
-	// Return the list of app templates.
+        // Return the list of app templates.
         return $this->appTemplates;
     }
 
@@ -156,7 +156,7 @@ class Agave
     {
         Log::debug('getAppTemplate: looking for ' . $app_name);
 
-	// Return the app template for the given app tap/name.
+        // Return the app template for the given app tap/name.
         return $this->appTemplates[$app_name];
     }
 

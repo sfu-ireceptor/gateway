@@ -69,15 +69,14 @@ class LaunchAgaveJob implements ShouldQueue
             $t = Sequence::sequencesTSV($filters, $this->gw_username);
             $dataFilePath = $t['public_path'];
 
-	    // The Gateway sets the download_file input as it controls the data
-	    // that is processed by the application.
+            // The Gateway sets the download_file input as it controls the data
+            // that is processed by the application.
             $inputs['download_file'] = 'agave://' . $this->systemStaging . '/' . basename($dataFilePath);
             foreach ($inputs as $key => $value) {
                 Log::debug('Job input ' . $key . ' = ' . $value);
             }
-	   
-            $executionSystem = System::getCurrentSystem($this->gw_username);
 
+            $executionSystem = System::getCurrentSystem($this->gw_username);
 
             $storage_folder_path = storage_path() . '/app/public/';
             $archive_folder = basename($dataFilePath, '.zip') . '_output';
