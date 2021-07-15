@@ -69,32 +69,15 @@ class LaunchAgaveJob implements ShouldQueue
             $t = Sequence::sequencesTSV($filters, $this->gw_username);
             $dataFilePath = $t['public_path'];
 
-            // Log::debug('$dataFilePath=' . $dataFilePath );
-
-            // $folder = dirname($dataFilePath);
-            // $folder = str_replace('/data/', '', $folder);
-
-            // Log::info('folder=' . $folder);
-            // $job->input_folder = $folder;
-            // $job->save();
-
-            // update input paths for AGAVE job
-            // foreach ($this->inputs as $key => $value) {
-            //     $inputs[$key] = 'agave://' . $this->systemStaging . '/' . $folder . '/' . $value;
-            // }
-            Log::debug('#### HELLLOOOOOO');
-            foreach ($this->inputs as $key => $value) {
-                Log::debug('#### input1 ' . $key . ' = ' . $value);
-            }
-
+	    // The Gateway sets the download_file input as it controls the data
+	    // that is processed by the application.
             $inputs['download_file'] = 'agave://' . $this->systemStaging . '/' . basename($dataFilePath);
-            $executionSystem = System::getCurrentSystem($this->gw_username);
-            Log::debug('#### user = ' . auth()->user());
-            Log::debug('#### executionSystem = ' . $executionSystem);
-
             foreach ($inputs as $key => $value) {
-                Log::debug('#### input2 ' . $key . ' = ' . $value);
+                Log::debug('Job input ' . $key . ' = ' . $value);
             }
+	   
+            $executionSystem = System::getCurrentSystem($this->gw_username);
+
 
             $storage_folder_path = storage_path() . '/app/public/';
             $archive_folder = basename($dataFilePath, '.zip') . '_output';
