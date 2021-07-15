@@ -1,7 +1,7 @@
 {
   "name": "irplus-histogram-template",
   "version": "1.0",
-  "label": "Historgram",
+  "label": "Histogram",
   "defaultQueue": "default",
   "defaultNodeCount": 1,
   "defaultProcessorsPerNode": 1,

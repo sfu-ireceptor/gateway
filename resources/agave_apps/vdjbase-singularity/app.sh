@@ -60,7 +60,7 @@ module load singularity
 # Get the singularity image from the Gateway
 echo "Downloading singularity image from the Gateway"
 date
-wget https://gateway-analysis.ireceptor.org/storage/singularity/${singularity_image}
+wget https://gateway-analysis.ireceptor.org/singularity/${singularity_image}
 echo -n "Singularity file downloaded = "
 ls ${singularity_image}
 echo "Done ownloading singularity image from the Gateway"
