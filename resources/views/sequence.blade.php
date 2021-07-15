@@ -6,7 +6,7 @@
 @section('content')
 <div class="container-fluid sequence_container">
 
-	<h1>2. SSSSSequence Search</h1>
+	<h1>2. Sequence Search</h1>
 	<p class="sh1">Filter by sequence and sequence annotation feature</p>
 
 	<div class="row">		
