@@ -14,10 +14,10 @@ source ~/python/agave/bin/activate
 
 # app variables (will be subsituted by AGAVE). If they don't exist
 # use command line arguments.
-if [ -z "${file1}" ]; then
+if [ -z "${download_file}" ]; then
 	ZIP_FILE="$1"
 else
-	ZIP_FILE="${file1}"
+	ZIP_FILE="${download_file}"
 fi
 
 # Temporary DIR

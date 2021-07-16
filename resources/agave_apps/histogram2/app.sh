@@ -9,8 +9,8 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # app variables (will be subsituted by AGAVE)
-ZIP_FILE=${file1}
-VARNAME=${param1}
+ZIP_FILE=${download_file}
+VARNAME=${variable}
 RED=${red}
 GREEN=${green}
 BLUE=${blue}

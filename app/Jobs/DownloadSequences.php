@@ -2,12 +2,12 @@
 
 namespace App\Jobs;
 
-use App\Agave;
 use App\Download;
 use App\LocalJob;
 use App\Query;
 use App\QueryLog;
 use App\Sequence;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -112,9 +112,7 @@ class DownloadSequences implements ShouldQueue
         $this->download->save();
 
         // send notification email
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $user = $agave->getUserWithUsername($this->username, $token);
+        $user = User::where('username', $this->username)->first();
         $email = $user->email;
         $date_str = $this->download->createdAtShort();
 

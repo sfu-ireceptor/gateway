@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Agave;
 use App\Bookmark;
 use App\Download;
 use App\FieldName;
@@ -204,22 +205,49 @@ class SequenceController extends Controller
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
 
-        // for analysis app
-        $amazingHistogramGeneratorColorList = [];
-        $amazingHistogramGeneratorColorList['1_0_0'] = 'Red';
-        $amazingHistogramGeneratorColorList['1_0.5_0'] = 'Orange';
-        $amazingHistogramGeneratorColorList['1_0_1'] = 'Pink';
-        $amazingHistogramGeneratorColorList['0.6_0.4_0.2'] = 'Brown';
-        $data['amazingHistogramGeneratorColorList'] = $amazingHistogramGeneratorColorList;
+        // Get information about all of the Apps
+        $agave = new Agave;
+        $appTemplates = $agave->updateAppTemplates();
+        $app_list = [];
 
-        // for histogram generator
-        $var_list = [];
-        $var_list['junction_length'] = __('short.junction_length');
-        $var_list['v_call'] = __('short.v_call');
-        $var_list['d_call'] = __('short.d_call');
-        $var_list['j_call'] = __('short.j_call');
-        $var_list = FieldName::convert($var_list, 'ir_id', 'ir_adc_api_query');
-        $data['var_list'] = $var_list;
+        // For each app, set up the info required by the UI.
+        foreach ($appTemplates as $app_tag => $app_info) {
+            $app_config = $app_info['config'];
+            $app_ui_info = [];
+            Log::debug('Processing app ' . $app_tag);
+            // Process the parameters.
+            $parameter_list = [];
+            foreach ($app_config['parameters'] as $parameter_info) {
+                // We only want the visible parameters to be visible. The
+                // UI uses the Tapis ID as a label and the Tapis paramenter
+                // "label" as the human readable name of the parameter.
+                if ($parameter_info['value']['visible']) {
+                    $parameter = [];
+                    Log::debug('   Processing parameter ' . $parameter_info['id']);
+                    $parameter['label'] = $parameter_info['id'];
+                    $parameter['name'] = $parameter_info['details']['label'];
+                    $parameter_list[$parameter_info['id']] = $parameter;
+                } else {
+                    Log::debug('   Not displaying invisible parameter ' . $parameter_info['id']);
+                }
+            }
+
+            // The name of the App is the Tapis App label. We pass the UI the short
+            // and long descriptions as well . The UI ID and tag are the Tapis ID.
+            $app_ui_info['name'] = $app_config['label'];
+            $app_ui_info['description'] = $app_config['shortDescription'];
+            $app_ui_info['info'] = $app_config['longDescription'];
+            $app_ui_info['parameter_list'] = $parameter_list;
+            $app_ui_info['app_id'] = $app_tag;
+            $app_ui_info['app_tag'] = $app_tag;
+
+            // Save the info in the app list given to the UI.
+            $app_list[$app_tag] = $app_ui_info;
+        }
+        // Log::debug($app_list);
+
+        // Add the app list to the data returned to the View.
+        $data['app_list'] = $app_list;
 
         $data['system'] = System::getCurrentSystem(auth()->user()->id);
 

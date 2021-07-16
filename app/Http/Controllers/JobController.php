@@ -67,13 +67,18 @@ class JobController extends Controller
     public function postLaunchApp(Request $request)
     {
         $f = $request->all();
+
+        $gw_username = auth()->user()->username;
         $token = auth()->user()->password;
 
-        $appId = intval($f['app_id']);
-        $gw_username = auth()->user()->username;
+        // create systems
+        System::createDefaultSystemsForUser($gw_username, $token);
+
+        Log::info('Processing Job: app_id = ' . $f['app_id']);
+        $appId = $f['app_id'];
 
         // 3rd-party analysis
-        if ($appId == 999) {
+        if ($appId == '999') {
             Log::info('999');
             $appHumanName = 'Third-party analysis';
             $jobDescription = 'Data federation';
@@ -82,54 +87,37 @@ class JobController extends Controller
             $executionSystem = System::getCurrentSystem(auth()->user()->id);
             $username = $executionSystem->username;
             $appExecutionSystem = $executionSystem->name;
-            $appDeploymentSystem = $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . $username;
-            $params = [];
+            $appDeploymentSystem = $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . str_replace('_', '-', $gw_username) . '-' . $username;
             $inputs = [];
             $appHumanName = '';
             $jobDescription = 'Data federation + submission to AGAVE';
 
-            if ($appId == 1) {
-                Log::info('1');
-                $appName = 'app-histogram--' . $executionSystem->name;
-                $appDeploymentPath = 'histogram';
-                $params['param1'] = $f['var'];
-                // $inputs['file1'] = 'data.tsv.zip';
-                $appHumanName = 'Standard Histogram Generator';
-            } elseif ($appId == 2) {
-                Log::info('2');
-                $appName = 'app-histogram2--' . $executionSystem->name;
-                $appDeploymentPath = 'histogram2';
-                $params['param1'] = 'junction_nt_length';
+            // Create an Agave object to work with.
+            $agave = new Agave;
 
-                $colorStr = $f['color'];
-                $colorArray = explode('_', $colorStr);
+            // Get the App config for the app in question.
+            Log::info('Processing App ' . $appId);
+            $agave->updateAppTemplates();
+            $app_info = $agave->getAppTemplate($appId);
+            $app_config = $app_info['config'];
 
-                $params['red'] = floatval($colorArray[0]);
-                $params['green'] = floatval($colorArray[1]);
-                $params['blue'] = floatval($colorArray[2]);
-                // $inputs['file1'] = 'data.tsv.zip';
-                $appHumanName = 'Amazing Historgram Generator';
-            } elseif ($appId == 3) {
-                Log::info('3');
-                $appName = 'app-stats--' . $executionSystem->name;
-                $appDeploymentPath = 'stats';
-                // $inputs['file1'] = 'data.tsv.zip';
-                $appHumanName = 'Stats';
-            } elseif ($appId == 5) {
-                Log::info('5');
-                $appName = 'app-shared-junction--' . $executionSystem->name;
-                $appDeploymentPath = 'shared_junction_aa';
-                // $inputs['file1'] = 'data.tsv.zip';
-                $appHumanName = 'Shared Junction';
-            } elseif ($appId == 6) {
-                Log::info('6');
-                $appName = 'app-genoa--' . $executionSystem->name;
-                $appDeploymentPath = 'genoa';
-                // $inputs['file1'] = 'data.tsv.zip';
-                $appHumanName = 'Genoa';
+            // Set up the App Tapis name, the human name, and the deployment path.
+            $appName = $appId . '-' . $executionSystem->name;
+            $appDeploymentPath = $appId;
+            $appHumanName = $app_config['label'];
+
+            // Process the parameters for the job.
+            $params = [];
+            foreach ($app_config['parameters'] as $parameter_info) {
+                Log::debug('   Processing parameter ' . $parameter_info['id']);
+                // If it visible, we want to pass on the input to the job.
+                if ($parameter_info['value']['visible']) {
+                    $params[$parameter_info['id']] = $f[$parameter_info['id']];
+                    Log::debug('   Parameter value = ' . $f[$parameter_info['id']]);
+                }
             }
 
-            $agave = new Agave;
+            // Based on the above, create the Tapis App.
             $config = $agave->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
             $response = $agave->createApp($token, $config);
             $agaveAppId = $response->result->id;
@@ -138,7 +126,7 @@ class JobController extends Controller
             // config parameters for the job
             $executionSystem = System::getCurrentSystem(auth()->user()->id);
             $tenant_url = config('services.agave.tenant_url');
-            $systemStaging = config('services.agave.system_staging.name_prefix') . $username;
+            $systemStaging = config('services.agave.system_staging.name_prefix') . str_replace('_', '-', $gw_username);
             $notificationUrl = config('services.agave.gw_notification_url');
         }
 
@@ -159,7 +147,7 @@ class JobController extends Controller
         $localJobId = $lj->id;
 
         // queue job
-        if ($appId == 999) {
+        if ($appId == '999') {
             PrepareDataForThirdPartyAnalysis::dispatch($jobId, $f, $gw_username, $localJobId);
         } else {
             LaunchAgaveJob::dispatch($jobId, $f, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $localJobId);

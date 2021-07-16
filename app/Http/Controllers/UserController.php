@@ -48,36 +48,44 @@ class UserController extends Controller
         $username = $request->input('username');
         $password = $request->input('password');
 
-        // try to get Agave OAuth token
-        $agave = new Agave;
-        $t = $agave->getTokenForUser($username, $password);
+        // if authentication is enabled
+        if (config('ireceptor.auth')) {
+            // try to get Agave OAuth token
+            $agave = new Agave;
+            $t = $agave->getTokenForUser($username, $password);
 
-        // if fail -> display form with error
-        if ($t == null) {
-            return redirect()->back()->withErrors(['Invalid credentials']);
+            // if fail -> display form with error
+            if ($t == null) {
+                return redirect()->back()->withErrors(['Invalid credentials']);
+            }
+
+            // create user in local DB if necessary
+            $user = User::where('username', $username)->first();
+            if ($user == null) {
+                // get user info from Agave
+                $token = $agave->getAdminToken();
+                $u = $agave->getUser($username, $token);
+                $u = $u->result;
+
+                // create user
+                $user = new User();
+
+                $user->username = $username;
+                $user->first_name = $u->first_name;
+                $user->last_name = $u->last_name;
+                $user->email = $u->email;
+
+                $user->save();
+            }
+
+            // save Agave OAuth token in local DB
+            $user->updateToken($t);
+        } else {
+            $user = User::where('username', $username)->first();
+            if ($user == null) {
+                return redirect()->back()->withErrors(["User doesn't exist"]);
+            }
         }
-
-        // create user in local DB if necessary
-        $user = User::where('username', $username)->first();
-        if ($user == null) {
-            // get user info from Agave
-            $token = $agave->getAdminToken();
-            $u = $agave->getUser($username, $token);
-            $u = $u->result;
-
-            // create user
-            $user = new User();
-
-            $user->username = $username;
-            $user->first_name = $u->first_name;
-            $user->last_name = $u->last_name;
-            $user->email = $u->email;
-
-            $user->save();
-        }
-
-        // save Agave OAuth token in local DB
-        $user->updateToken($t);
 
         // log user in
         auth()->login($user);

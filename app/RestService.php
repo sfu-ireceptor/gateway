@@ -13,7 +13,7 @@ class RestService extends Model
     protected $table = 'rest_service';
 
     protected $fillable = [
-        'url', 'name', 'username', 'password', 'enabled', 'version',
+        'url', 'name', 'username', 'password', 'enabled', 'version', 'nb_sequences',
     ];
 
     public $display_name = '';

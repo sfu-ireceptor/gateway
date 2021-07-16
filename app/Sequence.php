@@ -159,7 +159,12 @@ class Sequence
         $time_str = date('Y-m-d_Hi', $now);
         $folder_name = 'ir_' . $time_str . '_' . uniqid();
         $folder_path = $storage_folder . $folder_name;
-        File::makeDirectory($folder_path, 0777, true, true);
+
+        Log::debug('Creating directory: ' . $folder_path);
+        $old = umask(0);
+        mkdir($folder_path, 0777);
+        umask($old);
+        // File::makeDirectory($folder_path, 0777, true, true);
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filters, $folder_path, $username);
         $response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_sequences_by_rs);
@@ -297,8 +302,8 @@ class Sequence
         // zip files
         $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path);
 
-        // delete files
-        self::delete_files($folder_path);
+        // delete files - TODO not working, to fix
+        // self::delete_files($folder_path);
 
         $zip_public_path = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
 
@@ -634,8 +639,8 @@ class Sequence
 
     public static function delete_files($folder_path)
     {
-        Log::debug('Deleting downloaded files...');
         if (File::exists($folder_path)) {
+            Log::debug('Deleting folder of downloaded files: ' . $folder_path);
             Storage::deleteDirectory($folder_path);
         }
     }

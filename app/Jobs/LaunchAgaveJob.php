@@ -6,6 +6,7 @@ use App\Agave;
 use App\Job;
 use App\LocalJob;
 use App\Sequence;
+use App\System;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -68,23 +69,23 @@ class LaunchAgaveJob implements ShouldQueue
             $t = Sequence::sequencesTSV($filters, $this->gw_username);
             $dataFilePath = $t['public_path'];
 
-            // Log::debug('$dataFilePath=' . $dataFilePath );
+            // The Gateway sets the download_file input as it controls the data
+            // that is processed by the application.
+            $inputs['download_file'] = 'agave://' . $this->systemStaging . '/' . basename($dataFilePath);
+            foreach ($inputs as $key => $value) {
+                Log::debug('Job input ' . $key . ' = ' . $value);
+            }
 
-            // $folder = dirname($dataFilePath);
-            // $folder = str_replace('/data/', '', $folder);
+            $executionSystem = System::getCurrentSystem($this->gw_username);
 
-            // Log::info('folder=' . $folder);
-            // $job->input_folder = $folder;
-            // $job->save();
+            $storage_folder_path = storage_path() . '/app/public/';
+            $archive_folder = basename($dataFilePath, '.zip') . '_output';
+            $archive_folder_path = $storage_folder_path . $archive_folder;
+            Log::debug('Creating archive folder: ' . $archive_folder_path);
+            $old = umask(0);
+            mkdir($archive_folder_path, 0777);
+            umask($old);
 
-            // update input paths for AGAVE job
-            // foreach ($this->inputs as $key => $value) {
-            //     $inputs[$key] = 'agave://' . $this->systemStaging . '/' . $folder . '/' . $value;
-            // }
-
-            $inputs['file1'] = 'agave://' . $this->systemStaging . '/' . basename($dataFilePath);
-            $archive_folder = basename($dataFilePath, '.zip');
-            Log::info('archive folder=' . $archive_folder);
             $job->input_folder = $archive_folder;
             $job->save();
 

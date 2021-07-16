@@ -15,9 +15,12 @@ class CanarieTest extends TestCase
     /** @test */
     public function test_html_routes()
     {
-        foreach ($this->prefixes as $prefix) {
-            foreach ($this->html_routes as $route) {
-                $this->get($prefix . '/' . $route)->assertOk();
+        $this->assertTrue(true); // hack to avoid "empty test" warning
+        if (config('ireceptor.canarie')) {
+            foreach ($this->prefixes as $prefix) {
+                foreach ($this->html_routes as $route) {
+                    $this->get($prefix . '/' . $route)->assertOk();
+                }
             }
         }
     }
@@ -25,9 +28,12 @@ class CanarieTest extends TestCase
     /** @test */
     public function test_html_routes_redirect()
     {
-        foreach ($this->prefixes as $prefix) {
-            foreach ($this->html_routes_redirect as $route) {
-                $this->get($prefix . '/' . $route)->assertStatus(302);
+        $this->assertTrue(true); // hack to avoid "empty test" warning
+        if (config('ireceptor.canarie')) {
+            foreach ($this->prefixes as $prefix) {
+                foreach ($this->html_routes_redirect as $route) {
+                    $this->get($prefix . '/' . $route)->assertStatus(302);
+                }
             }
         }
     }
@@ -35,9 +41,12 @@ class CanarieTest extends TestCase
     /** @test */
     public function test_json_routes()
     {
-        foreach ($this->prefixes as $prefix) {
-            foreach ($this->json_routes  as $route) {
-                $this->json('GET', $prefix . '/' . $route)->assertJson([]);
+        $this->assertTrue(true); // hack to avoid "empty test" warning
+        if (config('ireceptor.canarie')) {
+            foreach ($this->prefixes as $prefix) {
+                foreach ($this->json_routes  as $route) {
+                    $this->json('GET', $prefix . '/' . $route)->assertJson([]);
+                }
             }
         }
     }

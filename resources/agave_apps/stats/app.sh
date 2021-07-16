@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Histogram App 5.0"
+echo "iReceptor Stats App"
 
 ##############################################
 # init environment
@@ -13,13 +13,12 @@ module load scipy-stack
 
 # app variables (will be subsituted by AGAVE). If they don't exist
 # use command line arguments.
-if [ -z "${file1}" ]; then
+if [ -z "${download_file}" ]; then
 	ZIP_FILE=$1
 	VARNAME=$2
 else
-	ZIP_FILE=${file1}
-	VARNAME=${param1}
-	VARNAME=junction_length
+	ZIP_FILE=${download_file}
+	VARNAME=${variable}
 fi
 
 function do_heatmap()
@@ -115,7 +114,7 @@ echo "Extracting files started at: `date`"
 unzip -o "$ZIP_FILE" 
 
 # Determine the files to process. We extract the .tsv files from the info.txt
-tsv_files=( `cat $INFO_FILE | awk -F":" 'BEGIN {count=0} /tsv/ {if (count>0) printf(" %s",$1); else printf("%s", $1); count++}'` )
+tsv_files=( `cat $INFO_FILE | awk -F" " 'BEGIN {count=0} /tsv/ {if (count>0) printf(" %s",$1); else printf("%s", $1); count++}'` )
 
 # Run the stats for each of the VDJ calls.
 do_histogram v_call
