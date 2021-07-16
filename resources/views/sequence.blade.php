@@ -374,14 +374,6 @@
 									    <li role="presentation"><a href="#{{$app['app_tag']}}" aria-controls="{{$app['app_tag']}}" role="tab" data-toggle="tab">{{$app['name']}}</a></li>
                                                                         @endif
 							                @php $count = $count + 1 @endphp
-                                                                        <!--
-                                                                        <li role="presentation" class="active"><a href="#app1" aria-controls="app1" role="tab" data-toggle="tab">Histogram</a></li>
-									<li role="presentation"><a href="#app7" aria-controls="app7" role="tab" data-toggle="tab">VDJBase</a></li>
-									<li role="presentation"><a href="#app3" aria-controls="app3" role="tab" data-toggle="tab">Stats</a></li>
-									<li role="presentation"><a href="#app5" aria-controls="app5" role="tab" data-toggle="tab">Shared Junction</a></li>
- 									<li role="presentation"><a href="#app6" aria-controls="app6" role="tab" data-toggle="tab">Genoa</a></li> 
-									<li role="presentation"><a href="#app4" aria-controls="app4" role="tab" data-toggle="tab">Third-party analysis</a></li>
-                                                                        -->
                                                                     @endforeach
 								</ul>
 
@@ -400,7 +392,7 @@
 											{{ Form::hidden('app_id', $app['app_id']) }}
                                                                                         <div class="row">
 										            <div class="col-md-10">
-											        <h3>{{$app['description']}}</h3>
+											        <h3>{{$app['description']}} <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$app['info']}}</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span></h3>
                                                                                             </div>
                                                                                         </div>
 								                        @foreach ($app['parameter_list'] as $parameter)
