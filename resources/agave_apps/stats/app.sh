@@ -41,9 +41,8 @@ function do_heatmap()
 	# As a result we chop things off at the first star. This also takes care of the case where
 	# a gened call has multiple calls. Since we drop everthing after the first allele we drop all of
 	# the other calls as well.
-	cat $f | cut -f $x_column,$y_column | awk -v xlabel=$1 -v ylabel=$2 'BEGIN {FS="\t"; printf("%s\t%s\n", xlabel, ylabel)} /IG|TR/ {printf("%s\t%s\n",substr($1,0,index($1,"*")-1), substr($2,0,index($2,"*")-1))}' > $TMP_FILE
+	cat $f | cut -f $x_column,$y_column | awk -v xlabel=$1 -v ylabel=$2 'BEGIN {FS="\t"; printf("%s\t%s\n", xlabel, ylabel)} /IG|TR/ {if (index($1,"*") == 0) {xstr = $1} else {xstr=substr($1,0,index($1,"*")-1)};if (index($2,"*") == 0) {ystr = $2} else {ystr=substr($2,0,index($2,"*")-1)};printf("%s\t%s\n",xstr,ystr)}' > $TMP_FILE
 
-	#python preprocess.py $f $1 >> $TMP_FILE
     done
     # Generate a set of unique values that we can generate the heatmap on. This is a comma separated
     # list of unique gene names for each of the two fields of interest.
@@ -120,7 +119,7 @@ tsv_files=( `cat $INFO_FILE | awk -F" " 'BEGIN {count=0} /tsv/ {if (count>0) pri
 do_histogram v_call
 do_histogram d_call
 do_histogram j_call
-do_histogram junction_length
+do_histogram junction_aa_length
 do_heatmap v_call j_call
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
