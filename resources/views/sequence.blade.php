@@ -400,13 +400,13 @@
 										             <div class="col-md-3">
 											          <div class="form-group">
 												      {{ Form::label($parameter['label'], $parameter['name']) }}
+											              <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$parameter['description']}}</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span>
 						                                                      @if ( ! empty($parameter['choices']) )
 												        {{ Form::select($parameter['label'], $parameter['choices'], '', array('class' => 'form-control')) }}
                                                                                                       @else
 									                                {{ Form::text($parameter['label'], '', array('class' => 'form-control')) }}
                                                                                                       @endif
 										                  </div>
-											          <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$parameter['description']}}</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span>
 											     </div>
 											  </div>
 							                                @endforeach
