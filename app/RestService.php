@@ -853,11 +853,7 @@ class RestService extends Model
         }
 
         // do requests
-        Log::debug('just before...');
-        Log::debug('aaaa');
-
         $response_list = self::doRequests($request_params);
-        Log::debug('cccc');
 
         //             if( ! $clonal) {
         //     $nb_sequences = data_get($response_list, '0.data.Rearrangement.0.count', 0);
