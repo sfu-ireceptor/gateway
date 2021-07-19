@@ -35,7 +35,7 @@ class SequenceController extends Controller
         /*************************************************
         * Immediate redirects */
 
-        // if legacy request without query id, generate query id and redirect
+        // if request without query id, generate query id and redirect
         if (! $request->has('query_id')) {
             $query_id = Query::saveParams($request->except(['_token']), 'sequences');
 

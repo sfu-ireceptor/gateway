@@ -66,7 +66,7 @@
 								</a>
 							</li>
 							<li role="presentation" class="sequences">
-								<a href="#" class="inactive">2. Sequences</a>
+								<a href="#" class="inactive">2. Sequences/Clones</a>
 							</li>
 						@elseif(Request::is('sequences*'))
 							<li role="presentation" class="dropdown active search">
