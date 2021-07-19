@@ -235,7 +235,6 @@ class CloneController extends Controller
         return view('clone', $data);
     }
 
-   
     public function timeEstimate($nb_sequences)
     {
         $time_estimate_max = '24 hours';

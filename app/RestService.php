@@ -693,12 +693,11 @@ class RestService extends Model
         Log::debug($sample_id_list_by_rs);
 
         // count sequences for each requested sample
-        if( ! $clonal) {
-        $counts_by_rs = self::sequence_count($sample_id_list_by_rs, $sequence_filters);
-        }
-else {
+        if (! $clonal) {
+            $counts_by_rs = self::sequence_count($sample_id_list_by_rs, $sequence_filters);
+        } else {
             $counts_by_rs = self::clone_count($sample_id_list_by_rs, $sequence_filters);
-}
+        }
         Log::debug('Sequence count for each requested sample (by repository):');
         Log::debug($counts_by_rs);
 
@@ -734,10 +733,9 @@ else {
                 $sample_count = $counts_by_rs[$rs->id]['samples'][$sample->repertoire_id];
                 // include sample only if it has sequences matching the query
                 if ($sample_count > 0) {
-                    if ( ! $clonal) {
+                    if (! $clonal) {
                         $sample->ir_filtered_sequence_count = $sample_count;
-                    }
-                    else {
+                    } else {
                         $sample->ir_filtered_clone_count = $sample_count;
                     }
                     $sample_list_filtered[] = $sample;
@@ -798,13 +796,11 @@ else {
     // retrieves n sequences
     public static function sequence_list($filters, $n = 10, $clonal = false)
     {
-        if( ! $clonal) {
-        $base_uri = 'rearrangement';
-
-    }else {
-                $base_uri = 'clone';
-
-    }
+        if (! $clonal) {
+            $base_uri = 'rearrangement';
+        } else {
+            $base_uri = 'clone';
+        }
 
         // prepare request parameters for each service
         $request_params = [];
@@ -858,21 +854,20 @@ else {
 
         // do requests
         Log::debug('just before...');
-                Log::debug('aaaa');
+        Log::debug('aaaa');
 
         $response_list = self::doRequests($request_params);
-                Log::debug('cccc');
+        Log::debug('cccc');
 
+        //             if( ! $clonal) {
+        //     $nb_sequences = data_get($response_list, '0.data.Rearrangement.0.count', 0);
 
-    //             if( ! $clonal) {
-    //     $nb_sequences = data_get($response_list, '0.data.Rearrangement.0.count', 0);
+        // }else {
+        //     // dd($response_list);
 
-    // }else {
-    //     // dd($response_list);
+        //     // $nb_sequences = data_get($response_list, '0.data.Clone.0.count', 0);
 
-    //     // $nb_sequences = data_get($response_list, '0.data.Clone.0.count', 0);
-
-    // }
+        // }
 
         return $response_list;
     }

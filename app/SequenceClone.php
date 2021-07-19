@@ -10,7 +10,6 @@ use ZipArchive;
 
 class SequenceClone
 {
-
     public static function summary($filters, $username)
     {
         // get clones summary
