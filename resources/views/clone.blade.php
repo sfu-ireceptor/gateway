@@ -215,7 +215,7 @@
 						<p>
 							<strong>
 								<span title="{{ number_format($total_filtered_clones) }}">
-									{{ number_format($total_filtered_clones) }} clones
+									{{ number_format($total_filtered_clones) }} {{ str_plural('clone', $total_filtered_clones)}}
 								</span>
 								({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
 							</strong>

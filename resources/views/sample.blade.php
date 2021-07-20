@@ -665,7 +665,7 @@
 									</h3>
 								</div>
 								<div class="col-md-6 repertoires_button_container">
-									<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
+									<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/clones?query_id={{ $sequences_query_id }}">
 										Browse clones from {{ $nb_samples }} repertoires →
 									</a>
 								
@@ -833,7 +833,7 @@
 								</div>
 
 								<div class="col-md-6 repertoires_button_container">
-									<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
+									<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/clones?query_id={{ $sequences_query_id }}">
 										Browse clones from {{ $nb_samples }} repertoires →
 									</a>
 								</div>

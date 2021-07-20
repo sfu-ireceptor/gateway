@@ -68,6 +68,25 @@
 							<li role="presentation" class="sequences">
 								<a href="#" class="inactive">2. Sequences/Clones</a>
 							</li>
+						@elseif(Request::is('clones*'))
+							<li role="presentation" class="dropdown active search">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+									Search
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+								  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
+								  <li><a href="/samples">Repertoire Metadata Search</a></li>
+								</ul>
+							</li>
+							<li role="presentation" class="active samples">
+								<a href="/samples?query_id=@yield('sample_query_id', '')">
+									1. Repertoire Metadata
+								</a>
+							</li>
+							<li role="presentation" class="active sequences">
+								<a href="#" class="active inactive">2. Clones</a>
+							</li>
 						@elseif(Request::is('sequences*'))
 							<li role="presentation" class="dropdown active search">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
