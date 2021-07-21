@@ -171,6 +171,27 @@ class Sample
                 $response_list[$i]['data'] = $sample_list_result;
             }
 
+            // filter by sequence count if needed
+            if (isset($filters['ir_sequence_count'])) {
+                $sample_list_result = [];
+
+                $extra_characters = array(',', ' ');
+                $sequence_count_filter_str = str_replace($extra_characters, '', $filters['ir_sequence_count']);
+                if(is_numeric($sequence_count_filter_str)) {
+
+                $sequence_count_filter = intval($sequence_count_filter_str);
+
+                    foreach ($sample_list as $sample) {
+                        if($sample->ir_sequence_count == $sequence_count_filter) {
+                            $sample_list_result[] = $sample;
+                        }
+                    }                    
+                }
+
+                $response_list[$i]['data'] = $sample_list_result;
+            }
+
+
             $sample_list = $response_list[$i]['data'];
             $sample_list = self::convert_sample_list($sample_list, $rs);
 
