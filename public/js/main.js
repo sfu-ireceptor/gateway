@@ -210,7 +210,7 @@ $(document).ready(function() {
 					    else if(stat == 'j_gene_usage') {
 						    properties.setDataType('JGeneUsage');
 						    properties.setDataDrilldown(true);
-						    properties.setSubtitle(["Subgroup/Family", "Gene", "Allele"]);
+						    properties.setSubtitle(["Gene", "Allele"]);
 						    properties.setSeriesColors(["rgb(107,194,135)"]);
 					    }
 					    else if(stat == 'junction_length_stats') {
