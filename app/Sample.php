@@ -202,12 +202,10 @@ class Sample
             $rs = $response['rs'];
 
             if ($response['status'] == 'error') {
+                $rs->error_type = 'error';
                 if (isset($response['error_type'])) {
                     $rs->error_type = $response['error_type'];
-                } else {
-                    $rs->error_type = 'error';
                 }
-                $rs->error_type = $response['error_type'];
                 $rs_list_no_response[] = $rs;
             }
         }
