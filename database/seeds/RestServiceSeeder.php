@@ -123,7 +123,7 @@ class RestServiceSeeder extends Seeder
             ],
             [
                 'url' => 'http://154.127.124.38:2222/airr/v1/',
-                'name' => 'NICD',
+                'name' => 'NICD - South Africa',
             ],
         ];
 
