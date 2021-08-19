@@ -192,7 +192,7 @@
 		<script src="https://code.highcharts.com/highcharts.js"></script>
 		<script src="https://code.highcharts.com/highcharts-3d.js"></script>
 		<script src="https://code.highcharts.com/modules/data.js"></script>
-		<script src="https://code.highcharts.com/modules/exporting.js"></script>
+		<script src="https://code.highcharts.com/9.1.2/modules/exporting.js"></script>
 		<script src="https://code.highcharts.com/modules/drilldown.js"></script>
 		<script src="https://code.highcharts.com/modules/bullet.js"></script>
 		<script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>  
