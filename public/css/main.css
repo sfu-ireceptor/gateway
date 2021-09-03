@@ -299,7 +299,7 @@ table td .progress {
 }
 
 table.jobs .status {
-	width: 80%;
+	width: 60%;
 }
 
 table.sample_list td, table.sample_list th {
