@@ -505,7 +505,7 @@ class Sequence
     public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
         $s = '';
-        $s .= '* Summary *' . "\n";
+        $s .= '<b>Data/Repository Summary</b>' . "\n";
 
         $nb_sequences_total = 0;
         $expected_nb_sequences_total = 0;
@@ -529,7 +529,6 @@ class Sequence
                 $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (from ' . $t['rs_url'] . ')' . "\n";
             }
         }
-        $s .= "\n";
 
         if (! empty($failed_rs)) {
             $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "\n";
@@ -540,7 +539,7 @@ class Sequence
 
         $s .= "\n";
 
-        $s .= '* Metadata filters *' . "\n";
+        $s .= '<b>Metadata filters</b>' . "\n";
         Log::debug($sample_filters);
         if (count($sample_filters) == 0) {
             $s .= 'None' . "\n";
@@ -554,7 +553,7 @@ class Sequence
         }
         $s .= "\n";
 
-        $s .= '* Sequence filters *' . "\n";
+        $s .= '<b>Sequence filters</b>' . "\n";
         unset($filters['ir_project_sample_id_list']);
         unset($filters['cols']);
         unset($filters['filters_order']);
@@ -589,7 +588,7 @@ class Sequence
         }
         $s .= "\n";
 
-        $s .= '* Source *' . "\n";
+        $s .= '<b>Source</b>' . "\n";
         $s .= $url . "\n";
         $date_str_human = date('M j, Y', $now);
         $time_str_human = date('H:i T', $now);
