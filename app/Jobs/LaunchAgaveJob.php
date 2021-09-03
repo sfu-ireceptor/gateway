@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Agave;
 use App\Job;
+use App\Query;
 use App\LocalJob;
 use App\Sequence;
 use App\System;
@@ -62,11 +63,40 @@ class LaunchAgaveJob implements ShouldQueue
             // find job in DB
             $job = Job::find($this->jobId);
 
-            // generate csv file
+	    // generate csv file
             $job->updateStatus('FEDERATING DATA');
+            Log::info('########## $this->f = ' . json_encode($this->f));
             Log::info('$f[filters_json]' . $this->f['filters_json']);
             $filters = json_decode($this->f['filters_json'], true);
-            $t = Sequence::sequencesTSV($filters, $this->gw_username);
+
+	    // Get the sample filters
+            $sample_filter_fields = [];
+            if (isset($filters['sample_query_id'])) {
+                $sample_query_id = $filters['sample_query_id'];
+                Log::info('query_id = ' . $sample_query_id);
+
+                // sample filters
+                $sample_filters = Query::getParams($sample_query_id);
+                foreach ($sample_filters as $k => $v) {
+                    if ($v) {
+                        if (is_array($v)) {
+                            $sample_filter_fields[$k] = implode(', ', $v);
+                        } else {
+                            $sample_filter_fields[$k] = $v;
+                        }
+                    }
+                }
+                // remove gateway-specific params
+                unset($sample_filter_fields['open_filter_panel_list']);
+                unset($sample_filter_fields['page']);
+                unset($sample_filter_fields['cols']);
+                unset($sample_filter_fields['sort_column']);
+                unset($sample_filter_fields['sort_order']);
+                unset($sample_filter_fields['extra_field']);
+	    }
+            
+	    // Generated the file
+            $t = Sequence::sequencesTSV($filters, $this->gw_username, $job->url, $sample_filter_fields);
             $dataFilePath = $t['public_path'];
 
             // The Gateway sets the download_file input as it controls the data
