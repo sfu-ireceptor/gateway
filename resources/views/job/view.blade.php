@@ -6,36 +6,40 @@
 @section('content')
 <div class="container job_container" data-job-id="{{ $job->id }}" data-job-status="{{ $job->status }}">
 
-	<h1>
-		Job {{ $job->id }}
+	<h2>
+		{{ $job->app }} (Job {{ $job->id }})
 		<small data-toggle="tooltip" data-placement="right" title="Submitted on {{ $job->createdAtFull() }}"> 
 			<span class="submission_date_relative">
 				{{ $job->createdAtRelative() }}
 			</span>
 		</small>
-	</h1>
+	</h2>
 
 	<div class="job_view_progress">
-		@include('job/progress')
-	</div>	
-
-	<h2>{{ $job->app }}</h2>
-	@if ($job->url)
+	    @include('job/progress')
+	    @if ($job->url)
 		<p>
 			Data from:
 			<a href="{{ $job->url }}">
 				{{ $job->url }}
 			</a>
 		</p>
-	@endif
+	    @endif
+	</div>	
 
+        @if (count($summary) > 0)
+            <h2>Summary</h2>
+            @foreach ($summary as $summary_line)
+		{!! $summary_line !!}<br />
+            @endforeach
+	@endif
 
 	@if (count($files) > 0 && $job->app != 'Third-party analysis')
-		<h2>Files</h2>
-		<div class="result_files">
-			{!! $filesHTML !!}
-		</div>
-	@endif
+            <h2>Files</h2>
+	    <div class="result_files">
+		{!! $filesHTML !!}
+	    </div>
+        @endif
 
 	@if (count($files) > 0 && $job->app == 'Third-party analysis')
 		<h2>BRepertoire</h2>
