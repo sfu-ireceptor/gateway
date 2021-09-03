@@ -166,14 +166,31 @@ class JobController extends Controller
 
         $data = [];
         $data['job'] = $job;
-
         $data['files'] = [];
+	$data['summary'] = [];
         if ($job['input_folder'] != '') {
             $folder = 'storage/' . $job['input_folder'];
             if (File::exists($folder)) {
                 $data['files'] = File::allFiles($folder);
                 $data['filesHTML'] = dir_to_html($folder);
             }
+	    $info_file = $folder . "/info.txt";
+	    if (File::exists($info_file)) {
+	        try {
+                    $info_txt = file_get_contents($info_file);
+		    $lines = file($info_file);
+                } catch (Exception $e) {
+                    Log::debug('Job::getView: Could not open file ' . $info_file);
+                    Log::debug('Job::getView: Error: ' . $e->getMessage());
+                }
+		foreach ($lines as $line) {
+                    Log::debug('Job::getView: ' . $line);
+		}
+
+                $data['summary'] = $info_txt;
+                $data['summary'] = $lines;
+	    }
+
         }
 
         $data['steps'] = JobStep::findAllForJob($id);
