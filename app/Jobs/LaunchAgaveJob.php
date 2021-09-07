@@ -4,8 +4,8 @@ namespace App\Jobs;
 
 use App\Agave;
 use App\Job;
-use App\Query;
 use App\LocalJob;
+use App\Query;
 use App\Sequence;
 use App\System;
 use Illuminate\Bus\Queueable;
@@ -63,13 +63,13 @@ class LaunchAgaveJob implements ShouldQueue
             // find job in DB
             $job = Job::find($this->jobId);
 
-	    // generate csv file
+            // generate csv file
             $job->updateStatus('FEDERATING DATA');
             Log::info('########## $this->f = ' . json_encode($this->f));
             Log::info('$f[filters_json]' . $this->f['filters_json']);
             $filters = json_decode($this->f['filters_json'], true);
 
-	    // Get the sample filters
+            // Get the sample filters
             $sample_filter_fields = [];
             if (isset($filters['sample_query_id'])) {
                 $sample_query_id = $filters['sample_query_id'];
@@ -93,9 +93,9 @@ class LaunchAgaveJob implements ShouldQueue
                 unset($sample_filter_fields['sort_column']);
                 unset($sample_filter_fields['sort_order']);
                 unset($sample_filter_fields['extra_field']);
-	    }
-            
-	    // Generated the file
+            }
+
+            // Generated the file
             $t = Sequence::sequencesTSV($filters, $this->gw_username, $job->url, $sample_filter_fields);
             $dataFilePath = $t['public_path'];
 
