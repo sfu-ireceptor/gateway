@@ -11,37 +11,40 @@ fi
 # Load the environment/modules needed.
 module load scipy-stack
 
+# Get the script directory where all teh code is.
+SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
+
 # app variables (will be subsituted by AGAVE). If they don't exist
 # use command line arguments.
 if [ -z "${download_file}" ]; then
 	ZIP_FILE=$1
-	VARNAME=$2
 else
 	ZIP_FILE=${download_file}
-	VARNAME=${variable}
 fi
 
 function do_heatmap()
 {
     # Temporary file for data
     TMP_FILE=tmp.tsv
+    # Get the array of files to process
+    array_of_files=$3
 
     # preprocess input files -> tmp.csv
     echo "Extracting $1 and $2 from files started at: `date`" 
     echo "$1\t$2" > $TMP_FILE
 
-    for f in "${tsv_files[@]}"; do
-	echo "    Extracting $1 and $2 from $f"
+    for filename in "${array_of_files[@]}"; do
+	echo "    Extracting $1 and $2 from $filename"
 	# Get the columns numbers for the column labels of interest.
-	x_column=`cat $f | awk -F"\t" -v label=$1 '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
-	y_column=`cat $f | awk -F"\t" -v label=$2 '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+	x_column=`cat $filename | awk -F"\t" -v label=$1 '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+	y_column=`cat $filename | awk -F"\t" -v label=$2 '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
 	echo "    Columns = $x_column, $y_column"
 
 	# Extract the two columns of interest. In this case we want the gene (not including the allele)
 	# As a result we chop things off at the first star. This also takes care of the case where
 	# a gened call has multiple calls. Since we drop everthing after the first allele we drop all of
 	# the other calls as well.
-	cat $f | cut -f $x_column,$y_column | awk -v xlabel=$1 -v ylabel=$2 'BEGIN {FS="\t"; printf("%s\t%s\n", xlabel, ylabel)} /IG|TR/ {if (index($1,"*") == 0) {xstr = $1} else {xstr=substr($1,0,index($1,"*")-1)};if (index($2,"*") == 0) {ystr = $2} else {ystr=substr($2,0,index($2,"*")-1)};printf("%s\t%s\n",xstr,ystr)}' > $TMP_FILE
+	cat $filename | cut -f $x_column,$y_column | awk -v xlabel=$1 -v ylabel=$2 'BEGIN {FS="\t"; printf("%s\t%s\n", xlabel, ylabel)} /IG|TR/ {if (index($1,"*") == 0) {xstr = $1} else {xstr=substr($1,0,index($1,"*")-1)};if (index($2,"*") == 0) {ystr = $2} else {ystr=substr($2,0,index($2,"*")-1)};printf("%s\t%s\n",xstr,ystr)}' > $TMP_FILE
 
     done
     # Generate a set of unique values that we can generate the heatmap on. This is a comma separated
@@ -57,7 +60,7 @@ function do_heatmap()
     OFILE=report-$1-$2-heatmap.png
 
     # Generate the heatmap
-    python3 airr_heatmap.py $1 $2 $xvals $yvals $TMP_FILE $OFILE
+    python3 ${SCRIPT_DIR}/airr_heatmap.py $1 $2 $xvals $yvals $TMP_FILE $OFILE
 
     # change permissions
     chmod 644 "$OFILE"
@@ -67,18 +70,21 @@ function do_heatmap()
 }
 
 function do_histogram()
-# Parameters: VARNAME to process, array of input files
+# Parameters: $1 is variable_name to process, $2 input files
 {
     # Temporary file for data
     TMP_FILE=tmp.tsv
+    # Get the array of files to process
+    array_of_files=$2
 
     # preprocess input files -> tmp.csv
     echo "Extracting $1 from files started at: `date`" 
     echo $1 > $TMP_FILE
-    for f in "${tsv_files[@]}"; do
-	echo "    Extracting $1 from $f"
-	python preprocess.py $f $1 >> $TMP_FILE
+    for filename in "${array_of_files[@]}"; do
+	echo "    Extracting $1 from $filename"
+	python3 ${SCRIPT_DIR}/preprocess.py $filename $1 >> $TMP_FILE
     done
+    #python3 ${SCRIPT_DIR}/preprocess.py $2 $1 >> $TMP_FILE
 
     ##############################################
     # Generate the image file.
@@ -92,7 +98,7 @@ function do_histogram()
 
     # Run the python histogram command
     #python histogram.py $TMP_FILE $OFILE
-    python airr_histogram.py $1 $TMP_FILE $OFILE_BASE.png
+    python3 ${SCRIPT_DIR}/airr_histogram.py $1 $TMP_FILE $OFILE_BASE.png
     #convert $OFILE_BASE.png $OFILE_BASE.jpg
 
     # change permissions
@@ -103,8 +109,30 @@ function do_histogram()
     rm -f $TMP_FILE
 }
 
+function run_repertoire_analysis()
+# Parameters: $1 input files
+{
+	echo "Running a Repertoire Analysis on $1"
+	array_of_files=($1)
+	do_histogram v_call $array_of_files
+        do_histogram d_call $array_of_files
+        do_histogram j_call $array_of_files
+        do_histogram junction_aa_length $array_of_files
+        do_heatmap v_call j_call $array_of_files
+}
+
 # The Gateway provides information about the download in the file info.txt
 INFO_FILE=info.txt
+
+# Create a working directory for data processing
+WORKING_DIR="working_dir"
+mkdir -p ${WORKING_DIR}
+
+# Move the ZIP file to the working directory
+mv ${ZIP_FILE} ${WORKING_DIR}
+
+# Move into the working directory to do work...
+cd ${WORKING_DIR}
 
 ##############################################
 # uncompress zip file
@@ -115,23 +143,46 @@ unzip -o "$ZIP_FILE"
 # Determine the files to process. We extract the .tsv files from the info.txt
 tsv_files=( `cat $INFO_FILE | awk -F" " 'BEGIN {count=0} /tsv/ {if (count>0) printf(" %s",$1); else printf("%s", $1); count++}'` )
 
+SPLIT_FIELD="repertoire_id"
+
+for f in "${tsv_files[@]}"; do
+    echo "    Extracting ${SPLIT_FIELD} from $f"
+    repertoire_ids=( `python3 ${SCRIPT_DIR}/preprocess.py $f $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
+    for repertoire_id in "${repertoire_ids[@]}"; do
+        echo "File $f has repertoire_id = ${repertoire_id}"
+	base_dirname="${f%.*}"
+	echo $base_dirname
+	repertoire_dirname=${base_dirname}"_"${repertoire_id}
+	echo $repertoire_dirname
+	mkdir -p $repertoire_dirname
+	repertoire_tsvfile=${repertoire_dirname}".tsv"
+
+	python3 ${SCRIPT_DIR}/filter.py $f ${SPLIT_FIELD} ${repertoire_id} ${repertoire_dirname}/${repertoire_tsvfile}
+	
+	pushd ${repertoire_dirname}
+	
+	run_repertoire_analysis ${repertoire_tsvfile}
+
+	popd
+    done
+done
 # Run the stats for each of the VDJ calls.
-do_histogram v_call
-do_histogram d_call
-do_histogram j_call
-do_histogram junction_aa_length
-do_heatmap v_call j_call
+#do_histogram v_call
+#do_histogram d_call
+#do_histogram j_call
+#do_histogram junction_aa_length
+#do_heatmap v_call j_call
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
-echo "Removing original ZIP file $ZIP_FILE"
-rm -f $ZIP_FILE
-echo "Removing extracted files for each repository"
-for f in "${tsv_files[@]}"; do
-    echo "    Removing extracted file $f"
-    rm -f $f
-done
+#echo "Removing original ZIP file $ZIP_FILE"
+#rm -f $ZIP_FILE
+#echo "Removing extracted files for each repository"
+#for f in "${tsv_files[@]}"; do
+#    echo "    Removing extracted file $f"
+#    rm -f $f
+#done
 
 
 # Debugging output, print data/time when shell command is finished.
-echo "Histogram finished at: `date`"
+echo "Statistics finished at: `date`"
 
