@@ -101,8 +101,7 @@ class RestService extends Model
     /**
      * Returns the services which are enabled.
      *
-     * @param  array|null $field_list Fields to fetch. Fetches all fields by default.
-     *
+     * @param  array|null  $field_list  Fields to fetch. Fetches all fields by default.
      * @return array List of RestService objects
      */
     public static function findEnabled($field_list = ['*'])
@@ -122,8 +121,7 @@ class RestService extends Model
     /**
      * Returns the services which can be enabled.
      *
-     * @param  array|null $field_list Fields to fetch. Fetches all fields by default.
-     *
+     * @param  array|null  $field_list  Fields to fetch. Fetches all fields by default.
      * @return array List of RestService objects
      */
     public static function findAvailable($field_list = ['*'])
@@ -143,9 +141,8 @@ class RestService extends Model
     /**
      * Generates a JSON query for an ADC API service.
      *
-     * @param  array $filters Example: ["study.study_title" => "Immunoglobulin"]
-     * @param  array $query_parameters Example: ["facets" => "repertoire_id"]
-     *
+     * @param  array  $filters  Example: ["study.study_title" => "Immunoglobulin"]
+     * @param  array  $query_parameters  Example: ["facets" => "repertoire_id"]
      * @return string JSON
      */
     public static function generate_json_query($filters, $query_parameters = [])
