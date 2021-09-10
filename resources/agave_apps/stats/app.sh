@@ -12,7 +12,10 @@ fi
 module load scipy-stack
 
 # Get the script directory where all teh code is.
+pwd
 SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
+SCRIPT_DIR=`pwd`
+echo $SCRIPT_DIR
 
 # app variables (will be subsituted by AGAVE). If they don't exist
 # use command line arguments.
@@ -23,6 +26,10 @@ else
 fi
 
 function do_heatmap()
+#     $1,$2 are variable names to process
+#     $3 array of input files
+#     $4 name of processing object (use to tag file)
+#     $5 output directory 
 {
     # Temporary file for data
     TMP_FILE=tmp.tsv
@@ -57,7 +64,7 @@ function do_heatmap()
     echo "$2"
     echo "$xvals"
     echo "$yvals"
-    OFILE=report-$1-$2-heatmap.png
+    OFILE=$4-$1-$2-heatmap.png
 
     # Generate the heatmap
     python3 ${SCRIPT_DIR}/airr_heatmap.py $1 $2 $xvals $yvals $TMP_FILE $OFILE
@@ -65,12 +72,19 @@ function do_heatmap()
     # change permissions
     chmod 644 "$OFILE"
 
+    # Move output file to output directory
+    mv $OFILE $5
+
     # Remove the temporary file.
     rm -f $TMP_FILE
 }
 
 function do_histogram()
-# Parameters: $1 is variable_name to process, $2 input files
+# Parameters:
+#     $1 is variable_name to process
+#     $2 array of input files
+#     $3 name of processing object (use to tag file)
+#     $4 output directory 
 {
     # Temporary file for data
     TMP_FILE=tmp.tsv
@@ -88,37 +102,41 @@ function do_histogram()
 
     ##############################################
     # Generate the image file.
-    OFILE_BASE="report-$1-histogram"
+    OFILE_BASE="$3-$1-histogram"
+    OFILE=${OFILE_BASE}.png
 
     # Debugging output
     echo "Histogram started at: `date`" 
     echo "Input file = $TMP_FILE"
     echo "Variable = $1"
-    echo "Output file = $OFILE_BASE.png"
+    echo "Output file = $OFILE"
 
     # Run the python histogram command
-    #python histogram.py $TMP_FILE $OFILE
-    python3 ${SCRIPT_DIR}/airr_histogram.py $1 $TMP_FILE $OFILE_BASE.png
-    #convert $OFILE_BASE.png $OFILE_BASE.jpg
+    python3 ${SCRIPT_DIR}/airr_histogram.py $1 $TMP_FILE $OFILE
 
     # change permissions
-    chmod 644 "$OFILE_BASE.png"
-    #chmod 644 "$OFILE_BASE.jpg"
+    chmod 644 $OFILE
+
+    # Move output file to output directory
+    mv $OFILE $4
 
     # Remove the temporary file.
     rm -f $TMP_FILE
 }
 
 function run_repertoire_analysis()
-# Parameters: $1 input files
+# Parameters:
+#     $1 input files
+#     $2 object name
+#     $3 output location
 {
 	echo "Running a Repertoire Analysis on $1"
 	array_of_files=($1)
-	do_histogram v_call $array_of_files
-        do_histogram d_call $array_of_files
-        do_histogram j_call $array_of_files
-        do_histogram junction_aa_length $array_of_files
-        do_heatmap v_call j_call $array_of_files
+	do_histogram v_call $array_of_files $2 $3
+        do_histogram d_call $array_of_files $2 $3
+        do_histogram j_call $array_of_files $2 $3
+        do_histogram junction_aa_length $array_of_files $2 $3
+        do_heatmap v_call j_call $array_of_files $2 $3
 }
 
 # The Gateway provides information about the download in the file info.txt
@@ -161,17 +179,16 @@ for f in "${tsv_files[@]}"; do
 	
 	pushd ${repertoire_dirname}
 	
-	run_repertoire_analysis ${repertoire_tsvfile}
+	run_repertoire_analysis ${repertoire_tsvfile} ${repertoire_dirname} ${SCRIPT_DIR}
 
 	popd
     done
 done
-# Run the stats for each of the VDJ calls.
-#do_histogram v_call
-#do_histogram d_call
-#do_histogram j_call
-#do_histogram junction_aa_length
-#do_heatmap v_call j_call
+
+cd ${SCRIPT_DIR}
+
+cp ${WORKING_DIR}/info.txt .
+cp ${WORKING_DIR}/*.json .
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
 #echo "Removing original ZIP file $ZIP_FILE"
