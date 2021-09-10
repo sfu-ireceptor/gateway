@@ -11,11 +11,9 @@ fi
 # Load the environment/modules needed.
 module load scipy-stack
 
-# Get the script directory where all teh code is.
-pwd
-SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
+# Get the script directory where all the code is.
 SCRIPT_DIR=`pwd`
-echo $SCRIPT_DIR
+echo "Running job from ${SCRIPT_DIR}"
 
 # app variables (will be subsituted by AGAVE). If they don't exist
 # use command line arguments.
