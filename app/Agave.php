@@ -89,8 +89,11 @@ class Agave
         return $t->access_token;
     }
 
-    public function renewToken($url, $refresh_token, $api_key, $api_secret)
+    public function renewToken($refresh_token)
     {
+        $api_key = config('services.agave.api_key');
+        $api_secret = config('services.agave.api_token');
+
         $headers = [];
         $headers['Content-Type'] = 'application/x-www-form-urlencoded';
 

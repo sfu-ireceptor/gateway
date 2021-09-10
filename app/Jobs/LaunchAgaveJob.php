@@ -119,10 +119,20 @@ class LaunchAgaveJob implements ShouldQueue
             $job->input_folder = $archive_folder;
             $job->save();
 
+            // refresh AGAVE token
+            $agave = new Agave;
+            $user = User::where('username', $gw_username)->first();
+            if ($user == null) {
+                throw new \Exception('User ' . $gw_username . ' could not be found in local database.');
+            }
+            $rt = $user->refresh_token;
+            $r = $agave->renewToken($rt);
+            $user->updateToken($r);
+            $user->save();
+            $this->token = $user->password;
+
             // submit AGAVE job
             $job->updateStatus('SENDING JOB TO AGAVE');
-
-            $agave = new Agave;
 
             $config = $agave->getJobConfig('irec-job-' . $this->jobId, $this->agaveAppId, $this->systemStaging, $this->notificationUrl, $archive_folder, $this->params, $inputs);
             $response = $agave->createJob($this->token, $config);
