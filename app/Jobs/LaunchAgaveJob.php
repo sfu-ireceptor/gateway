@@ -122,9 +122,9 @@ class LaunchAgaveJob implements ShouldQueue
 
             // refresh AGAVE token
             $agave = new Agave;
-            $user = User::where('username', $gw_username)->first();
+            $user = User::where('username', $this->gw_username)->first();
             if ($user == null) {
-                throw new \Exception('User ' . $gw_username . ' could not be found in local database.');
+                throw new \Exception('User ' . $this->gw_username . ' could not be found in local database.');
             }
             $rt = $user->refresh_token;
             $r = $agave->renewToken($rt);
