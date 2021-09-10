@@ -70,6 +70,7 @@ def getArguments():
     parser.add_argument("field_name")
     parser.add_argument("input_file")
     parser.add_argument("output_file")
+    parser.add_argument("title")
     parser.add_argument(
         "-v",
         "--verbose",
@@ -85,7 +86,7 @@ if __name__ == "__main__":
     # Perform the query analysis, gives us back the data
     data = performQueryAnalysis(options.input_file, options.field_name)
     # Graph the results if we got some...
-    title = options.field_name 
+    title = options.title 
     if not data is None:
         plotData(data, title, options.output_file)
     else:

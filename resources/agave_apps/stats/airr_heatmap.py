@@ -114,6 +114,7 @@ def getArguments():
     parser.add_argument("graph_yvalues")
     parser.add_argument("input_file")
     parser.add_argument("output_file")
+    parser.add_argument("title")
     parser.add_argument(
         "-v",
         "--verbose",
@@ -143,6 +144,7 @@ if __name__ == "__main__":
     data = performQueryAnalysis(options.input_file, options.api_xfield, options.api_yfield, xvalues, yvalues)
     # Graph the results
     title = options.api_xfield + " " + options.api_yfield + " Usage"
+    title = options.title
     plotData(data, xvalues, yvalues, title, options.output_file)
 
     # Return success
