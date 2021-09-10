@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Agave;
 use App\Job;
+use App\User;
 use App\LocalJob;
 use App\Query;
 use App\Sequence;
