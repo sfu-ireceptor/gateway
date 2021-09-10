@@ -26,8 +26,9 @@ fi
 function do_heatmap()
 #     $1,$2 are variable names to process
 #     $3 array of input files
-#     $4 name of processing object (use to tag file)
-#     $5 output directory 
+#     $4 output directory 
+#     $5 name of processing object (use to tag file)
+#     $6 title of processing object (use in title of graph)
 {
     # Temporary file for data
     TMP_FILE=tmp.tsv
@@ -62,16 +63,16 @@ function do_heatmap()
     echo "$2"
     echo "$xvals"
     echo "$yvals"
-    OFILE=$4-$1-$2-heatmap.png
+    OFILE=$5-$1-$2-heatmap.png
 
     # Generate the heatmap
-    python3 ${SCRIPT_DIR}/airr_heatmap.py $1 $2 $xvals $yvals $TMP_FILE $OFILE
+    python3 ${SCRIPT_DIR}/airr_heatmap.py $1 $2 $xvals $yvals $TMP_FILE $OFILE "$6($1,$2)"
 
     # change permissions
     chmod 644 "$OFILE"
 
     # Move output file to output directory
-    mv $OFILE $5
+    mv $OFILE $4
 
     # Remove the temporary file.
     rm -f $TMP_FILE
@@ -81,8 +82,9 @@ function do_histogram()
 # Parameters:
 #     $1 is variable_name to process
 #     $2 array of input files
-#     $3 name of processing object (use to tag file)
-#     $4 output directory 
+#     $3 output directory 
+#     $4 name of processing object (use to tag file)
+#     $5 title of processing object (use in title of graph)
 {
     # Temporary file for data
     TMP_FILE=tmp.tsv
@@ -96,11 +98,10 @@ function do_histogram()
 	echo "    Extracting $1 from $filename"
 	python3 ${SCRIPT_DIR}/preprocess.py $filename $1 >> $TMP_FILE
     done
-    #python3 ${SCRIPT_DIR}/preprocess.py $2 $1 >> $TMP_FILE
 
     ##############################################
     # Generate the image file.
-    OFILE_BASE="$3-$1-histogram"
+    OFILE_BASE="$4-$1-histogram"
     OFILE=${OFILE_BASE}.png
 
     # Debugging output
@@ -110,13 +111,13 @@ function do_histogram()
     echo "Output file = $OFILE"
 
     # Run the python histogram command
-    python3 ${SCRIPT_DIR}/airr_histogram.py $1 $TMP_FILE $OFILE
+    python3 ${SCRIPT_DIR}/airr_histogram.py $1 $TMP_FILE $OFILE "$5,$1"
 
     # change permissions
     chmod 644 $OFILE
 
     # Move output file to output directory
-    mv $OFILE $4
+    mv $OFILE $3
 
     # Remove the temporary file.
     rm -f $TMP_FILE
@@ -125,16 +126,17 @@ function do_histogram()
 function run_repertoire_analysis()
 # Parameters:
 #     $1 input files
-#     $2 object name
-#     $3 output location
+#     $2 output location
+#     $3 graph file string
+#     $4 graph title
 {
 	echo "Running a Repertoire Analysis on $1"
 	array_of_files=($1)
-	do_histogram v_call $array_of_files $2 $3
-        do_histogram d_call $array_of_files $2 $3
-        do_histogram j_call $array_of_files $2 $3
-        do_histogram junction_aa_length $array_of_files $2 $3
-        do_heatmap v_call j_call $array_of_files $2 $3
+	do_histogram v_call $array_of_files $2 $3 $4
+        do_histogram d_call $array_of_files $2 $3 $4
+        do_histogram j_call $array_of_files $2 $3 $4
+        do_histogram junction_aa_length $array_of_files $2 $3 $4
+        do_heatmap v_call j_call $array_of_files $2 $3 $4
 }
 
 # The Gateway provides information about the download in the file info.txt
@@ -164,20 +166,26 @@ SPLIT_FIELD="repertoire_id"
 for f in "${tsv_files[@]}"; do
     echo "    Extracting ${SPLIT_FIELD} from $f"
     repertoire_ids=( `python3 ${SCRIPT_DIR}/preprocess.py $f $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
+    base_name="${f%.*}"
+    json_file=${base_name}.json
     for repertoire_id in "${repertoire_ids[@]}"; do
         echo "File $f has repertoire_id = ${repertoire_id}"
-	base_dirname="${f%.*}"
-	echo $base_dirname
-	repertoire_dirname=${base_dirname}"_"${repertoire_id}
-	echo $repertoire_dirname
+	repertoire_dirname=${base_name}"_"${repertoire_id}
 	mkdir -p $repertoire_dirname
 	repertoire_tsvfile=${repertoire_dirname}".tsv"
+
+	repertoire_string=`python3 ${SCRIPT_DIR}/repertoire_summary.py ${base_name}-metadata.json ${repertoire_id} --separator "_"`
+	repertoire_string=${base_name}_${repertoire_string// /}
+	title="$(python3 ${SCRIPT_DIR}/repertoire_summary.py ${base_name}-metadata.json ${repertoire_id})"
+	title=${title// /}
+	echo $title
+	
 
 	python3 ${SCRIPT_DIR}/filter.py $f ${SPLIT_FIELD} ${repertoire_id} ${repertoire_dirname}/${repertoire_tsvfile}
 	
 	pushd ${repertoire_dirname}
 	
-	run_repertoire_analysis ${repertoire_tsvfile} ${repertoire_dirname} ${SCRIPT_DIR}
+	run_repertoire_analysis ${repertoire_tsvfile} ${SCRIPT_DIR} ${repertoire_string} ${title}
 
 	popd
     done
