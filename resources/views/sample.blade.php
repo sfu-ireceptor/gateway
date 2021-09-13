@@ -290,7 +290,15 @@
 				@if (empty($sample_list))
 					<div class="no_results">
 						<h2>No Results</h2>
-						<p>Remove a filter or <a href="/samples">remove all filters</a> to return results.</p>
+						@if ( ($rs_list_no_response_str != '') || ($rs_list_sequence_count_error_str != ''))
+							<div class="alert alert-warning" role="alert">
+								{!! $rs_list_no_response_str !!}
+								{!! $rs_list_sequence_count_error_str !!}
+							</div>
+						@endif
+						@if ( ! empty($filter_fields))
+							<p>Remove a filter or <a href="/samples">remove all filters</a> to return results.</p>
+						@endif
 						<p>For more information, go to our <a href="http://ireceptor.org/platform/doc/faq" class="external" target="_blank"> FAQ (Frequently Asked Questions)</a></p>			
 					</div>
 				@else
