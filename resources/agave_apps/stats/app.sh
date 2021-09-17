@@ -143,7 +143,7 @@ function run_repertoire_analysis()
 INFO_FILE=info.txt
 
 # Create a working directory for data processing
-WORKING_DIR="working_dir"
+WORKING_DIR="analysis_output"
 mkdir -p ${WORKING_DIR}
 
 # Move the ZIP file to the working directory
@@ -166,28 +166,33 @@ SPLIT_FIELD="repertoire_id"
 for f in "${tsv_files[@]}"; do
     echo "    Extracting ${SPLIT_FIELD} from $f"
     repertoire_ids=( `python3 ${SCRIPT_DIR}/preprocess.py $f $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
-    base_name="${f%.*}"
-    json_file=${base_name}.json
+    repository_name="${f%.*}"
+    mkdir -p ${repository_name}
+    json_file=${repository_name}-metadata.json
+    echo "JSON file = ${json_file}"
     for repertoire_id in "${repertoire_ids[@]}"; do
         echo "File $f has repertoire_id = ${repertoire_id}"
-	repertoire_dirname=${base_name}"_"${repertoire_id}
-	mkdir -p $repertoire_dirname
+	repertoire_dirname=${repertoire_id}
+	mkdir -p ${repository_name}/${repertoire_dirname}
 	repertoire_tsvfile=${repertoire_dirname}".tsv"
 
-	repertoire_string=`python3 ${SCRIPT_DIR}/repertoire_summary.py ${base_name}-metadata.json ${repertoire_id} --separator "_"`
-	repertoire_string=${base_name}_${repertoire_string// /}
-	title="$(python3 ${SCRIPT_DIR}/repertoire_summary.py ${base_name}-metadata.json ${repertoire_id})"
+	repertoire_string=`python3 ${SCRIPT_DIR}/repertoire_summary.py ${repository_name}-metadata.json ${repertoire_id} --separator "_"`
+	repertoire_string=${repository_name}_${repertoire_string// /}
+	title="$(python3 ${SCRIPT_DIR}/repertoire_summary.py ${json_file} ${repertoire_id})"
 	title=${title// /}
 	echo $title
 	
-
-	python3 ${SCRIPT_DIR}/filter.py $f ${SPLIT_FIELD} ${repertoire_id} ${repertoire_dirname}/${repertoire_tsvfile}
+        # filename, field_name, field_value, outfile
+	python3 ${SCRIPT_DIR}/filter.py $f ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_tsvfile}
 	
-	pushd ${repertoire_dirname}
 	
-	run_repertoire_analysis ${repertoire_tsvfile} ${SCRIPT_DIR} ${repertoire_string} ${title}
+	#run_repertoire_analysis ${repertoire_tsvfile} ${SCRIPT_DIR} ${repertoire_string} ${title}
+        #     $1 input files
+        #     $2 output location
+        #     $3 graph file string
+        #     $4 graph title
+	run_repertoire_analysis ${repository_name}/${repertoire_dirname}/${repertoire_tsvfile} ${repository_name}/${repertoire_dirname} ${repertoire_string} ${title}
 
-	popd
     done
 done
 
