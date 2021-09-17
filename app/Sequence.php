@@ -606,12 +606,12 @@ class Sequence
 
     public static function generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
-	# Name of the file we are generating for the download
-	$manifest_file = 'airr_manifest.json';
+        // Name of the file we are generating for the download
+        $manifest_file = 'airr_manifest.json';
 
-	# Create the opening object in the JSON file
+        // Create the opening object in the JSON file
         $s = '{\n';
-	# Create the Info block
+        // Create the Info block
         $s .= '  "Info":{},\n';
 
         $nb_sequences_total = 0;
@@ -622,101 +622,105 @@ class Sequence
         }
 
         $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
-	/*
-        if ($is_download_incomplete) {
-            $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
-            $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "\n";
-        } else {
-            $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
-        }
-	 */
+        /*
+            if ($is_download_incomplete) {
+                $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
+                $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "\n";
+            } else {
+                $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
+            }
+         */
 
-	# Create the DataSets block
+        // Create the DataSets block
         $s .= '  "DataSets":[\n';
-	$dataset_count = 0;
+        $dataset_count = 0;
         foreach ($file_stats as $t) {
             if ($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
-		if ($dataset_count != 0) { $s .= ',\n'; }
-		$s .= '    {"rearrangement_file":"' . $t['name'] . '"}';
+                if ($dataset_count != 0) {
+                    $s .= ',\n';
+                }
+                $s .= '    {"rearrangement_file":"' . $t['name'] . '"}';
             } else {
-		if ($dataset_count != 0) { $s .= ',\n'; }
-		$s .= '    {"rearrangement_file":"' . $t['name'] . '"}';
+                if ($dataset_count != 0) {
+                    $s .= ',\n';
+                }
+                $s .= '    {"rearrangement_file":"' . $t['name'] . '"}';
             }
-	    $dataset_count++;
+            $dataset_count++;
         }
         $s .= '  ]\n';
 
-	/*
-        if (! empty($failed_rs)) {
-            $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "\n";
-            foreach ($failed_rs as $rs) {
-                $s .= $rs->name . "\n";
+        /*
+            if (! empty($failed_rs)) {
+                $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "\n";
+                foreach ($failed_rs as $rs) {
+                    $s .= $rs->name . "\n";
+                }
             }
-        }
 
-        $s .= "\n";
+            $s .= "\n";
 
-        $s .= '<b>Metadata filters</b>' . "\n";
-        Log::debug($sample_filters);
-        if (count($sample_filters) == 0) {
-            $s .= 'None' . "\n";
-        }
-        foreach ($sample_filters as $k => $v) {
-            if (is_array($v)) {
-                $v = implode(' or ', $v);
+            $s .= '<b>Metadata filters</b>' . "\n";
+            Log::debug($sample_filters);
+            if (count($sample_filters) == 0) {
+                $s .= 'None' . "\n";
             }
-            // use human-friendly filter name
-            $s .= __('short.' . $k) . ': ' . $v . "\n";
-        }
-        $s .= "\n";
-
-        $s .= '<b>Sequence filters</b>' . "\n";
-        unset($filters['ir_project_sample_id_list']);
-        unset($filters['cols']);
-        unset($filters['filters_order']);
-        unset($filters['sample_query_id']);
-        unset($filters['open_filter_panel_list']);
-        unset($filters['username']);
-        unset($filters['ir_username']);
-        unset($filters['ir_data_format']);
-        unset($filters['output']);
-        unset($filters['tsv']);
-        foreach (RestService::findEnabled() as $rs) {
-            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-            unset($filters[$sample_id_list_key]);
-        }
-
-        foreach ($filters as $k => $v) {
-            if ($v === null) {
-                unset($filters[$k]);
+            foreach ($sample_filters as $k => $v) {
+                if (is_array($v)) {
+                    $v = implode(' or ', $v);
+                }
+                // use human-friendly filter name
+                $s .= __('short.' . $k) . ': ' . $v . "\n";
             }
-        }
+            $s .= "\n";
 
-        Log::debug($filters);
-        if (count($filters) == 0) {
-            $s .= 'None' . "\n";
-        }
-        foreach ($filters as $k => $v) {
-            if (is_array($v)) {
-                $v = implode(' or ', $v);
+            $s .= '<b>Sequence filters</b>' . "\n";
+            unset($filters['ir_project_sample_id_list']);
+            unset($filters['cols']);
+            unset($filters['filters_order']);
+            unset($filters['sample_query_id']);
+            unset($filters['open_filter_panel_list']);
+            unset($filters['username']);
+            unset($filters['ir_username']);
+            unset($filters['ir_data_format']);
+            unset($filters['output']);
+            unset($filters['tsv']);
+            foreach (RestService::findEnabled() as $rs) {
+                $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+                unset($filters[$sample_id_list_key]);
             }
-            // use human-friendly filter name
-            $s .= __('short.' . $k) . ': ' . $v . "\n";
-        }
-        $s .= "\n";
 
-        $s .= '<b>Source</b>' . "\n";
-        $s .= $url . "\n";
-        $date_str_human = date('M j, Y', $now);
-        $time_str_human = date('H:i T', $now);
-        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "\n";
-	*/
-	// Done the JSON file.
+            foreach ($filters as $k => $v) {
+                if ($v === null) {
+                    unset($filters[$k]);
+                }
+            }
+
+            Log::debug($filters);
+            if (count($filters) == 0) {
+                $s .= 'None' . "\n";
+            }
+            foreach ($filters as $k => $v) {
+                if (is_array($v)) {
+                    $v = implode(' or ', $v);
+                }
+                // use human-friendly filter name
+                $s .= __('short.' . $k) . ': ' . $v . "\n";
+            }
+            $s .= "\n";
+
+            $s .= '<b>Source</b>' . "\n";
+            $s .= $url . "\n";
+            $date_str_human = date('M j, Y', $now);
+            $time_str_human = date('H:i T', $now);
+            $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "\n";
+        */
+        // Done the JSON file.
         $s .= '}\n';
 
         $manifest_file_path = $folder_path . '/' . $manifest_file;
         file_put_contents($manifest_file_path, $s);
-	Log::debug("Writing manifest " . $manifest_file_path);
+        Log::debug('Writing manifest ' . $manifest_file_path);
 
         return $manifest_file_path;
     }
