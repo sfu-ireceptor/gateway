@@ -274,12 +274,15 @@ class Sequence
 
         // generate info.txt
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
+        // generate manifest.json
+        $manifest_file_path = self::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
 
         $t = [];
         $t['folder_path'] = $folder_path;
         $t['response_list'] = $response_list;
         $t['metadata_response_list'] = $metadata_response_list;
         $t['info_file_path'] = $info_file_path;
+        $t['manifest_file_path'] = $manifest_file_path;
         $t['is_download_incomplete'] = $is_download_incomplete;
         $t['download_incomplete_info'] = $download_incomplete_info;
         $t['file_stats'] = $file_stats;
@@ -295,12 +298,13 @@ class Sequence
         $response_list = $t['response_list'];
         $metadata_response_list = $t['metadata_response_list'];
         $info_file_path = $t['info_file_path'];
+        $manifest_file_path = $t['manifest_file_path'];
         $is_download_incomplete = $t['is_download_incomplete'];
         $download_incomplete_info = $t['download_incomplete_info'];
         $file_stats = $t['file_stats'];
 
         // zip files
-        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path);
+        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path);
 
         // delete files - TODO not working, to fix
         // self::delete_files($folder_path);
@@ -600,7 +604,124 @@ class Sequence
         return $info_file_path;
     }
 
-    public static function zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path)
+    public static function generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
+    {
+	# Name of the file we are generating for the download
+	$manifest_file = 'airr_manifest.json';
+
+	# Create the opening object in the JSON file
+        $s = '{\n';
+	# Create the Info block
+        $s .= '  "Info":{},\n';
+
+        $nb_sequences_total = 0;
+        $expected_nb_sequences_total = 0;
+        foreach ($file_stats as $t) {
+            $nb_sequences_total += $t['nb_sequences'];
+            $expected_nb_sequences_total += $t['expected_nb_sequences'];
+        }
+
+        $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
+	/*
+        if ($is_download_incomplete) {
+            $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
+            $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "\n";
+        } else {
+            $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
+        }
+	 */
+
+	# Create the DataSets block
+        $s .= '  "DataSets":[\n';
+	$dataset_count = 0;
+        foreach ($file_stats as $t) {
+            if ($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
+		if ($dataset_count != 0) { $s .= ',\n'; }
+		$s .= '    {"rearrangement_file":"' . $t['name'] . '"}';
+            } else {
+		if ($dataset_count != 0) { $s .= ',\n'; }
+		$s .= '    {"rearrangement_file":"' . $t['name'] . '"}';
+            }
+	    $dataset_count++;
+        }
+        $s .= '  ]\n';
+
+	/*
+        if (! empty($failed_rs)) {
+            $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "\n";
+            foreach ($failed_rs as $rs) {
+                $s .= $rs->name . "\n";
+            }
+        }
+
+        $s .= "\n";
+
+        $s .= '<b>Metadata filters</b>' . "\n";
+        Log::debug($sample_filters);
+        if (count($sample_filters) == 0) {
+            $s .= 'None' . "\n";
+        }
+        foreach ($sample_filters as $k => $v) {
+            if (is_array($v)) {
+                $v = implode(' or ', $v);
+            }
+            // use human-friendly filter name
+            $s .= __('short.' . $k) . ': ' . $v . "\n";
+        }
+        $s .= "\n";
+
+        $s .= '<b>Sequence filters</b>' . "\n";
+        unset($filters['ir_project_sample_id_list']);
+        unset($filters['cols']);
+        unset($filters['filters_order']);
+        unset($filters['sample_query_id']);
+        unset($filters['open_filter_panel_list']);
+        unset($filters['username']);
+        unset($filters['ir_username']);
+        unset($filters['ir_data_format']);
+        unset($filters['output']);
+        unset($filters['tsv']);
+        foreach (RestService::findEnabled() as $rs) {
+            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+            unset($filters[$sample_id_list_key]);
+        }
+
+        foreach ($filters as $k => $v) {
+            if ($v === null) {
+                unset($filters[$k]);
+            }
+        }
+
+        Log::debug($filters);
+        if (count($filters) == 0) {
+            $s .= 'None' . "\n";
+        }
+        foreach ($filters as $k => $v) {
+            if (is_array($v)) {
+                $v = implode(' or ', $v);
+            }
+            // use human-friendly filter name
+            $s .= __('short.' . $k) . ': ' . $v . "\n";
+        }
+        $s .= "\n";
+
+        $s .= '<b>Source</b>' . "\n";
+        $s .= $url . "\n";
+        $date_str_human = date('M j, Y', $now);
+        $time_str_human = date('H:i T', $now);
+        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "\n";
+	*/
+	// Done the JSON file.
+        $s .= '}\n';
+
+        $manifest_file_path = $folder_path . '/' . $manifest_file;
+        file_put_contents($manifest_file_path, $s);
+	Log::debug("Writing manifest " . $manifest_file_path);
+
+        return $manifest_file_path;
+    }
+
+    public static function zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path)
     {
         $zipPath = $folder_path . '.zip';
         Log::info('Zip files to ' . $zipPath);
@@ -630,7 +751,10 @@ class Sequence
                 $zip->addFile($file_path, basename($file_path));
             }
         }
+        Log::debug('Adding to ZIP: ' . $info_file_path);
         $zip->addFile($info_file_path, basename($info_file_path));
+        Log::debug('Adding to ZIP: ' . $manifest_file_path);
+        $zip->addFile($manifest_file_path, basename($manifest_file_path));
         $zip->close();
 
         return $zipPath;
