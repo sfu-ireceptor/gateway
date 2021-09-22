@@ -108,7 +108,7 @@ class FieldName extends Model
         $l['SampleProcessing'] = 'Sample Processing';
         $l['RawSequenceData'] = 'Raw Sequence Data';
         $l['PCRTarget'] = 'PCR Target';
-        
+
         $l['Genotype'] = 'Genotype';
         $l['MHCGenotype'] = 'MHCGenotype';
         $l['GenotypeSet'] = 'GenotypeSet';
