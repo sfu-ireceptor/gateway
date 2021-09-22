@@ -3,12 +3,28 @@
 		<h4>Study</h4>
 		<p>
 			<strong>@lang('short.study_title'):</strong>
-			{{ $sample->study_title }}
+			@isset($sample->study_url)
+				<a href="{{ $sample->study_url }}" target="_blank">
+					{{ $sample->study_title }}
+				</a>
+			@else
+				{{ $sample->study_title }}
+			@endisset
 		</p>
 		<p>
 			<strong>@lang('short.study_group_description'):</strong>
 			{{ $sample->study_group_description }}
 		</p>										
+		<p>
+			<strong>@lang('short.study_id'):</strong>
+			@isset($sample->ncbi_url)
+				<a href="{{ $sample->ncbi_url }}" title="{{ $sample->ncbi_url }}" target="_blank">
+					{{ $sample->study_id }}
+				</a>
+			@else
+				{{ $sample->study_id }}
+			@endisset
+		</p>
 	</div>
 	<div class="col-md-3">
 		<h4>Subject</h4>

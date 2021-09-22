@@ -197,6 +197,15 @@ fieldset {
 	text-align: left;
 }
 
+.stats_notification_container {
+	position: relative;
+}
+
+.stats_notification {
+	left: -132px;
+	top: -30px;
+}
+
 .filter_box {
 	list-style-type: none;
 	padding-left: 3px;

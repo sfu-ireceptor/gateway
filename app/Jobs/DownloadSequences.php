@@ -14,6 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -95,7 +96,9 @@ class DownloadSequences implements ShouldQueue
         $t = Sequence::sequencesTSV($filters, $this->username, $this->url, $sample_filter_fields);
         $file_path = $t['public_path'];
         $this->download->file_url = $file_path;
+        $this->download->file_size = filesize($t['system_path']);
 
+        $this->download->incomplete = false;
         if ($t['is_download_incomplete']) {
             $this->download->incomplete = true;
             $this->download->incomplete_info = $t['download_incomplete_info'];
@@ -126,8 +129,23 @@ class DownloadSequences implements ShouldQueue
             $message->to($email)->subject('[iReceptor] Your download from ' . $date_str . ' is ready');
         });
 
-        $localJob->setFinished();
+        if ($this->download->incomplete) {
+            // email notification to iReceptor support
+            if (App::environment() == 'production') {
+                $username = $this->username;
 
+                $t = [];
+                $t['username'] = $username;
+                $t['error_message'] = 'Incomplete download';
+                $t['user_query_admin_page_url'] = config('app.url') . '/admin/queries/' . $query_log_id;
+
+                Mail::send(['text' => 'emails.data_query_error'], $t, function ($message) use ($username) {
+                    $message->to(config('ireceptor.email_support'))->subject('Gateway Sequence Download Incomplete for ' . $username);
+                });
+            }
+        }
+
+        $localJob->setFinished();
         QueryLog::end_job($query_log_id);
     }
 
@@ -143,7 +161,7 @@ class DownloadSequences implements ShouldQueue
         $this->download->end_date = Carbon::now();
         $this->download->save();
 
-        // send notification email
+        // email notification to user
         $agave = new Agave;
         $token = $agave->getAdminToken();
         $user = $agave->getUserWithUsername($this->username, $token);
@@ -160,6 +178,21 @@ class DownloadSequences implements ShouldQueue
 
         $error_message = $e->getMessage();
         $query_log_id = QueryLog::get_query_log_id();
+
+        // email notification to iReceptor support
+        if (App::environment() == 'production') {
+            $username = $this->username;
+
+            $t = [];
+            $t['username'] = $username;
+            $t['error_message'] = $error_message;
+            $t['user_query_admin_page_url'] = config('app.url') . '/admin/queries/' . $query_log_id;
+
+            Mail::send(['text' => 'emails.data_query_error'], $t, function ($message) use ($username) {
+                $message->to(config('ireceptor.email_support'))->subject('Gateway Sequence Download Error for ' . $username);
+            });
+        }
+
         QueryLog::end_job($query_log_id, 'error', $error_message);
     }
 }

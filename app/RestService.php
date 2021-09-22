@@ -101,8 +101,7 @@ class RestService extends Model
     /**
      * Returns the services which are enabled.
      *
-     * @param  array|null $field_list Fields to fetch. Fetches all fields by default.
-     *
+     * @param  array|null  $field_list  Fields to fetch. Fetches all fields by default.
      * @return array List of RestService objects
      */
     public static function findEnabled($field_list = ['*'])
@@ -122,8 +121,7 @@ class RestService extends Model
     /**
      * Returns the services which can be enabled.
      *
-     * @param  array|null $field_list Fields to fetch. Fetches all fields by default.
-     *
+     * @param  array|null  $field_list  Fields to fetch. Fetches all fields by default.
      * @return array List of RestService objects
      */
     public static function findAvailable($field_list = ['*'])
@@ -143,9 +141,8 @@ class RestService extends Model
     /**
      * Generates a JSON query for an ADC API service.
      *
-     * @param  array $filters Example: ["study.study_title" => "Immunoglobulin"]
-     * @param  array $query_parameters Example: ["facets" => "repertoire_id"]
-     *
+     * @param  array  $filters  Example: ["study.study_title" => "Immunoglobulin"]
+     * @param  array  $query_parameters  Example: ["facets" => "repertoire_id"]
      * @return string JSON
      */
     public static function generate_json_query($filters, $query_parameters = [])
@@ -253,6 +250,7 @@ class RestService extends Model
         unset($filters['cols']);
         unset($filters['open_filter_panel_list']);
         unset($filters['full_text_search']);
+        unset($filters['ir_sequence_count']);
         unset($filters['filters_order']);
         unset($filters['sample_query_id']);
         unset($filters['sort_column']);
@@ -551,9 +549,10 @@ class RestService extends Model
         // build list of sequence filters only (remove sample id filters)
         $sequence_filters = $filters;
         unset($sequence_filters['project_id_list']);
-        foreach (self::findEnabled() as $rs) {
-            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-            unset($sequence_filters[$sample_id_list_key]);
+        foreach ($sequence_filters as $key => $value) {
+            if (starts_with($key, 'ir_project_sample_id_list_')) {
+                unset($sequence_filters[$key]);
+            }
         }
 
         Log::debug('Sequence filters (only):');
@@ -593,7 +592,12 @@ class RestService extends Model
 
             if ($counts_by_rs[$rs->id]['samples'] == null) {
                 $response['status'] = 'error';
-                $response['error_type'] = $counts_by_rs[$rs->id]['error_type'];
+
+                if (isset($counts_by_rs[$rs->id]['error_type'])) {
+                    $response['error_type'] = $counts_by_rs[$rs->id]['error_type'];
+                } else {
+                    $response['error_type'] = 'error';
+                }
 
                 // include this response so the error is reported
                 $response_list_filtered[] = $response;

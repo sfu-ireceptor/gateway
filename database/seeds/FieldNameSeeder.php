@@ -2,6 +2,7 @@
 
 use App\FieldName;
 use Flynsarmy\CsvSeeder\CsvSeeder;
+use Illuminate\Support\Facades\DB;
 
 class FieldNameSeeder extends CsvSeeder
 {
@@ -15,36 +16,38 @@ class FieldNameSeeder extends CsvSeeder
 
     public function run()
     {
-        // delete existing data
-        DB::table($this->table)->truncate();
+        DB::transaction(function () {
+            // delete existing data
+            DB::table($this->table)->truncate();
 
-        $this->mapping = [
-            0 => 'ir_id',
-            1 => 'ir_full',
-            2 => 'ir_short',
-            14 => 'airr',
-            15 => 'airr_full',
-            18  => 'ir_class',
-            19 => 'ir_subclass',
-            20 => 'ir_adc_api_query',
-            21 => 'ir_adc_api_response',
-            23 => 'airr_type',
-            24 => 'airr_description',
-            29 => 'airr_example',
-            41 => 'ir_api_input_type',
-        ];
+            $this->mapping = [
+                0 => 'ir_id',
+                1 => 'ir_full',
+                2 => 'ir_short',
+                15 => 'airr',
+                16 => 'airr_full',
+                19  => 'ir_class',
+                20 => 'ir_subclass',
+                21 => 'ir_adc_api_query',
+                22 => 'ir_adc_api_response',
+                24 => 'airr_type',
+                25 => 'airr_description',
+                30 => 'airr_example',
+                42 => 'ir_api_input_type',
+            ];
 
-        parent::run();
+            parent::run();
 
-        // delete any empty rows
-        DB::table($this->table)->whereNull('ir_id')->delete();
+            // delete any empty rows
+            DB::table($this->table)->whereNull('ir_id')->delete();
 
-        // add extra fields (gateway specific)
-        $this->add_gateway_specific_fields();
+            // add extra fields (gateway specific)
+            $this->add_gateway_specific_fields();
 
-        // define default fields and their order
-        $this->define_default_sample_fields();
-        $this->define_default_sequence_fields();
+            // define default fields and their order
+            $this->define_default_sample_fields();
+            $this->define_default_sequence_fields();
+        });
     }
 
     public function add_gateway_specific_fields()

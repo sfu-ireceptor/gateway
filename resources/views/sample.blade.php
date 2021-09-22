@@ -290,7 +290,15 @@
 				@if (empty($sample_list))
 					<div class="no_results">
 						<h2>No Results</h2>
-						<p>Remove a filter or <a href="/samples">remove all filters</a> to return results.</p>
+						@if ( ($rs_list_no_response_str != '') || ($rs_list_sequence_count_error_str != ''))
+							<div class="alert alert-warning" role="alert">
+								{!! $rs_list_no_response_str !!}
+								{!! $rs_list_sequence_count_error_str !!}
+							</div>
+						@endif
+						@if ( ! empty($filter_fields))
+							<p>Remove a filter or <a href="/samples">remove all filters</a> to return results.</p>
+						@endif
 						<p>For more information, go to our <a href="http://ireceptor.org/platform/doc/faq" class="external" target="_blank"> FAQ (Frequently Asked Questions)</a></p>			
 					</div>
 				@else
@@ -439,11 +447,19 @@
 						<tr>
 							<td class="stats">
 								@if(isset($sample->stats) && $sample->stats)
-									<a href="#modal_stats" class="{{ isset($sample->show_stats_notification) ? 'stats_available_notification' : ''}}" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-name="{{ $sample->subject_id }} - {{ $sample->sample_id }} - {{ $sample->pcr_target_locus }}" data-toggle="modal" data-target="#statsModal">
+									<a href="#modal_stats" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-name="{{ $sample->subject_id }} - {{ $sample->sample_id }} - {{ $sample->pcr_target_locus }}" data-toggle="modal" data-target="#statsModal">
 										<span class="label label-primary">
 											<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
 										</span>
 									</a>
+									@if(isset($sample->show_stats_notification))
+										<div class="stats_notification_container">
+											<div class="tooltip left in stats_notification" style="display: block;">
+												<div class="tooltip-arrow" style="top: 50%;"></div>
+												<div class="tooltip-inner">Repertoire statistics<br>are now available.</div>
+											</div>
+										</div>
+									@endif
 								@endif						
 							</td>
 							@foreach ($field_list as $field)

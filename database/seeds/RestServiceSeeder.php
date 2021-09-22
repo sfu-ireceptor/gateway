@@ -106,7 +106,7 @@ class RestServiceSeeder extends Seeder
                 'name' => 'Stats Demo',
             ],
             [
-                'url' => 'https://pangaea.scireptor.net/airr/v1/',
+                'url' => 'https://scireptor.dkfz.de/airr/v1/',
                 'name' => 'sciReptor',
             ],
             [
@@ -118,8 +118,12 @@ class RestServiceSeeder extends Seeder
                 'name' => 'VDJbase',
             ],
             [
-                'url' => 'https://pangaea.scireptor.net:51431/airr/v1/',
-                'name' => 'sciReptor Staging',
+                'url' => 'http://secure.ireceptor.org/middleware/airr/v1/',
+                'name' => 'Secure IPA1',
+            ],
+            [
+                'url' => 'http://154.127.124.38:2222/airr/v1/',
+                'name' => 'NICD - South Africa',
             ],
         ];
 
