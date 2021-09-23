@@ -166,11 +166,11 @@ class Sequence
         umask($old);
         // File::makeDirectory($folder_path, 0777, true, true);
 
-	// Get the response from the metadata query.
+        // Get the response from the metadata query.
         $metadata_response_list = RestService::sample_list_repertoire_data($filters, $folder_path, $username);
         $response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_sequences_by_rs);
 
-	// Get a list of file information as a block of data.
+        // Get a list of file information as a block of data.
         $file_stats = self::file_stats($response_list, $metadata_response_list, $expected_nb_sequences_by_rs);
 
         // if some files are incomplete, log it
@@ -646,7 +646,7 @@ class Sequence
                 }
                 $s .= '    {"repertoire_file":["' . $t['metadata_name'] . '"], "rearrangement_file":["' . $t['name'] . '"]}';
             }
-	    Log::debug("Manifest dataset = " . $t['metadata_name'] . ", " . $t['name']);
+            Log::debug('Manifest dataset = ' . $t['metadata_name'] . ', ' . $t['name']);
             $dataset_count++;
         }
         $s .= "\n  ]\n";
@@ -787,17 +787,17 @@ class Sequence
                 $t['rs_url'] = $response['rs']->url;
                 $t['size'] = human_filesize($file_path);
 
-		// Get the associated repertoire file
-		foreach ($metadata_response_list as $metadata_response) {
-		    // If the service IDs match, then the files match
-			if ($rest_service_id == $metadata_response['rs']->id) {
-			// If there is a file path, keep track of the metadata file
+                // Get the associated repertoire file
+                foreach ($metadata_response_list as $metadata_response) {
+                    // If the service IDs match, then the files match
+                    if ($rest_service_id == $metadata_response['rs']->id) {
+                        // If there is a file path, keep track of the metadata file
                         if (isset($metadata_response['data']['file_path'])) {
-		            $metadata_file_path = $metadata_response['data']['file_path'];
-			    $t['metadata_name'] = basename($metadata_file_path);
-			}
-		    }
-		}
+                            $metadata_file_path = $metadata_response['data']['file_path'];
+                            $t['metadata_name'] = basename($metadata_file_path);
+                        }
+                    }
+                }
 
                 // count number of lines
                 $n = 0;
