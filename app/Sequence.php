@@ -166,10 +166,12 @@ class Sequence
         umask($old);
         // File::makeDirectory($folder_path, 0777, true, true);
 
+	// Get the response from the metadata query.
         $metadata_response_list = RestService::sample_list_repertoire_data($filters, $folder_path, $username);
         $response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_sequences_by_rs);
 
-        $file_stats = self::file_stats($response_list, $expected_nb_sequences_by_rs);
+	// Get a list of file information as a block of data.
+        $file_stats = self::file_stats($response_list, $metadata_response_list, $expected_nb_sequences_by_rs);
 
         // if some files are incomplete, log it
         foreach ($file_stats as $t) {
@@ -544,7 +546,6 @@ class Sequence
         $s .= "\n";
 
         $s .= '<b>Metadata filters</b>' . "\n";
-        Log::debug($sample_filters);
         if (count($sample_filters) == 0) {
             $s .= 'None' . "\n";
         }
@@ -579,7 +580,6 @@ class Sequence
             }
         }
 
-        Log::debug($filters);
         if (count($filters) == 0) {
             $s .= 'None' . "\n";
         }
@@ -610,9 +610,9 @@ class Sequence
         $manifest_file = 'airr_manifest.json';
 
         // Create the opening object in the JSON file
-        $s = '{\n';
+        $s = "{\n";
         // Create the Info block
-        $s .= '  "Info":{},\n';
+        $s .= '  "Info":{},' . "\n";
 
         $nb_sequences_total = 0;
         $expected_nb_sequences_total = 0;
@@ -622,7 +622,7 @@ class Sequence
         }
 
         $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
-        /*
+        /* Keeping this in case we want to add more to manifest later.
             if ($is_download_incomplete) {
                 $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
                 $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "\n";
@@ -632,25 +632,26 @@ class Sequence
          */
 
         // Create the DataSets block
-        $s .= '  "DataSets":[\n';
+        $s .= '  "DataSets":[' . "\n";
         $dataset_count = 0;
         foreach ($file_stats as $t) {
             if ($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
                 if ($dataset_count != 0) {
-                    $s .= ',\n';
+                    $s .= ',' . "\n";
                 }
-                $s .= '    {"rearrangement_file":"' . $t['name'] . '"}';
+                $s .= '    {"repertoire_file":["' . $t['metadata_name'] . '"], "rearrangement_file":["' . $t['name'] . '"]}';
             } else {
                 if ($dataset_count != 0) {
-                    $s .= ',\n';
+                    $s .= ',' . "\n";
                 }
-                $s .= '    {"rearrangement_file":"' . $t['name'] . '"}';
+                $s .= '    {"repertoire_file":["' . $t['metadata_name'] . '"], "rearrangement_file":["' . $t['name'] . '"]}';
             }
+	    Log::debug("Manifest dataset = " . $t['metadata_name'] . ", " . $t['name']);
             $dataset_count++;
         }
-        $s .= '  ]\n';
+        $s .= "\n  ]\n";
 
-        /*
+        /* Keeping this in case we want to add more to manifest later.
             if (! empty($failed_rs)) {
                 $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "\n";
                 foreach ($failed_rs as $rs) {
@@ -716,7 +717,7 @@ class Sequence
             $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "\n";
         */
         // Done the JSON file.
-        $s .= '}\n';
+        $s .= '}' . "\n";
 
         $manifest_file_path = $folder_path . '/' . $manifest_file;
         file_put_contents($manifest_file_path, $s);
@@ -772,7 +773,7 @@ class Sequence
         }
     }
 
-    public static function file_stats($response_list, $expected_nb_sequences_by_rs)
+    public static function file_stats($response_list, $metadata_response_list, $expected_nb_sequences_by_rs)
     {
         Log::debug('Get TSV files stats');
         $file_stats = [];
@@ -785,6 +786,18 @@ class Sequence
                 $t['name'] = basename($file_path);
                 $t['rs_url'] = $response['rs']->url;
                 $t['size'] = human_filesize($file_path);
+
+		// Get the associated repertoire file
+		foreach ($metadata_response_list as $metadata_response) {
+		    // If the service IDs match, then the files match
+			if ($rest_service_id == $metadata_response['rs']->id) {
+			// If there is a file path, keep track of the metadata file
+                        if (isset($metadata_response['data']['file_path'])) {
+		            $metadata_file_path = $metadata_response['data']['file_path'];
+			    $t['metadata_name'] = basename($metadata_file_path);
+			}
+		    }
+		}
 
                 // count number of lines
                 $n = 0;
