@@ -139,13 +139,12 @@ function xxrun_repertoire_analysis()
         do_heatmap v_call j_call $array_of_files $2 $3 $4
 }
 
-function gateway_split()
+function gateway_split(){
 # Parameters:
 #     $1 - iReceptor info.txt file
 #     $2 - AIRR Manifest file
 #     $3 - iReceptor ZIP file
 #     $4 - Working directory
-{
 
 # The Gateway provides information about the download in the file info.txt and
 # an AIRR Manifest JSON file.
@@ -232,5 +231,6 @@ popd
 
 
 # Debugging output, print data/time when shell command is finished.
-#echo "Statistics finished at: `date`"
+FOOBAR="42"
+echo "Done loading iReceptor Gateway Utilities"
 

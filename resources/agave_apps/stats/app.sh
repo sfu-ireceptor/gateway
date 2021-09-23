@@ -200,11 +200,13 @@ for f in "${tsv_files[@]}"; do
 done
 }
 
-source ./gateway_download.sh
+. ${SCRIPT_DIR}/gateway_download.sh
 
 WORKING_DIR="analysis_output"
+INFO_FILE="info.txt"
+MANIFEST_FILE="airr_manifest.json"
 
-gateway_spilt "info.txt" "airr_manifest.json" ${ZIP_FILE} ${WORKING_DIR}
+gateway_split ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${WORKING_DIR}
 
 cd ${SCRIPT_DIR}
 
