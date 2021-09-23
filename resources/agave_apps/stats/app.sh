@@ -139,6 +139,9 @@ function run_repertoire_analysis()
         do_heatmap v_call j_call $array_of_files $2 $3 $4
 }
 
+function not_to_be_used()
+{
+
 # The Gateway provides information about the download in the file info.txt
 INFO_FILE=info.txt
 
@@ -195,6 +198,13 @@ for f in "${tsv_files[@]}"; do
 
     done
 done
+}
+
+source ./gateway_download.sh
+
+WORKING_DIR="analysis_output"
+
+gateway_spilt "info.txt" "airr_manifest.json" ${ZIP_FILE} ${WORKING_DIR}
 
 cd ${SCRIPT_DIR}
 
