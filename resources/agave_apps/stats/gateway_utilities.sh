@@ -2,7 +2,7 @@
 
 echo "iReceptor Gateway Utilities"
 
-function gateway_split(){
+function gateway_split_repertoire(){
 # Parameters:
 #     $1 - iReceptor info.txt file
 #     $2 - AIRR Manifest file

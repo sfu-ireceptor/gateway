@@ -139,14 +139,26 @@ function run_repertoire_analysis()
         do_heatmap v_call j_call $array_of_files $2 $3 $4
 }
 
-. ${SCRIPT_DIR}/gateway_download.sh
+# Load the iReceptor Gateway utilities functions.
+. ${SCRIPT_DIR}/gateway_utitlities.sh
 
+# Set up the required variables. An iReceptor Gateway download consists
+# of both an "info.txt" file that describes the download as well as an
+# AIRR manifest JSON file that describes the relationships between
+# AIRR Repertoire JSON files and AIRR TSV files.
 WORKING_DIR="analysis_output"
 INFO_FILE="info.txt"
 MANIFEST_FILE="airr_manifest.json"
 
-gateway_split ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${WORKING_DIR}
+# Split the download into single repertoire files, with a directory per
+# repository and within that a directory per repertoire. This expects the 
+# user to define a function called run_repertoire_analysis() that will be
+# called for each repertoire. See the docs in the gateway_utilities.sh file
+# for parameters to this function.
+gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${WORKING_DIR}
 
+# Make sure we are back where we started, although the gateway functions should
+# not change the working directory that we are in.
 cd ${SCRIPT_DIR}
 
 cp ${WORKING_DIR}/info.txt .
