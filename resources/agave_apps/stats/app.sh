@@ -139,67 +139,6 @@ function run_repertoire_analysis()
         do_heatmap v_call j_call $array_of_files $2 $3 $4
 }
 
-function not_to_be_used()
-{
-
-# The Gateway provides information about the download in the file info.txt
-INFO_FILE=info.txt
-
-# Create a working directory for data processing
-WORKING_DIR="analysis_output"
-mkdir -p ${WORKING_DIR}
-
-# Move the ZIP file to the working directory
-mv ${ZIP_FILE} ${WORKING_DIR}
-
-# Move into the working directory to do work...
-cd ${WORKING_DIR}
-
-##############################################
-# uncompress zip file
-#XXXunzip "$ZIP_FILE" && rm "$ZIP_FILE"
-echo "Extracting files started at: `date`" 
-unzip -o "$ZIP_FILE" 
-
-# Determine the files to process. We extract the .tsv files from the info.txt
-tsv_files=( `cat $INFO_FILE | awk -F" " 'BEGIN {count=0} /tsv/ {if (count>0) printf(" %s",$1); else printf("%s", $1); count++}'` )
-
-SPLIT_FIELD="repertoire_id"
-
-for f in "${tsv_files[@]}"; do
-    echo "    Extracting ${SPLIT_FIELD} from $f"
-    repertoire_ids=( `python3 ${SCRIPT_DIR}/preprocess.py $f $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
-    repository_name="${f%.*}"
-    mkdir -p ${repository_name}
-    json_file=${repository_name}-metadata.json
-    echo "JSON file = ${json_file}"
-    for repertoire_id in "${repertoire_ids[@]}"; do
-        echo "File $f has repertoire_id = ${repertoire_id}"
-	repertoire_dirname=${repertoire_id}
-	mkdir -p ${repository_name}/${repertoire_dirname}
-	repertoire_tsvfile=${repertoire_dirname}".tsv"
-
-	repertoire_string=`python3 ${SCRIPT_DIR}/repertoire_summary.py ${repository_name}-metadata.json ${repertoire_id} --separator "_"`
-	repertoire_string=${repository_name}_${repertoire_string// /}
-	title="$(python3 ${SCRIPT_DIR}/repertoire_summary.py ${json_file} ${repertoire_id})"
-	title=${title// /}
-	echo $title
-	
-        # filename, field_name, field_value, outfile
-	python3 ${SCRIPT_DIR}/filter.py $f ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_tsvfile}
-	
-	
-	#run_repertoire_analysis ${repertoire_tsvfile} ${SCRIPT_DIR} ${repertoire_string} ${title}
-        #     $1 input files
-        #     $2 output location
-        #     $3 graph file string
-        #     $4 graph title
-	run_repertoire_analysis ${repository_name}/${repertoire_dirname}/${repertoire_tsvfile} ${repository_name}/${repertoire_dirname} ${repertoire_string} ${title}
-
-    done
-done
-}
-
 . ${SCRIPT_DIR}/gateway_download.sh
 
 WORKING_DIR="analysis_output"
