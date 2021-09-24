@@ -138,6 +138,11 @@ function run_repertoire_analysis()
         do_histogram j_call $array_of_files $2 $3 $4
         do_histogram junction_aa_length $array_of_files $2 $3 $4
         do_heatmap v_call j_call $array_of_files $2 $3 $4
+
+	# Remove the data file, we don't want to return it as part of 
+	# the analysis.
+	echo "Removing generated TSV file $1"
+	rm -f $1
 }
 
 # Load the iReceptor Gateway utilities functions.
@@ -162,17 +167,14 @@ gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${WORKING_DIR
 # not change the working directory that we are in.
 cd ${SCRIPT_DIR}
 
-cp ${WORKING_DIR}/info.txt .
-cp ${WORKING_DIR}/*.json .
+# We want to move the info.txt and the JSON metadata and manifest files to the main
+# directory.
+mv ${WORKING_DIR}/info.txt .
+mv ${WORKING_DIR}/*.json .
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
-#echo "Removing original ZIP file $ZIP_FILE"
-#rm -f $ZIP_FILE
-#echo "Removing extracted files for each repository"
-#for f in "${tsv_files[@]}"; do
-#    echo "    Removing extracted file $f"
-#    rm -f $f
-#done
+echo "Removing original ZIP file $ZIP_FILE"
+rm -f $ZIP_FILE
 
 
 # Debugging output, print data/time when shell command is finished.
