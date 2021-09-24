@@ -292,7 +292,6 @@ class UserController extends Controller
         $table = 'password_resets';
         $entry = DB::table($table)->where('token', $reset_token)->first();
         if ($entry == null) {
-
             $data = [];
             $data['message'] = 'Sorry, your reset link is invalid.';
             $data['message2'] = 'Note: Microsoft Defender for Office 365 pre-visits links in emails by default, so your new password may have been sent to you by email already.';
