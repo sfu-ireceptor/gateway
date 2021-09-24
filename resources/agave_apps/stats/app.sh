@@ -37,14 +37,15 @@ function do_heatmap()
 
     # preprocess input files -> tmp.csv
     echo "Extracting $1 and $2 from files started at: `date`" 
+    rm -f $TMP_FILE
     echo "$1\t$2" > $TMP_FILE
 
     for filename in "${array_of_files[@]}"; do
 	echo "    Extracting $1 and $2 from $filename"
 	# Get the columns numbers for the column labels of interest.
-	x_column=`cat $filename | awk -F"\t" -v label=$1 '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
-	y_column=`cat $filename | awk -F"\t" -v label=$2 '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
-	echo "    Columns = $x_column, $y_column"
+	x_column=`cat $filename | head -n 1 | awk -F"\t" -v label=$1 '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+	y_column=`cat $filename | head -n 1 | awk -F"\t" -v label=$2 '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+	echo "    Columns = ${x_column}, ${y_column}"
 
 	# Extract the two columns of interest. In this case we want the gene (not including the allele)
 	# As a result we chop things off at the first star. This also takes care of the case where
@@ -140,7 +141,7 @@ function run_repertoire_analysis()
 }
 
 # Load the iReceptor Gateway utilities functions.
-. ${SCRIPT_DIR}/gateway_utitlities.sh
+. ${SCRIPT_DIR}/gateway_utilities.sh
 
 # Set up the required variables. An iReceptor Gateway download consists
 # of both an "info.txt" file that describes the download as well as an
