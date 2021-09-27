@@ -15,13 +15,22 @@ module load scipy-stack
 SCRIPT_DIR=`pwd`
 echo "Running job from ${SCRIPT_DIR}"
 
-# app variables (will be subsituted by AGAVE). If they don't exist
+# app variables (will be subsituted by Tapis). If they don't exist
 # use command line arguments.
+# Download file provide by Tapis, if not, set it to command line $1
 if [ -z "${download_file}" ]; then
 	ZIP_FILE=$1
 else
 	ZIP_FILE=${download_file}
 fi
+
+# If split_repertoire is not provided by Tapis then set it to the 
+# command line argument.
+echo "Tapis split = ${split_repertoire}"
+if [ -z "${split_repertoire}" ]; then
+	split_repertoire=$2
+fi
+
 
 function do_heatmap()
 #     $1,$2 are variable names to process
@@ -64,16 +73,19 @@ function do_heatmap()
     echo "$2"
     echo "$xvals"
     echo "$yvals"
-    OFILE=$5-$1-$2-heatmap.png
+    PNG_OFILE=$5-$1-$2-heatmap.png
+    TSV_OFILE=$5-$1-$2-heatmap.tsv
 
     # Generate the heatmap
-    python3 ${SCRIPT_DIR}/airr_heatmap.py $1 $2 $xvals $yvals $TMP_FILE $OFILE "$6($1,$2)"
+    python3 ${SCRIPT_DIR}/airr_heatmap.py $1 $2 $xvals $yvals $TMP_FILE $PNG_OFILE $TSV_OFILE "$6($1,$2)"
 
     # change permissions
-    chmod 644 "$OFILE"
+    chmod 644 "$PNG_OFILE"
+    chmod 644 "$TSV_OFILE"
 
     # Move output file to output directory
-    mv $OFILE $4
+    mv $PNG_OFILE $4
+    mv $TSV_OFILE $4
 
     # Remove the temporary file.
     rm -f $TMP_FILE
@@ -93,6 +105,8 @@ function do_histogram()
     array_of_files=$2
 
     # preprocess input files -> tmp.csv
+    echo ""
+    echo "Histogram started at: `date`" 
     echo "Extracting $1 from files started at: `date`" 
     echo $1 > $TMP_FILE
     for filename in "${array_of_files[@]}"; do
@@ -103,22 +117,25 @@ function do_histogram()
     ##############################################
     # Generate the image file.
     OFILE_BASE="$4-$1-histogram"
-    OFILE=${OFILE_BASE}.png
+    PNG_OFILE=${OFILE_BASE}.png
+    TSV_OFILE=${OFILE_BASE}.tsv
 
     # Debugging output
-    echo "Histogram started at: `date`" 
     echo "Input file = $TMP_FILE"
     echo "Variable = $1"
-    echo "Output file = $OFILE"
+    echo "Graph output file = $PNG_OFILE"
+    echo "Data output file = $TSV_OFILE"
 
     # Run the python histogram command
-    python3 ${SCRIPT_DIR}/airr_histogram.py $1 $TMP_FILE $OFILE "$5,$1"
+    python3 ${SCRIPT_DIR}/airr_histogram.py $1 $TMP_FILE $PNG_OFILE $TSV_OFILE "$5,$1"
 
     # change permissions
-    chmod 644 $OFILE
+    chmod 644 $PNG_OFILE
+    chmod 644 $TSV_OFILE
 
     # Move output file to output directory
-    mv $OFILE $3
+    mv $PNG_OFILE $3
+    mv $TSV_OFILE $3
 
     # Remove the temporary file.
     rm -f $TMP_FILE
@@ -126,12 +143,14 @@ function do_histogram()
 
 function run_repertoire_analysis()
 # Parameters:
-#     $1 input files
+#     $1 input file
 #     $2 output location
 #     $3 graph file string
 #     $4 graph title
 {
 	echo "Running a Repertoire Analysis on $1"
+	# The graphing functions handle an array of files. This function
+	# takes a single file, so we need to create an array of length 1.
 	array_of_files=($1)
 	do_histogram v_call $array_of_files $2 $3 $4
         do_histogram d_call $array_of_files $2 $3 $4
@@ -156,12 +175,14 @@ WORKING_DIR="analysis_output"
 INFO_FILE="info.txt"
 MANIFEST_FILE="airr_manifest.json"
 
-# Split the download into single repertoire files, with a directory per
-# repository and within that a directory per repertoire. This expects the 
-# user to define a function called run_repertoire_analysis() that will be
-# called for each repertoire. See the docs in the gateway_utilities.sh file
-# for parameters to this function.
-gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${WORKING_DIR}
+if [ "${split_repertoire}" = "True" ]; then
+    # Split the download into single repertoire files, with a directory per
+    # repository and within that a directory per repertoire. This expects the 
+    # user to define a function called run_repertoire_analysis() that will be
+    # called for each repertoire. See the docs in the gateway_utilities.sh file
+    # for parameters to this function.
+    gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${WORKING_DIR}
+fi
 
 # Make sure we are back where we started, although the gateway functions should
 # not change the working directory that we are in.
@@ -175,7 +196,6 @@ mv ${WORKING_DIR}/*.json .
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
 echo "Removing original ZIP file $ZIP_FILE"
 rm -f $ZIP_FILE
-
 
 # Debugging output, print data/time when shell command is finished.
 echo "Statistics finished at: `date`"
