@@ -74,7 +74,6 @@ function gateway_split_repertoire(){
 	    # We want to strip the spaces out of it - bash doesn't like strings with spaces as command line args.
 	    # TODO: Fix this, it should not be required.
 	    title=${title// /}
-	    echo $title
 	
             # Filter the input file $f and extract all records that the given repertoire_id in the SPLIT_FIELD.
 	    # Command line parameters: inputfile, field_name, field_value, outfile
@@ -94,8 +93,9 @@ function gateway_split_repertoire(){
     # First the ZIP file
     rm -f ${ZIP_FILE}
     # Remove any TSV files extracted from the ZIP - they are big and can be re-generated
-    rm -f *.tsv
+    # rm -f *.tsv
     # We want to leave the JSON file and INFO.txt files.
+    # 
 
     # Return to the directory we started from.
     popd
