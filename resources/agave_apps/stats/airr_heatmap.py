@@ -113,22 +113,14 @@ def getArguments():
     parser.add_argument("graph_xvalues")
     parser.add_argument("graph_yvalues")
     parser.add_argument("input_file")
-    parser.add_argument("output_file")
+    parser.add_argument("png_output_file")
+    parser.add_argument("tsv_output_file")
     parser.add_argument("title")
     parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
         help="Run the program in verbose mode. This option will generate a lot of output, but is recommended from a data provenance perspective as it will inform you of how it mapped input data columns into repository columns.")
-
-    # Add configuration options
-    #config_group = parser.add_argument_group("Configuration file options", "")
-    #config_group.add_argument(
-    #    "--mapfile",
-    #    dest="mapfile",
-    #    default="ireceptor.cfg",
-    #    help="the iReceptor configuration file. Defaults to 'ireceptor.cfg' in the local directory where the command is run. This file contains the mappings between the AIRR Community field definitions, the annotation tool field definitions, and the fields and their names that are stored in the repository."
-    #)
 
     options = parser.parse_args()
     return options
@@ -145,7 +137,14 @@ if __name__ == "__main__":
     # Graph the results
     title = options.api_xfield + " " + options.api_yfield + " Usage"
     title = options.title
-    plotData(data, xvalues, yvalues, title, options.output_file)
+    if not data is None:
+        plotData(data, xvalues, yvalues, title, options.png_output_file)
+        #data.to_csv(options.tsv_output_file, sep = '\t')
+        df = pd.DataFrame(data=data, index=yvalues, columns=xvalues)
+        df.to_csv(options.tsv_output_file, sep='\t')
+    else:
+        sys.exit(2)
+
 
     # Return success
     sys.exit(0)

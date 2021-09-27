@@ -69,7 +69,8 @@ def getArguments():
 
     parser.add_argument("field_name")
     parser.add_argument("input_file")
-    parser.add_argument("output_file")
+    parser.add_argument("png_output_file")
+    parser.add_argument("tsv_output_file")
     parser.add_argument("title")
     parser.add_argument(
         "-v",
@@ -88,9 +89,11 @@ if __name__ == "__main__":
     # Graph the results if we got some...
     title = options.title 
     if not data is None:
-        plotData(data, title, options.output_file)
+        plotData(data, title, options.png_output_file)
+        data.to_csv(options.tsv_output_file, sep = '\t')
     else:
         sys.exit(2)
     # Return success
-    print("Done writing graph to " + options.output_file)
+    print("Done writing graph to " + options.png_output_file)
+    print("Done writing data to " + options.tsv_output_file)
     sys.exit(0)
