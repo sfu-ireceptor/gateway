@@ -111,7 +111,9 @@ function gateway_split_repertoire(){
             #     $2 output location
             #     $3 graph file string
             #     $4 graph title
-	    run_repertoire_analysis ${repository_name}/${repertoire_dirname}/${repertoire_tsvfile} ${repository_name}/${repertoire_dirname} ${repertoire_string} ${title}
+	    #run_repertoire_analysis ${repository_name}/${repertoire_dirname}/${repertoire_tsvfile} ${repository_name}/${repertoire_dirname} ${repertoire_string} ${title}
+	    tsv_array=( "${repository_name}/${repertoire_dirname}/${repertoire_tsvfile}" )
+	    run_analysis ${tsv_array} ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${json_file}
 
         done
     done
