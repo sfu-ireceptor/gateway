@@ -116,9 +116,9 @@ function do_histogram()
 
     ##############################################
     # Generate the image file.
-    OFILE_BASE="$4-$1-histogram"
-    PNG_OFILE=${OFILE_BASE}.png
-    TSV_OFILE=${OFILE_BASE}.tsv
+    OFILE_BASE="$4-$1"
+    PNG_OFILE=${OFILE_BASE}-histogram.png
+    TSV_OFILE=${OFILE_BASE}-histogram.tsv
 
     # Debugging output
     echo "Input file = $TMP_FILE"
@@ -139,6 +139,33 @@ function do_histogram()
 
     # Remove the temporary file.
     rm -f $TMP_FILE
+}
+
+function run_full_analysis()
+# Parameters:
+#     $1 manifest file
+#     $2 working directory
+{
+	# Generate the array of TSV files to process.
+	echo "Running Stats analysis on $1"
+	local tsv_files=( `python3 ${SCRIPT_DIR}/manifest_summary.py ${1} rearrangement_file` )
+	if [ $? -ne 0 ]
+        then
+	    echo "Error: Could not process manifest file ${1}"
+            exit $?
+        fi
+        echo "TSV files = $tsv_files"
+
+	do_histogram v_call $tsv_files $2 v_call v_call
+        do_histogram d_call $tsv_files $2 d_call d_call
+        do_histogram j_call $tsv_files $2 j_call j_call
+        do_histogram junction_aa_length $tsv_files $2 junction_aa_length junction_aa_length
+        do_heatmap v_call j_call $tsv_files $2 "v_call-j_call" "v_call-j_call" 
+
+	# Remove the data file, we don't want to return it as part of 
+	# the analysis.
+	#echo "Removing generated TSV file $1"
+	#rm -f $1
 }
 
 function run_repertoire_analysis()
@@ -182,6 +209,14 @@ if [ "${split_repertoire}" = "True" ]; then
     # called for each repertoire. See the docs in the gateway_utilities.sh file
     # for parameters to this function.
     gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${WORKING_DIR}
+elif [ "${split_repertoire}" = "False" ]; then
+    # Run the stats on all the data combined. Unzip and then do the stats.
+    gateway_unzip ${ZIP_FILE} ${WORKING_DIR}
+    pushd ${WORKING_DIR}
+    run_full_analysis ${MANIFEST_FILE} .
+    popd
+else
+    echo "ERROR: Unknown repertoire operation ${split_repertoire}"
 fi
 
 # Make sure we are back where we started, although the gateway functions should
