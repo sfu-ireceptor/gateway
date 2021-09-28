@@ -33,7 +33,13 @@ if __name__ == "__main__":
     chunk_size = 100000
 
     # Create file reader.
-    airr_df_reader = pandas.read_csv(options.filename, sep='\t', chunksize=chunk_size, dtype= {'repertoire_id': str})
+    try:
+        airr_df_reader = pandas.read_csv(options.filename, sep='\t', chunksize=chunk_size, dtype= {'repertoire_id': str})
+    except Exception as e:
+        print('ERROR: Unable to read TSV file %s'%(options.filename))
+        print('ERROR: Reason =' + str(e))
+        sys.exit(1)
+
     chunk_count = 0
     total_size = 0
     # Loop over the file a chunk at a time.
