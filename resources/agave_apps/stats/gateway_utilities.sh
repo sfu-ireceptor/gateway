@@ -2,6 +2,36 @@
 
 echo "iReceptor Gateway Utilities"
 
+function gateway_unzip() {
+# Parameters
+#   $1 - iReceptor ZIP file
+#   $2 - Working directory to unzip into
+
+    # The data, including the info and manifest files, are in the ZIP file.
+    local ZIP_FILE=$1
+
+    # We want a working directory for the processing
+    local WORKING_DIR=$2
+
+    # Create a working directory for data processing
+    mkdir -p ${WORKING_DIR}
+
+    # Move the ZIP file to the working directory
+    cp ${ZIP_FILE} ${WORKING_DIR}
+
+    # Move into the working directory to do work...
+    pushd ${WORKING_DIR}
+
+    # Uncompress zip file
+    echo "Extracting files started at: `date`" 
+    unzip -o "$ZIP_FILE" 
+    echo "Extracting files finished at: `date`" 
+
+    # Go back to where we started
+    popd
+
+}
+
 function gateway_split_repertoire(){
 # Parameters:
 #     $1 - iReceptor info.txt file
@@ -18,21 +48,14 @@ function gateway_split_repertoire(){
     # We want a working directory for the processing
     WORKING_DIR=$4
     
+    # Unzip the iReceptor Gateway ZIP file into the working directory
+    gateway_unzip ${ZIP_FILE} ${WORKING_DIR}
+
     # We need a field on which to split the data.
     SPLIT_FIELD="repertoire_id"
 
-    # Create a working directory for data processing
-    mkdir -p ${WORKING_DIR}
-
-    # Move the ZIP file to the working directory
-    cp ${ZIP_FILE} ${WORKING_DIR}
-
     # Move into the working directory to do work...
     pushd ${WORKING_DIR}
-
-    # Uncompress zip file
-    echo "Extracting files started at: `date`" 
-    unzip -o "$ZIP_FILE" 
 
     # Determine the files to process. We extract the .tsv files from the info.txt
     # and store them in an array.
