@@ -59,9 +59,13 @@ function gateway_split_repertoire(){
 
     # Determine the files to process. We extract the .tsv files from the info.txt
     # and store them in an array.
-    # TODO: We need to change this to use the AIRR Manifest file.
-    tsv_files=( `cat $INFO_FILE | awk -F" " 'BEGIN {count=0} /tsv/ {if (count>0) printf(" %s",$1); else printf("%s", $1); count++}'` )
-
+    tsv_files=( `python3 ${SCRIPT_DIR}/manifest_summary.py ${MANIFEST_FILE} rearrangement_file` )
+    if [ $? -ne 0 ]
+    then
+	echo "Error: Could not process manifest file ${MANIFEST_FILE}"
+	exit $?
+    fi
+    echo "TSV files = $tsv_files"
 
     # For each TSV file in the array, process it.
     for f in "${tsv_files[@]}"; do
