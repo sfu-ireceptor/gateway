@@ -191,6 +191,55 @@ function run_repertoire_analysis()
 	rm -f $1
 }
 
+function run_analysis()
+# Parameters:
+#     $1 rearrangement file array
+#     $2 output directory
+#     $3 repository name [string]
+#     $4 repertoire_id [optional]
+#     $5 repertoire file [optional - required if repertoire_id is provided]
+{
+	# Use local variables - no scope issues please...
+	local array_of_files=$1
+	local output_directory=$2
+	local repository_name=$3
+	echo "Running a Repertoire Analysis on $1"
+
+	# Check to see if we are processing a specific repertoire_id
+	if [ "$#" -eq 5 ]; then
+	    local repertoire_id=$4
+	    local repertoire_file=$5
+	    file_string=`python3 ${SCRIPT_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
+	    file_string=${repository_name}_${file_string// /}
+            title_string="$(python3 ${SCRIPT_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
+            # TODO: Fix this, it should not be required.
+            title_string=${title_string// /}
+        else 
+	    file_string="total"
+	    title_string="Total"
+	fi
+
+	# Get a representation of the repertoire metadata for labels
+	#repertoire_string=`python3 ${SCRIPT_DIR}/repertoire_summary.py ${json_file} ${repertoire_id} --separator "_"`
+        #repertoire_string=${repository_name}_${repertoire_string// /}
+        #title="$(python3 ${SCRIPT_DIR}/repertoire_summary.py ${json_file} ${repertoire_id})"
+        ## We want to strip the spaces out of it - bash doesn't like strings with spaces as command line args.
+        # TODO: Fix this, it should not be required.
+        ##title=${title// /}
+
+	# Generate the histogram and heatmap stats
+	do_histogram v_call $array_of_files $output_directory $file_string $title_string
+        do_histogram d_call $array_of_files $output_directory $file_string $title_string
+        do_histogram j_call $array_of_files $output_directory $file_string $title_string
+        do_histogram junction_aa_length $array_of_files $output_directory $file_string $title_string
+        do_heatmap v_call j_call $array_of_files $output_directory $file_string $title_string
+
+	# Remove the data file, we don't want to return it as part of 
+	# the analysis.
+	#echo "Removing generated TSV file $1"
+	#rm -f $1
+}
+
 # Load the iReceptor Gateway utilities functions.
 . ${SCRIPT_DIR}/gateway_utilities.sh
 
@@ -213,7 +262,16 @@ elif [ "${split_repertoire}" = "False" ]; then
     # Run the stats on all the data combined. Unzip and then do the stats.
     gateway_unzip ${ZIP_FILE} ${WORKING_DIR}
     pushd ${WORKING_DIR}
-    run_full_analysis ${MANIFEST_FILE} .
+    tsv_files=( `python3 ${SCRIPT_DIR}/manifest_summary.py ${MANIFEST_FILE} rearrangement_file` )
+    if [ $? -ne 0 ]
+    then
+        echo "Error: Could not process manifest file ${1}"
+        exit $?
+    fi
+    echo "TSV files = $tsv_files"
+
+    #run_full_analysis ${MANIFEST_FILE} .
+    run_analysis $tsv_files . "all"
     popd
 else
     echo "ERROR: Unknown repertoire operation ${split_repertoire}"
