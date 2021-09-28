@@ -2,8 +2,11 @@ import sys
 import argparse
 import json
 
+# Extract a representative set of information about a repertoire. Outputs the
+# list of fields separated by the specified seperator.
 def repertoireSummary(json_filename, repertoire_id, verbose, separator=", "):
 
+    # Open the file.
     try:
         with open(json_filename) as f:
             json_data = json.load(f)
@@ -28,6 +31,7 @@ def repertoireSummary(json_filename, repertoire_id, verbose, separator=", "):
         print("ERROR: Expected to find a 'Repertoire' object, none found")
         return []
 
+    # Find the repertoire of interest and print out relevant fields.
     for repertoire in json_data[repertoire_key]:
         if repertoire['repertoire_id'] == repertoire_id:
             study_json = repertoire['study']
