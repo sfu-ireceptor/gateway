@@ -175,11 +175,7 @@ function run_analysis()
         do_histogram j_call $array_of_files $output_directory $file_string $title_string
         do_histogram junction_aa_length $array_of_files $output_directory $file_string $title_string
         do_heatmap v_call j_call $array_of_files $output_directory $file_string $title_string
-
-	# Remove the data file, we don't want to return it as part of 
-	# the analysis.
-	#echo "Removing generated TSV file $1"
-	#rm -f $1
+        do_heatmap v_call junction_aa_length $array_of_files $output_directory $file_string $title_string
 }
 
 # Load the iReceptor Gateway utilities functions.
@@ -218,6 +214,14 @@ elif [ "${split_repertoire}" = "False" ]; then
 
     # Run the analysis with a token repository name of "all"
     run_analysis $tsv_files . "all"
+
+    # Remove the extracted TSV files, we don't want to return them
+    for f in "${tsv_files[@]}"; do
+        rm -f $f
+    done
+    # Remove the copied ZIP file
+    rm -r ${ZIP_FILE}
+
     popd
 else
     echo "ERROR: Unknown repertoire operation ${split_repertoire}"
@@ -229,8 +233,13 @@ cd ${SCRIPT_DIR}
 
 # We want to move the info.txt and the JSON metadata and manifest files to the main
 # directory.
-mv ${WORKING_DIR}/info.txt .
-mv ${WORKING_DIR}/*.json .
+mv ${WORKING_DIR}/${INFO_FILE} .
+mv ${WORKING_DIR}/${MANIFEST_FILE} .
+repertoire_files=( `python3 ${SCRIPT_DIR}/manifest_summary.py ${MANIFEST_FILE} repertoire_file` )
+
+for f in "${repertoire_files[@]}"; do
+    mv ${WORKING_DIR}/$f .
+done
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
 echo "Removing original ZIP file $ZIP_FILE"
