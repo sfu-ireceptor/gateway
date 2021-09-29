@@ -90,28 +90,17 @@ function gateway_split_repertoire(){
 	    # Generate a file name for the TSV data for the repertoire.
 	    repertoire_tsvfile=${repertoire_dirname}".tsv"
     
-	    # Generate some identifier strings for this repertoire. repertoire_summary.py
-	    # joins together a bunch of field values for a repertoire that are hopefully
-	    # indicative of the sample (subject, sample id, target locus, etc).
-	    # We create two, one with fields separated by _ so we can use it in a file name
-	    # and the other separated with the default (which is a space).
-	    repertoire_string=`python3 ${SCRIPT_DIR}/repertoire_summary.py ${json_file} ${repertoire_id} --separator "_"`
-	    repertoire_string=${repository_name}_${repertoire_string// /}
-	    title="$(python3 ${SCRIPT_DIR}/repertoire_summary.py ${json_file} ${repertoire_id})"
-	    # We want to strip the spaces out of it - bash doesn't like strings with spaces as command line args.
-	    # TODO: Fix this, it should not be required.
-	    title=${title// /}
-	
-            # Filter the input file $f and extract all records that the given repertoire_id in the SPLIT_FIELD.
+            # Filter the input file $f and extract all records that have the given
+	    # repertoire_id in the SPLIT_FIELD.
 	    # Command line parameters: inputfile, field_name, field_value, outfile
 	    python3 ${SCRIPT_DIR}/filter.py $f ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_tsvfile}
 	
-	    # Call the client supplied "run_repertoire_analysis" function with the following parameters.
-            #     $1 input files
-            #     $2 output location
-            #     $3 graph file string
-            #     $4 graph title
-	    #run_repertoire_analysis ${repository_name}/${repertoire_dirname}/${repertoire_tsvfile} ${repository_name}/${repertoire_dirname} ${repertoire_string} ${title}
+	    # Call the client supplied "run_analysis" callback function. Parameters:
+            #     $1 array of TSV input files
+            #     $2 output directory
+	    #     $3 repository name
+            #     $4 repertoire id [optional]
+            #     $5 repertoire JSON file [optional - required of repertoire_id is specified]
 	    tsv_array=( "${repository_name}/${repertoire_dirname}/${repertoire_tsvfile}" )
 	    run_analysis ${tsv_array} ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${json_file}
 
