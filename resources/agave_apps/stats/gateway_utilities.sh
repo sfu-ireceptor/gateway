@@ -104,6 +104,8 @@ function gateway_split_repertoire(){
 	    tsv_array=( "${repository_name}/${repertoire_dirname}/${repertoire_tsvfile}" )
 	    run_analysis ${tsv_array} ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${json_file}
 
+	    # Remove the temporary TSV file
+	    rm -f ${repository_name}/${repertoire_dirname}/${repertoire_tsvfile}
         done
     done
 
@@ -111,9 +113,9 @@ function gateway_split_repertoire(){
     # First the ZIP file
     rm -f ${ZIP_FILE}
     # Remove any TSV files extracted from the ZIP - they are big and can be re-generated
-    # rm -f *.tsv
-    # We want to leave the JSON file and INFO.txt files.
-    # 
+    for f in "${tsv_files[@]}"; do
+        rm -f $f
+    done
 
     # Return to the directory we started from.
     popd
