@@ -31,6 +31,14 @@ class RestService extends Model
         }
     }
 
+    public function baseURL()
+    {
+        $url = $this->url;
+        $base_url = preg_replace('/airr\/v1\/$/', '', $url);
+
+        return $base_url;
+    }
+
     public function refreshChunkSize()
     {
         $defaults = [];
@@ -741,8 +749,7 @@ class RestService extends Model
 
         // build stats URL to query
         $rs = self::find($rest_service_id);
-        $rs_base_url = str_replace('airr/v1/', '', $rs->url);
-        $rs_stats_url = $rs_base_url . 'irplus/v1/stats/rearrangement/';
+        $rs_stats_url = $rs->baseURL() . 'irplus/v1/stats/rearrangement/';
 
         // create Guzzle client
         $defaults = [];
@@ -1049,8 +1056,7 @@ class RestService extends Model
 
                 // change URL for repositories acceptiong async queries
                 if ($rs->async) {
-                    // TODO generate URL from repository URL
-                    $t['url'] = 'https://vdj-staging.tacc.utexas.edu/airr/async/v1/rearrangement';
+                    $t['url'] = $rs->baseURL() . 'airr/async/v1/rearrangement';
                 } else {
                     $t['url'] = $rs->url . 'rearrangement';
                     $t['timeout'] = config('ireceptor.service_file_request_timeout');
@@ -1195,7 +1201,7 @@ class RestService extends Model
                 $query_id = $response['data']->query_id;
 
                 $defaults = [];
-                $defaults['base_uri'] = 'https://vdj-staging.tacc.utexas.edu/airr/async/v1/status/';
+                $defaults['base_uri'] = $rs->baseURL() . 'airr/async/v1/status/';
                 $defaults['verify'] = false;    // accept self-signed SSL certificates
 
                 $status = 'SUBMITTED';
