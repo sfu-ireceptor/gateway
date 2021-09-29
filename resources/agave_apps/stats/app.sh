@@ -141,56 +141,6 @@ function do_histogram()
     rm -f $TMP_FILE
 }
 
-function run_full_analysis()
-# Parameters:
-#     $1 manifest file
-#     $2 working directory
-{
-	# Generate the array of TSV files to process.
-	echo "Running Stats analysis on $1"
-	local tsv_files=( `python3 ${SCRIPT_DIR}/manifest_summary.py ${1} rearrangement_file` )
-	if [ $? -ne 0 ]
-        then
-	    echo "Error: Could not process manifest file ${1}"
-            exit $?
-        fi
-        echo "TSV files = $tsv_files"
-
-	do_histogram v_call $tsv_files $2 v_call v_call
-        do_histogram d_call $tsv_files $2 d_call d_call
-        do_histogram j_call $tsv_files $2 j_call j_call
-        do_histogram junction_aa_length $tsv_files $2 junction_aa_length junction_aa_length
-        do_heatmap v_call j_call $tsv_files $2 "v_call-j_call" "v_call-j_call" 
-
-	# Remove the data file, we don't want to return it as part of 
-	# the analysis.
-	#echo "Removing generated TSV file $1"
-	#rm -f $1
-}
-
-function run_repertoire_analysis()
-# Parameters:
-#     $1 input file
-#     $2 output location
-#     $3 graph file string
-#     $4 graph title
-{
-	echo "Running a Repertoire Analysis on $1"
-	# The graphing functions handle an array of files. This function
-	# takes a single file, so we need to create an array of length 1.
-	array_of_files=($1)
-	do_histogram v_call $array_of_files $2 $3 $4
-        do_histogram d_call $array_of_files $2 $3 $4
-        do_histogram j_call $array_of_files $2 $3 $4
-        do_histogram junction_aa_length $array_of_files $2 $3 $4
-        do_heatmap v_call j_call $array_of_files $2 $3 $4
-
-	# Remove the data file, we don't want to return it as part of 
-	# the analysis.
-	echo "Removing generated TSV file $1"
-	rm -f $1
-}
-
 function run_analysis()
 # Parameters:
 #     $1 rearrangement file array
@@ -219,14 +169,6 @@ function run_analysis()
 	    title_string="Total"
 	fi
 
-	# Get a representation of the repertoire metadata for labels
-	#repertoire_string=`python3 ${SCRIPT_DIR}/repertoire_summary.py ${json_file} ${repertoire_id} --separator "_"`
-        #repertoire_string=${repository_name}_${repertoire_string// /}
-        #title="$(python3 ${SCRIPT_DIR}/repertoire_summary.py ${json_file} ${repertoire_id})"
-        ## We want to strip the spaces out of it - bash doesn't like strings with spaces as command line args.
-        # TODO: Fix this, it should not be required.
-        ##title=${title// /}
-
 	# Generate the histogram and heatmap stats
 	do_histogram v_call $array_of_files $output_directory $file_string $title_string
         do_histogram d_call $array_of_files $output_directory $file_string $title_string
@@ -254,14 +196,18 @@ MANIFEST_FILE="airr_manifest.json"
 if [ "${split_repertoire}" = "True" ]; then
     # Split the download into single repertoire files, with a directory per
     # repository and within that a directory per repertoire. This expects the 
-    # user to define a function called run_repertoire_analysis() that will be
+    # user to define a function called run_analysis() that will be
     # called for each repertoire. See the docs in the gateway_utilities.sh file
     # for parameters to this function.
     gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${WORKING_DIR}
 elif [ "${split_repertoire}" = "False" ]; then
-    # Run the stats on all the data combined. Unzip and then do the stats.
+    # Run the stats on all the data combined. Unzip the files
     gateway_unzip ${ZIP_FILE} ${WORKING_DIR}
+
+    # Go into the working directory
     pushd ${WORKING_DIR}
+
+    # Generate the TSV files from the AIRR manifest
     tsv_files=( `python3 ${SCRIPT_DIR}/manifest_summary.py ${MANIFEST_FILE} rearrangement_file` )
     if [ $? -ne 0 ]
     then
@@ -270,7 +216,7 @@ elif [ "${split_repertoire}" = "False" ]; then
     fi
     echo "TSV files = $tsv_files"
 
-    #run_full_analysis ${MANIFEST_FILE} .
+    # Run the analysis with a token repository name of "all"
     run_analysis $tsv_files . "all"
     popd
 else
