@@ -117,7 +117,7 @@ function run_analysis()
 	echo "Mapping ${PWD} to /data"
 	echo "Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
 	echo "Storing output in /data/${output_directory}"
-        singularity exec -e -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} vdjbase-pipeline -f /data/${filename} -t ${AGAVE_JOB_PROCESSORS_PER_NODE} -o /data/${output_directory}
+        singularity exec -e -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} vdjbase-pipeline -s ${file_string} -f /data/${filename} -t ${AGAVE_JOB_PROCESSORS_PER_NODE} -o /data/${output_directory}
     done
 }
 
@@ -136,39 +136,27 @@ function run_analysis()
 # run_analysis() is defined above.
 gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${WORKING_DIR}
 
-# Uncompress the zip file. The Gateway ZIP file contains an info.txt file that 
-# describes the download, and a single AIRR JSON file and AIRR TSV file from
-# each repository where data was found.
-#echo "Extracting files started at: `date`"
-#unzip -o "$ZIP_FILE"
+# Make sure we are back where we started, although the gateway functions should
+# not change the working directory that we are in.
+cd ${SCRIPT_DIR}
 
+# We want to move the info.txt and the JSON metadata and manifest files to the main
+# directory.
+mv ${WORKING_DIR}/${INFO_FILE} .
+mv ${WORKING_DIR}/${MANIFEST_FILE} .
 
-# Determine the files to process. We extract the .tsv files from the info.txt by
-# searching for tsv in the info file. For each file that we find, the first string
-# space separated is the file name. This is not particularly robust!
-#tsv_files=( `cat $INFO_FILE | awk -F" " 'BEGIN {count=0} /tsv/ {if (count>0) printf(" %s",$1); else printf("%s", $1); count++}'` )
-
-# For now we assume that there is only one TSV file in any Gateway download.
-#rearrangement_file="${tsv_files}"
-#echo "Processing ${rearrangement_file}"
-
-
-
-# bring in common functions
-#source ./vdjbase_common.sh
-
-
-
-# Run the workflow (from vdjabse-common.sh)
-#print_parameters
-#print_versions
-#run_workflow
+# We also want to keep all of the repertoire files.
+repertoire_files=( `python3 ${SCRIPT_DIR}/manifest_summary.py ${MANIFEST_FILE} repertoire_file` )
+for f in "${repertoire_files[@]}"; do
+    mv ${WORKING_DIR}/$f .
+done
 
 # We don't want to copy around the singularity image everywhere.
 rm -f ${singularity_image}
-# We don't want to copy around the original data. This is replicated
-# in the sample file.
-rm -f ${ZIP_FILE}
+
+# Cleanup the input data files, don't want to return them as part of the resulting analysis
+echo "Removing original ZIP file $ZIP_FILE"
+rm -f $ZIP_FILE
 
 # End
 printf "DONE at $(date)\n\n"
