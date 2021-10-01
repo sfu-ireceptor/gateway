@@ -404,7 +404,27 @@
 						                                                      @if ( ! empty($parameter['choices']) )
 												        {{ Form::select($parameter['label'], $parameter['choices'], '', array('class' => 'form-control')) }}
                                                                                                       @else
-									                                {{ Form::text($parameter['label'], '', array('class' => 'form-control')) }}
+									                                {{ Form::text($parameter['label'], $parameter['default'], array('class' => 'form-control')) }}
+                                                                                                      @endif
+										                  </div>
+											     </div>
+											  </div>
+							                                @endforeach
+                                                                                        <div class="row">
+										            <div class="col-md-10">
+											        <h3>Job control parameters<span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>Parameters to control job resources used</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span></h3>
+                                                                                            </div>
+                                                                                        </div>
+								                        @foreach ($app['job_parameter_list'] as $job_parameter)
+									  	          <div class="row">
+										             <div class="col-md-3">
+											          <div class="form-group">
+												      {{ Form::label($job_parameter['label'], $job_parameter['name']) }}
+											              <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$job_parameter['description']}}</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span>
+						                                                      @if ( ! empty($job_parameter['choices']) )
+												        {{ Form::select($job_parameter['label'], $job_parameter['choices'], '', array('class' => 'form-control')) }}
+                                                                                                      @else
+									                                {{ Form::text($job_parameter['label'], $job_parameter['default'], array('class' => 'form-control')) }}
                                                                                                       @endif
 										                  </div>
 											     </div>
