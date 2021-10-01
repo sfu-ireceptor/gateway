@@ -1198,7 +1198,14 @@ class RestService extends Model
         foreach ($final_response_list as $response) {
             $rs = $response['rs'];
             if ($rs->async) {
-                $query_id = $response['data']->query_id;
+                if(isset($response['data']->query_id)) {
+                    $query_id = $response['data']->query_id;
+                }
+                else {
+                    Log::error('No query id found:');
+                    Log::error($response['data']);
+                    continue;
+                }
 
                 $defaults = [];
                 $defaults['base_uri'] = $rs->baseURL() . 'airr/async/v1/status/';
