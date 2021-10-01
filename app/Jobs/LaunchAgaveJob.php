@@ -34,11 +34,12 @@ class LaunchAgaveJob implements ShouldQueue
     protected $agaveAppId;
     protected $gw_username;
     protected $params;
+    protected $job_params;
     protected $inputs;
     protected $localJobId;
 
     // create job instance
-    public function __construct($jobId, $f, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $localJobId)
+    public function __construct($jobId, $f, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $job_params, $localJobId)
     {
         $this->jobId = $jobId;
         $this->f = $f;
@@ -51,6 +52,7 @@ class LaunchAgaveJob implements ShouldQueue
         $this->gw_username = $gw_username;
         $this->params = $params;
         $this->inputs = $inputs;
+        $this->job_params = $job_params;
         $this->localJobId = $localJobId;
     }
 
@@ -139,7 +141,7 @@ class LaunchAgaveJob implements ShouldQueue
 	    $memory_per_cpu = '4GB';
 	    $node_count = 1;
 	    $cpus_per_node = 8;
-            $config = $agave->getJobConfig('irec-job-' . $this->jobId, $this->agaveAppId, $this->systemStaging, $this->notificationUrl, $archive_folder, $this->params, $inputs, $run_time, $memory_per_cpu, $node_count, $cpus_per_node);
+            $config = $agave->getJobConfig('irec-job-' . $this->jobId, $this->agaveAppId, $this->systemStaging, $this->notificationUrl, $archive_folder, $this->params, $inputs, $this->job_params);
             $response = $agave->createJob($this->token, $config);
 
             $job->agave_id = $response->result->id;
