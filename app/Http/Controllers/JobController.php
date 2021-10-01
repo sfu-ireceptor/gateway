@@ -117,6 +117,22 @@ class JobController extends Controller
                 }
             }
 
+	    // Process the job parameters for the job.
+	    $job_params = [];
+	    // Get the possible list of parameters that can be set. The Agave class
+	    // manages which job parameters can be set.
+	    $job_parameter_list = $agave->getJobParameters();
+	    foreach ($job_parameter_list as $job_parameter_info) {
+		// If the parameter is provided, keep track of it so we can give it to the job.
+                Log::debug('   Processing job parameter ' . $job_parameter_info['label']);
+		if (isset($f[$job_parameter_info['label']]))
+		{
+                    $job_params[$job_parameter_info['label']] = $f[$job_parameter_info['label']];
+                    Log::debug('   Parameter value = ' . $f[$job_parameter_info['label']]);
+		}
+	    }
+
+
             // Based on the above, create the Tapis App.
             $config = $agave->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
             $response = $agave->createApp($token, $config);
@@ -150,7 +166,7 @@ class JobController extends Controller
         if ($appId == '999') {
             PrepareDataForThirdPartyAnalysis::dispatch($jobId, $f, $gw_username, $localJobId);
         } else {
-            LaunchAgaveJob::dispatch($jobId, $f, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $localJobId);
+            LaunchAgaveJob::dispatch($jobId, $f, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $job_params, $localJobId);
         }
 
         return redirect('jobs/view/' . $jobId);
