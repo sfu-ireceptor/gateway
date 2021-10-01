@@ -135,7 +135,11 @@ class LaunchAgaveJob implements ShouldQueue
             // submit AGAVE job
             $job->updateStatus('SENDING JOB TO AGAVE');
 
-            $config = $agave->getJobConfig('irec-job-' . $this->jobId, $this->agaveAppId, $this->systemStaging, $this->notificationUrl, $archive_folder, $this->params, $inputs);
+	    $run_time = '16:00:00';
+	    $memory_per_cpu = '4GB';
+	    $node_count = 1;
+	    $cpus_per_node = 8;
+            $config = $agave->getJobConfig('irec-job-' . $this->jobId, $this->agaveAppId, $this->systemStaging, $this->notificationUrl, $archive_folder, $this->params, $inputs, $run_time, $memory_per_cpu, $node_count, $cpus_per_node);
             $response = $agave->createJob($this->token, $config);
 
             $job->agave_id = $response->result->id;
