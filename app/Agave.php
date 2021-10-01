@@ -10,10 +10,31 @@ class Agave
 {
     private $client;
     private $appTemplates;
+    private $jobParameters;
 
     public function __construct()
     {
         $this->initGuzzleRESTClient();
+
+	# Set up the default job contorl parameters used by AGAVE
+	$this->jobParameters = [];
+	# Run time parameter
+        $job_parameter = [];
+        $job_parameter['label'] = 'run_time';
+        $job_parameter['type'] = 'string';
+        $job_parameter['name'] = 'Run time (hh:mm:ss)';
+        $job_parameter['description'] = 'Run time for the job in hh:mm:ss';
+        $job_parameter['default'] = '01:00:00';
+        $this->jobParameters[$job_parameter['label']] = $job_parameter;
+	
+	# Processors per node parameters
+        $job_parameter = [];
+        $job_parameter['label'] = 'processors_per_node';
+        $job_parameter['type'] = 'integer';
+        $job_parameter['name'] = 'Processors per Node';
+        $job_parameter['description'] = 'Number of Processors per node used by the job';
+        $job_parameter['default'] = 1;
+        $this->jobParameters[$job_parameter['label']] = $job_parameter;
     }
 
     public function isUp()
@@ -163,6 +184,11 @@ class Agave
         return $this->appTemplates[$app_name];
     }
 
+    public function getJobParameters()
+    {
+	return $this->jobParameters;
+    }
+   
     public function createSystem($token, $config)
     {
         $url = '/systems/v2/?pretty=true';
@@ -343,15 +369,19 @@ class Agave
         return $app_config;
     }
 
-    public function getJobConfig($name, $app_id, $storage_archiving, $notification_url, $folder, $params, $inputs)
+    public function getJobConfig($name, $app_id, $storage_archiving, $notification_url, $folder, $params, $inputs, $run_time, $mem_per_node, $node_count, $processors_per_node)
     {
         $t = [
             'name' => $name,
             'appId' => $app_id,
             'parameters' => $params,
             'inputs' => $inputs,
-            'maxRunTime' => '08:00:00',
-            'memoryPerNode' => '4GB',
+            #'maxRunTime' => '00:10:00',
+            #'memoryPerNode' => '4GB',
+            'maxRunTime' => $run_time,
+            'memoryPerNode' => $mem_per_node,
+	    'nodeCount' => $node_count,
+	    'processorsPerNode' => $processors_per_node,
             'archive' => true,
             'archiveSystem' => $storage_archiving,
             'archivePath' => $folder,
