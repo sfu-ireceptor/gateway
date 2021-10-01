@@ -142,7 +142,7 @@
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 							<span class="text">
 								Download
-								({{ human_filesize(filesize($d->file_url)) }})
+								({{ human_filesize($d->file_size) }})
 							</span>
 						</a>
 
