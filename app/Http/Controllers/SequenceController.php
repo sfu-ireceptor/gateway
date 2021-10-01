@@ -210,9 +210,9 @@ class SequenceController extends Controller
         $appTemplates = $agave->updateAppTemplates();
         $app_list = [];
 
-	// Store the normal job contorl parameters for the UI. The same parameters are used
-	// by all Apps.
-	$job_parameter_list = $agave->getJobParameters();
+        // Store the normal job contorl parameters for the UI. The same parameters are used
+        // by all Apps.
+        $job_parameter_list = $agave->getJobParameters();
 
         // For each app, set up the info required by the UI for the App parameters.
         foreach ($appTemplates as $app_tag => $app_info) {

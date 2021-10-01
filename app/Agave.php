@@ -16,9 +16,9 @@ class Agave
     {
         $this->initGuzzleRESTClient();
 
-	# Set up the default job contorl parameters used by AGAVE
-	$this->jobParameters = [];
-	# Run time parameter
+        // Set up the default job contorl parameters used by AGAVE
+        $this->jobParameters = [];
+        // Run time parameter
         $job_parameter = [];
         $job_parameter['label'] = 'maxRunTime';
         $job_parameter['type'] = 'string';
@@ -26,8 +26,8 @@ class Agave
         $job_parameter['description'] = 'Maximum run time for the job in hh:mm:ss. If the job takes longer than this to complete, the job will terminated. A run time of longer than 48 hours is not allowed.';
         $job_parameter['default'] = '01:00:00';
         $this->jobParameters[$job_parameter['label']] = $job_parameter;
-	
-	# Processors per node parameter
+
+        // Processors per node parameter
         $job_parameter = [];
         $job_parameter['label'] = 'processorsPerNode';
         $job_parameter['type'] = 'integer';
@@ -35,29 +35,29 @@ class Agave
         $job_parameter['description'] = 'Number of CPUs used by the job, with a maximum of 24 per job. Note not all jobs will scale well so adding more CPUs may not reduce execution time.';
         $job_parameter['default'] = 1;
         $this->jobParameters[$job_parameter['label']] = $job_parameter;
-	
-	# Memory per node parameter
-	# This doesn't seem to be working. Tapis does not seem to pass this on to
-	# the scheduler, so changing this has no effect. We go with 4GB/CPU through
-	# the default system config with a custom directive.
-        #$job_parameter = [];
-        #$job_parameter['label'] = 'memoryPerNode';
-        #$job_parameter['type'] = 'string';
-        ##$job_parameter['name'] = 'Memory per node';
-        #$job_parameter['description'] = 'Amount of memory allocated per node used by the job';
-        #$job_parameter['default'] = '4GB';
-        #$this->jobParameters[$job_parameter['label']] = $job_parameter;
-	
-	# Number of nodes to use parameter
-	# We don't want to have jobs cross nodes, so we limit to one only
-	# Leaving this here in case we want to change that...
-        #$job_parameter = [];
-        #$job_parameter['label'] = 'nodeCount';
-        #$job_parameter['type'] = 'integer';
-        #$job_parameter['name'] = 'Number of nodes';
-        #$job_parameter['description'] = 'Number of nodes used by the job';
-        #$job_parameter['default'] = 1;
-        #$this->jobParameters[$job_parameter['label']] = $job_parameter;
+
+        // Memory per node parameter
+    // This doesn't seem to be working. Tapis does not seem to pass this on to
+    // the scheduler, so changing this has no effect. We go with 4GB/CPU through
+    // the default system config with a custom directive.
+        //$job_parameter = [];
+        //$job_parameter['label'] = 'memoryPerNode';
+        //$job_parameter['type'] = 'string';
+        //#$job_parameter['name'] = 'Memory per node';
+        //$job_parameter['description'] = 'Amount of memory allocated per node used by the job';
+        //$job_parameter['default'] = '4GB';
+        //$this->jobParameters[$job_parameter['label']] = $job_parameter;
+
+    // Number of nodes to use parameter
+    // We don't want to have jobs cross nodes, so we limit to one only
+    // Leaving this here in case we want to change that...
+        //$job_parameter = [];
+        //$job_parameter['label'] = 'nodeCount';
+        //$job_parameter['type'] = 'integer';
+        //$job_parameter['name'] = 'Number of nodes';
+        //$job_parameter['description'] = 'Number of nodes used by the job';
+        //$job_parameter['default'] = 1;
+        //$this->jobParameters[$job_parameter['label']] = $job_parameter;
     }
 
     public function isUp()
@@ -209,9 +209,9 @@ class Agave
 
     public function getJobParameters()
     {
-	return $this->jobParameters;
+        return $this->jobParameters;
     }
-   
+
     public function createSystem($token, $config)
     {
         $url = '/systems/v2/?pretty=true';
@@ -411,25 +411,23 @@ class Agave
             ],
         ];
 
-	// Set up the job parameters. We loop over the possible job parameters and
-	// check to see if any of them are set in the job_params provided by the caller.
-	foreach ($this->getJobParameters() as $job_parameter_info) {
+        // Set up the job parameters. We loop over the possible job parameters and
+        // check to see if any of them are set in the job_params provided by the caller.
+        foreach ($this->getJobParameters() as $job_parameter_info) {
             Log::debug('   getJobConfig: Processing job parameter ' . $job_parameter_info['label']);
-	    // If the parameter is provided by the caller, process it.
-            if (isset($job_params[$job_parameter_info['label']]))
-            {
+            // If the parameter is provided by the caller, process it.
+            if (isset($job_params[$job_parameter_info['label']])) {
                 Log::debug('   getJobConfig: Parameter value = ' . $job_params[$job_parameter_info['label']]);
-		// We need to make sure the type is correct or the JSON will fail. 
-		// Once convereted, we set the parameter based on the label. The label
-		// in the config MUST be the correct Tapis label for that field.
-		if ($job_parameter_info['type'] == 'integer') {
-		    $t[$job_parameter_info['label']] = intval($job_params[$job_parameter_info['label']]);
-		} else {
-	            $t[$job_parameter_info['label']] = $job_params[$job_parameter_info['label']];
-		}
+                // We need to make sure the type is correct or the JSON will fail.
+                // Once convereted, we set the parameter based on the label. The label
+                // in the config MUST be the correct Tapis label for that field.
+                if ($job_parameter_info['type'] == 'integer') {
+                    $t[$job_parameter_info['label']] = intval($job_params[$job_parameter_info['label']]);
+                } else {
+                    $t[$job_parameter_info['label']] = $job_params[$job_parameter_info['label']];
+                }
             }
         }
-
 
         Log::debug('size of params = ' . count($params));
         if (count($params) == 0) {
