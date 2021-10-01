@@ -1198,10 +1198,9 @@ class RestService extends Model
         foreach ($final_response_list as $response) {
             $rs = $response['rs'];
             if ($rs->async) {
-                if(isset($response['data']->query_id)) {
+                if (isset($response['data']->query_id)) {
                     $query_id = $response['data']->query_id;
-                }
-                else {
+                } else {
                     Log::error('No query id found:');
                     Log::error($response['data']);
                     continue;
