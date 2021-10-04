@@ -1213,9 +1213,10 @@ class RestService extends Model
                 $status = 'SUBMITTED';
                 $download_url = '';
 
+                $client = new \GuzzleHttp\Client($defaults);
+
                 while ($status != 'FINISHED' && $status != 'ERROR') {
                     try {
-                        $client = new \GuzzleHttp\Client($defaults);
 
                         $response_polling = $client->get($query_id);
                         $body = $response_polling->getBody();
