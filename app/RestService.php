@@ -1217,7 +1217,6 @@ class RestService extends Model
 
                 while ($status != 'FINISHED' && $status != 'ERROR') {
                     try {
-
                         $response_polling = $client->get($query_id);
                         $body = $response_polling->getBody();
                         $json = json_decode($body);
