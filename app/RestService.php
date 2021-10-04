@@ -1253,11 +1253,11 @@ class RestService extends Model
 
                     $client = new \GuzzleHttp\Client($defaults);
 
-                    $response_download = $client->get($download_url);
-                    $tsv = $response_download->getBody();
-
                     $file_path = $folder_path . '/' . str_slug($rs->display_name) . '.tsv';
-                    file_put_contents($file_path, $tsv);
+                    $options['sink'] = fopen($file_path, 'a');
+                    Log::info('Guzzle: saving to ' . $file_path);
+
+                    $response_download = $client->get($download_url, $options);
 
                     unset($response['data']);
                     $response['data'] = [];
