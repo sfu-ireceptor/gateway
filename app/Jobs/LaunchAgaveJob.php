@@ -25,7 +25,7 @@ class LaunchAgaveJob implements ShouldQueue
     public $tries = 2;
 
     protected $jobId;
-    protected $f;
+    protected $request_data;
     protected $tenant_url;
     protected $token;
     protected $username;
@@ -39,10 +39,10 @@ class LaunchAgaveJob implements ShouldQueue
     protected $localJobId;
 
     // create job instance
-    public function __construct($jobId, $f, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $job_params, $localJobId)
+    public function __construct($jobId, $request_data, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $job_params, $localJobId)
     {
         $this->jobId = $jobId;
-        $this->f = $f;
+        $this->request_data = $request_data;
         $this->tenant_url = $tenant_url;
         $this->token = $token;
         $this->username = $username;
@@ -68,9 +68,9 @@ class LaunchAgaveJob implements ShouldQueue
 
             // generate csv file
             $job->updateStatus('FEDERATING DATA');
-            Log::info('########## $this->f = ' . json_encode($this->f));
-            Log::info('$f[filters_json]' . $this->f['filters_json']);
-            $filters = json_decode($this->f['filters_json'], true);
+            Log::info('########## $this->request_data = ' . json_encode($this->request_data));
+            Log::info('$request_data[filters_json]' . $this->request_data['filters_json']);
+            $filters = json_decode($this->request_data['filters_json'], true);
 
             // Get the sample filters
             $sample_filter_fields = [];
