@@ -484,6 +484,7 @@ $(document).ready(function() {
 						$('.job_view_progress').html(data['progress']);
 						$('.job_steps').html(data['steps']);
 						$('.submission_date_relative').html(data['submission_date_relative']);
+						$('.run_time').html(data['run_time']);
 						document.title = data['agave_status'];
 
 						if (data['status'] >= 2) {
