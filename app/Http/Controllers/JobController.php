@@ -35,11 +35,14 @@ class JobController extends Controller
             return;
         }
 
+	Log::debug("JobController::getJobData: job = " . json_encode($job, JSON_PRETTY_PRINT));
         $data = [];
 
         $data['status'] = $job->status;
         $data['agave_status'] = $job->agave_status;
-        $data['submission_date_relative'] = $job->createdAtRelative();
+        $data['submission_date_relative'] = "Submitted: " . $job->createdAtRelative();
+        $data['run_time'] = "Run time: ". $job->totalTime();
+	$data['job'] = $job;
 
         $d = [];
         $d['job'] = $job;
@@ -66,7 +69,7 @@ class JobController extends Controller
 
     public function postLaunchApp(Request $request)
     {
-        $f = $request->all();
+        $request_data = $request->all();
 
         $gw_username = auth()->user()->username;
         $token = auth()->user()->password;
@@ -74,8 +77,8 @@ class JobController extends Controller
         // create systems
         System::createDefaultSystemsForUser($gw_username, $token);
 
-        Log::info('Processing Job: app_id = ' . $f['app_id']);
-        $appId = $f['app_id'];
+        Log::info('Processing Job: app_id = ' . $request_data['app_id']);
+        $appId = $request_data['app_id'];
 
         // 3rd-party analysis
         if ($appId == '999') {
@@ -112,8 +115,8 @@ class JobController extends Controller
                 Log::debug('   Processing parameter ' . $parameter_info['id']);
                 // If it visible, we want to pass on the input to the job.
                 if ($parameter_info['value']['visible']) {
-                    $params[$parameter_info['id']] = $f[$parameter_info['id']];
-                    Log::debug('   Parameter value = ' . $f[$parameter_info['id']]);
+                    $params[$parameter_info['id']] = $request_data[$parameter_info['id']];
+                    Log::debug('   Parameter value = ' . $request_data[$parameter_info['id']]);
                 }
             }
 
@@ -125,9 +128,9 @@ class JobController extends Controller
             foreach ($job_parameter_list as $job_parameter_info) {
                 // If the parameter is provided, keep track of it so we can give it to the job.
                 Log::debug('   Processing job parameter ' . $job_parameter_info['label']);
-                if (isset($f[$job_parameter_info['label']])) {
-                    $job_params[$job_parameter_info['label']] = $f[$job_parameter_info['label']];
-                    Log::debug('   Parameter value = ' . $f[$job_parameter_info['label']]);
+                if (isset($request_data[$job_parameter_info['label']])) {
+                    $job_params[$job_parameter_info['label']] = $request_data[$job_parameter_info['label']];
+                    Log::debug('   Parameter value = ' . $request_data[$job_parameter_info['label']]);
                 }
             }
 
@@ -147,7 +150,7 @@ class JobController extends Controller
         // create job in DB
         $job = new Job;
         $job->user_id = auth()->user()->id;
-        $job->url = $f['data_url'];
+        $job->url = $request_data['data_url'];
         $job->app = $appHumanName;
         $job->save();
         $job->updateStatus('WAITING');
@@ -162,9 +165,9 @@ class JobController extends Controller
 
         // queue job
         if ($appId == '999') {
-            PrepareDataForThirdPartyAnalysis::dispatch($jobId, $f, $gw_username, $localJobId);
+            PrepareDataForThirdPartyAnalysis::dispatch($jobId, $request_data, $gw_username, $localJobId);
         } else {
-            LaunchAgaveJob::dispatch($jobId, $f, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $job_params, $localJobId);
+            LaunchAgaveJob::dispatch($jobId, $request_data, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $job_params, $localJobId);
         }
 
         return redirect('jobs/view/' . $jobId);
@@ -180,6 +183,7 @@ class JobController extends Controller
 
         $data = [];
         $data['job'] = $job;
+	Log::debug("JobController::getView: job = " . json_encode($job, JSON_PRETTY_PRINT));
         $data['files'] = [];
         $data['summary'] = [];
         if ($job['input_folder'] != '') {
@@ -194,14 +198,14 @@ class JobController extends Controller
                     $info_txt = file_get_contents($info_file);
                     $lines = file($info_file);
                 } catch (Exception $e) {
-                    Log::debug('Job::getView: Could not open file ' . $info_file);
-                    Log::debug('Job::getView: Error: ' . $e->getMessage());
+                    Log::debug('JobController::getView: Could not open file ' . $info_file);
+                    Log::debug('JobController::getView: Error: ' . $e->getMessage());
                 }
                 foreach ($lines as $line) {
-                    Log::debug('Job::getView: ' . $line);
+                    Log::debug('JobController::getView: ' . $line);
                 }
 
-                $data['summary'] = $info_txt;
+                //$data['summary'] = $info_txt;
                 $data['summary'] = $lines;
             }
         }
