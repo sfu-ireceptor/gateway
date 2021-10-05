@@ -8,9 +8,16 @@
 
 	<h2>
 		{{ $job->app }} (Job {{ $job->id }})
+                <br />
 		<small data-toggle="tooltip" data-placement="right" title="Submitted on {{ $job->createdAtFull() }}"> 
 			<span class="submission_date_relative">
-				{{ $job->createdAtRelative() }}
+				Submitted: {{ $job->createdAtRelative() }}
+			</span>
+		</small>
+                <br />
+		<small> 
+			<span class="run_time">
+				Run time: {{ $job->totalTime() }}
 			</span>
 		</small>
 	</h2>
