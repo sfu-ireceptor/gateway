@@ -35,14 +35,14 @@ class JobController extends Controller
             return;
         }
 
-	Log::debug("JobController::getJobData: job = " . json_encode($job, JSON_PRETTY_PRINT));
+        Log::debug('JobController::getJobData: job = ' . json_encode($job, JSON_PRETTY_PRINT));
         $data = [];
 
         $data['status'] = $job->status;
         $data['agave_status'] = $job->agave_status;
-        $data['submission_date_relative'] = "Submitted: " . $job->createdAtRelative();
-        $data['run_time'] = "Run time: ". $job->totalTime();
-	$data['job'] = $job;
+        $data['submission_date_relative'] = 'Submitted: ' . $job->createdAtRelative();
+        $data['run_time'] = 'Run time: ' . $job->totalTime();
+        $data['job'] = $job;
 
         $d = [];
         $d['job'] = $job;
@@ -183,7 +183,7 @@ class JobController extends Controller
 
         $data = [];
         $data['job'] = $job;
-	Log::debug("JobController::getView: job = " . json_encode($job, JSON_PRETTY_PRINT));
+        Log::debug('JobController::getView: job = ' . json_encode($job, JSON_PRETTY_PRINT));
         $data['files'] = [];
         $data['summary'] = [];
         if ($job['input_folder'] != '') {
