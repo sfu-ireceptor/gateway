@@ -17,9 +17,12 @@ def performQueryAnalysis(input_file, query_xkey, query_ykey, query_xvalues, quer
         print("ERROR: Could not open file ", input_file)
         return data 
 
-    # Get the rearrangement data into a Pandas data frame.
+    # Get the rearrangement data into a Pandas data frame. We force everything to be
+    # a string so we can do our index/slicing without worrying about type.
     chunk_size = 100000
-    airr_df_reader =  pd.read_csv(input_file, sep='\t', chunksize=chunk_size)
+    airr_df_reader =  pd.read_csv(input_file, sep='\t',
+            dtype={query_xkey:str,query_ykey:str},
+            chunksize=chunk_size)
 
     # Iterate over the block of data, gathering the stats for each X,Y
     # pair.
