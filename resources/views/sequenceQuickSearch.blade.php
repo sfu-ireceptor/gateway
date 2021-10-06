@@ -28,6 +28,13 @@
 								@include('help', ['id' => 'junction_aa'])
 								{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided, minimum of 4 AA required). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 							</div>
+							<p>
+								@if (isset($iedb_info) && $iedb_info)
+									@foreach ($iedb_data as $t)
+										<a href="{{ $t['url'] }}" target="_blank">{{ $t['id'] }}</a>
+									@endforeach
+								@endif
+							</p>
 						</div>
 					</div>
 				</div>
