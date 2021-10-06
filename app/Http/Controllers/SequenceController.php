@@ -404,14 +404,13 @@ class SequenceController extends Controller
         $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_sequences']);
 
         // if junction_aa filter, ask IEDB for more information
-        if(isset($sequence_filters['junction_aa'])) {
+        if (isset($sequence_filters['junction_aa'])) {
             try {
                 $defaults = [];
                 $defaults['base_uri'] = 'https://query-api.iedb.org/';
                 $defaults['verify'] = false;    // accept self-signed SSL certificates
 
                 $client = new \GuzzleHttp\Client($defaults);
-
 
                 $val = $sequence_filters['junction_aa'];
                 $response = $client->get('tcr_search?chain2_cdr3_seq=eq.' . $val);
@@ -420,7 +419,7 @@ class SequenceController extends Controller
 
                 $t = json_decode($body);
 
-                if(count($t) > 0) {
+                if (count($t) > 0) {
                     $data['iedb_info'] = true;
                     $data['iedb_data'] = [];
 
@@ -434,7 +433,7 @@ class SequenceController extends Controller
 
                     // sort by assay_ids_count desc
                     usort($data['iedb_data'], function ($a, $b) {
-                        return ($b['assay_ids_count'] >= $a['assay_ids_count']);
+                        return $b['assay_ids_count'] >= $a['assay_ids_count'];
                     });
                 }
             } catch (\Exception $e) {
