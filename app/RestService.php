@@ -1203,7 +1203,9 @@ class RestService extends Model
                 } else {
                     Log::error('No query id found:');
                     Log::error($response['data']);
-                    continue;
+                    
+                    $status = 'ERROR';
+                    $error_message = 'No query id found';
                 }
 
                 $defaults = [];
