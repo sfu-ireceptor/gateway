@@ -420,6 +420,7 @@ class SequenceController extends Controller
                 $t = json_decode($body);
 
                 if (count($t) > 0) {
+                    
                     $data['iedb_info'] = true;
                     $data['iedb_data'] = [];
 
