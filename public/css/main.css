@@ -987,7 +987,7 @@ a.download_sequences {
 /* @group jobs page */
 
 .job_view_progress {
-	margin-bottom: 80px;
+	margin-bottom: 0px;
 }
 
 .local-job-progress {

@@ -10,29 +10,25 @@
 		{{ $job->app }} (Job {{ $job->id }})
                 <br />
 		<small data-toggle="tooltip" data-placement="right" title="Submitted on {{ $job->createdAtFull() }}"> 
-			<span class="submission_date_relative">
-				Submitted: {{ $job->createdAtRelative() }}
+			Submitted: <span class="submission_date_relative">
+				{{ $job->createdAtRelative() }}
 			</span>
 		</small>
                 <br />
 		<small> 
-			<span class="run_time">
-				Run time: {{ $job->totalTime() }}
-			</span>
+			Run time: <span class="run_time">{{ $job->totalTime() }}</span>
 		</small>
 	</h2>
 
 	<div class="job_view_progress">
 	    @include('job/progress')
-	    @if ($job->url)
-		<p>
-			Data from:
-			<a href="{{ $job->url }}">
-				{{ $job->url }}
-			</a>
-		</p>
-	    @endif
 	</div>	
+	@if ($job->url)
+		Data from:
+                 <span class="job_url">
+                    <a href="{{ $job->url }}"> {{ $job->url }} </a>
+	        </span>
+	@endif
 
         @if (count($summary) > 0)
             <h2>Summary</h2>
