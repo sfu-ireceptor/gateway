@@ -1218,6 +1218,8 @@ class RestService extends Model
                 $client = new \GuzzleHttp\Client($defaults);
 
                 while ($status != 'FINISHED' && $status != 'ERROR') {
+                    Log::debug('status=' . $status);
+
                     try {
                         $response_polling = $client->get($query_id);
                         $body = $response_polling->getBody();
@@ -1243,23 +1245,25 @@ class RestService extends Model
                         $error_message = $e->getMessage();
                         Log::error($error_message);
                     }
-                    Log::debug('status=' . $status);
                 }
 
                 if ($status == 'FINISHED') {
-                    Log::debug('status=' . $status);
                     Log::debug('download_url=' . $download_url);
+
+                    // download file
+                    $file_path = $folder_path . '/' . str_slug($rs->display_name) . '.tsv';
+                    Log::info('Guzzle: saving to ' . $file_path);
+
+                    $query_log_id = QueryLog::start_rest_service_query($rs->id, $rs->name, $download_url, '', $file_path);
 
                     $defaults = [];
                     $defaults['verify'] = false;    // accept self-signed SSL certificates
-
                     $client = new \GuzzleHttp\Client($defaults);
-
-                    $file_path = $folder_path . '/' . str_slug($rs->display_name) . '.tsv';
+                    
                     $options['sink'] = fopen($file_path, 'a');
-                    Log::info('Guzzle: saving to ' . $file_path);
-
                     $response_download = $client->get($download_url, $options);
+
+                    QueryLog::end_rest_service_query($query_log_id, filesize($file_path));
 
                     unset($response['data']);
                     $response['data'] = [];
