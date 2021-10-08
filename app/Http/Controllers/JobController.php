@@ -35,7 +35,7 @@ class JobController extends Controller
             return;
         }
 
-	Log::debug("JobController::getJobData: job = " . json_encode($job, JSON_PRETTY_PRINT));
+        Log::debug('JobController::getJobData: job = ' . json_encode($job, JSON_PRETTY_PRINT));
         $data = [];
 
 	// These variables are used to update the state of the web page. They
@@ -187,7 +187,7 @@ class JobController extends Controller
 
         $data = [];
         $data['job'] = $job;
-	Log::debug("JobController::getView: job = " . json_encode($job, JSON_PRETTY_PRINT));
+        Log::debug('JobController::getView: job = ' . json_encode($job, JSON_PRETTY_PRINT));
         $data['files'] = [];
         $data['summary'] = [];
         if ($job['input_folder'] != '') {
