@@ -26,15 +26,13 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
-
-        $data=[];
+        $data = [];
         try {
             $defaults = [];
             $defaults['base_uri'] = 'https://query-api.iedb.org/';
             $defaults['verify'] = false;    // accept self-signed SSL certificates
 
             $client = new \GuzzleHttp\Client($defaults);
-
 
             $val = 'ASSIRSSYEQY';
             $response = $client->get('tcr_search?chain2_cdr3_seq=eq.' . $val);
@@ -43,7 +41,7 @@ class TestController extends Controller
 
             $t = json_decode($body);
 
-            if(count($t) > 0) {
+            if (count($t) > 0) {
                 $data['iedb_info'] = true;
                 $data['iedb_data'] = [];
 
@@ -55,11 +53,10 @@ class TestController extends Controller
                     $i++;
                 }
 
-            // sort by assay_ids_count desc
-            usort($data['iedb_data'], function ($a, $b) {
-                return ($b['assay_ids_count'] >= $a['assay_ids_count']);
-            });
-
+                // sort by assay_ids_count desc
+                usort($data['iedb_data'], function ($a, $b) {
+                    return $b['assay_ids_count'] >= $a['assay_ids_count'];
+                });
             }
             dd($data);
             dd($t);
@@ -69,8 +66,7 @@ class TestController extends Controller
 
             return $error_message;
         }
-die();
-
+        exit();
 
         $agave = new Agave;
         $token = $agave->getAdminToken();
