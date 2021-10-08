@@ -1259,7 +1259,7 @@ class RestService extends Model
                     $defaults = [];
                     $defaults['verify'] = false;    // accept self-signed SSL certificates
                     $client = new \GuzzleHttp\Client($defaults);
-                    
+
                     $options['sink'] = fopen($file_path, 'a');
                     $response_download = $client->get($download_url, $options);
 
