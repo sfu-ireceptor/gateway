@@ -65,12 +65,23 @@ ls ${singularity_image}
 echo "Done ownloading singularity image from the Gateway"
 date
 
+# Get the iRecpetor Gateway utilities from the Gateway
+echo "Downloading iReceptor Gateway Utilities from the Gateway"
+date
+GATEWAY_UTIL_DIR=gateway_utilities
+mkdir -p ${GATEWAY_UTIL_DIR}
+pushd ${GATEWAY_UTIL_DIR}
+wget -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" https://gateway-analysis.ireceptor.org/gateway_utilities/
+popd
+echo "Done downloading iReceptor Gateway Utilities"
+date
+
+# Load the iReceptor Gateway bash utility functions.
+source ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/gateway_utilities.sh
+
 # Load any modules that are required by the App. 
 module load singularity
 module load scipy-stack
-
-# Load any bash utility functions needed.
-source ./gateway_utilities.sh
 
 # The Gateway provides information about the download in the file info.txt
 INFO_FILE="info.txt"
@@ -101,9 +112,9 @@ function run_analysis()
     if [ "$#" -eq 5 ]; then
         local repertoire_id=$4
         local repertoire_file=$5
-        file_string=`python3 ${SCRIPT_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
+        file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
         file_string=${repository_name}_${file_string// /}
-        title_string="$(python3 ${SCRIPT_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
+        title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
         # TODO: Fix this, it should not be required.
         title_string=${title_string// /}
     else
@@ -146,13 +157,16 @@ mv ${WORKING_DIR}/${INFO_FILE} .
 mv ${WORKING_DIR}/${MANIFEST_FILE} .
 
 # We also want to keep all of the repertoire files.
-repertoire_files=( `python3 ${SCRIPT_DIR}/manifest_summary.py ${MANIFEST_FILE} repertoire_file` )
+repertoire_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} repertoire_file` )
 for f in "${repertoire_files[@]}"; do
     mv ${WORKING_DIR}/$f .
 done
 
 # We don't want to copy around the singularity image everywhere.
 rm -f ${singularity_image}
+
+# We don't want the iReceptor Utilities to be part of the results.
+rm -rf ${GATEWAY_UTIL_DIR}
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
 echo "Removing original ZIP file $ZIP_FILE"

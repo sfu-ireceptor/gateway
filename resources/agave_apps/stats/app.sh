@@ -8,6 +8,10 @@ if [ -f /etc/bashrc ]; then
 . /etc/bashrc
 fi
 
+# Get the script directory where all the code is.
+SCRIPT_DIR=`pwd`
+echo "Running job from ${SCRIPT_DIR}"
+
 # Load the environment/modules needed.
 module load scipy-stack
 
@@ -20,12 +24,10 @@ pushd ${GATEWAY_UTIL_DIR}
 wget -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" https://gateway-analysis.ireceptor.org/gateway_utilities/
 popd
 echo "Done downloading iReceptor Gateway Utilities"
-ls ${GATEWAY_UTIL_DIR}
 date
 
-# Get the script directory where all the code is.
-SCRIPT_DIR=`pwd`
-echo "Running job from ${SCRIPT_DIR}"
+# Load the iReceptor Gateway utilities functions.
+. ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/gateway_utilities.sh
 
 # app variables (will be subsituted by Tapis). If they don't exist
 # use command line arguments.
@@ -191,9 +193,6 @@ function run_analysis()
         do_heatmap v_call junction_aa_length $array_of_files $output_directory $file_string $title_string
 }
 
-# Load the iReceptor Gateway utilities functions.
-. ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/gateway_utilities.sh
-
 # Set up the required variables. An iReceptor Gateway download consists
 # of both an "info.txt" file that describes the download as well as an
 # AIRR manifest JSON file that describes the relationships between
@@ -253,6 +252,9 @@ repertoire_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.p
 for f in "${repertoire_files[@]}"; do
     mv ${WORKING_DIR}/$f .
 done
+
+# We don't want the iReceptor Utilities to be part of the results.
+rm -rf ${GATEWAY_UTIL_DIR}
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
 echo "Removing original ZIP file $ZIP_FILE"
