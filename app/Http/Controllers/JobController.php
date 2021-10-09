@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Agave;
 use App\Job;
-use App\Query;
 use App\Jobs\LaunchAgaveJob;
 use App\Jobs\PrepareDataForThirdPartyAnalysis;
 use App\JobStep;
 use App\LocalJob;
+use App\Query;
 use App\System;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -192,6 +192,8 @@ class JobController extends Controller
 
         $data['files'] = [];
         $data['summary'] = [];
+	// Set up the summary information. If we have a file use it, otherwise
+	// use the data from the query parameters.
         if ($job['input_folder'] != '') {
             $folder = 'storage/' . $job['input_folder'];
             if (File::exists($folder)) {
