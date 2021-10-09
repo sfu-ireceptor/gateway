@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\Query;
 use Facades\App\RestService;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -512,29 +511,29 @@ class Sequence
     public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
         $s = '';
-	// We want to extract the query_id from the URL. The URL has a query_id parameter
-	// wich we need to extract. URLs look like this:
-	// https:\/\/gateway-analysis.ireceptor.org\/sequences?query_id=8636
+        // We want to extract the query_id from the URL. The URL has a query_id parameter
+        // wich we need to extract. URLs look like this:
+        // https:\/\/gateway-analysis.ireceptor.org\/sequences?query_id=8636
         $query_sep = 'query_id=';
-	// Get the query_id, it should be everything after the query_sep string.
-        $seq_query_id = substr($url, strpos($url, $query_sep ) + strlen($query_sep));
-	// Get the query parameters for both the sequence and sample queries. The 
-	// sequence query parameters contains the query id of the sample query used
-	// to get to the seqeunces page.
-	$seq_query_params = Query::getParams($seq_query_id);
-	$sam_query_id = $seq_query_params['sample_query_id'];
-	$sam_query_params = Query::getParams($sam_query_id);
-	
-	// Use the Query class to generate a consistent set of summary info
-	// from the query parameters. This returns a single string, containing
-	// new lines, which is what we want.
+        // Get the query_id, it should be everything after the query_sep string.
+        $seq_query_id = substr($url, strpos($url, $query_sep) + strlen($query_sep));
+        // Get the query parameters for both the sequence and sample queries. The
+        // sequence query parameters contains the query id of the sample query used
+        // to get to the seqeunces page.
+        $seq_query_params = Query::getParams($seq_query_id);
+        $sam_query_id = $seq_query_params['sample_query_id'];
+        $sam_query_params = Query::getParams($sam_query_id);
+
+        // Use the Query class to generate a consistent set of summary info
+        // from the query parameters. This returns a single string, containing
+        // new lines, which is what we want.
         $sam_summary = Query::sampleParamsSummary($sam_query_params);
-	$s .= $sam_summary;
+        $s .= $sam_summary;
 
-	$seq_summary = Query::sequenceParamsSummary($seq_query_params);
-	$s .= $seq_summary;
+        $seq_summary = Query::sequenceParamsSummary($seq_query_params);
+        $s .= $seq_summary;
 
-	// Generate a summary of the repositories used.
+        // Generate a summary of the repositories used.
         $s .= '<b>Data/Repository Summary</b>' . "\n";
 
         $nb_sequences_total = 0;
@@ -568,14 +567,14 @@ class Sequence
         }
         $s .= "\n";
 
-	// Generate a summary of where the query came from.
+        // Generate a summary of where the query came from.
         $s .= '<b>Source</b>' . "\n";
         $s .= $url . "\n";
         $date_str_human = date('M j, Y', $now);
         $time_str_human = date('H:i T', $now);
         $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "\n";
 
-	// Save the info into the info.txt file.
+        // Save the info into the info.txt file.
         $info_file_path = $folder_path . '/info.txt';
         file_put_contents($info_file_path, $s);
 
