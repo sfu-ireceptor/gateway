@@ -39,15 +39,15 @@ class JobController extends Controller
         Log::debug('JobController::getJobData: job = ' . json_encode($job, JSON_PRETTY_PRINT));
         $data = [];
 
-	// These variables are used to update the state of the web page. They
-	// essentially map to <span> elements in the HTML and are updated through
-	// the JS code in main.js
+        // These variables are used to update the state of the web page. They
+        // essentially map to <span> elements in the HTML and are updated through
+        // the JS code in main.js
         $data['status'] = $job->status;
         $data['agave_status'] = $job->agave_status;
         $data['submission_date_relative'] = $job->createdAtRelative();
         $data['run_time'] = $job->totalTime();
         $data['job_url'] = $job->url;
-	$data['job'] = $job;
+        $data['job'] = $job;
 
         $d = [];
         $d['job'] = $job;
