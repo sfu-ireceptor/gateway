@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Agave;
 use App\Job;
-use App\Query;
 use App\Jobs\LaunchAgaveJob;
 use App\Jobs\PrepareDataForThirdPartyAnalysis;
 use App\JobStep;
 use App\LocalJob;
+use App\Query;
 use App\System;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -190,21 +190,21 @@ class JobController extends Controller
         $data['job'] = $job;
         Log::debug('JobController::getView: job = ' . json_encode($job, JSON_PRETTY_PRINT));
 
-	// Extract the query id from the query URL. They look like this:
-	// https:\/\/gateway-analysis.ireceptor.org\/sequences?query_id=8636
-	$job_url = $job['url'];
-	$query_string = 'query_id=';
-	$seq_query_id = substr($job_url, strpos($job_url, $query_string) + strlen($query_string));
+        // Extract the query id from the query URL. They look like this:
+        // https:\/\/gateway-analysis.ireceptor.org\/sequences?query_id=8636
+        $job_url = $job['url'];
+        $query_string = 'query_id=';
+        $seq_query_id = substr($job_url, strpos($job_url, $query_string) + strlen($query_string));
         Log::debug('JobController::getView: sequence query_id = ' . $seq_query_id);
 
-	// Get the query filters. Note this is the sequence query.
-	$seq_query_params = Query::getParams($seq_query_id);
+        // Get the query filters. Note this is the sequence query.
+        $seq_query_params = Query::getParams($seq_query_id);
         Log::debug('JobController::getView: seq query params = ' . json_encode($seq_query_params, JSON_PRETTY_PRINT));
         $sequence_summary = Query::sequenceParamsSummary($seq_query_params);
         Log::debug('JobController::getView: sequence query summary = ' . $sequence_summary);
 
-	$sample_query_id = $seq_query_params['sample_query_id'];
-	$sample_query_params = Query::getParams($sample_query_id);
+        $sample_query_id = $seq_query_params['sample_query_id'];
+        $sample_query_params = Query::getParams($sample_query_id);
         Log::debug('JobController::getView: sample query_id = ' . $sample_query_id);
         Log::debug('JobController::getView: sample query params = ' . json_encode($sample_query_params, JSON_PRETTY_PRINT));
         $sample_summary = Query::sampleParamsSummary($sample_query_params);
