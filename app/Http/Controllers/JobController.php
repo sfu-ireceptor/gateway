@@ -190,28 +190,8 @@ class JobController extends Controller
         $data['job'] = $job;
         Log::debug('JobController::getView: job = ' . json_encode($job, JSON_PRETTY_PRINT));
 
-	// Extract the query id from the query URL. They look like this:
-	// https:\/\/gateway-analysis.ireceptor.org\/sequences?query_id=8636
-	$job_url = $job['url'];
-	$query_string = 'query_id=';
-	$seq_query_id = substr($job_url, strpos($job_url, $query_string) + strlen($query_string));
-        Log::debug('JobController::getView: sequence query_id = ' . $seq_query_id);
-
-	// Get the query filters. Note this is the sequence query.
-	$seq_query_params = Query::getParams($seq_query_id);
-        Log::debug('JobController::getView: seq query params = ' . json_encode($seq_query_params, JSON_PRETTY_PRINT));
-        $sequence_summary = Query::sequenceParamsSummary($seq_query_params);
-        Log::debug('JobController::getView: sequence query summary = ' . $sequence_summary);
-
-	$sample_query_id = $seq_query_params['sample_query_id'];
-	$sample_query_params = Query::getParams($sample_query_id);
-        Log::debug('JobController::getView: sample query_id = ' . $sample_query_id);
-        Log::debug('JobController::getView: sample query params = ' . json_encode($sample_query_params, JSON_PRETTY_PRINT));
-        $sample_summary = Query::sampleParamsSummary($sample_query_params);
-        Log::debug('JobController::getView: sample query summary = ' . $sample_summary);
-
         $data['files'] = [];
-        $data['summary'] = explode("\n", $sample_summary . $sequence_summary);
+        $data['summary'] = [];
         if ($job['input_folder'] != '') {
             $folder = 'storage/' . $job['input_folder'];
             if (File::exists($folder)) {
@@ -227,14 +207,33 @@ class JobController extends Controller
                     Log::debug('JobController::getView: Could not open file ' . $info_file);
                     Log::debug('JobController::getView: Error: ' . $e->getMessage());
                 }
-                foreach ($lines as $line) {
-                    Log::debug('JobController::getView: ' . $line);
-                }
-
-                //$data['summary'] = $info_txt;
                 $data['summary'] = $lines;
             }
-        }
+	} else {
+	    // Extract the query id from the query URL. They look like this:
+	    // https:\/\/gateway-analysis.ireceptor.org\/sequences?query_id=8636
+	    $job_url = $job['url'];
+	    $query_string = 'query_id=';
+	    $seq_query_id = substr($job_url, strpos($job_url, $query_string) + strlen($query_string));
+    
+	    // Get the query filters. Note this is the sequence query.
+	    $seq_query_params = Query::getParams($seq_query_id);
+            $sequence_summary = Query::sequenceParamsSummary($seq_query_params);
+            Log::debug('JobController::getView: sequence query_id = ' . $seq_query_id);
+            Log::debug('JobController::getView: seq query params = ' . json_encode($seq_query_params, JSON_PRETTY_PRINT));
+            Log::debug('JobController::getView: sequence query summary = ' . $sequence_summary);
+
+	    // Get the sample query ID, the query parameters, and the text summary
+	    $sample_query_id = $seq_query_params['sample_query_id'];
+	    $sample_query_params = Query::getParams($sample_query_id);
+            $sample_summary = Query::sampleParamsSummary($sample_query_params);
+            Log::debug('JobController::getView: sample query_id = ' . $sample_query_id);
+            Log::debug('JobController::getView: sample query params = ' . json_encode($sample_query_params, JSON_PRETTY_PRINT));
+            Log::debug('JobController::getView: sample query summary = ' . $sample_summary);
+
+	    // Split the summaries by line into an array, which is what the view expects.
+	    $data['summary'] = explode("\n", $sample_summary . $sequence_summary);
+	}
 
         $data['steps'] = JobStep::findAllForJob($id);
 
