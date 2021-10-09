@@ -511,39 +511,6 @@ class Sequence
     public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
         $s = '';
-        $s .= '<b>Data/Repository Summary</b>' . "\n";
-
-        $nb_sequences_total = 0;
-        $expected_nb_sequences_total = 0;
-        foreach ($file_stats as $t) {
-            $nb_sequences_total += $t['nb_sequences'];
-            $expected_nb_sequences_total += $t['expected_nb_sequences'];
-        }
-
-        $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
-        if ($is_download_incomplete) {
-            $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
-            $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "\n";
-        } else {
-            $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
-        }
-
-        foreach ($file_stats as $t) {
-            if ($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences) (from ' . $t['rs_url'] . ')' . "\n";
-            } else {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (from ' . $t['rs_url'] . ')' . "\n";
-            }
-        }
-
-        if (! empty($failed_rs)) {
-            $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "\n";
-            foreach ($failed_rs as $rs) {
-                $s .= $rs->name . "\n";
-            }
-        }
-
-        $s .= "\n";
 
         $s .= '<b>Metadata filters</b>' . "\n";
         if (count($sample_filters) == 0) {
@@ -589,6 +556,39 @@ class Sequence
             }
             // use human-friendly filter name
             $s .= __('short.' . $k) . ': ' . $v . "\n";
+        }
+        $s .= "\n";
+
+        $s .= '<b>Data/Repository Summary</b>' . "\n";
+
+        $nb_sequences_total = 0;
+        $expected_nb_sequences_total = 0;
+        foreach ($file_stats as $t) {
+            $nb_sequences_total += $t['nb_sequences'];
+            $expected_nb_sequences_total += $t['expected_nb_sequences'];
+        }
+
+        $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
+        if ($is_download_incomplete) {
+            $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
+            $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "\n";
+        } else {
+            $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
+        }
+
+        foreach ($file_stats as $t) {
+            if ($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences) (from ' . $t['rs_url'] . ')' . "\n";
+            } else {
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (from ' . $t['rs_url'] . ')' . "\n";
+            }
+        }
+
+        if (! empty($failed_rs)) {
+            $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "\n";
+            foreach ($failed_rs as $rs) {
+                $s .= $rs->name . "\n";
+            }
         }
         $s .= "\n";
 
