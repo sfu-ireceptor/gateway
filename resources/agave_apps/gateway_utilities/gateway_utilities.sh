@@ -59,7 +59,7 @@ function gateway_split_repertoire(){
 
     # Determine the files to process. We extract the .tsv files from the info.txt
     # and store them in an array.
-    tsv_files=( `python3 ${SCRIPT_DIR}/manifest_summary.py ${MANIFEST_FILE} rearrangement_file` )
+    tsv_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} rearrangement_file` )
     if [ $? -ne 0 ]
     then
 	echo "Error: Could not process manifest file ${MANIFEST_FILE}"
@@ -71,7 +71,7 @@ function gateway_split_repertoire(){
     for f in "${tsv_files[@]}"; do
 	# Get an array of unique repertoire_ids from the TSV file
         echo "    Extracting ${SPLIT_FIELD} from $f"
-        repertoire_ids=( `python3 ${SCRIPT_DIR}/preprocess.py $f $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
+        repertoire_ids=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/preprocess.py $f $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
 
 	# Create a directory for each repository (mkdir if it isn't already with -p)
         repository_name="${f%.*}"
@@ -93,7 +93,7 @@ function gateway_split_repertoire(){
             # Filter the input file $f and extract all records that have the given
 	    # repertoire_id in the SPLIT_FIELD.
 	    # Command line parameters: inputfile, field_name, field_value, outfile
-	    python3 ${SCRIPT_DIR}/filter.py $f ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_tsvfile}
+	    python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter.py $f ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_tsvfile}
 	
 	    # Call the client supplied "run_analysis" callback function. Parameters:
             #     $1 array of TSV input files

@@ -11,6 +11,18 @@ fi
 # Load the environment/modules needed.
 module load scipy-stack
 
+# Get the iRecpetor Gateway utilities from the Gateway
+echo "Downloading iReceptor Gateway Utilities from the Gateway"
+date
+GATEWAY_UTIL_DIR=gateway_utilities
+mkdir -p ${GATEWAY_UTIL_DIR}
+pushd ${GATEWAY_UTIL_DIR}
+wget -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" https://gateway-analysis.ireceptor.org/gateway_utilities/
+popd
+echo "Done downloading iReceptor Gateway Utilities"
+ls ${GATEWAY_UTIL_DIR}
+date
+
 # Get the script directory where all the code is.
 SCRIPT_DIR=`pwd`
 echo "Running job from ${SCRIPT_DIR}"
@@ -112,7 +124,7 @@ function do_histogram()
     echo $1 > $TMP_FILE
     for filename in "${array_of_files[@]}"; do
 	echo "    Extracting $1 from $filename"
-	python3 ${SCRIPT_DIR}/preprocess.py $filename $1 >> $TMP_FILE
+	python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/preprocess.py $filename $1 >> $TMP_FILE
     done
 
     ##############################################
@@ -160,9 +172,9 @@ function run_analysis()
 	if [ "$#" -eq 5 ]; then
 	    local repertoire_id=$4
 	    local repertoire_file=$5
-	    file_string=`python3 ${SCRIPT_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
+	    file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
 	    file_string=${repository_name}_${file_string// /}
-            title_string="$(python3 ${SCRIPT_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
+            title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
             # TODO: Fix this, it should not be required.
             title_string=${title_string// /}
         else 
@@ -180,7 +192,7 @@ function run_analysis()
 }
 
 # Load the iReceptor Gateway utilities functions.
-. ${SCRIPT_DIR}/gateway_utilities.sh
+. ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/gateway_utilities.sh
 
 # Set up the required variables. An iReceptor Gateway download consists
 # of both an "info.txt" file that describes the download as well as an
@@ -205,7 +217,7 @@ elif [ "${split_repertoire}" = "False" ]; then
     pushd ${WORKING_DIR}
 
     # Generate the TSV files from the AIRR manifest
-    tsv_files=( `python3 ${SCRIPT_DIR}/manifest_summary.py ${MANIFEST_FILE} rearrangement_file` )
+    tsv_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} rearrangement_file` )
     if [ $? -ne 0 ]
     then
         echo "Error: Could not process manifest file ${1}"
@@ -236,7 +248,7 @@ cd ${SCRIPT_DIR}
 # directory.
 mv ${WORKING_DIR}/${INFO_FILE} .
 mv ${WORKING_DIR}/${MANIFEST_FILE} .
-repertoire_files=( `python3 ${SCRIPT_DIR}/manifest_summary.py ${MANIFEST_FILE} repertoire_file` )
+repertoire_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} repertoire_file` )
 
 for f in "${repertoire_files[@]}"; do
     mv ${WORKING_DIR}/$f .
