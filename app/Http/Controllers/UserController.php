@@ -300,7 +300,11 @@ class UserController extends Controller
         $table = 'password_resets';
         $entry = DB::table($table)->where('token', $reset_token)->first();
         if ($entry == null) {
-            abort(401, 'Sorry, your reset link is invalid. Could you make sure you copied it properly?');
+            $data = [];
+            $data['message'] = 'Sorry, your reset link is invalid.';
+            $data['message2'] = 'Note: Microsoft Defender for Office 365 pre-visits links in emails by default, so your new password may have been sent to you by email already.';
+
+            return response()->view('error', $data, 401);
         }
 
         // find user
@@ -342,6 +346,9 @@ class UserController extends Controller
         Mail::send(['text' => 'emails.auth.newPassword'], $t, function ($message) use ($email) {
             $message->to($email)->subject('Your new password');
         });
+
+        // disable reset token
+        DB::table($table)->where('token', $reset_token)->delete();
 
         return redirect('/user/reset-password-confirmation');
     }

@@ -266,7 +266,7 @@ class Sequence
 
                 if (count($success_rs) == 1) {
                     $download_incomplete_info .= 'The download from the repository ' . $rs_name_list_str . " finished successfully.\n";
-                } else {
+                } elseif (count($success_rs) > 1) {
                     $download_incomplete_info .= 'Downloads from the following repositories finished successfully: ' . $rs_name_list_str . ".\n";
                 }
             } else {

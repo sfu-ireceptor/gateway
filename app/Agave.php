@@ -469,6 +469,7 @@ class Agave
         $first_name_stripped = str_replace(' ', '', $first_name);
         $last_name_stripped = str_replace(' ', '', $last_name);
         $username = strtolower($first_name_stripped) . '_' . strtolower($last_name_stripped);
+        $username = iconv('UTF-8', 'ASCII//TRANSLIT', $username); // remove diacritics
 
         // if username already exists, append number
         if ($this->userExists($username, $token)) {

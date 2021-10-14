@@ -250,6 +250,7 @@ class RestService extends Model
         unset($filters['cols']);
         unset($filters['open_filter_panel_list']);
         unset($filters['full_text_search']);
+        unset($filters['ir_sequence_count']);
         unset($filters['filters_order']);
         unset($filters['sample_query_id']);
         unset($filters['sort_column']);

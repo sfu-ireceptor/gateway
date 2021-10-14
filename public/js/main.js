@@ -100,7 +100,7 @@ $(document).ready(function() {
 			$('.column_selector input.' + field).change();
 
 			// disable this option in the dropdown
-			$('.add_field select[name=extra_field] option[value=' + field + ']').attr('disabled','disabled');
+			$('.add_field select[name=extra_field] option[value="' + field + '"]').attr('disabled','disabled');
 
 			// change dropdown selection to first not-disabled option
 			var first_not_disabled_option_value = $('.add_field select[name=extra_field] option:enabled:first').val();
@@ -210,7 +210,7 @@ $(document).ready(function() {
 					    else if(stat == 'j_gene_usage') {
 						    properties.setDataType('JGeneUsage');
 						    properties.setDataDrilldown(true);
-						    properties.setSubtitle(["Subgroup/Family", "Gene", "Allele"]);
+						    properties.setSubtitle(["Gene", "Allele"]);
 						    properties.setSeriesColors(["rgb(107,194,135)"]);
 					    }
 					    else if(stat == 'junction_length_stats') {
