@@ -49,13 +49,13 @@ class Sequence
     public static function summary($filters, $username)
     {
         // get sequences summary
-        $response_list = RestService::sequences_summary($filters, $username);
+        $response_list_sequences_summary = RestService::sequences_summary($filters, $username);
 
         // generate stats
-        $data = self::process_response($response_list);
+        $data = self::process_response($response_list_sequences_summary);
 
         // get a few sequences from each service
-        $response_list = RestService::sequence_list($filters);
+        $response_list = RestService::sequence_list($filters, $response_list_sequences_summary);
 
         // merge responses
         $sequence_list = [];
