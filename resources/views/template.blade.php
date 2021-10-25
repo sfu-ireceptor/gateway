@@ -189,13 +189,13 @@
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
 
 		<script src="/js/jstree.min.js"></script>
-		<script src="https://code.highcharts.com/highcharts.js"></script>
-		<script src="https://code.highcharts.com/highcharts-3d.js"></script>
-		<script src="https://code.highcharts.com/modules/data.js"></script>
+		<script src="https://code.highcharts.com/9.1.2/highcharts.js"></script>
+		<script src="https://code.highcharts.com/9.1.2/highcharts-3d.js"></script>
+		<script src="https://code.highcharts.com/9.1.2/modules/data.js"></script>
 		<script src="https://code.highcharts.com/9.1.2/modules/exporting.js"></script>
-		<script src="https://code.highcharts.com/modules/drilldown.js"></script>
-		<script src="https://code.highcharts.com/modules/bullet.js"></script>
-		<script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>  
+		<script src="https://code.highcharts.com/9.1.2/modules/drilldown.js"></script>
+		<script src="https://code.highcharts.com/9.1.2/modules/bullet.js"></script>
+		<script src="https://code.highcharts.com/9.1.2/modules/no-data-to-display.js"></script>  
 		<script src="/js/bootstrap-multiselect.js"></script>
 		<script src="/js/pluralize.js"></script>
 
