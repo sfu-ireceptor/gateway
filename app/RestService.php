@@ -726,7 +726,7 @@ class RestService extends Model
                 } else {
                     // this should not happen, but keep legacy behaviour just in case
                     $service_filters['repertoire_id'] = array_slice($service_filters['repertoire_id'], 0, 20);
-                    Log::warn('This shouldn not have happened: response was not found for repository id=' . $rs->id);
+                    Log::error('This shouldn not have happened: response was not found for repository id=' . $rs->id);
                 }
             }
 
