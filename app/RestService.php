@@ -829,15 +829,14 @@ class RestService extends Model
         return $response->getBody();
     }
 
-    public static function sample_list_repertoire_data($filters, $folder_path, $username = '')
+    public static function sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username = '')
     {
         $now = time();
 
         // build list of services to query
         $rs_list = [];
         foreach (self::findEnabled() as $rs) {
-            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-            if (array_key_exists($sample_id_list_key, $filters) && ! empty($filters[$sample_id_list_key])) {
+            if(isset($filtered_samples_by_rs[$rs->id])) {
                 $rs_list[$rs->id] = $rs;
             }
         }
@@ -859,17 +858,8 @@ class RestService extends Model
         $group_list_count = [];
         foreach ($rs_list as $rs) {
             $rs_filters = [];
-            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-            // rename service id filter and remove other services' filters
-            // ir_project_sample_id_list_2 -> repertoire_id
-            $rs_filters['repertoire_id'] = $filters[$sample_id_list_key];
 
-            // remove extra ir_project_sample_id_list_ fields
-            foreach ($rs_filters as $key => $value) {
-                if (starts_with($key, 'ir_project_sample_id_list_')) {
-                    unset($rs_filters[$key]);
-                }
-            }
+            $rs_filters['repertoire_id'] = $filtered_samples_by_rs[$rs->id];
 
             $query_parameters = [];
 
