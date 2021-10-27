@@ -675,7 +675,7 @@ class RestService extends Model
     }
 
     // retrieves n sequences
-    public static function sequence_list($filters, $n = 10)
+    public static function sequence_list($filters, $response_list_sequences_summary, $n = 10)
     {
         $base_uri = 'rearrangement';
 
@@ -710,7 +710,32 @@ class RestService extends Model
 
             // if no sequence filters, query only subset of repertoires
             if (count($service_filters) == 1) {
-                $service_filters['repertoire_id'] = array_slice($service_filters['repertoire_id'], 0, 20);
+                $rs_sequences_summary_response = null;
+                foreach ($response_list_sequences_summary as $response) {
+                    if ($response['rs']->id == $rs->id) {
+                        $rs_sequences_summary_response = $response;
+                    }
+                }
+
+                if ($rs_sequences_summary_response != null) {
+                    $repertoire_id_list = [];
+                    $sample_list = $rs_sequences_summary_response['data'];
+                    $i = 0;
+                    foreach ($sample_list as $sample) {
+                        if ($sample->ir_sequence_count > 0) {
+                            $repertoire_id_list[] = $sample->repertoire_id;
+                            $i++;
+                            if ($i >= 20) {
+                                break;
+                            }
+                        }
+                    }
+                    $service_filters['repertoire_id'] = $repertoire_id_list;
+                } else {
+                    // this should not happen, but keep legacy behaviour just in case
+                    $service_filters['repertoire_id'] = array_slice($service_filters['repertoire_id'], 0, 20);
+                    Log::error('This shouldn not have happened: response was not found for repository id=' . $rs->id);
+                }
             }
 
             // prepare parameters for each service
