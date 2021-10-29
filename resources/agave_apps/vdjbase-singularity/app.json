@@ -70,26 +70,6 @@
       }
     },
     {
-      "id": "sample_name",
-      "value": {
-        "visible": true,
-        "required": true,
-        "type": "string",
-        "default": ""
-      },
-      "details": {
-        "label": "Sample name",
-        "description": "Sample name for the repertoire being processed."
-      },
-      "semantics": {
-        "minCardinality": 1,
-        "maxCardinality": 1,
-        "ontology": [
-          "xsd:string"
-        ]
-      }
-    },
-    {
       "id": "singularity_image",
       "value": {
         "visible": false,
