@@ -32,7 +32,8 @@ deleted_genes_list = list()
 # iterate through genotype df
 for index, row in genotype_df.iterrows():
 
-    # split the comma-sep genotyped alleles into a list of alleles. iterate through the alleles in the list and construct the full allele name.
+    # split the comma-sep genotyped alleles into a list of alleles.
+    # iterate through the alleles in the list and construct the full allele name.
     if row["GENOTYPED_ALLELES"] != "Deletion":
         allele_numbers = row["GENOTYPED_ALLELES"].split(",")
         for allele_number in allele_numbers:
@@ -104,5 +105,5 @@ repertoire_list.append(repertoire_dict)
 base_object = dict()
 base_object["Repertoire"] = repertoire_list
 
-with open(args["out_name"] + "_genotype.json", "w") as outfile:
-    json.dump(base_object, outfile)
+with open(args["out_name"], "w") as outfile:
+    json.dump(base_object, outfile, indent=4)
