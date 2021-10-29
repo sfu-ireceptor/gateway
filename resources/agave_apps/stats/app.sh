@@ -253,6 +253,9 @@ for f in "${repertoire_files[@]}"; do
     mv ${WORKING_DIR}/$f .
 done
 
+# ZIP up the analysis results for easy download
+zip -r ${WORKING_DIR}.zip ${WORKING_DIR}
+
 # We don't want the iReceptor Utilities to be part of the results.
 rm -rf ${GATEWAY_UTIL_DIR}
 
@@ -263,3 +266,8 @@ rm -f $ZIP_FILE
 # Debugging output, print data/time when shell command is finished.
 echo "Statistics finished at: `date`"
 
+# Handle AGAVE errors - this doesn't seem to have any effect...
+#export JOB_ERROR=1
+#if [[ $JOB_ERROR -eq 1 ]]; then
+#    ${AGAVE_JOB_CALLBACK_FAILURE}
+#fi
