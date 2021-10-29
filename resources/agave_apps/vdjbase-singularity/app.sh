@@ -71,7 +71,7 @@ date
 GATEWAY_UTIL_DIR=gateway_utilities
 mkdir -p ${GATEWAY_UTIL_DIR}
 pushd ${GATEWAY_UTIL_DIR}
-wget -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" https://gateway-analysis.ireceptor.org/gateway_utilities/
+wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" https://gateway-analysis.ireceptor.org/gateway_utilities/
 popd
 echo "Done downloading iReceptor Gateway Utilities"
 date
@@ -95,6 +95,10 @@ printf "START at $(date)\n\n"
 printf "PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n\n"
 printf "MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n\n"
 
+# This function is called by the iReceptor Gateway utilities function gateway_split_repertoire
+# The gateway utility function splits all data into repertoires and then calls this function
+# for a single repertoire. As such, this function should perform all analysis required for a
+# repertoire.
 function run_analysis()
 # Parameters:
 #     $1 rearrangement file array
@@ -128,12 +132,17 @@ function run_analysis()
 	echo "Mapping ${PWD} to /data"
 	echo "Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
 	echo "Storing output in /data/${output_directory}"
+	# Run VDJBase
         singularity exec -e -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} vdjbase-pipeline -s ${file_string} -f /data/${filename} -t ${AGAVE_JOB_PROCESSORS_PER_NODE} -o /data/${output_directory}
+	echo "Generating AIRR genotype in /data/${output_directory}/${file_string}/${file_string}_genotype.json"
+	# Generate AIRR Genotype JSON file.
+	singularity exec -e -B ${PWD}:/data -B ${SCRIPT_DIR}:/scripts ${SCRIPT_DIR}/${singularity_image} python3 /scripts/generate_genotype.py --genotype_file /data/${output_directory}/${file_string}/${file_string}_genotype.tsv --repertoire_id ${repertoire_id} --data_processing_file ${filename} --receptor_genotype_set_id ${repertoire_id} --receptor_genotype_id ${repertoire_id} --out_name /data/${output_directory}/${file_string}/${file_string}_genotype.json
+
     done
 }
 
 # Split the data by repertoire. This creates a directory tree in $WORKING_DIR
-# with a directory per repository and within that a director per repertoire in
+# with a directory per repository and within that a directory per repertoire in
 # that repository. In each repertoire directory there will exist an AIRR TSV
 # file with the data from that repertoire.
 #
@@ -161,6 +170,9 @@ repertoire_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.p
 for f in "${repertoire_files[@]}"; do
     mv ${WORKING_DIR}/$f .
 done
+
+# Tar up the analysis results for easy download
+tar cvf ${WORKING_DIR}.tar ${WORKING_DIR}
 
 # We don't want to copy around the singularity image everywhere.
 rm -f ${singularity_image}
