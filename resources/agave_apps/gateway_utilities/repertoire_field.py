@@ -11,25 +11,25 @@ def repertoireField(json_filename, repertoire_id, repertoire_field, verbose):
         with open(json_filename) as f:
             json_data = json.load(f)
     except Exception as e:
-        print('ERROR: Unable to read JSON file %s'%(json_filename))
-        print('ERROR: Reason =' + str(e))
-        return []
+        print('ERROR: Unable to read JSON file %s'%(json_filename), file=sys.stderr)
+        print('ERROR: Reason =' + str(e), file=sys.stderr)
+        return None
 
     # Print out an error if the query failed.
     if len(json_data) == 0:
-        print('ERROR: JSON file load for %s failed '%(json_filename))
-        return []
+        print('ERROR: JSON file load for %s failed '%(json_filename), file=sys.stderr)
+        return None
 
     # Check for a correct Info object.
     if not "Info" in json_data:
-        print("ERROR: Expected to find an 'Info' object, none found")
-        return []
+        print("ERROR: Expected to find an 'Info' object, none found", file=sys.stderr)
+        return None
 
     # Check for a correct Repertoire object.
     repertoire_key = "Repertoire"
     if not repertoire_key in json_data:
-        print("ERROR: Expected to find a 'Repertoire' object, none found")
-        return []
+        print("ERROR: Expected to find a 'Repertoire' object, none found", file=sys.stderr)
+        return None
     repertoire_array = json_data[repertoire_key]
 
     # Split the field string on the "." delimeter.
@@ -39,19 +39,25 @@ def repertoireField(json_filename, repertoire_id, repertoire_field, verbose):
     for repertoire in json_data[repertoire_key]:
         # Check to make sure we have a repertoire_id tag.
         if not "repertoire_id" in repertoire:
-            print("ERROR: Could not find repertoire_id tag in Repertoire.")
-            return []
-        if (not repertoire_id == None && repertoire['repertoire_id'] == repertoire_id):
+            print("ERROR: Could not find repertoire_id tag in Repertoire.", file=sys.stderr)
+            return None
+        if (not repertoire_id == None and repertoire['repertoire_id'] == repertoire_id):
             current_object = repertoire
             last_field = "repertoire"
             for field in field_array:
+                if isinstance(current_object, list):
+                    if verbose:
+                        print("Warning: Processing array field, first object only", file=sys.stderr)
+                    current_object = current_object[0]
                 if not field in current_object:
-                    print("ERROR: Could not find %s tag in %s object."%(field, last_field))
-                    return []
+                    print("ERROR: Could not find %s tag in %s object."%(field, last_field), file=sys.stderr)
+                    return None
 
                 current_object = current_object[field]
-                print(field)
                 last_field = field
+            if verbose:
+                print("Value = %s"%(current_object), file=sys.stderr)
+            return current_object
 
 def getArguments():
     # Set up the command line parser
@@ -87,10 +93,11 @@ if __name__ == "__main__":
     options = getArguments()
 
     # Get the repertoire summary list of information
-    success = repertoireField(options.json_filename, options.repertoire_id,
-                              options.repertoire_field, options.verbose)
+    field_value = repertoireField(options.json_filename, options.repertoire_id,
+                                  options.repertoire_field, options.verbose)
+    print("%s"%(field_value), file=sys.stdout)
 
     # Return success if successful
-    if not success:
+    if field_value == None:
         sys.exit(1)
 
