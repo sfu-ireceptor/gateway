@@ -134,9 +134,14 @@ function run_analysis()
 	echo "Storing output in /data/${output_directory}"
 	# Run VDJBase
         singularity exec -e -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} vdjbase-pipeline -s ${file_string} -f /data/${filename} -t ${AGAVE_JOB_PROCESSORS_PER_NODE} -o /data/${output_directory}
+	# Get the germline database info from the repertoire file
+	germline_database="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field data_processing.germline_database)"
+	# Get the data processing file info from the repertoire file
+	data_processing_files="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field data_processing.data_processing_files)"
+	echo "Data processing files = ${data_processing_files}"
 	echo "Generating AIRR genotype in /data/${output_directory}/${file_string}/${file_string}_genotype.json"
 	# Generate AIRR Genotype JSON file.
-	singularity exec -e -B ${PWD}:/data -B ${SCRIPT_DIR}:/scripts ${SCRIPT_DIR}/${singularity_image} python3 /scripts/generate_genotype.py --genotype_file /data/${output_directory}/${file_string}/${file_string}_genotype.tsv --repertoire_id ${repertoire_id} --data_processing_file ${filename} --receptor_genotype_set_id ${repertoire_id} --receptor_genotype_id ${repertoire_id} --out_name /data/${output_directory}/${file_string}/${file_string}_genotype.json
+	singularity exec -e -B ${PWD}:/data -B ${SCRIPT_DIR}:/scripts ${SCRIPT_DIR}/${singularity_image} python3 /scripts/generate_genotype.py --genotype_file /data/${output_directory}/${file_string}/${file_string}_genotype.tsv --repertoire_id ${repertoire_id} --data_processing_file ${data_processing_files} --germline_database ${germline_database} --receptor_genotype_set_id ${file_string} --receptor_genotype_id ${file_string} --out_name /data/${output_directory}/${file_string}/${file_string}_genotype.json
 
     done
 }
@@ -171,8 +176,9 @@ for f in "${repertoire_files[@]}"; do
     mv ${WORKING_DIR}/$f .
 done
 
-# Tar up the analysis results for easy download
-tar cvf ${WORKING_DIR}.tar ${WORKING_DIR}
+# Zip up the analysis results for easy download
+echo "ZIPing analysis results"
+zip -r ${WORKING_DIR}.zip ${WORKING_DIR}
 
 # We don't want to copy around the singularity image everywhere.
 rm -f ${singularity_image}
@@ -186,9 +192,9 @@ rm -f $ZIP_FILE
 
 # End
 printf "DONE at $(date)\n\n"
-printf "AGAVE callback error = ${AGAVE_JOB_CALLBACK_FAILURE} \n\n"
 
 # Handle AGAVE errors
-if [[ $JOB_ERROR -eq 1 ]]; then
-    ${AGAVE_JOB_CALLBACK_FAILURE}
-fi
+#printf "AGAVE callback error = ${AGAVE_JOB_CALLBACK_FAILURE} \n\n"
+#if [[ $JOB_ERROR -eq 1 ]]; then
+#    ${AGAVE_JOB_CALLBACK_FAILURE}
+#fi

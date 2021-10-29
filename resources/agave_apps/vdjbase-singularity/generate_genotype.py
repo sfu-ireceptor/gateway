@@ -4,17 +4,19 @@ import pandas as pd
 
 ap = argparse.ArgumentParser()
 
-ap.add_argument("-1", "--genotype_file", required=True,
+ap.add_argument("--genotype_file", required=True,
    help="path to genotype.tsv output file from VDJBase")
-ap.add_argument("-2", "--repertoire_id", required=True,
+ap.add_argument("--repertoire_id", required=True,
    help="repertoire id in repository")
-ap.add_argument("-3", "--data_processing_file", required=True,
+ap.add_argument("--data_processing_file", required=True,
    help="data processing file name in repository")
-ap.add_argument("-4", "--receptor_genotype_set_id", required=True,
+ap.add_argument("--receptor_genotype_set_id", required=True,
    help="value to use for receptor_genotype_set_id; typically we use subject_id e.g. 14711")
-ap.add_argument("-5", "--receptor_genotype_id", required=True,
+ap.add_argument("--receptor_genotype_id", required=True,
    help="value to use for receptor_genotype_id; e.g. 14711-IGH")
-ap.add_argument("-6", "--out_name", required=True,
+ap.add_argument("--germline_database", default="",
+        help="value to use for germline_set_ref; e.g. IMGT:201736-4")
+ap.add_argument("--out_name", required=True,
    help="name of output file as in out_name.json; typically use sample_id; e.g. 14711_CSF")
 
 args = vars(ap.parse_args())
@@ -43,7 +45,7 @@ for index, row in genotype_df.iterrows():
                 # Create a documented_alleles - which is a list of dictionaries
                 documented_allele_dict = dict()
                 documented_allele_dict["gene_symbol"] = allele_name
-                documented_allele_dict["germline_set_ref"] = "IMGT:201736-4"
+                documented_allele_dict["germline_set_ref"] = args["germline_database"]
                 documented_allele_list.append(documented_allele_dict)
 
             else:
