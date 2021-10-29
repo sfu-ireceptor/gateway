@@ -912,9 +912,17 @@ class RestService extends Model
             foreach ($sample_list as $sample) {
                 $rest_service_id = $sample->real_rest_service_id;
                 $rs = self::find($rest_service_id);
-                $rs_list[$rs->id] = $rs;
+                $rs_list[] = $rs;
             }
         }
+
+        // sort rest services alphabetically
+        usort($rs_list, function ($a, $b) {
+            $a_name = isset($a['rs_name']) ? $a['rs_name'] : $a['rs']->display_name;
+            $b_name = isset($b['rs_name']) ? $b['rs_name'] : $b['rs']->display_name;
+
+            return strcasecmp($a_name, $b_name);
+        });
 
         // count services in each service group
         $group_list = [];
@@ -988,7 +996,7 @@ class RestService extends Model
         $rs_list = [];
         foreach (self::findEnabled() as $rs) {
             if (isset($expected_nb_sequences_by_rs[$rs->id]) && ($expected_nb_sequences_by_rs[$rs->id] > 0)) {
-                $rs_list[$rs->id] = $rs;
+                $rs_list[] = $rs;
             }
         }
 
