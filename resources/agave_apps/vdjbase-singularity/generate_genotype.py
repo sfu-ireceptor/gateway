@@ -20,6 +20,8 @@ ap.add_argument("--out_name", required=True,
    help="name of output file as in out_name.json; typically use sample_id; e.g. 14711_CSF")
 
 args = vars(ap.parse_args())
+print("germline = %s"%(args['germline_database']))
+print("data processing file = %s"%(args['data_processing_file']))
 
 # create the dataframe
 genotype_df = pd.read_csv(args["genotype_file"], sep="\t")
@@ -92,7 +94,7 @@ subject_dict["genotype"] = genotype_dict
 data_proc_list = list()
 data_proc_dict = dict()
 if "[" in args["data_processing_file"]:
-    print("List - ")
+    print("List - %s "%(args["data_processing_file"]))
     data_files_list = json.loads(args["data_processing_file"])
 else:
     print("String")
