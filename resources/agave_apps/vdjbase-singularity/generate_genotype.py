@@ -59,7 +59,7 @@ for index, row in genotype_df.iterrows():
         deleted_gene_name = row["gene"]
         deleted_genes_dict = dict()
         deleted_genes_dict["gene_symbol"] = deleted_gene_name
-        deleted_genes_dict["germline_set_ref"] = "IMGT:201736-4"
+        deleted_genes_dict["germline_set_ref"] = args["germline_database"]
         deleted_genes_list.append(deleted_genes_dict)
 
 # Create a genotype class object
@@ -91,7 +91,14 @@ subject_dict["genotype"] = genotype_dict
 # Create a data processing object
 data_proc_list = list()
 data_proc_dict = dict()
-data_proc_dict["data_processing_files"] = args["data_processing_file"]
+if "[" in args["data_processing_file"]:
+    print("List - ")
+    data_files_list = json.loads(args["data_processing_file"])
+else:
+    print("String")
+    data_files_list = list()
+    data_files_list.append(args["data_processing_file"])
+data_proc_dict["data_processing_files"] = data_files_list
 data_proc_list.append(data_proc_dict)
 
 # Create a repertoire object
