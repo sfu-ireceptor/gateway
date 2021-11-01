@@ -93,11 +93,17 @@ subject_dict["genotype"] = genotype_dict
 # Create a data processing object
 data_proc_list = list()
 data_proc_dict = dict()
+# Need to handle lists as they come in from the command line properly
+# as a JSON list. Also handle a single string as a special case.
 if "[" in args["data_processing_file"]:
     print("List - %s "%(args["data_processing_file"]))
-    data_files_list = json.loads(args["data_processing_file"])
+    # JSON loads only likes double quote strings so need
+    # to replace single quote string where necessary.
+    list_string = args["data_processing_file"]
+    list_string = list_string.replace('\'','\"')
+    data_files_list = json.loads(list_string)
 else:
-    print("String")
+    print("String - %s"%(args["data_processing_file"]))
     data_files_list = list()
     data_files_list.append(args["data_processing_file"])
 data_proc_dict["data_processing_files"] = data_files_list
