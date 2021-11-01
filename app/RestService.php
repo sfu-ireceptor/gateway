@@ -669,6 +669,11 @@ class RestService extends Model
     // retrieves n sequences
     public static function sequence_list($filters, $response_list_sequences_summary, $n = 10)
     {
+        Log::debug('We have reponses for repos with id:');
+        foreach ($response_list_sequences_summary as $rl) {
+            Log::debug($rl['rs']->id);
+        }
+
         $base_uri = 'rearrangement';
 
         // prepare request parameters for each service
@@ -724,9 +729,7 @@ class RestService extends Model
                     }
                     $service_filters['repertoire_id'] = $repertoire_id_list;
                 } else {
-                    // this should not happen, but keep legacy behaviour just in case
-                    $service_filters['repertoire_id'] = array_slice($service_filters['repertoire_id'], 0, 20);
-                    Log::error('This shouldn not have happened: response was not found for repository id=' . $rs->id);
+                    continue;
                 }
             }
 
