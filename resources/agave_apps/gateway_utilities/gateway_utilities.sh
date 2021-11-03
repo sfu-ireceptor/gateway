@@ -104,8 +104,6 @@ function gateway_split_repertoire(){
 	    tsv_array=( "${repository_name}/${repertoire_dirname}/${repertoire_tsvfile}" )
 	    run_analysis ${tsv_array} ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${json_file}
 
-	    # Remove the temporary TSV file
-	    rm -f ${repository_name}/${repertoire_dirname}/${repertoire_tsvfile}
         done
     done
 
