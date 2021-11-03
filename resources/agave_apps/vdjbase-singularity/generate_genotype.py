@@ -24,7 +24,19 @@ print("germline = %s"%(args['germline_database']))
 print("data processing file = %s"%(args['data_processing_file']))
 
 # create the dataframe
-genotype_df = pd.read_csv(args["genotype_file"], sep="\t")
+try:
+    genotype_df = pd.read_csv(args["genotype_file"], sep="\t")
+except Exception as e:
+    print('ERROR: Unable to read TSV file %s'%(args["genotype_file"]))
+    print('ERROR: Reason =' + str(e))
+    sys.exit(1)
+
+
+# Check to see if columns of interest exist.
+if not 'gene' in genotype_df or not 'GENOTYPED_ALLELES' in genotype_df:
+    print('ERROR: Could not find required fields (%s, %s) in file %s'%
+            ('gene', 'GENOTYPED_ALLELES', args["genotype_file"]))
+    sys.exit(1)
 
 # select the columns of interest
 genotype_df = genotype_df[['gene','GENOTYPED_ALLELES']]
