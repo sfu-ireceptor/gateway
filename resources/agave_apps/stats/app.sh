@@ -21,7 +21,7 @@ date
 GATEWAY_UTIL_DIR=gateway_utilities
 mkdir -p ${GATEWAY_UTIL_DIR}
 pushd ${GATEWAY_UTIL_DIR}
-wget -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" https://gateway-analysis.ireceptor.org/gateway_utilities/
+wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" https://gateway-analysis.ireceptor.org/gateway_utilities/
 popd
 echo "Done downloading iReceptor Gateway Utilities"
 date
