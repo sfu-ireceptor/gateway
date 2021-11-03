@@ -191,6 +191,10 @@ function run_analysis()
         do_histogram junction_aa_length $array_of_files $output_directory $file_string $title_string
         do_heatmap v_call j_call $array_of_files $output_directory $file_string $title_string
         do_heatmap v_call junction_aa_length $array_of_files $output_directory $file_string $title_string
+	# Remove the temporary file(s) that was genereated for this repertoire.
+        for filename in "${array_of_files[@]}"; do
+		rm -f $filename
+	done
 }
 
 # Set up the required variables. An iReceptor Gateway download consists
