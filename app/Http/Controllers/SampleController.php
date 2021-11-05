@@ -326,7 +326,7 @@ class SampleController extends Controller
         $data['page_last_element_index'] = $data['page_first_element_index'] + count($samples_with_sequences) - 1;
 
         $tab = 'sequences';
-        if(isset($params['tab'])) {
+        if (isset($params['tab'])) {
             $tab = $params['tab'];
         }
         $data['tab'] = $tab;
