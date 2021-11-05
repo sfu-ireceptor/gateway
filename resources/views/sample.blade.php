@@ -16,9 +16,10 @@
 
 			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'post', 'class' => 'sample_search show_reloading_message')) }}
 				<input type="hidden" name="project_id_list" />
-				<input type="hidden" name="cols" value="{{ $current_columns_str }}">
-				<input type="hidden" name="sort_column" value="{{ $sort_column }}">
-				<input type="hidden" name="sort_order" value="{{ $sort_order }}">
+				<input type="hidden" name="cols" value="{{ $current_columns_str }}" />
+				<input type="hidden" name="sort_column" value="{{ $sort_column }}" />
+				<input type="hidden" name="sort_order" value="{{ $sort_order }}" />
+				<input type="hidden" name="tab" value="{{ $tab }}" />
 
 			    <div class="form-group full_text_search">
 					{{ Form::label('full_text_search', __('short.full_text_search')) }}
@@ -304,8 +305,8 @@
 				@else
 					<!-- Nav tabs -->
 					<ul class="nav nav-tabs" role="tablist">
-						<li role="presentation" class="active"><a href="#repertoireSequenceSearchResults" aria-controls="home" role="tab" data-toggle="tab">Sequence Search Results</a></li>
-						<li role="presentation"><a href="#repertoireCloneSearchResults" aria-controls="profile" role="tab" data-toggle="tab">Clone Search Results</a></li>
+						<li role="presentation" class="{{ $tab == 'sequences' ? 'active' : '' }}"><a class="sequences" href="#repertoireSequenceSearchResults" aria-controls="home" role="tab" data-toggle="tab">Sequence Search Results</a></li>
+						<li role="presentation" class="{{ $tab == 'clones' ? 'active' : '' }}"><a class="clones" href="#repertoireCloneSearchResults" aria-controls="profile" role="tab" data-toggle="tab">Clone Search Results</a></li>
 					</ul>
 
 					<!-- Tab panes -->

@@ -248,6 +248,7 @@ class RestService extends Model
 
         // remove gateway-specific filters
         unset($filters['cols']);
+        unset($filters['tab']);
         unset($filters['open_filter_panel_list']);
         unset($filters['full_text_search']);
         unset($filters['ir_sequence_count']);

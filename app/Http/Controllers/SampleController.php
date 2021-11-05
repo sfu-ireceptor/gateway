@@ -325,6 +325,12 @@ class SampleController extends Controller
         $data['page_first_element_index'] = ($page - 1) * $max_per_page + 1;
         $data['page_last_element_index'] = $data['page_first_element_index'] + count($samples_with_sequences) - 1;
 
+        $tab = 'sequences';
+        if(isset($params['tab'])) {
+            $tab = $params['tab'];
+        }
+        $data['tab'] = $tab;
+
         $data['sort_column'] = $sort_column;
         $data['sort_order'] = $sort_order;
         $data['sequences_query_id'] = $sequences_query_id;
@@ -377,6 +383,7 @@ class SampleController extends Controller
 
         // remove gateway-specific params
         unset($filter_fields['cols']);
+        unset($filter_fields['tab']);
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
 

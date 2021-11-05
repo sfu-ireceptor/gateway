@@ -235,6 +235,17 @@ $(document).ready(function() {
 		modal.find('.modal-title').text('Repertoire: ' + repertoire_name);
 	});
 
+	// when going to another tab, update corresponding form hidden value "tab"
+	$('.sample_container a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+		var current_tab = 'sequences';
+
+		if($(e.target).hasClass('clones')) {
+			current_tab = 'clones';
+		}
+
+		$('input[name=tab]').val(current_tab);
+	});
+
 	/**********************************************************
 	* Sequences
 	**********************************************************/
