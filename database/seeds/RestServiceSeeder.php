@@ -121,6 +121,14 @@ class RestServiceSeeder extends Seeder
                 'url' => 'http://secure.ireceptor.org/middleware/airr/v1/',
                 'name' => 'Secure IPA1',
             ],
+            [
+                'url' => 'http://turnkey-test2.ireceptor.org/airr/v2/',
+                'name' => 'ADC Turnkey 2 V2',
+            ],
+            [
+                'url' => 'http://154.127.124.38:2222/airr/v1/',
+                'name' => 'NICD - South Africa',
+            ],
         ];
 
         // if grouping is disabled, remove group code

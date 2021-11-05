@@ -109,16 +109,22 @@ class FieldName extends Model
         $l['RawSequenceData'] = 'Raw Sequence Data';
         $l['PCRTarget'] = 'PCR Target';
 
+        $l['Genotype'] = 'Receptor Genotype';
+        $l['MHCGenotype'] = 'MHC Genotype';
+        $l['GenotypeSet'] = 'Receptor Genotype Set';
+        $l['MHCGenotypeSet'] = 'MHC Genotype Set';
+
         $l['Rearrangement'] = 'Rearrangement';
 
         $l['ir_metadata'] = 'iReceptor Metadata';
-        $l['ir_parameter'] = 'iReceptor Parameter';
-        $l['ir_api'] = 'iReceptor API';
-        $l['ir_curator'] = 'iReceptor Curator';
+        $l['IR_Parameter'] = 'iReceptor Parameter';
+        $l['IR_API'] = 'iReceptor API';
+        $l['IR_Curator'] = 'iReceptor Curator';
         $l['rearrangement'] = 'Rearrangement';
         $l['ir_rearrangement'] = 'iReceptor Rearrangement';
-        $l['ir_rearrangement_db'] = 'iReceptor Rearrangement (database)';
-        $l['ir_rearrangement_pair'] = 'iReceptor Rearrangement (pair)';
+        $l['IR_RearrangementDB'] = 'iReceptor Rearrangement (database)';
+        $l['IR_RearrangementPair'] = 'iReceptor Rearrangement (pair)';
+
         $l['other'] = 'Other';
 
         return $l;
