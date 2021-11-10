@@ -1232,6 +1232,8 @@ class RestService extends Model
 
                     $status = 'ERROR';
                     $error_message = 'No query id found';
+
+                    throw new \Exception('Query to async download entry point failed.');
                 }
 
                 $defaults = [];
