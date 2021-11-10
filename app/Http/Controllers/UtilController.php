@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Job;
 use App\Deployment;
+use App\Job;
 use App\Jobs\ProcessAgaveNotification;
 use App\LocalJob;
 use Illuminate\Http\Request;
@@ -38,7 +38,7 @@ class UtilController extends Controller
     public function deploy(Request $request)
     {
         $already_running_deployment = Deployment::where('running', 1)->first();
-        while($already_running_deployment != null) {
+        while ($already_running_deployment != null) {
             sleep(5);
             $already_running_deployment = Deployment::where('running', 1)->first();
         }
