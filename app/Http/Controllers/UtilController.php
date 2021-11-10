@@ -62,6 +62,8 @@ class UtilController extends Controller
                 Log::info($buffer);
             });
 
+
+
             Log::info('-------- Deployment FINISHED --------');
         } else {
             Log::error('Deployment attempt failed because of hash mismatch.');
