@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Job;
+use App\Deployment;
 use App\Jobs\ProcessAgaveNotification;
 use App\LocalJob;
 use Illuminate\Http\Request;
@@ -36,6 +37,15 @@ class UtilController extends Controller
     // called by GitHub hook
     public function deploy(Request $request)
     {
+        $already_running_deployment = Deployment::where('running', 1)->first();
+        while($already_running_deployment != null) {
+            sleep(5);
+            $already_running_deployment = Deployment::where('running', 1)->first();
+        }
+
+        $deployment = new Deployment;
+        $deployment->save();
+
         $githubPayload = $request->getContent();
         $githubHash = $request->header('X-Hub-Signature');
 
@@ -61,5 +71,8 @@ class UtilController extends Controller
             Log::info('$githubPayload=' . $githubPayload);
             var_dump($request->header());
         }
+
+        $deployment->running = false;
+        $deployment->save();
     }
 }
