@@ -1226,6 +1226,7 @@ class RestService extends Model
             if ($rs->async) {
                 if (isset($response['data']->query_id)) {
                     $query_id = $response['data']->query_id;
+                    Log::debug('query_id=' . $query_id);
                 } else {
                     Log::error('No query id found:');
                     Log::error($response['data']);
@@ -1245,8 +1246,11 @@ class RestService extends Model
 
                 $client = new \GuzzleHttp\Client($defaults);
 
+                $polling_url = $defaults['base_uri'] . $query_id;
+                $query_log_id = QueryLog::start_rest_service_query($rs->id, $rs->name, $polling_url, '', '');
+
                 while ($status != 'FINISHED' && $status != 'ERROR') {
-                    Log::debug('status=' . $status);
+                    Log::debug('status for query id ' . $query_id . ' -> ' . $status);
 
                     try {
                         $response_polling = $client->get($query_id);
@@ -1274,6 +1278,9 @@ class RestService extends Model
                         Log::error($error_message);
                     }
                 }
+
+                QueryLog::end_rest_service_query($query_log_id);
+
 
                 if ($status == 'FINISHED') {
                     Log::debug('download_url=' . $download_url);
