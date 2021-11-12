@@ -1281,7 +1281,6 @@ class RestService extends Model
 
                 QueryLog::end_rest_service_query($query_log_id);
 
-
                 if ($status == 'FINISHED') {
                     Log::debug('download_url=' . $download_url);
 
