@@ -1273,7 +1273,6 @@ class RestService extends Model
 
                         sleep(10);
                     } catch (\Exception $e) {
-                        $status = 'ERROR';
                         $error_message = $e->getMessage();
                         Log::error($error_message);
                     }
