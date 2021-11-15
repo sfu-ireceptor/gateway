@@ -5,14 +5,12 @@
 
 @section('content')
 
-<div class="banner_title">
+<div class="banner_title clones">
 	<h1>2. Clone Search</h1>
 	<p class="sh1">Filter by clone and clone annotation feature</p>
 </div>
 
 <div class="container-fluid clone_container">
-
-
 	<div class="row">		
 		<div class="col-md-2 filters">
 

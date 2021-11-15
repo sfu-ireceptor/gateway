@@ -4,12 +4,14 @@
 @section('sample_query_id', $sample_query_id)
 
 @section('content')
-<div class="container-fluid sequence_container">
 
+<div class="banner_title sequences">
 	<h1>2. Sequence Search</h1>
 	<p class="sh1">Filter by sequence and sequence annotation feature</p>
+</div>
 
-	<div class="row">		
+<div class="container-fluid sequence_container">
+	<div class="row">
 		<div class="col-md-2 filters">
 
 			<h3 class="first">Filters</h3>

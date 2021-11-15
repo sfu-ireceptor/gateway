@@ -682,10 +682,17 @@ footer a:hover {
 /* @group page banner */
 
 .banner_title {
-	background-color: #ffa15a;
 	margin-top: -20px;
 	padding: 25px 15px;
 	margin-bottom: 20px;
+}
+
+.banner_title.clones {
+	background-color: #ffa15a;
+}
+
+.banner_title.sequences {
+	background-color: #91dc94;
 }
 
 .banner_title .sh1 {
