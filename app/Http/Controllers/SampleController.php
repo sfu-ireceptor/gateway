@@ -290,7 +290,6 @@ class SampleController extends Controller
         $samples_with_sequences = Sample::sort_sample_list($samples_with_sequences, $sort_column_sequences, $sort_order);
         $samples_with_clones = Sample::sort_sample_list($samples_with_clones, $sort_column_clones, $sort_order);
 
-
         $sequence_charts_fields = ['study_type', 'organism', 'disease_diagnosis', 'tissue', 'pcr_target_locus', 'template_class'];
         $data['sequence_charts_data'] = Sample::generateChartsData($samples_with_sequences, $sequence_charts_fields);
 
