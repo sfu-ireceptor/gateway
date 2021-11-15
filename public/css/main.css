@@ -679,6 +679,24 @@ footer a:hover {
 
 /* @end */
 
+/* @group page banner */
+
+.banner_title {
+	background-color: #ffa15a;
+	margin-top: -20px;
+	padding: 25px 15px;
+	margin-bottom: 20px;
+}
+
+.banner_title .sh1 {
+	color: inherit;
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+
+/* @end */
+
 /* @group login page */
 
 .login_container {
