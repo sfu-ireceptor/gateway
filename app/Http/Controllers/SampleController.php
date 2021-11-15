@@ -268,11 +268,8 @@ class SampleController extends Controller
 
         // $sample_list = $sample_list2;
 
-        // sort sample list
-        $sample_list = Sample::sort_sample_list($sample_list, $sort_column, $sort_order);
-
-        $samples_with_clones = [];
         $samples_with_sequences = [];
+        $samples_with_clones = [];
 
         foreach ($sample_list as $sample) {
             if (isset($sample->ir_clone_count) && $sample->ir_clone_count > 0) {
@@ -281,6 +278,18 @@ class SampleController extends Controller
                 $samples_with_sequences[] = $sample;
             }
         }
+
+        // sort sample lists
+        $sort_column_sequences = $sort_column;
+        $sort_column_clones = $sort_column;
+        if ($sort_column == 'ir_sequence_count' || $sort_column == 'ir_clone_count') {
+            $sort_column_sequences = 'ir_sequence_count';
+            $sort_column_clones = 'ir_clone_count';
+        }
+
+        $samples_with_sequences = Sample::sort_sample_list($samples_with_sequences, $sort_column_sequences, $sort_order);
+        $samples_with_clones = Sample::sort_sample_list($samples_with_clones, $sort_column_clones, $sort_order);
+
 
         $sequence_charts_fields = ['study_type', 'organism', 'disease_diagnosis', 'tissue', 'pcr_target_locus', 'template_class'];
         $data['sequence_charts_data'] = Sample::generateChartsData($samples_with_sequences, $sequence_charts_fields);
@@ -332,6 +341,8 @@ class SampleController extends Controller
         $data['tab'] = $tab;
 
         $data['sort_column'] = $sort_column;
+        $data['sort_column_sequences'] = $sort_column_sequences;
+        $data['sort_column_clones'] = $sort_column_clones;
         $data['sort_order'] = $sort_order;
         $data['sequences_query_id'] = $sequences_query_id;
         $data['rest_service_list'] = $sample_data['rs_list'];

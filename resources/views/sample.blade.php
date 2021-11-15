@@ -432,7 +432,7 @@
 											@endif
 
 											<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
-													@if ($field['ir_id'] == $sort_column)
+													@if ($field['ir_id'] == $sort_column_sequences)
 														@if ($sort_order == 'asc')
 															<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=desc">
 																@lang('short.' . $field['ir_id'])
@@ -701,7 +701,7 @@
 												@continue
 											@endif
 											<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
-													@if ($field['ir_id'] == $sort_column)
+													@if ($field['ir_id'] == $sort_column_clones)
 														@if ($sort_order == 'asc')
 															<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=desc">
 																@lang('short.' . $field['ir_id'])
