@@ -534,7 +534,7 @@ class Agave
 
         // return response as object
         $json = $response->getBody();
-        Log::info('json response -> ' . $json);
+        //Log::debug('json response -> ' . $json);
         if ($raw_json) {
             return $json;
         } else {
