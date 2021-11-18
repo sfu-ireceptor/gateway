@@ -157,7 +157,7 @@ class Sequence
 
         // do extra sequence summary request
         $response_list = RestService::sequences_summary($filters, $username, false);
-        
+
         // get expected number of sequences for sanity check after download
         $expected_nb_sequences_by_rs = self::expectedSequencesByRestSevice($response_list);
 
