@@ -141,7 +141,7 @@ function run_analysis()
 	echo "Data processing files = ${data_processing_files}"
 	echo "Generating AIRR genotype in /data/${output_directory}/${file_string}/${file_string}_genotype.json"
 	# Generate AIRR Genotype JSON file.
-	singularity exec -e -B ${PWD}:/data -B ${SCRIPT_DIR}:/scripts ${SCRIPT_DIR}/${singularity_image} python3 /scripts/generate_genotype.py --genotype_file /data/${output_directory}/${file_string}/${file_string}_genotype.tsv --repertoire_id ${repertoire_id} --data_processing_file ${data_processing_files} --germline_database ${germline_database} --receptor_genotype_set_id ${file_string} --receptor_genotype_id ${file_string} --out_name /data/${output_directory}/${file_string}/${file_string}_genotype.json
+	singularity exec -e -B ${PWD}:/data -B ${SCRIPT_DIR}:/scripts ${SCRIPT_DIR}/${singularity_image} python3 /scripts/generate_genotype.py --genotype_file /data/${output_directory}/${file_string}/${file_string}_genotype.tsv --repertoire_id ${repertoire_id} --data_processing_file ${data_processing_files} --germline_database "${germline_database}" --receptor_genotype_set_id ${file_string} --receptor_genotype_id ${file_string} --out_name /data/${output_directory}/${file_string}/${file_string}_genotype.json
 
 	# We don't want to keep around the original TSV file.
 	rm -f ${filename}
