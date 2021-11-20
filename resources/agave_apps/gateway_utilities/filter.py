@@ -47,9 +47,9 @@ if __name__ == "__main__":
         # If the field name is in the data frame, process further
         if options.field_name in airr_df:
             # Slice the data on the field name containg the value of interest.
-            print("Processing record %d"%(chunk_count*chunk_size))
+            #print("Processing record %d"%(chunk_count*chunk_size))
             field_df = airr_df.iloc[list(airr_df[options.field_name] == str(options.field_value)), :]
-            print("Writing %d records"%(field_df.index.size))
+            #print("Writing %d records"%(field_df.index.size))
             # Write the data to the output file.
             if chunk_count == 0:
                 field_df.to_csv(options.outfile, sep='\t', mode='a', header=True, index=False)
