@@ -189,13 +189,13 @@
 		<script src="/js/bootstrap.min.js"></script>
 
 		<script src="/js/jstree.min.js"></script>
-		<script src="https://code.highcharts.com/9.1.2/highcharts.js"></script>
-		<script src="https://code.highcharts.com/9.1.2/highcharts-3d.js"></script>
-		<script src="https://code.highcharts.com/9.1.2/modules/data.js"></script>
-		<script src="https://code.highcharts.com/9.1.2/modules/exporting.js"></script>
-		<script src="https://code.highcharts.com/9.1.2/modules/drilldown.js"></script>
-		<script src="https://code.highcharts.com/9.1.2/modules/bullet.js"></script>
-		<script src="https://code.highcharts.com/9.1.2/modules/no-data-to-display.js"></script>  
+		<script src="/js/highcharts/code/highcharts.js"></script>
+		<script src="/js/highcharts/code/highcharts-3d.js"></script>
+		<script src="/js/highcharts/code/modules/data.js"></script>
+		<script src="/js/highcharts/code/modules/exporting.js"></script>
+		<script src="/js/highcharts/code/modules/drilldown.js"></script>
+		<script src="/js/highcharts/code/modules/bullet.js"></script>
+		<script src="/js/highcharts/code/modules/no-data-to-display.js"></script>  
 		<script src="/js/bootstrap-multiselect.js"></script>
 		<script src="/js/pluralize.js"></script>
 
