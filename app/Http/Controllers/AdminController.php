@@ -487,6 +487,7 @@ class AdminController extends Controller
                     }
                 }
             }
+            unset($node_queries);
         }
 
         $data = [];
