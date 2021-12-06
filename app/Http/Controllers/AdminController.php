@@ -462,4 +462,36 @@ class AdminController extends Controller
 
         return view('allDownloads', $data);
     }
+
+    public function downloadsMultipleIPAs()
+    {
+        $download_list = Download::orderBy('id', 'desc')->get();
+
+        $download_list_filtered = [];
+        foreach ($download_list as $d) {
+            $query_log_id = $d->query_log_id;
+            $q = QueryLog::find($query_log_id);
+            $node_queries = QueryLog::find_node_queries($query_log_id);
+            
+            $nb_ipa_queries = 0;
+            foreach ($node_queries as $nq) {
+                if(isset($nq['params']) && is_string($nq['params']) && str_contains($nq['params'], 'tsv')) {                
+                    if(isset($nq['rest_service_name']) && str_contains($nq['rest_service_name'], 'IPA')) {
+                        if(isset($nq['result_size']) && $nq['result_size'] > 0) {
+                            $nb_ipa_queries++;
+                            if ($nb_ipa_queries >=2) {
+                                $download_list_filtered[] = $d;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        $data = [];
+        $data['download_list'] = $download_list_filtered;
+
+        return view('allDownloads', $data);
+    }
 }
