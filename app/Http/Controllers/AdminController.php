@@ -469,6 +469,9 @@ class AdminController extends Controller
 
         $download_list_filtered = [];
         foreach ($download_list as $d) {
+            $node_queries = null;
+            time_nanosleep(0, 10000000);
+
             Log::debug('Parsing download from ' . $d['start_date']);
             $query_log_id = $d->query_log_id;
             $q = QueryLog::find($query_log_id);
