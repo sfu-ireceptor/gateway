@@ -477,7 +477,6 @@ class AdminController extends Controller
             $query_log_id = $d->query_log_id;
             $q = QueryLog::find($query_log_id);
 
-
             QueryLog::where('parent_id', '=', $query_log_id)->where('rest_service_name', 'like', 'IPA%')->where('result_size', '>', 0)->chunk(10, function ($node_queries) use ($d, &$download_list_filtered) {
                 $nb_ipa_queries = 0;
                 foreach ($node_queries as $nq) {
@@ -515,8 +514,7 @@ class AdminController extends Controller
             // unset($node_queries);
         }
 
-                                        // dd($download_list_filtered);
-
+        // dd($download_list_filtered);
 
         $data = [];
         $data['download_list'] = $download_list_filtered;
