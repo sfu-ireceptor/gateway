@@ -475,25 +475,48 @@ class AdminController extends Controller
             Log::debug('Parsing download from ' . $d['start_date']);
             $query_log_id = $d->query_log_id;
             $q = QueryLog::find($query_log_id);
-            $node_queries = QueryLog::find_node_queries($query_log_id);
 
-            $nb_ipa_queries = 0;
-            foreach ($node_queries as $nq) {
-                if (isset($nq['params']) && is_string($nq['params']) && str_contains($nq['params'], 'tsv')) {
-                    if (isset($nq['rest_service_name']) && str_contains($nq['rest_service_name'], 'IPA')) {
-                        if (isset($nq['result_size']) && $nq['result_size'] > 0) {
-                            $nb_ipa_queries++;
-                            if ($nb_ipa_queries >= 2) {
-                                $download_list_filtered[] = $d;
-                                break;
+
+            QueryLog::where('parent_id', '=', $query_log_id)->orderBy('_id', 'desc')->chunk(100, function ($node_queries) use ($d, $download_list_filtered) {
+                $nb_ipa_queries = 0;
+                foreach ($node_queries as $nq) {
+                    // dd($nq);
+                    if (isset($nq['params']) && is_string($nq['params']) && str_contains($nq['params'], 'tsv')) {
+                        if (isset($nq['rest_service_name']) && str_contains($nq['rest_service_name'], 'IPA')) {
+                            if (isset($nq['result_size']) && $nq['result_size'] > 0) {
+                                $nb_ipa_queries++;
+                                if ($nb_ipa_queries >= 2) {
+                                    $download_list_filtered[] = $d;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
-            }
+            });
 
-            unset($q);
-            unset($node_queries);
+
+            // $node_queries = QueryLog::find_node_queries($query_log_id);
+
+            // dd($node_queries);
+
+            // $nb_ipa_queries = 0;
+            // foreach ($node_queries as $nq) {
+            //     if (isset($nq['params']) && is_string($nq['params']) && str_contains($nq['params'], 'tsv')) {
+            //         if (isset($nq['rest_service_name']) && str_contains($nq['rest_service_name'], 'IPA')) {
+            //             if (isset($nq['result_size']) && $nq['result_size'] > 0) {
+            //                 $nb_ipa_queries++;
+            //                 if ($nb_ipa_queries >= 2) {
+            //                     $download_list_filtered[] = $d;
+            //                     break;
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+
+            // unset($q);
+            // unset($node_queries);
         }
 
         $data = [];
