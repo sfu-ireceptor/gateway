@@ -7,8 +7,8 @@
   "defaultProcessorsPerNode": 1,
   "defaultMemoryPerNode": "8GB",
   "defaultRequestedTime": "8:00:00",
-  "shortDescription": "Tool to compare two sets of adaptive immune receptor repertoires and compute their overlap.",
-  "longDescription": "iReceptor+ AIRR Repertoire comparison tool: CompAIRR (compairr) is a command line tool to compare two sets of adaptive immune receptor repertoires and compute their overlap. It can also identify which sequences are present in which repertoires. Furthermore, CompAIRR can cluster the sequences in a repertoire set. Sequence comparisons can be exact or approximate, allowing 0-2 substitutions and an indel, if desired. CompAIRR has been shown to be very fast and to have a small memory footprint compared to similar tools.",
+  "shortDescription": "Cluster sequences in a repertoire using single linkage hierarchical clustering using the CompAIRR tool.",
+  "longDescription": "iReceptor+ AIRR Repertoire sequence cluster tool: CompAIRR (compairr) is a command line tool to cluster sequences within adaptive immune receptor repertoires.",
   "executionType": "HPC",
   "executionSystem": "cedar.computecanada.ca-compute-ireceptorgw",
   "parallelism": "PARALLEL",
@@ -75,7 +75,7 @@
         "visible": false,
         "required": true,
         "type": "string",
-        "default": "CompAIRR.sif"
+        "default": "CompAIRR-1.5.1.sif"
       },
       "details": {
         "label": "Singularity image",
