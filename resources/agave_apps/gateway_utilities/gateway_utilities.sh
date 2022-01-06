@@ -20,7 +20,7 @@ function gateway_unzip() {
     cp ${ZIP_FILE} ${WORKING_DIR}
 
     # Move into the working directory to do work...
-    pushd ${WORKING_DIR}
+    pushd ${WORKING_DIR} > /dev/null
 
     # Uncompress zip file
     echo "Extracting files started at: `date`" 
@@ -28,7 +28,7 @@ function gateway_unzip() {
     echo "Extracting files finished at: `date`" 
 
     # Go back to where we started
-    popd
+    popd > /dev/null
 
 }
 
@@ -55,7 +55,7 @@ function gateway_split_repertoire(){
     SPLIT_FIELD="repertoire_id"
 
     # Move into the working directory to do work...
-    pushd ${WORKING_DIR}
+    pushd ${WORKING_DIR} > /dev/null
 
     # Determine the files to process. We extract the .tsv files from the info.txt
     # and store them in an array.
@@ -116,7 +116,7 @@ function gateway_split_repertoire(){
     done
 
     # Return to the directory we started from.
-    popd
+    popd > /dev/null
 
 }
 
