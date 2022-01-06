@@ -16,10 +16,10 @@ class Agave
 
     public function __construct()
     {
-	// Maximum run time for a job in hours.
-	$this->maxRunTime = 96;
-	// Maximum number of processors per job
-	$this->processorsPerNode = 24;
+        // Maximum run time for a job in hours.
+        $this->maxRunTime = 96;
+        // Maximum number of processors per job
+        $this->processorsPerNode = 24;
 
         $this->initGuzzleRESTClient();
 
@@ -38,7 +38,7 @@ class Agave
         $job_parameter = [];
         $job_parameter['label'] = 'processorsPerNode';
         $job_parameter['type'] = 'integer';
-        $job_parameter['name'] = 'Number of CPUs (max '.strval($this->processorsPerNode).')';
+        $job_parameter['name'] = 'Number of CPUs (max ' . strval($this->processorsPerNode) . ')';
         $job_parameter['description'] = 'Number of CPUs used by the job, with a maximum of ' . strval($this->processorsPerNode) . ' per job. Note not all jobs will scale well so adding more CPUs may not reduce execution time.';
         $job_parameter['default'] = 1;
         $this->jobParameters[$job_parameter['label']] = $job_parameter;
