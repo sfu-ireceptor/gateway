@@ -70,9 +70,9 @@ echo "Downloading iReceptor Gateway Utilities from the Gateway"
 date
 GATEWAY_UTIL_DIR=gateway_utilities
 mkdir -p ${GATEWAY_UTIL_DIR}
-pushd ${GATEWAY_UTIL_DIR}
+pushd ${GATEWAY_UTIL_DIR} > /dev/null
 wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" https://gateway-analysis.ireceptor.org/gateway_utilities/
-popd
+popd > /dev/null
 echo "Done downloading iReceptor Gateway Utilities"
 date
 
@@ -111,8 +111,8 @@ function run_analysis()
     local array_of_files=$1
     local output_directory=$2
     local repository_name=$3
-    echo "Running a Repertoire Analysis on $1"
-        # Check to see if we are processing a specific repertoire_id
+    printf "\nRunning a Repertoire Analysis on $1 at $(date)\n"
+    # Check to see if we are processing a specific repertoire_id
     if [ "$#" -eq 5 ]; then
         local repertoire_id=$4
         local repertoire_file=$5
@@ -147,6 +147,7 @@ function run_analysis()
 	rm -f ${filename}
 
     done
+    printf "Done running Repertoire Analysis on $1 at $(date)\n\n"
 }
 
 # Split the data by repertoire. This creates a directory tree in $WORKING_DIR
@@ -168,16 +169,8 @@ gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${WORKING_DIR
 # not change the working directory that we are in.
 cd ${SCRIPT_DIR}
 
-# We want to move the info.txt and the JSON metadata and manifest files to the main
-# directory.
-mv ${WORKING_DIR}/${INFO_FILE} .
-mv ${WORKING_DIR}/${MANIFEST_FILE} .
-
-# We also want to keep all of the repertoire files.
-repertoire_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} repertoire_file` )
-for f in "${repertoire_files[@]}"; do
-    mv ${WORKING_DIR}/$f .
-done
+# We want to move the info.txt file to the main directory.
+cp ${WORKING_DIR}/${INFO_FILE} .
 
 # Zip up the analysis results for easy download
 echo "ZIPing analysis results"
