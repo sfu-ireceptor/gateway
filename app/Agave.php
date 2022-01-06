@@ -11,9 +11,16 @@ class Agave
     private $client;
     private $appTemplates;
     private $jobParameters;
+    private $maxRunTime;
+    private $processorsPerNode;
 
     public function __construct()
     {
+	// Maximum run time for a job in hours.
+	$this->maxRunTime = 96;
+	// Maximum number of processors per job
+	$this->processorsPerNode = 24;
+
         $this->initGuzzleRESTClient();
 
         // Set up the default job contorl parameters used by AGAVE
@@ -23,7 +30,7 @@ class Agave
         $job_parameter['label'] = 'maxRunTime';
         $job_parameter['type'] = 'string';
         $job_parameter['name'] = 'Maximum run time (hh:mm:ss)';
-        $job_parameter['description'] = 'Maximum run time for the job in hh:mm:ss. If the job takes longer than this to complete, the job will terminated. A run time of longer than 48 hours is not allowed.';
+        $job_parameter['description'] = 'Maximum run time for the job in hh:mm:ss. If the job takes longer than this to complete, the job will be terminated. A run time of longer than ' . strval($this->maxRunTime) . ' hours is not allowed.';
         $job_parameter['default'] = '01:00:00';
         $this->jobParameters[$job_parameter['label']] = $job_parameter;
 
@@ -31,8 +38,8 @@ class Agave
         $job_parameter = [];
         $job_parameter['label'] = 'processorsPerNode';
         $job_parameter['type'] = 'integer';
-        $job_parameter['name'] = 'Number of CPUs (max 24)';
-        $job_parameter['description'] = 'Number of CPUs used by the job, with a maximum of 24 per job. Note not all jobs will scale well so adding more CPUs may not reduce execution time.';
+        $job_parameter['name'] = 'Number of CPUs (max '.strval($this->processorsPerNode).')';
+        $job_parameter['description'] = 'Number of CPUs used by the job, with a maximum of ' . strval($this->processorsPerNode) . ' per job. Note not all jobs will scale well so adding more CPUs may not reduce execution time.';
         $job_parameter['default'] = 1;
         $this->jobParameters[$job_parameter['label']] = $job_parameter;
 
@@ -310,9 +317,9 @@ class Agave
                 [
                     'default' => true,
                     'name' => 'default',
-                    'maxRequestedTime' => '48:00:00',
+                    'maxRequestedTime' => strval($this->maxRunTime) . ':00:00',
                     'maxNodes' => 1,
-                    'maxProcessorsPerNode' => 24,
+                    'maxProcessorsPerNode' => $this->processorsPerNode,
                     'maxMemoryPerNode' => '64GB',
                     'customDirectives' => '--mem-per-cpu=4G',
                 ],
