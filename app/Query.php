@@ -71,6 +71,8 @@ class Query extends Model
         $s = '<b>Sequence filters</b>' . "\n";
         // Remove the query parameters that are internal.
         unset($params['sample_query_id']);
+        unset($params['cols']);
+        unset($params['open_filter_panel_list']);
 
         // If there are parameters, then process them
         $parameter_count = 0;
