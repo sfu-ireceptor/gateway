@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Query extends Model
 {
@@ -33,7 +34,6 @@ class Query extends Model
 
     public static function sampleParamsSummary($params)
     {
-        $s = '<b>Metadata filters</b>' . "\n";
         // Remove the query parameters that are internal.
         unset($params['project_id_list']);
         unset($params['cols']);
@@ -43,6 +43,7 @@ class Query extends Model
         unset($params['extra_field']);
 
         // If there are parameters, then process them
+	$s = "";
         $parameter_count = 0;
         foreach ($params as $k => $v) {
             // If the value is null, it isn't a filter.
@@ -61,20 +62,19 @@ class Query extends Model
         if ($parameter_count == 0) {
             $s .= 'None' . "\n";
         }
-        $s .= "\n";
 
         return $s;
     }
 
     public static function sequenceParamsSummary($params)
     {
-        $s = '<b>Sequence filters</b>' . "\n";
         // Remove the query parameters that are internal.
         unset($params['sample_query_id']);
         unset($params['cols']);
         unset($params['open_filter_panel_list']);
 
         // If there are parameters, then process them
+	$s = "";
         $parameter_count = 0;
         foreach ($params as $k => $v) {
             // If the key indcates a repertoire field, then skip.
@@ -97,7 +97,6 @@ class Query extends Model
         if ($parameter_count == 0) {
             $s .= 'None' . "\n";
         }
-        $s .= "\n";
 
         return $s;
     }

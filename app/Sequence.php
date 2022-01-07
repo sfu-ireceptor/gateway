@@ -526,12 +526,16 @@ class Sequence
 
         // Use the Query class to generate a consistent set of summary info
         // from the query parameters. This returns a single string, containing
-        // new lines, which is what we want.
+        // a set of lines for each parameter (with \n), which is what we want.
+	$s .= '<b>Metadata filters</b>' . "\n";
         $sam_summary = Query::sampleParamsSummary($sam_query_params);
         $s .= $sam_summary;
+        $s .= "\n";
 
+        $s .= '<b>Sequence filters</b>' . "\n";
         $seq_summary = Query::sequenceParamsSummary($seq_query_params);
         $s .= $seq_summary;
+        $s .= "\n";
 
         // Generate a summary of the repositories used.
         $s .= '<b>Data/Repository Summary</b>' . "\n";
