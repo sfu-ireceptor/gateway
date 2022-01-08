@@ -101,21 +101,28 @@ printf "MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n\n"
 # repertoire.
 function run_analysis()
 # Parameters:
-#     $1 rearrangement file array
-#     $2 output directory
-#     $3 repository name [string]
-#     $4 repertoire_id [optional]
-#     $5 repertoire file [optional - required if repertoire_id is provided]
+#     $1 output directory
+#     $2 repository name [string]
+#     $3 repertoire_id ("NULL" if should skip repertoire processing)
+#     $4 repertoire file (Not used if repertoire_id == NULL)
+#     $5-$N rearrangement files (bash doesn't like arrays, so the rest of the parameters
+#        are considered rearrangement files.
 {
     # Use local variables - no scope issues please...
-    local array_of_files=$1
-    local output_directory=$2
-    local repository_name=$3
-    printf "\nRunning a Repertoire Analysis on $1 at $(date)\n"
+    local output_directory=$1
+    local repository_name=$2
+    local repertoire_id=$3
+    local repertoire_file=$4
+    shift
+    shift
+    shift
+    shift
+    # Remaining variable are the files to process
+    local array_of_files=( $@ )
+
+    printf "\nRunning a Repertoire Analysis on ${array_of_files[@]} at $(date)\n"
     # Check to see if we are processing a specific repertoire_id
-    if [ "$#" -eq 5 ]; then
-        local repertoire_id=$4
-        local repertoire_file=$5
+    if [ "${repertoire_id}" != "NULL" ]; then
         file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
         file_string=${repository_name}_${file_string// /}
         title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
@@ -147,7 +154,7 @@ function run_analysis()
 	rm -f ${filename}
 
     done
-    printf "Done running Repertoire Analysis on $1 at $(date)\n\n"
+    printf "Done running Repertoire Analysis on ${array_of_files[@]} at $(date)\n\n"
 }
 
 # Split the data by repertoire. This creates a directory tree in $WORKING_DIR
@@ -171,6 +178,10 @@ cd ${SCRIPT_DIR}
 
 # We want to move the info.txt file to the main directory.
 cp ${WORKING_DIR}/${INFO_FILE} .
+
+# We want to keep the job error and output files as part of the analysis output.
+cp *.err ${WORKING_DIR}
+cp *.out ${WORKING_DIR}
 
 # Zip up the analysis results for easy download
 echo "ZIPing analysis results"
