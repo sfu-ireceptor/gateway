@@ -234,10 +234,10 @@ class JobController extends Controller
             Log::debug('JobController::getView: sample query summary = ' . $sample_summary);
 
             // Split the summaries by line into an array, which is what the view expects.
-	    $s = "<p><b>Metadata filters</b>\n";
-	    $s .= $sample_summary . "<br/>\n";
-	    $s .= "<p><b>Sequence filters</b>\n";
-	    $s .= $sequence_summary . "<br/>\n";
+            $s = "<p><b>Metadata filters</b>\n";
+            $s .= $sample_summary . "<br/>\n";
+            $s .= "<p><b>Sequence filters</b>\n";
+            $s .= $sequence_summary . "<br/>\n";
             $data['summary'] = explode("\n", $s);
         }
 
