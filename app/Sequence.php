@@ -527,18 +527,18 @@ class Sequence
         // Use the Query class to generate a consistent set of summary info
         // from the query parameters. This returns a single string, containing
         // a set of lines for each parameter (with \n), which is what we want.
-	$s .= '<b>Metadata filters</b>' . "\n";
+	$s .= '<p><b>Metadata filters</b></p>' . "\n";
         $sam_summary = Query::sampleParamsSummary($sam_query_params);
         $s .= $sam_summary;
-        $s .= "\n";
+        $s .= "<br/>\n";
 
-        $s .= '<b>Sequence filters</b>' . "\n";
+        $s .= '<p><b>Sequence filters</b></p>' . "\n";
         $seq_summary = Query::sequenceParamsSummary($seq_query_params);
         $s .= $seq_summary;
-        $s .= "\n";
+        $s .= "<br/>\n";
 
         // Generate a summary of the repositories used.
-        $s .= '<b>Data/Repository Summary</b>' . "\n";
+        $s .= '<p><b>Data/Repository Summary</b></p>' . "\n";
 
         $nb_sequences_total = 0;
         $expected_nb_sequences_total = 0;
@@ -549,34 +549,34 @@ class Sequence
 
         $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
         if ($is_download_incomplete) {
-            $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
-            $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "\n";
+            $s .= 'Warning: some of the files appears to be incomplete:' . "<br/>\n";
+            $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "<br/>\n";
         } else {
-            $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
+            $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "<br/>\n";
         }
 
         foreach ($file_stats as $t) {
             if ($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences) (from ' . $t['rs_url'] . ')' . "\n";
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences) (from ' . $t['rs_url'] . ')' . "<br/>\n";
             } else {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (from ' . $t['rs_url'] . ')' . "\n";
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (from ' . $t['rs_url'] . ')' . "<br/>\n";
             }
         }
 
         if (! empty($failed_rs)) {
-            $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "\n";
+            $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "<br/>\n";
             foreach ($failed_rs as $rs) {
-                $s .= $rs->name . "\n";
+                $s .= $rs->name . "<br/>\n";
             }
         }
         $s .= "\n";
 
         // Generate a summary of where the query came from.
-        $s .= '<b>Source</b>' . "\n";
-        $s .= $url . "\n";
+        $s .= '<p><b>Source</b></p>' . "\n";
+        $s .= $url . "<br/>\n";
         $date_str_human = date('M j, Y', $now);
         $time_str_human = date('H:i T', $now);
-        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "\n";
+        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "<br/>\n";
 
         // Save the info into the info.txt file.
         $info_file_path = $folder_path . '/info.txt';
