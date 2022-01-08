@@ -65,7 +65,7 @@ function gateway_split_repertoire(){
 	echo "Error: Could not process manifest file ${MANIFEST_FILE}"
 	exit $?
     fi
-    echo "TSV files = $tsv_files"
+    echo "TSV files = ${tsv_files}"
 
     # For each TSV file in the array, process it.
     for f in "${tsv_files[@]}"; do
@@ -96,13 +96,13 @@ function gateway_split_repertoire(){
 	    python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter.py $f ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_tsvfile}
 	
 	    # Call the client supplied "run_analysis" callback function. Parameters:
-            #     $1 array of TSV input files
-            #     $2 output directory
-	    #     $3 repository name
-            #     $4 repertoire id [optional]
-            #     $5 repertoire JSON file [optional - required of repertoire_id is specified]
+            #     $1 output directory
+	    #     $2 repository name
+	    #     $3 repertoire id ("NULL" if not used)
+            #     $4 repertoire JSON file ["NULL" if not used, required if repertoire_id is specified]
+            #     $5-$N list of TSV input files
 	    tsv_array=( "${repository_name}/${repertoire_dirname}/${repertoire_tsvfile}" )
-	    run_analysis ${tsv_array} ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${json_file}
+	    run_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${json_file} ${tsv_array[@]} 
 
         done
     done
