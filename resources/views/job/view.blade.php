@@ -33,7 +33,7 @@
         @if (count($summary) > 0)
             <h2>Summary</h2>
             @foreach ($summary as $summary_line)
-		{!! $summary_line !!}<br />
+		{!! $summary_line !!}
             @endforeach
 	@endif
 
