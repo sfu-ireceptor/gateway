@@ -527,7 +527,7 @@ class Sequence
         // Use the Query class to generate a consistent set of summary info
         // from the query parameters. This returns a single string, containing
         // a set of lines for each parameter (with \n), which is what we want.
-	$s .= '<p><b>Metadata filters</b></p>' . "\n";
+        $s .= '<p><b>Metadata filters</b></p>' . "\n";
         $sam_summary = Query::sampleParamsSummary($sam_query_params);
 	// Replace each newline with a HTML <br/> followed by the newline as
 	// we want HTML here.
