@@ -32,9 +32,11 @@
 
         @if (count($summary) > 0)
             <h2>Summary</h2>
+            <div class="summary">
             @foreach ($summary as $summary_line)
 		{!! $summary_line !!}
             @endforeach
+	    </div>
 	@endif
 
 	@if (count($files) > 0 && $job->app != 'Third-party analysis')
