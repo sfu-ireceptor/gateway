@@ -529,11 +529,17 @@ class Sequence
         // a set of lines for each parameter (with \n), which is what we want.
 	$s .= '<p><b>Metadata filters</b></p>' . "\n";
         $sam_summary = Query::sampleParamsSummary($sam_query_params);
+	// Replace each newline with a HTML <br/> followed by the newline as
+	// we want HTML here.
+	$sam_summary = str_replace("\n", "<br/>\n", $sam_summary); 
         $s .= $sam_summary;
         $s .= "<br/>\n";
 
         $s .= '<p><b>Sequence filters</b></p>' . "\n";
         $seq_summary = Query::sequenceParamsSummary($seq_query_params);
+	// Replace each newline with a HTML <br/> followed by the newline as
+	// we want HTML here.
+	$seq_summary = str_replace("\n", "<br/>\n", $seq_summary); 
         $s .= $seq_summary;
         $s .= "<br/>\n";
 
@@ -569,7 +575,7 @@ class Sequence
                 $s .= $rs->name . "<br/>\n";
             }
         }
-        $s .= "\n";
+        $s .= "<br/>\n";
 
         // Generate a summary of where the query came from.
         $s .= '<p><b>Source</b></p>' . "\n";
