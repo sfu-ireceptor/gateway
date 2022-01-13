@@ -216,7 +216,7 @@ class RestService extends Model
 
         // convert filter object to JSON
         $filter_object_json = json_encode($filter_object);
-        Log::debug(json_encode($filter_object, JSON_PRETTY_PRINT));
+        //Log::debug(json_encode($filter_object, JSON_PRETTY_PRINT));
 
         return $filter_object_json;
     }
