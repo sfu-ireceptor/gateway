@@ -1028,7 +1028,7 @@ class RestService extends Model
             $query_parameters = [];
             $query_parameters['format'] = 'tsv';
 
-            Log::debug('Peak memory usage:' . (memory_get_peak_usage(true)/1024/1024) . " MiB\n\n");
+            Log::debug('Peak memory usage:' . (memory_get_peak_usage(true) / 1024 / 1024) . " MiB\n\n");
             if (isset($rs->chunk_size) && ($rs->chunk_size != null)) {
                 $chunk_size = $rs->chunk_size;
                 $nb_results = $expected_nb_sequences_by_rs[$rs->id];
@@ -1041,8 +1041,7 @@ class RestService extends Model
 
                     // generate JSON query
                     Log::debug('generating query for chunk ' . $i);
-                    Log::debug('Current memory usage:' . (memory_get_usage()/1024/1024) . " MiB\n\n");
-
+                    Log::debug('Current memory usage:' . (memory_get_usage() / 1024 / 1024) . " MiB\n\n");
 
                     $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
 
