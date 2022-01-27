@@ -129,6 +129,10 @@ class RestServiceSeeder extends Seeder
                 'url' => 'http://154.127.124.38:2222/airr/v1/',
                 'name' => 'NICD - South Africa',
             ],
+            [
+                'url' => 'http://single-cell.ireceptor.org/airr/v1/',
+                'name' => 'Single Cell Repo',
+            ],
         ];
 
         // if grouping is disabled, remove group code
