@@ -195,7 +195,7 @@
 					</div>
 				@endif	
 
-				@if (empty($sequence_list))
+				@if ($total_filtered_sequences <= 0)
 					<!-- No results -->
 					<div class="no_results">
 						<h2>No Results</h2>
@@ -246,7 +246,7 @@
 					</div>
 				@endif 
 				
-				@if (! empty($sequence_list))
+				@if ($total_filtered_sequences > 0)
 					@if ($total_filtered_sequences > config('ireceptor.sequences_download_limit'))
 						<a href="/sequences-download" class="btn btn-primary pull-right download_sequences" disabled="disabled" role="button" data-container="body" data-toggle="tooltip" data-placement="top" title="Downloads of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future." data-trigger="hover" tabindex="0">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
@@ -259,104 +259,105 @@
 						</a>
 					@endif
 
-					<h3> 
-						Individual Sequences
-						<small class="sequence_count">
-							1-{{ count($sequence_list) }}
-							of
-							<span title="{{ number_format($total_filtered_sequences) }}">
-								{{ human_number($total_filtered_sequences) }}
-							</span>
-						</small>
+					@if (! empty($sequence_list))
+						<h3>
+							Individual Sequences
+							<small class="sequence_count">
+								1-{{ count($sequence_list) }}
+								of
+								<span title="{{ number_format($total_filtered_sequences) }}">
+									{{ human_number($total_filtered_sequences) }}
+								</span>
+							</small>
 
-						<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
-						  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-						  Customize displayed columns
-						</a>
-					</h3>
+							<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
+							  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							  Customize displayed columns
+							</a>
+						</h3>
 
-					<!-- table column selector -->
-					<div class="collapse" id="column_selector">
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<h4 class="panel-title">
-									Customize displayed columns
-									<button class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
-										<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-							  			Close
-									</button>
-								</h4>
-							</div>
-					  		<div class="panel-body">
-								<form class="column_selector">
-									@foreach ($field_list_grouped as $field_group)
-										<h5>{{ $field_group['name'] }}</h5>
-										@foreach ($field_group['fields'] as $field)
-											<div class="checkbox">
-												<label>
-													<input name="table_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'col_' . $field['ir_id']}}" {{ in_array($field['ir_id'], $current_columns) ? 'checked="checked"' : '' }}/>
-													@include('help', ['id' => $field['ir_id']])
-													@lang('short.' . $field['ir_id'])
-												</label>
-											</div>		
+						<!-- table column selector -->
+						<div class="collapse" id="column_selector">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										Customize displayed columns
+										<button class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
+											<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+											Close
+										</button>
+									</h4>
+								</div>
+								<div class="panel-body">
+									<form class="column_selector">
+										@foreach ($field_list_grouped as $field_group)
+											<h5>{{ $field_group['name'] }}</h5>
+											@foreach ($field_group['fields'] as $field)
+												<div class="checkbox">
+													<label>
+														<input name="table_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'col_' . $field['ir_id']}}" {{ in_array($field['ir_id'], $current_columns) ? 'checked="checked"' : '' }}/>
+														@include('help', ['id' => $field['ir_id']])
+														@lang('short.' . $field['ir_id'])
+													</label>
+												</div>
+											@endforeach
 										@endforeach
-									@endforeach
-								</form>
-					  		</div>
+									</form>
+								</div>
+							</div>
 						</div>
-					</div>
 
-					<!-- sequence data -->
-					<table class="table table-striped table-condensed much_data table-bordered">
-						<thead>
-							<tr>
-								@foreach ($field_list as $field)
-									<th class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
-										@lang('short.' . $field['ir_id'])
-										@include('help', ['id' => $field['ir_id']])
-									</th>
-								@endforeach
-							</tr>
-						</thead>
-						<tbody>
-							@foreach ($sequence_list as $s)
-							<tr>
-								@foreach ($field_list as $field)
-									<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
-										@isset($s->{$field['ir_id']})
-											@if($field['ir_id'] == 'functional')
-												{{ $s->functional ? 'Yes' : 'No' }}											
-											@elseif($field['ir_id'] == 'v_call' || $field['ir_id'] == 'v_call' || $field['ir_id'] == 'd_call' )
-												<span title="{{ $s->{$field['ir_id']} }}">
-													{{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
-												</span>
-											@else
-												@if(is_object($s->{$field['ir_id']}))
-													<span title="{{ json_encode($s->{$field['ir_id']}) }}">
-														{{ json_encode($s->{$field['ir_id']}) }}												
-													</span>
-												@elseif (is_array($s->{$field['ir_id']}))
-													<span title="{{ implode(', ', $s->{$field['ir_id']}) }}">
-														{{ str_limit(implode(', ', $s->{$field['ir_id']}), $limit = 25, $end = '‥') }}									
-													</span>			
-												@else
+						<!-- sequence data -->
+						<table class="table table-striped table-condensed much_data table-bordered">
+							<thead>
+								<tr>
+									@foreach ($field_list as $field)
+										<th class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
+											@lang('short.' . $field['ir_id'])
+											@include('help', ['id' => $field['ir_id']])
+										</th>
+									@endforeach
+								</tr>
+							</thead>
+							<tbody>
+								@foreach ($sequence_list as $s)
+								<tr>
+									@foreach ($field_list as $field)
+										<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
+											@isset($s->{$field['ir_id']})
+												@if($field['ir_id'] == 'functional')
+													{{ $s->functional ? 'Yes' : 'No' }}
+												@elseif($field['ir_id'] == 'v_call' || $field['ir_id'] == 'v_call' || $field['ir_id'] == 'd_call' )
 													<span title="{{ $s->{$field['ir_id']} }}">
-														@if (is_bool($s->{$field['ir_id']}))
-															{{ $s->{$field['ir_id']} ? 'Yes' : 'No' }}
-														@else
-															{{ $s->{$field['ir_id']} }}
-														@endif
+														{{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
 													</span>
-												@endif												
+												@else
+													@if(is_object($s->{$field['ir_id']}))
+														<span title="{{ json_encode($s->{$field['ir_id']}) }}">
+															{{ json_encode($s->{$field['ir_id']}) }}
+														</span>
+													@elseif (is_array($s->{$field['ir_id']}))
+														<span title="{{ implode(', ', $s->{$field['ir_id']}) }}">
+															{{ str_limit(implode(', ', $s->{$field['ir_id']}), $limit = 25, $end = '‥') }}
+														</span>
+													@else
+														<span title="{{ $s->{$field['ir_id']} }}">
+															@if (is_bool($s->{$field['ir_id']}))
+																{{ $s->{$field['ir_id']} ? 'Yes' : 'No' }}
+															@else
+																{{ $s->{$field['ir_id']} }}
+															@endif
+														</span>
+													@endif
+												@endif
 											@endif
-										@endif
-									</td>
+										</td>
+									@endforeach
+								</tr>
 								@endforeach
-							</tr>
-							@endforeach
-						</tbody>
-					</table>
-
+							</tbody>
+						</table>
+					@endif
 					@if(config('services.agave.enabled'))
 						<!-- apps -->
 						<h2>Analysis Apps</h2>

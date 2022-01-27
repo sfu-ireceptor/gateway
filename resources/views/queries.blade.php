@@ -113,9 +113,9 @@
 
 			<h3>Service timeouts</h3>
 			<p>
-				/samples (JSON): <strong>{{ $service_request_timeout_samples }} sec</strong><br>
-				/sequences_summary (JSON): <strong>{{ $service_request_timeout }} sec</strong><br>
-				/sequences_data (file): <strong>{{ $service_file_request_timeout }} sec</strong>
+				/repertoire (JSON): <strong>{{ $service_request_timeout_samples }} sec</strong><br>
+				/rearrangement (JSON): <strong>{{ $service_request_timeout }} sec</strong><br>
+				/rearrangement (TSV): <strong>{{ $service_file_request_timeout }} sec</strong>
 			</p>
 		</div>
 	</div>

@@ -17,8 +17,8 @@
 
 		<!-- IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-		  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
-		  <script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+		  <script src="/js/html5shiv.min.js"></script>
+		  <script src="/js/respond.min.js"></script>
 		<![endif]-->
 	</head>
 
@@ -184,22 +184,22 @@
 		</footer>
 
 		<!-- javascript -->
-		<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+		<script src="/js/jquery-1.12.4.min.js"></script>
+		<script src="/js/bootstrap.min.js"></script>
 
 		<script src="/js/jstree.min.js"></script>
-		<script src="https://code.highcharts.com/highcharts.js"></script>
-		<script src="https://code.highcharts.com/highcharts-3d.js"></script>
-		<script src="https://code.highcharts.com/modules/data.js"></script>
-		<script src="https://code.highcharts.com/modules/exporting.js"></script>
-		<script src="https://code.highcharts.com/modules/drilldown.js"></script>
-		<script src="https://code.highcharts.com/modules/bullet.js"></script>
-		<script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>  
+		<script src="/js/highcharts/code/highcharts.js"></script>
+		<script src="/js/highcharts/code/highcharts-3d.js"></script>
+		<script src="/js/highcharts/code/modules/data.js"></script>
+		<script src="/js/highcharts/code/modules/exporting.js"></script>
+		<script src="/js/highcharts/code/modules/drilldown.js"></script>
+		<script src="/js/highcharts/code/modules/bullet.js"></script>
+		<script src="/js/highcharts/code/modules/no-data-to-display.js"></script>  
 		<script src="/js/bootstrap-multiselect.js"></script>
 		<script src="/js/pluralize.js"></script>
 
 		<script src="/js/airrvisualization.js?v=12"></script>
-		<script src="/js/main.js?v=73"></script>
+		<script src="/js/main.js?v=75"></script>
 		<script src="/js/admin.js?v=1"></script>
 		<script src="/js/visualization.js?v=19"></script>
 	</body>

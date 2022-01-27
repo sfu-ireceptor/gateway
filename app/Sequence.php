@@ -49,13 +49,13 @@ class Sequence
     public static function summary($filters, $username)
     {
         // get sequences summary
-        $response_list = RestService::sequences_summary($filters, $username);
+        $response_list_sequences_summary = RestService::sequences_summary($filters, $username);
 
         // generate stats
-        $data = self::process_response($response_list);
+        $data = self::process_response($response_list_sequences_summary);
 
         // get a few sequences from each service
-        $response_list = RestService::sequence_list($filters);
+        $response_list = RestService::sequence_list($filters, $response_list_sequences_summary);
 
         // merge responses
         $sequence_list = [];
@@ -106,9 +106,8 @@ class Sequence
         return $data;
     }
 
-    public static function expectedSequencesByRestSevice($filters, $username)
+    public static function expectedSequencesByRestSevice($response_list)
     {
-        $response_list = RestService::sequences_summary($filters, $username, false);
         $expected_nb_sequences_by_rs = [];
         foreach ($response_list as $response) {
             $rest_service_id = $response['rs']->id;
@@ -129,14 +128,41 @@ class Sequence
         return $expected_nb_sequences_by_rs;
     }
 
+    public static function filteredSamplesByRestService($response_list)
+    {
+        $filtered_samples_by_rs = [];
+        foreach ($response_list as $response) {
+            $rest_service_id = $response['rs']->id;
+
+            $sample_id_list = [];
+            if (isset($response['data'])) {
+                $sample_list = $response['data'];
+                foreach ($sample_list as $sample) {
+                    if (isset($sample->ir_filtered_sequence_count) && ($sample->ir_filtered_sequence_count > 0)) {
+                        $sample_id_list[] = $sample->repertoire_id;
+                    }
+                }
+            }
+
+            $filtered_samples_by_rs[$rest_service_id] = $sample_id_list;
+        }
+
+        return $filtered_samples_by_rs;
+    }
+
     public static function sequencesTSVFolder($filters, $username, $url = '', $sample_filters = [])
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
-        // do extra sequence summary request to get expected number of sequences
-        // for sanity check after download
-        $expected_nb_sequences_by_rs = self::expectedSequencesByRestSevice($filters, $username);
+        // do extra sequence summary request
+        $response_list = RestService::sequences_summary($filters, $username, false);
+
+        // get expected number of sequences for sanity check after download
+        $expected_nb_sequences_by_rs = self::expectedSequencesByRestSevice($response_list);
+
+        // get filtered list of repertoires ids
+        $filtered_samples_by_rs = self::filteredSamplesByRestService($response_list);
 
         // if total expected nb sequences is 0, immediately fail download
         $total_expected_nb_sequences = 0;
@@ -166,7 +192,7 @@ class Sequence
         umask($old);
         // File::makeDirectory($folder_path, 0777, true, true);
 
-        $metadata_response_list = RestService::sample_list_repertoire_data($filters, $folder_path, $username);
+        $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
         $response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_sequences_by_rs);
 
         $file_stats = self::file_stats($response_list, $expected_nb_sequences_by_rs);
@@ -264,7 +290,7 @@ class Sequence
 
                 if (count($success_rs) == 1) {
                     $download_incomplete_info .= 'The download from the repository ' . $rs_name_list_str . " finished successfully.\n";
-                } else {
+                } elseif (count($success_rs) > 1) {
                     $download_incomplete_info .= 'Downloads from the following repositories finished successfully: ' . $rs_name_list_str . ".\n";
                 }
             } else {

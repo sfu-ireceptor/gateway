@@ -50,6 +50,10 @@
 			<strong>@lang('short.sex'):</strong>
 			{{ $sample->sex }}
 		</p>
+		<p>
+			<strong>@lang('short.organism'):</strong>
+			{{ $sample->organism }}
+		</p>
 	</div>
 	<div class="col-md-3">
 		<h4>Sample</h4>
