@@ -31,12 +31,6 @@ AGAVE_JOB_MEMORY_PER_NODE=${AGAVE_JOB_MEMORY_PER_NODE}
 singularity_image="${singularity_image}"
 echo "Singularity image = ${singularity_image}"
 
-# We provide a mechanism for the user to specify a name for the
-# processed data - this is a VDJBase functionality.
-sample_name="${sample_name}"
-echo "Sample name = ${sample_name}"
-
-
 #
 # Tapis App Inputs
 #
@@ -120,7 +114,6 @@ function run_analysis()
     # Remaining variable are the files to process
     local array_of_files=( $@ )
 
-    printf "\nRunning a Repertoire Analysis on ${array_of_files[@]} at $(date)\n"
     # Check to see if we are processing a specific repertoire_id
     if [ "${repertoire_id}" != "NULL" ]; then
         file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
@@ -132,29 +125,19 @@ function run_analysis()
         file_string="total"
         title_string="Total"
     fi
-
-    # Run the VDJBase pipeline within the singularity image on each rearrangement file provided.
+input
+    
     for filename in "${array_of_files[@]}"; do
-        echo "Running VDJBase on $filename"
+        echo "Running CompAIRR on $filename"
 	echo "Mapping ${PWD} to /data"
 	echo "Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
 	echo "Storing output in /data/${output_directory}"
-	# Run VDJBase
-        singularity exec -e -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} vdjbase-pipeline -s ${file_string} -f /data/${filename} -t ${AGAVE_JOB_PROCESSORS_PER_NODE} -o /data/${output_directory}
-	# Get the germline database info from the repertoire file
-	germline_database="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field data_processing.germline_database)"
-	# Get the data processing file info from the repertoire file
-	data_processing_files="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field data_processing.data_processing_files)"
-	echo "Data processing files = ${data_processing_files}"
-	echo "Generating AIRR genotype in /data/${output_directory}/${file_string}/${file_string}_genotype.json"
-	# Generate AIRR Genotype JSON file.
-	singularity exec -e -B ${PWD}:/data -B ${SCRIPT_DIR}:/scripts ${SCRIPT_DIR}/${singularity_image} python3 /scripts/generate_genotype.py --genotype_file /data/${output_directory}/${file_string}/${file_string}_genotype.tsv --repertoire_id ${repertoire_id} --data_processing_file ${data_processing_files} --germline_database "${germline_database}" --receptor_genotype_set_id ${file_string} --receptor_genotype_id ${file_string} --out_name /data/${output_directory}/${file_string}/${file_string}_genotype.json
-
-	# We don't want to keep around the original TSV file.
-	rm -f ${filename}
-
+	# Run CompAIRR
+        singularity exec -e -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} compairr -u -t ${AGAVE_JOB_PROCESSORS_PER_NODE} --cluster --difference 0 --ignore-counts /data/${filename} -o /data/${output_directory}/${file_string}.tsv
+	# Remove the repertoire TSV file, we don't want to keep it around as part of the analysis results.
+	rm -f ${PWD}/${filename}
     done
-    printf "Done running Repertoire Analysis on ${array_of_files[@]} at $(date)\n\n"
+    printf "Done Repertoire Analysis on ${array_of_files[@]} at $(date)\n\n"
 }
 
 # Split the data by repertoire. This creates a directory tree in $WORKING_DIR
@@ -176,10 +159,10 @@ gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${WORKING_DIR
 # not change the working directory that we are in.
 cd ${SCRIPT_DIR}
 
-# We want to move the info.txt file to the main directory.
+# We want to move the info.txt to the main directory. The Gateway expects this.
 cp ${WORKING_DIR}/${INFO_FILE} .
 
-# We want to keep the job error and output files as part of the analysis output.
+# We want the job error and output files to be part of the analysis so copy them
 cp *.err ${WORKING_DIR}
 cp *.out ${WORKING_DIR}
 

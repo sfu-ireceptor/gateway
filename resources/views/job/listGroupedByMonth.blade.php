@@ -10,6 +10,8 @@
 
                                     {{ $job->app }} (Job {{ $job->id }})
                                     </a>
+				    <br />
+                                    <em class="dateRelative">Run time: {{ $job->totalTime() }}
                                 </td>
 				<td>
 					{{ $job->createdAt() }}

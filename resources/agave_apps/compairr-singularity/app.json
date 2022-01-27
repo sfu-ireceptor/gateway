@@ -1,20 +1,20 @@
 {
-  "name": "irplus-stats-template",
-  "version": "1.0",
-  "label": "Statistics",
+  "name": "irplus-compairr-cedar-ireceptorgw",
+  "version": "0.1",
+  "label": "CompAIRR",
   "defaultQueue": "default",
   "defaultNodeCount": 1,
   "defaultProcessorsPerNode": 1,
-  "defaultMemoryPerNode": "4GB",
-  "defaultRequestedTime": "1:00:00",
-  "longDescription": "Perform a range of simple statistics, such as gene usage and junction length",
-  "shortDescription": "Simple gene usage statistics",
+  "defaultMemoryPerNode": "8GB",
+  "defaultRequestedTime": "8:00:00",
+  "shortDescription": "Cluster sequences in a repertoire using single linkage hierarchical clustering using the CompAIRR tool.",
+  "longDescription": "iReceptor+ AIRR Repertoire sequence cluster tool: CompAIRR (compairr) is a command line tool to cluster sequences within adaptive immune receptor repertoires.",
   "executionType": "HPC",
-  "executionSystem": "FILLED IN BY GATEWAY",
-  "parallelism": "SERIAL",
+  "executionSystem": "cedar.computecanada.ca-compute-ireceptorgw",
+  "parallelism": "PARALLEL",
   "checkpointable": false,
-  "deploymentPath": "FILLED IN BY GATEWAY",
-  "deploymentSystem": "FILLED IN BY GATEWAY",
+  "deploymentPath": "/tapis/apps/compairr-singularity/0.1/cedar/",
+  "deploymentSystem": "cedar.computecanada.ca-storage-ireceptorgw",
   "templatePath": "app.sh",
   "testPath": "test.sh",
   "ontology": [
@@ -50,26 +50,6 @@
   ],
   "parameters": [
     {
-      "id": "split_repertoire",
-      "value": {
-        "visible": true,
-        "required": true,
-        "type": "string",
-        "default": "True"
-      },
-      "details": {
-        "label": "Split Repertoire (True/False)?",
-        "description": "Split data based on Repertoire ID?"
-      },
-      "semantics": {
-        "minCardinality": 1,
-        "maxCardinality": 1,
-        "ontology": [
-          "xsd:string"
-        ]
-      }
-    },
-    {
       "id": "creator",
       "value": {
         "visible": false,
@@ -80,6 +60,26 @@
       "details": {
         "label": "Creator",
         "description": "Username that created this job."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
+    },
+    {
+      "id": "singularity_image",
+      "value": {
+        "visible": false,
+        "required": true,
+        "type": "string",
+        "default": "CompAIRR-1.5.1.sif"
+      },
+      "details": {
+        "label": "Singularity image",
+        "description": "The singularity image to be used. This is set by the Gateway and is not changed by the user."
       },
       "semantics": {
         "minCardinality": 1,

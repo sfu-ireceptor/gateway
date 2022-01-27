@@ -30,4 +30,73 @@ class Query extends Model
 
         return json_decode($q->params, true);
     }
+
+    public static function sampleParamsSummary($params)
+    {
+        // Remove the query parameters that are internal.
+        unset($params['project_id_list']);
+        unset($params['cols']);
+        unset($params['sort_order']);
+        unset($params['sort_column']);
+        unset($params['open_filter_panel_list']);
+        unset($params['extra_field']);
+
+        // If there are parameters, then process them
+        $s = '';
+        $parameter_count = 0;
+        foreach ($params as $k => $v) {
+            // If the value is null, it isn't a filter.
+            if ($v == null) {
+                continue;
+            }
+            // If it is an array, compile it as a list.
+            if (is_array($v)) {
+                $v = implode(' or ', $v);
+            }
+            // use human-friendly filter name
+            $s .= __('short.' . $k) . ': ' . $v . "\n";
+            $parameter_count++;
+        }
+        // If nothing left, then say None
+        if ($parameter_count == 0) {
+            $s .= 'None' . "\n";
+        }
+
+        return $s;
+    }
+
+    public static function sequenceParamsSummary($params)
+    {
+        // Remove the query parameters that are internal.
+        unset($params['sample_query_id']);
+        unset($params['cols']);
+        unset($params['open_filter_panel_list']);
+
+        // If there are parameters, then process them
+        $s = '';
+        $parameter_count = 0;
+        foreach ($params as $k => $v) {
+            // If the key indcates a repertoire field, then skip.
+            if (strpos($k, 'ir_project_sample_id_list_') !== false) {
+                continue;
+            }
+            // If the value is null, it isn't a filter.
+            if ($v == null) {
+                continue;
+            }
+            // If it is an array, compile it as a list.
+            if (is_array($v)) {
+                $v = implode(' or ', $v);
+            }
+            // use human-friendly filter name
+            $s .= __('short.' . $k) . ': ' . $v . "\n";
+            $parameter_count++;
+        }
+        // If nothing left, then say None
+        if ($parameter_count == 0) {
+            $s .= 'None' . "\n";
+        }
+
+        return $s;
+    }
 }

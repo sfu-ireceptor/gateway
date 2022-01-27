@@ -8,30 +8,35 @@
 
 	<h2>
 		{{ $job->app }} (Job {{ $job->id }})
+                <br />
 		<small data-toggle="tooltip" data-placement="right" title="Submitted on {{ $job->createdAtFull() }}"> 
-			<span class="submission_date_relative">
+			Submitted: <span class="submission_date_relative">
 				{{ $job->createdAtRelative() }}
 			</span>
+		</small>
+                <br />
+		<small> 
+			Run time: <span class="run_time">{{ $job->totalTime() }}</span>
 		</small>
 	</h2>
 
 	<div class="job_view_progress">
 	    @include('job/progress')
-	    @if ($job->url)
-		<p>
-			Data from:
-			<a href="{{ $job->url }}">
-				{{ $job->url }}
-			</a>
-		</p>
-	    @endif
 	</div>	
+	@if ($job->url)
+		Data from:
+                 <span class="job_url">
+                    <a href="{{ $job->url }}"> {{ $job->url }} </a>
+	        </span>
+	@endif
 
         @if (count($summary) > 0)
             <h2>Summary</h2>
+            <div class="summary">
             @foreach ($summary as $summary_line)
-		{!! $summary_line !!}<br />
+		{!! $summary_line !!}
             @endforeach
+	    </div>
 	@endif
 
 	@if (count($files) > 0 && $job->app != 'Third-party analysis')

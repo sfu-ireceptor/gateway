@@ -210,7 +210,11 @@ class SequenceController extends Controller
         $appTemplates = $agave->updateAppTemplates();
         $app_list = [];
 
-        // For each app, set up the info required by the UI.
+        // Store the normal job contorl parameters for the UI. The same parameters are used
+        // by all Apps.
+        $job_parameter_list = $agave->getJobParameters();
+
+        // For each app, set up the info required by the UI for the App parameters.
         foreach ($appTemplates as $app_tag => $app_info) {
             $app_config = $app_info['config'];
             $app_ui_info = [];
@@ -228,6 +232,7 @@ class SequenceController extends Controller
                     $parameter['name'] = $parameter_info['details']['label'];
                     $parameter['description'] = $parameter_info['details']['description'];
                     $parameter['type'] = $parameter_info['value']['type'];
+                    $parameter['default'] = $parameter_info['value']['default'];
                     $parameter_list[$parameter_info['id']] = $parameter;
                 } else {
                     Log::debug('   Not displaying invisible parameter ' . $parameter_info['id']);
@@ -240,6 +245,7 @@ class SequenceController extends Controller
             $app_ui_info['description'] = $app_config['shortDescription'];
             $app_ui_info['info'] = $app_config['longDescription'];
             $app_ui_info['parameter_list'] = $parameter_list;
+            $app_ui_info['job_parameter_list'] = $job_parameter_list;
             $app_ui_info['app_id'] = $app_tag;
             $app_ui_info['app_tag'] = $app_tag;
 

@@ -8,6 +8,7 @@ use App\Jobs\LaunchAgaveJob;
 use App\Jobs\PrepareDataForThirdPartyAnalysis;
 use App\JobStep;
 use App\LocalJob;
+use App\Query;
 use App\System;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -35,11 +36,18 @@ class JobController extends Controller
             return;
         }
 
+        Log::debug('JobController::getJobData: job = ' . json_encode($job, JSON_PRETTY_PRINT));
         $data = [];
 
+        // These variables are used to update the state of the web page. They
+        // essentially map to <span> elements in the HTML and are updated through
+        // the JS code in main.js
         $data['status'] = $job->status;
         $data['agave_status'] = $job->agave_status;
         $data['submission_date_relative'] = $job->createdAtRelative();
+        $data['run_time'] = $job->totalTime();
+        $data['job_url'] = $job->url;
+        $data['job'] = $job;
 
         $d = [];
         $d['job'] = $job;
@@ -66,7 +74,7 @@ class JobController extends Controller
 
     public function postLaunchApp(Request $request)
     {
-        $f = $request->all();
+        $request_data = $request->all();
 
         $gw_username = auth()->user()->username;
         $token = auth()->user()->password;
@@ -74,8 +82,8 @@ class JobController extends Controller
         // create systems
         System::createDefaultSystemsForUser($gw_username, $token);
 
-        Log::info('Processing Job: app_id = ' . $f['app_id']);
-        $appId = $f['app_id'];
+        Log::info('Processing Job: app_id = ' . $request_data['app_id']);
+        $appId = $request_data['app_id'];
 
         // 3rd-party analysis
         if ($appId == '999') {
@@ -112,8 +120,22 @@ class JobController extends Controller
                 Log::debug('   Processing parameter ' . $parameter_info['id']);
                 // If it visible, we want to pass on the input to the job.
                 if ($parameter_info['value']['visible']) {
-                    $params[$parameter_info['id']] = $f[$parameter_info['id']];
-                    Log::debug('   Parameter value = ' . $f[$parameter_info['id']]);
+                    $params[$parameter_info['id']] = $request_data[$parameter_info['id']];
+                    Log::debug('   Parameter value = ' . $request_data[$parameter_info['id']]);
+                }
+            }
+
+            // Process the job parameters for the job.
+            $job_params = [];
+            // Get the possible list of parameters that can be set. The Agave class
+            // manages which job parameters can be set.
+            $job_parameter_list = $agave->getJobParameters();
+            foreach ($job_parameter_list as $job_parameter_info) {
+                // If the parameter is provided, keep track of it so we can give it to the job.
+                Log::debug('   Processing job parameter ' . $job_parameter_info['label']);
+                if (isset($request_data[$job_parameter_info['label']])) {
+                    $job_params[$job_parameter_info['label']] = $request_data[$job_parameter_info['label']];
+                    Log::debug('   Parameter value = ' . $request_data[$job_parameter_info['label']]);
                 }
             }
 
@@ -133,7 +155,7 @@ class JobController extends Controller
         // create job in DB
         $job = new Job;
         $job->user_id = auth()->user()->id;
-        $job->url = $f['data_url'];
+        $job->url = $request_data['data_url'];
         $job->app = $appHumanName;
         $job->save();
         $job->updateStatus('WAITING');
@@ -148,9 +170,9 @@ class JobController extends Controller
 
         // queue job
         if ($appId == '999') {
-            PrepareDataForThirdPartyAnalysis::dispatch($jobId, $f, $gw_username, $localJobId);
+            PrepareDataForThirdPartyAnalysis::dispatch($jobId, $request_data, $gw_username, $localJobId);
         } else {
-            LaunchAgaveJob::dispatch($jobId, $f, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $localJobId);
+            LaunchAgaveJob::dispatch($jobId, $request_data, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $job_params, $localJobId);
         }
 
         return redirect('jobs/view/' . $jobId);
@@ -166,8 +188,12 @@ class JobController extends Controller
 
         $data = [];
         $data['job'] = $job;
+        Log::debug('JobController::getView: job = ' . json_encode($job, JSON_PRETTY_PRINT));
+
         $data['files'] = [];
         $data['summary'] = [];
+        // Set up the summary information. If we have a file use it, otherwise
+        // use the data from the query parameters.
         if ($job['input_folder'] != '') {
             $folder = 'storage/' . $job['input_folder'];
             if (File::exists($folder)) {
@@ -180,16 +206,41 @@ class JobController extends Controller
                     $info_txt = file_get_contents($info_file);
                     $lines = file($info_file);
                 } catch (Exception $e) {
-                    Log::debug('Job::getView: Could not open file ' . $info_file);
-                    Log::debug('Job::getView: Error: ' . $e->getMessage());
+                    Log::debug('JobController::getView: Could not open file ' . $info_file);
+                    Log::debug('JobController::getView: Error: ' . $e->getMessage());
                 }
-                foreach ($lines as $line) {
-                    Log::debug('Job::getView: ' . $line);
-                }
-
-                $data['summary'] = $info_txt;
                 $data['summary'] = $lines;
             }
+        } else {
+            // Extract the query id from the query URL. They look like this:
+            // https:\/\/gateway-analysis.ireceptor.org\/sequences?query_id=8636
+            $job_url = $job['url'];
+            $query_string = 'query_id=';
+            $seq_query_id = substr($job_url, strpos($job_url, $query_string) + strlen($query_string));
+
+            // Get the query filters. Note this is the sequence query.
+            $seq_query_params = Query::getParams($seq_query_id);
+            $sequence_summary = Query::sequenceParamsSummary($seq_query_params);
+            Log::debug('JobController::getView: sequence query summary = ' . $sequence_summary);
+
+            // Get the sample query ID, the query parameters, and the text summary
+            $sample_query_id = $seq_query_params['sample_query_id'];
+            $sample_query_params = Query::getParams($sample_query_id);
+            $sample_summary = Query::sampleParamsSummary($sample_query_params);
+            Log::debug('JobController::getView: sample query summary = ' . $sample_summary);
+
+            // Split the summaries by line into an array, which is what the view expects.
+            $s = "<p><b>Metadata filters</b></p>\n";
+            // Replace each newline with a HTML <br/> followed by the newline as
+            // we want HTML here.
+            $sample_summary = str_replace("\n", "<br/>\n", $sample_summary);
+            $s .= $sample_summary . "<br/>\n";
+            $s .= "<p><b>Sequence filters</b></p>\n";
+            // Replace each newline with a HTML <br/> followed by the newline as
+            // we want HTML here.
+            $sequence_summary = str_replace("\n", "<br/>\n", $sequence_summary);
+            $s .= $sequence_summary . "<br/>\n";
+            $data['summary'] = explode("\n", $s);
         }
 
         $data['steps'] = JobStep::findAllForJob($id);
