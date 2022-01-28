@@ -406,7 +406,6 @@ class SequenceController extends Controller
 
         // if junction_aa filter, ask IEDB for more information
         if (isset($sequence_filters['junction_aa'])) {
-
             try {
                 $defaults = [];
                 $defaults['base_uri'] = 'https://query-api.iedb.org/';
@@ -415,7 +414,7 @@ class SequenceController extends Controller
                 $client = new \GuzzleHttp\Client($defaults);
 
                 $val = $sequence_filters['junction_aa'];
-                
+
                 $query_list = [];
                 $query_list[] = 'tcr_search?chain2_cdr3_seq=like.';
                 $query_list[] = 'tcr_search?chain1_cdr3_seq=like.';
@@ -423,11 +422,11 @@ class SequenceController extends Controller
                 $query_list[] = 'bcr_search?chain1_cdr3_seq=like.';
 
                 $t = [];
-                foreach ($query_list as $key => $query) {                    
+                foreach ($query_list as $key => $query) {
                     $response = $client->get($query . '*' . $val . '*');
                     $body = $response->getBody();
                     $t = json_decode($body);
-                    
+
                     if (count($t) > 0) {
                         break;
                     }
@@ -439,7 +438,7 @@ class SequenceController extends Controller
                     $organism_list = [];
                     foreach ($t as $o) {
                         foreach ($o->parent_source_antigen_source_org_names as $organism) {
-                            if(! in_array($organism, $organism_list)) {
+                            if (! in_array($organism, $organism_list)) {
                                 $organism_list[] = $organism;
                             }
                         }
@@ -455,7 +454,7 @@ class SequenceController extends Controller
                 // return $error_message;
             }
         }
-        
+
         // display view
         return view('sequenceQuickSearch', $data);
     }
