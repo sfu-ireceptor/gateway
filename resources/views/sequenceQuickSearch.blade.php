@@ -28,13 +28,6 @@
 								@include('help', ['id' => 'junction_aa'])
 								{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided, minimum of 4 AA required). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 							</div>
-							<p>
-								@if (isset($iedb_info) && $iedb_info)
-									@foreach ($iedb_data as $t)
-										<a href="{{ $t['url'] }}" target="_blank">{{ $t['id'] }}</a>
-									@endforeach
-								@endif
-							</p>
 						</div>
 					</div>
 				</div>
@@ -111,7 +104,7 @@
 				@if ( ! empty($filter_fields))
 					<div class="active_filters">
 						<h3>Active filters</h3>
-
+						
 						@foreach($filter_fields as $filter_key => $filter_value)
 							<a title= "@lang('short.' . $filter_key): {{ $filter_value }}" href="/sequences-quick-search?query_id={{ $query_id }}&amp;remove_filter={{ $filter_key }}" class="label label-primary">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -139,6 +132,29 @@
 
 					</div>
 				@endif	
+
+
+				<!-- if IEDB match -->				
+				@if (isset($iedb_info) && $iedb_info)
+					<div class="panel panel-primary iedb">
+						<div class="panel-heading">
+							<h3 class="panel-title">
+							<span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
+							Immune Epitope Database match</h3>
+						</div>
+						<div class="panel-body">
+							<p><code>{{ $filter_fields['junction_aa'] }}</code> has known specificity from the following organisms:</p>
+
+							<ul>
+								@foreach ($iedb_organism_list as $o)
+									<li>{{ $o }}</li>
+								@endforeach
+							</ul>
+
+							<p><strong><a href="https://www.iedb.org/result_v3.php" class="external" target="_blank">Find more information on iedb.org</a></strong></p>
+						</div>
+					</div>
+				@endif
 
 				@if (empty($sequence_list))
 					<!-- No results -->

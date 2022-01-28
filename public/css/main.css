@@ -984,6 +984,35 @@ a.download_sequences {
 
 /* @end */
 
+/* @group sequences quick search page */
+
+.panel-primary code {
+	background-color: #d9edf7;
+	color: rgb(49, 112, 143);
+}
+
+.iedb .panel-heading {
+	padding-top: 7px;
+	padding-bottom: 7px;
+}
+
+.iedb .panel-title {
+	font-size: 14px;
+}
+
+.iedb .panel-title span.glyphicon-globe
+ {
+	margin-right: 3px;
+	margin-left: -6px;
+}
+
+.iedb .panel-body {
+	padding-top: 10px;
+	padding-bottom: 0;
+}
+
+/* @end */
+
 /* @group jobs page */
 
 .job_view_progress {
