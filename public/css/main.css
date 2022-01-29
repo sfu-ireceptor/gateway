@@ -986,9 +986,30 @@ a.download_sequences {
 
 /* @group sequences quick search page */
 
+.sqs_sample_filters {
+	margin-top: 12px;
+}
+
 .panel-primary code {
 	background-color: #d9edf7;
 	color: rgb(49, 112, 143);
+}
+
+.iedb {
+	margin-top: 12px;
+	margin-bottom: 12px;
+	font-size: 13px;
+}
+
+.iedb a {
+	font-size: 12px;
+}
+
+.iedb ul {
+	font-size: 12px;
+	padding-left: 20px;
+	margin-top: -5px;
+	margin-bottom: 3px;
 }
 
 .iedb .panel-heading {
@@ -1007,8 +1028,11 @@ a.download_sequences {
 }
 
 .iedb .panel-body {
-	padding-top: 10px;
-	padding-bottom: 0;
+	padding: 6px 5px 0;
+}
+
+.iedb .panel-body p:last-child {
+	margin-bottom: 5px;
 }
 
 /* @end */
