@@ -399,6 +399,7 @@ class SequenceController extends Controller
                 }
             }
         }
+
         // remove gateway-specific filters
         unset($filter_fields['cols']);
         unset($filter_fields['filters_order']);
@@ -419,36 +420,47 @@ class SequenceController extends Controller
                 $client = new \GuzzleHttp\Client($defaults);
 
                 $val = $sequence_filters['junction_aa'];
-                $response = $client->get('tcr_search?chain2_cdr3_seq=eq.' . $val);
-                $body = $response->getBody();
-                // echo $body;
 
-                $t = json_decode($body);
+                $query_list = [];
+                $query_list[] = 'tcr_search?chain2_cdr3_seq=like.';
+                $query_list[] = 'tcr_search?chain1_cdr3_seq=like.';
+                $query_list[] = 'bcr_search?chain2_cdr3_seq=like.';
+                $query_list[] = 'bcr_search?chain1_cdr3_seq=like.';
+
+                $t = [];
+                foreach ($query_list as $key => $query) {
+                    $response = $client->get($query . '*' . $val . '*');
+                    $body = $response->getBody();
+                    $t = json_decode($body);
+
+                    if (count($t) > 0) {
+                        break;
+                    }
+                }
 
                 if (count($t) > 0) {
                     $data['iedb_info'] = true;
-                    $data['iedb_data'] = [];
 
-                    $i = 0;
+                    $organism_list = [];
                     foreach ($t as $o) {
-                        $data['iedb_data'][$i]['id'] = $o->receptor_group_id;
-                        $data['iedb_data'][$i]['url'] = 'http://www.iedb.org/receptor/' . $o->receptor_group_id;
-                        $data['iedb_data'][$i]['assay_ids_count'] = count($o->iedb_assay_ids);
-                        $i++;
+                        foreach ($o->parent_source_antigen_source_org_names as $organism) {
+                            if (! in_array($organism, $organism_list)) {
+                                $organism_list[] = $organism;
+                            }
+                        }
                     }
 
-                    // sort by assay_ids_count desc
-                    usort($data['iedb_data'], function ($a, $b) {
-                        return $b['assay_ids_count'] >= $a['assay_ids_count'];
-                    });
+                    sort($organism_list);
+                    $data['iedb_organism_list'] = $organism_list;
                 }
             } catch (\Exception $e) {
                 $error_message = $e->getMessage();
                 Log::error($error_message);
-
-                return $error_message;
+                $data['iedb_info'] = false;
+                // return $error_message;
             }
         }
+
         // display view
         return view('sequenceQuickSearch', $data);
     }
