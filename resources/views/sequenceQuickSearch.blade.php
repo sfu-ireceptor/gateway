@@ -32,13 +32,13 @@
 									has known specificity to antigens from the following organisms:
 								</p>
 								<ul>
-									@foreach ($iedb_organism_list as $o)
-										<li>{{ $o }}</li>
+									@foreach ($iedb_organism_list as $i => $o)
+										<li><span title="{{ $iedb_organism_list_extra[$i] }}">{{ $iedb_organism_list_short[$i] }}</span></li>
 									@endforeach
 								</ul>
 								<p>
 									<a href="https://www.iedb.org/result_v3.php" class="external" target="_blank">
-										Find more information with an Epitope Search at IEDB.org
+										Find more information with a <br />"Receptor Search" at IEDB.org
 									</a>
 								</p>
 							</div>

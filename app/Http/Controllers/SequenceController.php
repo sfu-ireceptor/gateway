@@ -445,7 +445,20 @@ class SequenceController extends Controller
                     }
 
                     sort($organism_list);
+                    $organism_list_short = [];
+                    $organism_list_extra = [];
+                    foreach ($organism_list as $i => $o) {
+                        $o_short =  strstr($o, '(', true) ?: $o;
+                        $organism_list_short[$i] = $o_short;
+
+                        $o_extra = strstr($o, '(');
+                        $o_extra = str_replace(['(',')'], '', $o_extra);
+                        $organism_list_extra[$i] = $o_extra;
+                    }
+
                     $data['iedb_organism_list'] = $organism_list;
+                    $data['iedb_organism_list_short'] = $organism_list_short;
+                    $data['iedb_organism_list_extra'] = $organism_list_extra;
                 }
             } catch (\Exception $e) {
                 $error_message = $e->getMessage();
