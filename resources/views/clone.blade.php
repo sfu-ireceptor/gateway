@@ -215,7 +215,7 @@
 					<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Search results statistics</h3>
 					<div class="statistics">
 						<p>
-							<strong>
+							<strong class="summary">
 								<span title="{{ number_format($total_filtered_clones) }}">
 									{{ number_format($total_filtered_clones) }} {{ str_plural('clone', $total_filtered_clones)}}
 								</span>

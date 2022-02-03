@@ -171,6 +171,9 @@ fieldset {
 	font-size: 14px;
 }
 
+.statistics strong.summary {
+	color: rgb(75, 75, 75);
+}
 
 .samples_stats {
 	list-style-type: none;
@@ -691,12 +694,12 @@ footer a:hover {
 	background-color: #ffa15a;
 }
 
-.banner_title.clones h1 {
-	color: black;
-}
-
 .banner_title.sequences {
 	background-color: #91dc94;
+}
+
+.banner_title.clones h1, .banner_title.sequences h1 {
+	color: black;
 }
 
 .banner_title .sh1 {
