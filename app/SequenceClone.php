@@ -13,15 +13,15 @@ class SequenceClone
     public static function summary($filters, $username)
     {
         // get clones summary
-        $response_list = RestService::sequences_summary($filters, $username, true, true);
+        $response_list_clones_summary = RestService::sequences_summary($filters, $username, true, true);
 
         // dd($response_list);
 
         // generate stats
-        $data = self::process_response($response_list);
+        $data = self::process_response($response_list_clones_summary);
 
         // get a few clones from each service
-        $response_list = RestService::sequence_list($filters, 10, true);
+        $response_list = RestService::sequence_list($filters, $response_list_clones_summary, 10, true);
 
         // merge responses
         $clone_list = [];
