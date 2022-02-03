@@ -133,6 +133,10 @@ class RestServiceSeeder extends Seeder
                 'url' => 'http://single-cell.ireceptor.org/airr/v1/',
                 'name' => 'Single Cell Repo',
             ],
+            [
+                'url' => 'https://agschwab.uni-muenster.de/airr/v1/',
+                'name' => 'University of Münster',
+            ],
         ];
 
         // if grouping is disabled, remove group code

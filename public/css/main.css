@@ -1035,14 +1035,13 @@ a.download_sequences {
 }
 
 .iedb a {
-	font-size: 12px;
 }
 
 .iedb ul {
-	font-size: 12px;
+	line-height: 17.15px;
 	padding-left: 20px;
 	margin-top: -5px;
-	margin-bottom: 3px;
+	margin-bottom: 5px;
 }
 
 .iedb .panel-heading {
@@ -1061,7 +1060,7 @@ a.download_sequences {
 }
 
 .iedb .panel-body {
-	padding: 6px 5px 0;
+	padding: 7px 7px 1px;
 }
 
 .iedb .panel-body p:last-child {
