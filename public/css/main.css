@@ -691,6 +691,10 @@ footer a:hover {
 	background-color: #ffa15a;
 }
 
+.banner_title.clones h1 {
+	color: black;
+}
+
 .banner_title.sequences {
 	background-color: #91dc94;
 }
