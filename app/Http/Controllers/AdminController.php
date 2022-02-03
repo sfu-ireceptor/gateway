@@ -483,4 +483,63 @@ class AdminController extends Controller
 
         return view('allDownloads', $data);
     }
+
+    public function downloadsMultipleIPAs()
+    {
+        $download_list = Download::orderBy('id', 'desc')->get();
+
+        $download_list_filtered = [];
+        foreach ($download_list as $d) {
+            $node_queries = null;
+            // time_nanosleep(0, 10000000);
+
+            Log::debug('Parsing download ' . $d['id'] . ' from ' . $d['start_date'] . ', memory=' . human_filesize(memory_get_usage()));
+
+            $query_log_id = $d->query_log_id;
+            $q = QueryLog::find($query_log_id);
+
+            QueryLog::where('parent_id', '=', $query_log_id)->where('rest_service_name', 'like', 'IPA%')->where('result_size', '>', 0)->chunk(10, function ($node_queries) use ($d, &$download_list_filtered) {
+                $nb_ipa_queries = 0;
+                foreach ($node_queries as $nq) {
+                    // dd($nq);
+                    if (isset($nq['params']) && is_string($nq['params']) && str_contains($nq['params'], 'tsv')) {
+                        $nb_ipa_queries++;
+                        if ($nb_ipa_queries >= 2) {
+                            $download_list_filtered[] = $d;
+                            break;
+                        }
+                    }
+                }
+            });
+
+            // $node_queries = QueryLog::find_node_queries($query_log_id);
+
+            // dd($node_queries);
+
+            // $nb_ipa_queries = 0;
+            // foreach ($node_queries as $nq) {
+            //     if (isset($nq['params']) && is_string($nq['params']) && str_contains($nq['params'], 'tsv')) {
+            //         if (isset($nq['rest_service_name']) && str_contains($nq['rest_service_name'], 'IPA')) {
+            //             if (isset($nq['result_size']) && $nq['result_size'] > 0) {
+            //                 $nb_ipa_queries++;
+            //                 if ($nb_ipa_queries >= 2) {
+            //                     $download_list_filtered[] = $d;
+            //                     break;
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+
+            // unset($q);
+            // unset($node_queries);
+        }
+
+        // dd($download_list_filtered);
+
+        $data = [];
+        $data['download_list'] = $download_list_filtered;
+
+        return view('allDownloads', $data);
+    }
 }
