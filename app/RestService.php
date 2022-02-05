@@ -531,6 +531,31 @@ class RestService extends Model
         return $clone_counts;
     }
 
+    public static function cell_count_from_cache($rest_service_id, $sample_id_list = [])
+    {
+        $l = CellCount::where('rest_service_id', $rest_service_id)->orderBy('updated_at', 'desc')->take(1)->get();
+
+        if (count($l) == 0) {
+            return;
+        }
+
+        $all_cell_counts = $l[0]->cell_counts;
+        if (count($sample_id_list) == 0) {
+            return $all_cell_counts;
+        }
+
+        $cell_counts = [];
+        foreach ($sample_id_list as $sample_id) {
+            if (isset($all_cell_counts[$sample_id])) {
+                $cell_counts[$sample_id] = $all_cell_counts[$sample_id];
+            } else {
+                $cell_counts[$sample_id] = null;
+            }
+        }
+
+        return $cell_counts;
+    }
+    
     // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
     public static function clone_count($sample_id_list_by_rs, $filters = [], $use_cache_if_possible = true)
     {
@@ -609,6 +634,89 @@ class RestService extends Model
             }
 
             $counts_by_rs[$rest_service_id]['samples'] = $clone_count;
+        }
+
+        return $counts_by_rs;
+    }
+
+    // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
+    public static function cell_count($sample_id_list_by_rs, $filters = [], $use_cache_if_possible = true)
+    {
+        // clean filters
+        $filters = self::clean_filters($filters);
+
+        // hack: use cached total counts if there are no sequence filters
+        if (count($filters) == 0 && $use_cache_if_possible) {
+            $counts_by_rs = [];
+            foreach ($sample_id_list_by_rs as $rs_id => $sample_id_list) {
+                $cell_count = self::cell_count_from_cache($rs_id, $sample_id_list);
+                $counts_by_rs[$rs_id]['samples'] = $cell_count;
+            }
+
+            return $counts_by_rs;
+        }
+
+        // prepare request parameters for each service
+        $request_params = [];
+
+        foreach ($sample_id_list_by_rs as $rs_id => $sample_id_list) {
+            $service_filters = $filters;
+
+            // force all sample ids to string
+            foreach ($sample_id_list as $k => $v) {
+                $sample_id_list[$k] = (string) $v;
+            }
+
+            // generate JSON query
+            $service_filters['repertoire_id'] = $sample_id_list;
+
+            $query_parameters = [];
+            $query_parameters['facets'] = 'repertoire_id';
+
+            $filters_json = self::generate_json_query($service_filters, $query_parameters);
+
+            // prepare parameters for each service
+            $t = [];
+
+            $rs = self::find($rs_id);
+            $t['rs'] = $rs;
+            $t['url'] = $rs->url . 'cell';
+
+            $t['params'] = $filters_json;
+            $t['timeout'] = config('ireceptor.service_request_timeout');
+
+            $request_params[] = $t;
+        }
+
+        // do requests
+        $response_list = self::doRequests($request_params);
+
+        // build list of cell count for each sample grouped by repository id
+        $counts_by_rs = [];
+        foreach ($response_list as $response) {
+            $rest_service_id = $response['rs']->id;
+
+            if ($response['status'] == 'error') {
+                $counts_by_rs[$rest_service_id]['samples'] = null;
+                $counts_by_rs[$rest_service_id]['error_type'] = $response['error_type'];
+                continue;
+            }
+
+            $facet_list = data_get($response, 'data.Facet', []);
+            $cell_count = [];
+            foreach ($facet_list as $facet) {
+                $cell_count[$facet->repertoire_id] = $facet->count;
+            }
+
+            // TODO might not be needed because of IR-1484
+            // add count = 0
+            foreach ($sample_id_list_by_rs[$rest_service_id] as $sample_id) {
+                if (! isset($cell_count[$sample_id])) {
+                    $cell_count[$sample_id] = 0;
+                }
+            }
+
+            $counts_by_rs[$rest_service_id]['samples'] = $cell_count;
         }
 
         return $counts_by_rs;

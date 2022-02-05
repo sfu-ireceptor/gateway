@@ -133,6 +133,40 @@ class Sample
         }
     }
 
+    public static function cache_cell_counts($username, $rest_service_id = null)
+    {
+        $response_list = RestService::samples([], $username, false, [$rest_service_id]);
+        foreach ($response_list as $i => $response) {
+            $rest_service_id = $response['rs']->id;
+            $sample_list = $response['data'];
+
+            $t = [];
+            $t['rest_service_id'] = $rest_service_id;
+            $t['cell_counts'] = [];
+
+            $total_cell_count = 0;
+            foreach ($sample_list as $sample) {
+                $sample_id = $sample->repertoire_id;
+                $cell_count_array = RestService::cell_count([$rest_service_id =>[$sample_id]], [], false);
+                $cell_count = $cell_count_array[$rest_service_id]['samples'][$sample_id];
+                $t['cell_counts'][$sample_id] = $cell_count;
+                $total_cell_count += $cell_count;
+
+                // HACK: to avoid hitting throttling limits
+                sleep(1);
+            }
+
+            CellCount::create($t);
+
+            // cache total counts
+            $rs = RestService::find($rest_service_id);
+            $rs->nb_samples = count($sample_list);
+            $rs->nb_cells = $total_cell_count;
+            $rs->last_cached = new Carbon('now');
+            $rs->save();
+        }
+    }
+
     public static function find_sample_id_list($filters, $username)
     {
         // get samples

@@ -25,6 +25,7 @@
 						<th>Repertoires</th>
 						<th>Sequences</th>
 						<th>Clones</th>
+						<th>Cells</th>
 						<th>Stats</th>
 						<th>max_size</th>
 						<th>Last Refresh</th>
@@ -69,6 +70,12 @@
 											</a>
 										</li>
 										<li>
+											<a href="/admin/samples/update-cell_count/{{ $rs->id }}">
+												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+												Refresh cached <strong>cell</strong> counts
+											</a>
+										</li>
+										<li>
 											<a href="/admin/update-chunk-size/{{ $rs->id }}">
 												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
 												Refresh max_size, stats
@@ -94,6 +101,11 @@
 							<td>
 								<span title="{{ number_format($rs->nb_clones) }}">
 									{{ human_number($rs->nb_clones) }}
+								</span>
+							</td>
+							<td>
+								<span title="{{ number_format($rs->nb_cells) }}">
+									{{ human_number($rs->nb_cells) }}
 								</span>
 							</td>
 							<td>
