@@ -555,7 +555,7 @@ class RestService extends Model
 
         return $cell_counts;
     }
-    
+
     // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
     public static function clone_count($sample_id_list_by_rs, $filters = [], $use_cache_if_possible = true)
     {

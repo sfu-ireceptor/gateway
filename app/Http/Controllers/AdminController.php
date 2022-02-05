@@ -411,7 +411,7 @@ class AdminController extends Controller
 
         return redirect('admin/databases')->with('notification', $message);
     }
-    
+
     public function getUpdateChunkSize($id)
     {
         $rs = RestService::find($id);
