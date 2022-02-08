@@ -319,7 +319,7 @@ class Sample
             }
 
             // add extra fields (not defined in mapping file)
-            $fields = ['repertoire_id', 'real_rest_service_id', 'ir_sequence_count', 'ir_clone_count', 'ir_filtered_sequence_count', 'ir_filtered_clone_count', 'stats'];
+            $fields = ['repertoire_id', 'real_rest_service_id', 'ir_sequence_count', 'ir_clone_count', 'ir_cell_count', 'ir_filtered_sequence_count', 'ir_filtered_clone_count', 'ir_filtered_cell_count', 'stats'];
             foreach ($fields as $field_name) {
                 if (isset($sample->{$field_name})) {
                     $new_sample->{$field_name} = $sample->{$field_name};
@@ -385,6 +385,7 @@ class Sample
             $study_list = [];
             $total_sequences = 0;
             $total_clones = 0;
+            $total_cells = 0;
 
             foreach ($sample_list as $sample) {
                 $sequence_count = 0;
@@ -395,6 +396,11 @@ class Sample
                 $clone_count = 0;
                 if (isset($sample->ir_clone_count) && is_numeric($sample->ir_clone_count)) {
                     $clone_count = $sample->ir_clone_count;
+                }
+
+                $cell_count = 0;
+                if (isset($sample->ir_cell_count) && is_numeric($sample->ir_cell_count)) {
+                    $cell_count = $sample->ir_cell_count;
                 }
 
                 if (isset($sample->lab_name)) {
@@ -423,6 +429,7 @@ class Sample
 
                 $total_sequences += $sequence_count;
                 $total_clones += $clone_count;
+                $total_cells += $cell_count;
             }
 
             $study_tree = [];
@@ -481,6 +488,7 @@ class Sample
             $rs_data['total_studies'] = count($study_list);
             $rs_data['total_sequences'] = $total_sequences;
             $rs_data['total_clones'] = $total_clones;
+            $rs_data['total_cells'] = $total_cells;
             $rs_data['total_filtered_sequences'] = $total_sequences;
             $data['rs_list'][] = $rs_data;
 
@@ -496,6 +504,7 @@ class Sample
         $total_filtered_samples = 0;
         $total_filtered_sequences = 0;
         $total_filtered_clones = 0;
+        $total_filtered_cells = 0;
         $filtered_repositories = [];
 
         foreach ($data['rs_list'] as $rs_data) {
@@ -509,6 +518,7 @@ class Sample
             $total_filtered_studies += $rs_data['total_studies'];
             $total_filtered_sequences += $rs_data['total_sequences'];
             $total_filtered_clones += $rs_data['total_clones'];
+            $total_filtered_cells += $rs_data['total_cells'];
         }
 
         // sort alphabetically repositories/labs/studies
@@ -520,6 +530,7 @@ class Sample
         $data['total_filtered_studies'] = $total_filtered_studies;
         $data['total_filtered_sequences'] = $total_filtered_sequences;
         $data['total_filtered_clones'] = $total_filtered_clones;
+        $data['total_filtered_cells'] = $total_filtered_cells;
         $data['filtered_repositories'] = $filtered_repositories;
 
         return $data;
@@ -690,14 +701,14 @@ class Sample
     public static function sort_sample_list($sample_list, $sort_column, $sort_order)
     {
         $field_type = FieldName::getFieldType($sort_column);
-        if ($sort_column == 'ir_sequence_count' || $sort_column == 'ir_clone_count') {
+        if ($sort_column == 'ir_sequence_count' || $sort_column == 'ir_clone_count' || $sort_column == 'ir_cell_count') {
             $field_type = 'integer';
         }
 
         usort($sample_list, function ($a, $b) use ($sort_column, $sort_order, $field_type) {
             $comparison_result = 0;
 
-            if ($sort_column == 'ir_sequence_count' || $sort_column == 'ir_clone_count') {
+            if ($sort_column == 'ir_sequence_count' || $sort_column == 'ir_clone_count' || $sort_column == 'ir_cell_count') {
                 if (! isset($a->{$sort_column})) {
                     $a->{$sort_column} = 0;
                 }

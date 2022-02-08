@@ -344,6 +344,16 @@ class RestService extends Model
                         }
                     }
 
+                    // count cells
+                    $cell_counts = self::cell_count_from_cache($rs->id, $sample_id_list);
+
+                    foreach ($sample_list as $sample) {
+                        $sample->ir_cell_count = 0;
+                        if (isset($cell_counts[$sample->repertoire_id])) {
+                            $sample->ir_cell_count = $cell_counts[$sample->repertoire_id];
+                        }
+                    }
+
                     // if there was an error
                     if ($sequence_counts == null) {
                         $response['sequence_count_error'] = true;

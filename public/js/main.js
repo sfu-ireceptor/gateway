@@ -243,6 +243,10 @@ $(document).ready(function() {
 			current_tab = 'clones';
 		}
 
+		if($(e.target).hasClass('cells')) {
+			current_tab = 'cells';
+		}
+
 		$('input[name=tab]').val(current_tab);
 	});
 
