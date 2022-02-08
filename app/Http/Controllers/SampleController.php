@@ -275,8 +275,7 @@ class SampleController extends Controller
         foreach ($sample_list as $sample) {
             if (isset($sample->ir_cell_count) && $sample->ir_cell_count > 0) {
                 $samples_with_cells[] = $sample;
-            }
-            elseif (isset($sample->ir_clone_count) && $sample->ir_clone_count > 0) {
+            } elseif (isset($sample->ir_clone_count) && $sample->ir_clone_count > 0) {
                 $samples_with_clones[] = $sample;
             } else {
                 $samples_with_sequences[] = $sample;
