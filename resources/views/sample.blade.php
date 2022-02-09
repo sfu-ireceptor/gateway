@@ -312,7 +312,7 @@
 
 					<!-- Tab panes -->
 					<div class="tab-content">
-						<div role="tabpanel" class="tab-pane active" id="repertoireSequenceSearchResults">
+						<div role="tabpanel" class="tab-pane {{ $tab == 'sequences' ? 'active' : '' }}" id="repertoireSequenceSearchResults">
 							<!-- Statistics -->
 							<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
 							<div class="statistics">
@@ -593,7 +593,7 @@
 
 						</div>
 
-						<div role="tabpanel" class="tab-pane" id="repertoireCloneSearchResults">
+						<div role="tabpanel" class="tab-pane {{ $tab == 'clones' ? 'active' : '' }}" id="repertoireCloneSearchResults">
 							<!-- Statistics -->
 							<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
 							<div class="statistics">
@@ -860,7 +860,7 @@
 							</div>
 						</div>
 
-						<div role="tabpanel" class="tab-pane" id="repertoireCellSearchResults">
+						<div role="tabpanel" class="tab-pane {{ $tab == 'cells' ? 'active' : '' }}" id="repertoireCellSearchResults">
 							<!-- Statistics -->
 							<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
 							<div class="statistics">
