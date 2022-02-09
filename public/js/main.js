@@ -242,8 +242,7 @@ $(document).ready(function() {
 		if($(e.target).hasClass('clones')) {
 			current_tab = 'clones';
 		}
-
-		if($(e.target).hasClass('cells')) {
+		else if($(e.target).hasClass('cells')) {
 			current_tab = 'cells';
 		}
 

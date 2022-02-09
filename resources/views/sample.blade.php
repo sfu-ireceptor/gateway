@@ -305,9 +305,9 @@
 				@else
 					<!-- Nav tabs -->
 					<ul class="nav nav-tabs" role="tablist">
-						<li role="presentation" class="{{ $tab == 'sequences' ? 'active' : '' }}"><a class="sequences" href="#repertoireSequenceSearchResults" aria-controls="home" role="tab" data-toggle="tab">Sequence Search Results</a></li>
-						<li role="presentation" class="{{ $tab == 'clones' ? 'active' : '' }}"><a class="clones" href="#repertoireCloneSearchResults" aria-controls="profile" role="tab" data-toggle="tab">Clone Search Results</a></li>
-						<li role="presentation" class="{{ $tab == 'cells' ? 'active' : '' }}"><a class="cells" href="#repertoireCellSearchResults" aria-controls="profile" role="tab" data-toggle="tab">Cell Search Results</a></li>
+						<li role="presentation" class="{{ $tab == 'sequences' ? 'active' : '' }}"><a class="sequences" href="#repertoireSequenceSearchResults" aria-controls="sequences" role="tab" data-toggle="tab">Sequence Search Results</a></li>
+						<li role="presentation" class="{{ $tab == 'clones' ? 'active' : '' }}"><a class="clones" href="#repertoireCloneSearchResults" aria-controls="clones" role="tab" data-toggle="tab">Clone Search Results</a></li>
+						<li role="presentation" class="{{ $tab == 'cells' ? 'active' : '' }}"><a class="cells" href="#repertoireCellSearchResults" aria-controls="cells" role="tab" data-toggle="tab">Cell Search Results</a></li>
 					</ul>
 
 					<!-- Tab panes -->
@@ -1138,10 +1138,8 @@
 								</div>
 							</div>
 						</div>
+
 					</div>
-
-
-
 
 
 
