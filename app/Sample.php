@@ -339,7 +339,7 @@ class Sample
         return $new_sample_list;
     }
 
-    public static function stats($sample_list)
+    public static function stats($sample_list, $count_field = 'ir_sequence_count')
     {
         // group samples by service
         $samples_by_rs = [];
@@ -389,8 +389,8 @@ class Sample
 
             foreach ($sample_list as $sample) {
                 $sequence_count = 0;
-                if (isset($sample->ir_sequence_count) && is_numeric($sample->ir_sequence_count)) {
-                    $sequence_count = $sample->ir_sequence_count;
+                if (isset($sample->{$count_field}) && is_numeric($sample->{$count_field})) {
+                    $sequence_count = $sample->{$count_field};
                 }
 
                 $clone_count = 0;
@@ -434,7 +434,7 @@ class Sample
 
             $study_tree = [];
             foreach ($sample_list as $sample) {
-                // Handle the case where a sample doesn't have a lab_name.
+                // sample has no lab_name.
                 if (isset($sample->lab_name)) {
                     $lab = $sample->lab_name;
                 } else {
@@ -505,12 +505,10 @@ class Sample
         $total_filtered_sequences = 0;
         $total_filtered_clones = 0;
         $total_filtered_cells = 0;
-        $filtered_repositories = [];
 
         foreach ($data['rs_list'] as $rs_data) {
             if ($rs_data['total_samples'] > 0) {
                 $total_filtered_repositories++;
-                $filtered_repositories[] = $rs_data['rs_name'];
             }
 
             $total_filtered_samples += $rs_data['total_samples'];
@@ -531,8 +529,10 @@ class Sample
         $data['total_filtered_sequences'] = $total_filtered_sequences;
         $data['total_filtered_clones'] = $total_filtered_clones;
         $data['total_filtered_cells'] = $total_filtered_cells;
-        $data['filtered_repositories'] = $filtered_repositories;
 
+        // dd($data);
+
+        // dd($data['rs_list']);
         return $data;
     }
 

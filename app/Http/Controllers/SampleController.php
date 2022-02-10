@@ -365,8 +365,6 @@ class SampleController extends Controller
         $data['total_filtered_clones'] = $sample_data['total_filtered_clones'];
         $data['total_filtered_cells'] = $sample_data['total_filtered_cells'];
 
-        $data['filtered_repositories_names'] = implode(', ', $sample_data['filtered_repositories']);
-
         // list of repositories that didn't respond
         $rs_list_no_response = $sample_data['rs_list_no_response'];
         $rs_list_no_response_names = [];
