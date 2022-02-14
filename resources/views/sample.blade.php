@@ -601,11 +601,10 @@
 								<div class="statistics">
 									<p>
 										<strong>
-											<span title="{{ number_format($total_filtered_clones) }}">
-												{{ number_format($total_filtered_clones) }} clones
+											<span title="{{ number_format($total_filtered_sequences) }}">
+												{{ number_format($total_filtered_sequences) }} clones
 											</span>
-											({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
-										</strong>
+											({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})										</strong>
 										returned from
 					
 										<a href="#" class="toggle_modal_rest_service_list_folded">
@@ -870,8 +869,8 @@
 								<div class="statistics">
 									<p>
 										<strong>
-											<span title="{{ number_format($total_filtered_cells) }}">
-												{{ number_format($total_filtered_cells) }} cells
+											<span title="{{ number_format($total_filtered_sequences) }}">
+												{{ number_format($total_filtered_sequences) }} cells
 											</span>
 											({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
 										</strong>
