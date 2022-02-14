@@ -36,7 +36,7 @@ class SampleController extends Controller
     public function postIndex(Request $request, $type = '')
     {
         $page_uri = 'samples';
-        if($type != '') {
+        if ($type != '') {
             $page_uri = 'samples/' . $type;
         }
 
@@ -48,7 +48,7 @@ class SampleController extends Controller
     public function index(Request $request, $type = '')
     {
         $page_uri = 'samples';
-        if($type != '') {
+        if ($type != '') {
             $page_uri = 'samples/' . $type;
         }
 
@@ -356,7 +356,7 @@ class SampleController extends Controller
         $data['page_last_element_index'] = $data['page_first_element_index'] + count($samples_with_sequences) - 1;
 
         $tab = $type;
-        if($type == '') {
+        if ($type == '') {
             $tab = 'sequence';
         }
         $data['tab'] = $tab;

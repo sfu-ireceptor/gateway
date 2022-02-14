@@ -265,7 +265,7 @@ class Sample
             $samples_with_sequences = [];
             $samples_with_clones = [];
             $samples_with_cells = [];
-            
+
             foreach ($sample_list as $sample) {
                 if (isset($sample->ir_cell_count) && $sample->ir_cell_count > 0) {
                     $samples_with_cells[] = $sample;
@@ -277,15 +277,13 @@ class Sample
             }
 
             $sample_list_result = $samples_with_sequences;
-            if($type == 'clone') {
+            if ($type == 'clone') {
                 $sample_list_result = $samples_with_clones;
-            }
-            else if($type == 'cell') {
+            } elseif ($type == 'cell') {
                 $sample_list_result = $samples_with_cells;
             }
 
             $response_list[$i]['data'] = $sample_list_result;
-
 
             $sample_list = $response_list[$i]['data'];
             $sample_list = self::convert_sample_list($sample_list, $rs);
@@ -319,10 +317,9 @@ class Sample
 
         // return the statistics about that list of samples
         $count_field = 'ir_sequence_count';
-        if($type == 'clone') {
+        if ($type == 'clone') {
             $count_field = 'ir_clone_count';
-        }
-        else if($type == 'cell') {
+        } elseif ($type == 'cell') {
             $count_field = 'ir_cell_count';
         }
 
