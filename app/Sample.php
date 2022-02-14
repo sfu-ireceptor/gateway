@@ -214,6 +214,9 @@ class Sample
 
         // tweak responses
         $sample_list_all = [];
+        $nb_samples_with_sequences = 0;
+        $nb_samples_with_clones = 0;
+        $nb_samples_with_cells = 0;
         foreach ($response_list as $i => $response) {
             $rs = $response['rs'];
             $sample_list = $response['data'];
@@ -276,6 +279,10 @@ class Sample
                 }
             }
 
+            $nb_samples_with_sequences += count($samples_with_sequences);
+            $nb_samples_with_clones += count($samples_with_clones);
+            $nb_samples_with_cells += count($samples_with_cells);
+
             $sample_list_result = $samples_with_sequences;
             if ($type == 'clone') {
                 $sample_list_result = $samples_with_clones;
@@ -326,6 +333,9 @@ class Sample
         $data = self::stats($sample_list_all, $count_field);
         $data['rs_list_no_response'] = $rs_list_no_response;
         $data['rs_list_sequence_count_error'] = $rs_list_sequence_count_error;
+        $data['nb_samples_with_sequences'] = $nb_samples_with_sequences;
+        $data['nb_samples_with_clones'] = $nb_samples_with_clones;
+        $data['nb_samples_with_cells'] = $nb_samples_with_cells;
 
         return $data;
     }

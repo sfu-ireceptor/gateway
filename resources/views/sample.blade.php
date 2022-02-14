@@ -289,9 +289,9 @@
 
 				<!-- Sequences/Clones/Cells tabs -->
 				<ul class="nav nav-tabs">
-					<li role="presentation" class="{{ $tab == 'sequence' ? 'active' : '' }}"><a class="sequences" href="/samples?query_id={{ $sample_query_id }}">Sequence Search Results</a></li>
-					<li role="presentation" class="{{ $tab == 'clone' ? 'active' : '' }}"><a class="clones" href="/samples/clone?query_id={{ $sample_query_id }}">Clone Search Results</a></li>
-					<li role="presentation" class="{{ $tab == 'cell' ? 'active' : '' }}"><a class="cells" href="/samples/cell?query_id={{ $sample_query_id }}">Cell Search Results</a></li>
+					<li role="presentation" class="{{ $tab == 'sequence' ? 'active' : '' }}"><a class="sequences" href="/samples?query_id={{ $sample_query_id }}">Sequence Search Results ({{ $nb_samples_with_sequences }})</a></li>
+					<li role="presentation" class="{{ $tab == 'clone' ? 'active' : '' }}"><a class="clones" href="/samples/clone?query_id={{ $sample_query_id }}">Clone Search Results ({{ $nb_samples_with_clones }})</a></li>
+					<li role="presentation" class="{{ $tab == 'cell' ? 'active' : '' }}"><a class="cells" href="/samples/cell?query_id={{ $sample_query_id }}">Cell Search Results ({{ $nb_samples_with_cells }})</a></li>
 				</ul>
 
 				@if (empty($samples_with_sequences) && empty($samples_with_clones) && empty($samples_with_cells))

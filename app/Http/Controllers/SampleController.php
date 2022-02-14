@@ -375,6 +375,10 @@ class SampleController extends Controller
         $data['total_filtered_samples'] = $sample_data['total_filtered_samples'];
         $data['total_filtered_sequences'] = $sample_data['total_filtered_sequences'];
 
+        $data['nb_samples_with_sequences'] = $sample_data['nb_samples_with_sequences'];
+        $data['nb_samples_with_clones'] = $sample_data['nb_samples_with_clones'];
+        $data['nb_samples_with_cells'] = $sample_data['nb_samples_with_cells'];
+
         // list of repositories that didn't respond
         $rs_list_no_response = $sample_data['rs_list_no_response'];
         $rs_list_no_response_names = [];
