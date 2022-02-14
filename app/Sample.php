@@ -182,7 +182,7 @@ class Sample
         return $sample_id_list;
     }
 
-    public static function find($filters, $username, $count_sequences = true)
+    public static function find($filters, $username, $count_sequences = true, $type = '')
     {
         $service_filters = $filters;
 
@@ -259,6 +259,34 @@ class Sample
                 $response_list[$i]['data'] = $sample_list_result;
             }
 
+            // break up repertoires based on type (if it has sequences, clones, cells)
+            $sample_list_result = [];
+
+            $samples_with_sequences = [];
+            $samples_with_clones = [];
+            $samples_with_cells = [];
+            
+            foreach ($sample_list as $sample) {
+                if (isset($sample->ir_cell_count) && $sample->ir_cell_count > 0) {
+                    $samples_with_cells[] = $sample;
+                } elseif (isset($sample->ir_clone_count) && $sample->ir_clone_count > 0) {
+                    $samples_with_clones[] = $sample;
+                } else {
+                    $samples_with_sequences[] = $sample;
+                }
+            }
+
+            $sample_list_result = $samples_with_sequences;
+            if($type == 'clone') {
+                $sample_list_result = $samples_with_clones;
+            }
+            else if($type == 'cell') {
+                $sample_list_result = $samples_with_cells;
+            }
+
+            $response_list[$i]['data'] = $sample_list_result;
+
+
             $sample_list = $response_list[$i]['data'];
             $sample_list = self::convert_sample_list($sample_list, $rs);
 
@@ -290,7 +318,15 @@ class Sample
         }
 
         // return the statistics about that list of samples
-        $data = self::stats($sample_list_all);
+        $count_field = 'ir_sequence_count';
+        if($type == 'clone') {
+            $count_field = 'ir_clone_count';
+        }
+        else if($type == 'cell') {
+            $count_field = 'ir_cell_count';
+        }
+
+        $data = self::stats($sample_list_all, $count_field);
         $data['rs_list_no_response'] = $rs_list_no_response;
         $data['rs_list_sequence_count_error'] = $rs_list_sequence_count_error;
 

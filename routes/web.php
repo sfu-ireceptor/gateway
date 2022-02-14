@@ -69,8 +69,8 @@ Route::get('email', 'TestController@email');
 Route::middleware('auth')->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
 
-    Route::post('/samples', 'SampleController@postIndex')->name('samples-post');
-    Route::get('/samples', 'SampleController@index')->name('samples')->middleware('log_query');
+    Route::post('/samples/{type?}', 'SampleController@postIndex')->name('samples-post');
+    Route::get('/samples/{type?}', 'SampleController@index')->name('samples')->middleware('log_query');
     Route::get('/samples/field/{id}', 'SampleController@field')->name('samples-field');
     Route::get('/samples/field-data/{id}', 'SampleController@field_data')->name('samples-field-data');
     Route::get('/samples/json', 'SampleController@json')->name('samples-json')->middleware('log_query');

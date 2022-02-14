@@ -33,15 +33,25 @@ class SampleController extends Controller
         return in_array($field_id, $this->extra_fields);
     }
 
-    public function postIndex(Request $request)
+    public function postIndex(Request $request, $type = '')
     {
-        $query_id = Query::saveParams($request->except(['_token']), 'samples');
+        $page_uri = 'samples';
+        if($type != '') {
+            $page_uri = 'samples/' . $type;
+        }
 
-        return redirect('samples?query_id=' . $query_id)->withInput();
+        $query_id = Query::saveParams($request->except(['_token']), $page_uri);
+
+        return redirect($page_uri . '?query_id=' . $query_id)->withInput();
     }
 
-    public function index(Request $request)
+    public function index(Request $request, $type = '')
     {
+        $page_uri = 'samples';
+        if($type != '') {
+            $page_uri = 'samples/' . $type;
+        }
+
         $username = auth()->user()->username;
 
         // if "remove one filter" request, generate new query_id and redirect to it
@@ -76,7 +86,7 @@ class SampleController extends Controller
 
             $new_query_id = Query::saveParams($new_filters, 'samples');
 
-            return redirect('samples?query_id=' . $new_query_id);
+            return redirect($page_uri . '?query_id=' . $new_query_id);
         }
 
         // if there's a "page" parameter, generate new query_id and redirect to it
@@ -85,7 +95,7 @@ class SampleController extends Controller
             $filters['page'] = $request->input('page');
             $new_query_id = Query::saveParams($filters, 'samples');
 
-            return redirect('samples?query_id=' . $new_query_id);
+            return redirect($page_uri . '?query_id=' . $new_query_id);
         }
 
         // if there's a "sort_column" parameter, generate new query_id and redirect to it
@@ -101,7 +111,7 @@ class SampleController extends Controller
 
             $new_query_id = Query::saveParams($filters, 'samples');
 
-            return redirect('samples?query_id=' . $new_query_id);
+            return redirect($page_uri . '?query_id=' . $new_query_id);
         }
 
         /*************************************************
@@ -166,6 +176,8 @@ class SampleController extends Controller
 
         // data
         $data = [];
+        $data['page_uri'] = $page_uri;
+
         $data['study_type_list'] = $study_type_list;
         $data['subject_gender_list'] = $subject_gender_list;
         $data['subject_ethnicity_list'] = $subject_ethnicity_list;
@@ -233,7 +245,7 @@ class SampleController extends Controller
         /*************************************************
         * get filtered sample list and related statistics */
 
-        $sample_data = Sample::find($params, $username);
+        $sample_data = Sample::find($params, $username, true, $type);
 
         // log result
         $query_log_id = $request->get('query_log_id');
@@ -343,9 +355,9 @@ class SampleController extends Controller
         $data['page_first_element_index'] = ($page - 1) * $max_per_page + 1;
         $data['page_last_element_index'] = $data['page_first_element_index'] + count($samples_with_sequences) - 1;
 
-        $tab = 'sequences';
-        if (isset($params['tab'])) {
-            $tab = $params['tab'];
+        $tab = $type;
+        if($type == '') {
+            $tab = 'sequence';
         }
         $data['tab'] = $tab;
 
