@@ -294,7 +294,7 @@
 					<li role="presentation" class="{{ $tab == 'cell' ? 'active' : '' }}"><a class="cells" href="/samples/cell?query_id={{ $sample_query_id }}">Cell Search Results ({{ $nb_samples_with_cells }})</a></li>
 				</ul>
 
-				@if (empty($samples_with_sequences) && empty($samples_with_clones) && empty($samples_with_cells))
+				@if (empty($samples_with_sequences))
 					<div class="no_results">
 						<h2>No Results</h2>
 						@if ( ($rs_list_no_response_str != '') || ($rs_list_sequence_count_error_str != ''))
@@ -438,22 +438,22 @@
 												@endif
 
 												<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
-														@if ($field['ir_id'] == $sort_column_sequences)
+														@if ($field['ir_id'] == $sort_column)
 															@if ($sort_order == 'asc')
-																<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=desc">
+																<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=desc">
 																	@lang('short.' . $field['ir_id'])
 																	@include('help', ['id' => $field['ir_id']])
 																	<span class="glyphicon sort_icon sorted_asc"></span>
 																</a>
 															@else
-																<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
+																<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
 																	@lang('short.' . $field['ir_id'])
 																	@include('help', ['id' => $field['ir_id']])
 																	<span class="glyphicon sort_icon sorted_desc"></span>
 																</a>
 															@endif
 														@else
-															<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
+															<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
 																@lang('short.' . $field['ir_id'])
 																@include('help', ['id' => $field['ir_id']])
 																<span class="glyphicon sort_icon"></span>
@@ -627,12 +627,12 @@
 
 									<div class="charts">
 										<div class="row">
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($clone_charts_data['study_type']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($clone_charts_data['organism']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($clone_charts_data['disease_diagnosis']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($clone_charts_data['tissue']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($clone_charts_data['pcr_target_locus']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($clone_charts_data['template_class']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['study_type']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['organism']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['disease_diagnosis']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['tissue']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['pcr_target_locus']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['template_class']) !!}"></div>
 										</div>
 									</div>
 									
@@ -713,22 +713,22 @@
 													@continue
 												@endif
 												<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
-														@if ($field['ir_id'] == $sort_column_clones)
+														@if ($field['ir_id'] == $sort_column)
 															@if ($sort_order == 'asc')
-																<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=desc">
+																<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=desc">
 																	@lang('short.' . $field['ir_id'])
 																	@include('help', ['id' => $field['ir_id']])
 																	<span class="glyphicon sort_icon sorted_asc"></span>
 																</a>
 															@else
-																<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
+																<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
 																	@lang('short.' . $field['ir_id'])
 																	@include('help', ['id' => $field['ir_id']])
 																	<span class="glyphicon sort_icon sorted_desc"></span>
 																</a>
 															@endif
 														@else
-															<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
+															<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
 																@lang('short.' . $field['ir_id'])
 																@include('help', ['id' => $field['ir_id']])
 																<span class="glyphicon sort_icon"></span>
@@ -739,7 +739,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										@foreach ($samples_with_clones as $sample)
+										@foreach ($samples_with_sequences as $sample)
 										<tr>
 											<td class="stats">
 												@if(isset($sample->stats) && $sample->stats)
@@ -896,12 +896,12 @@
 
 									<div class="charts">
 										<div class="row">
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($cell_charts_data['study_type']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($cell_charts_data['organism']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($cell_charts_data['disease_diagnosis']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($cell_charts_data['tissue']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($cell_charts_data['pcr_target_locus']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($cell_charts_data['template_class']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['study_type']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['organism']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['disease_diagnosis']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['tissue']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['pcr_target_locus']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['template_class']) !!}"></div>
 										</div>
 									</div>
 									
@@ -989,22 +989,22 @@
 												@endif
 												
 												<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
-														@if ($field['ir_id'] == $sort_column_cells)
+														@if ($field['ir_id'] == $sort_column)
 															@if ($sort_order == 'asc')
-																<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=desc">
+																<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=desc">
 																	@lang('short.' . $field['ir_id'])
 																	@include('help', ['id' => $field['ir_id']])
 																	<span class="glyphicon sort_icon sorted_asc"></span>
 																</a>
 															@else
-																<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
+																<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
 																	@lang('short.' . $field['ir_id'])
 																	@include('help', ['id' => $field['ir_id']])
 																	<span class="glyphicon sort_icon sorted_desc"></span>
 																</a>
 															@endif
 														@else
-															<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
+															<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
 																@lang('short.' . $field['ir_id'])
 																@include('help', ['id' => $field['ir_id']])
 																<span class="glyphicon sort_icon"></span>
@@ -1015,7 +1015,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										@foreach ($samples_with_cells as $sample)
+										@foreach ($samples_with_sequences as $sample)
 										<tr>
 											<td class="stats">
 												@if(isset($sample->stats) && $sample->stats)

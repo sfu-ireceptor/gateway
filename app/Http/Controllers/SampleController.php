@@ -269,57 +269,13 @@ class SampleController extends Controller
         }
 
         $sample_list = $sample_data['items'];
-
-        // $sample_list2 = [];
-        // foreach ($sample_list as $sample) {
-        //     // PRJNA330606-268
-        //     if($sample->repertoire_id == '17' || $sample->repertoire_id == 'PRJNA330606-268' || $sample->repertoire_id == '5890931441127648790-242ac113-0001-012') {
-        //         $sample_list2[] = $sample;
-        //     }
-        // }
-
-        // $sample_list = $sample_list2;
-
-        $samples_with_sequences = [];
-        $samples_with_clones = [];
-        $samples_with_cells = [];
-
-        foreach ($sample_list as $sample) {
-            if (isset($sample->ir_cell_count) && $sample->ir_cell_count > 0) {
-                $samples_with_cells[] = $sample;
-            } elseif (isset($sample->ir_clone_count) && $sample->ir_clone_count > 0) {
-                $samples_with_clones[] = $sample;
-            } else {
-                $samples_with_sequences[] = $sample;
-            }
-        }
-
-        // sort sample lists
-        $sort_column_sequences = $sort_column;
-        $sort_column_clones = $sort_column;
-        if ($sort_column == 'ir_sequence_count' || $sort_column == 'ir_clone_count' || $sort_column == 'ir_cell_count') {
-            $sort_column_sequences = 'ir_sequence_count';
-            $sort_column_clones = 'ir_clone_count';
-            $sort_column_cells = 'ir_cell_count';
-        }
-
-        $samples_with_sequences = Sample::sort_sample_list($samples_with_sequences, $sort_column_sequences, $sort_order);
-        $samples_with_clones = Sample::sort_sample_list($samples_with_clones, $sort_column_clones, $sort_order);
-        $samples_with_cells = Sample::sort_sample_list($samples_with_cells, $sort_column_cells, $sort_order);
+        $samples_with_sequences = Sample::sort_sample_list($sample_list, $sort_column, $sort_order);
 
         $sequence_charts_fields = ['study_type', 'organism', 'disease_diagnosis', 'tissue', 'pcr_target_locus', 'template_class'];
         $data['sequence_charts_data'] = Sample::generateChartsData($samples_with_sequences, $sequence_charts_fields);
 
-        $clone_charts_fields = ['study_type', 'organism', 'disease_diagnosis', 'tissue', 'pcr_target_locus', 'template_class'];
-        $data['clone_charts_data'] = Sample::generateChartsData($samples_with_clones, $clone_charts_fields, 'ir_clone_count');
-
-        $cell_charts_fields = ['study_type', 'organism', 'disease_diagnosis', 'tissue', 'pcr_target_locus', 'template_class'];
-        $data['cell_charts_data'] = Sample::generateChartsData($samples_with_cells, $cell_charts_fields, 'ir_cell_count');
-
         // keep only samples to display on the current page
         $samples_with_sequences = array_slice($samples_with_sequences, ($page - 1) * $max_per_page, $max_per_page);
-        $samples_with_clones = array_slice($samples_with_clones, ($page - 1) * $max_per_page, $max_per_page);
-        $samples_with_cells = array_slice($samples_with_cells, ($page - 1) * $max_per_page, $max_per_page);
 
         // add flag to first sample with stats for stats info popup
         if (auth()->user()->stats_popup_count <= 0) {
@@ -347,8 +303,6 @@ class SampleController extends Controller
 
         // prepare view data
         $data['samples_with_sequences'] = $samples_with_sequences;
-        $data['samples_with_clones'] = $samples_with_clones;
-        $data['samples_with_cells'] = $samples_with_cells;
         $data['nb_samples'] = $nb_samples;
         $data['nb_pages'] = $nb_pages;
         $data['page'] = $page;
@@ -362,9 +316,6 @@ class SampleController extends Controller
         $data['tab'] = $tab;
 
         $data['sort_column'] = $sort_column;
-        $data['sort_column_sequences'] = $sort_column_sequences;
-        $data['sort_column_clones'] = $sort_column_clones;
-        $data['sort_column_cells'] = $sort_column_cells;
         $data['sort_order'] = $sort_order;
         $data['sequences_query_id'] = $sequences_query_id;
         $data['rest_service_list'] = $sample_data['rs_list'];
