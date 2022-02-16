@@ -3,8 +3,6 @@
 namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
-
 
 class CachedSample extends Model
 {
