@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class SampleController extends Controller
 {
-    # This is the default list of fields that are searched on...
+    // This is the default list of fields that are searched on...
     protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type_id', 'study_group_description', 'lab_name', 'subject_id', 'organism', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis', 'sample_id', 'pcr_target_locus', 'cell_subset', 'tissue', 'template_class', 'cell_phenotype', 'sequencing_platform'];
     protected $extra_fields = [];
 
@@ -129,7 +129,7 @@ class SampleController extends Controller
         $study_type_ontology_list = [];
         foreach ($metadata['study_type_ontology_list'] as $v) {
             $study_type_ontology_list[$v['study_type_id']] = $v['study_type'] . ' (' . $v['study_type_id'] . ')';
-            #Log::debug('XXX Study type info: ' . $v['study_type']);
+            //Log::debug('XXX Study type info: ' . $v['study_type']);
         }
 
         // gender
@@ -379,8 +379,7 @@ class SampleController extends Controller
         unset($filter_fields['cols']);
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
-        #Log::debug('XXX Filter fields: ' . json_encode($filter_fields));
-
+        //Log::debug('XXX Filter fields: ' . json_encode($filter_fields));
 
         // for bookmarking
         $current_url = $request->fullUrl();
