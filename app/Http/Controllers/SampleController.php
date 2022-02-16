@@ -109,11 +109,26 @@ class SampleController extends Controller
 
         // get data
         $metadata = Sample::metadata($username);
+        #Log::debug('METADATA: ' . serialize($metadata));
 
         // study type
         $study_type_list = [];
         foreach ($metadata['study_type'] as $v) {
             $study_type_list[$v] = $v;
+        }
+
+        // study type id (ontology ID)
+        $study_type_id_list = [];
+        foreach ($metadata['study_type_id'] as $v) {
+            $study_type_id_list[$v] = $v;
+            #Log::debug('Study type info: ' . $v);
+        }
+
+        // study type ontology info
+        $study_type_ontology_list = [];
+        foreach ($metadata['study_type_ontology_list'] as $v) {
+            $study_type_ontology_list[$v['study_type_id']] = $v['study_type'] . ' (' . $v['study_type_id'] . ')';
+            Log::debug('XXX Study type info: ' . $v['study_type']);
         }
 
         // gender
@@ -167,6 +182,8 @@ class SampleController extends Controller
         // data
         $data = [];
         $data['study_type_list'] = $study_type_list;
+        $data['study_type_id_list'] = $study_type_id_list;
+        $data['study_type_ontology_list'] = $study_type_ontology_list;
         $data['subject_gender_list'] = $subject_gender_list;
         $data['subject_ethnicity_list'] = $subject_ethnicity_list;
         $data['subject_organism_list'] = $subject_organism_list;
@@ -196,6 +213,7 @@ class SampleController extends Controller
             $params = Query::getParams($query_id);
             $data['query_id'] = $query_id;
         }
+        #Log::debug('XXX Params: ' . json_encode($params));
 
         // fill form fields accordingly
         $request->session()->forget('_old_input');

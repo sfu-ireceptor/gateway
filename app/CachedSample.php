@@ -3,6 +3,8 @@
 namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+
 
 class CachedSample extends Model
 {
@@ -40,12 +42,13 @@ class CachedSample extends Model
         $t = [];
 
         // distinct values for simple sample fields
-        $fields = ['study_type', 'template_class', 'ethnicity', 'tissue', 'sex', 'pcr_target_locus', 'cell_subset', 'organism', 'disease_diagnosis'];
+        $fields = ['study_type_id', 'study_type', 'template_class', 'ethnicity', 'tissue', 'sex', 'pcr_target_locus', 'cell_subset', 'organism', 'disease_diagnosis'];
         foreach ($fields as $field) {
             $t[$field] = self::distinctValues($field);
         }
 
         // distinct values for combined sample fields (ex: project_id/project_name)
+        $t['study_type_ontology_list'] = self::distinctValuesGrouped(['study_type_id', 'study_type']);
         $t['lab_list'] = self::distinctValuesGrouped(['ir_lab_id', 'lab_name']);
         $t['project_list'] = self::distinctValuesGrouped(['ir_project_id', 'study_title']);
 
