@@ -56,6 +56,7 @@ class SampleController extends Controller
         if ($type != '') {
             $type_full = $type;
         }
+        
         $username = auth()->user()->username;
 
         // if "remove one filter" request, generate new query_id and redirect to it

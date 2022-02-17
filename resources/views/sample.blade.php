@@ -712,6 +712,11 @@
 												@if ($field['ir_id'] == 'ir_sequence_count')
 													@continue
 												@endif
+
+												{{-- skip cells column --}}
+												@if ($field['ir_id'] == 'ir_cell_count')
+													@continue
+												@endif
 												<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 														@if ($field['ir_id'] == $sort_column)
 															@if ($sort_order == 'asc')
@@ -759,10 +764,17 @@
 												@endif						
 											</td>
 											@foreach ($field_list as $field)
+												
 												{{-- skip sequence column --}}
 												@if ($field['ir_id'] == 'ir_sequence_count')
 													@continue
 												@endif
+												
+												{{-- skip cells column --}}
+												@if ($field['ir_id'] == 'ir_cell_count')
+													@continue
+												@endif
+
 												<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 													@isset($sample->{$field['ir_id']})
 														@if($field['ir_id'] == 'ir_clone_count')
@@ -1035,6 +1047,7 @@
 												@endif						
 											</td>
 											@foreach ($field_list as $field)
+											
 												{{-- skip sequence column --}}
 												@if ($field['ir_id'] == 'ir_sequence_count')
 													@continue
@@ -1044,6 +1057,7 @@
 												@if ($field['ir_id'] == 'ir_clone_count')
 													@continue
 												@endif
+
 												<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
 													@isset($sample->{$field['ir_id']})
 														@if($field['ir_id'] == 'ir_cell_count')
