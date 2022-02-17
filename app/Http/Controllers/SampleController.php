@@ -272,7 +272,7 @@ class SampleController extends Controller
         $samples_with_sequences = Sample::sort_sample_list($sample_list, $sort_column, $sort_order);
 
         $sequence_charts_fields = ['study_type', 'organism', 'disease_diagnosis', 'tissue', 'pcr_target_locus', 'template_class'];
-        $data['sequence_charts_data'] = Sample::generateChartsData($samples_with_sequences, $sequence_charts_fields);
+        $data['sequence_charts_data'] = Sample::generateChartsData($samples_with_sequences, $sequence_charts_fields, 'ir_' . $type . '_count');
 
         // keep only samples to display on the current page
         $samples_with_sequences = array_slice($samples_with_sequences, ($page - 1) * $max_per_page, $max_per_page);
