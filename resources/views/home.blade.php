@@ -21,7 +21,7 @@
 						{{ $total_projects }} {{ str_plural('study', $total_projects)}}.
 					</a>
 
-					@include('rest_service_list')
+					@include('rest_service_list', ['tab' => 'sequence'])
 				</p>
 
 				<div class="charts">

@@ -101,7 +101,7 @@
 					across
 					<a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}</a>.
 					<!-- repos/labs/studies popup -->
-					@include('rest_service_list')
+					@include('rest_service_list', ['tab' => 'sequence'])
 				</p>
 
 				<div class="charts">

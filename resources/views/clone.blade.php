@@ -233,7 +233,7 @@
 						</p>
 						
 						<!-- repos/labs/studies details popup -->
-						@include('rest_service_list_clones', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
+						@include('rest_service_list_clones', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies, 'tab' => 'clone'])
 
 						<div class="charts">
 							<div class="row">
