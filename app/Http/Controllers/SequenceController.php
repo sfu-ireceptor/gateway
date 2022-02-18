@@ -404,67 +404,74 @@ class SequenceController extends Controller
         // download time estimate
         $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_sequences']);
 
-        // if junction_aa filter, ask IEDB for more information
+        // if there is a junction_aa filter, ask IEDB for info about it
         if (isset($sequence_filters['junction_aa'])) {
-            try {
-                $defaults = [];
-                $defaults['base_uri'] = 'https://query-api.iedb.org/';
-                $defaults['verify'] = false;    // accept self-signed SSL certificates
-
-                $client = new \GuzzleHttp\Client($defaults);
-
-                $val = $sequence_filters['junction_aa'];
-
-                $query_list = [];
-                $query_list[] = 'tcr_search?chain2_cdr3_seq=like.';
-                $query_list[] = 'tcr_search?chain1_cdr3_seq=like.';
-                $query_list[] = 'bcr_search?chain2_cdr3_seq=like.';
-                $query_list[] = 'bcr_search?chain1_cdr3_seq=like.';
-
-                $t = [];
-                foreach ($query_list as $key => $query) {
-                    $response = $client->get($query . '*' . $val . '*');
-                    $body = $response->getBody();
-                    $t = json_decode($body);
-
-                    if (count($t) > 0) {
-                        break;
-                    }
-                }
-
-                if (count($t) > 0) {
-                    $data['iedb_info'] = true;
-
-                    $organism_list = [];
-                    foreach ($t as $o) {
-                        foreach ($o->parent_source_antigen_source_org_names as $organism) {
-                            if (! in_array($organism, $organism_list)) {
-                                $organism_list[] = $organism;
-                            }
-                        }
-                    }
-
-                    sort($organism_list);
-                    $organism_list_short = [];
-                    foreach ($organism_list as $i => $o) {
-                        $o_short = strstr($o, '(', true) ?: $o;
-                        $organism_list_short[$i] = $o_short;
-                    }
-
-                    $data['iedb_organism_list'] = $organism_list;
-                    $data['iedb_organism_list_short'] = $organism_list_short;
-                    $data['iedb_organism_list_extra'] = $organism_list;
-                }
-            } catch (\Exception $e) {
-                $error_message = $e->getMessage();
-                Log::error($error_message);
-                $data['iedb_info'] = false;
-                // return $error_message;
-            }
+            $iedb_data = $this->getIEDBInfo($sequence_filters['junction_aa']);
+            $data = array_merge($data, $iedb_data);
         }
 
         // display view
         return view('sequenceQuickSearch', $data);
+    }
+
+    public function getIEDBInfo($val) {
+        $data = [];
+
+        try {
+            $defaults = [];
+            $defaults['base_uri'] = 'https://query-api.iedb.org/';
+            $defaults['verify'] = false;    // accept self-signed SSL certificates
+
+            $client = new \GuzzleHttp\Client($defaults);
+
+            $query_list = [];
+            $query_list[] = 'tcr_search?chain2_cdr3_seq=like.';
+            $query_list[] = 'tcr_search?chain1_cdr3_seq=like.';
+            $query_list[] = 'bcr_search?chain2_cdr3_seq=like.';
+            $query_list[] = 'bcr_search?chain1_cdr3_seq=like.';
+
+            $t = [];
+            foreach ($query_list as $key => $query) {
+                $response = $client->get($query . '*' . $val . '*');
+                $body = $response->getBody();
+                $t = json_decode($body);
+
+                if (count($t) > 0) {
+                    break;
+                }
+            }
+
+            if (count($t) > 0) {
+                $data['iedb_info'] = true;
+
+                $organism_list = [];
+                foreach ($t as $o) {
+                    foreach ($o->parent_source_antigen_source_org_names as $organism) {
+                        if (! in_array($organism, $organism_list)) {
+                            $organism_list[] = $organism;
+                        }
+                    }
+                }
+
+                sort($organism_list);
+                $organism_list_short = [];
+                foreach ($organism_list as $i => $o) {
+                    $o_short = strstr($o, '(', true) ?: $o;
+                    $organism_list_short[$i] = $o_short;
+                }
+
+                $data['iedb_organism_list'] = $organism_list;
+                $data['iedb_organism_list_short'] = $organism_list_short;
+                $data['iedb_organism_list_extra'] = $organism_list;
+            }
+        } catch (\Exception $e) {
+            $error_message = $e->getMessage();
+            Log::error($error_message);
+            $data['iedb_info'] = false;
+            // return $error_message;
+        }
+
+        return $data;
     }
 
     public function timeEstimate($nb_sequences)
