@@ -226,6 +226,12 @@ class SequenceController extends Controller
         // download time estimate
         $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_sequences']);
 
+        // if there is a junction_aa filter, ask IEDB for info about it
+        if (isset($filters['junction_aa'])) {
+            $iedb_data = $this->getIEDBInfo($filters['junction_aa']);
+            $data = array_merge($data, $iedb_data);
+        }
+
         // display view
         return view('sequence', $data);
     }
@@ -468,7 +474,8 @@ class SequenceController extends Controller
             $error_message = $e->getMessage();
             Log::error($error_message);
             $data['iedb_info'] = false;
-            // return $error_message;
+
+            // return $error_message; ??
         }
 
         return $data;
