@@ -414,7 +414,8 @@ class SequenceController extends Controller
         return view('sequenceQuickSearch', $data);
     }
 
-    public function getIEDBInfo($val) {
+    public function getIEDBInfo($val)
+    {
         $data = [];
 
         try {
