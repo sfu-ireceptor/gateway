@@ -9,6 +9,10 @@ ap.add_argument("--genotype_file", required=True,
    help="path to genotype.tsv output file from VDJBase")
 ap.add_argument("--repertoire_id", required=True,
    help="repertoire id in repository")
+ap.add_argument("--data_processing_id", required=True,
+   help="data processing id in repository")
+ap.add_argument("--sample_processing_id", required=True,
+   help="sample_processing_id in repository")
 ap.add_argument("--data_processing_file", required=True,
    help="data processing file name in repository")
 ap.add_argument("--receptor_genotype_set_id", required=True,
@@ -59,7 +63,7 @@ for index, row in genotype_df.iterrows():
 
                 # Create a documented_alleles - which is a list of dictionaries
                 documented_allele_dict = dict()
-                documented_allele_dict["gene_symbol"] = allele_name
+                documented_allele_dict["label"] = allele_name
                 documented_allele_dict["germline_set_ref"] = args["germline_database"]
                 documented_allele_list.append(documented_allele_dict)
 
@@ -73,7 +77,7 @@ for index, row in genotype_df.iterrows():
     if row["GENOTYPED_ALLELES"] == "Deletion":
         deleted_gene_name = row["gene"]
         deleted_genes_dict = dict()
-        deleted_genes_dict["gene_symbol"] = deleted_gene_name
+        deleted_genes_dict["label"] = deleted_gene_name
         deleted_genes_dict["germline_set_ref"] = args["germline_database"]
         deleted_genes_list.append(deleted_genes_dict)
 
@@ -103,6 +107,7 @@ genotype_dict["receptor_genotype_set"] = genotype_set_dict
 subject_dict = dict()
 subject_dict["genotype"] = genotype_dict
 
+
 # Create a data processing object
 data_proc_list = list()
 data_proc_dict = dict()
@@ -120,12 +125,20 @@ else:
     data_files_list = list()
     data_files_list.append(args["data_processing_file"])
 data_proc_dict["data_processing_files"] = data_files_list
+if "data_processing_id" in args:
+    data_proc_dict["data_processing_id"] = args["data_processing_id"]
 data_proc_list.append(data_proc_dict)
+
+# Crete a sample object
+sample_dict = dict()
+if "sample_processing_id" in args:
+    sample_dict["sample_processing_id"] = args["sample_processing_id"]
 
 # Create a repertoire object
 repertoire_dict = dict()
 repertoire_dict["repertoire_id"] = str(args["repertoire_id"])
 repertoire_dict["subject"] = subject_dict
+repertoire_dict["sample"] = sample_dict
 repertoire_dict["data_processing"] = data_proc_list
 
 repertoire_list = list()
