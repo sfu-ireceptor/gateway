@@ -93,7 +93,7 @@
 							    <div class="form-group">
 									{{ Form::label('organism', __('short.organism')) }}
 									@include('help', ['id' => 'organism'])
-									{{ Form::select('organism[]', $subject_organism_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+									{{ Form::select('organism_id[]', $subject_organism_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 								<div class="form-group">
@@ -127,7 +127,7 @@
 							    <div class="form-group">
 									{{ Form::label('disease_diagnosis', __('short.disease_diagnosis')) }}
 									@include('help', ['id' => 'disease_diagnosis'])
-									{{ Form::select('disease_diagnosis[]', $subject_disease_diagnosis_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+									{{ Form::select('disease_diagnosis_id[]', $subject_disease_diagnosis_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 								<p class="button_container">
@@ -168,7 +168,7 @@
 							    <div class="form-group">
 									{{ Form::label('tissue', __('short.tissue')) }}
 									@include('help', ['id' => 'tissue'])
-								    {{ Form::select('tissue[]', $sample_source_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+								    {{ Form::select('tissue_id[]', $sample_tissue_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 							    <div class="form-group">

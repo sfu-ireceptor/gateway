@@ -13,8 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class SampleController extends Controller
 {
-    //protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type', 'study_group_description', 'lab_name', 'subject_id', 'organism', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis', 'sample_id', 'pcr_target_locus', 'cell_subset', 'tissue', 'template_class', 'cell_phenotype', 'sequencing_platform'];
-    protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type_id', 'study_group_description', 'lab_name', 'subject_id', 'organism', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis', 'sample_id', 'pcr_target_locus', 'cell_subset', 'tissue', 'template_class', 'cell_phenotype', 'sequencing_platform'];
+    protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type_id', 'study_group_description', 'lab_name', 'subject_id', 'organism_id', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis_id', 'sample_id', 'pcr_target_locus', 'cell_subset', 'tissue_id', 'template_class', 'cell_phenotype', 'sequencing_platform'];
     protected $extra_fields = [];
 
     public function __construct()
@@ -111,21 +110,11 @@ class SampleController extends Controller
         // get data
         $metadata = Sample::metadata($username);
 
-        // study type
-	/*
-        $study_type_list = [];
-        foreach ($metadata['study_type'] as $v) {
-            $study_type_list[$v] = $v;
-        }
-	 */
-
 	// study type ontology info
         $study_type_ontology_list = [];
         foreach ($metadata['study_type_ontology_list'] as $v) {
             $study_type_ontology_list[$v['study_type_id']] = $v['study_type'] . ' (' . $v['study_type_id'] . ')';
-            Log::debug('XXX Study type info: ' . $v['study_type']);
         }
-
 
         // gender
         $subject_gender_list = [];
@@ -133,10 +122,10 @@ class SampleController extends Controller
             $subject_gender_list[$v] = $v;
         }
 
-        // organism
-        $subject_organism_list = [];
-        foreach ($metadata['organism'] as $v) {
-            $subject_organism_list[$v] = $v;
+	// organism ontology info
+        $subject_organism_ontology_list = [];
+        foreach ($metadata['organism_ontology_list'] as $v) {
+            $subject_organism_ontology_list[$v['organism_id']] = $v['organism'] . ' (' . $v['organism_id'] . ')';
         }
 
         // ethnicity
@@ -157,10 +146,10 @@ class SampleController extends Controller
             $cell_type_list[$v] = $v;
         }
 
-        // sample source
-        $sample_source_list = [];
-        foreach ($metadata['tissue'] as $v) {
-            $sample_source_list[$v] = $v;
+	// tissue ontology info
+        $sample_tissue_ontology_list = [];
+        foreach ($metadata['tissue_ontology_list'] as $v) {
+            $sample_tissue_ontology_list[$v['tissue_id']] = $v['tissue'] . ' (' . $v['tissue_id'] . ')';
         }
 
         // dna type
@@ -169,23 +158,22 @@ class SampleController extends Controller
             $dna_type_list[$v] = $v;
         }
 
-        // disease_diagnosis
-        $subject_disease_diagnosis_list = [];
-        foreach ($metadata['disease_diagnosis'] as $v) {
-            $subject_disease_diagnosis_list[$v] = $v;
+	// disease_diagnosis ontology info
+        $subject_disease_diagnosis_ontology_list = [];
+        foreach ($metadata['disease_diagnosis_ontology_list'] as $v) {
+            $subject_disease_diagnosis_ontology_list[$v['disease_diagnosis_id']] = $v['disease_diagnosis'] . ' (' . $v['disease_diagnosis_id'] . ')';
         }
 
         // data
         $data = [];
-        //$data['study_type_list'] = $study_type_list;
         $data['study_type_ontology_list'] = $study_type_ontology_list;
         $data['subject_gender_list'] = $subject_gender_list;
         $data['subject_ethnicity_list'] = $subject_ethnicity_list;
-        $data['subject_organism_list'] = $subject_organism_list;
-        $data['subject_disease_diagnosis_list'] = $subject_disease_diagnosis_list;
+        $data['subject_organism_ontology_list'] = $subject_organism_ontology_list;
+        $data['subject_disease_diagnosis_ontology_list'] = $subject_disease_diagnosis_ontology_list;
         $data['pcr_target_locus_list'] = $pcr_target_locus_list;
         $data['cell_type_list'] = $cell_type_list;
-        $data['sample_source_list'] = $sample_source_list;
+        $data['sample_tissue_ontology_list'] = $sample_tissue_ontology_list;
         $data['dna_type_list'] = $dna_type_list;
 
         /******************************************************
