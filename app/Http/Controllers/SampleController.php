@@ -112,20 +112,19 @@ class SampleController extends Controller
         $metadata = Sample::metadata($username);
 
         // study type
-	/*
-        $study_type_list = [];
-        foreach ($metadata['study_type'] as $v) {
-            $study_type_list[$v] = $v;
-        }
-	 */
+        /*
+            $study_type_list = [];
+            foreach ($metadata['study_type'] as $v) {
+                $study_type_list[$v] = $v;
+            }
+         */
 
-	// study type ontology info
+        // study type ontology info
         $study_type_ontology_list = [];
         foreach ($metadata['study_type_ontology_list'] as $v) {
             $study_type_ontology_list[$v['study_type_id']] = $v['study_type'] . ' (' . $v['study_type_id'] . ')';
             Log::debug('XXX Study type info: ' . $v['study_type']);
         }
-
 
         // gender
         $subject_gender_list = [];
