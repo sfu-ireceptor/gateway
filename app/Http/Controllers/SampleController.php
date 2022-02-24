@@ -110,7 +110,7 @@ class SampleController extends Controller
         // get data
         $metadata = Sample::metadata($username);
 
-	// study type ontology info
+        // study type ontology info
         $study_type_ontology_list = [];
         foreach ($metadata['study_type_ontology_list'] as $v) {
             $study_type_ontology_list[$v['study_type_id']] = $v['study_type'] . ' (' . $v['study_type_id'] . ')';
@@ -122,7 +122,7 @@ class SampleController extends Controller
             $subject_gender_list[$v] = $v;
         }
 
-	// organism ontology info
+        // organism ontology info
         $subject_organism_ontology_list = [];
         foreach ($metadata['organism_ontology_list'] as $v) {
             $subject_organism_ontology_list[$v['organism_id']] = $v['organism'] . ' (' . $v['organism_id'] . ')';
@@ -146,7 +146,7 @@ class SampleController extends Controller
             $cell_type_list[$v] = $v;
         }
 
-	// tissue ontology info
+        // tissue ontology info
         $sample_tissue_ontology_list = [];
         foreach ($metadata['tissue_ontology_list'] as $v) {
             $sample_tissue_ontology_list[$v['tissue_id']] = $v['tissue'] . ' (' . $v['tissue_id'] . ')';
@@ -158,7 +158,7 @@ class SampleController extends Controller
             $dna_type_list[$v] = $v;
         }
 
-	// disease_diagnosis ontology info
+        // disease_diagnosis ontology info
         $subject_disease_diagnosis_ontology_list = [];
         foreach ($metadata['disease_diagnosis_ontology_list'] as $v) {
             $subject_disease_diagnosis_ontology_list[$v['disease_diagnosis_id']] = $v['disease_diagnosis'] . ' (' . $v['disease_diagnosis_id'] . ')';
