@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Log;
 
 class SampleController extends Controller
 {
-    protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type', 'study_group_description', 'lab_name', 'subject_id', 'organism', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis', 'sample_id', 'pcr_target_locus', 'cell_subset', 'tissue', 'template_class', 'cell_phenotype', 'sequencing_platform'];
+    //protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type', 'study_group_description', 'lab_name', 'subject_id', 'organism', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis', 'sample_id', 'pcr_target_locus', 'cell_subset', 'tissue', 'template_class', 'cell_phenotype', 'sequencing_platform'];
+    protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type_id', 'study_group_description', 'lab_name', 'subject_id', 'organism', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis', 'sample_id', 'pcr_target_locus', 'cell_subset', 'tissue', 'template_class', 'cell_phenotype', 'sequencing_platform'];
     protected $extra_fields = [];
 
     public function __construct()
@@ -111,10 +112,20 @@ class SampleController extends Controller
         $metadata = Sample::metadata($username);
 
         // study type
+	/*
         $study_type_list = [];
         foreach ($metadata['study_type'] as $v) {
             $study_type_list[$v] = $v;
         }
+	 */
+
+	// study type ontology info
+        $study_type_ontology_list = [];
+        foreach ($metadata['study_type_ontology_list'] as $v) {
+            $study_type_ontology_list[$v['study_type_id']] = $v['study_type'] . ' (' . $v['study_type_id'] . ')';
+            Log::debug('XXX Study type info: ' . $v['study_type']);
+        }
+
 
         // gender
         $subject_gender_list = [];
@@ -166,7 +177,8 @@ class SampleController extends Controller
 
         // data
         $data = [];
-        $data['study_type_list'] = $study_type_list;
+        //$data['study_type_list'] = $study_type_list;
+        $data['study_type_ontology_list'] = $study_type_ontology_list;
         $data['subject_gender_list'] = $subject_gender_list;
         $data['subject_ethnicity_list'] = $subject_ethnicity_list;
         $data['subject_organism_list'] = $subject_organism_list;
