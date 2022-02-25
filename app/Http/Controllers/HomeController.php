@@ -33,9 +33,8 @@ class HomeController extends Controller
 
 	// organism ontology info
         $subject_organism_ontology_list = [];
-        foreach ($metadata['organism_ontology_list'] as $v) {
-            //$subject_organism_list[$v['organism']] = $v['organism'];
-            $subject_organism_ontology_list[$v['organism_id']] = $v['organism'] . ' (' . $v['organism_id'] . ')';
+        foreach ($metadata['organism'] as $v) {
+            $subject_organism_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
         $data['subject_organism_ontology_list'] = $subject_organism_ontology_list;
 

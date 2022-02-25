@@ -112,8 +112,8 @@ class SampleController extends Controller
 
         // study type ontology info
         $study_type_ontology_list = [];
-        foreach ($metadata['study_type_ontology_list'] as $v) {
-            $study_type_ontology_list[$v['study_type_id']] = $v['study_type'] . ' (' . $v['study_type_id'] . ')';
+        foreach ($metadata['study_type'] as $v) {
+            $study_type_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
         // gender
@@ -124,8 +124,8 @@ class SampleController extends Controller
 
         // organism ontology info
         $subject_organism_ontology_list = [];
-        foreach ($metadata['organism_ontology_list'] as $v) {
-            $subject_organism_ontology_list[$v['organism_id']] = $v['organism'] . ' (' . $v['organism_id'] . ')';
+        foreach ($metadata['organism'] as $v) {
+            $subject_organism_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
         // ethnicity
@@ -148,8 +148,8 @@ class SampleController extends Controller
 
         // tissue ontology info
         $sample_tissue_ontology_list = [];
-        foreach ($metadata['tissue_ontology_list'] as $v) {
-            $sample_tissue_ontology_list[$v['tissue_id']] = $v['tissue'] . ' (' . $v['tissue_id'] . ')';
+        foreach ($metadata['tissue'] as $v) {
+            $sample_tissue_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
         // dna type
@@ -160,8 +160,8 @@ class SampleController extends Controller
 
         // disease_diagnosis ontology info
         $subject_disease_diagnosis_ontology_list = [];
-        foreach ($metadata['disease_diagnosis_ontology_list'] as $v) {
-            $subject_disease_diagnosis_ontology_list[$v['disease_diagnosis_id']] = $v['disease_diagnosis'] . ' (' . $v['disease_diagnosis_id'] . ')';
+        foreach ($metadata['disease_diagnosis'] as $v) {
+            $subject_disease_diagnosis_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
         // data
@@ -346,11 +346,43 @@ class SampleController extends Controller
 
         // create copy of filters for display
         $filter_fields = [];
+	$ontology_fields = ['tissue_id','organism_id','study_type_id','disease_diagnosis_id'];
         foreach ($params as $k => $v) {
             if ($v) {
                 if (is_array($v)) {
-                    $filter_fields[$k] = implode(', ', $v);
+		    // If the field is an ontology field, we want the filter fields to
+		    // have both label and ID.
+		    if (in_array($k, $ontology_fields))
+		    {
+			// Get the base field (without the _id part). This is how the
+			// metadata is tagged.
+		        $base_field = substr($k, 0, strlen($k)-3);
+			$filter_info = "";
+			// For each element in the filter parameters... This is essentially
+			// the list of filters that are set.
+			foreach ($v as $element)
+			{
+			    // Get the cahced metadata for the field so we can build a label/id string
+			    $field_metadata = $metadata[$base_field];
+			    // Find the element in the metadata and build the filter label string.
+			    foreach ($field_metadata as $field_info)
+			    {
+			        if ($field_info['id'] == $element)
+				{
+				    if ($filter_info != "") $filter_info = $filter_info . ', ';
+			            $filter_info = $filter_info . $field_info['label'] . ' (' . $field_info['id'] . ')';
+				}
+			    }
+                            $filter_fields[$k] = $filter_info;
+			}
+		    }
+		    else 
+		    {
+			// If it is a normal array filter, then combine the stings
+                        $filter_fields[$k] = implode(', ', $v);
+		    }
                 } else {
+	            // If it is a simple string filter, then use the value directly.
                     $filter_fields[$k] = $v;
                 }
             }

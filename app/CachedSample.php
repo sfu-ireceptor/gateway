@@ -3,6 +3,8 @@
 namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+
 
 class CachedSample extends Model
 {
@@ -39,19 +41,21 @@ class CachedSample extends Model
     {
         $t = [];
 
-        // distinct values for simple sample fields
-        $fields = ['study_type_id', 'template_class', 'ethnicity', 'tissue_id', 'sex', 'pcr_target_locus', 'cell_subset', 'organism_id', 'disease_diagnosis_id'];
+        // Distinct values for simple sample fields
+        $fields = ['template_class', 'ethnicity', 'sex', 'pcr_target_locus', 'cell_subset'];
         foreach ($fields as $field) {
             $t[$field] = self::distinctValues($field);
+        }
+
+	// Distinct values for ontology fields
+	$ontology_fields = ['study_type', 'tissue', 'organism', 'disease_diagnosis'];
+        foreach ($ontology_fields as $field) {
+            $t[$field] = self::distinctOntologyValuesGrouped($field);
         }
 
         // distinct values for combined sample fields (ex: project_id/project_name)
         $t['lab_list'] = self::distinctValuesGrouped(['ir_lab_id', 'lab_name']);
         $t['project_list'] = self::distinctValuesGrouped(['ir_project_id', 'study_title']);
-        $t['study_type_ontology_list'] = self::distinctValuesGrouped(['study_type_id', 'study_type']);
-        $t['tissue_ontology_list'] = self::distinctValuesGrouped(['tissue_id', 'tissue']);
-        $t['organism_ontology_list'] = self::distinctValuesGrouped(['organism_id', 'organism']);
-        $t['disease_diagnosis_ontology_list'] = self::distinctValuesGrouped(['disease_diagnosis_id', 'disease_diagnosis']);
 
         // list of REST services
         $t['rest_service_list'] = RestService::findEnabled(['id', 'name', 'rest_service_group_code'])->toArray();
@@ -102,6 +106,40 @@ class CachedSample extends Model
         // remove useless '_id' key
         foreach ($l as $k => $v) {
             unset($v['_id']);
+            $l[$k] = $v;
+        }
+
+        return $l;
+    }
+
+    public static function distinctOntologyValuesGrouped($field)
+    {
+	// We are passed in the base field. Ontology fields have
+	// the label in the base field and the ID in the base field
+	// with an _id on the end.
+	$id_field = $field . '_id';
+	$label_field = $field;
+
+        // Build a query, group by the ontology id_field, no nulls
+        $l = self::groupBy([$id_field]);
+        $l = $l->whereNotNull($id_field);
+        $l = $l->select([$id_field, $label_field]);
+
+        // do query
+        $l = $l->get();
+        $l = $l->toArray();
+
+	// We want to restructure the ontology metadata fields
+        foreach ($l as $k => $v) {
+	    // Add the field, ID, and label to the metadata
+	    $v['field'] = $field;
+	    $v['id'] = $v[$id_field];
+	    $v['label'] = $v[$label_field];
+            // remove useless '_id' key and the original fields
+            unset($v['_id']);
+            unset($v[$id_field]);
+            unset($v[$label_field]);
+	    // Store the new info in the array.
             $l[$k] = $v;
         }
 
