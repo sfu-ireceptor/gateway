@@ -72,6 +72,9 @@ class SequenceController extends Controller
         // sequence data
         $data = [];
 
+	// get cached sample metadata
+        $metadata = Sample::metadata($username);
+
         $data['sequence_list'] = $sequence_data['items'];
         $data['sample_list_json'] = json_encode($sequence_data['summary']);
         $data['rest_service_list'] = $sequence_data['rs_list'];
@@ -104,10 +107,37 @@ class SequenceController extends Controller
             $sample_filters = Query::getParams($sample_query_id);
 
             $sample_filter_fields = [];
+	    $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id', 'disease_diagnosis_id'];
             foreach ($sample_filters as $k => $v) {
                 if ($v) {
                     if (is_array($v)) {
-                        $sample_filter_fields[$k] = implode(', ', $v);
+                        // If the field is an ontology field, we want the filter fields to
+                        // have both label and ID.
+                        if (in_array($k, $ontology_fields)) {
+                            // Get the base field (without the _id part). This is how the
+                            // metadata is tagged.
+                            $base_field = substr($k, 0, strlen($k) - 3);
+                            $filter_info = '';
+                            // For each element in the filter parameters... This is essentially
+                            // the list of filters that are set.
+                            foreach ($v as $element) {
+                                // Get the cahced metadata for the field so we can build a label/id string
+                                $field_metadata = $metadata[$base_field];
+                                // Find the element in the metadata and build the filter label string.
+                                foreach ($field_metadata as $field_info) {
+                                    if ($field_info['id'] == $element) {
+                                        if ($filter_info != '') {
+                                            $filter_info = $filter_info . ', ';
+                                        }
+                                        $filter_info = $filter_info . $field_info['label'] . ' (' . $field_info['id'] . ')';
+                                    }
+                                }
+                                $sample_filter_fields[$k] = $filter_info;
+                            }
+                        } else {
+                            // If it is a normal array filter, then combine the stings
+                            $sample_filter_fields[$k] = implode(', ', $v);
+                        }
                     } else {
                         $sample_filter_fields[$k] = $v;
                     }
