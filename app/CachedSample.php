@@ -3,8 +3,6 @@
 namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
-
 
 class CachedSample extends Model
 {
@@ -47,8 +45,8 @@ class CachedSample extends Model
             $t[$field] = self::distinctValues($field);
         }
 
-	// Distinct values for ontology fields
-	$ontology_fields = ['study_type', 'tissue', 'organism', 'disease_diagnosis'];
+        // Distinct values for ontology fields
+        $ontology_fields = ['study_type', 'tissue', 'organism', 'disease_diagnosis'];
         foreach ($ontology_fields as $field) {
             $t[$field] = self::distinctOntologyValuesGrouped($field);
         }
@@ -114,11 +112,11 @@ class CachedSample extends Model
 
     public static function distinctOntologyValuesGrouped($field)
     {
-	// We are passed in the base field. Ontology fields have
-	// the label in the base field and the ID in the base field
-	// with an _id on the end.
-	$id_field = $field . '_id';
-	$label_field = $field;
+        // We are passed in the base field. Ontology fields have
+        // the label in the base field and the ID in the base field
+        // with an _id on the end.
+        $id_field = $field . '_id';
+        $label_field = $field;
 
         // Build a query, group by the ontology id_field, no nulls
         $l = self::groupBy([$id_field]);
@@ -129,17 +127,17 @@ class CachedSample extends Model
         $l = $l->get();
         $l = $l->toArray();
 
-	// We want to restructure the ontology metadata fields
+        // We want to restructure the ontology metadata fields
         foreach ($l as $k => $v) {
-	    // Add the field, ID, and label to the metadata
-	    $v['field'] = $field;
-	    $v['id'] = $v[$id_field];
-	    $v['label'] = $v[$label_field];
+            // Add the field, ID, and label to the metadata
+            $v['field'] = $field;
+            $v['id'] = $v[$id_field];
+            $v['label'] = $v[$label_field];
             // remove useless '_id' key and the original fields
             unset($v['_id']);
             unset($v[$id_field]);
             unset($v[$label_field]);
-	    // Store the new info in the array.
+            // Store the new info in the array.
             $l[$k] = $v;
         }
 
