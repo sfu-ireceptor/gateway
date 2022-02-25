@@ -72,7 +72,7 @@ class SequenceController extends Controller
         // sequence data
         $data = [];
 
-	// get cached sample metadata
+        // get cached sample metadata
         $metadata = Sample::metadata($username);
 
         $data['sequence_list'] = $sequence_data['items'];
@@ -107,7 +107,7 @@ class SequenceController extends Controller
             $sample_filters = Query::getParams($sample_query_id);
 
             $sample_filter_fields = [];
-	    $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id', 'disease_diagnosis_id'];
+            $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id', 'disease_diagnosis_id'];
             foreach ($sample_filters as $k => $v) {
                 if ($v) {
                     if (is_array($v)) {
