@@ -90,7 +90,7 @@
 							    <div class="form-group">
 									{{ Form::label('organism', __('short.organism')) }}
 									@include('help', ['id' => 'organism'])
-									{{ Form::select('organism', $subject_organism_list, '', array('class' => 'form-control')) }}
+									{{ Form::select('organism_id[]', $subject_organism_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 							</div>
 							<div class="col-md-7">

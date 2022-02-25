@@ -271,8 +271,8 @@ class SequenceController extends Controller
         if (isset($filters['cell_subset'])) {
             $sample_filters['cell_subset'] = $filters['cell_subset'];
         }
-        if (isset($filters['organism'])) {
-            $sample_filters['organism'] = $filters['organism'];
+        if (isset($filters['organism_id'])) {
+            $sample_filters['organism_id'] = $filters['organism_id'];
         }
 
         // sequence filters
@@ -308,13 +308,12 @@ class SequenceController extends Controller
         }
         $data['cell_type_list'] = $cell_type_list;
 
-        // organism
-        $subject_organism_list = [];
-        $subject_organism_list[''] = 'Any';
-        foreach ($metadata['organism'] as $v) {
-            $subject_organism_list[$v] = $v;
+	// organism ontology info
+	$subject_organism_ontology_list = [];
+        foreach ($metadata['organism_ontology_list'] as $v) {
+            $subject_organism_ontology_list[$v['organism_id']] = $v['organism'] . ' (' . $v['organism_id'] . ')';
         }
-        $data['subject_organism_list'] = $subject_organism_list;
+	$data['subject_organism_ontology_list'] = $subject_organism_ontology_list;
 
         // generate query id for download link
         $sample_id_list = Sample::find_sample_id_list($sample_filters, $username);
