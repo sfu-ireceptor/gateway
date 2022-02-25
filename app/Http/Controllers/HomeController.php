@@ -31,7 +31,7 @@ class HomeController extends Controller
         }
         $data['cell_type_list'] = $cell_type_list;
 
-	// organism ontology info
+        // organism ontology info
         $subject_organism_ontology_list = [];
         foreach ($metadata['organism'] as $v) {
             $subject_organism_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';

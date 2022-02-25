@@ -308,12 +308,12 @@ class SequenceController extends Controller
         }
         $data['cell_type_list'] = $cell_type_list;
 
-	// organism ontology info
-	$subject_organism_ontology_list = [];
+        // organism ontology info
+        $subject_organism_ontology_list = [];
         foreach ($metadata['organism'] as $v) {
             $subject_organism_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
-	$data['subject_organism_ontology_list'] = $subject_organism_ontology_list;
+        $data['subject_organism_ontology_list'] = $subject_organism_ontology_list;
 
         // generate query id for download link
         $sample_id_list = Sample::find_sample_id_list($sample_filters, $username);
@@ -386,7 +386,7 @@ class SequenceController extends Controller
 
         // create copy of current filters for display
         $filter_fields = [];
-	$ontology_fields = ['tissue_id','organism_id','study_type_id','disease_diagnosis_id'];
+        $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id', 'disease_diagnosis_id'];
         foreach ($filters as $k => $v) {
             if ($v) {
                 if (is_array($v)) {
@@ -396,36 +396,31 @@ class SequenceController extends Controller
                     }
                     // If the field is an ontology field, we want the filter fields to
                     // have both label and ID.
-		    else if (in_array($k, $ontology_fields))
-                    {
+                    elseif (in_array($k, $ontology_fields)) {
                         // Get the base field (without the _id part). This is how the
                         // metadata is tagged.
-                        $base_field = substr($k, 0, strlen($k)-3);
-                        $filter_info = "";
+                        $base_field = substr($k, 0, strlen($k) - 3);
+                        $filter_info = '';
                         // For each element in the filter parameters... This is essentially
                         // the list of filters that are set.
-                        foreach ($v as $element)
-                        {
+                        foreach ($v as $element) {
                             // Get the cahced metadata for the field so we can build a label/id string
                             $field_metadata = $metadata[$base_field];
                             // Find the element in the metadata and build the filter label string.
-                            foreach ($field_metadata as $field_info)
-                            {
-                                if ($field_info['id'] == $element)
-                                {
-                                    if ($filter_info != "") $filter_info = $filter_info . ', ';
+                            foreach ($field_metadata as $field_info) {
+                                if ($field_info['id'] == $element) {
+                                    if ($filter_info != '') {
+                                        $filter_info = $filter_info . ', ';
+                                    }
                                     $filter_info = $filter_info . $field_info['label'] . ' (' . $field_info['id'] . ')';
                                 }
                             }
                             $filter_fields[$k] = $filter_info;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         // If it is a normal array filter, then combine the stings
                         $filter_fields[$k] = implode(', ', $v);
                     }
-
                 } else {
                     $filter_fields[$k] = $v;
                 }
