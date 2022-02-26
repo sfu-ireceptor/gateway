@@ -41,8 +41,14 @@ function showData(json, graphFields, graphNames, countField, htmlBase, internalL
     var containerNumber = 1; // The numeric suffix, containers expected to start at 1
     for (index in graphFields)
     {
+	// Each graph field is an array of two field names, the first is for counting, 
+	// the second is for labels.
+	fieldPair = graphFields[index];
+	aggrField = fieldPair[0];
+	nameField = fieldPair[1];
         // valeus count for this field.
-        valuesCount = irAggregateData(graphFields[index], json, aggregateBySequence, countField);
+        //valuesCount = irAggregateData(graphFields[index], json, aggregateBySequence, countField);
+        valuesCount = irAggregateData(aggrField, nameField, json, aggregateBySequence, countField);
 
         // transform aggregate data structure for chart
         var aggregateData = [];
@@ -372,19 +378,28 @@ function irBuildBarChart(fieldTitle, data, level)
 // objList: list of objects
 // aggregateBySequence: aggregate number of sequences count instead of
 //  just incrementing value count for each object that field value
-function irAggregateData(field, objList, aggregateBySequence = true, sequenceCountField = 'ir_sequence_count')
+function irAggregateData(field, nameField, objList, aggregateBySequence = true, sequenceCountField = 'ir_sequence_count')
 {        
     var valuesCount = [];
+    var fieldMap = [];
 
+    // Iterate over all the object in the list.
     for (i in objList) {
         var obj = objList[i];
+	// If the object has the field we are counting, process it.
         if (obj.hasOwnProperty(field)) {
+	    // Get the value of the field for this object, so we can aggregate
             var value = obj[field];
-
             if(value === null) {
                 value = 'None';
             }
+	    // Also keep track of the label field value for each unique count value
+	    if (obj[nameField] === null)
+		fieldMap[value] = 'None';
+	    else
+	        fieldMap[value] = obj[nameField];
 
+	    // Do the aggregation on the appropriate field
             count = 1;
             if (aggregateBySequence)
             {
@@ -397,6 +412,7 @@ function irAggregateData(field, objList, aggregateBySequence = true, sequenceCou
                 }
             }
 
+	    // Keep track of the count for this value of the count field
             if( ! (value in valuesCount)) {
                 valuesCount[value] = 0;
             }
@@ -404,5 +420,13 @@ function irAggregateData(field, objList, aggregateBySequence = true, sequenceCou
         }
     }
 
-    return valuesCount;
+    // What we really want to return is actual the aggregation with the key
+    // being the field we want to display, not the field we counted on. So
+    // we use the field map to create a count array keyed by the display field.
+    var finalCount = [];
+    for (i in valuesCount) {
+	finalCount[fieldMap[i]] = valuesCount[i]
+    }
+
+    return finalCount;
 }

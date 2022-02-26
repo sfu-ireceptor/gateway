@@ -124,15 +124,15 @@
 
 <script>
 	
-	var graphFields = [
-	        "study_type", 
-	        "organism",
-	        "disease_diagnosis", 
-	        "tissue",
-	        "pcr_target_locus",
-	        "template_class"
-	    ];
-	
+        var graphFields = [
+                ["study_type_id","study_type"],
+                ["organism_id","organism"],
+                ["disease_diagnosis_id","disease_diagnosis"],
+                ["tissue_id","tissue"],
+                ["pcr_target_locus","pcr_target_locus"],
+                ["template_class", "template_class"]
+            ];
+
 	var graphNames = [
 	        "@lang('short.study_type')",
 	        "@lang('short.organism')", 

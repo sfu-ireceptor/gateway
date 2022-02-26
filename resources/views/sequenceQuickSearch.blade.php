@@ -317,12 +317,12 @@
 
 <script>
 	var graphFields = [
-	        "study_title",
-	        "subject_id",
-	        "sample_id",
-	        "disease_diagnosis", 
-	        "tissue",
-	        "pcr_target_locus"
+	        ["study_title","study_title"],
+	        ["subject_id","subject_id"],
+	        ["sample_id","sample_id"],
+	        ["disease_diagnosis","disease_diagnosis"], 
+	        ["tissue","tissue"],
+	        ["pcr_target_locus","pcr_target_locus"]
 	    ];
 	var graphNames = [
 	        "@lang('short.study_title')", 
