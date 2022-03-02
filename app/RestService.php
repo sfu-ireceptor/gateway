@@ -812,7 +812,7 @@ class RestService extends Model
         // count sequences for each requested sample
         if ($type == 'sequence') {
             $counts_by_rs = self::sequence_count($sample_id_list_by_rs, $sequence_filters);
-        } else if ($type == 'clone') {
+        } elseif ($type == 'clone') {
             $counts_by_rs = self::clone_count($sample_id_list_by_rs, $sequence_filters);
         } else {
             $counts_by_rs = self::cell_count($sample_id_list_by_rs, $sequence_filters);
@@ -853,13 +853,11 @@ class RestService extends Model
                 // include sample only if it has sequences matching the query
                 if ($sample_count > 0) {
                     if ($type == 'sequence') {
-                        $sample->ir_filtered_sequence_count = $sample_count;                        
-                    }
-                    else if ($type == 'clone') {
-                        $sample->ir_filtered_clone_count = $sample_count;                        
-                    }
-                    else {
-                       $sample->ir_filtered_cell_count = $sample_count;  
+                        $sample->ir_filtered_sequence_count = $sample_count;
+                    } elseif ($type == 'clone') {
+                        $sample->ir_filtered_clone_count = $sample_count;
+                    } else {
+                        $sample->ir_filtered_cell_count = $sample_count;
                     }
                     $sample_list_filtered[] = $sample;
                 }
@@ -921,7 +919,7 @@ class RestService extends Model
     {
         if ($type == 'sequence') {
             $base_uri = 'rearrangement';
-        } else if ($type == 'clone') {
+        } elseif ($type == 'clone') {
             $base_uri = 'clone';
         } else {
             $base_uri = 'cell';
