@@ -49,13 +49,13 @@ class Sequence
     public static function summary($filters, $username)
     {
         // get sequences summary
-        $response_list_sequences_summary = RestService::sequences_summary($filters, $username);
+        $response_list_sequences_summary = RestService::sequences_summary($filters, $username, 'sequence');
 
         // generate stats
         $data = self::process_response($response_list_sequences_summary);
 
         // get a few sequences from each service
-        $response_list = RestService::sequence_list($filters, $response_list_sequences_summary);
+        $response_list = RestService::sequence_list($filters, $response_list_sequences_summary, 10, 'sequence');
 
         // merge responses
         $sequence_list = [];
@@ -156,7 +156,7 @@ class Sequence
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
         // do extra sequence summary request
-        $response_list = RestService::sequences_summary($filters, $username, false);
+        $response_list = RestService::sequences_summary($filters, $username, false, 'sequence');
 
         // get expected number of sequences for sanity check after download
         $expected_nb_sequences_by_rs = self::expectedSequencesByRestSevice($response_list);

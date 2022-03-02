@@ -8,23 +8,23 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
-class SequenceClone
+class SequenceCell
 {
     public static function summary($filters, $username)
     {
-        // get clones summary
-        $response_list_clones_summary = RestService::sequences_summary($filters, $username, true, 'clone');
+        // get cells summary
+        $response_list_cells_summary = RestService::sequences_summary($filters, $username, true, 'cell');
 
         // dd($response_list);
 
         // generate stats
-        $data = self::process_response($response_list_clones_summary);
+        $data = self::process_response($response_list_cells_summary);
 
-        // get a few clones from each service
-        $response_list = RestService::sequence_list($filters, $response_list_clones_summary, 10, 'clone');
+        // get a few cells from each service
+        $response_list = RestService::sequence_list($filters, $response_list_cells_summary, 10, 'cell');
 
         // merge responses
-        $clone_list = [];
+        $cell_list = [];
         foreach ($response_list as $response) {
             $rs = $response['rs'];
 
@@ -47,15 +47,15 @@ class SequenceClone
             }
 
             $obj = $response['data'];
-            $clone_list = array_merge($clone_list, data_get($obj, 'Clone', []));
+            $cell_list = array_merge($cell_list, data_get($obj, 'Cell', []));
         }
 
         // convert any array properties to strings
-        $clone_list = array_map('convert_arrays_to_strings', $clone_list);
-        $clone_list = FieldName::convertObjectList($clone_list, 'ir_adc_api_query', 'ir_id');
+        $cell_list = array_map('convert_arrays_to_strings', $cell_list);
+        $cell_list = FieldName::convertObjectList($cell_list, 'ir_adc_api_query', 'ir_id');
 
         // add to stats data
-        $data['items'] = $clone_list;
+        $data['items'] = $cell_list;
 
         // split list of servers which didn't respond by "timeout" or "error"
         $data['rs_list_no_response_timeout'] = [];
@@ -72,51 +72,51 @@ class SequenceClone
         return $data;
     }
 
-    public static function expectedSequenceClonesByRestSevice($filters, $username)
+    public static function expectedSequenceCellsByRestSevice($filters, $username)
     {
-        $response_list = RestService::clones_summary($filters, $username, false);
-        $expected_nb_clones_by_rs = [];
+        $response_list = RestService::cells_summary($filters, $username, false);
+        $expected_nb_cells_by_rs = [];
         foreach ($response_list as $response) {
             $rest_service_id = $response['rs']->id;
 
-            $nb_clones = 0;
+            $nb_cells = 0;
             if (isset($response['data'])) {
                 $sample_list = $response['data'];
                 foreach ($sample_list as $sample) {
-                    if (isset($sample->ir_filtered_clone_count)) {
-                        $nb_clones += $sample->ir_filtered_clone_count;
+                    if (isset($sample->ir_filtered_cell_count)) {
+                        $nb_cells += $sample->ir_filtered_cell_count;
                     }
                 }
             }
 
-            $expected_nb_clones_by_rs[$rest_service_id] = $nb_clones;
+            $expected_nb_cells_by_rs[$rest_service_id] = $nb_cells;
         }
 
-        return $expected_nb_clones_by_rs;
+        return $expected_nb_cells_by_rs;
     }
 
-    public static function clonesTSVFolder($filters, $username, $url = '', $sample_filters = [])
+    public static function cellsTSVFolder($filters, $username, $url = '', $sample_filters = [])
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
-        // do extra clone summary request to get expected number of clones
+        // do extra cell summary request to get expected number of cells
         // for sanity check after download
-        $expected_nb_clones_by_rs = self::expectedSequenceClonesByRestSevice($filters, $username);
+        $expected_nb_cells_by_rs = self::expectedSequenceCellsByRestSevice($filters, $username);
 
-        // if total expected nb clones is 0, immediately fail download
-        $total_expected_nb_clones = 0;
-        foreach ($expected_nb_clones_by_rs as $rs => $count) {
-            $total_expected_nb_clones += $count;
+        // if total expected nb cells is 0, immediately fail download
+        $total_expected_nb_cells = 0;
+        foreach ($expected_nb_cells_by_rs as $rs => $count) {
+            $total_expected_nb_cells += $count;
         }
-        if ($total_expected_nb_clones <= 0) {
-            throw new \Exception('No clones to download');
+        if ($total_expected_nb_cells <= 0) {
+            throw new \Exception('No cells to download');
         }
 
-        // if total expected nb clones > download limit, immediately fail download
-        $clones_download_limit = config('ireceptor.clones_download_limit');
-        if ($total_expected_nb_clones > $clones_download_limit) {
-            throw new \Exception('Trying to download to many clones: ' . $total_expected_nb_clones . ' > ' . $clones_download_limit);
+        // if total expected nb cells > download limit, immediately fail download
+        $cells_download_limit = config('ireceptor.cells_download_limit');
+        if ($total_expected_nb_cells > $cells_download_limit) {
+            throw new \Exception('Trying to download to many cells: ' . $total_expected_nb_cells . ' > ' . $cells_download_limit);
         }
 
         // create receiving folder
@@ -128,15 +128,15 @@ class SequenceClone
         File::makeDirectory($folder_path, 0777, true, true);
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filters, $folder_path, $username);
-        $response_list = RestService::clones_data($filters, $folder_path, $username, $expected_nb_clones_by_rs);
+        $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs);
 
-        $file_stats = self::file_stats($response_list, $expected_nb_clones_by_rs);
+        $file_stats = self::file_stats($response_list, $expected_nb_cells_by_rs);
 
         // if some files are incomplete, log it
         foreach ($file_stats as $t) {
-            if ($t['nb_clones'] != $t['expected_nb_clones']) {
-                $delta = ($t['expected_nb_clones'] - $t['nb_clones']);
-                $str = 'expected ' . $t['expected_nb_clones'] . ' clones, got ' . $t['nb_clones'] . ' clones (difference=' . $delta . ' clones)';
+            if ($t['nb_cells'] != $t['expected_nb_cells']) {
+                $delta = ($t['expected_nb_cells'] - $t['nb_cells']);
+                $str = 'expected ' . $t['expected_nb_cells'] . ' cells, got ' . $t['nb_cells'] . ' cells (difference=' . $delta . ' cells)';
                 Log::warning($t['rest_service_name'] . ': ' . $str);
 
                 $query_log_id = $t['query_log_id'];
@@ -167,13 +167,13 @@ class SequenceClone
         }
 
         // are some files incomplete?
-        $nb_clones_total = 0;
-        $expected_nb_clones_total = 0;
+        $nb_cells_total = 0;
+        $expected_nb_cells_total = 0;
         foreach ($file_stats as $t) {
-            $nb_clones_total += $t['nb_clones'];
-            $expected_nb_clones_total += $t['expected_nb_clones'];
+            $nb_cells_total += $t['nb_cells'];
+            $expected_nb_cells_total += $t['expected_nb_cells'];
         }
-        if ($nb_clones_total < $expected_nb_clones_total) {
+        if ($nb_cells_total < $expected_nb_cells_total) {
             $is_download_incomplete = true;
         }
 
@@ -248,9 +248,9 @@ class SequenceClone
         return $t;
     }
 
-    public static function clonesTSV($filters, $username, $url = '', $sample_filters = [])
+    public static function cellsTSV($filters, $username, $url = '', $sample_filters = [])
     {
-        $t = self::clonesTSVFolder($filters, $username, $url, $sample_filters);
+        $t = self::cellsTSVFolder($filters, $username, $url, $sample_filters);
 
         $folder_path = $t['folder_path'];
         $response_list = $t['response_list'];
@@ -315,25 +315,25 @@ class SequenceClone
 
     public static function stats($sample_list)
     {
-        $total_clones = 0;
-        $total_filtered_clones = 0;
+        $total_cells = 0;
+        $total_filtered_cells = 0;
 
         $lab_list = [];
-        $lab_clone_count = [];
+        $lab_cell_count = [];
 
         $study_list = [];
-        $study_clone_count = [];
+        $study_cell_count = [];
 
         foreach ($sample_list as $sample) {
-            // clone count for that sample
-            if (isset($sample->ir_clone_count)) {
-                $total_clones += $sample->ir_clone_count;
+            // cell count for that sample
+            if (isset($sample->ir_cell_count)) {
+                $total_cells += $sample->ir_cell_count;
             }
 
-            // filtered clone count for that sample
-            if (isset($sample->ir_filtered_clone_count)) {
-                $nb_filtered_clones = $sample->ir_filtered_clone_count;
-                $total_filtered_clones += $nb_filtered_clones;
+            // filtered cell count for that sample
+            if (isset($sample->ir_filtered_cell_count)) {
+                $nb_filtered_cells = $sample->ir_filtered_cell_count;
+                $total_filtered_cells += $nb_filtered_cells;
 
                 // add lab
                 $lab_name = '';
@@ -346,9 +346,9 @@ class SequenceClone
                 if ($lab_name != '') {
                     if (! in_array($lab_name, $lab_list)) {
                         $lab_list[] = $lab_name;
-                        $lab_clone_count[$lab_name] = 0;
+                        $lab_cell_count[$lab_name] = 0;
                     }
-                    $lab_clone_count[$lab_name] += $nb_filtered_clones;
+                    $lab_cell_count[$lab_name] += $nb_filtered_cells;
                 }
 
                 // add study
@@ -356,9 +356,9 @@ class SequenceClone
                 if ($study_title != '') {
                     if (! in_array($study_title, $study_list)) {
                         $study_list[] = $study_title;
-                        $study_clone_count[$study_title] = 0;
+                        $study_cell_count[$study_title] = 0;
                     }
-                    $study_clone_count[$study_title] += $nb_filtered_clones;
+                    $study_cell_count[$study_title] += $nb_filtered_cells;
                 }
             }
         }
@@ -378,10 +378,10 @@ class SequenceClone
             // If we don't have this lab already, create it.
             if (! isset($study_tree[$lab])) {
                 $lab_data['name'] = $lab;
-                if (isset($lab_clone_count[$lab])) {
-                    $lab_data['total_clones'] = $lab_clone_count[$lab];
+                if (isset($lab_cell_count[$lab])) {
+                    $lab_data['total_cells'] = $lab_cell_count[$lab];
                 } else {
-                    $lab_data['total_clones'] = 0;
+                    $lab_data['total_cells'] = 0;
                 }
                 $study_tree[$lab] = $lab_data;
             }
@@ -392,10 +392,10 @@ class SequenceClone
             }
             if (! isset($study_tree[$lab]['studies'])) {
                 $new_study_data['study_title'] = $sample->study_title;
-                if (isset($study_clone_count[$sample->study_title])) {
-                    $new_study_data['total_clones'] = $study_clone_count[$sample->study_title];
+                if (isset($study_cell_count[$sample->study_title])) {
+                    $new_study_data['total_cells'] = $study_cell_count[$sample->study_title];
                 } else {
-                    $new_study_data['total_clones'] = 0;
+                    $new_study_data['total_cells'] = 0;
                 }
                 $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
             } else {
@@ -406,10 +406,10 @@ class SequenceClone
                     } else {
                         unset($new_study_data['study_url']);
                     }
-                    if (isset($study_clone_count[$sample->study_title])) {
-                        $new_study_data['total_clones'] = $study_clone_count[$sample->study_title];
+                    if (isset($study_cell_count[$sample->study_title])) {
+                        $new_study_data['total_cells'] = $study_cell_count[$sample->study_title];
                     } else {
-                        $new_study_data['total_clones'] = 0;
+                        $new_study_data['total_cells'] = 0;
                     }
                     $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
                 }
@@ -421,8 +421,8 @@ class SequenceClone
         $rs_data['total_samples'] = count($sample_list);
         $rs_data['total_labs'] = count($lab_list);
         $rs_data['total_studies'] = count($study_list);
-        $rs_data['total_clones'] = $total_clones;
-        $rs_data['total_filtered_clones'] = $total_filtered_clones;
+        $rs_data['total_cells'] = $total_cells;
+        $rs_data['total_filtered_cells'] = $total_filtered_cells;
         $rs_data['study_tree'] = $study_tree;
 
         return $rs_data;
@@ -436,7 +436,7 @@ class SequenceClone
         $total_filtered_labs = 0;
         $total_filtered_studies = 0;
         $total_filtered_samples = 0;
-        $total_filtered_clones = 0;
+        $total_filtered_cells = 0;
 
         foreach ($data['rs_list'] as $rs_data) {
             if ($rs_data['total_samples'] > 0) {
@@ -447,7 +447,7 @@ class SequenceClone
             $total_filtered_samples += $rs_data['total_samples'];
             $total_filtered_labs += $rs_data['total_labs'];
             $total_filtered_studies += $rs_data['total_studies'];
-            $total_filtered_clones += $rs_data['total_filtered_clones'];
+            $total_filtered_cells += $rs_data['total_filtered_cells'];
         }
 
         // sort alphabetically repositories/labs/studies
@@ -457,7 +457,7 @@ class SequenceClone
         $data['total_filtered_repositories'] = $total_filtered_repositories;
         $data['total_filtered_labs'] = $total_filtered_labs;
         $data['total_filtered_studies'] = $total_filtered_studies;
-        $data['total_filtered_clones'] = $total_filtered_clones;
+        $data['total_filtered_cells'] = $total_filtered_cells;
         $data['filtered_repositories'] = $filtered_repositories;
 
         return $data;
@@ -468,32 +468,32 @@ class SequenceClone
         $s = '';
         $s .= '* Summary *' . "\n";
 
-        $nb_clones_total = 0;
-        $expected_nb_clones_total = 0;
+        $nb_cells_total = 0;
+        $expected_nb_cells_total = 0;
         foreach ($file_stats as $t) {
-            $nb_clones_total += $t['nb_clones'];
-            $expected_nb_clones_total += $t['expected_nb_clones'];
+            $nb_cells_total += $t['nb_cells'];
+            $expected_nb_cells_total += $t['expected_nb_cells'];
         }
 
-        $is_download_incomplete = ($nb_clones_total < $expected_nb_clones_total);
+        $is_download_incomplete = ($nb_cells_total < $expected_nb_cells_total);
         if ($is_download_incomplete) {
             $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
-            $s .= 'Total: ' . $nb_clones_total . ' clones, but ' . $expected_nb_clones_total . ' were expected.' . "\n";
+            $s .= 'Total: ' . $nb_cells_total . ' cells, but ' . $expected_nb_cells_total . ' were expected.' . "\n";
         } else {
-            $s .= 'Total: ' . $nb_clones_total . ' clones' . "\n";
+            $s .= 'Total: ' . $nb_cells_total . ' cells' . "\n";
         }
 
         foreach ($file_stats as $t) {
-            if ($is_download_incomplete && ($t['nb_clones'] < $t['expected_nb_clones'])) {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_clones'] . ' clones (incomplete, expected ' . $t['expected_nb_clones'] . ' clones) (from ' . $t['rs_url'] . ')' . "\n";
+            if ($is_download_incomplete && ($t['nb_cells'] < $t['expected_nb_cells'])) {
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_cells'] . ' cells (incomplete, expected ' . $t['expected_nb_cells'] . ' cells) (from ' . $t['rs_url'] . ')' . "\n";
             } else {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_clones'] . ' clones (from ' . $t['rs_url'] . ')' . "\n";
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_cells'] . ' cells (from ' . $t['rs_url'] . ')' . "\n";
             }
         }
         $s .= "\n";
 
         if (! empty($failed_rs)) {
-            $s .= 'Warning: some files are missing because an error occurred while downloading clones from these repositories:' . "\n";
+            $s .= 'Warning: some files are missing because an error occurred while downloading cells from these repositories:' . "\n";
             foreach ($failed_rs as $rs) {
                 $s .= $rs->name . "\n";
             }
@@ -515,7 +515,7 @@ class SequenceClone
         }
         $s .= "\n";
 
-        $s .= '* SequenceClone filters *' . "\n";
+        $s .= '* SequenceCell filters *' . "\n";
         unset($filters['ir_project_sample_id_list']);
         unset($filters['cols']);
         unset($filters['filters_order']);
@@ -606,7 +606,7 @@ class SequenceClone
         }
     }
 
-    public static function file_stats($response_list, $expected_nb_clones_by_rs)
+    public static function file_stats($response_list, $expected_nb_cells_by_rs)
     {
         Log::debug('Get TSV files stats');
         $file_stats = [];
@@ -630,17 +630,17 @@ class SequenceClone
                     }
                 }
                 fclose($f);
-                $t['nb_clones'] = $n - 1; // don't count first line (columns headers)
-                $t['expected_nb_clones'] = 0;
-                if (isset($expected_nb_clones_by_rs[$rest_service_id])) {
-                    $t['expected_nb_clones'] = $expected_nb_clones_by_rs[$rest_service_id];
+                $t['nb_cells'] = $n - 1; // don't count first line (columns headers)
+                $t['expected_nb_cells'] = 0;
+                if (isset($expected_nb_cells_by_rs[$rest_service_id])) {
+                    $t['expected_nb_cells'] = $expected_nb_cells_by_rs[$rest_service_id];
                 } else {
-                    Log::error('rest_service ' . $rest_service_id . ' is missing from $expected_nb_clones_by_rs array');
-                    Log::error($expected_nb_clones_by_rs);
+                    Log::error('rest_service ' . $rest_service_id . ' is missing from $expected_nb_cells_by_rs array');
+                    Log::error($expected_nb_cells_by_rs);
                 }
                 $t['query_log_id'] = $response['query_log_id'];
                 $t['rest_service_name'] = $response['rs']->name;
-                $t['incomplete'] = ($t['nb_clones'] != $t['expected_nb_clones']);
+                $t['incomplete'] = ($t['nb_cells'] != $t['expected_nb_cells']);
 
                 $file_stats[] = $t;
             }

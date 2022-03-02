@@ -732,7 +732,7 @@ class RestService extends Model
         return $counts_by_rs;
     }
 
-    public static function sequences_summary($filters, $username = '', $group_by_rest_service = true, $clonal = false)
+    public static function sequences_summary($filters, $username = '', $group_by_rest_service = true, $type = 'sequence')
     {
         Log::debug('RestService::sequences_summary()');
 
@@ -810,12 +810,14 @@ class RestService extends Model
         Log::debug($sample_id_list_by_rs);
 
         // count sequences for each requested sample
-        if (! $clonal) {
+        if ($type == 'sequence') {
             $counts_by_rs = self::sequence_count($sample_id_list_by_rs, $sequence_filters);
-        } else {
+        } else if ($type == 'clone') {
             $counts_by_rs = self::clone_count($sample_id_list_by_rs, $sequence_filters);
+        } else {
+            $counts_by_rs = self::cell_count($sample_id_list_by_rs, $sequence_filters);
         }
-        Log::debug('Sequence count for each requested sample (by repository):');
+        Log::debug('Sequence/clone/cell count for each requested sample (by repository):');
         Log::debug($counts_by_rs);
 
         // add sequences count to samples
@@ -850,10 +852,14 @@ class RestService extends Model
                 $sample_count = $counts_by_rs[$rs->id]['samples'][$sample->repertoire_id];
                 // include sample only if it has sequences matching the query
                 if ($sample_count > 0) {
-                    if (! $clonal) {
-                        $sample->ir_filtered_sequence_count = $sample_count;
-                    } else {
-                        $sample->ir_filtered_clone_count = $sample_count;
+                    if ($type == 'sequence') {
+                        $sample->ir_filtered_sequence_count = $sample_count;                        
+                    }
+                    else if ($type == 'clone') {
+                        $sample->ir_filtered_clone_count = $sample_count;                        
+                    }
+                    else {
+                       $sample->ir_filtered_cell_count = $sample_count;  
                     }
                     $sample_list_filtered[] = $sample;
                 }
@@ -911,12 +917,14 @@ class RestService extends Model
     }
 
     // retrieves n sequences
-    public static function sequence_list($filters, $response_list_sequences_summary, $n = 10, $clonal = false)
+    public static function sequence_list($filters, $response_list_sequences_summary, $n = 10, $type = 'sequence')
     {
-        if (! $clonal) {
+        if ($type == 'sequence') {
             $base_uri = 'rearrangement';
-        } else {
+        } else if ($type == 'clone') {
             $base_uri = 'clone';
+        } else {
+            $base_uri = 'cell';
         }
 
         Log::debug('We have reponses for repos with id:');
