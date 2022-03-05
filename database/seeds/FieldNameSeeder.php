@@ -47,6 +47,7 @@ class FieldNameSeeder extends CsvSeeder
             // define default fields and their order
             $this->define_default_sample_fields();
             $this->define_default_sequence_fields();
+            $this->define_default_cell_fields();
         });
     }
 
@@ -99,6 +100,35 @@ class FieldNameSeeder extends CsvSeeder
             'ir_subclass' => 'Rearrangement',
         ];
 
+
+        // cell fields
+        $l[] = [
+            'ir_id' => 'v_call_1',
+            'ir_short' => 'V Gene With Allele (Chain 1)',
+            'ir_class' => 'Cell',
+            'ir_subclass' => 'Cell',
+        ];
+
+        $l[] = [
+            'ir_id' => 'junction_aa_1',
+            'ir_short' => 'Junction/CDR3 AA (Chain 1)',
+            'ir_class' => 'Cell',
+            'ir_subclass' => 'Cell',
+        ];
+       $l[] = [
+            'ir_id' => 'v_call_2',
+            'ir_short' => 'V Gene With Allele (Chain 2)',
+            'ir_class' => 'Cell',
+            'ir_subclass' => 'Cell',
+        ];
+
+        $l[] = [
+            'ir_id' => 'junction_aa_2',
+            'ir_short' => 'Junction/CDR3 AA (Chain 2)',
+            'ir_class' => 'Cell',
+            'ir_subclass' => 'Cell',
+        ];
+
         foreach ($l as $t) {
             FieldName::updateOrCreate(['ir_id' => $t['ir_id']], $t);
         }
@@ -141,6 +171,23 @@ class FieldNameSeeder extends CsvSeeder
         $l[] = ['id' => 'junction_aa', 'visible' => true];
         $l[] = ['id' => 'ir_junction_aa_length', 'visible' => true];
 
+        foreach ($l as $i => $t) {
+            FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);
+        }
+    }
+
+    public function define_default_cell_fields()
+    {
+        $l = [];
+        $l[] = ['id' => 'cell_id', 'visible' => true];
+        $l[] = ['id' => 'cell_id_cell', 'visible' => true];
+        $l[] = ['id' => 'expression_study_method_cell', 'visible' => true];
+        $l[] = ['id' => 'virtual_pairing_cell', 'visible' => true];
+        $l[] = ['id' => 'v_call_1', 'visible' => true];
+        $l[] = ['id' => 'junction_aa_1', 'visible' => true];
+        $l[] = ['id' => 'v_call_2', 'visible' => true];
+        $l[] = ['id' => 'junction_aa_2', 'visible' => true];
+        
         foreach ($l as $i => $t) {
             FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);
         }

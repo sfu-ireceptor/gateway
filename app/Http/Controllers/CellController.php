@@ -142,7 +142,7 @@ class CellController extends Controller
         $data['bookmark_id'] = Bookmark::getIdFromURl($current_url, auth()->user()->id);
 
         // get sequence fields
-        $field_list = FieldName::getSequenceFields();
+        $field_list = FieldName::getCellFields();
         $data['field_list'] = $field_list;
 
         // get sequence fields grouped

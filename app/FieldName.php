@@ -91,6 +91,19 @@ class FieldName extends Model
         return $l;
     }
 
+    public static function getCellFields()
+    {
+        $ir_class_list = ['Cell'];
+
+        if (config('ireceptor.display_all_ir_fields')) {
+            $ir_class_list[] = 'IR_Cell';
+        }
+
+        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('default_order', 'asc')->get()->toArray();
+
+        return $l;
+    }
+
     public static function getGroups()
     {
         $l = [];
@@ -173,6 +186,17 @@ class FieldName extends Model
 
         if (config('ireceptor.display_all_ir_fields')) {
             $ir_class_list[] = 'ir_rearrangement';
+        }
+
+        return static::getFieldsGrouped($ir_class_list);
+    }
+
+    public static function getCellieldsGrouped()
+    {
+        $ir_class_list = ['Cell'];
+
+        if (config('ireceptor.display_all_ir_fields')) {
+            $ir_class_list[] = 'ir_cell';
         }
 
         return static::getFieldsGrouped($ir_class_list);
