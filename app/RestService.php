@@ -1008,7 +1008,7 @@ class RestService extends Model
 
         if ($type == 'cell') {
             $request_params = [];
-        
+
             foreach ($response_list as $i => $response) {
                 foreach ($response['data']->Cell as $t) {
                     $cell_id = $t->cell_id;
@@ -1026,7 +1026,7 @@ class RestService extends Model
 
                     $params = [];
                     $params['fields'] = ['v_call', 'c_call', 'junction_aa', 'cell_id', 'clone_id'];
-                    
+
                     $filters_json = self::generate_json_query($filters, $params);
                     $t['params'] = $filters_json;
 
@@ -1045,7 +1045,7 @@ class RestService extends Model
                         $sequence = $response_sequence['data']->Rearrangement;
                         $cell_id_sequence = $sequence[0]->cell_id;
 
-                        if($cell_id == $cell_id_sequence) {
+                        if ($cell_id == $cell_id_sequence) {
                             $t->cell_id_cell = $cell_id;
                             $t->v_call_1 = isset($sequence[0]->v_call) ? $sequence[0]->v_call : '';
                             $t->junction_aa_1 = isset($sequence[0]->junction_aa) ? $sequence[0]->junction_aa : '';
@@ -1062,7 +1062,6 @@ class RestService extends Model
                 $response['data']->Cell = $cell_list_merged;
             }
         }
-
 
         return $response_list;
     }

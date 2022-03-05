@@ -100,7 +100,6 @@ class FieldNameSeeder extends CsvSeeder
             'ir_subclass' => 'Rearrangement',
         ];
 
-
         // cell fields
         $l[] = [
             'ir_id' => 'v_call_1',
@@ -115,7 +114,7 @@ class FieldNameSeeder extends CsvSeeder
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
         ];
-       $l[] = [
+        $l[] = [
             'ir_id' => 'v_call_2',
             'ir_short' => 'V Gene With Allele (Chain 2)',
             'ir_class' => 'Cell',
@@ -187,7 +186,7 @@ class FieldNameSeeder extends CsvSeeder
         $l[] = ['id' => 'junction_aa_1', 'visible' => true];
         $l[] = ['id' => 'v_call_2', 'visible' => true];
         $l[] = ['id' => 'junction_aa_2', 'visible' => true];
-        
+
         foreach ($l as $i => $t) {
             FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);
         }
