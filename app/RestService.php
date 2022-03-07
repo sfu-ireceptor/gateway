@@ -1096,18 +1096,16 @@ class RestService extends Model
                     $data_processing_id = $t->data_processing_id;
 
                     foreach ($response_list_expressions as $response_expression) {
-                        // dd($response_expression);
                         $expression_list = $response_expression['data']->GeneExpression;
                         $cell_id_expression = $expression_list[0]->cell_id;
 
                         if ($cell_id == $cell_id_expression) {
-                            // foreach ($expression_list as $expression) {
-                            //     $cell_id_expression = $expression->cell_id;
-                            //     break;
-                            // }
-
-                            // TODO sort by "value"
+                            // sort by "value"
                             $expression_list_sorted = $expression_list;
+                            $sort = 'value';
+                            usort($expression_list_sorted, function ($a, $b) use ($sort) {
+                                return strcmp($b->{$sort}, $a->{$sort});
+                            });
 
                             $expression_list_sorted = array_slice($expression_list_sorted, 0, 4);
 
@@ -1118,8 +1116,6 @@ class RestService extends Model
                                 }
                             }
 
-                            // $expression_label_list_
-                            // dd($expression_label_list);
                             $t->expression_label_list = $expression_label_list;
 
                             break;

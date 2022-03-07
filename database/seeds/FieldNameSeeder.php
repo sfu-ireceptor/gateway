@@ -130,7 +130,7 @@ class FieldNameSeeder extends CsvSeeder
 
         $l[] = [
             'ir_id' => 'expression_label_list',
-            'ir_short' => 'Expressions',
+            'ir_short' => 'Gene Expression',
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
         ];
