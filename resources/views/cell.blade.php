@@ -340,7 +340,7 @@
 													</span>
 												@elseif (is_array($s->{$field['ir_id']}))
 													<span title="{{ implode(', ', $s->{$field['ir_id']}) }}">
-														{{ str_limit(implode(', ', $s->{$field['ir_id']}), $limit = 25, $end = '‥') }}									
+														{{ str_limit(implode(', ', $s->{$field['ir_id']}), $limit = 40, $end = '‥') }}									
 													</span>			
 												@else
 													<span title="{{ $s->{$field['ir_id']} }}">

@@ -128,6 +128,13 @@ class FieldNameSeeder extends CsvSeeder
             'ir_subclass' => 'Cell',
         ];
 
+        $l[] = [
+            'ir_id' => 'expression_label_list',
+            'ir_short' => 'Expressions',
+            'ir_class' => 'Cell',
+            'ir_subclass' => 'Cell',
+        ];
+
         foreach ($l as $t) {
             FieldName::updateOrCreate(['ir_id' => $t['ir_id']], $t);
         }
@@ -186,6 +193,7 @@ class FieldNameSeeder extends CsvSeeder
         $l[] = ['id' => 'junction_aa_1', 'visible' => true];
         $l[] = ['id' => 'v_call_2', 'visible' => true];
         $l[] = ['id' => 'junction_aa_2', 'visible' => true];
+        $l[] = ['id' => 'expression_label_list', 'visible' => true];
 
         foreach ($l as $i => $t) {
             FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);

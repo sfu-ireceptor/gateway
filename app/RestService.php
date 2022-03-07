@@ -1007,9 +1007,10 @@ class RestService extends Model
         $response_list = self::doRequests($request_params);
 
         if ($type == 'cell') {
-            $request_params = [];
-
             foreach ($response_list as $i => $response) {
+
+                // 1. add chain 1 and chain 2
+                $request_params = [];
                 foreach ($response['data']->Cell as $t) {
                     $cell_id = $t->cell_id;
                     $data_processing_id = $t->data_processing_id;
@@ -1051,6 +1052,75 @@ class RestService extends Model
                             $t->junction_aa_1 = isset($sequence[0]->junction_aa) ? $sequence[0]->junction_aa : '';
                             $t->v_call_2 = isset($sequence[1]->v_call) ? $sequence[1]->v_call : '';
                             $t->junction_aa_2 = isset($sequence[1]->junction_aa) ? $sequence[1]->junction_aa : '';
+
+                            break;
+                        }
+                    }
+
+                    $cell_list_merged[] = $t;
+                }
+
+                $response['data']->Cell = $cell_list_merged;
+
+                 // 2. add expression data
+                $request_params = [];
+                foreach ($response['data']->Cell as $t) {
+                    $cell_id = $t->cell_id;
+                    $data_processing_id = $t->data_processing_id;
+
+                    $filters = [];
+                    $filters['data_processing_id_cell'] = $data_processing_id;
+                    $filters['cell_id_cell'] = $cell_id;
+
+                    // prepare parameters for each service
+                    $t = [];
+
+                    $t['rs'] = $rs;
+                    $t['url'] = $rs->url . 'expression';
+
+                    $params = [];
+                    // $params['fields'] = ['cell_id', 'value', 'ir_property_label_expression'];
+
+                    $filters_json = self::generate_json_query($filters, $params);
+                    $t['params'] = $filters_json;
+
+                    $request_params[] = $t;
+                }
+
+                $response_list_expressions = self::doRequests($request_params);
+
+                // add sequence data to cell data
+                $cell_list_merged = [];
+                foreach ($response['data']->Cell as $t) {
+                    $cell_id = $t->cell_id;
+                    $data_processing_id = $t->data_processing_id;
+
+                    foreach ($response_list_expressions as $response_expression) {
+                        // dd($response_expression);
+                        $expression_list = $response_expression['data']->GeneExpression;
+                        $cell_id_expression = $expression_list[0]->cell_id;
+
+                        if ($cell_id == $cell_id_expression) {
+                            // foreach ($expression_list as $expression) {
+                            //     $cell_id_expression = $expression->cell_id;
+                            //     break;
+                            // }
+
+                            // TODO sort by "value"
+                            $expression_list_sorted = $expression_list;
+
+                            $expression_list_sorted = array_slice($expression_list_sorted, 0, 4);
+
+                            $expression_label_list = [];
+                            foreach ($expression_list_sorted as $expression) {
+                                if(isset($expression->ir_property_label_expression)) {
+                                    $expression_label_list[] = $expression->ir_property_label_expression;
+                                }
+                            }
+
+                            // $expression_label_list_
+                            // dd($expression_label_list);
+                            $t->expression_label_list = $expression_label_list;
 
                             break;
                         }

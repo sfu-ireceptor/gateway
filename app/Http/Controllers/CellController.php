@@ -49,7 +49,7 @@ class CellController extends Controller
         }
 
         /*************************************************
-        * Get sequence data */
+        * Get cell data */
 
         // parameters
         $query_id = $request->input('query_id');
