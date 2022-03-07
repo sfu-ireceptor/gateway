@@ -1062,7 +1062,7 @@ class RestService extends Model
 
                 $response['data']->Cell = $cell_list_merged;
 
-                 // 2. add expression data
+                // 2. add expression data
                 $request_params = [];
                 foreach ($response['data']->Cell as $t) {
                     $cell_id = $t->cell_id;
@@ -1113,7 +1113,7 @@ class RestService extends Model
 
                             $expression_label_list = [];
                             foreach ($expression_list_sorted as $expression) {
-                                if(isset($expression->ir_property_label_expression)) {
+                                if (isset($expression->ir_property_label_expression)) {
                                     $expression_label_list[] = $expression->ir_property_label_expression;
                                 }
                             }
