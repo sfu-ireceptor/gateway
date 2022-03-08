@@ -1104,7 +1104,7 @@ class RestService extends Model
                             $expression_list_sorted = $expression_list;
                             $sort = 'value';
                             usort($expression_list_sorted, function ($a, $b) use ($sort) {
-                                return strcmp($b->{$sort}, $a->{$sort});
+                                return $b->{$sort} >= $a->{$sort};
                             });
 
                             $expression_list_sorted = array_slice($expression_list_sorted, 0, 4);
