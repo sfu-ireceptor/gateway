@@ -504,7 +504,7 @@ class SequenceController extends Controller
 
         $page = $request->input('page');
         $page_query_id = $request->input('page_query_id');
-        if(empty($page_query_id)) {
+        if (empty($page_query_id)) {
             $page_query_id = $query_id;
         }
 
