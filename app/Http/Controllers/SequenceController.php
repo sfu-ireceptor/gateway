@@ -503,7 +503,12 @@ class SequenceController extends Controller
         $username = auth()->user()->username;
 
         $page = $request->input('page');
-        $page_url = route($page, ['query_id' => $query_id], false);
+        $page_query_id = $request->input('page_query_id');
+        if(empty($page_query_id)) {
+            $page_query_id = $query_id;
+        }
+
+        $page_url = route($page, ['query_id' => $page_query_id], false);
 
         $nb_sequences = $request->input('n');
 
