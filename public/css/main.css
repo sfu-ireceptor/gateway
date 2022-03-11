@@ -1041,6 +1041,10 @@ a.download_sequences {
 	font-size: 13px;
 }
 
+.panel-body .iedb {
+	margin-bottom: 20px;	
+}
+
 .iedb a {
 }
 
