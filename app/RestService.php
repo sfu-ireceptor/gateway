@@ -184,8 +184,12 @@ class RestService extends Model
             } elseif ($field_type == 'number') {
                 $filter->op = '=';
                 $v = (float) $v;
-            } elseif ($k == 'repertoire_id' || $k == 'data_processing_id' || $k == 'cell_id' || $k == 'subject.sex' || $k == 'v_call' || $k == 'j_call' || $k == 'd_call' || $k == 'v_gene' || $k == 'j_gene' || $k == 'd_gene' || $k == 'v_subgroup' || $k == 'j_subgroup' || $k == 'd_subgroup' || $k == 'd_subgroup') {
+            } elseif ($k == 'repertoire_id' || $k == 'data_processing_id' || $k == 'cell_id' || $k == 'subject.sex' || $k == 'v_call' || $k == 'j_call' || $k == 'd_call' || $k == 'v_gene' || $k == 'j_gene' || $k == 'd_gene' || $k == 'v_subgroup' || $k == 'j_subgroup' || $k == 'd_subgroup' || $k == 'd_subgroup' || $k == 'property') {
                 $filter->op = '=';
+            }
+            
+            if ($k == 'value') {
+                $filter->op = '>';
             }
 
             $filter->content = new \stdClass();
@@ -690,7 +694,7 @@ class RestService extends Model
 
             $rs = self::find($rs_id);
             $t['rs'] = $rs;
-            $t['url'] = $rs->url . 'cell';
+            $t['url'] = $rs->url . 'expression';
 
             $t['params'] = $filters_json;
             $t['timeout'] = config('ireceptor.service_request_timeout');
@@ -1008,124 +1012,126 @@ class RestService extends Model
 
         if ($type == 'cell') {
             foreach ($response_list as $i => $response) {
+                if(isset($response['data']->Cell)) {
 
-                // 1. add chain 1 and chain 2
-                $request_params = [];
-                foreach ($response['data']->Cell as $t) {
-                    $cell_id = $t->cell_id;
-                    $data_processing_id = $t->data_processing_id;
+                    // 1. add chain 1 and chain 2
+                    $request_params = [];
+                    foreach ($response['data']->Cell as $t) {
+                        $cell_id = $t->cell_id;
+                        $data_processing_id = $t->data_processing_id;
 
-                    $filters = [];
-                    $filters['data_processing_id_cell'] = $data_processing_id;
-                    $filters['cell_id_cell'] = $cell_id;
+                        $filters = [];
+                        $filters['data_processing_id_cell'] = $data_processing_id;
+                        $filters['cell_id_cell'] = $cell_id;
 
-                    // prepare parameters for each service
-                    $t = [];
+                        // prepare parameters for each service
+                        $t = [];
 
-                    $t['rs'] = $rs;
-                    $t['url'] = $rs->url . 'rearrangement';
+                        $t['rs'] = $rs;
+                        $t['url'] = $rs->url . 'rearrangement';
 
-                    $params = [];
-                    $params['fields'] = ['v_call', 'c_call', 'junction_aa', 'cell_id', 'clone_id'];
+                        $params = [];
+                        $params['fields'] = ['v_call', 'c_call', 'junction_aa', 'cell_id', 'clone_id'];
 
-                    $filters_json = self::generate_json_query($filters, $params);
-                    $t['params'] = $filters_json;
+                        $filters_json = self::generate_json_query($filters, $params);
+                        $t['params'] = $filters_json;
 
-                    $request_params[] = $t;
-                }
-
-                $response_list_sequences = self::doRequests($request_params);
-
-                // add sequence data to cell data
-                $cell_list_merged = [];
-                foreach ($response['data']->Cell as $t) {
-                    $cell_id = $t->cell_id;
-                    $data_processing_id = $t->data_processing_id;
-
-                    foreach ($response_list_sequences as $response_sequence) {
-                        $sequence = $response_sequence['data']->Rearrangement;
-                        $cell_id_sequence = $sequence[0]->cell_id;
-
-                        if ($cell_id == $cell_id_sequence) {
-                            $t->cell_id_cell = $cell_id;
-                            $t->v_call_1 = isset($sequence[0]->v_call) ? $sequence[0]->v_call : '';
-                            $t->junction_aa_1 = isset($sequence[0]->junction_aa) ? $sequence[0]->junction_aa : '';
-                            $t->v_call_2 = isset($sequence[1]->v_call) ? $sequence[1]->v_call : '';
-                            $t->junction_aa_2 = isset($sequence[1]->junction_aa) ? $sequence[1]->junction_aa : '';
-
-                            break;
-                        }
+                        $request_params[] = $t;
                     }
 
-                    $cell_list_merged[] = $t;
-                }
+                    $response_list_sequences = self::doRequests($request_params);
 
-                $response['data']->Cell = $cell_list_merged;
+                    // add sequence data to cell data
+                    $cell_list_merged = [];
+                    foreach ($response['data']->Cell as $t) {
+                        $cell_id = $t->cell_id;
+                        $data_processing_id = $t->data_processing_id;
 
-                // 2. add expression data
-                $request_params = [];
-                foreach ($response['data']->Cell as $t) {
-                    $cell_id = $t->cell_id;
-                    $data_processing_id = $t->data_processing_id;
+                        foreach ($response_list_sequences as $response_sequence) {
+                            $sequence = $response_sequence['data']->Rearrangement;
+                            $cell_id_sequence = $sequence[0]->cell_id;
 
-                    $filters = [];
-                    $filters['data_processing_id_cell'] = $data_processing_id;
-                    $filters['cell_id_cell'] = $cell_id;
+                            if ($cell_id == $cell_id_sequence) {
+                                $t->cell_id_cell = $cell_id;
+                                $t->v_call_1 = isset($sequence[0]->v_call) ? $sequence[0]->v_call : '';
+                                $t->junction_aa_1 = isset($sequence[0]->junction_aa) ? $sequence[0]->junction_aa : '';
+                                $t->v_call_2 = isset($sequence[1]->v_call) ? $sequence[1]->v_call : '';
+                                $t->junction_aa_2 = isset($sequence[1]->junction_aa) ? $sequence[1]->junction_aa : '';
 
-                    // prepare parameters for each service
-                    $t = [];
-
-                    $t['rs'] = $rs;
-                    $t['url'] = $rs->url . 'expression';
-
-                    $params = [];
-                    // $params['fields'] = ['cell_id', 'value', 'ir_property_label_expression'];
-
-                    $filters_json = self::generate_json_query($filters, $params);
-                    $t['params'] = $filters_json;
-
-                    $request_params[] = $t;
-                }
-
-                $response_list_expressions = self::doRequests($request_params);
-
-                // add sequence data to cell data
-                $cell_list_merged = [];
-                foreach ($response['data']->Cell as $t) {
-                    $cell_id = $t->cell_id;
-                    $data_processing_id = $t->data_processing_id;
-
-                    foreach ($response_list_expressions as $response_expression) {
-                        $expression_list = $response_expression['data']->GeneExpression;
-                        $cell_id_expression = $expression_list[0]->cell_id;
-
-                        if ($cell_id == $cell_id_expression) {
-                            // sort by "value"
-                            $expression_list_sorted = $expression_list;
-                            $sort = 'value';
-                            usort($expression_list_sorted, function ($a, $b) use ($sort) {
-                                return $b->{$sort} >= $a->{$sort};
-                            });
-
-                            $expression_list_sorted = array_slice($expression_list_sorted, 0, 4);
-
-                            $expression_label_list = [];
-                            foreach ($expression_list_sorted as $expression) {
-                                if (isset($expression->ir_property_label_expression)) {
-                                    $expression_label_list[] = $expression->ir_property_label_expression;
-                                }
+                                break;
                             }
-
-                            $t->expression_label_list = $expression_label_list;
-
-                            break;
                         }
+
+                        $cell_list_merged[] = $t;
                     }
 
-                    $cell_list_merged[] = $t;
-                }
+                    $response['data']->Cell = $cell_list_merged;
 
-                $response['data']->Cell = $cell_list_merged;
+                    // 2. add expression data
+                    $request_params = [];
+                    foreach ($response['data']->Cell as $t) {
+                        $cell_id = $t->cell_id;
+                        $data_processing_id = $t->data_processing_id;
+
+                        $filters = [];
+                        $filters['data_processing_id_cell'] = $data_processing_id;
+                        $filters['cell_id_cell'] = $cell_id;
+
+                        // prepare parameters for each service
+                        $t = [];
+
+                        $t['rs'] = $rs;
+                        $t['url'] = $rs->url . 'expression';
+
+                        $params = [];
+                        // $params['fields'] = ['cell_id', 'value', 'ir_property_label_expression'];
+
+                        $filters_json = self::generate_json_query($filters, $params);
+                        $t['params'] = $filters_json;
+
+                        $request_params[] = $t;
+                    }
+
+                    $response_list_expressions = self::doRequests($request_params);
+
+                    // add sequence data to cell data
+                    $cell_list_merged = [];
+                    foreach ($response['data']->Cell as $t) {
+                        $cell_id = $t->cell_id;
+                        $data_processing_id = $t->data_processing_id;
+
+                        foreach ($response_list_expressions as $response_expression) {
+                            $expression_list = $response_expression['data']->GeneExpression;
+                            $cell_id_expression = $expression_list[0]->cell_id;
+
+                            if ($cell_id == $cell_id_expression) {
+                                // sort by "value"
+                                $expression_list_sorted = $expression_list;
+                                $sort = 'value';
+                                usort($expression_list_sorted, function ($a, $b) use ($sort) {
+                                    return $b->{$sort} >= $a->{$sort};
+                                });
+
+                                $expression_list_sorted = array_slice($expression_list_sorted, 0, 4);
+
+                                $expression_label_list = [];
+                                foreach ($expression_list_sorted as $expression) {
+                                    if (isset($expression->ir_property_label_expression)) {
+                                        $expression_label_list[] = $expression->ir_property_label_expression;
+                                    }
+                                }
+
+                                $t->expression_label_list = $expression_label_list;
+
+                                break;
+                            }
+                        }
+
+                        $cell_list_merged[] = $t;
+                    }
+
+                    $response['data']->Cell = $cell_list_merged;
+                }
             }
         }
 

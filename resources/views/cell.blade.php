@@ -39,15 +39,15 @@
 						<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
 							<div class="panel-body">
 								<div class="form-group">
-									{{ Form::label('v_call',  'Gene ID') }}
-									@include('help', ['id' => 'v_call'])
-									{{ Form::text('v_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of cells are found.', 'data-placement' => 'bottom')) }}
+									{{ Form::label('property_expression',  'Gene ID') }}
+									@include('help', ['id' => 'property_expression'])
+									{{ Form::text('property_expression', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of cells are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<div class="form-group">
-									{{ Form::label('j_call', 'Minimum Expression Value') }}
-									@include('help', ['id' => 'j_call'])
-									{{ Form::text('j_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of cells are found.', 'data-placement' => 'bottom')) }}
+									{{ Form::label('value_expression', 'Minimum Expression Value') }}
+									@include('help', ['id' => 'value_expression'])
+									{{ Form::text('value_expression', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of cells are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<p class="button_container">
