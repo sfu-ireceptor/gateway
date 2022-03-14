@@ -187,7 +187,7 @@ class RestService extends Model
             } elseif ($k == 'repertoire_id' || $k == 'data_processing_id' || $k == 'cell_id' || $k == 'subject.sex' || $k == 'v_call' || $k == 'j_call' || $k == 'd_call' || $k == 'v_gene' || $k == 'j_gene' || $k == 'd_gene' || $k == 'v_subgroup' || $k == 'j_subgroup' || $k == 'd_subgroup' || $k == 'd_subgroup' || $k == 'property') {
                 $filter->op = '=';
             }
-            
+
             if ($k == 'value') {
                 $filter->op = '>';
             }
@@ -1012,7 +1012,7 @@ class RestService extends Model
 
         if ($type == 'cell') {
             foreach ($response_list as $i => $response) {
-                if(isset($response['data']->Cell)) {
+                if (isset($response['data']->Cell)) {
 
                     // 1. add chain 1 and chain 2
                     $request_params = [];
