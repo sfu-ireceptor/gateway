@@ -28,7 +28,7 @@
 
 				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
-					<div class="panel panel-default">
+<!-- 					<div class="panel panel-default">
 						<div class="panel-heading" role="tab" id="headingOne">
 							<h4 class="panel-title">
 								<a role="button" class="" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
@@ -48,6 +48,35 @@
 									{{ Form::label('value_expression', 'Minimum Expression Value') }}
 									@include('help', ['id' => 'value_expression'])
 									{{ Form::text('value_expression', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of cells are found.', 'data-placement' => 'bottom')) }}
+								</div>
+
+								<p class="button_container">
+									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
+								</p>
+							</div>
+						</div>
+					</div> -->
+
+					<div class="panel panel-default">
+						<div class="panel-heading" role="tab" id="headingOne">
+							<h4 class="panel-title">
+								<a role="button" class="{{ in_array('0', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+									Filter by Cell
+								</a>
+							</h4>
+						</div>
+						<div id="collapseOne" class="panel-collapse collapse {{ in_array('0', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingOne">
+							<div class="panel-body">
+								<div class="form-group">
+									{{ Form::label('expression_study_method_cell',  __('short.expression_study_method_cell')) }}
+									@include('help', ['id' => 'expression_study_method_cell'])
+									{{ Form::text('expression_study_method_cell', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
+								</div>
+
+								<div class="form-group">
+									{{ Form::label('virtual_pairing_cell', __('short.virtual_pairing_cell')) }}
+									@include('help', ['id' => 'virtual_pairing_cell'])
+									{{ Form::text('virtual_pairing_cell', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
 								</div>
 
 								<p class="button_container">

@@ -238,7 +238,7 @@
 		<script src="/js/pluralize.js"></script>
 
 		<script src="/js/airrvisualization.js?v=12"></script>
-		<script src="/js/main.js?v=78"></script>
+		<script src="/js/main.js?v=79"></script>
 		<script src="/js/admin.js?v=1"></script>
 		<script src="/js/visualization.js?v=20"></script>
 	</body>

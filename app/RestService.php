@@ -694,7 +694,7 @@ class RestService extends Model
 
             $rs = self::find($rs_id);
             $t['rs'] = $rs;
-            $t['url'] = $rs->url . 'expression';
+            $t['url'] = $rs->url . 'cell';
 
             $t['params'] = $filters_json;
             $t['timeout'] = config('ireceptor.service_request_timeout');
