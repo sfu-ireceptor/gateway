@@ -72,6 +72,16 @@ date
 
 # Load the iReceptor Gateway bash utility functions.
 source ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/gateway_utilities.sh
+# This directory is defined in the gateway_utilities.sh. The Gateway
+# relies on this being set. If it isn't set, abort as something has
+# gone wrong with loading the Gateway utilties.
+echo "Gateway analysis directory = ${GATEWAY_ANALYSIS_DIR}"
+if [ -z "${GATEWAY_ANALYSIS_DIR}" ]; then
+	echo "ERROR: GATEWAY_ANALYSIS_DIR not defined, gateway_utilities not loaded correctly."
+        exit 1
+fi
+echo "Done loading iReceptor Gateway Utilities"
+
 
 # Load any modules that are required by the App. 
 module load singularity
@@ -80,9 +90,6 @@ module load scipy-stack
 # The Gateway provides information about the download in the file info.txt
 INFO_FILE="info.txt"
 MANIFEST_FILE="airr_manifest.json"
-
-# We want a working directory for the Gateway download information.
-WORKING_DIR="analysis_output"
 
 # Start
 printf "START at $(date)\n\n"
@@ -140,7 +147,7 @@ input
     printf "Done Repertoire Analysis on ${array_of_files[@]} at $(date)\n\n"
 }
 
-# Split the data by repertoire. This creates a directory tree in $WORKING_DIR
+# Split the data by repertoire. This creates a directory tree in $GATEWAY_ANALYSIS_DIR
 # with a directory per repository and within that a directory per repertoire in
 # that repository. In each repertoire directory there will exist an AIRR TSV
 # file with the data from that repertoire.
@@ -153,22 +160,26 @@ input
 # information about the repertoire can be found. 
 #
 # run_analysis() is defined above.
-gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${WORKING_DIR}
+gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 # Make sure we are back where we started, although the gateway functions should
 # not change the working directory that we are in.
 cd ${SCRIPT_DIR}
 
 # We want to move the info.txt to the main directory. The Gateway expects this.
-cp ${WORKING_DIR}/${INFO_FILE} .
+cp ${GATEWAY_ANALYSIS_DIR}/${INFO_FILE} .
 
 # We want the job error and output files to be part of the analysis so copy them
-cp *.err ${WORKING_DIR}
-cp *.out ${WORKING_DIR}
+cp *.err ${GATEWAY_ANALYSIS_DIR}
+cp *.out ${GATEWAY_ANALYSIS_DIR}
 
 # Zip up the analysis results for easy download
 echo "ZIPing analysis results"
-zip -r ${WORKING_DIR}.zip ${WORKING_DIR}
+zip -r ${GATEWAY_ANALYSIS_DIR}.zip ${GATEWAY_ANALYSIS_DIR}
+
+# We don't want the analysis files to remain - they are in the ZIP file
+echo "Removing analysis output"
+rm -rf ${GATEWAY_ANALYSIS_DIR}
 
 # We don't want to copy around the singularity image everywhere.
 rm -f ${singularity_image}

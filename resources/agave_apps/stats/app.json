@@ -78,7 +78,7 @@
         "default": ""
       },
       "details": {
-        "label": "Creator",
+        "label": "Creator (hidden)",
         "description": "Username that created this job."
       },
       "semantics": {

@@ -18,7 +18,7 @@ module load scipy-stack
 # Get the iRecpetor Gateway utilities from the Gateway
 echo "Downloading iReceptor Gateway Utilities from the Gateway"
 date
-GATEWAY_UTIL_DIR=gateway_utilities
+GATEWAY_UTIL_DIR="gateway_utilities"
 mkdir -p ${GATEWAY_UTIL_DIR}
 pushd ${GATEWAY_UTIL_DIR} > /dev/null
 wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" https://gateway-analysis.ireceptor.org/gateway_utilities/
@@ -28,9 +28,20 @@ date
 
 # Load the iReceptor Gateway utilities functions.
 . ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/gateway_utilities.sh
+# This directory is defined in the gateway_utilities.sh. The Gateway
+# relies on this being set. If it isn't set, abort as something has
+# gone wrong with loading the Gateway utilties.
+echo "Gateway analysis directory = ${GATEWAY_ANALYSIS_DIR}"
+if [ -z "${GATEWAY_ANALYSIS_DIR}" ]; then
+        echo "ERROR: GATEWAY_ANALYSIS_DIR not defined, gateway_utilities not loaded correctly."
+	exit 1
+fi
+echo "Done loading iReceptor Gateway Utilities"
 
-# app variables (will be subsituted by Tapis). If they don't exist
+#########################################################################
+# Application variables (will be subsituted by Tapis). If they don't exist
 # use command line arguments.
+
 # Download file provide by Tapis, if not, set it to command line $1
 if [ -z "${download_file}" ]; then
 	ZIP_FILE=$1
@@ -44,7 +55,6 @@ echo "Tapis split = ${split_repertoire}"
 if [ -z "${split_repertoire}" ]; then
 	split_repertoire=$2
 fi
-
 
 function do_heatmap()
 #     $1,$2 are variable names to process
@@ -249,7 +259,6 @@ function run_analysis()
 # of both an "info.txt" file that describes the download as well as an
 # AIRR manifest JSON file that describes the relationships between
 # AIRR Repertoire JSON files and AIRR TSV files.
-WORKING_DIR="analysis_output"
 INFO_FILE="info.txt"
 MANIFEST_FILE="airr_manifest.json"
 
@@ -260,14 +269,14 @@ if [ "${split_repertoire}" = "True" ]; then
     # user to define a function called run_analysis() that will be
     # called for each repertoire. See the docs in the gateway_utilities.sh file
     # for parameters to this function.
-    gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${WORKING_DIR}
+    gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
 elif [ "${split_repertoire}" = "False" ]; then
     echo -e "\nRunning app on entire data set\n"
     # Run the stats on all the data combined. Unzip the files
-    gateway_unzip ${ZIP_FILE} ${WORKING_DIR}
+    gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
 
     # Go into the working directory
-    pushd ${WORKING_DIR} > /dev/null
+    pushd ${GATEWAY_ANALYSIS_DIR} > /dev/null
 
     # Generate the TSV files from the AIRR manifest
     tsv_files=( "`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} rearrangement_file`" )
@@ -303,18 +312,22 @@ cd ${SCRIPT_DIR}
 
 # We want to move the info.txt to the main directory as the Gateway uses it if
 # it is available.
-cp ${WORKING_DIR}/${INFO_FILE} .
+cp ${GATEWAY_ANALYSIS_DIR}/${INFO_FILE} .
 
 # We want to keep the job error and output files as part of the analysis output.
-cp *.err ${WORKING_DIR}
-cp *.out ${WORKING_DIR}
+cp *.err ${GATEWAY_ANALYSIS_DIR}
+cp *.out ${GATEWAY_ANALYSIS_DIR}
 
 # ZIP up the analysis results for easy download
-zip -r ${WORKING_DIR}.zip ${WORKING_DIR}
+zip -r ${GATEWAY_ANALYSIS_DIR}.zip ${GATEWAY_ANALYSIS_DIR}
 
 # We don't want the iReceptor Utilities to be part of the results.
 echo "Removing Gateway utilities"
 rm -rf ${GATEWAY_UTIL_DIR}
+
+# We don't want the analysis files to remain - they are in the ZIP file
+echo "Removing analysis output"
+rm -rf ${GATEWAY_ANALYSIS_DIR}
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
 echo "Removing original ZIP file $ZIP_FILE"

@@ -2,6 +2,9 @@
 
 echo "iReceptor Gateway Utilities"
 
+# Define the directory to use for Gateway analysis output.
+export GATEWAY_ANALYSIS_DIR="gateway_analysis"
+
 function gateway_unzip() {
 # Parameters
 #   $1 - iReceptor ZIP file

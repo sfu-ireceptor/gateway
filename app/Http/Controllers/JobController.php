@@ -13,6 +13,7 @@ use App\System;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use ZipArchive;
 
 class JobController extends Controller
 {
@@ -197,6 +198,19 @@ class JobController extends Controller
         if ($job['input_folder'] != '') {
             $folder = 'storage/' . $job['input_folder'];
             if (File::exists($folder)) {
+		// This is defined in the Gateway Uitlities that are used by Gateway Apps.
+		// If this ZIP file exists and the directory does not, the Gateway will 
+		// UNZIP the archive.
+		$analysis_zipbase = 'gateway_analysis';
+		$zip_file = $folder . '/' . $analysis_zipbase . '.zip';
+		$zip_folder = $folder . '/' . $analysis_zipbase;
+	        if (File::exists($zip_file) && !File::exists($zip_folder)) {
+		    Log::debug('JobController::getView - UNZIPing analysis folder');
+		    $zip = new ZipArchive();
+		    $zip->open($zip_file, ZipArchive::RDONLY);
+		    $zip->extractTo($folder);
+		    $zip->close();
+		}
                 $data['files'] = File::allFiles($folder);
                 $data['filesHTML'] = dir_to_html($folder);
             }
