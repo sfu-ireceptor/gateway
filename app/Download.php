@@ -134,11 +134,13 @@ class Download extends Model
         return $diff_seconds < 0;
     }
 
-    public static function start_sequence_download($query_id, $username, $page_url, $nb_items) {
+    public static function start_sequence_download($query_id, $username, $page_url, $nb_items)
+    {
         self::start_download($query_id, $username, $page_url, $nb_items, 'sequence');
     }
 
-    public static function start_cell_download($query_id, $username, $page_url, $nb_items) {
+    public static function start_cell_download($query_id, $username, $page_url, $nb_items)
+    {
         self::start_download($query_id, $username, $page_url, $nb_items, 'cell');
     }
 
