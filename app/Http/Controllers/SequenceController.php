@@ -518,7 +518,7 @@ class SequenceController extends Controller
 
         $nb_sequences = $request->input('n');
 
-        Download::start_download($query_id, $username, $page_url, $nb_sequences);
+        Download::start_sequence_download($query_id, $username, $page_url, $nb_sequences);
 
         return redirect('downloads')->with('download_page', $page_url);
     }

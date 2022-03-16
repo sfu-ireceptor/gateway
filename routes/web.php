@@ -88,6 +88,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/cells', 'CellController@postIndex')->name('cells-post');
     Route::get('/cells', 'CellController@index')->name('cells')->middleware('log_query');
+    Route::get('/cells-download', 'CellController@download')->name('cells-download');
 
     Route::prefix('user')->group(function () {
         Route::get('account', 'UserController@getAccount');

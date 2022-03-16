@@ -258,9 +258,9 @@ class CellController extends Controller
         $page = $request->input('page');
         $page_url = route($page, ['query_id' => $query_id], false);
 
-        $nb_sequences = $request->input('n');
+        $nb_cells = $request->input('n');
 
-        Download::start_download($query_id, $username, $page_url, $nb_sequences);
+        Download::start_cell_download($query_id, $username, $page_url, $nb_cells, 'cell');
 
         return redirect('downloads')->with('download_page', $page_url);
     }

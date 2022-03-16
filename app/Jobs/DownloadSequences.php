@@ -8,6 +8,7 @@ use App\LocalJob;
 use App\Query;
 use App\QueryLog;
 use App\Sequence;
+use App\SequenceCell;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -33,9 +34,10 @@ class DownloadSequences implements ShouldQueue
     protected $download;
     protected $nb_sequences;
     protected $query_id;
+    protected $type;
 
     // create job instance
-    public function __construct($username, $localJobId, $query_id, $url, $nb_sequences, $download)
+    public function __construct($username, $localJobId, $query_id, $url, $nb_sequences, $download, $type)
     {
         $this->username = $username;
         $this->localJobId = $localJobId;
@@ -43,6 +45,7 @@ class DownloadSequences implements ShouldQueue
         $this->url = $url;
         $this->download = $download;
         $this->nb_sequences = $nb_sequences;
+        $this->type = $type;
     }
 
     // execute job
@@ -93,7 +96,13 @@ class DownloadSequences implements ShouldQueue
         $this->download->query_log_id = $query_log_id;
         $this->download->save();
 
-        $t = Sequence::sequencesTSV($filters, $this->username, $this->url, $sample_filter_fields);
+        if ($this->type == 'sequence') {
+            $t = Sequence::sequencesTSV($filters, $this->username, $this->url, $sample_filter_fields);
+        }
+        else if ($this->type == 'cell') {
+            $t = SequenceCell::cellsTSV($filters, $this->username, $this->url, $sample_filter_fields);
+        }
+
         $file_path = $t['public_path'];
         $this->download->file_url = $file_path;
         $this->download->file_size = filesize($t['system_path']);
@@ -140,7 +149,7 @@ class DownloadSequences implements ShouldQueue
                 $t['user_query_admin_page_url'] = config('app.url') . '/admin/queries/' . $query_log_id;
 
                 Mail::send(['text' => 'emails.data_query_error'], $t, function ($message) use ($username) {
-                    $message->to(config('ireceptor.email_support'))->subject('Gateway Sequence Download Incomplete for ' . $username);
+                    $message->to(config('ireceptor.email_support'))->subject('Gateway Download Incomplete for ' . $username);
                 });
             }
         }
@@ -189,7 +198,7 @@ class DownloadSequences implements ShouldQueue
             $t['user_query_admin_page_url'] = config('app.url') . '/admin/queries/' . $query_log_id;
 
             Mail::send(['text' => 'emails.data_query_error'], $t, function ($message) use ($username) {
-                $message->to(config('ireceptor.email_support'))->subject('Gateway Sequence Download Error for ' . $username);
+                $message->to(config('ireceptor.email_support'))->subject('Gateway Download Error for ' . $username);
             });
         }
 
