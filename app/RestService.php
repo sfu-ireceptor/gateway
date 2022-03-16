@@ -1636,7 +1636,7 @@ class RestService extends Model
             }
 
             $query_parameters = [];
-          
+
             // generate JSON query
             $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
 
@@ -1658,7 +1658,6 @@ class RestService extends Model
             }
             $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.json';
             $request_params[] = $t;
-        
         }
 
         $final_response_list = [];

@@ -98,8 +98,7 @@ class DownloadSequences implements ShouldQueue
 
         if ($this->type == 'sequence') {
             $t = Sequence::sequencesTSV($filters, $this->username, $this->url, $sample_filter_fields);
-        }
-        else if ($this->type == 'cell') {
+        } elseif ($this->type == 'cell') {
             $t = SequenceCell::cellsTSV($filters, $this->username, $this->url, $sample_filter_fields);
         }
 

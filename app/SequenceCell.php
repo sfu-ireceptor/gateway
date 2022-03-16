@@ -657,7 +657,6 @@ class SequenceCell
 
                     // TODO tmp hack - bypass check because JSON
                     $t['nb_cells'] = $t['expected_nb_cells'];
-
                 } else {
                     Log::error('rest_service ' . $rest_service_id . ' is missing from $expected_nb_cells_by_rs array');
                     Log::error($expected_nb_cells_by_rs);
