@@ -307,7 +307,14 @@ class Agave
 
     public function getJobStatus($job_id, $token)
     {
-        $url = '/jobs/v2/' . $job_id . '/history?pretty=true';
+        $url = '/jobs/v2/' . $job_id . '/status?pretty=true';
+
+        return $this->doGETRequest($url, $token, true);
+    }
+
+    public function getJob($job_id, $token)
+    {
+        $url = '/jobs/v2/' . $job_id ;
 
         return $this->doGETRequest($url, $token, true);
     }

@@ -39,6 +39,24 @@
 	    </div>
 	@endif
 
+        @if (count($job_summary) > 0)
+            <h2>Job Summary</h2>
+            <div class="summary">
+            @foreach ($job_summary as $summary_line)
+		{!! $summary_line !!}
+            @endforeach
+	    </div>
+	@endif
+
+        @if (count($error_summary) > 0)
+            <h2>Error Summary</h2>
+            <div class="summary">
+            @foreach ($error_summary as $summary_line)
+		{!! $summary_line !!}
+            @endforeach
+	    </div>
+	@endif
+
 	@if (count($files) > 0 && $job->app != 'Third-party analysis')
             <h2>Files</h2>
 	    <div class="result_files">
