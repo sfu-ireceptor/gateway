@@ -314,7 +314,7 @@ class Agave
 
     public function getJob($job_id, $token)
     {
-        $url = '/jobs/v2/' . $job_id ;
+        $url = '/jobs/v2/' . $job_id;
 
         return $this->doGETRequest($url, $token, true);
     }
