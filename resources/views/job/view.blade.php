@@ -57,7 +57,7 @@
 	    </div>
 	@endif
 
-	@if (count($files) > 0 && $job->app != 'Third-party analysis')
+	@if ($filesHTML != '' && $job->app != 'Third-party analysis')
             <h2>Analysis Output</h2>
 	    <div class="result_files">
 		{!! $filesHTML !!}

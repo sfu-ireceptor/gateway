@@ -217,12 +217,25 @@ class JobController extends Controller
 	}
 
         $data['files'] = [];
+        $data['filesHTML'] = '';
 	// Set up the display of the file listing from the output of the analysis, it it
 	// exists. 
         if ($job['input_folder'] != '') {
             if (File::exists($folder)) {
                 $data['files'] = File::allFiles($folder);
-                $data['filesHTML'] = dir_to_html($folder);
+		if (count($data['files']) > 0)
+		{
+                    $data['filesHTML'] = dir_to_html($folder);
+		}
+		else if ($job->agave_status == 'FINISHED') {
+	            // In the case where the job is FINISHED and there are no output files, tell the user
+		    // that the data is no longer available. Note: the current Gateway cleanup removes all 
+		    // the files but the directory structure still exists. So it has to be the count of 
+		    // actual files that is used to determine if the analysis has been removed or not.
+	            $msg = "<b>NOTE</b>: The data from this analysis has been removed as the archive timeout has expired, please re-run this analysis to reproduce the data.<br/><br/>\n";
+	            $msg .= "<em>Remember that these analyses can be resource intensive so please remember to download your analysis results once the analysis is finished if you want to maintain a copy! Re-running analysis jobs is a waste of computational resources and will negatively impact all users of the iReceptor Platform.</em><br/>\n";
+		    $data['filesHTML'] = $msg;
+		}
             }
 	}
 
@@ -239,6 +252,10 @@ class JobController extends Controller
             }
             $data['summary'] = $lines;
         } else {
+            // This code gets executed when the job is actively being run AND
+	    // when the job is finished and the data has been deleted after the
+	    // download time out has expired and the gateway has removed the output.
+	    //
             // Extract the query id from the query URL. They look like this:
             // https:\/\/gateway-analysis.ireceptor.org\/sequences?query_id=8636
             $job_url = $job['url'];
@@ -266,18 +283,21 @@ class JobController extends Controller
             // Replace each newline with a HTML <br/> followed by the newline as
             // we want HTML here.
             $sequence_summary = str_replace("\n", "<br/>\n", $sequence_summary);
-            $s .= $sequence_summary . "<br/>\n";
+            $s .= $sequence_summary . "\n";
+
+	    // Split the data into lines as an array of strings based on the newline character.
             $data['summary'] = explode("\n", $s);
         }
 
 
         // Generate a set of job summary comments for the Tapis part of the job.
         $data['job_summary'] = [];
+	Log::debug('AGAVE ID = ' . strval($job->agave_id));
         if ($job->agave_id != '') {
             $agave_status = json_decode($this->getAgaveJobJSON($job->id));
             $s = '<p><b>Job Parameters</b></p>';
             $s .= 'Number of cores = ' . strval($agave_status->result->processorsPerNode) . '<br/>\n';
-            $s .= 'Maximum run time = ' . strval($agave_status->result->maxHours) . '<br/>\n';
+            $s .= 'Maximum run time = ' . strval($agave_status->result->maxHours) . ' hours<br/>\n';
             $data['job_summary'] = explode('\n', $s);
         }
 
