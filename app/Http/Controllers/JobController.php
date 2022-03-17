@@ -191,40 +191,53 @@ class JobController extends Controller
         $data['job'] = $job;
         Log::debug('JobController::getView: job = ' . json_encode($job, JSON_PRETTY_PRINT));
 
+	// Check to see if we have a folder with Gateway output. If we have gateway
+	// output in just a ZIP file, extract the ZIP file. This should only happen once
+	// the first time this code is run with a Gateway analysis ZIP file without the
+	// unzipped directory.
+        $folder = 'storage/' . $job['input_folder'];
+	if ($job['input_folder'] != '' && File::exists($folder))
+	{
+            // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
+	    // that are used by Gateway Apps. This MUST be the same and probably should be 
+	    // defined as a CONFIG variable some how. For now we hardcode here and in the
+	    // Tapis Gateway Utilities code.
+            $analysis_zipbase = 'gateway_analysis';
+            // If this ZIP file exists and the directory does not, the Gateway needs to 
+            // UNZIP the archive.
+            $zip_file = $folder . '/' . $analysis_zipbase . '.zip';
+            $zip_folder = $folder . '/' . $analysis_zipbase;
+            if (File::exists($zip_file) && ! File::exists($zip_folder)) {
+                Log::debug('JobController::getView - UNZIPing analysis folder');
+                $zip = new ZipArchive();
+                $zip->open($zip_file, ZipArchive::RDONLY);
+                $zip->extractTo($folder);
+                $zip->close();
+            }
+	}
+
         $data['files'] = [];
-        $data['summary'] = [];
-        // Set up the summary information. If we have a file use it, otherwise
-        // use the data from the query parameters.
+	// Set up the display of the file listing from the output of the analysis, it it
+	// exists. 
         if ($job['input_folder'] != '') {
-            $folder = 'storage/' . $job['input_folder'];
             if (File::exists($folder)) {
-                // This is defined in the Gateway Uitlities that are used by Gateway Apps.
-                // If this ZIP file exists and the directory does not, the Gateway will
-                // UNZIP the archive.
-                $analysis_zipbase = 'gateway_analysis';
-                $zip_file = $folder . '/' . $analysis_zipbase . '.zip';
-                $zip_folder = $folder . '/' . $analysis_zipbase;
-                if (File::exists($zip_file) && ! File::exists($zip_folder)) {
-                    Log::debug('JobController::getView - UNZIPing analysis folder');
-                    $zip = new ZipArchive();
-                    $zip->open($zip_file, ZipArchive::RDONLY);
-                    $zip->extractTo($folder);
-                    $zip->close();
-                }
                 $data['files'] = File::allFiles($folder);
                 $data['filesHTML'] = dir_to_html($folder);
             }
-            $info_file = $folder . '/info.txt';
-            if (File::exists($info_file)) {
-                try {
-                    $info_txt = file_get_contents($info_file);
-                    $lines = file($info_file);
-                } catch (Exception $e) {
-                    Log::debug('JobController::getView: Could not open file ' . $info_file);
-                    Log::debug('JobController::getView: Error: ' . $e->getMessage());
-                }
-                $data['summary'] = $lines;
+	}
+
+        // Generate a set of summary information about where the data came from
+        $data['summary'] = [];
+        $info_file = $folder . '/info.txt';
+        if ($job['input_folder'] != '' && File::exists($info_file)) {
+            try {
+                $info_txt = file_get_contents($info_file);
+                $lines = file($info_file);
+            } catch (Exception $e) {
+                Log::debug('JobController::getView: Could not open file ' . $info_file);
+                Log::debug('JobController::getView: Error: ' . $e->getMessage());
             }
+            $data['summary'] = $lines;
         } else {
             // Extract the query id from the query URL. They look like this:
             // https:\/\/gateway-analysis.ireceptor.org\/sequences?query_id=8636
@@ -257,13 +270,11 @@ class JobController extends Controller
             $data['summary'] = explode("\n", $s);
         }
 
+
         // Generate a set of job summary comments for the Tapis part of the job.
         $data['job_summary'] = [];
         if ($job->agave_id != '') {
-            Log::debug('AGAVE Job = ' . $job->agave_id);
             $agave_status = json_decode($this->getAgaveJobJSON($job->id));
-            Log::debug('Status = ' . json_encode($agave_status->result));
-            //Log::debug('Status = ' . $agave_status);
             $s = '<p><b>Job Parameters</b></p>';
             $s .= 'Number of cores = ' . strval($agave_status->result->processorsPerNode) . '<br/>\n';
             $s .= 'Maximum run time = ' . strval($agave_status->result->maxHours) . '<br/>\n';
@@ -274,7 +285,8 @@ class JobController extends Controller
         $data['error_summary'] = [];
         if ($job->agave_status == 'FAILED') {
             $agave_status = json_decode($this->getAgaveJobJSON($job->id));
-            $s = 'TAPIS internal error = ' . strval($agave_status->result->lastStatusMessage) . '<br/>\n';
+	    $s = '<p><b>TAPIS errors</b></p>\n';
+	    $s .= strval($agave_status->result->lastStatusMessage) . '<br/>\n';
             $data['error_summary'] = explode('\n', $s);
         }
 

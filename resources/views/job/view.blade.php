@@ -31,7 +31,7 @@
 	@endif
 
         @if (count($summary) > 0)
-            <h2>Summary</h2>
+            <h2>Data Summary</h2>
             <div class="summary">
             @foreach ($summary as $summary_line)
 		{!! $summary_line !!}
@@ -58,7 +58,7 @@
 	@endif
 
 	@if (count($files) > 0 && $job->app != 'Third-party analysis')
-            <h2>Files</h2>
+            <h2>Analysis Output</h2>
 	    <div class="result_files">
 		{!! $filesHTML !!}
 	    </div>
