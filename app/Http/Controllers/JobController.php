@@ -257,28 +257,26 @@ class JobController extends Controller
             $data['summary'] = explode("\n", $s);
         }
 
-	// Generate a set of job summary comments for the Tapis part of the job.
+        // Generate a set of job summary comments for the Tapis part of the job.
         $data['job_summary'] = [];
-	if ($job->agave_id != '')
-	{
+        if ($job->agave_id != '') {
             Log::debug('AGAVE Job = ' . $job->agave_id);
-	    $agave_status = json_decode($this->getAgaveJobJSON($job->id));
+            $agave_status = json_decode($this->getAgaveJobJSON($job->id));
             Log::debug('Status = ' . json_encode($agave_status->result));
             //Log::debug('Status = ' . $agave_status);
-	    $s = '<p><b>Job Parameters</b></p>';
-	    $s .= 'Number of cores = ' . strval($agave_status->result->processorsPerNode) . '<br/>\n';
-	    $s .= 'Maximum run time = ' . strval($agave_status->result->maxHours) . '<br/>\n';
+            $s = '<p><b>Job Parameters</b></p>';
+            $s .= 'Number of cores = ' . strval($agave_status->result->processorsPerNode) . '<br/>\n';
+            $s .= 'Maximum run time = ' . strval($agave_status->result->maxHours) . '<br/>\n';
             $data['job_summary'] = explode('\n', $s);
-	}
+        }
 
-	// Generate some Error summary information if the job failed
+        // Generate some Error summary information if the job failed
         $data['error_summary'] = [];
-	if ($job->agave_status == 'FAILED')
-	{
-	    $agave_status = json_decode($this->getAgaveJobJSON($job->id));
-	    $s = 'TAPIS internal error = ' . strval($agave_status->result->lastStatusMessage) . '<br/>\n';
+        if ($job->agave_status == 'FAILED') {
+            $agave_status = json_decode($this->getAgaveJobJSON($job->id));
+            $s = 'TAPIS internal error = ' . strval($agave_status->result->lastStatusMessage) . '<br/>\n';
             $data['error_summary'] = explode('\n', $s);
-	}
+        }
 
         $data['steps'] = JobStep::findAllForJob($id);
 
@@ -301,7 +299,7 @@ class JobController extends Controller
     public function getAgaveJobJSON($id)
     {
         $job = Job::where('id', '=', $id)->first();
-	$response = '{}';
+        $response = '{}';
         if ($job != null && $job->agave_id != '') {
             $job_agave_id = $job->agave_id;
             $token = auth()->user()->password;
@@ -309,7 +307,8 @@ class JobController extends Controller
             $agave = new Agave;
             $response = $agave->getJob($job_agave_id, $token);
         }
-	return $response;
+
+        return $response;
     }
 
     // ajax-called from view page
