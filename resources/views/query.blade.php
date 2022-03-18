@@ -94,7 +94,7 @@
 						<th>Service</th>
 						<th>Start</th>
 						<th>URL</th>
-						<th>TSV size</th>
+						<th>Size</th>
 						<th>Duration</th>
 					</tr>
 				</thead>

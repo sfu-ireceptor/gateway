@@ -18,7 +18,7 @@
 			<th>User</th>
 			<th>Queued on</th>
 			<th>Page URL</th>
-			<th>Nb sequences</th>
+			<th>Nb</th>
 			<th>Duration (running)</th>
 			<th>Status</th>
 			<th>Size</th>
