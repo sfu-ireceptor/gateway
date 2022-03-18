@@ -809,15 +809,15 @@ class Sample
     public static function generateChartsData($sample_list, $field_list, $count_field = 'ir_sequence_count')
     {
         $chartsData = [];
-	$chartCount = 1;
+        $chartCount = 1;
         foreach ($field_list as $field) {
-	    $chartTag = 'chart' . strval($chartCount);
+            $chartTag = 'chart' . strval($chartCount);
             $chartsData[$chartTag] = [];
             $title = strtoupper(__('short.' . $field));
             $chartsData[$chartTag]['title'] = $title;
             $chartsData[$chartTag]['data'] = Sample::generateChartData($sample_list, $field, $count_field);
-	    $chartCount++;
-	    Log::debug($chartTag . ' ' . $field . ' ' . $title);
+            $chartCount++;
+            Log::debug($chartTag . ' ' . $field . ' ' . $title);
         }
 
         return $chartsData;
