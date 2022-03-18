@@ -157,6 +157,7 @@ class SequenceCell
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
         $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs);
+        $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list);
 
         $file_stats = self::file_stats($response_list, $expected_nb_cells_by_rs);
 
@@ -188,6 +189,14 @@ class SequenceCell
 
         // did the repertoire query fail for some services?
         foreach ($metadata_response_list as $response) {
+            if ($response['status'] == 'error') {
+                $failed_rs[] = $response['rs'];
+                $is_download_incomplete = true;
+            }
+        }
+
+        // did the expression query fail for some services?
+        foreach ($expression_response_list as $response) {
             if ($response['status'] == 'error') {
                 $failed_rs[] = $response['rs'];
                 $is_download_incomplete = true;
@@ -268,6 +277,7 @@ class SequenceCell
         $t['folder_path'] = $folder_path;
         $t['response_list'] = $response_list;
         $t['metadata_response_list'] = $metadata_response_list;
+        $t['expression_response_list'] = $expression_response_list;
         $t['info_file_path'] = $info_file_path;
         $t['is_download_incomplete'] = $is_download_incomplete;
         $t['download_incomplete_info'] = $download_incomplete_info;
@@ -283,13 +293,14 @@ class SequenceCell
         $folder_path = $t['folder_path'];
         $response_list = $t['response_list'];
         $metadata_response_list = $t['metadata_response_list'];
+        $expression_response_list = $t['expression_response_list'];
         $info_file_path = $t['info_file_path'];
         $is_download_incomplete = $t['is_download_incomplete'];
         $download_incomplete_info = $t['download_incomplete_info'];
         $file_stats = $t['file_stats'];
 
         // zip files
-        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path);
+        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $expression_response_list);
 
         // delete files
         self::delete_files($folder_path);
@@ -590,12 +601,14 @@ class SequenceCell
         return $info_file_path;
     }
 
-    public static function zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path)
+    public static function zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $expression_response_list)
     {
         $zipPath = $folder_path . '.zip';
         Log::info('Zip files to ' . $zipPath);
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::CREATE);
+        
+        // cell data
         foreach ($response_list as $response) {
             if (isset($response['data']['file_path'])) {
                 $file_path = $response['data']['file_path'];
@@ -603,6 +616,8 @@ class SequenceCell
                 $zip->addFile($file_path, basename($file_path));
             }
         }
+
+        // repertoire data
         foreach ($metadata_response_list as $response) {
             if (isset($response['data']['file_path'])) {
                 $file_path = $response['data']['file_path'];
@@ -620,7 +635,19 @@ class SequenceCell
                 $zip->addFile($file_path, basename($file_path));
             }
         }
+
+        // expression data
+        foreach ($expression_response_list as $response) {
+            if (isset($response['data']['file_path'])) {
+                $file_path = $response['data']['file_path'];
+                Log::debug('Adding to ZIP: ' . $file_path);
+                $zip->addFile($file_path, basename($file_path));
+            }
+        }
+        
+        // info.txt
         $zip->addFile($info_file_path, basename($info_file_path));
+        
         $zip->close();
 
         return $zipPath;

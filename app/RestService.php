@@ -1670,6 +1670,76 @@ class RestService extends Model
         return $final_response_list;
     }
 
+    public static function expression_data($filters, $folder_path, $username = '', $cell_response_list)
+    {
+        $now = time();
+
+        // build list of services to query
+        $rs_list = [];
+        foreach ($cell_response_list as $response) {
+            $rs_list[] = $response['rs'];
+        }
+
+        // count services in each service group
+        $group_list = [];
+        foreach ($rs_list as $rs) {
+            $group = $rs->rest_service_group_code;
+            if ($group) {
+                if (! isset($group_list[$group])) {
+                    $group_list[$group] = 0;
+                }
+                $group_list[$group] += 1;
+            }
+        }
+
+        // prepare request parameters for each service
+        $request_params = [];
+        $request_params_chunking = [];
+
+        $group_list_count = [];
+        foreach ($rs_list as $rs) {
+            $rs_filters = [];
+            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+
+            // rename sample id filter for this service:
+            // ir_project_sample_id_list_2 -> repertoire_id
+            $rs_filters['repertoire_id'] = $filters[$sample_id_list_key];
+
+            $query_parameters = [];
+
+            // generate JSON query
+            $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
+
+            $t = [];
+            $t['rs'] = $rs;
+            $t['url'] = $rs->url . 'expression';
+            $t['params'] = $rs_filters_json;
+            $t['timeout'] = config('ireceptor.service_file_request_timeout');
+
+            // add number suffix for rest services belonging to a group
+            $file_suffix = '';
+            $group = $rs->rest_service_group_code;
+            if ($group && $group_list[$group] > 1) {
+                if (! isset($group_list_count[$group])) {
+                    $group_list_count[$group] = 0;
+                }
+                $group_list_count[$group] += 1;
+                $file_suffix = '_part' . $group_list_count[$group];
+            }
+            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '-gex.json';
+            $request_params[] = $t;
+        }
+
+        $final_response_list = [];
+        // do requests, write data to files
+        if (count($request_params) > 0) {
+            Log::info('Do download requests...');
+            $final_response_list = self::doRequests($request_params);
+        }
+
+        return $final_response_list;
+    }
+
     // do requests (in parallel)
     public static function doRequests($request_params)
     {
