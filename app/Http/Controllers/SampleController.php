@@ -361,8 +361,8 @@ class SampleController extends Controller
 
         // create copy of filters for display
         $filter_fields = [];
-	$ontology_fields = ['tissue_id', 'organism_id', 'study_type_id',
-	                    'disease_diagnosis_id', 'cell_subset_id'];
+        $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id',
+            'disease_diagnosis_id', 'cell_subset_id', ];
         foreach ($params as $k => $v) {
             if ($v) {
                 if (is_array($v)) {
