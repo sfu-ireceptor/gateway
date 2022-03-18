@@ -27,11 +27,11 @@ class HomeController extends Controller
         $data['rest_service_list'] = $sample_data['rs_list'];
 
         // cell type
-        $cell_type_list = [];
+        $cell_type_ontology_list = [];
         foreach ($metadata['cell_subset'] as $v) {
-            $cell_type_list[$v] = $v;
+            $cell_type_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
-        $data['cell_type_list'] = $cell_type_list;
+        $data['cell_type_ontology_list'] = $cell_type_ontology_list;
 
         // organism ontology info
         $subject_organism_ontology_list = [];

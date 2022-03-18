@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class SampleController extends Controller
 {
-    protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type_id', 'study_group_description', 'lab_name', 'subject_id', 'organism_id', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis_id', 'sample_id', 'pcr_target_locus', 'cell_subset', 'tissue_id', 'template_class', 'cell_phenotype', 'sequencing_platform'];
+    protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type_id', 'study_group_description', 'lab_name', 'subject_id', 'organism_id', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis_id', 'sample_id', 'pcr_target_locus', 'cell_subset_id', 'tissue_id', 'template_class', 'cell_phenotype', 'sequencing_platform'];
     protected $extra_fields = [];
 
     public function __construct()
@@ -156,9 +156,9 @@ class SampleController extends Controller
         }
 
         // cell type
-        $cell_type_list = [];
+        $cell_type_ontology_list = [];
         foreach ($metadata['cell_subset'] as $v) {
-            $cell_type_list[$v] = $v;
+            $cell_type_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
         // tissue ontology info
@@ -189,7 +189,7 @@ class SampleController extends Controller
         $data['subject_organism_ontology_list'] = $subject_organism_ontology_list;
         $data['subject_disease_diagnosis_ontology_list'] = $subject_disease_diagnosis_ontology_list;
         $data['pcr_target_locus_list'] = $pcr_target_locus_list;
-        $data['cell_type_list'] = $cell_type_list;
+        $data['cell_type_ontology_list'] = $cell_type_ontology_list;
         $data['sample_tissue_ontology_list'] = $sample_tissue_ontology_list;
         $data['dna_type_list'] = $dna_type_list;
 
@@ -361,7 +361,8 @@ class SampleController extends Controller
 
         // create copy of filters for display
         $filter_fields = [];
-        $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id', 'disease_diagnosis_id'];
+	$ontology_fields = ['tissue_id', 'organism_id', 'study_type_id',
+	                    'disease_diagnosis_id', 'cell_subset_id'];
         foreach ($params as $k => $v) {
             if ($v) {
                 if (is_array($v)) {

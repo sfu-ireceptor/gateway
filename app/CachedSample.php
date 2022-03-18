@@ -40,13 +40,13 @@ class CachedSample extends Model
         $t = [];
 
         // Distinct values for simple sample fields
-        $fields = ['template_class', 'ethnicity', 'sex', 'pcr_target_locus', 'cell_subset'];
+        $fields = ['template_class', 'ethnicity', 'sex', 'pcr_target_locus'];
         foreach ($fields as $field) {
             $t[$field] = self::distinctValues($field);
         }
 
         // Distinct values for ontology fields
-        $ontology_fields = ['study_type', 'tissue', 'organism', 'disease_diagnosis'];
+        $ontology_fields = ['study_type', 'tissue', 'organism', 'disease_diagnosis', 'cell_subset'];
         foreach ($ontology_fields as $field) {
             $t[$field] = self::distinctOntologyValuesGrouped($field);
         }
