@@ -39,10 +39,16 @@ class CachedSample extends Model
     {
         $t = [];
 
-        // distinct values for simple sample fields
-        $fields = ['study_type', 'template_class', 'ethnicity', 'tissue', 'sex', 'pcr_target_locus', 'cell_subset', 'organism', 'disease_diagnosis'];
+        // Distinct values for simple sample fields
+        $fields = ['template_class', 'ethnicity', 'sex', 'pcr_target_locus', 'cell_subset'];
         foreach ($fields as $field) {
             $t[$field] = self::distinctValues($field);
+        }
+
+        // Distinct values for ontology fields
+        $ontology_fields = ['study_type', 'tissue', 'organism', 'disease_diagnosis'];
+        foreach ($ontology_fields as $field) {
+            $t[$field] = self::distinctOntologyValuesGrouped($field);
         }
 
         // distinct values for combined sample fields (ex: project_id/project_name)
@@ -98,6 +104,40 @@ class CachedSample extends Model
         // remove useless '_id' key
         foreach ($l as $k => $v) {
             unset($v['_id']);
+            $l[$k] = $v;
+        }
+
+        return $l;
+    }
+
+    public static function distinctOntologyValuesGrouped($field)
+    {
+        // We are passed in the base field. Ontology fields have
+        // the label in the base field and the ID in the base field
+        // with an _id on the end.
+        $id_field = $field . '_id';
+        $label_field = $field;
+
+        // Build a query, group by the ontology id_field, no nulls
+        $l = self::groupBy([$id_field]);
+        $l = $l->whereNotNull($id_field);
+        $l = $l->select([$id_field, $label_field]);
+
+        // do query
+        $l = $l->get();
+        $l = $l->toArray();
+
+        // We want to restructure the ontology metadata fields
+        foreach ($l as $k => $v) {
+            // Add the field, ID, and label to the metadata
+            $v['field'] = $field;
+            $v['id'] = $v[$id_field];
+            $v['label'] = $v[$label_field];
+            // remove useless '_id' key and the original fields
+            unset($v['_id']);
+            unset($v[$id_field]);
+            unset($v[$label_field]);
+            // Store the new info in the array.
             $l[$k] = $v;
         }
 

@@ -33,13 +33,12 @@ class HomeController extends Controller
         }
         $data['cell_type_list'] = $cell_type_list;
 
-        // organism
-        $subject_organism_list = [];
-        $subject_organism_list[''] = 'Any';
+        // organism ontology info
+        $subject_organism_ontology_list = [];
         foreach ($metadata['organism'] as $v) {
-            $subject_organism_list[$v] = $v;
+            $subject_organism_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
-        $data['subject_organism_list'] = $subject_organism_list;
+        $data['subject_organism_ontology_list'] = $subject_organism_ontology_list;
 
         // clear any lingering form data
         $request->session()->forget('_old_input');
