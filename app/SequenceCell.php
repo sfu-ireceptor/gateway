@@ -607,7 +607,7 @@ class SequenceCell
         Log::info('Zip files to ' . $zipPath);
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::CREATE);
-        
+
         // cell data
         foreach ($response_list as $response) {
             if (isset($response['data']['file_path'])) {
@@ -644,10 +644,10 @@ class SequenceCell
                 $zip->addFile($file_path, basename($file_path));
             }
         }
-        
+
         // info.txt
         $zip->addFile($info_file_path, basename($info_file_path));
-        
+
         $zip->close();
 
         return $zipPath;
