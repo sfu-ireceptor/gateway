@@ -26,14 +26,14 @@
 
 				<div class="charts">
 					<div class="row">
-						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['study_type']) !!}"></div>
-						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['organism']) !!}"></div>
-						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['disease_diagnosis']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart1']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart2']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart3']) !!}"></div>
 					</div>
 					<div class="row">
-						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['tissue']) !!}"></div>
-						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['pcr_target_locus']) !!}"></div>
-						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['template_class']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart4']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart5']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart6']) !!}"></div>
 					</div>
 				</div>
 
