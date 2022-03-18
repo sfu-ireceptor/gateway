@@ -110,7 +110,8 @@ class SequenceController extends Controller
             $sample_filters = Query::getParams($sample_query_id);
 
             $sample_filter_fields = [];
-            $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id', 'disease_diagnosis_id'];
+	    $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id',
+		                'disease_diagnosis_id', 'cell_subset_id'];
             foreach ($sample_filters as $k => $v) {
                 if ($v) {
                     if (is_array($v)) {
@@ -301,8 +302,8 @@ class SequenceController extends Controller
 
         // sample filters
         $sample_filters = [];
-        if (isset($filters['cell_subset'])) {
-            $sample_filters['cell_subset'] = $filters['cell_subset'];
+        if (isset($filters['cell_subset_id'])) {
+            $sample_filters['cell_subset_id'] = $filters['cell_subset_id'];
         }
         if (isset($filters['organism_id'])) {
             $sample_filters['organism_id'] = $filters['organism_id'];
@@ -422,7 +423,8 @@ class SequenceController extends Controller
 
         // create copy of current filters for display
         $filter_fields = [];
-        $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id', 'disease_diagnosis_id'];
+	$ontology_fields = ['tissue_id', 'organism_id', 'study_type_id',
+	                    'disease_diagnosis_id', 'cell_subset_id'];
         foreach ($filters as $k => $v) {
             if ($v) {
                 if (is_array($v)) {
