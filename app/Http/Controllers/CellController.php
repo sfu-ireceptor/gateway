@@ -76,8 +76,15 @@ class CellController extends Controller
 
         $data['cell_list'] = $cell_data['items'];
 
-        $charts_fields = ['study_title', 'subject_id', 'sample_id', 'disease_diagnosis', 'tissue', 'pcr_target_locus'];
-        $data['charts_data'] = Sample::generateChartsData($cell_data['summary'], $charts_fields, 'ir_filtered_cell_count');
+        // Fields we want to graph. The UI/blade expects six fields
+        $charts_fields = ['study_title', 'subject_id', 'sample_id', 'disease_diagnosis_id', 'tissue_id', 'pcr_target_locus'];
+        // Mapping of fields to display as labels on the graph for those that need
+        // mappings. These are usually required for ontology fields where we want
+        // to aggregate on the ontology ID but display the ontology label.
+        $field_map = ['disease_diagnosis_id' => 'disease_diagnosis',
+                      'tissue_id' => 'tissue'];
+
+        $data['charts_data'] = Sample::generateChartsData($cell_data['summary'], $charts_fields, $field_map, 'ir_filtered_cell_count');
 
         $data['rest_service_list'] = $cell_data['rs_list'];
         $data['rest_service_list_no_response'] = $cell_data['rs_list_no_response'];
