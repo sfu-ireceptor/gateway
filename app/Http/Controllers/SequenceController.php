@@ -83,9 +83,8 @@ class SequenceController extends Controller
         // mappings. These are usually required for ontology fields where we want
         // to aggregate on the ontology ID but display the ontology label.
         $field_map = ['disease_diagnosis_id' => 'disease_diagnosis',
-                      'tissue_id' => 'tissue'];
+            'tissue_id' => 'tissue', ];
         $data['charts_data'] = Sample::generateChartsData($sequence_data['summary'], $charts_fields, $field_map, 'ir_filtered_sequence_count');
-
 
         $data['rest_service_list'] = $sequence_data['rs_list'];
         $data['rest_service_list_no_response'] = $sequence_data['rs_list_no_response'];
@@ -375,7 +374,7 @@ class SequenceController extends Controller
         // mappings. These are usually required for ontology fields where we want
         // to aggregate on the ontology ID but display the ontology label.
         $field_map = ['disease_diagnosis_id' => 'disease_diagnosis',
-                      'tissue_id' => 'tissue'];
+            'tissue_id' => 'tissue', ];
         $data['charts_data'] = Sample::generateChartsData($sequence_data['summary'], $charts_fields, $field_map, 'ir_filtered_sequence_count');
 
         $data['rest_service_list'] = $sequence_data['rs_list'];
