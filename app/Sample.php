@@ -765,13 +765,13 @@ class Sample
 
     public static function generateChartData($sample_list, $stat_field, $label_field, $count_field = 'ir_sequence_count')
     {
-	// Keep track of the counts for each field value
+        // Keep track of the counts for each field value
         $valuesCounts = [];
-	// Keep track of the label to be used for each field value
+        // Keep track of the label to be used for each field value
         $valuesLabels = [];
-	$valuesLabels['None'] = 'None';
+        $valuesLabels['None'] = 'None';
 
-	// Iterate over each sample
+        // Iterate over each sample
         foreach ($sample_list as $sample) {
             $sample = json_decode(json_encode($sample), true);
 
@@ -784,43 +784,45 @@ class Sample
             if (isset($sample[$stat_field]) && $sample[$stat_field] != null) {
                 // If the field has a non-null value, get the value for the field for this sample
                 $value = $sample[$stat_field];
-		// If our array of counts has not seen this field value yet, initialize the
-		// count to 0. If we have seen this field value, then this array element 
-		// already has a value
+                // If our array of counts has not seen this field value yet, initialize the
+                // count to 0. If we have seen this field value, then this array element
+                // already has a value
                 if (! isset($valuesCounts[$value])) {
                     $valuesCounts[$value] = 0;
                 }
-		// Increment the total count for this value by the number of sequences.
+                // Increment the total count for this value by the number of sequences.
                 $valuesCounts[$value] += $nb_sequences;
 
-		// Get a label mapping for this field value.
-		if (!isset($valuesLabels[$value]))
-		    if (isset($sample[$label_field]) && $sample[$label_field] != null)
-		        $valuesLabels[$value] = $sample[$label_field];
-            }
-            else {
-		// If the field doesn't exist in this sample, we still want to keep
-		// track of the number of sequence where there was no value for the field.
-		// We use the "None" tag for this.
+                // Get a label mapping for this field value.
+                if (! isset($valuesLabels[$value])) {
+                    if (isset($sample[$label_field]) && $sample[$label_field] != null) {
+                        $valuesLabels[$value] = $sample[$label_field];
+                    }
+                }
+            } else {
+                // If the field doesn't exist in this sample, we still want to keep
+                // track of the number of sequence where there was no value for the field.
+                // We use the "None" tag for this.
                 if (! isset($valuesCounts['None'])) {
                     $valuesCounts['None'] = 0;
                 }
                 $valuesCounts['None'] += $nb_sequences;
-		// Get a label mapping for this 
-		if (!isset($valuesLabels['None']))
-		    $valuesLabels['None'] = 'None';
+                // Get a label mapping for this
+                if (! isset($valuesLabels['None'])) {
+                    $valuesLabels['None'] = 'None';
+                }
             }
-
         }
 
         // convert counts to a list of count objects
         $l = [];
         foreach ($valuesCounts as $val => $count) {
             $o = new \stdClass();
-	    if (array_key_exists($val, $valuesLabels))
+            if (array_key_exists($val, $valuesLabels)) {
                 $o->name = $valuesLabels[$val];
-	    else
-		$o->name = $val;
+            } else {
+                $o->name = $val;
+            }
             $o->count = $count;
             $l[] = $o;
         }
@@ -830,24 +832,24 @@ class Sample
 
     public static function generateChartsData($sample_list, $field_list, $field_map, $count_field = 'ir_sequence_count')
     {
-	// Create an empty array, and keep track of which chart we are doing
+        // Create an empty array, and keep track of which chart we are doing
         $chartsData = [];
-	
+
         for ($chartCount = 0; $chartCount < count($field_list); $chartCount++) {
-	    // Get the field and the label
-	    $stat_field = $field_list[$chartCount];
-	    if (array_key_exists($stat_field, $field_map)) {
-	        $label_field = $field_map[$stat_field];
-	    } else {
-		$label_field = $stat_field;
-	    }
-	    // The tag for the chart from a UI perspective is chartN
-            $chartTag = 'chart' . strval($chartCount+1);
+            // Get the field and the label
+            $stat_field = $field_list[$chartCount];
+            if (array_key_exists($stat_field, $field_map)) {
+                $label_field = $field_map[$stat_field];
+            } else {
+                $label_field = $stat_field;
+            }
+            // The tag for the chart from a UI perspective is chartN
+            $chartTag = 'chart' . strval($chartCount + 1);
             $chartsData[$chartTag] = [];
-	    // Title is short, human readable title, all upper case
+            // Title is short, human readable title, all upper case
             $title = strtoupper(__('short.' . $label_field));
             $chartsData[$chartTag]['title'] = $title;
-	    // Get the data for this field.
+            // Get the data for this field.
             $chartsData[$chartTag]['data'] = Sample::generateChartData($sample_list, $stat_field, $label_field, $count_field);
             Log::debug($chartTag . ' ' . $stat_field . ' ' . $title);
         }

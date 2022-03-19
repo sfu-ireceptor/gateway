@@ -82,7 +82,7 @@ class CellController extends Controller
         // mappings. These are usually required for ontology fields where we want
         // to aggregate on the ontology ID but display the ontology label.
         $field_map = ['disease_diagnosis_id' => 'disease_diagnosis',
-                      'tissue_id' => 'tissue'];
+            'tissue_id' => 'tissue', ];
 
         $data['charts_data'] = Sample::generateChartsData($cell_data['summary'], $charts_fields, $field_map, 'ir_filtered_cell_count');
 
