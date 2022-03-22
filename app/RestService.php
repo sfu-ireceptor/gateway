@@ -1656,7 +1656,7 @@ class RestService extends Model
                 $group_list_count[$group] += 1;
                 $file_suffix = '_part' . $group_list_count[$group];
             }
-            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.json';
+            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '-cell.json';
             $request_params[] = $t;
         }
 
