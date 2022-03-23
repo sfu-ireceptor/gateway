@@ -5,12 +5,11 @@
 
 @section('content')
 
-<div class="banner_title cells">
+<div class="container-fluid cell_container">
+
 	<h1>2. Cell Search</h1>
 	<p class="sh1">Filter by cell and cell annotation feature</p>
-</div>
 
-<div class="container-fluid cell_container">
 	<div class="row">		
 		<div class="col-md-2 filters">
 
