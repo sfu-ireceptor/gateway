@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class SampleController extends Controller
 {
-    protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type', 'study_group_description', 'lab_name', 'subject_id', 'organism', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis', 'sample_id', 'pcr_target_locus', 'cell_subset', 'tissue', 'template_class', 'cell_phenotype', 'sequencing_platform'];
+    protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type_id', 'study_group_description', 'lab_name', 'subject_id', 'organism_id', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis_id', 'sample_id', 'pcr_target_locus', 'cell_subset_id', 'tissue_id', 'template_class', 'cell_phenotype', 'sequencing_platform'];
     protected $extra_fields = [];
 
     public function __construct()
@@ -125,10 +125,10 @@ class SampleController extends Controller
         // get data
         $metadata = Sample::metadata($username);
 
-        // study type
-        $study_type_list = [];
+        // study type ontology info
+        $study_type_ontology_list = [];
         foreach ($metadata['study_type'] as $v) {
-            $study_type_list[$v] = $v;
+            $study_type_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
         // gender
@@ -137,10 +137,10 @@ class SampleController extends Controller
             $subject_gender_list[$v] = $v;
         }
 
-        // organism
-        $subject_organism_list = [];
+        // organism ontology info
+        $subject_organism_ontology_list = [];
         foreach ($metadata['organism'] as $v) {
-            $subject_organism_list[$v] = $v;
+            $subject_organism_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
         // ethnicity
@@ -156,15 +156,15 @@ class SampleController extends Controller
         }
 
         // cell type
-        $cell_type_list = [];
+        $cell_type_ontology_list = [];
         foreach ($metadata['cell_subset'] as $v) {
-            $cell_type_list[$v] = $v;
+            $cell_type_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
-        // sample source
-        $sample_source_list = [];
+        // tissue ontology info
+        $sample_tissue_ontology_list = [];
         foreach ($metadata['tissue'] as $v) {
-            $sample_source_list[$v] = $v;
+            $sample_tissue_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
         // dna type
@@ -173,24 +173,24 @@ class SampleController extends Controller
             $dna_type_list[$v] = $v;
         }
 
-        // disease_diagnosis
-        $subject_disease_diagnosis_list = [];
+        // disease_diagnosis ontology info
+        $subject_disease_diagnosis_ontology_list = [];
         foreach ($metadata['disease_diagnosis'] as $v) {
-            $subject_disease_diagnosis_list[$v] = $v;
+            $subject_disease_diagnosis_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
         // data
         $data = [];
         $data['page_uri'] = $page_uri;
 
-        $data['study_type_list'] = $study_type_list;
+        $data['study_type_ontology_list'] = $study_type_ontology_list;
         $data['subject_gender_list'] = $subject_gender_list;
         $data['subject_ethnicity_list'] = $subject_ethnicity_list;
-        $data['subject_organism_list'] = $subject_organism_list;
-        $data['subject_disease_diagnosis_list'] = $subject_disease_diagnosis_list;
+        $data['subject_organism_ontology_list'] = $subject_organism_ontology_list;
+        $data['subject_disease_diagnosis_ontology_list'] = $subject_disease_diagnosis_ontology_list;
         $data['pcr_target_locus_list'] = $pcr_target_locus_list;
-        $data['cell_type_list'] = $cell_type_list;
-        $data['sample_source_list'] = $sample_source_list;
+        $data['cell_type_ontology_list'] = $cell_type_ontology_list;
+        $data['sample_tissue_ontology_list'] = $sample_tissue_ontology_list;
         $data['dna_type_list'] = $dna_type_list;
 
         /******************************************************
@@ -276,8 +276,19 @@ class SampleController extends Controller
         $sample_list = $sample_data['items'];
         $samples_with_sequences = Sample::sort_sample_list($sample_list, $sort_column, $sort_order);
 
-        $sequence_charts_fields = ['study_type', 'organism', 'disease_diagnosis', 'tissue', 'pcr_target_locus', 'template_class'];
-        $data['sequence_charts_data'] = Sample::generateChartsData($samples_with_sequences, $sequence_charts_fields, 'ir_' . $type_full . '_count');
+        // Fields we want to graph. The UI/blade expects six fields
+        $charts_fields = ['study_type_id', 'organism_id', 'disease_diagnosis_id',
+            'tissue_id', 'pcr_target_locus', 'template_class', ];
+        // Mapping of fields to display as labels on the graph for those that need
+        // mappings. These are usually required for ontology fields where we want
+        // to aggregate on the ontology ID but display the ontology label.
+        $field_map = ['study_type_id' => 'study_type',
+            'organism_id' =>  'organism',
+            'disease_diagnosis_id' => 'disease_diagnosis',
+            'tissue_id' => 'tissue', ];
+        $data['charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map);
+
+        $data['sequence_charts_data'] = Sample::generateChartsData($samples_with_sequences, $charts_fields, $field_map, 'ir_' . $type_full . '_count');
 
         // keep only samples to display on the current page
         $samples_with_sequences = array_slice($samples_with_sequences, ($page - 1) * $max_per_page, $max_per_page);
@@ -361,11 +372,40 @@ class SampleController extends Controller
 
         // create copy of filters for display
         $filter_fields = [];
+        $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id',
+            'disease_diagnosis_id', 'cell_subset_id', ];
         foreach ($params as $k => $v) {
             if ($v) {
                 if (is_array($v)) {
-                    $filter_fields[$k] = implode(', ', $v);
+                    // If the field is an ontology field, we want the filter fields to
+                    // have both label and ID.
+                    if (in_array($k, $ontology_fields)) {
+                        // Get the base field (without the _id part). This is how the
+                        // metadata is tagged.
+                        $base_field = substr($k, 0, strlen($k) - 3);
+                        $filter_info = '';
+                        // For each element in the filter parameters... This is essentially
+                        // the list of filters that are set.
+                        foreach ($v as $element) {
+                            // Get the cahced metadata for the field so we can build a label/id string
+                            $field_metadata = $metadata[$base_field];
+                            // Find the element in the metadata and build the filter label string.
+                            foreach ($field_metadata as $field_info) {
+                                if ($field_info['id'] == $element) {
+                                    if ($filter_info != '') {
+                                        $filter_info = $filter_info . ', ';
+                                    }
+                                    $filter_info = $filter_info . $field_info['label'] . ' (' . $field_info['id'] . ')';
+                                }
+                            }
+                            $filter_fields[$k] = $filter_info;
+                        }
+                    } else {
+                        // If it is a normal array filter, then combine the stings
+                        $filter_fields[$k] = implode(', ', $v);
+                    }
                 } else {
+                    // If it is a simple string filter, then use the value directly.
                     $filter_fields[$k] = $v;
                 }
             }

@@ -53,7 +53,7 @@
 							    <div class="form-group">
 									{{ Form::label('study_type', __('short.study_type')) }}
 									@include('help', ['id' => 'study_type'])
-									{{ Form::select('study_type[]', $study_type_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+									{{ Form::select('study_type_id[]', $study_type_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 							    <div class="form-group">
@@ -93,7 +93,7 @@
 							    <div class="form-group">
 									{{ Form::label('organism', __('short.organism')) }}
 									@include('help', ['id' => 'organism'])
-									{{ Form::select('organism[]', $subject_organism_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+									{{ Form::select('organism_id[]', $subject_organism_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 								<div class="form-group">
@@ -127,7 +127,7 @@
 							    <div class="form-group">
 									{{ Form::label('disease_diagnosis', __('short.disease_diagnosis')) }}
 									@include('help', ['id' => 'disease_diagnosis'])
-									{{ Form::select('disease_diagnosis[]', $subject_disease_diagnosis_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+									{{ Form::select('disease_diagnosis_id[]', $subject_disease_diagnosis_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 								<p class="button_container">
@@ -162,13 +162,13 @@
 								<div class="form-group">
 									{{ Form::label('cell_subset', __('short.cell_subset')) }}
 									@include('help', ['id' => 'cell_subset'])
-								    {{ Form::select('cell_subset[]', $cell_type_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+								    {{ Form::select('cell_subset_id[]', $cell_type_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 							    <div class="form-group">
 									{{ Form::label('tissue', __('short.tissue')) }}
 									@include('help', ['id' => 'tissue'])
-								    {{ Form::select('tissue[]', $sample_source_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+								    {{ Form::select('tissue_id[]', $sample_tissue_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 							    <div class="form-group">
@@ -345,12 +345,12 @@
 
 									<div class="charts">
 										<div class="row">
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['study_type']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['organism']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['disease_diagnosis']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['tissue']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['pcr_target_locus']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['template_class']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart1']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart2']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart3']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart4']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart5']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart6']) !!}"></div>
 										</div>
 									</div>
 
@@ -627,12 +627,12 @@
 
 									<div class="charts">
 										<div class="row">
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['study_type']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['organism']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['disease_diagnosis']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['tissue']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['pcr_target_locus']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['template_class']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart1']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart2']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart3']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart4']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart5']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart6']) !!}"></div>
 										</div>
 									</div>
 									
@@ -908,12 +908,12 @@
 
 									<div class="charts">
 										<div class="row">
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['study_type']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['organism']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['disease_diagnosis']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['tissue']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['pcr_target_locus']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['template_class']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart1']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart2']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart3']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart4']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart5']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart6']) !!}"></div>
 										</div>
 									</div>
 									
