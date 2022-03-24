@@ -659,7 +659,7 @@ class RestService extends Model
         // clean filters
         $filters = self::clean_filters($filters);
 
-        // hack: use cached total counts if there are no sequence filters
+        // hack: use cached total counts if there are no filters
         if (count($filters) == 0 && $use_cache_if_possible) {
             $counts_by_rs = [];
             foreach ($sample_id_list_by_rs as $rs_id => $sample_id_list) {
@@ -668,6 +668,11 @@ class RestService extends Model
             }
 
             return $counts_by_rs;
+        }
+
+        $query_type = 'cell';
+        if(isset($filters['property_expression'])) {
+            $query_type = 'expression';
         }
 
         // prepare request parameters for each service
@@ -694,7 +699,7 @@ class RestService extends Model
 
             $rs = self::find($rs_id);
             $t['rs'] = $rs;
-            $t['url'] = $rs->url . 'cell';
+            $t['url'] = $rs->url . $query_type;
 
             $t['params'] = $filters_json;
             $t['timeout'] = config('ireceptor.service_request_timeout');
@@ -926,7 +931,11 @@ class RestService extends Model
         } elseif ($type == 'clone') {
             $base_uri = 'clone';
         } else {
-            $base_uri = 'cell';
+            $query_type = 'cell';
+            if(isset($filters['property_expression'])) {
+                $query_type = 'expression';
+            }
+            $base_uri = $query_type;
         }
 
         Log::debug('We have reponses for repos with id:');
@@ -1012,9 +1021,131 @@ class RestService extends Model
 
         if ($type == 'cell') {
             foreach ($response_list as $i => $response) {
-                if (isset($response['data']->Cell)) {
+                $rs = $response['rs'];                
 
-                    // 1. add chain 1 and chain 2
+                if (isset($response['data']->GeneExpression)) {
+                    // add cell data
+                    $request_params = [];
+                    foreach ($response['data']->GeneExpression as $t) {
+                        $cell_id = $t->cell_id;
+                        $data_processing_id = $t->data_processing_id;
+
+                        $filters = [];
+                        $filters['data_processing_id_cell'] = $data_processing_id;
+                        $filters['cell_id_cell'] = $cell_id;
+
+                        // prepare parameters for each service
+                        $t = [];
+
+                        $t['rs'] = $rs;
+                        $t['url'] = $rs->url . 'cell';
+
+                        $params = [];
+                        // $params['fields'] = ['cell_id', 'value', 'ir_property_label_expression'];
+
+                        $filters_json = self::generate_json_query($filters, $params);
+                        $t['params'] = $filters_json;
+
+                        $request_params[] = $t;
+                    }
+
+                    $response_list_cells = self::doRequests($request_params);
+
+                    // add expression data to cell data
+                    $cell_list_merged = [];
+                    foreach ($response['data']->GeneExpression as $t) {
+                        $cell_id = $t->cell_id;
+                        $data_processing_id = $t->data_processing_id;
+
+                        // dd($t);
+                        foreach ($response_list_cells as $response_cell) {
+                            $cell_list = $response_cell['data']->Cell;
+                            $cell_id_cell = $cell_list[0]->cell_id;
+
+                            if ($cell_id == $cell_id_cell) {
+                                $cell_data = $response_cell['data']->Cell[0];
+                                $t2 = (object) array_merge((array) $t, (array) $cell_data);
+                                $t = $t2;
+
+                                break;
+                            }
+                        }
+
+                        $cell_list_merged[] = $t;
+                    }
+
+                    $response['data']->Cell = $cell_list_merged;
+                }
+                
+                if (isset($response['data']->Cell)) {
+                    // add expression data
+                    $request_params = [];
+                    foreach ($response['data']->Cell as $t) {
+                        $cell_id = $t->cell_id;
+                        $data_processing_id = $t->data_processing_id;
+
+                        $filters = [];
+                        $filters['data_processing_id_cell'] = $data_processing_id;
+                        $filters['cell_id_cell'] = $cell_id;
+
+                        // prepare parameters for each service
+                        $t = [];
+
+                        $t['rs'] = $rs;
+                        $t['url'] = $rs->url . 'expression';
+
+                        $params = [];
+                        // $params['fields'] = ['cell_id', 'value', 'ir_property_label_expression'];
+
+                        $filters_json = self::generate_json_query($filters, $params);
+                        $t['params'] = $filters_json;
+
+                        $request_params[] = $t;
+                    }
+
+                    $response_list_expressions = self::doRequests($request_params);
+
+                    // add expression data to cell data
+                    $cell_list_merged = [];
+                    foreach ($response['data']->Cell as $t) {
+                        $cell_id = $t->cell_id;
+                        $data_processing_id = $t->data_processing_id;
+
+                        foreach ($response_list_expressions as $response_expression) {
+                            $expression_list = $response_expression['data']->GeneExpression;
+                            $cell_id_expression = $expression_list[0]->cell_id;
+
+                            if ($cell_id == $cell_id_expression) {
+                                // sort by "value"
+                                $expression_list_sorted = $expression_list;
+                                $sort = 'value';
+                                usort($expression_list_sorted, function ($a, $b) use ($sort) {
+                                    return $b->{$sort} >= $a->{$sort};
+                                });
+
+                                $expression_list_sorted = array_slice($expression_list_sorted, 0, 4);
+
+                                $expression_label_list = [];
+                                foreach ($expression_list_sorted as $expression) {
+                                    if (isset($expression->ir_property_label_expression)) {
+                                        $expression_label_list[] = $expression->ir_property_label_expression;
+                                    }
+                                }
+
+                                $t->expression_label_list = $expression_label_list;
+
+                                break;
+                            }
+                        }
+
+                        $cell_list_merged[] = $t;
+                    }
+
+                    $response['data']->Cell = $cell_list_merged;
+                }
+
+                // add chain 1 and chain 2
+                if (isset($response['data']->Cell)) {                    
                     $request_params = [];
                     foreach ($response['data']->Cell as $t) {
                         $cell_id = $t->cell_id;
@@ -1066,72 +1197,8 @@ class RestService extends Model
                     }
 
                     $response['data']->Cell = $cell_list_merged;
-
-                    // 2. add expression data
-                    $request_params = [];
-                    foreach ($response['data']->Cell as $t) {
-                        $cell_id = $t->cell_id;
-                        $data_processing_id = $t->data_processing_id;
-
-                        $filters = [];
-                        $filters['data_processing_id_cell'] = $data_processing_id;
-                        $filters['cell_id_cell'] = $cell_id;
-
-                        // prepare parameters for each service
-                        $t = [];
-
-                        $t['rs'] = $rs;
-                        $t['url'] = $rs->url . 'expression';
-
-                        $params = [];
-                        // $params['fields'] = ['cell_id', 'value', 'ir_property_label_expression'];
-
-                        $filters_json = self::generate_json_query($filters, $params);
-                        $t['params'] = $filters_json;
-
-                        $request_params[] = $t;
-                    }
-
-                    $response_list_expressions = self::doRequests($request_params);
-
-                    // add sequence data to cell data
-                    $cell_list_merged = [];
-                    foreach ($response['data']->Cell as $t) {
-                        $cell_id = $t->cell_id;
-                        $data_processing_id = $t->data_processing_id;
-
-                        foreach ($response_list_expressions as $response_expression) {
-                            $expression_list = $response_expression['data']->GeneExpression;
-                            $cell_id_expression = $expression_list[0]->cell_id;
-
-                            if ($cell_id == $cell_id_expression) {
-                                // sort by "value"
-                                $expression_list_sorted = $expression_list;
-                                $sort = 'value';
-                                usort($expression_list_sorted, function ($a, $b) use ($sort) {
-                                    return $b->{$sort} >= $a->{$sort};
-                                });
-
-                                $expression_list_sorted = array_slice($expression_list_sorted, 0, 4);
-
-                                $expression_label_list = [];
-                                foreach ($expression_list_sorted as $expression) {
-                                    if (isset($expression->ir_property_label_expression)) {
-                                        $expression_label_list[] = $expression->ir_property_label_expression;
-                                    }
-                                }
-
-                                $t->expression_label_list = $expression_label_list;
-
-                                break;
-                            }
-                        }
-
-                        $cell_list_merged[] = $t;
-                    }
-
-                    $response['data']->Cell = $cell_list_merged;
                 }
+
             }
         }
 
