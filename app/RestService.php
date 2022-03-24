@@ -671,7 +671,7 @@ class RestService extends Model
         }
 
         $query_type = 'cell';
-        if(isset($filters['property_expression'])) {
+        if (isset($filters['property_expression'])) {
             $query_type = 'expression';
         }
 
@@ -932,7 +932,7 @@ class RestService extends Model
             $base_uri = 'clone';
         } else {
             $query_type = 'cell';
-            if(isset($filters['property_expression'])) {
+            if (isset($filters['property_expression'])) {
                 $query_type = 'expression';
             }
             $base_uri = $query_type;
@@ -1021,7 +1021,7 @@ class RestService extends Model
 
         if ($type == 'cell') {
             foreach ($response_list as $i => $response) {
-                $rs = $response['rs'];                
+                $rs = $response['rs'];
 
                 if (isset($response['data']->GeneExpression)) {
                     // add cell data
@@ -1076,7 +1076,7 @@ class RestService extends Model
 
                     $response['data']->Cell = $cell_list_merged;
                 }
-                
+
                 if (isset($response['data']->Cell)) {
                     // add expression data
                     $request_params = [];
@@ -1145,7 +1145,7 @@ class RestService extends Model
                 }
 
                 // add chain 1 and chain 2
-                if (isset($response['data']->Cell)) {                    
+                if (isset($response['data']->Cell)) {
                     $request_params = [];
                     foreach ($response['data']->Cell as $t) {
                         $cell_id = $t->cell_id;
@@ -1198,7 +1198,6 @@ class RestService extends Model
 
                     $response['data']->Cell = $cell_list_merged;
                 }
-
             }
         }
 
