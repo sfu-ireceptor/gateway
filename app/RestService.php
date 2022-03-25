@@ -1057,17 +1057,19 @@ class RestService extends Model
                         $cell_id = $t->cell_id;
                         $data_processing_id = $t->data_processing_id;
 
-                        // dd($t);
                         foreach ($response_list_cells as $response_cell) {
                             $cell_list = $response_cell['data']->Cell;
-                            $cell_id_cell = $cell_list[0]->cell_id;
 
-                            if ($cell_id == $cell_id_cell) {
-                                $cell_data = $response_cell['data']->Cell[0];
-                                $t2 = (object) array_merge((array) $t, (array) $cell_data);
-                                $t = $t2;
+                            if(isset($cell_list[0])) {
+                                $cell_id_cell = $cell_list[0]->cell_id;
 
-                                break;
+                                if ($cell_id == $cell_id_cell) {
+                                    $cell_data = $response_cell['data']->Cell[0];
+                                    $t2 = (object) array_merge((array) $t, (array) $cell_data);
+                                    $t = $t2;
+
+                                    break;
+                                }
                             }
                         }
 
@@ -1113,28 +1115,30 @@ class RestService extends Model
 
                         foreach ($response_list_expressions as $response_expression) {
                             $expression_list = $response_expression['data']->GeneExpression;
-                            $cell_id_expression = $expression_list[0]->cell_id;
+                            if (isset($expression_list[0])) {
+                                $cell_id_expression = $expression_list[0]->cell_id;
 
-                            if ($cell_id == $cell_id_expression) {
-                                // sort by "value"
-                                $expression_list_sorted = $expression_list;
-                                $sort = 'value';
-                                usort($expression_list_sorted, function ($a, $b) use ($sort) {
-                                    return $b->{$sort} >= $a->{$sort};
-                                });
+                                if ($cell_id == $cell_id_expression) {
+                                    // sort by "value"
+                                    $expression_list_sorted = $expression_list;
+                                    $sort = 'value';
+                                    usort($expression_list_sorted, function ($a, $b) use ($sort) {
+                                        return $b->{$sort} >= $a->{$sort};
+                                    });
 
-                                $expression_list_sorted = array_slice($expression_list_sorted, 0, 4);
+                                    $expression_list_sorted = array_slice($expression_list_sorted, 0, 4);
 
-                                $expression_label_list = [];
-                                foreach ($expression_list_sorted as $expression) {
-                                    if (isset($expression->ir_property_label_expression)) {
-                                        $expression_label_list[] = $expression->ir_property_label_expression;
+                                    $expression_label_list = [];
+                                    foreach ($expression_list_sorted as $expression) {
+                                        if (isset($expression->ir_property_label_expression)) {
+                                            $expression_label_list[] = $expression->ir_property_label_expression;
+                                        }
                                     }
+
+                                    $t->expression_label_list = $expression_label_list;
+
+                                    break;
                                 }
-
-                                $t->expression_label_list = $expression_label_list;
-
-                                break;
                             }
                         }
 
