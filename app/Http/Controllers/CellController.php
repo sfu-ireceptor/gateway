@@ -59,13 +59,12 @@ class CellController extends Controller
         // allow only Cell filters, or only GEX filters, based on currently opened panel
         if (isset($filters['open_filter_panel_list'])) {
             $open_filter_panel_list = $filters['open_filter_panel_list'];
-            if($open_filter_panel_list[0] == 0) {
+            if ($open_filter_panel_list[0] == 0) {
                 unset($filters['property_expression']);
                 unset($filters['value_expression']);
-            }
-            else {
+            } else {
                 unset($filters['expression_study_method_cell']);
-                unset($filters['virtual_pairing_cell']);                
+                unset($filters['virtual_pairing_cell']);
             }
         }
 
