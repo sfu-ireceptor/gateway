@@ -1060,7 +1060,7 @@ class RestService extends Model
                         foreach ($response_list_cells as $response_cell) {
                             $cell_list = $response_cell['data']->Cell;
 
-                            if(isset($cell_list[0])) {
+                            if (isset($cell_list[0])) {
                                 $cell_id_cell = $cell_list[0]->cell_id;
 
                                 if ($cell_id == $cell_id_cell) {
