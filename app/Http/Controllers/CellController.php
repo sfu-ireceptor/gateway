@@ -56,9 +56,21 @@ class CellController extends Controller
         $filters = Query::getParams($query_id);
         $username = auth()->user()->username;
 
+        // allow only Cell filters, or only GEX filters, based on currently opened panel
+        if (isset($filters['open_filter_panel_list'])) {
+            $open_filter_panel_list = $filters['open_filter_panel_list'];
+            if($open_filter_panel_list[0] == 0) {
+                unset($filters['property_expression']);
+                unset($filters['value_expression']);
+            }
+            else {
+                unset($filters['expression_study_method_cell']);
+                unset($filters['virtual_pairing_cell']);                
+            }
+        }
+
         // retrieve data
         $cell_data = SequenceCell::summary($filters, $username);
-        // dd($cell_data);
 
         // store data size in user query log
         $query_log_id = $request->get('query_log_id');
