@@ -42,8 +42,7 @@ class TestController extends Controller
         $r = RestService::generate_or_json_query($t);
         // dd($r);
         echo $r;
-        die();
-
+        exit();
 
         $data = [];
         try {
