@@ -15,8 +15,6 @@ class SequenceCell
         // get cells summary
         $response_list_cells_summary = RestService::sequences_summary($filters, $username, true, 'cell');
 
-        // dd($response_list);
-
         // generate stats
         $data = self::process_response($response_list_cells_summary);
 
@@ -155,9 +153,21 @@ class SequenceCell
         $folder_path = $storage_folder . $folder_name;
         File::makeDirectory($folder_path, 0777, true, true);
 
+        $query_type = 'cell';
+        if (isset($filters['property_expression'])) {
+            $query_type = 'expression';
+        }
+
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
-        $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs);
-        $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list);
+        if($query_type == 'cell') {
+            $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs);
+            $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list);            
+        }
+        else {
+            $cell_list_by_rs = RestService::cell_list_from_expression_query($filters, $username, $expected_nb_cells_by_rs);
+            $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_list_by_rs);
+            $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_list_by_rs);            
+        }
 
         $file_stats = self::file_stats($response_list, $expected_nb_cells_by_rs);
 

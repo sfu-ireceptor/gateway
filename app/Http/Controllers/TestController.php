@@ -26,6 +26,25 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
+        $t = [];
+
+        $t1 = [];
+        $t1['repertoire_id'] = 'aaa';
+        $t1['data_processing_id'] = 'bb';
+
+        $t2 = [];
+        $t2['repertoire_id'] = 'ccc';
+        $t2['data_processing_id'] = 'ddd';
+
+        $t[] = $t1;
+        $t[] = $t2;
+
+        $r = RestService::generate_or_json_query($t);
+        // dd($r);
+        echo $r;
+        die();
+
+
         $data = [];
         try {
             $defaults = [];
