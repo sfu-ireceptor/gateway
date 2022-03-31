@@ -68,7 +68,7 @@
 						<div id="collapseTwo" class="panel-collapse collapse {{ in_array('1', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingOne">
 							<div class="panel-body">
 								<div class="form-group">
-									{{ Form::label('ir_property_label_expression',  'Gene ID') }}
+									{{ Form::label('ir_property_label_expression',  'Gene Label') }}
 									@include('help', ['id' => 'ir_property_label_expression'])
 									{{ Form::text('ir_property_label_expression', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
 								</div>
