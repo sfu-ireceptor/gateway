@@ -722,7 +722,7 @@ class RestService extends Model
         }
 
         $query_type = 'cell';
-        if (isset($filters['property_expression'])) {
+        if (isset($filters['ir_property_label_expression'])) {
             $query_type = 'expression';
         }
 
@@ -983,7 +983,7 @@ class RestService extends Model
             $base_uri = 'clone';
         } else {
             $query_type = 'cell';
-            if (isset($filters['property_expression'])) {
+            if (isset($filters['ir_property_label_expression'])) {
                 $query_type = 'expression';
             }
             $base_uri = $query_type;
