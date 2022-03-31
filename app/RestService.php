@@ -230,7 +230,6 @@ class RestService extends Model
         // build array of filters
         $filter_list = [];
         foreach ($filters as $k => $t) {
-            
             $filter1 = new \stdClass();
             $filter1->op = '=';
             $filter1->content = new \stdClass();
@@ -242,7 +241,7 @@ class RestService extends Model
             $filter2->content = new \stdClass();
             $filter2->content->field = 'cell_id';
             $filter2->content->value = $t['cell_id'];
-            
+
             $filter = new \stdClass();
             $filter->op = 'and';
             $filter->content = [];
@@ -1793,7 +1792,7 @@ class RestService extends Model
         }
 
         return $final_response_list;
-    }    
+    }
 
     public static function cells_data($filters, $folder_path, $username = '', $expected_nb_cells_by_rs, $cell_list_by_rs = [])
     {
@@ -1827,18 +1826,17 @@ class RestService extends Model
             $rs_filters = $filters;
 
             // if we retrieve cells by cell_id
-            if(count($cell_list_by_rs) > 0) {
+            if (count($cell_list_by_rs) > 0) {
                 $query_parameters = [];
 
                 foreach ($cell_list_by_rs as $response) {
-                    if($response['rs']->id == $rs->id) {
+                    if ($response['rs']->id == $rs->id) {
                         $cell_list = $response['cell_list'];
                         $rs_filters_json = self::generate_or_json_query($cell_list, $query_parameters);
                         break;
                     }
                 }
-            }
-            else {
+            } else {
                 $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
 
                 // rename sample id filter for this service:
@@ -1855,9 +1853,8 @@ class RestService extends Model
                 $query_parameters = [];
 
                 // generate JSON query
-                $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);                
+                $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
             }
-
 
             $t = [];
             $t['rs'] = $rs;
@@ -1919,18 +1916,17 @@ class RestService extends Model
             $rs_filters = [];
 
             // if we retrieve cells by cell_id
-            if(count($cell_list_by_rs) > 0) {
+            if (count($cell_list_by_rs) > 0) {
                 $query_parameters = [];
 
                 foreach ($cell_list_by_rs as $response) {
-                    if($response['rs']->id == $rs->id) {
+                    if ($response['rs']->id == $rs->id) {
                         $cell_list = $response['cell_list'];
                         $rs_filters_json = self::generate_or_json_query($cell_list, $query_parameters);
                         break;
                     }
                 }
-            }
-            else {
+            } else {
                 $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
 
                 // rename sample id filter for this service:

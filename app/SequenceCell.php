@@ -159,14 +159,13 @@ class SequenceCell
         }
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
-        if($query_type == 'cell') {
+        if ($query_type == 'cell') {
             $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs);
-            $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list);            
-        }
-        else {
+            $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list);
+        } else {
             $cell_list_by_rs = RestService::cell_list_from_expression_query($filters, $username, $expected_nb_cells_by_rs);
             $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_list_by_rs);
-            $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_list_by_rs);            
+            $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_list_by_rs);
         }
 
         $file_stats = self::file_stats($response_list, $expected_nb_cells_by_rs);
