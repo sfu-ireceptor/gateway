@@ -40,6 +40,7 @@ class Query extends Model
         unset($params['sort_column']);
         unset($params['open_filter_panel_list']);
         unset($params['extra_field']);
+        unset($params['page']);
 
         // If there are parameters, then process them
         $s = '';
