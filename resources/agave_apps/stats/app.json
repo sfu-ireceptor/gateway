@@ -1,0 +1,93 @@
+{
+  "name": "irplus-stats-template",
+  "version": "1.0",
+  "label": "Statistics",
+  "defaultQueue": "default",
+  "defaultNodeCount": 1,
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": "4GB",
+  "defaultRequestedTime": "1:00:00",
+  "longDescription": "Perform a range of simple statistics, such as gene usage and junction length",
+  "shortDescription": "Simple gene usage statistics",
+  "executionType": "HPC",
+  "executionSystem": "FILLED IN BY GATEWAY",
+  "parallelism": "SERIAL",
+  "checkpointable": false,
+  "deploymentPath": "FILLED IN BY GATEWAY",
+  "deploymentSystem": "FILLED IN BY GATEWAY",
+  "templatePath": "app.sh",
+  "testPath": "test.sh",
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "modules": [
+    "purge"
+  ],
+  "inputs": [
+    {
+      "id": "download_file",
+      "details": {
+        "label": "",
+        "description": "File downloaded from the iReceptor Gateway",
+        "showAttribute": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/Json"
+        ],
+        "fileTypes": [
+          "text-0"
+        ]
+      },
+      "value": {
+        "default": "",
+        "visible": true,
+        "required": true
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "split_repertoire",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "default": "True"
+      },
+      "details": {
+        "label": "Split Repertoire (True/False)?",
+        "description": "Split data based on Repertoire ID?"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
+    },
+    {
+      "id": "creator",
+      "value": {
+        "visible": false,
+        "required": true,
+        "type": "string",
+        "default": ""
+      },
+      "details": {
+        "label": "Creator (hidden)",
+        "description": "Username that created this job."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
+    }
+  ]
+}

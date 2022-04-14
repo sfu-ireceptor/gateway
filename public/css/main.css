@@ -310,7 +310,7 @@ table td .progress {
 }
 
 table.jobs .status {
-	width: 80%;
+	width: 60%;
 }
 
 table.sample_list td, table.sample_list th {
@@ -1083,7 +1083,7 @@ a.download_sequences {
 /* @group jobs page */
 
 .job_view_progress {
-	margin-bottom: 80px;
+	margin-bottom: 0px;
 }
 
 .local-job-progress {

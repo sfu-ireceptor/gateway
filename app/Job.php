@@ -113,11 +113,11 @@ class Job extends Model
     "appId": "$app_id",
 
     "parameters":{
-        "param1":"junction_nt_length"
+        "variable":"junction_nt_length"
     },
 
     "inputs":{
-        "file1":"agave://$gw_storage_staging/${inputFolder}/data.csv.zip"
+        "download_file":"agave://$gw_storage_staging/${inputFolder}/data.csv.zip"
     },
 
     "maxRunTime":"00:10:00",

@@ -185,7 +185,6 @@
 								<li><a href="/downloads"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Downloads</a></li>
 								@if(config('services.agave.enabled'))
 									<li><a href="/jobs"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Jobs</a></li>
-									<li><a href="/systems"><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> Systems</a></li>
 								@endif
 								  <li role="separator" class="divider"></li>
 								<li><a href="/logout"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Log Out</a></li>

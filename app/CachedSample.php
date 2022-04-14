@@ -52,6 +52,7 @@ class CachedSample extends Model
         }
 
         // distinct values for combined sample fields (ex: project_id/project_name)
+        $t['study_type_ontology_list'] = self::distinctValuesGrouped(['study_type_id', 'study_type']);
         $t['lab_list'] = self::distinctValuesGrouped(['ir_lab_id', 'lab_name']);
         $t['project_list'] = self::distinctValuesGrouped(['ir_project_id', 'study_title']);
 

@@ -9,10 +9,62 @@ use phpseclib\Crypt\RSA;
 class Agave
 {
     private $client;
+    private $appTemplates;
+    private $jobParameters;
+    private $maxRunTime;
+    private $processorsPerNode;
 
     public function __construct()
     {
+        // Maximum run time for a job in hours.
+        $this->maxRunTime = 96;
+        // Maximum number of processors per job
+        $this->processorsPerNode = 24;
+
         $this->initGuzzleRESTClient();
+
+        // Set up the default job contorl parameters used by AGAVE
+        $this->jobParameters = [];
+        // Run time parameter
+        $job_parameter = [];
+        $job_parameter['label'] = 'maxRunTime';
+        $job_parameter['type'] = 'string';
+        $job_parameter['name'] = 'Maximum run time (hh:mm:ss)';
+        $job_parameter['description'] = 'Maximum run time for the job in hh:mm:ss. If the job takes longer than this to complete, the job will be terminated. A run time of longer than ' . strval($this->maxRunTime) . ' hours is not allowed.';
+        $job_parameter['default'] = '01:00:00';
+        $this->jobParameters[$job_parameter['label']] = $job_parameter;
+
+        // Processors per node parameter
+        $job_parameter = [];
+        $job_parameter['label'] = 'processorsPerNode';
+        $job_parameter['type'] = 'integer';
+        $job_parameter['name'] = 'Number of CPUs (max ' . strval($this->processorsPerNode) . ')';
+        $job_parameter['description'] = 'Number of CPUs used by the job, with a maximum of ' . strval($this->processorsPerNode) . ' per job. Note not all jobs will scale well so adding more CPUs may not reduce execution time.';
+        $job_parameter['default'] = 1;
+        $this->jobParameters[$job_parameter['label']] = $job_parameter;
+
+        // Memory per node parameter
+    // This doesn't seem to be working. Tapis does not seem to pass this on to
+    // the scheduler, so changing this has no effect. We go with 4GB/CPU through
+    // the default system config with a custom directive.
+        //$job_parameter = [];
+        //$job_parameter['label'] = 'memoryPerNode';
+        //$job_parameter['type'] = 'string';
+        //#$job_parameter['name'] = 'Memory per node';
+        //$job_parameter['description'] = 'Amount of memory allocated per node used by the job';
+        //$job_parameter['default'] = '4GB';
+        //$this->jobParameters[$job_parameter['label']] = $job_parameter;
+
+    // Number of nodes to use parameter
+    // We don't want to have jobs cross nodes, so we limit to one only
+    // Leaving this here in case we want to change that...
+        //$job_parameter = [];
+        //$job_parameter['label'] = 'nodeCount';
+        //$job_parameter['type'] = 'integer';
+        //$job_parameter['name'] = 'Number of nodes';
+        //$job_parameter['description'] = 'Number of nodes used by the job';
+        //$job_parameter['default'] = 1;
+        //$this->jobParameters[$job_parameter['label']] = $job_parameter;
     }
 
     public function isUp()
@@ -88,8 +140,11 @@ class Agave
         return $t->access_token;
     }
 
-    public function renewToken($url, $refresh_token, $api_key, $api_secret)
+    public function renewToken($refresh_token)
     {
+        $api_key = config('services.agave.api_key');
+        $api_secret = config('services.agave.api_token');
+
         $headers = [];
         $headers['Content-Type'] = 'application/x-www-form-urlencoded';
 
@@ -109,6 +164,59 @@ class Agave
         }
 
         return $response;
+    }
+
+    public function updateAppTemplates()
+    {
+        // Get the list of app directories. Note that this is the set of names/tags
+        // used for the Apps
+        $app_directories = config('services.agave.app_directories');
+        // Build a list of Tapis App templates.
+        $this->appTemplates = [];
+        foreach ($app_directories as $app_dir) {
+            // Tapis Apps are stored in the resources/agave_apps directory. It is
+            // expected that each App that works on the iReceptor Gateway has an
+            // app.json file that is the Tapis definition of the App. We use this
+            // to determine how to submit the App to Tapis and to build the UI.
+            $file_path = resource_path('agave_apps/' . $app_dir . '/app.json');
+            Log::debug('updateAppTemplates: Trying to open App file ' . $file_path);
+            // Open the file and convert the JSON to an object.
+            try {
+                $app_json = file_get_contents($file_path);
+            } catch (Exception $e) {
+                Log::debug('updateAppTemplates: Could not open App file ' . $file_path);
+                Log::debug('updateAppTemplates: Error: ' . $e->getMessage());
+            }
+            $app_config = json_decode($app_json, true);
+            // Store the object in a dictionary keyed with 'config'. We do this because
+            // we anticipate needing more information about the App that will be
+            // separate from the Tapis App.
+            $app_info = [];
+            $app_info['config'] = $app_config;
+            // Save this app template keyed by the name/tag/dir
+            $this->appTemplates[$app_dir] = $app_info;
+        }
+        // Return the template list.
+        return $this->appTemplates;
+    }
+
+    public function getAppTemplates()
+    {
+        // Return the list of app templates.
+        return $this->appTemplates;
+    }
+
+    public function getAppTemplate($app_name)
+    {
+        Log::debug('getAppTemplate: looking for ' . $app_name);
+
+        // Return the app template for the given app tap/name.
+        return $this->appTemplates[$app_name];
+    }
+
+    public function getJobParameters()
+    {
+        return $this->jobParameters;
     }
 
     public function createSystem($token, $config)
@@ -197,6 +305,20 @@ class Agave
         return $this->doGETRequest($url, $token, true);
     }
 
+    public function getJobStatus($job_id, $token)
+    {
+        $url = '/jobs/v2/' . $job_id . '/status?pretty=true';
+
+        return $this->doGETRequest($url, $token, true);
+    }
+
+    public function getJob($job_id, $token)
+    {
+        $url = '/jobs/v2/' . $job_id;
+
+        return $this->doGETRequest($url, $token, true);
+    }
+
     public function getExcutionSystemConfig($name, $host, $port, $username, $privateKey, $publicKey)
     {
         $t = [
@@ -204,14 +326,19 @@ class Agave
             'name' => $name,
             'type' => 'EXECUTION',
             'executionType' => 'HPC',
-            'scheduler' => 'CUSTOM_SLURM',
+            'scheduler' => 'SLURM',
             'queues' => [
                 [
+                    'default' => true,
                     'name' => 'default',
-                    'maxRequestedTime' => '06:00:00',
-                    'customDirectives' => "#SBATCH -t \${AGAVE_JOB_MAX_RUNTIME}\n#SBATCH -N \${AGAVE_JOB_NODE_COUNT} -n \${AGAVE_JOB_PROCESSORS_PER_NODE}\n#SBATCH --account=rpp-breden-ab\n",
+                    'maxRequestedTime' => strval($this->maxRunTime) . ':00:00',
+                    'maxNodes' => 1,
+                    'maxProcessorsPerNode' => $this->processorsPerNode,
+                    'maxMemoryPerNode' => '64GB',
+                    'customDirectives' => '--mem-per-cpu=4G',
                 ],
             ],
+
             'login' => [
                 'protocol' => 'SSH',
                 'host' => $host,
@@ -240,7 +367,7 @@ class Agave
         return $t;
     }
 
-    public function getStorageSystemConfig($name, $host, $port, $auth, $rootDir)
+    public function getStorageSystemConfig($name, $host, $port, $username, $privateKey, $publicKey, $rootDir)
     {
         $t = [
             'id' => $name,
@@ -250,7 +377,12 @@ class Agave
                 'protocol' => 'SFTP',
                 'host' => $host,
                 'port' => $port,
-                'auth' => $auth,
+                'auth' => [
+                    'type' => 'SSHKEYS',
+                    'username' => $username,
+                    'publicKey' => $publicKey,
+                    'privateKey' => $privateKey,
+                ],
                 'rootDir' => $rootDir,
             ],
         ];
@@ -260,104 +392,34 @@ class Agave
 
     public function getAppConfig($id, $name, $executionSystem, $deploymentSystem, $deploymentPath)
     {
-        $params = [];
-        $inputs = [];
+        // Update the app templates. This shouldn't be necessary every
+        // time, but for now we will update them every time an App
+        // config is requested.
+        $this->updateAppTemplates();
 
-        if ($id == 1) {
-            $params = [
-                [
-                    'id' => 'param1',
-                    'value' => [
-                        'type' => 'string',
-                    ],
-                ],
-            ];
+        // Get the app template and its config given the App ID/name
+        $app_template = $this->getAppTemplate($id);
+        $app_config = $app_template['config'];
 
-            $inputs = [
-                [
-                    'id' => 'file1',
-                ],
-            ];
-        } elseif ($id == 2) {
-            $params = [
-                [
-                    'id' => 'param1',
-                    'value' => [
-                        'type' => 'string',
-                    ],
-                ],
-                [
-                    'id' => 'red',
-                    'value' => [
-                        'type' => 'number',
-                    ],
-                ],
-                [
-                    'id' => 'green',
-                    'value' => [
-                        'type' => 'number',
-                    ],
-                ],
-                [
-                    'id' => 'blue',
-                    'value' => [
-                        'type' => 'number',
-                    ],
-                ],
-            ];
+        // We overwrite the systems and deployment paths so we know what
+        // apps are being used from where.
+        $app_config['name'] = $name;
+        $app_config['executionSystem'] = $executionSystem;
+        $app_config['deploymentSystem'] = $deploymentSystem;
+        $app_config['deploymentPath'] = $deploymentPath;
+        Log::debug('Agave::getAppConfig: App config:');
+        Log::debug($app_config);
 
-            $inputs = [
-                [
-                    'id' => 'file1',
-                ],
-            ];
-        } elseif ($id == 3) {
-            $inputs = [
-                [
-                    'id' => 'file1',
-                ],
-            ];
-        } elseif ($id == 5) {
-            $inputs = [
-                [
-                    'id' => 'file1',
-                ],
-            ];
-        } elseif ($id == 6) {
-            $inputs = [
-                [
-                    'id' => 'file1',
-                ],
-            ];
-        }
-
-        $t = [
-            'name' => $name,
-            'version' => '1.00',
-            'executionSystem' => $executionSystem,
-            'parallelism' => 'SERIAL',
-            'executionType' => 'HPC',
-            'defaultMaxRequestedTime' => '06:00:00',
-            'deploymentSystem' => $deploymentSystem,
-            'deploymentPath' => $deploymentPath,
-            'templatePath' => 'app.sh',
-            'testPath' => 'test.sh',
-            'parameters' => $params,
-            'inputs' => $inputs,
-        ];
-
-        return $t;
+        return $app_config;
     }
 
-    public function getJobConfig($name, $app_id, $storage_archiving, $notification_url, $folder, $params, $inputs)
+    public function getJobConfig($name, $app_id, $storage_archiving, $notification_url, $folder, $params, $inputs, $job_params)
     {
         $t = [
             'name' => $name,
             'appId' => $app_id,
             'parameters' => $params,
             'inputs' => $inputs,
-            'maxRunTime' => '01:00:00',
-            'memoryPerNode' => '4GB',
             'archive' => true,
             'archiveSystem' => $storage_archiving,
             'archivePath' => $folder,
@@ -369,6 +431,29 @@ class Agave
                 ],
             ],
         ];
+
+        // Set up the job parameters. We loop over the possible job parameters and
+        // check to see if any of them are set in the job_params provided by the caller.
+        foreach ($this->getJobParameters() as $job_parameter_info) {
+            Log::debug('   getJobConfig: Processing job parameter ' . $job_parameter_info['label']);
+            // If the parameter is provided by the caller, process it.
+            if (isset($job_params[$job_parameter_info['label']])) {
+                Log::debug('   getJobConfig: Parameter value = ' . $job_params[$job_parameter_info['label']]);
+                // We need to make sure the type is correct or the JSON will fail.
+                // Once convereted, we set the parameter based on the label. The label
+                // in the config MUST be the correct Tapis label for that field.
+                if ($job_parameter_info['type'] == 'integer') {
+                    $t[$job_parameter_info['label']] = intval($job_params[$job_parameter_info['label']]);
+                } else {
+                    $t[$job_parameter_info['label']] = $job_params[$job_parameter_info['label']];
+                }
+            }
+        }
+
+        Log::debug('size of params = ' . count($params));
+        if (count($params) == 0) {
+            unset($t['parameters']);
+        }
 
         return $t;
     }
@@ -460,17 +545,17 @@ class Agave
 
     private function doGETRequest($url, $token, $raw_json = false)
     {
-        return $this->doHTTPRequest('GET', $url, $token, [], [], $raw_json);
+        return $this->doHTTPRequest('GET', $url, $token, [], null, $raw_json);
     }
 
-    public function doPOSTRequest($url, $token, $variables = [], $files = [])
+    public function doPOSTRequest($url, $token, $variables = [], $body = null)
     {
-        return $this->doHTTPRequest('POST', $url, $token, $variables, $files);
+        return $this->doHTTPRequest('POST', $url, $token, $variables, $body);
     }
 
-    public function doPUTRequest($url, $token, $variables = [], $files = [])
+    public function doPUTRequest($url, $token, $variables = [])
     {
-        return $this->doHTTPRequest('PUT', $url, $token, $variables, $files);
+        return $this->doHTTPRequest('PUT', $url, $token, $variables);
     }
 
     public function doDELETERequest($url, $token)
@@ -484,7 +569,7 @@ class Agave
         $json = json_encode($config, JSON_PRETTY_PRINT);
         Log::info('json request -> ' . $json);
 
-        return $this->doPOSTRequest($url, $token, [], ['fileToUpload' => $json]);
+        return $this->doPOSTRequest($url, $token, [], $json);
     }
 
     private function initGuzzleRESTClient()
@@ -501,27 +586,19 @@ class Agave
         $this->client = new \GuzzleHttp\Client($defaults);
     }
 
-    private function doHTTPRequest($method, $url, $token, $variables = [], $files = [], $raw_json = false)
+    private function doHTTPRequest($method, $url, $token, $variables = [], $body = null, $raw_json = false)
     {
         $headers = [];
         $headers['Authorization'] = 'Bearer ' . $token;
+        Log::debug('Bearer:' . $token);
 
         $data = [];
-        if (count($files) == 0) {
+        if ($body == null) {
             $data = ['headers' => $headers, 'form_params' => $variables];
         } else {
-            $multipart = [];
-
-            foreach ($variables as $key => $value) {
-                $multipart[] = ['name' => $key, 'contents' => $value];
-            }
-
-            foreach ($files as $filename => $file_str) {
-                $multipart[] = ['filename' => $filename, 'name' => $filename, 'contents' => $file_str];
-            }
-
             $headers['Content-Type'] = 'application/json';
-            $data = ['headers' => $headers, 'multipart' => $multipart];
+            // dd($body);
+            $data = ['headers' => $headers, 'body' => $body];
         }
 
         try {

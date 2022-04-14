@@ -1,0 +1,93 @@
+{
+  "name": "irplus-vdjbase-cedar-ireceptorgw",
+  "version": "0.1",
+  "label": "VDJBase",
+  "defaultQueue": "default",
+  "defaultNodeCount": 1,
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": "8GB",
+  "defaultRequestedTime": "8:00:00",
+  "shortDescription": "Genotype inference using VDJBase",
+  "longDescription": "iReceptor+ genotype inference using VDJBase. ",
+  "executionType": "HPC",
+  "executionSystem": "cedar.computecanada.ca-compute-ireceptorgw",
+  "parallelism": "PARALLEL",
+  "checkpointable": false,
+  "deploymentPath": "/tapis/apps/vdjbase-singularity/0.1/cedar/",
+  "deploymentSystem": "cedar.computecanada.ca-storage-ireceptorgw",
+  "templatePath": "app.sh",
+  "testPath": "test.sh",
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "modules": [
+    "purge"
+  ],
+  "inputs": [
+    {
+      "id": "download_file",
+      "details": {
+        "label": "",
+        "description": "File downloaded from the iReceptor Gateway",
+        "showAttribute": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/Json"
+        ],
+        "fileTypes": [
+          "text-0"
+        ]
+      },
+      "value": {
+        "default": "",
+        "visible": true,
+        "required": true
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "creator",
+      "value": {
+        "visible": false,
+        "required": true,
+        "type": "string",
+        "default": ""
+      },
+      "details": {
+        "label": "Creator",
+        "description": "Username that created this job."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
+    },
+    {
+      "id": "singularity_image",
+      "value": {
+        "visible": false,
+        "required": true,
+        "type": "string",
+        "default": "vdjbase_pipeline-1.1.01.sif"
+      },
+      "details": {
+        "label": "Singularity image",
+        "description": "The singularity image to be used. This is set by the Gateway and is not changed by the user."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
+    }
+  ]
+}

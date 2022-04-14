@@ -6,36 +6,63 @@
 @section('content')
 <div class="container job_container" data-job-id="{{ $job->id }}" data-job-status="{{ $job->status }}">
 
-	<h1>
-		Job {{ $job->id }}
+	<h2>
+		{{ $job->app }} (Job {{ $job->id }})
+                <br />
 		<small data-toggle="tooltip" data-placement="right" title="Submitted on {{ $job->createdAtFull() }}"> 
-			<span class="submission_date_relative">
+			Submitted: <span class="submission_date_relative">
 				{{ $job->createdAtRelative() }}
 			</span>
 		</small>
-	</h1>
+                <br />
+		<small> 
+			Run time: <span class="run_time">{{ $job->totalTime() }}</span>
+		</small>
+	</h2>
 
 	<div class="job_view_progress">
-		@include('job/progress')
+	    @include('job/progress')
 	</div>	
-
-	<h2>{{ $job->app }}</h2>
 	@if ($job->url)
-		<p>
-			Data from:
-			<a href="{{ $job->url }}">
-				{{ $job->url }}
-			</a>
-		</p>
+		Data from:
+                 <span class="job_url">
+                    <a href="{{ $job->url }}"> {{ $job->url }} </a>
+	        </span>
 	@endif
 
-
-	@if (count($files) > 0 && $job->app != 'Third-party analysis')
-		<h2>Files</h2>
-		<div class="result_files">
-			{!! $filesHTML !!}
-		</div>
+        @if (count($summary) > 0)
+            <h2>Data Summary</h2>
+            <div class="summary">
+            @foreach ($summary as $summary_line)
+		{!! $summary_line !!}
+            @endforeach
+	    </div>
 	@endif
+
+        @if (count($job_summary) > 0)
+            <h2>Job Summary</h2>
+            <div class="summary">
+            @foreach ($job_summary as $summary_line)
+		{!! $summary_line !!}
+            @endforeach
+	    </div>
+	@endif
+
+        @if (count($error_summary) > 0)
+            <h2>Error Summary</h2>
+            <div class="summary">
+            @foreach ($error_summary as $summary_line)
+		{!! $summary_line !!}
+            @endforeach
+	    </div>
+	@endif
+
+	@if ($filesHTML != '' && $job->app != 'Third-party analysis')
+            <h2>Analysis Output</h2>
+	    <div class="result_files">
+		{!! $filesHTML !!}
+	    </div>
+        @endif
 
 	@if (count($files) > 0 && $job->app == 'Third-party analysis')
 		<h2>BRepertoire</h2>

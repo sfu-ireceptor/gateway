@@ -185,12 +185,18 @@ class Sequence
         $time_str = date('Y-m-d_Hi', $now);
         $folder_name = 'ir_' . $time_str . '_' . uniqid();
         $folder_path = $storage_folder . $folder_name;
-        File::makeDirectory($folder_path, 0777, true, true);
+
+        Log::debug('Creating directory: ' . $folder_path);
+        $old = umask(0);
+        mkdir($folder_path, 0777);
+        umask($old);
+        // File::makeDirectory($folder_path, 0777, true, true);
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
         $response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_sequences_by_rs);
 
-        $file_stats = self::file_stats($response_list, $expected_nb_sequences_by_rs);
+        // Get a list of file information as a block of data.
+        $file_stats = self::file_stats($response_list, $metadata_response_list, $expected_nb_sequences_by_rs);
 
         // if some files are incomplete, log it
         foreach ($file_stats as $t) {
@@ -295,12 +301,15 @@ class Sequence
 
         // generate info.txt
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
+        // generate manifest.json
+        $manifest_file_path = self::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
 
         $t = [];
         $t['folder_path'] = $folder_path;
         $t['response_list'] = $response_list;
         $t['metadata_response_list'] = $metadata_response_list;
         $t['info_file_path'] = $info_file_path;
+        $t['manifest_file_path'] = $manifest_file_path;
         $t['is_download_incomplete'] = $is_download_incomplete;
         $t['download_incomplete_info'] = $download_incomplete_info;
         $t['file_stats'] = $file_stats;
@@ -316,15 +325,16 @@ class Sequence
         $response_list = $t['response_list'];
         $metadata_response_list = $t['metadata_response_list'];
         $info_file_path = $t['info_file_path'];
+        $manifest_file_path = $t['manifest_file_path'];
         $is_download_incomplete = $t['is_download_incomplete'];
         $download_incomplete_info = $t['download_incomplete_info'];
         $file_stats = $t['file_stats'];
 
         // zip files
-        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path);
+        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path);
 
-        // delete files
-        self::delete_files($folder_path);
+        // delete files - TODO not working, to fix
+        // self::delete_files($folder_path);
 
         $zip_public_path = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
 
@@ -526,7 +536,40 @@ class Sequence
     public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
         $s = '';
-        $s .= '* Summary *' . "\n";
+        // We want to extract the query_id from the URL. The URL has a query_id parameter
+        // wich we need to extract. URLs look like this:
+        // https:\/\/gateway-analysis.ireceptor.org\/sequences?query_id=8636
+        $query_sep = 'query_id=';
+        // Get the query_id, it should be everything after the query_sep string.
+        $seq_query_id = substr($url, strpos($url, $query_sep) + strlen($query_sep));
+        // Get the query parameters for both the sequence and sample queries. The
+        // sequence query parameters contains the query id of the sample query used
+        // to get to the seqeunces page.
+        $seq_query_params = Query::getParams($seq_query_id);
+        $sam_query_id = $seq_query_params['sample_query_id'];
+        $sam_query_params = Query::getParams($sam_query_id);
+
+        // Use the Query class to generate a consistent set of summary info
+        // from the query parameters. This returns a single string, containing
+        // a set of lines for each parameter (with \n), which is what we want.
+        $s .= '<p><b>Metadata filters</b></p>' . "\n";
+        $sam_summary = Query::sampleParamsSummary($sam_query_params);
+        // Replace each newline with a HTML <br/> followed by the newline as
+        // we want HTML here.
+        $sam_summary = str_replace("\n", "<br/>\n", $sam_summary);
+        $s .= $sam_summary;
+        $s .= "<br/>\n";
+
+        $s .= '<p><b>Sequence filters</b></p>' . "\n";
+        $seq_summary = Query::sequenceParamsSummary($seq_query_params);
+        // Replace each newline with a HTML <br/> followed by the newline as
+        // we want HTML here.
+        $seq_summary = str_replace("\n", "<br/>\n", $seq_summary);
+        $s .= $seq_summary;
+        $s .= "<br/>\n";
+
+        // Generate a summary of the repositories used.
+        $s .= '<p><b>Data/Repository Summary</b></p>' . "\n";
 
         $nb_sequences_total = 0;
         $expected_nb_sequences_total = 0;
@@ -537,92 +580,165 @@ class Sequence
 
         $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
         if ($is_download_incomplete) {
-            $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
-            $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "\n";
+            $s .= 'Warning: some of the files appears to be incomplete:' . "<br/>\n";
+            $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "<br/>\n";
         } else {
-            $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
+            $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "<br/>\n";
         }
 
         foreach ($file_stats as $t) {
             if ($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences) (from ' . $t['rs_url'] . ')' . "\n";
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences) (from ' . $t['rs_url'] . ')' . "<br/>\n";
             } else {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (from ' . $t['rs_url'] . ')' . "\n";
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (from ' . $t['rs_url'] . ')' . "<br/>\n";
             }
         }
-        $s .= "\n";
 
         if (! empty($failed_rs)) {
-            $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "\n";
+            $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "<br/>\n";
             foreach ($failed_rs as $rs) {
-                $s .= $rs->name . "\n";
+                $s .= $rs->name . "<br/>\n";
             }
         }
+        $s .= "<br/>\n";
 
-        $s .= "\n";
-
-        $s .= '* Metadata filters *' . "\n";
-        Log::debug($sample_filters);
-        if (count($sample_filters) == 0) {
-            $s .= 'None' . "\n";
-        }
-        foreach ($sample_filters as $k => $v) {
-            if (is_array($v)) {
-                $v = implode(' or ', $v);
-            }
-            // use human-friendly filter name
-            $s .= __('short.' . $k) . ': ' . $v . "\n";
-        }
-        $s .= "\n";
-
-        $s .= '* Sequence filters *' . "\n";
-        unset($filters['ir_project_sample_id_list']);
-        unset($filters['cols']);
-        unset($filters['filters_order']);
-        unset($filters['sample_query_id']);
-        unset($filters['open_filter_panel_list']);
-        unset($filters['username']);
-        unset($filters['ir_username']);
-        unset($filters['ir_data_format']);
-        unset($filters['output']);
-        unset($filters['tsv']);
-        foreach (RestService::findEnabled() as $rs) {
-            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-            unset($filters[$sample_id_list_key]);
-        }
-
-        foreach ($filters as $k => $v) {
-            if ($v === null) {
-                unset($filters[$k]);
-            }
-        }
-
-        Log::debug($filters);
-        if (count($filters) == 0) {
-            $s .= 'None' . "\n";
-        }
-        foreach ($filters as $k => $v) {
-            if (is_array($v)) {
-                $v = implode(' or ', $v);
-            }
-            // use human-friendly filter name
-            $s .= __('short.' . $k) . ': ' . $v . "\n";
-        }
-        $s .= "\n";
-
-        $s .= '* Source *' . "\n";
-        $s .= $url . "\n";
+        // Generate a summary of where the query came from.
+        $s .= '<p><b>Source</b></p>' . "\n";
+        $s .= $url . "<br/>\n";
         $date_str_human = date('M j, Y', $now);
         $time_str_human = date('H:i T', $now);
-        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "\n";
+        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "<br/>\n";
 
+        // Save the info into the info.txt file.
         $info_file_path = $folder_path . '/info.txt';
         file_put_contents($info_file_path, $s);
 
         return $info_file_path;
     }
 
-    public static function zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path)
+    public static function generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
+    {
+        // Name of the file we are generating for the download
+        $manifest_file = 'airr_manifest.json';
+
+        // Create the opening object in the JSON file
+        $s = "{\n";
+        // Create the Info block
+        $s .= '  "Info":{},' . "\n";
+
+        $nb_sequences_total = 0;
+        $expected_nb_sequences_total = 0;
+        foreach ($file_stats as $t) {
+            $nb_sequences_total += $t['nb_sequences'];
+            $expected_nb_sequences_total += $t['expected_nb_sequences'];
+        }
+
+        $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
+        /* Keeping this in case we want to add more to manifest later.
+            if ($is_download_incomplete) {
+                $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
+                $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "\n";
+            } else {
+                $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "\n";
+            }
+         */
+
+        // Create the DataSets block
+        $s .= '  "DataSets":[' . "\n";
+        $dataset_count = 0;
+        foreach ($file_stats as $t) {
+            if ($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
+                if ($dataset_count != 0) {
+                    $s .= ',' . "\n";
+                }
+                $s .= '    {"repertoire_file":["' . $t['metadata_name'] . '"], "rearrangement_file":["' . $t['name'] . '"]}';
+            } else {
+                if ($dataset_count != 0) {
+                    $s .= ',' . "\n";
+                }
+                $s .= '    {"repertoire_file":["' . $t['metadata_name'] . '"], "rearrangement_file":["' . $t['name'] . '"]}';
+            }
+            Log::debug('Manifest dataset = ' . $t['metadata_name'] . ', ' . $t['name']);
+            $dataset_count++;
+        }
+        $s .= "\n  ]\n";
+
+        /* Keeping this in case we want to add more to manifest later.
+            if (! empty($failed_rs)) {
+                $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "\n";
+                foreach ($failed_rs as $rs) {
+                    $s .= $rs->name . "\n";
+                }
+            }
+
+            $s .= "\n";
+
+            $s .= '<b>Metadata filters</b>' . "\n";
+            Log::debug($sample_filters);
+            if (count($sample_filters) == 0) {
+                $s .= 'None' . "\n";
+            }
+            foreach ($sample_filters as $k => $v) {
+                if (is_array($v)) {
+                    $v = implode(' or ', $v);
+                }
+                // use human-friendly filter name
+                $s .= __('short.' . $k) . ': ' . $v . "\n";
+            }
+            $s .= "\n";
+
+            $s .= '<b>Sequence filters</b>' . "\n";
+            unset($filters['ir_project_sample_id_list']);
+            unset($filters['cols']);
+            unset($filters['filters_order']);
+            unset($filters['sample_query_id']);
+            unset($filters['open_filter_panel_list']);
+            unset($filters['username']);
+            unset($filters['ir_username']);
+            unset($filters['ir_data_format']);
+            unset($filters['output']);
+            unset($filters['tsv']);
+            foreach (RestService::findEnabled() as $rs) {
+                $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+                unset($filters[$sample_id_list_key]);
+            }
+
+            foreach ($filters as $k => $v) {
+                if ($v === null) {
+                    unset($filters[$k]);
+                }
+            }
+
+            Log::debug($filters);
+            if (count($filters) == 0) {
+                $s .= 'None' . "\n";
+            }
+            foreach ($filters as $k => $v) {
+                if (is_array($v)) {
+                    $v = implode(' or ', $v);
+                }
+                // use human-friendly filter name
+                $s .= __('short.' . $k) . ': ' . $v . "\n";
+            }
+            $s .= "\n";
+
+            $s .= '<b>Source</b>' . "\n";
+            $s .= $url . "\n";
+            $date_str_human = date('M j, Y', $now);
+            $time_str_human = date('H:i T', $now);
+            $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "\n";
+        */
+        // Done the JSON file.
+        $s .= '}' . "\n";
+
+        $manifest_file_path = $folder_path . '/' . $manifest_file;
+        file_put_contents($manifest_file_path, $s);
+        Log::debug('Writing manifest ' . $manifest_file_path);
+
+        return $manifest_file_path;
+    }
+
+    public static function zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path)
     {
         $zipPath = $folder_path . '.zip';
         Log::info('Zip files to ' . $zipPath);
@@ -652,7 +768,10 @@ class Sequence
                 $zip->addFile($file_path, basename($file_path));
             }
         }
+        Log::debug('Adding to ZIP: ' . $info_file_path);
         $zip->addFile($info_file_path, basename($info_file_path));
+        Log::debug('Adding to ZIP: ' . $manifest_file_path);
+        $zip->addFile($manifest_file_path, basename($manifest_file_path));
         $zip->close();
 
         return $zipPath;
@@ -660,13 +779,13 @@ class Sequence
 
     public static function delete_files($folder_path)
     {
-        Log::debug('Deleting downloaded files...');
         if (File::exists($folder_path)) {
+            Log::debug('Deleting folder of downloaded files: ' . $folder_path);
             Storage::deleteDirectory($folder_path);
         }
     }
 
-    public static function file_stats($response_list, $expected_nb_sequences_by_rs)
+    public static function file_stats($response_list, $metadata_response_list, $expected_nb_sequences_by_rs)
     {
         Log::debug('Get TSV files stats');
         $file_stats = [];
@@ -679,6 +798,18 @@ class Sequence
                 $t['name'] = basename($file_path);
                 $t['rs_url'] = $response['rs']->url;
                 $t['size'] = human_filesize($file_path);
+
+                // Get the associated repertoire file
+                foreach ($metadata_response_list as $metadata_response) {
+                    // If the service IDs match, then the files match
+                    if ($rest_service_id == $metadata_response['rs']->id) {
+                        // If there is a file path, keep track of the metadata file
+                        if (isset($metadata_response['data']['file_path'])) {
+                            $metadata_file_path = $metadata_response['data']['file_path'];
+                            $t['metadata_name'] = basename($metadata_file_path);
+                        }
+                    }
+                }
 
                 // count number of lines
                 $n = 0;

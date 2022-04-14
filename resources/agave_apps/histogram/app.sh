@@ -13,41 +13,52 @@ module load scipy-stack
 
 # app variables (will be subsituted by AGAVE). If they don't exist
 # use command line arguments.
-if [ -z "${file1}" ]; then
+if [ -z "${download_file}" ]; then
 	ZIP_FILE=$1
 	VARNAME=$2
+	NUM_VALUES=$3
+	SORT_VALUES=$4
 else
-	ZIP_FILE=${file1}
-	VARNAME=${param1}
+	ZIP_FILE=${download_file}
+	VARNAME=${variable}
+	NUM_VALUES=${num_values}
+	SORT_VALUES=${sort_values}
 fi
-
 function do_histogram()
 # Parameters: VARNAME to process, array of input files
 {
-    # Temporary file for data
+    # Temporary files for data
     TMP_FILE=tmp.tsv
+    TMP2_FILE=tmp2.tsv
+    FINAL_FILE=$TMP_FILE
 
     # preprocess input files -> tmp.csv
     echo "Extracting $1 from files started at: `date`" 
     echo $1 > $TMP_FILE
     for f in "${tsv_files[@]}"; do
 	echo "    Extracting $1 from $f"
-	python preprocess.py $f $1 >> $TMP_FILE
+	python3 preprocess.py $f $1 >> $TMP_FILE
     done
 
+    #if [ $NUM_VALUES -gt 0 ]
+    #then
+#	head --lines=1 $TMP_FILE > $TMP2_FILE
+#	tail --lines=+2 $TMP_FILE | sort | head --lines=$NUM_VALUES >> $TMP2_FILE
+#	FINAL_FILE=$TMP2_FILE
+#    fi
     ##############################################
     # Generate the image file.
     OFILE_BASE="report-$1-histogram"
 
     # Debugging output
     echo "Histogram started at: `date`" 
-    echo "Input file = $TMP_FILE"
+    echo "Input file = $FINAL_FILE"
     echo "Variable = $1"
     echo "Output file = $OFILE_BASE.png"
 
     # Run the python histogram command
     #python histogram.py $TMP_FILE $OFILE
-    python airr_histogram.py $1 $TMP_FILE $OFILE_BASE.png
+    python3 airr_histogram.py $1 $FINAL_FILE $NUM_VALUES $SORT_VALUES $OFILE_BASE.png
     #convert $OFILE_BASE.png $OFILE_BASE.jpg
 
     # change permissions
@@ -55,7 +66,8 @@ function do_histogram()
     #chmod 644 "$OFILE_BASE.jpg"
 
     # Remove the temporary file.
-    rm -f $TMP_FILE
+    #rm -f $TMP_FILE
+    #rm -f $TMP2_FILE
 }
 
 # The Gateway provides information about the download in the file info.txt
@@ -68,18 +80,18 @@ echo "Extracting files started at: `date`"
 unzip -o "$ZIP_FILE" 
 
 # Determine the files to process. We extract the .tsv files from the info.txt
-tsv_files=( `cat $INFO_FILE | awk -F":" 'BEGIN {count=0} /tsv/ {if (count>0) printf(" %s",$1); else printf("%s", $1); count++}'` )
+tsv_files=( `cat $INFO_FILE | awk -F" " 'BEGIN {count=0} /tsv/ {if (count>0) printf(" %s",$1); else printf("%s", $1); count++}'` )
 
 # Run the historgram for the variable of interest
 do_histogram $VARNAME
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
 echo "Removing original ZIP file $ZIP_FILE"
-rm -f $ZIP_FILE
+#rm -f $ZIP_FILE
 echo "Removing extracted files for each repository"
 for f in "${tsv_files[@]}"; do
     echo "    Removing extracted file $f"
-    rm -f $f
+#    rm -f $f
 done
 
 

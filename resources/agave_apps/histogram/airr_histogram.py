@@ -10,7 +10,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from collections import OrderedDict
 
-def performQueryAnalysis(input_file, field_name):
+def performQueryAnalysis(input_file, field_name, num_values, sort_values):
     # Check to see if the file exists and return if not.
     if not os.path.isfile(input_file):
         print("ERROR: Could not open file ", input_file)
@@ -25,8 +25,15 @@ def performQueryAnalysis(input_file, field_name):
         return None
 
     # Count up the number for each column value.
-    counts = airr_df[field_name].value_counts(sort=False)
-    counts = counts.sort_index()
+    if sort_values == "TRUE":
+        counts = airr_df[field_name].value_counts(sort=True)
+    else:
+        counts = airr_df[field_name].value_counts(sort=False)
+        counts = counts.sort_index()
+
+    print(num_values)
+    if num_values > 0:
+        counts = counts.head(num_values)
     return counts
 
 def plotData(plot_data, title, filename):
@@ -69,6 +76,8 @@ def getArguments():
 
     parser.add_argument("field_name")
     parser.add_argument("input_file")
+    parser.add_argument("num_values", type=int)
+    parser.add_argument("sort_values")
     parser.add_argument("output_file")
     parser.add_argument(
         "-v",
@@ -83,7 +92,8 @@ if __name__ == "__main__":
     # Get the command line arguments.
     options = getArguments()
     # Perform the query analysis, gives us back the data
-    data = performQueryAnalysis(options.input_file, options.field_name)
+    data = performQueryAnalysis(options.input_file, options.field_name,
+                                options.num_values, options.sort_values)
     # Graph the results if we got some...
     title = options.field_name 
     if not data is None:
