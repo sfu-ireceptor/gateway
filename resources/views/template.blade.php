@@ -13,7 +13,7 @@
 		<link rel="stylesheet" href="/css/bootstrap.min.css" />
 		<link href="/css/bootstrap-multiselect.css" rel="stylesheet" />
 		<link href="/css/jstree/default/style.min.css" rel="stylesheet" />
-		<link href="/css/main.css?v=64" rel="stylesheet" />
+		<link href="/css/main.css?v=67" rel="stylesheet" />
 
 		<!-- IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -199,7 +199,7 @@
 		<script src="/js/pluralize.js"></script>
 
 		<script src="/js/airrvisualization.js?v=12"></script>
-		<script src="/js/main.js?v=75"></script>
+		<script src="/js/main.js?v=76"></script>
 		<script src="/js/admin.js?v=1"></script>
 		<script src="/js/visualization.js?v=19"></script>
 	</body>

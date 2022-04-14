@@ -94,7 +94,7 @@
 						<th>Service</th>
 						<th>Start</th>
 						<th>URL</th>
-						<th>Returns</th>
+						<th>TSV size</th>
 						<th>Duration</th>
 					</tr>
 				</thead>
@@ -136,11 +136,8 @@
 
 							</td>
 							<td>
-								@if ($q->file)
-									{{ $q->file }}
+								@if (isset($q->result_size) && isset($q['params']) && is_string($q['params']) && str_contains($q['params'], 'tsv'))
 									{{ human_filesize($q->result_size) }}
-								@else
-								    JSON
 								@endif
 							</td>
 							<td class="{{ $q->status == 'running' ? 'warning' : ''}}{{ $q->status == 'error' ? 'danger' : ''}}" title='{{ $q->message }}'>

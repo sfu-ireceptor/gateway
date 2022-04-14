@@ -19,33 +19,38 @@
 					<input type="hidden" name="{{$hf['name']}}" value="{{$hf['value']}}">
 				@endforeach
 
-					
-				<div class="panel panel-default">
-					<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-						<div class="panel-body">
-							<div class="form-group">
-								{{ Form::label('junction_aa', __('short.junction_aa')) }}
-								@include('help', ['id' => 'junction_aa'])
-								{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided, minimum of 4 AA required). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
-							</div>
-							<p>
-								@if (isset($iedb_info) && $iedb_info)
-									@foreach ($iedb_data as $t)
-										<a href="{{ $t['url'] }}" target="_blank">{{ $t['id'] }}</a>
+				<div>
+					{{ Form::label('junction_aa', __('short.junction_aa')) }}
+					@include('help', ['id' => 'junction_aa'])
+					{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided, minimum of 4 AA required). It takes several minutes if millions of sequences are found.', 'data-placement' => 'bottom')) }}
+
+					@if (isset($iedb_info) && $iedb_info)
+						<div class="panel panel-primary iedb">
+							<div class="panel-body">
+								<p>
+									<code>{{ $filter_fields['junction_aa'] }}</code>
+									has known specificity to antigens from the following organisms:
+								</p>
+								<ul>
+									@foreach ($iedb_organism_list as $i => $o)
+										<li><span title="{{ $iedb_organism_list_extra[$i] }}">{{ $iedb_organism_list_short[$i] }}</span></li>
 									@endforeach
-								@endif
-							</p>
+								</ul>
+								<p>
+									<a href="https://www.iedb.org/result_v3.php" class="external" target="_blank">
+										Find more information with a <br />"Receptor Search" at IEDB.org
+									</a>
+								</p>
+							</div>
 						</div>
-					</div>
+					@endif
 				</div>
 
-				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+				<div class="panel-group sqs_sample_filters" id="accordion" role="tablist" aria-multiselectable="true">
 					<div class="panel panel-default">
 						<div class="panel-heading" role="tab" id="headingThree">
 							<h4 class="panel-title">
-								<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
 									Sample level filters
-								</a>
 							</h4>
 						</div>
 						<div id="collapseThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
@@ -111,7 +116,7 @@
 				@if ( ! empty($filter_fields))
 					<div class="active_filters">
 						<h3>Active filters</h3>
-
+						
 						@foreach($filter_fields as $filter_key => $filter_value)
 							<a title= "@lang('short.' . $filter_key): {{ $filter_value }}" href="/sequences-quick-search?query_id={{ $query_id }}&amp;remove_filter={{ $filter_key }}" class="label label-primary">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -199,7 +204,7 @@
 							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
 						</a>
 					@else
-						<a href="/sequences-download?query_id={{ $download_query_id }}&amp;n={{ $total_filtered_sequences }}&amp;page=sequences-quick-search" class="btn btn-primary pull-right download_sequences">
+						<a href="/sequences-download?query_id={{ $download_query_id }}&amp;n={{ $total_filtered_sequences }}&amp;page=sequences-quick-search&amp;page_query_id={{ $query_id }}" class="btn btn-primary pull-right download_sequences">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences <strong>{{ $download_time_estimate ? '(will take up to ' . $download_time_estimate . ')' : ''}}</strong></span>
 						</a>

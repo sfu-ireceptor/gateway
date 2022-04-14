@@ -75,6 +75,27 @@
 									{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided, minimum of 4 AA required). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
 
+								@if (isset($iedb_info) && $iedb_info)
+									<div class="panel panel-primary iedb">
+										<div class="panel-body">
+											<p>
+												<code>{{ $filter_fields['junction_aa'] }}</code>
+												has known specificity to antigens from the following organisms:
+											</p>
+											<ul>
+												@foreach ($iedb_organism_list as $i => $o)
+													<li><span title="{{ $iedb_organism_list_extra[$i] }}">{{ $iedb_organism_list_short[$i] }}</span></li>
+												@endforeach
+											</ul>
+											<p>
+												<a href="https://www.iedb.org/result_v3.php" class="external" target="_blank">
+													Find more information with a <br />"Receptor Search" at IEDB.org
+												</a>
+											</p>
+										</div>
+									</div>
+								@endif
+
 								<div class="form-group">
 									{{ Form::label('junction_aa_length', __('short.ir_junction_aa_length')) }}
 									{{ Form::text('ir_junction_aa_length', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact value match. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
