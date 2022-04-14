@@ -262,6 +262,12 @@ class SequenceController extends Controller
         // download time estimate
         $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_sequences']);
 
+        // if there is a junction_aa filter, ask IEDB for info about it
+        if (isset($filters['junction_aa'])) {
+            $iedb_data = $this->getIEDBInfo($filters['junction_aa']);
+            $data = array_merge($data, $iedb_data);
+        }
+
         // display view
         return view('sequence', $data);
     }
@@ -429,6 +435,7 @@ class SequenceController extends Controller
                 }
             }
         }
+
         // remove gateway-specific filters
         unset($filter_fields['cols']);
         unset($filter_fields['filters_order']);
@@ -439,48 +446,76 @@ class SequenceController extends Controller
         // download time estimate
         $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_sequences']);
 
-        // if junction_aa filter, ask IEDB for more information
+        // if there is a junction_aa filter, ask IEDB for info about it
         if (isset($sequence_filters['junction_aa'])) {
-            try {
-                $defaults = [];
-                $defaults['base_uri'] = 'https://query-api.iedb.org/';
-                $defaults['verify'] = false;    // accept self-signed SSL certificates
+            $iedb_data = $this->getIEDBInfo($sequence_filters['junction_aa']);
+            $data = array_merge($data, $iedb_data);
+        }
 
-                $client = new \GuzzleHttp\Client($defaults);
+        // display view
+        return view('sequenceQuickSearch', $data);
+    }
 
-                $val = $sequence_filters['junction_aa'];
-                $response = $client->get('tcr_search?chain2_cdr3_seq=eq.' . $val);
+    public function getIEDBInfo($val)
+    {
+        $data = [];
+
+        try {
+            $defaults = [];
+            $defaults['base_uri'] = 'https://query-api.iedb.org/';
+            $defaults['verify'] = false;    // accept self-signed SSL certificates
+
+            $client = new \GuzzleHttp\Client($defaults);
+
+            $query_list = [];
+            $query_list[] = 'tcr_search?chain2_cdr3_seq=like.';
+            $query_list[] = 'tcr_search?chain1_cdr3_seq=like.';
+            $query_list[] = 'bcr_search?chain2_cdr3_seq=like.';
+            $query_list[] = 'bcr_search?chain1_cdr3_seq=like.';
+
+            $t = [];
+            foreach ($query_list as $key => $query) {
+                $response = $client->get($query . '*' . $val . '*');
                 $body = $response->getBody();
-                // echo $body;
-
                 $t = json_decode($body);
 
                 if (count($t) > 0) {
-                    $data['iedb_info'] = true;
-                    $data['iedb_data'] = [];
-
-                    $i = 0;
-                    foreach ($t as $o) {
-                        $data['iedb_data'][$i]['id'] = $o->receptor_group_id;
-                        $data['iedb_data'][$i]['url'] = 'http://www.iedb.org/receptor/' . $o->receptor_group_id;
-                        $data['iedb_data'][$i]['assay_ids_count'] = count($o->iedb_assay_ids);
-                        $i++;
-                    }
-
-                    // sort by assay_ids_count desc
-                    usort($data['iedb_data'], function ($a, $b) {
-                        return $b['assay_ids_count'] >= $a['assay_ids_count'];
-                    });
+                    break;
                 }
-            } catch (\Exception $e) {
-                $error_message = $e->getMessage();
-                Log::error($error_message);
-
-                return $error_message;
             }
+
+            if (count($t) > 0) {
+                $data['iedb_info'] = true;
+
+                $organism_list = [];
+                foreach ($t as $o) {
+                    foreach ($o->parent_source_antigen_source_org_names as $organism) {
+                        if (! in_array($organism, $organism_list)) {
+                            $organism_list[] = $organism;
+                        }
+                    }
+                }
+
+                sort($organism_list);
+                $organism_list_short = [];
+                foreach ($organism_list as $i => $o) {
+                    $o_short = strstr($o, '(', true) ?: $o;
+                    $organism_list_short[$i] = $o_short;
+                }
+
+                $data['iedb_organism_list'] = $organism_list;
+                $data['iedb_organism_list_short'] = $organism_list_short;
+                $data['iedb_organism_list_extra'] = $organism_list;
+            }
+        } catch (\Exception $e) {
+            $error_message = $e->getMessage();
+            Log::error($error_message);
+            $data['iedb_info'] = false;
+
+            // return $error_message; ??
         }
-        // display view
-        return view('sequenceQuickSearch', $data);
+
+        return $data;
     }
 
     public function timeEstimate($nb_sequences)
@@ -504,7 +539,12 @@ class SequenceController extends Controller
         $username = auth()->user()->username;
 
         $page = $request->input('page');
-        $page_url = route($page, ['query_id' => $query_id], false);
+        $page_query_id = $request->input('page_query_id');
+        if (empty($page_query_id)) {
+            $page_query_id = $query_id;
+        }
+
+        $page_url = route($page, ['query_id' => $page_query_id], false);
 
         $nb_sequences = $request->input('n');
 
