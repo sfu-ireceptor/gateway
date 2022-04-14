@@ -546,16 +546,13 @@ class Sequence
         // sequence query parameters contains the query id of the sample query used
         // to get to the seqeunces page.
         $seq_query_params = Query::getParams($seq_query_id);
-	if (array_key_exists('sample_query_id', $seq_query_params))
-        {
+        if (array_key_exists('sample_query_id', $seq_query_params)) {
             $sam_query_id = $seq_query_params['sample_query_id'];
             $sam_query_params = Query::getParams($sam_query_id);
             $sam_summary = Query::sampleParamsSummary($sam_query_params);
-	}
-	else
-	{
-	    $sam_summary = "None";
-	}
+        } else {
+            $sam_summary = 'None';
+        }
 
         // Use the Query class to generate a consistent set of summary info
         // from the query parameters. This returns a single string, containing
