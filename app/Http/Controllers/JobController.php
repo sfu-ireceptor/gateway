@@ -265,9 +265,13 @@ class JobController extends Controller
             Log::debug('JobController::getView: sequence query summary = ' . $sequence_summary);
 
             // Get the sample query ID, the query parameters, and the text summary
-            $sample_query_id = $seq_query_params['sample_query_id'];
-            $sample_query_params = Query::getParams($sample_query_id);
-            $sample_summary = Query::sampleParamsSummary($sample_query_params);
+            if (array_key_exists('sample_query_id', $seq_query_params)) {
+                $sample_query_id = $seq_query_params['sample_query_id'];
+                $sample_query_params = Query::getParams($sample_query_id);
+                $sample_summary = Query::sampleParamsSummary($sample_query_params);
+            } else {
+                $sample_summary = 'None';
+            }
             Log::debug('JobController::getView: sample query summary = ' . $sample_summary);
 
             // Split the summaries by line into an array, which is what the view expects.

@@ -546,6 +546,13 @@ class Sequence
         // sequence query parameters contains the query id of the sample query used
         // to get to the seqeunces page.
         $seq_query_params = Query::getParams($seq_query_id);
+        if (array_key_exists('sample_query_id', $seq_query_params)) {
+            $sam_query_id = $seq_query_params['sample_query_id'];
+            $sam_query_params = Query::getParams($sam_query_id);
+            $sam_summary = Query::sampleParamsSummary($sam_query_params);
+        } else {
+            $sam_summary = 'None';
+        }
         $sam_query_id = $seq_query_params['sample_query_id'];
         $sam_query_params = Query::getParams($sam_query_id);
 
@@ -553,7 +560,6 @@ class Sequence
         // from the query parameters. This returns a single string, containing
         // a set of lines for each parameter (with \n), which is what we want.
         $s .= '<p><b>Metadata filters</b></p>' . "\n";
-        $sam_summary = Query::sampleParamsSummary($sam_query_params);
         // Replace each newline with a HTML <br/> followed by the newline as
         // we want HTML here.
         $sam_summary = str_replace("\n", "<br/>\n", $sam_summary);
