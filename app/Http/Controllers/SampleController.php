@@ -124,7 +124,6 @@ class SampleController extends Controller
 
         // get data
         $metadata = Sample::metadata($username);
-        //Log::debug('METADATA: ' . serialize($metadata));
 
         // study type ontology info
         $study_type_ontology_list = [];
@@ -136,14 +135,12 @@ class SampleController extends Controller
         $study_type_id_list = [];
         foreach ($metadata['study_type_id'] as $v) {
             $study_type_id_list[$v] = $v;
-            //Log::debug('Study type info: ' . $v);
         }
 
         // study type ontology info
         $study_type_ontology_list = [];
         foreach ($metadata['study_type_ontology_list'] as $v) {
             $study_type_ontology_list[$v['study_type_id']] = $v['study_type'] . ' (' . $v['study_type_id'] . ')';
-            //Log::debug('XXX Study type info: ' . $v['study_type']);
         }
 
         // gender

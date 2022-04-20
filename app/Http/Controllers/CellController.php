@@ -159,12 +159,12 @@ class CellController extends Controller
         $data['url'] = $current_url;
         $data['bookmark_id'] = Bookmark::getIdFromURl($current_url, auth()->user()->id);
 
-        // get sequence fields
+        // get cell fields
         $field_list = FieldName::getCellFields();
         $data['field_list'] = $field_list;
 
-        // get sequence fields grouped
-        $field_list_grouped = FieldName::getSequenceFieldsGrouped();
+        // get cell fields grouped
+        $field_list_grouped = FieldName::getCellFieldsGrouped();
         $data['field_list_grouped'] = $field_list_grouped;
 
         // table columns to display

@@ -91,6 +91,19 @@ class FieldName extends Model
         return $l;
     }
 
+    public static function getCloneFields()
+    {
+        $ir_class_list = ['Clone'];
+
+        if (config('ireceptor.display_all_ir_fields')) {
+            $ir_class_list[] = 'IR_Clone';
+        }
+
+        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('default_order', 'asc')->get()->toArray();
+
+        return $l;
+    }
+
     public static function getCellFields()
     {
         $ir_class_list = ['Cell'];
@@ -174,7 +187,7 @@ class FieldName extends Model
         $ir_class_list = ['Repertoire'];
 
         if (config('ireceptor.display_all_ir_fields')) {
-            $ir_class_list[] = 'ir_repertoire';
+            $ir_class_list[] = 'IR_Repertoire';
         }
 
         return static::getFieldsGrouped($ir_class_list);
@@ -185,18 +198,29 @@ class FieldName extends Model
         $ir_class_list = ['Rearrangement'];
 
         if (config('ireceptor.display_all_ir_fields')) {
-            $ir_class_list[] = 'ir_rearrangement';
+            $ir_class_list[] = 'IR_Rearrangement';
         }
 
         return static::getFieldsGrouped($ir_class_list);
     }
 
-    public static function getCellieldsGrouped()
+    public static function getCloneFieldsGrouped()
+    {
+        $ir_class_list = ['Clone'];
+
+        if (config('ireceptor.display_all_ir_fields')) {
+            $ir_class_list[] = 'IR_Clone';
+        }
+
+        return static::getFieldsGrouped($ir_class_list);
+    }
+
+    public static function getCellFieldsGrouped()
     {
         $ir_class_list = ['Cell'];
 
         if (config('ireceptor.display_all_ir_fields')) {
-            $ir_class_list[] = 'ir_cell';
+            $ir_class_list[] = 'IR_Cell';
         }
 
         return static::getFieldsGrouped($ir_class_list);

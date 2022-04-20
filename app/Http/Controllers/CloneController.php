@@ -148,12 +148,12 @@ class CloneController extends Controller
         $data['url'] = $current_url;
         $data['bookmark_id'] = Bookmark::getIdFromURl($current_url, auth()->user()->id);
 
-        // get sequence fields
-        $field_list = FieldName::getSequenceFields();
+        // get clone fields
+        $field_list = FieldName::getCloneFields();
         $data['field_list'] = $field_list;
 
-        // get sequence fields grouped
-        $field_list_grouped = FieldName::getSequenceFieldsGrouped();
+        // get clone fields grouped
+        $field_list_grouped = FieldName::getCloneFieldsGrouped();
         $data['field_list_grouped'] = $field_list_grouped;
 
         // table columns to display
