@@ -47,6 +47,7 @@ class FieldNameSeeder extends CsvSeeder
             // define default fields and their order
             $this->define_default_sample_fields();
             $this->define_default_sequence_fields();
+            $this->define_default_clone_fields();
             $this->define_default_cell_fields();
         });
     }
@@ -199,4 +200,18 @@ class FieldNameSeeder extends CsvSeeder
             FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);
         }
     }
+
+    public function define_default_clone_fields()
+    {
+        $l = [];
+        $l[] = ['id' => 'v_call_clone', 'visible' => true];
+        $l[] = ['id' => 'd_call_clone', 'visible' => true];
+        $l[] = ['id' => 'j_call_clone', 'visible' => true];
+        $l[] = ['id' => 'junction_aa_clone', 'visible' => true];
+
+        foreach ($l as $i => $t) {
+            FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);
+        }
+    }
+
 }
