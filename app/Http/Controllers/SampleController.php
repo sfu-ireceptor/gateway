@@ -131,18 +131,6 @@ class SampleController extends Controller
             $study_type_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
-        // study type id (ontology ID)
-        $study_type_id_list = [];
-        foreach ($metadata['study_type_id'] as $v) {
-            $study_type_id_list[$v] = $v;
-        }
-
-        // study type ontology info
-        $study_type_ontology_list = [];
-        foreach ($metadata['study_type_ontology_list'] as $v) {
-            $study_type_ontology_list[$v['study_type_id']] = $v['study_type'] . ' (' . $v['study_type_id'] . ')';
-        }
-
         // gender
         $subject_gender_list = [];
         foreach ($metadata['sex'] as $v) {
@@ -196,8 +184,6 @@ class SampleController extends Controller
 
         $data['page_uri'] = $page_uri;
 
-        $data['study_type_list'] = $study_type_list;
-        $data['study_type_id_list'] = $study_type_id_list;
         $data['study_type_ontology_list'] = $study_type_ontology_list;
         $data['subject_gender_list'] = $subject_gender_list;
         $data['subject_ethnicity_list'] = $subject_ethnicity_list;
