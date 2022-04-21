@@ -78,10 +78,10 @@ if (! function_exists('convert_array_keys')) {
             foreach ($mapping as $m) {
                 if (isset($m[$from]) && $m[$from] == $key) {
                     if (isset($m[$to])) {
-                        
-                        // ignore if wrong $ir_class 
-                        if($ir_class != '') {
-                            if(isset($m['ir_class']) && $m['ir_class'] != $ir_class) {
+
+                        // ignore if wrong $ir_class
+                        if ($ir_class != '') {
+                            if (isset($m['ir_class']) && $m['ir_class'] != $ir_class) {
                                 continue;
                             }
                         }

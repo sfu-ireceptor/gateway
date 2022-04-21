@@ -213,5 +213,4 @@ class FieldNameSeeder extends CsvSeeder
             FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);
         }
     }
-
 }
