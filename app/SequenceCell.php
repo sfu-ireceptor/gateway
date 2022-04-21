@@ -50,7 +50,7 @@ class SequenceCell
 
         // convert any array properties to strings
         // $cell_list = array_map('convert_arrays_to_strings', $cell_list);
-        $cell_list = FieldName::convertObjectList($cell_list, 'ir_adc_api_query', 'ir_id');
+        $cell_list = FieldName::convertObjectList($cell_list, 'ir_adc_api_query', 'ir_id', 'Cell');
 
         // add to stats data
         $data['items'] = $cell_list;
