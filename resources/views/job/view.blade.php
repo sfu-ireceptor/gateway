@@ -59,6 +59,22 @@
 
 	@if ($filesHTML != '' && $job->app != 'Third-party analysis')
             <h2>Analysis Output</h2>
+	        @if ($analysis_download_url != '') 
+		    <a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/{{ $analysis_download_url }}">
+
+                        Download Analysis Results Archive (ZIP)
+                    </a>
+                @endif
+	        @if ($output_log_url != '') 
+		    <a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/{{ $output_log_url }}">
+                        View Analysis Output Log 
+                    </a>
+                @endif
+	        @if ($error_log_url != '') 
+		    <a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/{{ $error_log_url }}">
+                        View Analysis Error Log
+                    </a>
+                @endif
 	    <div class="result_files">
 		{!! $filesHTML !!}
 	    </div>

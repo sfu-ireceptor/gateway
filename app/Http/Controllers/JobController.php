@@ -191,27 +191,32 @@ class JobController extends Controller
         $data['job'] = $job;
         Log::debug('JobController::getView: job = ' . json_encode($job, JSON_PRETTY_PRINT));
 
+        // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
+        // that are used by Gateway Apps. This MUST be the same and probably should be
+        // defined as a CONFIG variable some how. For now we hardcode here and in the
+        // Tapis Gateway Utilities code.
+        $analysis_base = 'gateway_analysis';
+
+	$data['analysis_download_url'] = '';
+	$data['output_log_url'] = '';
+	$data['error_log_url'] = '';
         // Check to see if we have a folder with Gateway output. If we have gateway
         // output in just a ZIP file, extract the ZIP file. This should only happen once
         // the first time this code is run with a Gateway analysis ZIP file without the
         // unzipped directory.
         $folder = 'storage/' . $job['input_folder'];
         if ($job['input_folder'] != '' && File::exists($folder)) {
-            // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
-            // that are used by Gateway Apps. This MUST be the same and probably should be
-            // defined as a CONFIG variable some how. For now we hardcode here and in the
-            // Tapis Gateway Utilities code.
-            $analysis_zipbase = 'gateway_analysis';
             // If this ZIP file exists and the directory does not, the Gateway needs to
             // UNZIP the archive.
-            $zip_file = $folder . '/' . $analysis_zipbase . '.zip';
-            $zip_folder = $folder . '/' . $analysis_zipbase;
+            $zip_file = $folder . '/' . $analysis_base . '.zip';
+            $zip_folder = $folder . '/' . $analysis_base;
             if (File::exists($zip_file) && ! File::exists($zip_folder)) {
                 Log::debug('JobController::getView - UNZIPing analysis folder');
                 $zip = new ZipArchive();
                 $zip->open($zip_file, ZipArchive::RDONLY);
                 $zip->extractTo($folder);
                 $zip->close();
+	        $data['analysis_download_url'] = $zip_file;
             }
         }
 
@@ -223,7 +228,9 @@ class JobController extends Controller
             if (File::exists($folder)) {
                 $data['files'] = File::allFiles($folder);
                 if (count($data['files']) > 0) {
-                    $data['filesHTML'] = dir_to_html($folder);
+                    $data['filesHTML'] = dir_to_html($folder . '/' . $analysis_base);
+		    $data['error_log_url'] = $folder . '/irec-job-' . $job['id'] . '-' . $job['agave_id'] . '.err';
+		    $data['output_log_url'] = $folder . '/irec-job-' . $job['id'] . '-' . $job['agave_id'] . '.out';
                 } elseif ($job->agave_status == 'FINISHED') {
                     // In the case where the job is FINISHED and there are no output files, tell the user
                     // that the data is no longer available. Note: the current Gateway cleanup removes all
