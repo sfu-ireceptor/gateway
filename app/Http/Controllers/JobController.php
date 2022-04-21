@@ -197,9 +197,9 @@ class JobController extends Controller
         // Tapis Gateway Utilities code.
         $analysis_base = 'gateway_analysis';
 
-	$data['analysis_download_url'] = '';
-	$data['output_log_url'] = '';
-	$data['error_log_url'] = '';
+        $data['analysis_download_url'] = '';
+        $data['output_log_url'] = '';
+        $data['error_log_url'] = '';
         // Check to see if we have a folder with Gateway output. If we have gateway
         // output in just a ZIP file, extract the ZIP file. This should only happen once
         // the first time this code is run with a Gateway analysis ZIP file without the
@@ -216,7 +216,7 @@ class JobController extends Controller
                 $zip->open($zip_file, ZipArchive::RDONLY);
                 $zip->extractTo($folder);
                 $zip->close();
-	        $data['analysis_download_url'] = $zip_file;
+                $data['analysis_download_url'] = $zip_file;
             }
         }
 
@@ -229,8 +229,8 @@ class JobController extends Controller
                 $data['files'] = File::allFiles($folder);
                 if (count($data['files']) > 0) {
                     $data['filesHTML'] = dir_to_html($folder . '/' . $analysis_base);
-		    $data['error_log_url'] = $folder . '/irec-job-' . $job['id'] . '-' . $job['agave_id'] . '.err';
-		    $data['output_log_url'] = $folder . '/irec-job-' . $job['id'] . '-' . $job['agave_id'] . '.out';
+                    $data['error_log_url'] = $folder . '/irec-job-' . $job['id'] . '-' . $job['agave_id'] . '.err';
+                    $data['output_log_url'] = $folder . '/irec-job-' . $job['id'] . '-' . $job['agave_id'] . '.out';
                 } elseif ($job->agave_status == 'FINISHED') {
                     // In the case where the job is FINISHED and there are no output files, tell the user
                     // that the data is no longer available. Note: the current Gateway cleanup removes all
