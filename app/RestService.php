@@ -1074,10 +1074,10 @@ class RestService extends Model
             foreach ($response_list as $i => $response) {
                 $rs = $response['rs'];
 
-                if (isset($response['data']->GeneExpression)) {
+                if (isset($response['data']->CellExpression)) {
                     // add cell data
                     $request_params = [];
-                    foreach ($response['data']->GeneExpression as $t) {
+                    foreach ($response['data']->CellExpression as $t) {
                         $cell_id = $t->cell_id;
                         $data_processing_id = $t->data_processing_id;
 
@@ -1104,7 +1104,7 @@ class RestService extends Model
 
                     // add expression data to cell data
                     $cell_list_merged = [];
-                    foreach ($response['data']->GeneExpression as $t) {
+                    foreach ($response['data']->CellExpression as $t) {
                         $cell_id = $t->cell_id;
                         $data_processing_id = $t->data_processing_id;
 
@@ -1165,7 +1165,7 @@ class RestService extends Model
                         $data_processing_id = $t->data_processing_id;
 
                         foreach ($response_list_expressions as $response_expression) {
-                            $expression_list = $response_expression['data']->GeneExpression;
+                            $expression_list = $response_expression['data']->CellExpression;
                             if (isset($expression_list[0])) {
                                 $cell_id_expression = $expression_list[0]->cell_id;
 
@@ -1777,9 +1777,9 @@ class RestService extends Model
 
         $final_response_list = [];
         foreach ($response_list as $response) {
-            if (isset($response['data']->GeneExpression)) {
+            if (isset($response['data']->CellExpression)) {
                 $l = [];
-                foreach ($response['data']->GeneExpression as $e) {
+                foreach ($response['data']->CellExpression as $e) {
                     $t = [];
                     $t['repertoire_id'] = $e->repertoire_id;
                     $t['cell_id'] = $e->cell_id;
