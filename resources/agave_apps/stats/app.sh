@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "iReceptor Stats App"
+echo "IR-INFO: iReceptor Stats App - starting at: `date`"
 
 ##############################################
 # init environment
@@ -33,10 +33,10 @@ date
 # gone wrong with loading the Gateway utilties.
 echo "Gateway analysis directory = ${GATEWAY_ANALYSIS_DIR}"
 if [ -z "${GATEWAY_ANALYSIS_DIR}" ]; then
-        echo "ERROR: GATEWAY_ANALYSIS_DIR not defined, gateway_utilities not loaded correctly."
+        echo "IR-ERROR: GATEWAY_ANALYSIS_DIR not defined, gateway_utilities not loaded correctly." >&2
 	exit 1
 fi
-echo "Done loading iReceptor Gateway Utilities"
+echo "IR-INFO: Done loading iReceptor Gateway Utilities"
 
 #########################################################################
 # Application variables (will be subsituted by Tapis). If they don't exist
@@ -55,6 +55,31 @@ echo "Tapis split = ${split_repertoire}"
 if [ -z "${split_repertoire}" ]; then
 	split_repertoire=$2
 fi
+
+#echo "--AGAVE environment vairables"
+#echo "${AGAVE_JOB_APP_ID}"
+#echo "${AGAVE_JOB_ARCHIVE}"
+#echo "${AGAVE_JOB_ARCHIVE_SYSTEM}"
+#echo "${AGAVE_JOB_ARCHIVE_URL}"
+#echo "${AGAVE_JOB_ARCHIVE_PATH}"
+#echo "${AGAVE_JOB_BATCH_QUEUE}"
+#echo "${AGAVE_JOB_EXECUTION_SYSTEM}"
+#echo "${AGAVE_JOB_ID}"
+#echo "${AGAVE_JOB_MEMORY_PER_NODE}"
+#echo "${AGAVE_JOB_NAME}"
+#echo "${AGAVE_JOB_NAME_RAW}"
+#echo "${AGAVE_JOB_NODE_COUNT}"
+#echo "${AGAVE_JOB_OWNER}"
+#echo "${AGAVE_JOB_PROCESSORS_PER_NODE}"
+#echo "${AGAVE_JOB_SUBMIT_TIME}"
+#echo "${AGAVE_JOB_TENANT}"
+#echo "${AGAVE_JOB_ARCHIVE_URL}"
+#echo "${AGAVE_JOB_CALLBACK_RUNNING}"
+#echo "${AGAVE_JOB_CALLBACK_CLEANING_UP}"
+#echo "${AGAVE_JOB_CALLBACK_ALIVE}"
+#echo "${AGAVE_JOB_CALLBACK_NOTIFICATION}"
+#echo "${AGAVE_JOB_CALLBACK_FAILURE}"
+#echo "--"
 
 function do_heatmap()
 #     $1,$2 are variable names to process
@@ -263,7 +288,7 @@ INFO_FILE="info.txt"
 MANIFEST_FILE="airr_manifest.json"
 
 if [ "${split_repertoire}" = "True" ]; then
-    echo -e "\nSplitting data by Repertoire\n"
+    echo -e "\nIR-INFO: Splitting data by Repertoire\n"
     # Split the download into single repertoire files, with a directory per
     # repository and within that a directory per repertoire. This expects the 
     # user to define a function called run_analysis() that will be
@@ -271,7 +296,7 @@ if [ "${split_repertoire}" = "True" ]; then
     # for parameters to this function.
     gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
 elif [ "${split_repertoire}" = "False" ]; then
-    echo -e "\nRunning app on entire data set\n"
+    echo -e "\nIR-INFO: Running app on entire data set\n"
     # Run the stats on all the data combined. Unzip the files
     gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
 
@@ -282,7 +307,7 @@ elif [ "${split_repertoire}" = "False" ]; then
     tsv_files=( "`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} rearrangement_file`" )
     if [ $? -ne 0 ]
     then
-        echo "Error: Could not process manifest file ${MANIFEST_FILE}"
+        echo "IR-ERROR: Could not process manifest file ${MANIFEST_FILE}"
         exit $?
     fi
     echo "TSV files = ${tsv_files}"
@@ -303,7 +328,8 @@ elif [ "${split_repertoire}" = "False" ]; then
 
     popd > /dev/null
 else
-    echo "ERROR: Unknown repertoire operation ${split_repertoire}"
+    echo "IR-ERROR: Unknown repertoire operation ${split_repertoire}" >&2
+    exit 1
 fi
 
 # Make sure we are back where we started, although the gateway functions should
@@ -334,7 +360,7 @@ echo "Removing original ZIP file $ZIP_FILE"
 rm -f $ZIP_FILE
 
 # Debugging output, print data/time when shell command is finished.
-echo "Statistics finished at: `date`"
+echo "IR-INFO: Statistics finished at: `date`"
 
 # Handle AGAVE errors - this doesn't seem to have any effect...
 #export JOB_ERROR=1
