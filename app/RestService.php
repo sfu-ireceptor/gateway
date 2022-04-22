@@ -1181,8 +1181,8 @@ class RestService extends Model
 
                                     $expression_label_list = [];
                                     foreach ($expression_list_sorted as $expression) {
-                                        if (isset($expression->property_expression)) {
-                                            $expression_label_list[] = $expression->property_expression;
+                                        if (isset($expression->property)) {
+                                            $expression_label_list[] = $expression->property->label;
                                         }
                                     }
 
