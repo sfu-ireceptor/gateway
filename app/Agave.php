@@ -321,11 +321,11 @@ class Agave
 
     public function getJobOutputFile($job_id, $token, $file)
     {
-	$url = '/jobs/v2/' . $job_id . '/outputs/media/' . $file;
+        $url = '/jobs/v2/' . $job_id . '/outputs/media/' . $file;
 
         return $this->doGETRequest($url, $token, true);
     }
- 
+
     public function getExcutionSystemConfig($name, $host, $port, $username, $privateKey, $publicKey)
     {
         $t = [
