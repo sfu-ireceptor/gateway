@@ -69,7 +69,7 @@ if (! function_exists('human_date_time')) {
 //  $mapping = [['v1' => 'project_id', 'airr' => 'study_id', ...], ...]
 //  returns [study_id => 1, ...]
 if (! function_exists('convert_array_keys')) {
-    function convert_array_keys($data, $mapping, $from, $to)
+    function convert_array_keys($data, $mapping, $from, $to, $ir_class = '')
     {
         $t = [];
         foreach ((array) $data as $key => $value) {
@@ -78,6 +78,14 @@ if (! function_exists('convert_array_keys')) {
             foreach ($mapping as $m) {
                 if (isset($m[$from]) && $m[$from] == $key) {
                     if (isset($m[$to])) {
+
+                        // ignore if wrong $ir_class
+                        if ($ir_class != '') {
+                            if (isset($m['ir_class']) && $m['ir_class'] != $ir_class) {
+                                continue;
+                            }
+                        }
+
                         $t[$m[$to]] = $value;
                         $converted = true;
                         break;
@@ -97,11 +105,11 @@ if (! function_exists('convert_array_keys')) {
 
 // ditto for a list of arrays
 if (! function_exists('convert_arrays_keys')) {
-    function convert_arrays_keys($data, $mapping, $from, $to)
+    function convert_arrays_keys($data, $mapping, $from, $to, $ir_class = '')
     {
         $t = [];
         foreach ($data as $d) {
-            $t[] = convert_array_keys($d, $mapping, $from, $to);
+            $t[] = convert_array_keys($d, $mapping, $from, $to, $ir_class);
         }
 
         return $t;

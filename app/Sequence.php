@@ -86,7 +86,7 @@ class Sequence
 
         // convert any array properties to strings
         $sequence_list = array_map('convert_arrays_to_strings', $sequence_list);
-        $sequence_list = FieldName::convertObjectList($sequence_list, 'ir_adc_api_query', 'ir_id');
+        $sequence_list = FieldName::convertObjectList($sequence_list, 'ir_adc_api_query', 'ir_id', 'Rearrangement');
 
         // add to stats data
         $data['items'] = $sequence_list;

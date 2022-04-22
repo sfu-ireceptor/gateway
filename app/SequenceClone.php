@@ -52,7 +52,7 @@ class SequenceClone
 
         // convert any array properties to strings
         $clone_list = array_map('convert_arrays_to_strings', $clone_list);
-        $clone_list = FieldName::convertObjectList($clone_list, 'ir_adc_api_query', 'ir_id');
+        $clone_list = FieldName::convertObjectList($clone_list, 'ir_adc_api_query', 'ir_id', 'Clone');
 
         // add to stats data
         $data['items'] = $clone_list;
