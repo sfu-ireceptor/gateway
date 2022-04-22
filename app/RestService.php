@@ -184,7 +184,7 @@ class RestService extends Model
             } elseif ($field_type == 'number') {
                 $filter->op = '=';
                 $v = (float) $v;
-            } elseif ($k == 'repertoire_id' || $k == 'data_processing_id' || $k == 'cell_id' || $k == 'subject.sex' || $k == 'v_call' || $k == 'j_call' || $k == 'd_call' || $k == 'v_gene' || $k == 'j_gene' || $k == 'd_gene' || $k == 'v_subgroup' || $k == 'j_subgroup' || $k == 'd_subgroup' || $k == 'd_subgroup' || $k == 'property' || $k == 'ir_property_label_expression') {
+            } elseif ($k == 'repertoire_id' || $k == 'data_processing_id' || $k == 'cell_id' || $k == 'subject.sex' || $k == 'v_call' || $k == 'j_call' || $k == 'd_call' || $k == 'v_gene' || $k == 'j_gene' || $k == 'd_gene' || $k == 'v_subgroup' || $k == 'j_subgroup' || $k == 'd_subgroup' || $k == 'd_subgroup' || $k == 'property' || $k == 'property_expression') {
                 $filter->op = '=';
             }
 
@@ -722,7 +722,7 @@ class RestService extends Model
         }
 
         $query_type = 'cell';
-        if (isset($filters['ir_property_label_expression'])) {
+        if (isset($filters['property_expression'])) {
             $query_type = 'expression';
         }
 
@@ -983,7 +983,7 @@ class RestService extends Model
             $base_uri = 'clone';
         } else {
             $query_type = 'cell';
-            if (isset($filters['ir_property_label_expression'])) {
+            if (isset($filters['property_expression'])) {
                 $query_type = 'expression';
             }
             $base_uri = $query_type;
@@ -1092,7 +1092,7 @@ class RestService extends Model
                         $t['url'] = $rs->url . 'cell';
 
                         $params = [];
-                        // $params['fields'] = ['cell_id', 'value', 'ir_property_label_expression'];
+                        // $params['fields'] = ['cell_id', 'value', 'property_expression'];
 
                         $filters_json = self::generate_json_query($filters, $params);
                         $t['params'] = $filters_json;
@@ -1148,7 +1148,7 @@ class RestService extends Model
                         $t['url'] = $rs->url . 'expression';
 
                         $params = [];
-                        // $params['fields'] = ['cell_id', 'value', 'ir_property_label_expression'];
+                        // $params['fields'] = ['cell_id', 'value', 'property_expression'];
 
                         $filters_json = self::generate_json_query($filters, $params);
                         $t['params'] = $filters_json;
@@ -1181,8 +1181,8 @@ class RestService extends Model
 
                                     $expression_label_list = [];
                                     foreach ($expression_list_sorted as $expression) {
-                                        if (isset($expression->ir_property_label_expression)) {
-                                            $expression_label_list[] = $expression->ir_property_label_expression;
+                                        if (isset($expression->property_expression)) {
+                                            $expression_label_list[] = $expression->property_expression;
                                         }
                                     }
 
