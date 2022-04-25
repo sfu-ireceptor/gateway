@@ -217,25 +217,25 @@ class CloneController extends Controller
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
 
-	/*
-        // for analysis app
-        $amazingHistogramGeneratorColorList = [];
-        $amazingHistogramGeneratorColorList['1_0_0'] = 'Red';
-        $amazingHistogramGeneratorColorList['1_0.5_0'] = 'Orange';
-        $amazingHistogramGeneratorColorList['1_0_1'] = 'Pink';
-        $amazingHistogramGeneratorColorList['0.6_0.4_0.2'] = 'Brown';
-        $data['amazingHistogramGeneratorColorList'] = $amazingHistogramGeneratorColorList;
+        /*
+            // for analysis app
+            $amazingHistogramGeneratorColorList = [];
+            $amazingHistogramGeneratorColorList['1_0_0'] = 'Red';
+            $amazingHistogramGeneratorColorList['1_0.5_0'] = 'Orange';
+            $amazingHistogramGeneratorColorList['1_0_1'] = 'Pink';
+            $amazingHistogramGeneratorColorList['0.6_0.4_0.2'] = 'Brown';
+            $data['amazingHistogramGeneratorColorList'] = $amazingHistogramGeneratorColorList;
 
-        // for histogram generator
-        $var_list = [];
-        $var_list['junction_length'] = __('short.junction_length');
-        $var_list['v_call'] = __('short.v_call');
-        $var_list['d_call'] = __('short.d_call');
-        $var_list['j_call'] = __('short.j_call');
-        $var_list = FieldName::convert($var_list, 'ir_id', 'ir_adc_api_query');
-        $data['var_list'] = $var_list;
-	*/
-	        // Get information about all of the Apps for the AIRR "Rearrangement" object
+            // for histogram generator
+            $var_list = [];
+            $var_list['junction_length'] = __('short.junction_length');
+            $var_list['v_call'] = __('short.v_call');
+            $var_list['d_call'] = __('short.d_call');
+            $var_list['j_call'] = __('short.j_call');
+            $var_list = FieldName::convert($var_list, 'ir_id', 'ir_adc_api_query');
+            $data['var_list'] = $var_list;
+        */
+        // Get information about all of the Apps for the AIRR "Rearrangement" object
         $agave = new Agave;
         $appTemplates = $agave->getAppTemplates('Clone');
         $app_list = [];
