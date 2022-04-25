@@ -679,10 +679,11 @@
 												{{ $page_first_element_index }}-{{ $page_last_element_index }} of {{ $nb_samples }}
 											</small>
 
-	<!-- 										<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
+											<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
 											  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 											  Customize displayed columns
-											</a> -->
+											</a>
+
 										</h3>
 									</div>
 									<div class="col-md-6 repertoires_button_container">
@@ -960,10 +961,10 @@
 												{{ $page_first_element_index }}-{{ $page_last_element_index }} of {{ $nb_samples }}
 											</small>
 
-	<!-- 										<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
+											<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
 											  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 											  Customize displayed columns
-											</a> -->
+											</a>
 										</h3>
 									</div>
 									<div class="col-md-6 repertoires_button_container">
