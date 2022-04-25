@@ -245,9 +245,9 @@ class SequenceController extends Controller
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
 
-        // Get information about all of the Apps
+        // Get information about all of the Apps for the AIRR "Rearrangement" object
         $agave = new Agave;
-        $appTemplates = $agave->updateAppTemplates();
+        $appTemplates = $agave->getAppTemplates('Rearrangement');
         $app_list = [];
 
         // Store the normal job contorl parameters for the UI. The same parameters are used
