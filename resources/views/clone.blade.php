@@ -363,116 +363,89 @@
 						<!-- apps -->
 						<h2>Analysis Apps</h2>
 
-						@if (isset($system) && $total_filtered_clones <= config('ireceptor.clones_download_limit'))
+						@if (count($app_list) > 0 && $total_filtered_clones <= config('ireceptor.clones_download_limit'))
 
 							<div role="tabpanel" class="analysis_apps_tabpanel">
-								<!-- Tab links -->
-								<ul class="nav nav-tabs" role="tablist">
-									<li role="presentation" class="active"><a href="#app1" aria-controls="app1" role="tab" data-toggle="tab">Histogram</a></li>
-									<li role="presentation"><a href="#app3" aria-controls="app3" role="tab" data-toggle="tab">Stats</a></li>
-									<li role="presentation"><a href="#app5" aria-controls="app5" role="tab" data-toggle="tab">Shared Junction</a></li>
-{{-- 									<li role="presentation"><a href="#app6" aria-controls="app6" role="tab" data-toggle="tab">Genoa</a></li> --}}
-									<li role="presentation"><a href="#app4" aria-controls="app4" role="tab" data-toggle="tab">Third-party analysis</a></li>
-								</ul>
+							        <!-- Tab links -->
+                                                                <ul class="nav nav-tabs" role="tablist">
+                                                                    @php $count = 0 @endphp
+                                                                    @foreach ($app_list as $app)
+                                                                        @if ( $count === 0)
+                                                                            <li role="presentation" class="active"><a href="#{{$app['app_tag']}}" aria-controls="{{$app['app_tag']}}" role="tab" data-toggle="tab">{{$app['name']}}</a></li>
+                                                                        @else
+                                                                            <li role="presentation"><a href="#{{$app['app_tag']}}" aria-controls="{{$app['app_tag']}}" role="tab" data-toggle="tab">{{$app['name']}}</a></li>
+                                                                        @endif
+                                                                        @php $count = $count + 1 @endphp
+                                                                    @endforeach
+                                                                </ul>
+
 
 								<!-- Tab panes -->
-								<div class="tab-content">
+                                                                <div class="tab-content">
+                                                                        @php $count = 0 @endphp
+                                                                        @foreach ($app_list as $app)
+                                                                            @if ( $count === 0)
+                                                                              <div role="tabpanel" class="tab-pane active" id="{{$app['app_tag']}}">
+                                                                            @else
+                                                                              <div role="tabpanel" class="tab-pane" id="{{$app['app_tag']}}">
+                                                                            @endif
+                                                                                {{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
+                                                                                        {{ Form::hidden('filters_json', $filters_json) }}
+                                                                                        {{ Form::hidden('data_url', $url) }}
+                                                                                        {{ Form::hidden('app_id', $app['app_id']) }}
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-10">
+                                                                                                <h3>{{$app['description']}} <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$app['info']}}</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span></h3>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        @foreach ($app['parameter_list'] as $parameter)
+                                                                                          <div class="row">
+                                                                                             <div class="col-md-3">
+                                                                                                  <div class="form-group">
+                                                                                                      {{ Form::label($parameter['label'], $parameter['name']) }}
+                                                                                                      <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$parameter['description']}}</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span>
+                                                                                                      @if ( ! empty($parameter['choices']) )
+                                                                                                        {{ Form::select($parameter['label'], $parameter['choices'], '', array('class' => 'form-control')) }}
+                                                                                                      @else
+                                                                                                        {{ Form::text($parameter['label'], $parameter['default'], array('class' => 'form-control')) }}
+                                                                                                      @endif
+                                                                                                  </div>
+                                                                                             </div>
+                                                                                          </div>
+                                                                                        @endforeach
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-10">
+                                                                                                <h3>Job control parameters<span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>Parameters to control job resources used</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span></h3>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        @foreach ($app['job_parameter_list'] as $job_parameter)
+                                                                                          <div class="row">
+                                                                                             <div class="col-md-3">
+                                                                                                  <div class="form-group">
+                                                                                                      {{ Form::label($job_parameter['label'], $job_parameter['name']) }}
+                                                                                                      <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$job_parameter['description']}}</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span>
+                                                                                                      @if ( ! empty($job_parameter['choices']) )
+                                                                                                        {{ Form::select($job_parameter['label'], $job_parameter['choices'], '', array('class' => 'form-control')) }}
+                                                                                                      @else
+                                                                                                        {{ Form::text($job_parameter['label'], $job_parameter['default'], array('class' => 'form-control')) }}
+                                                                                                      @endif
+                                                                                                  </div>
+                                                                                             </div>
+                                                                                          </div>
+                                                                                        @endforeach
 
-									<div role="tabpanel" class="tab-pane active" id="app1">
-						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 1) }}
+                                                                                        {{ Form::submit('Submit ' . $app['name'] . ' analysis job', array('class' => 'btn btn-primary')) }}
+                                                                                {{ Form::close() }}
+                                                                            </div>
+                                                                            @php $count = $count + 1 @endphp
+                                                                        @endforeach
 
-										    <div class="row">
-										    	<div class="col-md-3">
-												    <div class="form-group">
-														{{ Form::label('var', 'Variable') }}
-														{{ Form::select('var', $var_list, '', array('class' => 'form-control')) }}
-													</div>
-												</div>
-											</div>
-
-											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}
-									</div>
-									
-									<div role="tabpanel" class="tab-pane" id="app2">
-						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 2) }}
-
-										    <div class="row">
-										    	<div class="col-md-3">
-												    <div class="form-group">
-														{{ Form::label('var', 'Variable') }}
-														{{ Form::select('var', $var_list, '', array('class' => 'form-control')) }}
-													</div>
-												</div>
-										    	<div class="col-md-3">
-												    <div class="form-group">
-														{{ Form::label('var', 'Color') }}
-														{{ Form::select('color', $amazingHistogramGeneratorColorList, '', array('class' => 'form-control')) }}
-													</div>
-												</div>
-											</div>
-
-											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}
-									</div>
-
-									<div role="tabpanel" class="tab-pane" id="app3">
-						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 3) }}
-
-											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}
-									</div>
-
-									<div role="tabpanel" class="tab-pane" id="app4">
-						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 999) }}
-
-											{{ Form::submit('Prepare data for third-party analysis', array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}									
-									</div>
-
-									<div role="tabpanel" class="tab-pane" id="app5">
-										{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 5) }}
-
-											<p>Heatmap of shared junctions.</p>
-											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}
-									</div>
-
-{{-- 									<div role="tabpanel" class="tab-pane" id="app6">
-						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 6) }}
-
-											<p>Test analysis app.</p>
-											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}
-									</div> --}}
-
-
-								</div>
+                                                                </div>
 							</div>
-						@elseif($total_filtered_clones > config('ireceptor.clones_download_limit'))
+						@elseif ($total_filtered_clones > config('ireceptor.clones_download_limit'))
 							<p>Sorry, analyses of more than {{ number_format(config('ireceptor.clones_download_limit')) }} clones will be possible in the near future.</p>
-						@else
-							<p>
-								<a href="systems">Add a system</a> to be able to use analysis apps.
-							</p>
+                                                @else
+                                                        <p>No Analysis Apps for Clones available</p>
 						@endif
 					@endif
 				@endif

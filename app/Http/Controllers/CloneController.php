@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Agave;
 use App\Bookmark;
 use App\Download;
 use App\FieldName;
@@ -216,6 +217,7 @@ class CloneController extends Controller
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
 
+	/*
         // for analysis app
         $amazingHistogramGeneratorColorList = [];
         $amazingHistogramGeneratorColorList['1_0_0'] = 'Red';
@@ -232,6 +234,58 @@ class CloneController extends Controller
         $var_list['j_call'] = __('short.j_call');
         $var_list = FieldName::convert($var_list, 'ir_id', 'ir_adc_api_query');
         $data['var_list'] = $var_list;
+	*/
+	        // Get information about all of the Apps for the AIRR "Rearrangement" object
+        $agave = new Agave;
+        $appTemplates = $agave->getAppTemplates('Clone');
+        $app_list = [];
+
+        // Store the normal job contorl parameters for the UI. The same parameters are used
+        // by all Apps.
+        $job_parameter_list = $agave->getJobParameters();
+
+        // For each app, set up the info required by the UI for the App parameters.
+        foreach ($appTemplates as $app_tag => $app_info) {
+            $app_config = $app_info['config'];
+            $app_ui_info = [];
+            Log::debug('Processing app ' . $app_tag);
+            // Process the parameters.
+            $parameter_list = [];
+            foreach ($app_config['parameters'] as $parameter_info) {
+                // We only want the visible parameters to be visible. The
+                // UI uses the Tapis ID as a label and the Tapis paramenter
+                // "label" as the human readable name of the parameter.
+                if ($parameter_info['value']['visible']) {
+                    $parameter = [];
+                    Log::debug('   Processing parameter ' . $parameter_info['id']);
+                    $parameter['label'] = $parameter_info['id'];
+                    $parameter['name'] = $parameter_info['details']['label'];
+                    $parameter['description'] = $parameter_info['details']['description'];
+                    $parameter['type'] = $parameter_info['value']['type'];
+                    $parameter['default'] = $parameter_info['value']['default'];
+                    $parameter_list[$parameter_info['id']] = $parameter;
+                } else {
+                    Log::debug('   Not displaying invisible parameter ' . $parameter_info['id']);
+                }
+            }
+
+            // The name of the App is the Tapis App label. We pass the UI the short
+            // and long descriptions as well . The UI ID and tag are the Tapis ID.
+            $app_ui_info['name'] = $app_config['label'];
+            $app_ui_info['description'] = $app_config['shortDescription'];
+            $app_ui_info['info'] = $app_config['longDescription'];
+            $app_ui_info['parameter_list'] = $parameter_list;
+            $app_ui_info['job_parameter_list'] = $job_parameter_list;
+            $app_ui_info['app_id'] = $app_tag;
+            $app_ui_info['app_tag'] = $app_tag;
+
+            // Save the info in the app list given to the UI.
+            $app_list[$app_tag] = $app_ui_info;
+        }
+        // Log::debug($app_list);
+
+        // Add the app list to the data returned to the View.
+        $data['app_list'] = $app_list;
 
         $data['system'] = System::getCurrentSystem(auth()->user()->id);
 
