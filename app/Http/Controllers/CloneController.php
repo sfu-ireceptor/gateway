@@ -217,7 +217,7 @@ class CloneController extends Controller
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
 
-	// Get information about all of the Apps for the AIRR "Clone" object
+        // Get information about all of the Apps for the AIRR "Clone" object
         $agave = new Agave;
         $appTemplates = $agave->getAppTemplates('Clone');
         $app_list = [];
