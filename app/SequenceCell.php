@@ -154,7 +154,7 @@ class SequenceCell
         File::makeDirectory($folder_path, 0777, true, true);
 
         $query_type = 'cell';
-        if (isset($filters['ir_property_label_expression'])) {
+        if (isset($filters['property_expression'])) {
             $query_type = 'expression';
         }
 

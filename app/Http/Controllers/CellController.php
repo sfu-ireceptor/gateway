@@ -60,7 +60,7 @@ class CellController extends Controller
         if (isset($filters['open_filter_panel_list'])) {
             $open_filter_panel_list = $filters['open_filter_panel_list'];
             if ($open_filter_panel_list[0] == 0) {
-                unset($filters['ir_property_label_expression']);
+                unset($filters['property_expression']);
                 unset($filters['value_expression']);
             } else {
                 unset($filters['expression_study_method_cell']);

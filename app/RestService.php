@@ -184,7 +184,7 @@ class RestService extends Model
             } elseif ($field_type == 'number') {
                 $filter->op = '=';
                 $v = (float) $v;
-            } elseif ($k == 'repertoire_id' || $k == 'data_processing_id' || $k == 'cell_id' || $k == 'subject.sex' || $k == 'v_call' || $k == 'j_call' || $k == 'd_call' || $k == 'v_gene' || $k == 'j_gene' || $k == 'd_gene' || $k == 'v_subgroup' || $k == 'j_subgroup' || $k == 'd_subgroup' || $k == 'd_subgroup' || $k == 'property' || $k == 'ir_property_label_expression') {
+            } elseif ($k == 'repertoire_id' || $k == 'data_processing_id' || $k == 'cell_id' || $k == 'subject.sex' || $k == 'v_call' || $k == 'j_call' || $k == 'd_call' || $k == 'v_gene' || $k == 'j_gene' || $k == 'd_gene' || $k == 'v_subgroup' || $k == 'j_subgroup' || $k == 'd_subgroup' || $k == 'd_subgroup' || $k == 'property' || $k == 'property_expression') {
                 $filter->op = '=';
             }
 
@@ -722,7 +722,7 @@ class RestService extends Model
         }
 
         $query_type = 'cell';
-        if (isset($filters['ir_property_label_expression'])) {
+        if (isset($filters['property_expression'])) {
             $query_type = 'expression';
         }
 
@@ -983,7 +983,7 @@ class RestService extends Model
             $base_uri = 'clone';
         } else {
             $query_type = 'cell';
-            if (isset($filters['ir_property_label_expression'])) {
+            if (isset($filters['property_expression'])) {
                 $query_type = 'expression';
             }
             $base_uri = $query_type;
@@ -1074,10 +1074,10 @@ class RestService extends Model
             foreach ($response_list as $i => $response) {
                 $rs = $response['rs'];
 
-                if (isset($response['data']->GeneExpression)) {
+                if (isset($response['data']->CellExpression)) {
                     // add cell data
                     $request_params = [];
-                    foreach ($response['data']->GeneExpression as $t) {
+                    foreach ($response['data']->CellExpression as $t) {
                         $cell_id = $t->cell_id;
                         $data_processing_id = $t->data_processing_id;
 
@@ -1092,7 +1092,7 @@ class RestService extends Model
                         $t['url'] = $rs->url . 'cell';
 
                         $params = [];
-                        // $params['fields'] = ['cell_id', 'value', 'ir_property_label_expression'];
+                        // $params['fields'] = ['cell_id', 'value', 'property_expression'];
 
                         $filters_json = self::generate_json_query($filters, $params);
                         $t['params'] = $filters_json;
@@ -1104,7 +1104,7 @@ class RestService extends Model
 
                     // add expression data to cell data
                     $cell_list_merged = [];
-                    foreach ($response['data']->GeneExpression as $t) {
+                    foreach ($response['data']->CellExpression as $t) {
                         $cell_id = $t->cell_id;
                         $data_processing_id = $t->data_processing_id;
 
@@ -1148,7 +1148,7 @@ class RestService extends Model
                         $t['url'] = $rs->url . 'expression';
 
                         $params = [];
-                        // $params['fields'] = ['cell_id', 'value', 'ir_property_label_expression'];
+                        // $params['fields'] = ['cell_id', 'value', 'property_expression'];
 
                         $filters_json = self::generate_json_query($filters, $params);
                         $t['params'] = $filters_json;
@@ -1165,7 +1165,7 @@ class RestService extends Model
                         $data_processing_id = $t->data_processing_id;
 
                         foreach ($response_list_expressions as $response_expression) {
-                            $expression_list = $response_expression['data']->GeneExpression;
+                            $expression_list = $response_expression['data']->CellExpression;
                             if (isset($expression_list[0])) {
                                 $cell_id_expression = $expression_list[0]->cell_id;
 
@@ -1181,8 +1181,8 @@ class RestService extends Model
 
                                     $expression_label_list = [];
                                     foreach ($expression_list_sorted as $expression) {
-                                        if (isset($expression->ir_property_label_expression)) {
-                                            $expression_label_list[] = $expression->ir_property_label_expression;
+                                        if (isset($expression->property)) {
+                                            $expression_label_list[] = $expression->property->label;
                                         }
                                     }
 
@@ -1777,9 +1777,9 @@ class RestService extends Model
 
         $final_response_list = [];
         foreach ($response_list as $response) {
-            if (isset($response['data']->GeneExpression)) {
+            if (isset($response['data']->CellExpression)) {
                 $l = [];
-                foreach ($response['data']->GeneExpression as $e) {
+                foreach ($response['data']->CellExpression as $e) {
                     $t = [];
                     $t['repertoire_id'] = $e->repertoire_id;
                     $t['cell_id'] = $e->cell_id;
