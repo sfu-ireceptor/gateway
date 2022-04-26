@@ -36,7 +36,7 @@ class SequenceController extends Controller
         /*************************************************
         * Immediate redirects */
 
-        // if legacy request without query id, generate query id and redirect
+        // if request without query id, generate query id and redirect
         if (! $request->has('query_id')) {
             $query_id = Query::saveParams($request->except(['_token']), 'sequences');
 
@@ -73,8 +73,20 @@ class SequenceController extends Controller
         // sequence data
         $data = [];
 
+        // get cached sample metadata
+        $metadata = Sample::metadata($username);
+
         $data['sequence_list'] = $sequence_data['items'];
-        $data['sample_list_json'] = json_encode($sequence_data['summary']);
+
+        // Fields we want to graph. The UI/blade expects six fields
+        $charts_fields = ['study_title', 'subject_id', 'sample_id', 'disease_diagnosis_id', 'tissue_id', 'pcr_target_locus'];
+        // Mapping of fields to display as labels on the graph for those that need
+        // mappings. These are usually required for ontology fields where we want
+        // to aggregate on the ontology ID but display the ontology label.
+        $field_map = ['disease_diagnosis_id' => 'disease_diagnosis',
+            'tissue_id' => 'tissue', ];
+        $data['charts_data'] = Sample::generateChartsData($sequence_data['summary'], $charts_fields, $field_map, 'ir_filtered_sequence_count');
+
         $data['rest_service_list'] = $sequence_data['rs_list'];
         $data['rest_service_list_no_response'] = $sequence_data['rs_list_no_response'];
         $data['rest_service_list_no_response_timeout'] = $sequence_data['rs_list_no_response_timeout'];
@@ -105,10 +117,38 @@ class SequenceController extends Controller
             $sample_filters = Query::getParams($sample_query_id);
 
             $sample_filter_fields = [];
+            $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id',
+                'disease_diagnosis_id', 'cell_subset_id', ];
             foreach ($sample_filters as $k => $v) {
                 if ($v) {
                     if (is_array($v)) {
-                        $sample_filter_fields[$k] = implode(', ', $v);
+                        // If the field is an ontology field, we want the filter fields to
+                        // have both label and ID.
+                        if (in_array($k, $ontology_fields)) {
+                            // Get the base field (without the _id part). This is how the
+                            // metadata is tagged.
+                            $base_field = substr($k, 0, strlen($k) - 3);
+                            $filter_info = '';
+                            // For each element in the filter parameters... This is essentially
+                            // the list of filters that are set.
+                            foreach ($v as $element) {
+                                // Get the cahced metadata for the field so we can build a label/id string
+                                $field_metadata = $metadata[$base_field];
+                                // Find the element in the metadata and build the filter label string.
+                                foreach ($field_metadata as $field_info) {
+                                    if ($field_info['id'] == $element) {
+                                        if ($filter_info != '') {
+                                            $filter_info = $filter_info . ', ';
+                                        }
+                                        $filter_info = $filter_info . $field_info['label'] . ' (' . $field_info['id'] . ')';
+                                    }
+                                }
+                                $sample_filter_fields[$k] = $filter_info;
+                            }
+                        } else {
+                            // If it is a normal array filter, then combine the stings
+                            $sample_filter_fields[$k] = implode(', ', $v);
+                        }
                     } else {
                         $sample_filter_fields[$k] = $v;
                     }
@@ -205,9 +245,9 @@ class SequenceController extends Controller
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
 
-        // Get information about all of the Apps
+        // Get information about all of the Apps for the AIRR "Rearrangement" object
         $agave = new Agave;
-        $appTemplates = $agave->updateAppTemplates();
+        $appTemplates = $agave->getAppTemplates('Rearrangement');
         $app_list = [];
 
         // Store the normal job contorl parameters for the UI. The same parameters are used
@@ -304,11 +344,11 @@ class SequenceController extends Controller
 
         // sample filters
         $sample_filters = [];
-        if (isset($filters['cell_subset'])) {
-            $sample_filters['cell_subset'] = $filters['cell_subset'];
+        if (isset($filters['cell_subset_id'])) {
+            $sample_filters['cell_subset_id'] = $filters['cell_subset_id'];
         }
-        if (isset($filters['organism'])) {
-            $sample_filters['organism'] = $filters['organism'];
+        if (isset($filters['organism_id'])) {
+            $sample_filters['organism_id'] = $filters['organism_id'];
         }
 
         // sequence filters
@@ -338,19 +378,18 @@ class SequenceController extends Controller
         $metadata = Sample::metadata($username);
 
         // cell type
-        $cell_type_list = [];
+        $cell_type_ontology_list = [];
         foreach ($metadata['cell_subset'] as $v) {
-            $cell_type_list[$v] = $v;
+            $cell_type_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
-        $data['cell_type_list'] = $cell_type_list;
+        $data['cell_type_ontology_list'] = $cell_type_ontology_list;
 
-        // organism
-        $subject_organism_list = [];
-        $subject_organism_list[''] = 'Any';
+        // organism ontology info
+        $subject_organism_ontology_list = [];
         foreach ($metadata['organism'] as $v) {
-            $subject_organism_list[$v] = $v;
+            $subject_organism_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
-        $data['subject_organism_list'] = $subject_organism_list;
+        $data['subject_organism_ontology_list'] = $subject_organism_ontology_list;
 
         // generate query id for download link
         $sample_id_list = Sample::find_sample_id_list($sample_filters, $username);
@@ -364,7 +403,16 @@ class SequenceController extends Controller
         $data['download_query_id'] = $download_query_id;
 
         $data['sequence_list'] = $sequence_data['items'];
-        $data['sample_list_json'] = json_encode($sequence_data['summary']);
+
+        // Fields we want to graph. The UI/blade expects six fields
+        $charts_fields = ['study_title', 'subject_id', 'sample_id', 'disease_diagnosis_id', 'tissue_id', 'pcr_target_locus'];
+        // Mapping of fields to display as labels on the graph for those that need
+        // mappings. These are usually required for ontology fields where we want
+        // to aggregate on the ontology ID but display the ontology label.
+        $field_map = ['disease_diagnosis_id' => 'disease_diagnosis',
+            'tissue_id' => 'tissue', ];
+        $data['charts_data'] = Sample::generateChartsData($sequence_data['summary'], $charts_fields, $field_map, 'ir_filtered_sequence_count');
+
         $data['rest_service_list'] = $sequence_data['rs_list'];
         $data['rest_service_list_no_response'] = $sequence_data['rs_list_no_response'];
         $data['rest_service_list_no_response_timeout'] = $sequence_data['rs_list_no_response_timeout'];
@@ -423,11 +471,40 @@ class SequenceController extends Controller
 
         // create copy of current filters for display
         $filter_fields = [];
+        $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id',
+            'disease_diagnosis_id', 'cell_subset_id', ];
         foreach ($filters as $k => $v) {
             if ($v) {
                 if (is_array($v)) {
                     // don't show sample id filters
-                    if (! starts_with($k, 'ir_project_sample_id_list_')) {
+                    if (starts_with($k, 'ir_project_sample_id_list_')) {
+                        continue;
+                    }
+                    // If the field is an ontology field, we want the filter fields to
+                    // have both label and ID.
+                    elseif (in_array($k, $ontology_fields)) {
+                        // Get the base field (without the _id part). This is how the
+                        // metadata is tagged.
+                        $base_field = substr($k, 0, strlen($k) - 3);
+                        $filter_info = '';
+                        // For each element in the filter parameters... This is essentially
+                        // the list of filters that are set.
+                        foreach ($v as $element) {
+                            // Get the cahced metadata for the field so we can build a label/id string
+                            $field_metadata = $metadata[$base_field];
+                            // Find the element in the metadata and build the filter label string.
+                            foreach ($field_metadata as $field_info) {
+                                if ($field_info['id'] == $element) {
+                                    if ($filter_info != '') {
+                                        $filter_info = $filter_info . ', ';
+                                    }
+                                    $filter_info = $filter_info . $field_info['label'] . ' (' . $field_info['id'] . ')';
+                                }
+                            }
+                            $filter_fields[$k] = $filter_info;
+                        }
+                    } else {
+                        // If it is a normal array filter, then combine the stings
                         $filter_fields[$k] = implode(', ', $v);
                     }
                 } else {
@@ -548,7 +625,7 @@ class SequenceController extends Controller
 
         $nb_sequences = $request->input('n');
 
-        Download::start_download($query_id, $username, $page_url, $nb_sequences);
+        Download::start_sequence_download($query_id, $username, $page_url, $nb_sequences);
 
         return redirect('downloads')->with('download_page', $page_url);
     }

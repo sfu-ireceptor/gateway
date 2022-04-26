@@ -65,7 +65,7 @@ function gateway_split_repertoire(){
     tsv_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} rearrangement_file` )
     if [ $? -ne 0 ]
     then
-	echo "Error: Could not process manifest file ${MANIFEST_FILE}"
+	echo "IR-ERROR: Could not process manifest file ${MANIFEST_FILE}"
 	exit $?
     fi
     echo "TSV files = ${tsv_files}"

@@ -16,12 +16,16 @@ class Agave
 
     public function __construct()
     {
+        // Initialize the rest client interface.
+        $this->initGuzzleRESTClient();
+
+        // Update the AppTemplates at start up.
+        $this->updateAppTemplates();
+
         // Maximum run time for a job in hours.
         $this->maxRunTime = 96;
         // Maximum number of processors per job
         $this->processorsPerNode = 24;
-
-        $this->initGuzzleRESTClient();
 
         // Set up the default job contorl parameters used by AGAVE
         $this->jobParameters = [];
@@ -193,6 +197,24 @@ class Agave
             // separate from the Tapis App.
             $app_info = [];
             $app_info['config'] = $app_config;
+            // We want to store information about the app that is useful in helping us
+            // determine when to use it. This information is encoded in a JSON string in
+            // the App in the hidden App parameter ir_hint.
+            if (array_key_exists('parameters', $app_config)) {
+                $parameters = $app_config['parameters'];
+                // Loop over the parameters and check for an ir_hints parameter.
+                foreach ($parameters as $parameter) {
+                    if (array_key_exists('id', $parameter) && $parameter['id'] == 'ir_hints') {
+                        // If we found a JSON hint decode it
+                        $hint_obj = json_decode($parameter['value']['default']);
+                        Log::debug('updateAppTemplates: hint_obj = ' . json_encode($hint_obj));
+                        // Get the object attribute - this tells us which AIRR object type this
+                        // App can be applied to (e.g. Rearrangement, Clone, Cell).
+                        $app_info['object'] = $hint_obj->object;
+                    }
+                }
+            }
+
             // Save this app template keyed by the name/tag/dir
             $this->appTemplates[$app_dir] = $app_info;
         }
@@ -200,10 +222,19 @@ class Agave
         return $this->appTemplates;
     }
 
-    public function getAppTemplates()
+    public function getAppTemplates($object_type)
     {
-        // Return the list of app templates.
-        return $this->appTemplates;
+        // Return the list of app templates based on the AIRR object type provided.
+        $object_templates = [];
+        // For each app, filter it out based on the matching the Apps 'object' attribute
+        // with the value passed in.
+        foreach ($this->appTemplates as $app_tag => $app_info) {
+            if (array_key_exists('object', $app_info) && $app_info['object'] == $object_type) {
+                $object_templates[$app_tag] = $app_info;
+            }
+        }
+
+        return $object_templates;
     }
 
     public function getAppTemplate($app_name)
@@ -315,6 +346,13 @@ class Agave
     public function getJob($job_id, $token)
     {
         $url = '/jobs/v2/' . $job_id;
+
+        return $this->doGETRequest($url, $token, true);
+    }
+
+    public function getJobOutputFile($job_id, $token, $file)
+    {
+        $url = '/jobs/v2/' . $job_id . '/outputs/media/' . $file;
 
         return $this->doGETRequest($url, $token, true);
     }

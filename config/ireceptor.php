@@ -84,6 +84,30 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Clones download limit
+    |--------------------------------------------------------------------------
+    |
+    | Maximum number of clones that can be downloaded at once
+    | Ex: 30000
+    |
+    */
+
+    'clones_download_limit' => env('IRECEPTOR_CLONES_DOWNLOAD_LIMIT', 500000000),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cells download limit
+    |--------------------------------------------------------------------------
+    |
+    | Maximum number of cells that can be downloaded at once
+    | Ex: 30000
+    |
+    */
+
+    'cells_download_limit' => env('IRECEPTOR_CELLS_DOWNLOAD_LIMIT', 500000000),
+
+    /*
+    |--------------------------------------------------------------------------
     | Sequence downloads page refresh interval
     |--------------------------------------------------------------------------
     |

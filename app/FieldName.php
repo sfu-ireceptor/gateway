@@ -19,19 +19,19 @@ class FieldName extends Model
     }
 
     // convert field names for a list of arrays
-    public static function convertList($data, $from, $to)
+    public static function convertList($data, $from, $to, $ir_class = '')
     {
         $mapping = self::all([$from, $to])->toArray();
 
-        return convert_arrays_keys($data, $mapping, $from, $to);
+        return convert_arrays_keys($data, $mapping, $from, $to, $ir_class);
     }
 
     // convert field names for a list of objects
-    public static function convertObjectList($data, $from, $to)
+    public static function convertObjectList($data, $from, $to, $ir_class = '')
     {
-        $mapping = self::all([$from, $to])->toArray();
+        $mapping = self::all([$from, $to, 'ir_class'])->toArray();
 
-        $array_list = convert_arrays_keys($data, $mapping, $from, $to);
+        $array_list = convert_arrays_keys($data, $mapping, $from, $to, $ir_class);
 
         $object_list = [];
         foreach ($array_list as $a) {
@@ -91,6 +91,32 @@ class FieldName extends Model
         return $l;
     }
 
+    public static function getCloneFields()
+    {
+        $ir_class_list = ['Clone'];
+
+        if (config('ireceptor.display_all_ir_fields')) {
+            $ir_class_list[] = 'IR_Clone';
+        }
+
+        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('default_order', 'asc')->get()->toArray();
+
+        return $l;
+    }
+
+    public static function getCellFields()
+    {
+        $ir_class_list = ['Cell'];
+
+        if (config('ireceptor.display_all_ir_fields')) {
+            $ir_class_list[] = 'IR_Cell';
+        }
+
+        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('default_order', 'asc')->get()->toArray();
+
+        return $l;
+    }
+
     public static function getGroups()
     {
         $l = [];
@@ -115,6 +141,9 @@ class FieldName extends Model
         $l['MHCGenotypeSet'] = 'MHC Genotype Set';
 
         $l['Rearrangement'] = 'Rearrangement';
+
+        $l['Clone'] = 'Clone';
+        $l['Cell'] = 'Cell';
 
         $l['ir_metadata'] = 'iReceptor Metadata';
         $l['IR_Parameter'] = 'iReceptor Parameter';
@@ -161,7 +190,7 @@ class FieldName extends Model
         $ir_class_list = ['Repertoire'];
 
         if (config('ireceptor.display_all_ir_fields')) {
-            $ir_class_list[] = 'ir_repertoire';
+            $ir_class_list[] = 'IR_Repertoire';
         }
 
         return static::getFieldsGrouped($ir_class_list);
@@ -172,7 +201,29 @@ class FieldName extends Model
         $ir_class_list = ['Rearrangement'];
 
         if (config('ireceptor.display_all_ir_fields')) {
-            $ir_class_list[] = 'ir_rearrangement';
+            $ir_class_list[] = 'IR_Rearrangement';
+        }
+
+        return static::getFieldsGrouped($ir_class_list);
+    }
+
+    public static function getCloneFieldsGrouped()
+    {
+        $ir_class_list = ['Clone'];
+
+        if (config('ireceptor.display_all_ir_fields')) {
+            $ir_class_list[] = 'IR_Clone';
+        }
+
+        return static::getFieldsGrouped($ir_class_list);
+    }
+
+    public static function getCellFieldsGrouped()
+    {
+        $ir_class_list = ['Cell'];
+
+        if (config('ireceptor.display_all_ir_fields')) {
+            $ir_class_list[] = 'IR_Cell';
         }
 
         return static::getFieldsGrouped($ir_class_list);

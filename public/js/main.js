@@ -66,7 +66,7 @@ $(document).ready(function() {
 
 	
 	// save filters panels state when submitting form
-	$('form.sample_search, form.sequence_search').submit(function(){
+	$('form.sample_search, form.sequence_search, form.clone_search, form.cell_search').submit(function(){
 		var filters_form = $(this);
 
 		$('.panel-collapse', $(this)).each(function(i){
@@ -234,6 +234,7 @@ $(document).ready(function() {
 		
 		modal.find('.modal-title').text('Repertoire: ' + repertoire_name);
 	});
+
 
 	/**********************************************************
 	* Sequences
@@ -502,7 +503,7 @@ $(document).ready(function() {
 		}
 	});	
 
-	// jow view - display images
+	// job view - display images
 	$('.result_files li a').each(function(){
 		var href = $(this).attr('href');
 		if (href.endsWith('.jpg')) {

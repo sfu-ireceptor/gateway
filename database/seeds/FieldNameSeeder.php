@@ -47,6 +47,8 @@ class FieldNameSeeder extends CsvSeeder
             // define default fields and their order
             $this->define_default_sample_fields();
             $this->define_default_sequence_fields();
+            $this->define_default_clone_fields();
+            $this->define_default_cell_fields();
         });
     }
 
@@ -77,12 +79,61 @@ class FieldNameSeeder extends CsvSeeder
             'ir_subclass' => 'other',
         ];
 
+        $l[] = [
+            'ir_id' => 'ir_clone_count',
+            'ir_short' => 'Clones',
+            'ir_class' => 'Repertoire',
+            'ir_subclass' => 'other',
+        ];
+
+        $l[] = [
+            'ir_id' => 'ir_cell_count',
+            'ir_short' => 'Cells',
+            'ir_class' => 'Repertoire',
+            'ir_subclass' => 'other',
+        ];
+
         // HACK: override ir_class from from "ir_rearrangement" to "rearrangement", so this field is displayed by default
         $l[] = [
             'ir_id' => 'ir_junction_aa_length',
             'ir_short' => 'Junction Length (AA)',
             'ir_class' => 'Rearrangement',
             'ir_subclass' => 'Rearrangement',
+        ];
+
+        // cell fields
+        $l[] = [
+            'ir_id' => 'v_call_1',
+            'ir_short' => 'V Gene With Allele (Chain 1)',
+            'ir_class' => 'Cell',
+            'ir_subclass' => 'Cell',
+        ];
+
+        $l[] = [
+            'ir_id' => 'junction_aa_1',
+            'ir_short' => 'Junction/CDR3 AA (Chain 1)',
+            'ir_class' => 'Cell',
+            'ir_subclass' => 'Cell',
+        ];
+        $l[] = [
+            'ir_id' => 'v_call_2',
+            'ir_short' => 'V Gene With Allele (Chain 2)',
+            'ir_class' => 'Cell',
+            'ir_subclass' => 'Cell',
+        ];
+
+        $l[] = [
+            'ir_id' => 'junction_aa_2',
+            'ir_short' => 'Junction/CDR3 AA (Chain 2)',
+            'ir_class' => 'Cell',
+            'ir_subclass' => 'Cell',
+        ];
+
+        $l[] = [
+            'ir_id' => 'expression_label_list',
+            'ir_short' => 'Expressed Genes (top 4)',
+            'ir_class' => 'Cell',
+            'ir_subclass' => 'Cell',
         ];
 
         foreach ($l as $t) {
@@ -99,6 +150,8 @@ class FieldNameSeeder extends CsvSeeder
         $l[] = ['id' => 'disease_diagnosis', 'visible' => true];
         $l[] = ['id' => 'study_group_description', 'visible' => true];
         $l[] = ['id' => 'ir_sequence_count', 'visible' => true];
+        $l[] = ['id' => 'ir_clone_count', 'visible' => true];
+        $l[] = ['id' => 'ir_cell_count', 'visible' => true];
         $l[] = ['id' => 'lab_name', 'visible' => true];
         $l[] = ['id' => 'tissue', 'visible' => true];
         $l[] = ['id' => 'pcr_target_locus', 'visible' => true];
@@ -124,6 +177,37 @@ class FieldNameSeeder extends CsvSeeder
         $l[] = ['id' => 'j_call', 'visible' => true];
         $l[] = ['id' => 'junction_aa', 'visible' => true];
         $l[] = ['id' => 'ir_junction_aa_length', 'visible' => true];
+
+        foreach ($l as $i => $t) {
+            FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);
+        }
+    }
+
+    public function define_default_cell_fields()
+    {
+        $l = [];
+        $l[] = ['id' => 'cell_id', 'visible' => true];
+        $l[] = ['id' => 'cell_id_cell', 'visible' => true];
+        $l[] = ['id' => 'expression_study_method_cell', 'visible' => true];
+        $l[] = ['id' => 'virtual_pairing_cell', 'visible' => true];
+        $l[] = ['id' => 'v_call_1', 'visible' => true];
+        $l[] = ['id' => 'junction_aa_1', 'visible' => true];
+        $l[] = ['id' => 'v_call_2', 'visible' => true];
+        $l[] = ['id' => 'junction_aa_2', 'visible' => true];
+        $l[] = ['id' => 'expression_label_list', 'visible' => true];
+
+        foreach ($l as $i => $t) {
+            FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);
+        }
+    }
+
+    public function define_default_clone_fields()
+    {
+        $l = [];
+        $l[] = ['id' => 'v_call_clone', 'visible' => true];
+        $l[] = ['id' => 'd_call_clone', 'visible' => true];
+        $l[] = ['id' => 'j_call_clone', 'visible' => true];
+        $l[] = ['id' => 'junction_aa_clone', 'visible' => true];
 
         foreach ($l as $i => $t) {
             FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);

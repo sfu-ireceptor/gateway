@@ -4,12 +4,13 @@
 @section('sample_query_id', $sample_query_id)
 
 @section('content')
+
 <div class="container-fluid sequence_container">
 
 	<h1>2. Sequence Search</h1>
 	<p class="sh1">Filter by sequence and sequence annotation feature</p>
 
-	<div class="row">		
+	<div class="row">
 		<div class="col-md-2 filters">
 
 			<h3 class="first">Filters</h3>
@@ -234,7 +235,7 @@
 					<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Search results statistics</h3>
 					<div class="statistics">
 						<p>
-							<strong>
+							<strong class="summary">
 								<span title="{{ number_format($total_filtered_sequences) }}">
 									{{ number_format($total_filtered_sequences) }} sequences
 								</span>
@@ -252,18 +253,19 @@
 						</p>
 						
 						<!-- repos/labs/studies details popup -->
-						@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
+						@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies, 'tab' => 'sequence'])
 
-						<div id="charts" class="charts">
+						<div class="charts">
 							<div class="row">
-								<div class="col-md-2 chart" id="chart1"></div>
-								<div class="col-md-2 chart" id="chart2"></div>
-								<div class="col-md-2 chart" id="chart3"></div>
-								<div class="col-md-2 chart" id="chart4"></div>
-								<div class="col-md-2 chart" id="chart5"></div>
-								<div class="col-md-2 chart" id="chart6"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart1']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart2']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart3']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart4']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart5']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart6']) !!}"></div>
 							</div>
-						</div>										
+						</div>
+									
 					</div>
 				@endif 
 				
@@ -474,28 +476,5 @@
 
 @include('reloadingMessage')
 @include('loadingMessage')
-
-<script>
-	var graphFields = [
-	        "study_title",
-	        "subject_id",
-	        "sample_id",
-	        "disease_diagnosis", 
-	        "tissue",
-	        "pcr_target_locus"
-	    ];
-	var graphNames = [
-	        "@lang('short.study_title')",
-	        "@lang('short.subject_id')",
-	        "@lang('short.sample_id')",
-	        "@lang('short.disease_diagnosis')",
-	        "@lang('short.tissue')", 
-	        "@lang('short.pcr_target_locus')"
-	    ];
-
-	var graphInternalLabels = true;
-	var graphCountField = "ir_filtered_sequence_count";
-	var graphData = {!! $sample_list_json !!};
-</script>
 
 @stop

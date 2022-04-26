@@ -101,19 +101,19 @@
 					across
 					<a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}</a>.
 					<!-- repos/labs/studies popup -->
-					@include('rest_service_list')
+					@include('rest_service_list', ['tab' => 'sequence'])
 				</p>
 
-				<div id="charts">
+				<div class="charts">
 					<div class="row">
-						<div class="col-md-4 chart" id="chart1"></div>
-						<div class="col-md-4 chart" id="chart2"></div>
-						<div class="col-md-4 chart" id="chart3"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart1']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart2']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart3']) !!}"></div>
 					</div>
 					<div class="row">
-						<div class="col-md-4 chart" id="chart4"></div>
-						<div class="col-md-4 chart" id="chart5"></div>
-						<div class="col-md-4 chart" id="chart6"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart4']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart5']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart6']) !!}"></div>
 					</div>
 				</div>
 				
@@ -121,34 +121,6 @@
 		</div>
 	</div>
 </div>
-
-<script>
-	
-	var graphFields = [
-	        "study_type", 
-	        "organism",
-	        "disease_diagnosis", 
-	        "tissue",
-	        "pcr_target_locus",
-	        "template_class"
-	    ];
-	
-	var graphNames = [
-	        "@lang('short.study_type')",
-	        "@lang('short.organism')", 
-	        "@lang('short.disease_diagnosis')",
-	        "@lang('short.tissue')", 
-	        "@lang('short.pcr_target_locus')",
-	        "@lang('short.template_class')"
-	    ];
-	
-	var graphDIV = "landing_chart";
-	var graphInternalLabels = true;
-	var graphLabelLength = 10;
-	var graphCountField = "ir_sequence_count";
-	var graphData = {!! $sample_list_json !!};
-
-</script>
 
 @endsection
 

@@ -5,7 +5,7 @@
 @section('content')
 <div class="container page-refresh" data-page-refresh-interval="{{ config('ireceptor.sequences_downloads_refresh_interval') }}">
 	
-	<h1>Sequence Downloads</h1>
+	<h1>Downloads</h1>
 
 	@if (session('notification'))
 	<div class="alert alert-warning alert-dismissible" role="alert">
@@ -62,8 +62,8 @@
 			<th>Creation Date</th>
 			<th>Status</th>
 			<th>Duration</th>
-			<th>Sequence Search Page</th>
-			<th>Nb sequences</th>
+			<th>Search Page</th>
+			<th>Size</th>
 			<th>File</th>
 			<th>Expiration Date</th>
 			<th></th>
@@ -115,6 +115,14 @@
 				</td>
 				<td class="text-nowrap">
 					{{ number_format($d->nb_sequences) }}
+
+					@if(str_contains($d->page_url, 'sequence'))
+						{{ str_plural('sequence', $d->nb_sequences) }}
+					@elseif(str_contains($d->page_url, 'clone'))
+						{{ str_plural('clone', $d->nb_sequences) }}
+					@elseif(str_contains($d->page_url, 'cell'))
+						{{ str_plural('cell', $d->nb_sequences) }}
+					@endif
 				</td>
 				<td class="text-nowrap">
 					@if($d->isQueued())
@@ -142,7 +150,7 @@
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 							<span class="text">
 								Download
-								({{ human_filesize(filesize($d->file_url)) }})
+								({{ human_filesize($d->file_size) }})
 							</span>
 						</a>
 

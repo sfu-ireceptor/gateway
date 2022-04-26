@@ -5,7 +5,7 @@
 @section('content')
 <div class="container">
 	<h1>
-		{{ $q->type == 'job' ? 'Sequence Download' : 'User Query'}}
+		{{ $q->type == 'job' ? 'Download' : 'User Query'}}
 	</h1>
 
 	<table class="table table-bordered table-striped">
@@ -94,7 +94,7 @@
 						<th>Service</th>
 						<th>Start</th>
 						<th>URL</th>
-						<th>TSV size</th>
+						<th>Size</th>
 						<th>Duration</th>
 					</tr>
 				</thead>

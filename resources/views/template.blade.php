@@ -13,7 +13,7 @@
 		<link rel="stylesheet" href="/css/bootstrap.min.css" />
 		<link href="/css/bootstrap-multiselect.css" rel="stylesheet" />
 		<link href="/css/jstree/default/style.min.css" rel="stylesheet" />
-		<link href="/css/main.css?v=67" rel="stylesheet" />
+		<link href="/css/main.css?v=68" rel="stylesheet" />
 
 		<!-- IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -66,7 +66,45 @@
 								</a>
 							</li>
 							<li role="presentation" class="sequences">
-								<a href="#" class="inactive">2. Sequences</a>
+								<a href="#" class="inactive">2. Sequences/Clones/Cells</a>
+							</li>
+						@elseif(Request::is('clones*'))
+							<li role="presentation" class="dropdown active search">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+									Search
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+								  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
+								  <li><a href="/samples">Repertoire Metadata Search</a></li>
+								</ul>
+							</li>
+							<li role="presentation" class="active samples">
+								<a href="/samples?query_id=@yield('sample_query_id', '')">
+									1. Repertoire Metadata
+								</a>
+							</li>
+							<li role="presentation" class="active sequences">
+								<a href="#" class="active inactive">2. Clones</a>
+							</li>
+						@elseif(Request::is('cells*'))
+							<li role="presentation" class="dropdown active search">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+									Search
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+								  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
+								  <li><a href="/samples">Repertoire Metadata Search</a></li>
+								</ul>
+							</li>
+							<li role="presentation" class="active samples">
+								<a href="/samples?query_id=@yield('sample_query_id', '')">
+									1. Repertoire Metadata
+								</a>
+							</li>
+							<li role="presentation" class="active sequences">
+								<a href="#" class="active inactive">2. Cells</a>
 							</li>
 						@elseif(Request::is('sequences*'))
 							<li role="presentation" class="dropdown active search">
@@ -199,9 +237,9 @@
 		<script src="/js/pluralize.js"></script>
 
 		<script src="/js/airrvisualization.js?v=12"></script>
-		<script src="/js/main.js?v=76"></script>
+		<script src="/js/main.js?v=79"></script>
 		<script src="/js/admin.js?v=1"></script>
-		<script src="/js/visualization.js?v=19"></script>
+		<script src="/js/visualization.js?v=20"></script>
 	</body>
 
 </html>

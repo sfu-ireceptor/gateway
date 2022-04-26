@@ -24,6 +24,8 @@
 						<th>URL</th>
 						<th>Repertoires</th>
 						<th>Sequences</th>
+						<th>Clones</th>
+						<th>Cells</th>
 						<th>Stats</th>
 						<th>max_size</th>
 						<th>Last Refresh</th>
@@ -58,7 +60,19 @@
 										<li>
 											<a href="/admin/samples/update-sequence_count/{{ $rs->id }}">
 												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
-												Refresh cached sequence counts
+												Refresh cached <strong>sequence</strong> counts
+											</a>
+										</li>
+										<li>
+											<a href="/admin/samples/update-clone_count/{{ $rs->id }}">
+												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+												Refresh cached <strong>clone</strong> counts
+											</a>
+										</li>
+										<li>
+											<a href="/admin/samples/update-cell_count/{{ $rs->id }}">
+												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+												Refresh cached <strong>cell</strong> counts
 											</a>
 										</li>
 										<li>
@@ -82,6 +96,16 @@
 							<td>
 								<span title="{{ number_format($rs->nb_sequences) }}">
 									{{ human_number($rs->nb_sequences) }}
+								</span>
+							</td>
+							<td>
+								<span title="{{ number_format($rs->nb_clones) }}">
+									{{ human_number($rs->nb_clones) }}
+								</span>
+							</td>
+							<td>
+								<span title="{{ number_format($rs->nb_cells) }}">
+									{{ human_number($rs->nb_cells) }}
 								</span>
 							</td>
 							<td>

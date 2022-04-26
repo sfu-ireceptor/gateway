@@ -70,18 +70,27 @@ Route::get('email', 'TestController@email');
 
 Route::middleware('auth')->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
-    Route::post('/samples', 'SampleController@postIndex')->name('samples-post');
-    Route::get('/samples', 'SampleController@index')->name('samples')->middleware('log_query');
+
+    Route::post('/samples/{type?}', 'SampleController@postIndex')->name('samples-post');
+    Route::get('/samples/{type?}', 'SampleController@index')->name('samples')->middleware('log_query');
     Route::get('/samples/field/{id}', 'SampleController@field')->name('samples-field');
     Route::get('/samples/field-data/{id}', 'SampleController@field_data')->name('samples-field-data');
     Route::get('/samples/json', 'SampleController@json')->name('samples-json')->middleware('log_query');
     Route::get('/samples/tsv', 'SampleController@tsv')->name('samples-tsv')->middleware('log_query');
     Route::get('/samples/count-stats-popup-open', 'SampleController@countStatsPopupOpen')->name('samples-count-stats-popup-open');
+
     Route::post('/sequences', 'SequenceController@postIndex')->name('sequences-post');
     Route::get('/sequences', 'SequenceController@index')->name('sequences')->middleware('log_query');
     Route::get('/sequences-quick-search', 'SequenceController@quickSearch')->name('sequences-quick-search')->middleware('log_query');
     Route::post('/sequences-quick-search', 'SequenceController@postQuickSearch')->name('sequences-quick-search-post');
     Route::get('/sequences-download', 'SequenceController@download')->name('sequences-download');
+
+    Route::post('/clones', 'CloneController@postIndex')->name('clones-post');
+    Route::get('/clones', 'CloneController@index')->name('clones')->middleware('log_query');
+
+    Route::post('/cells', 'CellController@postIndex')->name('cells-post');
+    Route::get('/cells', 'CellController@index')->name('cells')->middleware('log_query');
+    Route::get('/cells-download', 'CellController@download')->name('cells-download');
 
     Route::prefix('user')->group(function () {
         Route::get('account', 'UserController@getAccount');
@@ -147,6 +156,8 @@ Route::middleware('auth')->group(function () {
         Route::get('delete-user/{username}', 'AdminController@getDeleteUser');
         Route::get('samples/update-cache', 'AdminController@getUpdateSampleCache');
         Route::get('samples/update-sequence_count/{rest_service_id}', 'AdminController@getUpdateSequenceCount');
+        Route::get('samples/update-clone_count/{rest_service_id}', 'AdminController@getUpdateCloneCount');
+        Route::get('samples/update-cell_count/{rest_service_id}', 'AdminController@getUpdateCellCount');
         Route::get('field-names', 'AdminController@getFieldNames');
         Route::get('queries', 'AdminController@queries');
         Route::get('downloads', 'AdminController@downloads');

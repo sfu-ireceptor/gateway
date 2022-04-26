@@ -191,21 +191,26 @@ class JobController extends Controller
         $data['job'] = $job;
         Log::debug('JobController::getView: job = ' . json_encode($job, JSON_PRETTY_PRINT));
 
+        // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
+        // that are used by Gateway Apps. This MUST be the same and probably should be
+        // defined as a CONFIG variable some how. For now we hardcode here and in the
+        // Tapis Gateway Utilities code.
+        $analysis_base = 'gateway_analysis';
+
+        $data['analysis_download_url'] = '';
+        $data['output_log_url'] = '';
+        $data['error_log_url'] = '';
         // Check to see if we have a folder with Gateway output. If we have gateway
         // output in just a ZIP file, extract the ZIP file. This should only happen once
         // the first time this code is run with a Gateway analysis ZIP file without the
         // unzipped directory.
         $folder = 'storage/' . $job['input_folder'];
+        $analysis_folder = $folder . '/' . $analysis_base;
         if ($job['input_folder'] != '' && File::exists($folder)) {
-            // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
-            // that are used by Gateway Apps. This MUST be the same and probably should be
-            // defined as a CONFIG variable some how. For now we hardcode here and in the
-            // Tapis Gateway Utilities code.
-            $analysis_zipbase = 'gateway_analysis';
             // If this ZIP file exists and the directory does not, the Gateway needs to
             // UNZIP the archive.
-            $zip_file = $folder . '/' . $analysis_zipbase . '.zip';
-            $zip_folder = $folder . '/' . $analysis_zipbase;
+            $zip_file = $folder . '/' . $analysis_base . '.zip';
+            $zip_folder = $analysis_folder;
             if (File::exists($zip_file) && ! File::exists($zip_folder)) {
                 Log::debug('JobController::getView - UNZIPing analysis folder');
                 $zip = new ZipArchive();
@@ -213,26 +218,8 @@ class JobController extends Controller
                 $zip->extractTo($folder);
                 $zip->close();
             }
-        }
-
-        $data['files'] = [];
-        $data['filesHTML'] = '';
-        // Set up the display of the file listing from the output of the analysis, it it
-        // exists.
-        if ($job['input_folder'] != '') {
-            if (File::exists($folder)) {
-                $data['files'] = File::allFiles($folder);
-                if (count($data['files']) > 0) {
-                    $data['filesHTML'] = dir_to_html($folder);
-                } elseif ($job->agave_status == 'FINISHED') {
-                    // In the case where the job is FINISHED and there are no output files, tell the user
-                    // that the data is no longer available. Note: the current Gateway cleanup removes all
-                    // the files but the directory structure still exists. So it has to be the count of
-                    // actual files that is used to determine if the analysis has been removed or not.
-                    $msg = "<b>NOTE</b>: The data from this analysis has been removed as the archive timeout has expired, please re-run this analysis to reproduce the data.<br/><br/>\n";
-                    $msg .= "<em>Remember that these analyses can be resource intensive so please remember to download your analysis results once the analysis is finished if you want to maintain a copy! Re-running analysis jobs is a waste of computational resources and will negatively impact all users of the iReceptor Platform.</em><br/>\n";
-                    $data['filesHTML'] = $msg;
-                }
+            if (File::exists($zip_file)) {
+                $data['analysis_download_url'] = $zip_file;
             }
         }
 
@@ -303,14 +290,133 @@ class JobController extends Controller
         }
 
         // Generate some Error summary information if the job failed
+        $output_file = 'irec-job-' . $job['id'] . '-' . $job['agave_id'] . '.out';
+        $error_file = 'irec-job-' . $job['id'] . '-' . $job['agave_id'] . '.err';
         $data['error_summary'] = [];
         if ($job->agave_status == 'FAILED') {
+            // Get the Tapis error status
             $agave_status = json_decode($this->getAgaveJobJSON($job->id));
             $s = '<p><b>TAPIS errors</b></p>\n';
             $s .= strval($agave_status->result->lastStatusMessage) . '<br/>\n';
+
+            // Get the relevant iReceptor Gateway error messages. These come from the
+            // normal job ourput and error files, but are tagged with either "IR-ERROR" or
+            // "IR_INFO" in the error messages. This allows App developers to provide error
+            // messages that the Gateway will display for the user.
+
+            // If there is an error, Tapis doesn't by default download the files, so if
+            // it doesn't exist download it and save it. If it does exist open it.
+            $response = '';
+            $err_path = $analysis_folder . '/' . $error_file;
+            if (File::exists($folder) && ! File::exists($err_path)) {
+                // Tapis command to get the file.
+                $agave = new Agave;
+                $token = auth()->user()->password;
+                $response = $agave->getJobOutputFile($job->agave_id, $token, $error_file);
+                // Check for the analysis directory, create if it doesn't exist.
+                if (! File::exists($analysis_folder)) {
+                    mkdir($analysis_folder);
+                }
+                // Write it to disk so it is cached.
+                $filehandle = fopen($err_path, 'w');
+                fwrite($filehandle, $response);
+            } elseif (File::exists($folder) && File::exists($err_path)) {
+                // If it already exists, then open it.
+                $filehandle = fopen($err_path, 'r');
+                if (filesize($err_path) > 0) {
+                    $response = fread($filehandle, filesize($err_path));
+                } else {
+                    $response = '';
+                }
+            }
+            // Extract the error messages from the App for the Gateway.
+            $s .= '<br/><p><b>iReceptor Gateway errors</b></p>\n';
+            $string_list = explode(PHP_EOL, $response);
+            $ireceptor_error = 'IR-ERROR';
+            foreach ($string_list as $line) {
+                if (substr($line, 0, strlen($ireceptor_error)) == $ireceptor_error) {
+                    $s .= $line . '<br/>\n';
+                }
+            }
+
+            // Repeat for the output log file for the job. Download if not here, add to messages
+            // if info available.
+            $out_path = $analysis_folder . '/' . $output_file;
+            if (File::exists($folder) && ! File::exists($out_path)) {
+                // Tapis command to get the file.
+                $agave = new Agave;
+                $token = auth()->user()->password;
+                $response = $agave->getJobOutputFile($job->agave_id, $token, $output_file);
+                // Check for the analysis directory, create if it doesn't exist.
+                if (! File::exists($analysis_folder)) {
+                    mkdir($analysis_folder);
+                }
+                // Write it to disk so it is cached.
+                $filehandle = fopen($out_path, 'w');
+                fwrite($filehandle, $response);
+            } elseif (File::exists($folder) && File::exists($out_path)) {
+                // If it already exists, then open it.
+                $filehandle = fopen($out_path, 'r');
+                if (filesize($out_path) > 0) {
+                    $response = fread($filehandle, filesize($out_path));
+                } else {
+                    $response = '';
+                }
+            }
+            // Extract the info messages from the App for the Gateway.
+            $s .= '<br/><p><b>iReceptor Gateway info messages</b></p>\n';
+            $string_list = explode(PHP_EOL, $response);
+            $ireceptor_error = 'IR-INFO';
+            foreach ($string_list as $line) {
+                if (substr($line, 0, strlen($ireceptor_error)) == $ireceptor_error) {
+                    $s .= $line . '<br/>\n';
+                }
+            }
+
+            // Save the exploded error summary message in the data for the view.
             $data['error_summary'] = explode('\n', $s);
         }
 
+        // Set up the display of the file listing from the output of the analysis, it it
+        // exists.
+        $data['files'] = [];
+        $data['filesHTML'] = '';
+        $data['analysis_summary'] = [];
+        if ($job['input_folder'] != '') {
+            if (File::exists($folder)) {
+                $data['files'] = File::allFiles($folder);
+                if (count($data['files']) > 0) {
+                    $data['filesHTML'] = dir_to_html($folder);
+                    $data['error_log_url'] = $analysis_folder . '/' . $error_file;
+                    $data['output_log_url'] = $analysis_folder . '/' . $output_file;
+
+                    $analysis_summary = [];
+                    if (File::exists($analysis_folder)) {
+                        foreach (scandir($analysis_folder) as $file) {
+                            if ($file !== '.' && $file !== '..' && is_dir($analysis_folder . '/' . $file)) {
+                                $html_file = $analysis_folder . '/' . $file . '/' . $file . '.html';
+                                if (File::exists($html_file)) {
+                                    Log::debug('file = ' . $html_file);
+                                    $summary_object = ['name' => $file, 'url' => '/' . $html_file];
+                                    $analysis_summary[] = $summary_object;
+                                }
+                            }
+                        }
+                    }
+                    $data['analysis_summary'] = $analysis_summary;
+                } elseif ($job->agave_status == 'FINISHED') {
+                    // In the case where the job is FINISHED and there are no output files, tell the user
+                    // that the data is no longer available. Note: the current Gateway cleanup removes all
+                    // the files but the directory structure still exists. So it has to be the count of
+                    // actual files that is used to determine if the analysis has been removed or not.
+                    $msg = "<b>NOTE</b>: The data from this analysis has been removed as the archive timeout has expired, please re-run this analysis to reproduce the data.<br/><br/>\n";
+                    $msg .= "<em>Remember that these analyses can be resource intensive so please remember to download your analysis results once the analysis is finished if you want to maintain a copy! Re-running analysis jobs is a waste of computational resources and will negatively impact all users of the iReceptor Platform.</em><br/>\n";
+                    $data['filesHTML'] = $msg;
+                }
+            }
+        }
+
+        // Provide the step info for the job.
         $data['steps'] = JobStep::findAllForJob($id);
 
         return view('job/view', $data);

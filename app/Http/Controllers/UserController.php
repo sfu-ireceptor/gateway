@@ -24,7 +24,18 @@ class UserController extends Controller
         $data = $metadata;
 
         $sample_list = Sample::public_samples();
-        $data['sample_list_json'] = json_encode($sample_list);
+
+        // Fields we want to graph. The UI/blade expects six fields
+        $charts_fields = ['study_type_id', 'organism_id', 'disease_diagnosis_id',
+            'tissue_id', 'pcr_target_locus', 'template_class', ];
+        // Mapping of fields to display as labels on the graph for those that need
+        // mappings. These are usually required for ontology fields where we want
+        // to aggregate on the ontology ID but display the ontology label.
+        $field_map = ['study_type_id' => 'study_type',
+            'organism_id' =>  'organism',
+            'disease_diagnosis_id' => 'disease_diagnosis',
+            'tissue_id' => 'tissue', ];
+        $data['charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map);
 
         // generate statistics
         $sample_data = Sample::stats($sample_list);

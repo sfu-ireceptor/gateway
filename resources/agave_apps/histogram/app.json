@@ -128,6 +128,26 @@
           "xsd:string"
         ]
       }
+    },
+    {
+      "id": "ir_hints",
+      "value": {
+        "visible": false,
+        "required": true,
+        "type": "string",
+        "default": "{\"object\":\"Rearrangement\"}"
+      },
+      "details": {
+        "label": "iReceptor Gateway hints (hidden) ",
+        "description": "JSON string that is used to provide hints to the gateway on when to use an App."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
     }
   ]
 }

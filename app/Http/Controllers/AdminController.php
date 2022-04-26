@@ -6,6 +6,8 @@ use App\Agave;
 use App\CachedSample;
 use App\Download;
 use App\FieldName;
+use App\Jobs\CountCells;
+use App\Jobs\CountClones;
 use App\Jobs\CountSequences;
 use App\LocalJob;
 use App\News;
@@ -366,6 +368,46 @@ class AdminController extends Controller
         CountSequences::dispatch($username, $rest_service_id, $localJobId)->onQueue('admin');
 
         $message = 'Sequence count job for  ' . $rs->name . ' has been <a href="/admin/queues">queued</a>';
+
+        return redirect('admin/databases')->with('notification', $message);
+    }
+
+    public function getUpdateCloneCount($rest_service_id)
+    {
+        $rs = RestService::find($rest_service_id);
+        $username = auth()->user()->username;
+
+        $lj = new LocalJob();
+        $lj->user = $username;
+        $lj->queue = 'admin';
+        $lj->description = 'Clone count for  ' . $rs->name;
+        $lj->save();
+
+        // queue as a job
+        $localJobId = $lj->id;
+        CountClones::dispatch($username, $rest_service_id, $localJobId)->onQueue('admin');
+
+        $message = 'Clone count job for  ' . $rs->name . ' has been <a href="/admin/queues">queued</a>';
+
+        return redirect('admin/databases')->with('notification', $message);
+    }
+
+    public function getUpdateCellCount($rest_service_id)
+    {
+        $rs = RestService::find($rest_service_id);
+        $username = auth()->user()->username;
+
+        $lj = new LocalJob();
+        $lj->user = $username;
+        $lj->queue = 'admin';
+        $lj->description = 'Cell count for  ' . $rs->name;
+        $lj->save();
+
+        // queue as a job
+        $localJobId = $lj->id;
+        CountCells::dispatch($username, $rest_service_id, $localJobId)->onQueue('admin');
+
+        $message = 'Cell count job for  ' . $rs->name . ' has been <a href="/admin/queues">queued</a>';
 
         return redirect('admin/databases')->with('notification', $message);
     }
