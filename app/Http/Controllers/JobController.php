@@ -205,7 +205,7 @@ class JobController extends Controller
         // the first time this code is run with a Gateway analysis ZIP file without the
         // unzipped directory.
         $folder = 'storage/' . $job['input_folder'];
-	$analysis_folder = $folder . '/' . $analysis_base;
+        $analysis_folder = $folder . '/' . $analysis_base;
         if ($job['input_folder'] != '' && File::exists($folder)) {
             // If this ZIP file exists and the directory does not, the Gateway needs to
             // UNZIP the archive.
@@ -306,15 +306,16 @@ class JobController extends Controller
             // If there is an error, Tapis doesn't by default download the files, so if
             // it doesn't exist download it and save it. If it does exist open it.
             $response = '';
-	    $err_path = $analysis_folder . '/' . $error_file;
+            $err_path = $analysis_folder . '/' . $error_file;
             if (File::exists($folder) && ! File::exists($err_path)) {
                 // Tapis command to get the file.
                 $agave = new Agave;
                 $token = auth()->user()->password;
                 $response = $agave->getJobOutputFile($job->agave_id, $token, $error_file);
-		// Check for the analysis directory, create if it doesn't exist.
-		if (!File::exists($analysis_folder))
-			mkdir($analysis_folder);
+                // Check for the analysis directory, create if it doesn't exist.
+                if (! File::exists($analysis_folder)) {
+                    mkdir($analysis_folder);
+                }
                 // Write it to disk so it is cached.
                 $filehandle = fopen($err_path, 'w');
                 fwrite($filehandle, $response);
@@ -339,15 +340,16 @@ class JobController extends Controller
 
             // Repeat for the output log file for the job. Download if not here, add to messages
             // if info available.
-	    $out_path = $analysis_folder . '/' . $output_file;
+            $out_path = $analysis_folder . '/' . $output_file;
             if (File::exists($folder) && ! File::exists($out_path)) {
                 // Tapis command to get the file.
                 $agave = new Agave;
                 $token = auth()->user()->password;
                 $response = $agave->getJobOutputFile($job->agave_id, $token, $output_file);
-		// Check for the analysis directory, create if it doesn't exist.
-		if (!File::exists($analysis_folder))
-			mkdir($analysis_folder);
+                // Check for the analysis directory, create if it doesn't exist.
+                if (! File::exists($analysis_folder)) {
+                    mkdir($analysis_folder);
+                }
                 // Write it to disk so it is cached.
                 $filehandle = fopen($out_path, 'w');
                 fwrite($filehandle, $response);
@@ -387,22 +389,20 @@ class JobController extends Controller
                     $data['error_log_url'] = $analysis_folder . '/' . $error_file;
                     $data['output_log_url'] = $analysis_folder . '/' . $output_file;
 
-		    $analysis_summary = [];
-		    if (File::exists($analysis_folder))
-		    {
+                    $analysis_summary = [];
+                    if (File::exists($analysis_folder)) {
                         foreach (scandir($analysis_folder) as $file) {
-                            if ($file !== '.' && $file !== '..' && is_dir($analysis_folder .  '/' . $file)) {
-				$html_file = $analysis_folder . '/' . $file . '/' . $file . '.html';
-				if (File::exists($html_file))
-				{
+                            if ($file !== '.' && $file !== '..' && is_dir($analysis_folder . '/' . $file)) {
+                                $html_file = $analysis_folder . '/' . $file . '/' . $file . '.html';
+                                if (File::exists($html_file)) {
                                     Log::debug('file = ' . $html_file);
-				    $summary_object = array('name' => $file, 'url' => '/' . $html_file);
-				    $analysis_summary[] = $summary_object;
-				}
+                                    $summary_object = ['name' => $file, 'url' => '/' . $html_file];
+                                    $analysis_summary[] = $summary_object;
+                                }
                             }
                         }
-		    }
-		    $data['analysis_summary'] = $analysis_summary;
+                    }
+                    $data['analysis_summary'] = $analysis_summary;
                 } elseif ($job->agave_status == 'FINISHED') {
                     // In the case where the job is FINISHED and there are no output files, tell the user
                     // that the data is no longer available. Note: the current Gateway cleanup removes all
