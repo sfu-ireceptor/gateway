@@ -75,6 +75,16 @@
                         View Analysis Error Log
                     </a>
                 @endif
+                @if (count($analysis_summary) > 0)
+                    <div class="summary">
+                    </br>
+                    @foreach ($analysis_summary as $summary_object)
+		    <a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="{{ $summary_object['url'] }}">
+			Analysis Results: {{$summary_object['name']}}
+                    </a></br>
+                    @endforeach
+	    </div>
+	@endif
 	    <div class="result_files">
 		{!! $filesHTML !!}
 	    </div>

@@ -245,7 +245,7 @@ function run_analysis()
             # TODO: Fix this, it should not be required.
             title_string=${title_string// /}
         else 
-	    file_string="total"
+	    file_string="Total"
 	    title_string="Total"
 	fi
 
@@ -312,14 +312,14 @@ elif [ "${split_repertoire}" = "False" ]; then
     fi
     echo "TSV files = ${tsv_files}"
 
-    # Output directory is called "total"
+    # Output directory is called "Total"
     # Run the analysis with a token repository name of "ADC" since the
     # analysis is being run on data from the entire ADC.
     # repertoire_id and repository should be "NULL"
     # Lastly, provide the list of TSV files to process. Remember that
     # the array elements are expanded into separate parameters, which
     # the run_analyis function handles.
-    outdir="total"
+    outdir="Total"
     mkdir ${outdir}
     run_analysis ${outdir} "ADC" "NULL" "NULL" ${tsv_files[@]} 
 

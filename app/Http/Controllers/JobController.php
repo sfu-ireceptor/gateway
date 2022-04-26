@@ -205,11 +205,12 @@ class JobController extends Controller
         // the first time this code is run with a Gateway analysis ZIP file without the
         // unzipped directory.
         $folder = 'storage/' . $job['input_folder'];
+	$analysis_folder = $folder . '/' . $analysis_base;
         if ($job['input_folder'] != '' && File::exists($folder)) {
             // If this ZIP file exists and the directory does not, the Gateway needs to
             // UNZIP the archive.
             $zip_file = $folder . '/' . $analysis_base . '.zip';
-            $zip_folder = $folder . '/' . $analysis_base;
+            $zip_folder = $analysis_folder;
             if (File::exists($zip_file) && ! File::exists($zip_folder)) {
                 Log::debug('JobController::getView - UNZIPing analysis folder');
                 $zip = new ZipArchive();
@@ -305,19 +306,23 @@ class JobController extends Controller
             // If there is an error, Tapis doesn't by default download the files, so if
             // it doesn't exist download it and save it. If it does exist open it.
             $response = '';
-            if (File::exists($folder) && ! File::exists($folder . '/' . $error_file)) {
+	    $err_path = $analysis_folder . '/' . $error_file;
+            if (File::exists($folder) && ! File::exists($err_path)) {
                 // Tapis command to get the file.
                 $agave = new Agave;
                 $token = auth()->user()->password;
                 $response = $agave->getJobOutputFile($job->agave_id, $token, $error_file);
+		// Check for the analysis directory, create if it doesn't exist.
+		if (!File::exists($analysis_folder))
+			mkdir($analysis_folder);
                 // Write it to disk so it is cached.
-                $filehandle = fopen($folder . '/' . $error_file, 'w');
+                $filehandle = fopen($err_path, 'w');
                 fwrite($filehandle, $response);
-            } elseif (File::exists($folder) && File::exists($folder . '/' . $error_file)) {
+            } elseif (File::exists($folder) && File::exists($err_path)) {
                 // If it already exists, then open it.
-                $filehandle = fopen($folder . '/' . $error_file, 'r');
-                if (filesize($folder . '/' . $error_file) > 0) {
-                    $response = fread($filehandle, filesize($folder . '/' . $error_file));
+                $filehandle = fopen($err_path, 'r');
+                if (filesize($err_path) > 0) {
+                    $response = fread($filehandle, filesize($err_path));
                 } else {
                     $response = '';
                 }
@@ -334,19 +339,23 @@ class JobController extends Controller
 
             // Repeat for the output log file for the job. Download if not here, add to messages
             // if info available.
-            if (File::exists($folder) && ! File::exists($folder . '/' . $output_file)) {
+	    $out_path = $analysis_folder . '/' . $output_file;
+            if (File::exists($folder) && ! File::exists($out_path)) {
                 // Tapis command to get the file.
                 $agave = new Agave;
                 $token = auth()->user()->password;
                 $response = $agave->getJobOutputFile($job->agave_id, $token, $output_file);
+		// Check for the analysis directory, create if it doesn't exist.
+		if (!File::exists($analysis_folder))
+			mkdir($analysis_folder);
                 // Write it to disk so it is cached.
-                $filehandle = fopen($folder . '/' . $output_file, 'w');
+                $filehandle = fopen($out_path, 'w');
                 fwrite($filehandle, $response);
-            } elseif (File::exists($folder) && File::exists($folder . '/' . $output_file)) {
+            } elseif (File::exists($folder) && File::exists($out_path)) {
                 // If it already exists, then open it.
-                $filehandle = fopen($folder . '/' . $output_file, 'r');
-                if (filesize($folder . '/' . $output_file) > 0) {
-                    $response = fread($filehandle, filesize($folder . '/' . $output_file));
+                $filehandle = fopen($out_path, 'r');
+                if (filesize($out_path) > 0) {
+                    $response = fread($filehandle, filesize($out_path));
                 } else {
                     $response = '';
                 }
@@ -369,13 +378,31 @@ class JobController extends Controller
         // exists.
         $data['files'] = [];
         $data['filesHTML'] = '';
+        $data['analysis_summary'] = [];
         if ($job['input_folder'] != '') {
             if (File::exists($folder)) {
                 $data['files'] = File::allFiles($folder);
                 if (count($data['files']) > 0) {
                     $data['filesHTML'] = dir_to_html($folder);
-                    $data['error_log_url'] = $folder . '/' . $error_file;
-                    $data['output_log_url'] = $folder . '/' . $output_file;
+                    $data['error_log_url'] = $analysis_folder . '/' . $error_file;
+                    $data['output_log_url'] = $analysis_folder . '/' . $output_file;
+
+		    $analysis_summary = [];
+		    if (File::exists($analysis_folder))
+		    {
+                        foreach (scandir($analysis_folder) as $file) {
+                            if ($file !== '.' && $file !== '..' && is_dir($analysis_folder .  '/' . $file)) {
+				$html_file = $analysis_folder . '/' . $file . '/' . $file . '.html';
+				if (File::exists($html_file))
+				{
+                                    Log::debug('file = ' . $html_file);
+				    $summary_object = array('name' => $file, 'url' => '/' . $html_file);
+				    $analysis_summary[] = $summary_object;
+				}
+                            }
+                        }
+		    }
+		    $data['analysis_summary'] = $analysis_summary;
                 } elseif ($job->agave_status == 'FINISHED') {
                     // In the case where the job is FINISHED and there are no output files, tell the user
                     // that the data is no longer available. Note: the current Gateway cleanup removes all
