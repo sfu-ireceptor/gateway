@@ -136,9 +136,9 @@ class DownloadSequences implements ShouldQueue
         $t['date_str'] = $date_str;
 
         Mail::send(['text' => 'emails.download_successful'], $t, function ($message) use ($email, $date_str) {
-		Log::debug('test1');
-		Log::debug($email);
-		$message->to($email)->subject('[iReceptor] Your download from ' . $date_str . ' is ready');
+            Log::debug('test1');
+            Log::debug($email);
+            $message->to($email)->subject('[iReceptor] Your download from ' . $date_str . ' is ready');
         });
 
         if ($this->download->incomplete) {
