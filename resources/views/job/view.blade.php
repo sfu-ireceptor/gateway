@@ -11,10 +11,9 @@
                 <br />
 		<small data-toggle="tooltip" data-placement="right" title="Submitted on {{ $job->createdAtFull() }}"> 
 			Submitted: <span class="submission_date_relative">
-				{{ $job->createdAtRelative() }}
+				{{ $job->createdAtRelative() }}, 
 			</span>
 		</small>
-                <br />
 		<small> 
 			Run time: <span class="run_time">{{ $job->totalTime() }}</span>
 		</small>
@@ -28,33 +27,6 @@
                  <span class="job_url">
                     <a href="{{ $job->url }}"> {{ $job->url }} </a>
 	        </span>
-	@endif
-
-        @if (count($summary) > 0)
-            <h2>Data Summary</h2>
-            <div class="summary">
-            @foreach ($summary as $summary_line)
-		{!! $summary_line !!}
-            @endforeach
-	    </div>
-	@endif
-
-        @if (count($job_summary) > 0)
-            <h2>Job Summary</h2>
-            <div class="summary">
-            @foreach ($job_summary as $summary_line)
-		{!! $summary_line !!}
-            @endforeach
-	    </div>
-	@endif
-
-        @if (count($error_summary) > 0)
-            <h2>Error Summary</h2>
-            <div class="summary">
-            @foreach ($error_summary as $summary_line)
-		{!! $summary_line !!}
-            @endforeach
-	    </div>
 	@endif
 
 	@if ($filesHTML != '' && $job->app != 'Third-party analysis')
@@ -76,6 +48,10 @@
 			        Analysis Summary - {{$summary_object['label']}}
                             </a></br></br>
                             @endforeach
+	                    </div>
+                        @else
+	                    <div class="result_files">
+		                {!! $filesHTML !!}
 	                    </div>
 	                @endif
 	                @if ($analysis_download_url != '') 
@@ -103,6 +79,33 @@
                 </div>
             </div>
         @endif
+
+        @if (count($summary) > 0)
+            <h2>Data Summary</h2>
+            <div class="summary">
+            @foreach ($summary as $summary_line)
+		{!! $summary_line !!}
+            @endforeach
+	    </div>
+	@endif
+
+        @if (count($job_summary) > 0)
+            <h2>Job Summary</h2>
+            <div class="summary">
+            @foreach ($job_summary as $summary_line)
+		{!! $summary_line !!}
+            @endforeach
+	    </div>
+	@endif
+
+        @if (count($error_summary) > 0)
+            <h2>Error Summary</h2>
+            <div class="summary">
+            @foreach ($error_summary as $summary_line)
+		{!! $summary_line !!}
+            @endforeach
+	    </div>
+	@endif
 
 	@if (count($files) > 0 && $job->app == 'Third-party analysis')
 		<h2>BRepertoire</h2>
