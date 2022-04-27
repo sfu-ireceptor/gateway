@@ -397,7 +397,7 @@ class JobController extends Controller
                                 $html_file = $analysis_folder . '/' . $file . '/' . $file . '.html';
                                 if (File::exists($html_file)) {
                                     Log::debug('file = ' . $html_file);
-				    $label_file = $analysis_folder . '/' . $file . '/' . $file . '.txt';
+                                    $label_file = $analysis_folder . '/' . $file . '/' . $file . '.txt';
                                     $filehandle = fopen($label_file, 'r');
                                     $label = $file;
                                     if (filesize($label_file) > 0) {
@@ -406,9 +406,7 @@ class JobController extends Controller
 
                                     $summary_object = ['name' => $file, 'label' => $label, 'url' => '/' . $html_file];
                                     $analysis_summary[] = $summary_object;
-                                }
-			        else
-			        {
+                                } else {
                                     $repository_dir = $analysis_folder . '/' . $file;
                                     Log::debug('Checking ' . $repository_dir);
                                     foreach (scandir($repository_dir) as $file) {
@@ -417,9 +415,9 @@ class JobController extends Controller
                                             $html_file = $repository_dir . '/' . $file . '/' . $file . '.html';
                                             Log::debug('html file = ' . $html_file);
                                             if (File::exists($html_file)) {
-						$label_file = $repository_dir . '/' . $file . '/' . $file . '.txt';
+                                                $label_file = $repository_dir . '/' . $file . '/' . $file . '.txt';
                                                 $filehandle = fopen($label_file, 'r');
-						$label = $file;
+                                                $label = $file;
                                                 if (filesize($label_file) > 0) {
                                                     $label = fread($filehandle, filesize($label_file));
                                                 }
@@ -427,9 +425,9 @@ class JobController extends Controller
                                                 $summary_object = ['name' => $file, 'label' => $label, 'url' => '/' . $html_file];
                                                 $analysis_summary[] = $summary_object;
                                             }
-					}
-				    }
-			        }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
