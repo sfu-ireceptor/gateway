@@ -238,7 +238,7 @@ function run_analysis()
 	echo "Running a Repertoire Analysis on ${array_of_files[@]}"
 
 	# Check to see if we are processing a specific repertoire_id
-	if [ "${repertoire_id}" != "NULL" ]; then
+	if [ "${repertoire_id}" != "${output_directory}" ]; then
 	    file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
 	    file_string=${repository_name}_${file_string// /}
             title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
@@ -261,7 +261,12 @@ function run_analysis()
 		rm -f $filename
 	done
 
-	html_file=${output_directory}/${file_string}.html
+	# Generate a label file for the Gateway to use to present this info to the user
+	label_file=${output_directory}/${repertoire_id}.txt
+	echo "${repository_name}: ${title_string}" > ${label_file}
+
+	# Generate a summary HTML file for the Gateway to present this info to the user
+	html_file=${output_directory}/${repertoire_id}.html
 	printf "<h1>iReceptor Stats Analysis</h1>\n" > ${html_file}
 	printf "<h2>Data Summary</h2>\n" >> ${html_file}
 	cat info.txt >> ${html_file}
@@ -321,7 +326,7 @@ elif [ "${split_repertoire}" = "False" ]; then
     # the run_analyis function handles.
     outdir="Total"
     mkdir ${outdir}
-    run_analysis ${outdir} "ADC" "NULL" "NULL" ${tsv_files[@]} 
+    run_analysis ${outdir} "AIRRDataCommons" ${outdir} "NULL" ${tsv_files[@]} 
 
     # Remove the copied ZIP file
     rm -r ${ZIP_FILE}

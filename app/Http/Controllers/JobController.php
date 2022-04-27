@@ -397,9 +397,39 @@ class JobController extends Controller
                                 $html_file = $analysis_folder . '/' . $file . '/' . $file . '.html';
                                 if (File::exists($html_file)) {
                                     Log::debug('file = ' . $html_file);
-                                    $summary_object = ['name' => $file, 'url' => '/' . $html_file];
+				    $label_file = $analysis_folder . '/' . $file . '/' . $file . '.txt';
+                                    $filehandle = fopen($label_file, 'r');
+                                    $label = $file;
+                                    if (filesize($label_file) > 0) {
+                                        $label = fread($filehandle, filesize($label_file));
+                                    }
+
+                                    $summary_object = ['name' => $file, 'label' => $label, 'url' => '/' . $html_file];
                                     $analysis_summary[] = $summary_object;
                                 }
+			        else
+			        {
+                                    $repository_dir = $analysis_folder . '/' . $file;
+                                    Log::debug('Checking ' . $repository_dir);
+                                    foreach (scandir($repository_dir) as $file) {
+                                        Log::debug('file = ' . $file);
+                                        if ($file !== '.' && $file !== '..' && is_dir($repository_dir . '/' . $file)) {
+                                            $html_file = $repository_dir . '/' . $file . '/' . $file . '.html';
+                                            Log::debug('html file = ' . $html_file);
+                                            if (File::exists($html_file)) {
+						$label_file = $repository_dir . '/' . $file . '/' . $file . '.txt';
+                                                $filehandle = fopen($label_file, 'r');
+						$label = $file;
+                                                if (filesize($label_file) > 0) {
+                                                    $label = fread($filehandle, filesize($label_file));
+                                                }
+                                                Log::debug('summary html file = ' . $html_file);
+                                                $summary_object = ['name' => $file, 'label' => $label, 'url' => '/' . $html_file];
+                                                $analysis_summary[] = $summary_object;
+                                            }
+					}
+				    }
+			        }
                             }
                         }
                     }
