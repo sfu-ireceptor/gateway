@@ -49,19 +49,30 @@
                     <div role="tabpanel" class="tab-pane active" id="summary">
 
                         @if (count($analysis_summary) > 0)
-                            <div class="summary">
-                            </br>
-                            @foreach ($analysis_summary as $summary_object)
-		            <a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="{{ $summary_object['url'] }}">
-			        Analysis Summary - {{$summary_object['label']}}
-                            </a></br></br>
-                            @endforeach
-	                    </div>
+                            <table class="table table-striped table-condensed much_data table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-nowrap col_repo">Repository</th>
+                                    <th class="text-nowrap col_desc">Description</th>
+                                    <th class="text-nowrap col_results">Summary</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($analysis_summary as $summary_object)
+                                <tr>
+                                    <td>{{ $summary_object['repository'] }}</td>
+                                    <td>{{ $summary_object['label'] }}</td>
+		                            <td><a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="{{ $summary_object['url'] }}"> View Summary </a></td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                            </table>
                         @else
-	                    <div class="result_files">
-		                {!! $filesHTML !!}
-	                    </div>
-	                @endif
+	                        <div class="result_files">
+		                    {!! $filesHTML !!}
+	                        </div>
+	                    @endif
+
 	                @if ($analysis_download_url != '') 
 		            <a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/{{ $analysis_download_url }}">
         
