@@ -377,7 +377,7 @@ class JobController extends Controller
             $data['error_summary'] = explode('\n', $s);
         }
 
-        // Set up the display of the file listing from the output of the analysis, it it
+        // Set up the display of the file listing from the output of the analysis, if it
         // exists.
         $data['files'] = [];
         $data['filesHTML'] = '';
@@ -394,42 +394,53 @@ class JobController extends Controller
                     if (File::exists($analysis_folder)) {
                         foreach (scandir($analysis_folder) as $file) {
                             if ($file !== '.' && $file !== '..' && is_dir($analysis_folder . '/' . $file)) {
-                                $html_file = $analysis_folder . '/' . $file . '/' . $file . '.html';
-                                if (File::exists($html_file)) {
-                                    Log::debug('file = ' . $html_file);
-				    $label_file = $analysis_folder . '/' . $file . '/' . $file . '.txt';
+                                $summary_file = '';
+                                if (File::exists($analysis_folder . '/' . $file . '/' . $file . '.html'))
+                                    $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.html';
+                                elseif (File::exists($analysis_folder . '/' . $file . '/' . $file . '.pdf'))
+                                    $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.pdf';
+				                $label_file = $analysis_folder . '/' . $file . '/' . $file . '.txt';
+                                if (File::exists($summary_file) && File::exists($label_file))
+                                {
+                                    Log::debug('file = ' . $summary_file);
                                     $filehandle = fopen($label_file, 'r');
                                     $label = $file;
-                                    if (filesize($label_file) > 0) {
+                                    if (filesize($label_file) > 0) 
                                         $label = fread($filehandle, filesize($label_file));
-                                    }
 
-                                    $summary_object = ['name' => $file, 'label' => $label, 'url' => '/' . $html_file];
+                                    $summary_object = ['repository' => '', 'name' => $file, 'label' => $label, 'url' => '/' . $summary_file];
                                     $analysis_summary[] = $summary_object;
                                 }
-			        else
-			        {
+			                    else
+			                    {
                                     $repository_dir = $analysis_folder . '/' . $file;
+                                    $repository_name = $file;
                                     Log::debug('Checking ' . $repository_dir);
-                                    foreach (scandir($repository_dir) as $file) {
+                                    foreach (scandir($repository_dir) as $file)
+                                    {
                                         Log::debug('file = ' . $file);
-                                        if ($file !== '.' && $file !== '..' && is_dir($repository_dir . '/' . $file)) {
-                                            $html_file = $repository_dir . '/' . $file . '/' . $file . '.html';
-                                            Log::debug('html file = ' . $html_file);
-                                            if (File::exists($html_file)) {
-						$label_file = $repository_dir . '/' . $file . '/' . $file . '.txt';
+                                        if ($file !== '.' && $file !== '..' && is_dir($repository_dir . '/' . $file))
+                                        {
+                                            $summary_file = '';
+                                            if (File::exists($repository_dir . '/' . $file . '/' . $file . '.html'))
+                                                $summary_file = $repository_dir . '/' . $file . '/' . $file . '.html';
+                                            elseif (File::exists($repository_dir . '/' . $file . '/' . $file . '.pdf'))
+                                                $summary_file = $repository_dir . '/' . $file . '/' . $file . '.pdf';
+						                    $label_file = $repository_dir . '/' . $file . '/' . $file . '.txt';
+                                            Log::debug('summary file = ' . $summary_file);
+                                            if (File::exists($summary_file) && File::exists($label_file))
+                                            {
                                                 $filehandle = fopen($label_file, 'r');
-						$label = $file;
-                                                if (filesize($label_file) > 0) {
+						                        $label = $file;
+                                                if (filesize($label_file) > 0)
                                                     $label = fread($filehandle, filesize($label_file));
-                                                }
-                                                Log::debug('summary html file = ' . $html_file);
-                                                $summary_object = ['name' => $file, 'label' => $label, 'url' => '/' . $html_file];
+                                                Log::debug('summary file = ' . $summary_file);
+                                                $summary_object = ['repository' => $repository_name, 'name' => $file, 'label' => $label, 'url' => '/' . $summary_file];
                                                 $analysis_summary[] = $summary_object;
                                             }
-					}
-				    }
-			        }
+					                    }
+				                    }
+			                    }
                             }
                         }
                     }
