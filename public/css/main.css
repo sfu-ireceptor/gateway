@@ -1096,6 +1096,10 @@ a.download_sequences {
 
 /* @group tabs */
 
+.nav-tabs  {
+	margin-bottom: 10px;
+}
+
 .nav-tabs a {
 	text-decoration: none;
 }
