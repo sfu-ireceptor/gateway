@@ -111,7 +111,7 @@ function do_histogram()
     echo "Data output file = $TSV_OFILE"
 
     # Run the python histogram command
-    python3 ${SCRIPT_DIR}/airr_histogram.py ${variable_name} $TMP_FILE $PNG_OFILE $TSV_OFILE "${title},${variable_name}"
+    python3 ${SCRIPT_DIR}/airr_histogram.py ${variable_name} $TMP_FILE $PNG_OFILE $TSV_OFILE ${SORT_VALUES} ${NUM_VALUES} "${title},${variable_name}"
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not generate histogram for ${title}"
@@ -177,8 +177,8 @@ function run_analysis()
     printf "<h2>Data Summary</h2>\n" >> ${html_file}
     cat info.txt >> ${html_file}
     printf "<h2>Analysis</h2>\n" >> ${html_file}
-    printf "<h3>Junction AA Length</h3>\n" >> ${html_file}
-    printf '<img src="%s-junction_aa_length-histogram.png" width="800">' ${file_string} >> ${html_file}
+    printf "<h3>%s</h3>\n" ${VARNAME} >> ${html_file}
+    printf '<img src="%s-%s-histogram.png" width="800">' ${file_string} ${VARNAME} >> ${html_file}
 
 }
 

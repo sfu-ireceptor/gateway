@@ -10,7 +10,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from collections import OrderedDict
 
-def performQueryAnalysis(input_file, field_name):
+def performQueryAnalysis(input_file, field_name, num_values, sort_values=False):
     # Check to see if the file exists and return if not.
     if not os.path.isfile(input_file):
         print("ERROR: Could not open file ", input_file)
@@ -25,8 +25,12 @@ def performQueryAnalysis(input_file, field_name):
         return None
 
     # Count up the number for each column value.
-    counts = airr_df[field_name].value_counts(sort=False)
+    counts = airr_df[field_name].value_counts(sort=sort_values)
     counts = counts.sort_index()
+
+    if num_values > 0:
+        counts = counts.head(num_values)
+
     return counts
 
 def plotData(plot_data, title, filename):
@@ -74,6 +78,9 @@ def getArguments():
     # PNG and TSV output files
     parser.add_argument("png_output_file")
     parser.add_argument("tsv_output_file")
+    # Count and sort parameters
+    parser.add_argument("sort_values")
+    parser.add_argument("num_values", type=int)
     # Title of the graph
     parser.add_argument("title")
     # Verbosity flag
@@ -89,8 +96,13 @@ def getArguments():
 if __name__ == "__main__":
     # Get the command line arguments.
     options = getArguments()
+    if options.sort_values.upper() is "TRUE":
+        sort = True
+    else:
+        sort = False
     # Perform the query analysis, gives us back the data
-    data = performQueryAnalysis(options.input_file, options.field_name)
+    data = performQueryAnalysis(options.input_file, options.field_name,
+                                options.num_values, sort)
     # Graph the results if we got some...
     title = options.title 
     if not data is None:
