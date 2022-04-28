@@ -177,7 +177,6 @@ function run_analysis()
     printf "<h2>Data Summary</h2>\n" >> ${html_file}
     cat info.txt >> ${html_file}
     printf "<h2>Analysis</h2>\n" >> ${html_file}
-    printf "<h3>%s</h3>\n" ${VARNAME} >> ${html_file}
     printf '<img src="%s-%s-histogram.png" width="800">' ${file_string} ${VARNAME} >> ${html_file}
 
 }
