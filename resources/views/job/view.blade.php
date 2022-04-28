@@ -1,6 +1,6 @@
 @extends('template')
 
-@section('title', $job->agave_status)
+@section('title', $job->app . ' (Job ' . $job->id . ') ' . $job->agave_status)
 @section('base_title', ' ')
  
 @section('content')
@@ -10,9 +10,8 @@
 		{{ $job->app }} (Job {{ $job->id }})
                 <br />
 		<small data-toggle="tooltip" data-placement="right" title="Submitted on {{ $job->createdAtFull() }}"> 
-			Submitted: <span class="submission_date_relative">
-				{{ $job->createdAtRelative() }}, 
-			</span>
+            Submitted: 
+              <span class="submission_date_relative">{{ $job->createdAtRelative() }}</span>,
 		</small>
 		<small> 
 			Run time: <span class="run_time">{{ $job->totalTime() }}</span>
@@ -27,6 +26,15 @@
                  <span class="job_url">
                     <a href="{{ $job->url }}"> {{ $job->url }} </a>
 	        </span>
+	@endif
+
+    @if (count($error_summary) > 0)
+        <h2>Error Summary</h2>
+        <div class="summary">
+            @foreach ($error_summary as $summary_line)
+		        {!! $summary_line !!}
+            @endforeach
+	    </div>
 	@endif
 
 	@if ($filesHTML != '' && $job->app != 'Third-party analysis')
@@ -93,15 +101,6 @@
             <h2>Job Summary</h2>
             <div class="summary">
             @foreach ($job_summary as $summary_line)
-		{!! $summary_line !!}
-            @endforeach
-	    </div>
-	@endif
-
-        @if (count($error_summary) > 0)
-            <h2>Error Summary</h2>
-            <div class="summary">
-            @foreach ($error_summary as $summary_line)
 		{!! $summary_line !!}
             @endforeach
 	    </div>
