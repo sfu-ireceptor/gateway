@@ -1493,7 +1493,7 @@ class RestService extends Model
         if ($type == 'clone') {
             $base_uri = 'clone';
         }
-            
+
         $now = time();
 
         // build list of services to query
