@@ -143,34 +143,40 @@ function run_analysis()
     # Run the VDJBase pipeline within the singularity image on each rearrangement file provided.
     for filename in "${array_of_files[@]}"; do
         echo "Running VDJBase on $filename"
-	echo "Mapping ${PWD} to /data"
-	echo "Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
-	echo "Storing output in /data/${output_directory}"
-	# Run VDJBase
+        echo "Mapping ${PWD} to /data"
+        echo "Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
+        echo "Storing output in /data/${output_directory}"
+        # Run VDJBase
         singularity exec -e -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} vdjbase-pipeline -s ${file_string} -f /data/${filename} -t ${AGAVE_JOB_PROCESSORS_PER_NODE} -o /data/${output_directory}
 
-	# Get the germline database info from the repertoire file
-	germline_database="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field data_processing.germline_database)"
+        # Get the germline database info from the repertoire file
+        germline_database="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field data_processing.germline_database)"
 
-	# Get the data processing file info from the repertoire file
-	data_processing_files="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field data_processing.data_processing_files)"
+        # Get the data processing file info from the repertoire file
+        data_processing_files="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field data_processing.data_processing_files)"
 
-	# Get the data processing ID info from the repertoire file
-	data_processing_id="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field data_processing.data_processing_id)"
+        # Get the data processing ID info from the repertoire file
+        data_processing_id="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field data_processing.data_processing_id)"
 
-	# Get the sample processing ID info from the repertoire file
-	sample_processing_id="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field sample.sample_processing_id)"
+        # Get the sample processing ID info from the repertoire file
+        sample_processing_id="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field sample.sample_processing_id)"
 
-	echo "Data processing files = ${data_processing_files}"
-	echo "Data processing ID = ${data_processing_id}"
-	echo "Sample processing ID = ${sample_processing_id}"
-	echo "Germline database = ${germline_database}"
-	echo "Generating AIRR genotype in /data/${output_directory}/${file_string}/${file_string}_genotype.json"
-	# Generate AIRR Genotype JSON file.
-	singularity exec -e -B ${PWD}:/data -B ${SCRIPT_DIR}:/scripts ${SCRIPT_DIR}/${singularity_image} python3 /scripts/generate_genotype.py --genotype_file /data/${output_directory}/${file_string}/${file_string}_genotype.tsv --repertoire_id ${repertoire_id} --data_processing_id ${data_processing_id} --sample_processing_id ${sample_processing_id} --data_processing_file ${data_processing_files} --germline_database "${germline_database}" --receptor_genotype_set_id ${file_string} --receptor_genotype_id ${file_string} --out_name /data/${output_directory}/${file_string}/${file_string}_genotype.json
+        echo "Data processing files = ${data_processing_files}"
+        echo "Data processing ID = ${data_processing_id}"
+        echo "Sample processing ID = ${sample_processing_id}"
+        echo "Germline database = ${germline_database}"
+        echo "Generating AIRR genotype in /data/${output_directory}/${file_string}/${file_string}_genotype.json"
+        # Generate AIRR Genotype JSON file.
+        singularity exec -e -B ${PWD}:/data -B ${SCRIPT_DIR}:/scripts ${SCRIPT_DIR}/${singularity_image} python3 /scripts/generate_genotype.py --genotype_file /data/${output_directory}/${file_string}/${file_string}_genotype.tsv --repertoire_id ${repertoire_id} --data_processing_id ${data_processing_id} --sample_processing_id ${sample_processing_id} --data_processing_file ${data_processing_files} --germline_database "${germline_database}" --receptor_genotype_set_id ${file_string} --receptor_genotype_id ${file_string} --out_name /data/${output_directory}/${file_string}/${file_string}_genotype.json
 
-	# We don't want to keep around the original TSV file.
-	rm -f ${filename}
+        # Generate a label file for the Gateway to use to present this info to the user
+        label_file=${output_directory}/${repertoire_id}.txt
+        echo "${repository_name}: ${title_string}" > ${label_file}
+
+        # Copy the PDF report to the repertoire_id.pdf file for the gateway to use as a summary.
+        cp ${output_directory}/${file_string}/${file_string}_ogrdb_plots.pdf ${output_directory}/${repertoire_id}.pdf
+        # We don't want to keep around the original TSV file.
+        rm -f ${filename}
 
     done
     printf "Done running Repertoire Analysis on ${array_of_files[@]} at $(date)\n\n"
