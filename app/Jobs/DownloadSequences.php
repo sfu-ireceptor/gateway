@@ -9,6 +9,7 @@ use App\Query;
 use App\QueryLog;
 use App\Sequence;
 use App\SequenceCell;
+use App\SequenceClone;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -99,6 +100,8 @@ class DownloadSequences implements ShouldQueue
 
         if ($this->type == 'sequence') {
             $t = Sequence::sequencesTSV($filters, $this->username, $this->url, $sample_filter_fields);
+        } elseif ($this->type == 'clone') {
+            $t = SequenceClone::clonesTSV($filters, $this->username, $this->url, $sample_filter_fields);
         } elseif ($this->type == 'cell') {
             $t = SequenceCell::cellsTSV($filters, $this->username, $this->url, $sample_filter_fields);
         }

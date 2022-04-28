@@ -780,7 +780,7 @@
 													@isset($sample->{$field['ir_id']})
 														@if($field['ir_id'] == 'ir_clone_count')
 															@if ($sample->ir_clone_count > 0)
-																<a class="number" href="clones?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
+																<a class="number" href="/clones?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
 																	{{number_format($sample->ir_clone_count, 0 ,'.' ,',') }}
 																</a>
 															@endif

@@ -87,6 +87,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/clones', 'CloneController@postIndex')->name('clones-post');
     Route::get('/clones', 'CloneController@index')->name('clones')->middleware('log_query');
+    Route::get('/clones-download', 'CloneController@download')->name('clones-download');
 
     Route::post('/cells', 'CellController@postIndex')->name('cells-post');
     Route::get('/cells', 'CellController@index')->name('cells')->middleware('log_query');

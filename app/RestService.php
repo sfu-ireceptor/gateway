@@ -1486,8 +1486,14 @@ class RestService extends Model
     //   },
     //   "format": "tsv"
     // }
-    public static function sequences_data($filters, $folder_path, $username = '', $expected_nb_sequences_by_rs)
+    public static function sequences_data($filters, $folder_path, $username = '', $expected_nb_sequences_by_rs, $type = 'rearrangement')
     {
+        $base_uri = 'rearrangement';
+
+        if ($type == 'clone') {
+            $base_uri = 'clone';
+        }
+            
         $now = time();
 
         // build list of services to query
@@ -1552,7 +1558,7 @@ class RestService extends Model
 
                     $t = [];
                     $t['rs'] = $rs;
-                    $t['url'] = $rs->url . 'rearrangement';
+                    $t['url'] = $rs->url . $base_uri;
                     $t['params'] = $rs_filters_json;
                     $t['timeout'] = config('ireceptor.service_file_request_chunked_timeout');
 
@@ -1577,7 +1583,7 @@ class RestService extends Model
 
                 $t = [];
                 $t['rs'] = $rs;
-                $t['url'] = $rs->url . 'rearrangement';
+                $t['url'] = $rs->url . $base_uri;
                 $t['params'] = $rs_filters_json;
                 $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
@@ -1647,7 +1653,7 @@ class RestService extends Model
                             // if number of sequences is unexpected, mark this chunk as error
                             $expected_nb_sequences = $requests[$k]['params_array']['size'] + 1;
                             if ($n != $expected_nb_sequences) {
-                                Log::error('Expected ' . $expected_nb_sequences . ' sequences, but received ' . $n . ' sequences');
+                                Log::error('Expected ' . $expected_nb_sequences . $type . 's, but received ' . $n . ' ' . $type . 's');
                                 $has_errors = true;
                                 $failed_response = $response;
                                 break;

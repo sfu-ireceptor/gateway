@@ -74,7 +74,7 @@ class SequenceClone
 
     public static function expectedSequenceClonesByRestSevice($filters, $username)
     {
-        $response_list = RestService::clones_summary($filters, $username, false);
+        $response_list = RestService::sequences_summary($filters, $username, false, 'clone');
         $expected_nb_clones_by_rs = [];
         foreach ($response_list as $response) {
             $rest_service_id = $response['rs']->id;
@@ -128,7 +128,7 @@ class SequenceClone
         File::makeDirectory($folder_path, 0777, true, true);
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filters, $folder_path, $username);
-        $response_list = RestService::clones_data($filters, $folder_path, $username, $expected_nb_clones_by_rs);
+        $response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_clones_by_rs, 'clone');
 
         $file_stats = self::file_stats($response_list, $expected_nb_clones_by_rs);
 
