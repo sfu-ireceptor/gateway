@@ -515,7 +515,7 @@ class SequenceClone
         }
         $s .= "\n";
 
-        $s .= '* SequenceClone filters *' . "\n";
+        $s .= '* Clone filters *' . "\n";
         unset($filters['ir_project_sample_id_list']);
         unset($filters['cols']);
         unset($filters['filters_order']);
