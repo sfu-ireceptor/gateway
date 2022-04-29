@@ -1063,7 +1063,7 @@
 													@isset($sample->{$field['ir_id']})
 														@if($field['ir_id'] == 'ir_cell_count')
 															@if ($sample->ir_cell_count > 0)
-																<a class="number" href="cells?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
+																<a class="number" href="/cells?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
 																	{{number_format($sample->ir_cell_count, 0 ,'.' ,',') }}
 																</a>
 															@endif
