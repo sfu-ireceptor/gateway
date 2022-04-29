@@ -1,8 +1,8 @@
+# Imports
 import argparse
 import os, ssl
 import sys
 import time
-#import airr as airr
 import pandas as pd
 import numpy as np
 import matplotlib
@@ -10,7 +10,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from collections import OrderedDict
 
-def performQueryAnalysis(input_file, field_name, num_values, sort_values):
+def performQueryAnalysis(input_file, field_name, num_values, sort_values=False):
     # Check to see if the file exists and return if not.
     if not os.path.isfile(input_file):
         print("ERROR: Could not open file ", input_file)
@@ -25,15 +25,11 @@ def performQueryAnalysis(input_file, field_name, num_values, sort_values):
         return None
 
     # Count up the number for each column value.
-    if sort_values == "TRUE":
-        counts = airr_df[field_name].value_counts(sort=True)
-    else:
-        counts = airr_df[field_name].value_counts(sort=False)
-        counts = counts.sort_index()
+    counts = airr_df[field_name].value_counts(sort=sort_values)
 
-    print(num_values)
     if num_values > 0:
         counts = counts.head(num_values)
+
     return counts
 
 def plotData(plot_data, title, filename):
@@ -74,11 +70,19 @@ def getArguments():
         description=""
     )
 
+    # Field name for which we generate the histogram
     parser.add_argument("field_name")
+    # Input file.
     parser.add_argument("input_file")
-    parser.add_argument("num_values", type=int)
+    # PNG and TSV output files
+    parser.add_argument("png_output_file")
+    parser.add_argument("tsv_output_file")
+    # Count and sort parameters
     parser.add_argument("sort_values")
-    parser.add_argument("output_file")
+    parser.add_argument("num_values", type=int)
+    # Title of the graph
+    parser.add_argument("title")
+    # Verbosity flag
     parser.add_argument(
         "-v",
         "--verbose",
@@ -91,15 +95,23 @@ def getArguments():
 if __name__ == "__main__":
     # Get the command line arguments.
     options = getArguments()
+    if options.sort_values.upper() == "TRUE":
+        sort = True
+    else:
+        sort = False
     # Perform the query analysis, gives us back the data
     data = performQueryAnalysis(options.input_file, options.field_name,
-                                options.num_values, options.sort_values)
+                                options.num_values, sort)
     # Graph the results if we got some...
-    title = options.field_name 
+    title = options.title 
     if not data is None:
-        plotData(data, title, options.output_file)
+        # Plot the data and save the file
+        plotData(data, title, options.png_output_file)
+        # Save the data itself.
+        data.to_csv(options.tsv_output_file, sep = '\t')
     else:
         sys.exit(2)
     # Return success
-    print("Done writing graph to " + options.output_file)
+    print("Done writing graph to " + options.png_output_file)
+    print("Done writing data to " + options.tsv_output_file)
     sys.exit(0)

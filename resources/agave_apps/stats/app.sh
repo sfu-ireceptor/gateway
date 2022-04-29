@@ -4,6 +4,7 @@ echo "IR-INFO: iReceptor Stats App - starting at: `date`"
 
 ##############################################
 # init environment
+##############################################
 if [ -f /etc/bashrc ]; then
 . /etc/bashrc
 fi
@@ -15,7 +16,9 @@ echo "Running job from ${SCRIPT_DIR}"
 # Load the environment/modules needed.
 module load scipy-stack
 
+##############################################
 # Get the iRecpetor Gateway utilities from the Gateway
+##############################################
 echo "Downloading iReceptor Gateway Utilities from the Gateway"
 date
 GATEWAY_UTIL_DIR="gateway_utilities"
@@ -41,6 +44,7 @@ echo "IR-INFO: Done loading iReceptor Gateway Utilities"
 #########################################################################
 # Application variables (will be subsituted by Tapis). If they don't exist
 # use command line arguments.
+#########################################################################
 
 # Download file provide by Tapis, if not, set it to command line $1
 if [ -z "${download_file}" ]; then
@@ -56,31 +60,10 @@ if [ -z "${split_repertoire}" ]; then
 	split_repertoire=$2
 fi
 
-#echo "--AGAVE environment vairables"
-#echo "${AGAVE_JOB_APP_ID}"
-#echo "${AGAVE_JOB_ARCHIVE}"
-#echo "${AGAVE_JOB_ARCHIVE_SYSTEM}"
-#echo "${AGAVE_JOB_ARCHIVE_URL}"
-#echo "${AGAVE_JOB_ARCHIVE_PATH}"
-#echo "${AGAVE_JOB_BATCH_QUEUE}"
-#echo "${AGAVE_JOB_EXECUTION_SYSTEM}"
-#echo "${AGAVE_JOB_ID}"
-#echo "${AGAVE_JOB_MEMORY_PER_NODE}"
-#echo "${AGAVE_JOB_NAME}"
-#echo "${AGAVE_JOB_NAME_RAW}"
-#echo "${AGAVE_JOB_NODE_COUNT}"
-#echo "${AGAVE_JOB_OWNER}"
-#echo "${AGAVE_JOB_PROCESSORS_PER_NODE}"
-#echo "${AGAVE_JOB_SUBMIT_TIME}"
-#echo "${AGAVE_JOB_TENANT}"
-#echo "${AGAVE_JOB_ARCHIVE_URL}"
-#echo "${AGAVE_JOB_CALLBACK_RUNNING}"
-#echo "${AGAVE_JOB_CALLBACK_CLEANING_UP}"
-#echo "${AGAVE_JOB_CALLBACK_ALIVE}"
-#echo "${AGAVE_JOB_CALLBACK_NOTIFICATION}"
-#echo "${AGAVE_JOB_CALLBACK_FAILURE}"
-#echo "--"
 
+#########################################################################
+# Code to do the analysis
+#########################################################################
 function do_heatmap()
 #     $1,$2 are variable names to process
 #     $3 output directory 
@@ -110,17 +93,17 @@ function do_heatmap()
     echo "${variable1}\t${variable2}" > $TMP_FILE
 
     for filename in "${array_of_files[@]}"; do
-	echo "    Extracting ${variable1} and ${variable2} from $filename"
-	# Get the columns numbers for the column labels of interest.
-	x_column=`cat $filename | head -n 1 | awk -F"\t" -v label=${variable1} '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
-	y_column=`cat $filename | head -n 1 | awk -F"\t" -v label=${variable2} '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
-	echo "    Columns = ${x_column}, ${y_column}"
+	    echo "    Extracting ${variable1} and ${variable2} from $filename"
+	    # Get the columns numbers for the column labels of interest.
+	    x_column=`cat $filename | head -n 1 | awk -F"\t" -v label=${variable1} '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+	    y_column=`cat $filename | head -n 1 | awk -F"\t" -v label=${variable2} '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+	    echo "    Columns = ${x_column}, ${y_column}"
 
-	# Extract the two columns of interest. In this case we want the gene (not including the allele)
-	# As a result we chop things off at the first star. This also takes care of the case where
-	# a gened call has multiple calls. Since we drop everthing after the first allele we drop all of
-	# the other calls as well.
-	cat $filename | cut -f $x_column,$y_column | awk -v xlabel=${variable1} -v ylabel=${variable2} 'BEGIN {FS="\t"; printf("%s\t%s\n", xlabel, ylabel)} /IG|TR/ {if (index($1,"*") == 0) {xstr = $1} else {xstr=substr($1,0,index($1,"*")-1)};if (index($2,"*") == 0) {ystr = $2} else {ystr=substr($2,0,index($2,"*")-1)};printf("%s\t%s\n",xstr,ystr)}' > $TMP_FILE
+	    # Extract the two columns of interest. In this case we want the gene (not including the allele)
+	    # As a result we chop things off at the first star. This also takes care of the case where
+	    # a gened call has multiple calls. Since we drop everthing after the first allele we drop all of
+	    # the other calls as well.
+	    cat $filename | cut -f $x_column,$y_column | awk -v xlabel=${variable1} -v ylabel=${variable2} 'BEGIN {FS="\t"; printf("%s\t%s\n", xlabel, ylabel)} /IG|TR/ {if (index($1,"*") == 0) {xstr = $1} else {xstr=substr($1,0,index($1,"*")-1)};if (index($2,"*") == 0) {ystr = $2} else {ystr=substr($2,0,index($2,"*")-1)};printf("%s\t%s\n",xstr,ystr)}' > $TMP_FILE
 
     done
     # Generate a set of unique values that we can generate the heatmap on. This is a comma separated
@@ -183,8 +166,8 @@ function do_histogram()
     echo "Extracting ${variable_name} from files started at: `date`" 
     echo ${variable_name} > $TMP_FILE
     for filename in "${array_of_files[@]}"; do
-	echo "    Extracting ${variable_name} from $filename"
-	python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/preprocess.py $filename ${variable_name} >> $TMP_FILE
+	    echo "    Extracting ${variable_name} from $filename"
+	    python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/preprocess.py $filename ${variable_name} >> $TMP_FILE
     done
 
     ##############################################
@@ -238,30 +221,35 @@ function run_analysis()
 	echo "Running a Repertoire Analysis on ${array_of_files[@]}"
 
 	# Check to see if we are processing a specific repertoire_id
-	if [ "${repertoire_id}" != "NULL" ]; then
+	if [ "${repertoire_id}" != "${output_directory}" ]; then
 	    file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
 	    file_string=${repository_name}_${file_string// /}
-            title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
-            # TODO: Fix this, it should not be required.
-            title_string=${title_string// /}
-        else 
+        title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
+        # TODO: Fix this, it should not be required.
+        title_string=${title_string// /}
+    else 
 	    file_string="Total"
 	    title_string="Total"
 	fi
 
 	# Generate the histogram and heatmap stats
 	do_histogram v_call $output_directory $file_string $title_string ${array_of_files[@]}
-        do_histogram d_call $output_directory $file_string $title_string ${array_of_files[@]}
-        do_histogram j_call $output_directory $file_string $title_string ${array_of_files[@]}
-        do_histogram junction_aa_length $output_directory $file_string $title_string ${array_of_files[@]}
-        do_heatmap v_call j_call $output_directory $file_string $title_string ${array_of_files[@]}
-        do_heatmap v_call junction_aa_length $output_directory $file_string $title_string ${array_of_files[@]}
-        # Remove the TSV files, we don't want to return them
-        for filename in "${array_of_files[@]}"; do
+    do_histogram d_call $output_directory $file_string $title_string ${array_of_files[@]}
+    do_histogram j_call $output_directory $file_string $title_string ${array_of_files[@]}
+    do_histogram junction_aa_length $output_directory $file_string $title_string ${array_of_files[@]}
+    do_heatmap v_call j_call $output_directory $file_string $title_string ${array_of_files[@]}
+    do_heatmap v_call junction_aa_length $output_directory $file_string $title_string ${array_of_files[@]}
+    # Remove the TSV files, we don't want to return them
+    for filename in "${array_of_files[@]}"; do
 		rm -f $filename
 	done
 
-	html_file=${output_directory}/${file_string}.html
+	# Generate a label file for the Gateway to use to present this info to the user
+	label_file=${output_directory}/${repertoire_id}.txt
+	echo "${repository_name}: ${title_string}" > ${label_file}
+
+	# Generate a summary HTML file for the Gateway to present this info to the user
+	html_file=${output_directory}/${repertoire_id}.html
 	printf "<h1>iReceptor Stats Analysis</h1>\n" > ${html_file}
 	printf "<h2>Data Summary</h2>\n" >> ${html_file}
 	cat info.txt >> ${html_file}
@@ -321,7 +309,7 @@ elif [ "${split_repertoire}" = "False" ]; then
     # the run_analyis function handles.
     outdir="Total"
     mkdir ${outdir}
-    run_analysis ${outdir} "ADC" "NULL" "NULL" ${tsv_files[@]} 
+    run_analysis ${outdir} "AIRRDataCommons" ${outdir} "NULL" ${tsv_files[@]} 
 
     # Remove the copied ZIP file
     rm -r ${ZIP_FILE}

@@ -377,32 +377,91 @@ class JobController extends Controller
             $data['error_summary'] = explode('\n', $s);
         }
 
-        // Set up the display of the file listing from the output of the analysis, it it
+        // Set up the display of the output of the analysis, if it
         // exists.
         $data['files'] = [];
         $data['filesHTML'] = '';
         $data['analysis_summary'] = [];
         if ($job['input_folder'] != '') {
             if (File::exists($folder)) {
+                // If we have a folder with files in it...
                 $data['files'] = File::allFiles($folder);
                 if (count($data['files']) > 0) {
+                    // Create a list of files a baseline to display
                     $data['filesHTML'] = dir_to_html($folder);
+                    // We want to have specific info for the error and output files.
                     $data['error_log_url'] = $analysis_folder . '/' . $error_file;
                     $data['output_log_url'] = $analysis_folder . '/' . $output_file;
 
+                    // Do special case handling if the output has an iReceptor Gateway specific
+                    // output director. In this case we expect a certain structure, which is a
+                    // directory per analysis unit and in the case of a multi-repository analysis,
+                    // a directory per repository and within that a directory per analysis unit.
+                    // Currently, the only analysis unit supported is repertoire_id.
                     $analysis_summary = [];
                     if (File::exists($analysis_folder)) {
                         foreach (scandir($analysis_folder) as $file) {
+                            // Look at each file and if it is a folder, process it.
                             if ($file !== '.' && $file !== '..' && is_dir($analysis_folder . '/' . $file)) {
-                                $html_file = $analysis_folder . '/' . $file . '/' . $file . '.html';
-                                if (File::exists($html_file)) {
-                                    Log::debug('file = ' . $html_file);
-                                    $summary_object = ['name' => $file, 'url' => '/' . $html_file];
+                                // Look for gateway specific analysis summary files. If the analysis app
+                                // produces an .html/.pdf and a .txt file with the same name as the directory
+                                // for this analysis unit, then we give that information to the Gateway so that
+                                // it can display
+                                //
+                                // Build the summary file name.
+                                $summary_file = '';
+                                if (File::exists($analysis_folder . '/' . $file . '/' . $file . '.html')) {
+                                    $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.html';
+                                } elseif (File::exists($analysis_folder . '/' . $file . '/' . $file . '.pdf')) {
+                                    $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.pdf';
+                                }
+                                // Build the label file name
+                                $label_file = $analysis_folder . '/' . $file . '/' . $file . '.txt';
+                                // If both files exist, build a summary object for the Gateway so that it can present
+                                // the summary information for this analysis unit elegantly...
+                                if (File::exists($summary_file) && File::exists($label_file)) {
+                                    $filehandle = fopen($label_file, 'r');
+                                    $label = $file;
+                                    if (filesize($label_file) > 0) {
+                                        $label = fread($filehandle, filesize($label_file));
+                                    }
+                                    // Create the object with useful info (that the Gateway Job view expects).
+                                    $summary_object = ['repository' => '', 'name' => $file, 'label' => $label, 'url' => '/' . $summary_file];
+                                    // Add to the list of summary objects.
                                     $analysis_summary[] = $summary_object;
+                                } else {
+                                    // If the files don't exist, then check to see if we have a repository/analysis hierarchy
+                                    $repository_dir = $analysis_folder . '/' . $file;
+                                    $repository_name = $file;
+                                    // We repeat the process above for each directory.
+                                    foreach (scandir($repository_dir) as $file) {
+                                        if ($file !== '.' && $file !== '..' && is_dir($repository_dir . '/' . $file)) {
+                                            // Get file names
+                                            $summary_file = '';
+                                            if (File::exists($repository_dir . '/' . $file . '/' . $file . '.html')) {
+                                                $summary_file = $repository_dir . '/' . $file . '/' . $file . '.html';
+                                            } elseif (File::exists($repository_dir . '/' . $file . '/' . $file . '.pdf')) {
+                                                $summary_file = $repository_dir . '/' . $file . '/' . $file . '.pdf';
+                                            }
+                                            $label_file = $repository_dir . '/' . $file . '/' . $file . '.txt';
+                                            // If they exist, process them
+                                            if (File::exists($summary_file) && File::exists($label_file)) {
+                                                $filehandle = fopen($label_file, 'r');
+                                                $label = $file;
+                                                if (filesize($label_file) > 0) {
+                                                    $label = fread($filehandle, filesize($label_file));
+                                                }
+                                                // Create the summary object for the Job view to display for this analysis unit.
+                                                $summary_object = ['repository' => $repository_name, 'name' => $file, 'label' => $label, 'url' => '/' . $summary_file];
+                                                $analysis_summary[] = $summary_object;
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
+                    // Store the analysis summary in the data block returned to the Job view.
                     $data['analysis_summary'] = $analysis_summary;
                 } elseif ($job->agave_status == 'FINISHED') {
                     // In the case where the job is FINISHED and there are no output files, tell the user
