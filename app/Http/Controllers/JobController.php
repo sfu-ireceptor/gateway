@@ -393,7 +393,7 @@ class JobController extends Controller
                     $data['error_log_url'] = $analysis_folder . '/' . $error_file;
                     $data['output_log_url'] = $analysis_folder . '/' . $output_file;
 
-                    // Do special case handling if the output has an iReceptor Gateway specific 
+                    // Do special case handling if the output has an iReceptor Gateway specific
                     // output director. In this case we expect a certain structure, which is a
                     // directory per analysis unit and in the case of a multi-repository analysis,
                     // a directory per repository and within that a directory per analysis unit.
@@ -406,7 +406,7 @@ class JobController extends Controller
                                 // Look for gateway specific analysis summary files. If the analysis app
                                 // produces an .html/.pdf and a .txt file with the same name as the directory
                                 // for this analysis unit, then we give that information to the Gateway so that
-                                // it can display 
+                                // it can display
                                 //
                                 // Build the summary file name.
                                 $summary_file = '';
