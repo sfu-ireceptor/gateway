@@ -26,7 +26,6 @@ def performQueryAnalysis(input_file, field_name, num_values, sort_values=False):
 
     # Count up the number for each column value.
     counts = airr_df[field_name].value_counts(sort=sort_values)
-    counts = counts.sort_index()
 
     if num_values > 0:
         counts = counts.head(num_values)
@@ -96,7 +95,7 @@ def getArguments():
 if __name__ == "__main__":
     # Get the command line arguments.
     options = getArguments()
-    if options.sort_values.upper() is "TRUE":
+    if options.sort_values.upper() == "TRUE":
         sort = True
     else:
         sort = False
