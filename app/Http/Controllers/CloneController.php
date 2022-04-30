@@ -301,9 +301,9 @@ class CloneController extends Controller
         $page = $request->input('page');
         $page_url = route($page, ['query_id' => $query_id], false);
 
-        $nb_sequences = $request->input('n');
+        $nb_clones = $request->input('n');
 
-        Download::start_download($query_id, $username, $page_url, $nb_sequences);
+        Download::start_clone_download($query_id, $username, $page_url, $nb_clones);
 
         return redirect('downloads')->with('download_page', $page_url);
     }

@@ -139,6 +139,11 @@ class Download extends Model
         self::start_download($query_id, $username, $page_url, $nb_items, 'sequence');
     }
 
+    public static function start_clone_download($query_id, $username, $page_url, $nb_items)
+    {
+        self::start_download($query_id, $username, $page_url, $nb_items, 'clone');
+    }
+
     public static function start_cell_download($query_id, $username, $page_url, $nb_items)
     {
         self::start_download($query_id, $username, $page_url, $nb_items, 'cell');

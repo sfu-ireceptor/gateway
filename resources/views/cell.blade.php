@@ -61,14 +61,14 @@
 						<div class="panel-heading" role="tab" id="headingOne">
 							<h4 class="panel-title">
 								<a role="button" class="{{ in_array('1', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-									Filter by Gene Expression
+									Filter by Cell Expression
 								</a>
 							</h4>
 						</div>
 						<div id="collapseTwo" class="panel-collapse collapse {{ in_array('1', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingOne">
 							<div class="panel-body">
 								<div class="form-group">
-									{{ Form::label('property_expression',  'Gene Label') }}
+									{{ Form::label('property_expression',  'Property Label') }}
 									@include('help', ['id' => 'property_expression'])
 									{{ Form::text('property_expression', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
 								</div>

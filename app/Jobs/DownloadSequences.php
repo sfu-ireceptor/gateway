@@ -2,12 +2,14 @@
 
 namespace App\Jobs;
 
+use App\Agave;
 use App\Download;
 use App\LocalJob;
 use App\Query;
 use App\QueryLog;
 use App\Sequence;
 use App\SequenceCell;
+use App\SequenceClone;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -98,6 +100,8 @@ class DownloadSequences implements ShouldQueue
 
         if ($this->type == 'sequence') {
             $t = Sequence::sequencesTSV($filters, $this->username, $this->url, $sample_filter_fields);
+        } elseif ($this->type == 'clone') {
+            $t = SequenceClone::clonesTSV($filters, $this->username, $this->url, $sample_filter_fields);
         } elseif ($this->type == 'cell') {
             $t = SequenceCell::cellsTSV($filters, $this->username, $this->url, $sample_filter_fields);
         }
@@ -120,8 +124,11 @@ class DownloadSequences implements ShouldQueue
         $this->download->save();
 
         // send notification email
-        $user = User::where('username', $this->username)->first();
+        $agave = new Agave;
+        $token = $agave->getAdminToken();
+        $user = $agave->getUserWithUsername($this->username, $token);
         $email = $user->email;
+
         $date_str = $this->download->createdAtShort();
 
         $t = [];
@@ -132,6 +139,8 @@ class DownloadSequences implements ShouldQueue
         $t['date_str'] = $date_str;
 
         Mail::send(['text' => 'emails.download_successful'], $t, function ($message) use ($email, $date_str) {
+            Log::debug('test1');
+            Log::debug($email);
             $message->to($email)->subject('[iReceptor] Your download from ' . $date_str . ' is ready');
         });
 
