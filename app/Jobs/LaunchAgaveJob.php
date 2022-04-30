@@ -7,6 +7,8 @@ use App\Job;
 use App\LocalJob;
 use App\Query;
 use App\Sequence;
+use App\SequenceCell;
+use App\SequenceClone;
 use App\System;
 use App\User;
 use Illuminate\Bus\Queueable;
@@ -37,9 +39,10 @@ class LaunchAgaveJob implements ShouldQueue
     protected $job_params;
     protected $inputs;
     protected $localJobId;
+    protected $jobType;
 
     // create job instance
-    public function __construct($jobId, $request_data, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $job_params, $localJobId)
+    public function __construct($jobId, $request_data, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $job_params, $localJobId, $jobType='Rearrangement')
     {
         $this->jobId = $jobId;
         $this->request_data = $request_data;
@@ -54,6 +57,7 @@ class LaunchAgaveJob implements ShouldQueue
         $this->inputs = $inputs;
         $this->job_params = $job_params;
         $this->localJobId = $localJobId;
+        $this->jobType = $jobType;
     }
 
     // execute job
@@ -99,7 +103,13 @@ class LaunchAgaveJob implements ShouldQueue
             }
 
             // Generated the file
-            $t = Sequence::sequencesTSV($filters, $this->gw_username, $job->url, $sample_filter_fields);
+            if ($this->jobType == 'sequence') {
+                $t = Sequence::sequencesTSV($filters, $this->gw_username, $job->url, $sample_filter_fields);
+            } elseif ($this->jobType == 'clone') {
+                $t = SequenceClone::clonesTSV($filters, $this->gw_username, $job->url, $sample_filter_fields);
+            } elseif ($this->jobType == 'cell') {
+                $t = SequenceCell::cellsTSV($filters, $this->gw_username, $job->url, $sample_filter_fields);
+            }
             $dataFilePath = $t['public_path'];
 
             // The Gateway sets the download_file input as it controls the data
