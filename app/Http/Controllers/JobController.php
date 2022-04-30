@@ -183,7 +183,6 @@ class JobController extends Controller
         $lj->save();
         $localJobId = $lj->id;
 
-
         // queue job
         if ($appId == '999') {
             PrepareDataForThirdPartyAnalysis::dispatch($jobId, $request_data, $gw_username, $localJobId);

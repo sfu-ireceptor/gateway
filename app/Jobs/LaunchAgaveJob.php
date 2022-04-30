@@ -42,7 +42,7 @@ class LaunchAgaveJob implements ShouldQueue
     protected $jobType;
 
     // create job instance
-    public function __construct($jobId, $request_data, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $job_params, $localJobId, $jobType='Rearrangement')
+    public function __construct($jobId, $request_data, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $job_params, $localJobId, $jobType = 'Rearrangement')
     {
         $this->jobId = $jobId;
         $this->request_data = $request_data;
