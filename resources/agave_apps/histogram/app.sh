@@ -60,6 +60,8 @@ else
 	SORT_VALUES=${sort_values}
 fi
 
+echo "IR-INFO: Running histogram on variable ${VARNAME}"
+
 #########################################################################
 # Code to do the analysis
 #########################################################################
