@@ -566,7 +566,6 @@ class SequenceClone
         return $info_file_path;
     }
 
-
     public static function generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
         // Name of the file we are generating for the download
@@ -683,7 +682,7 @@ class SequenceClone
                         }
                     }
                 }
-                
+
                 // count number of lines
                 $n = 0;
                 $f = fopen($file_path, 'r');

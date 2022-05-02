@@ -772,6 +772,7 @@ class SequenceCell
         }
 
         Log::debug('####### files stats=' . json_encode($file_stats));
+
         return $file_stats;
     }
 }
