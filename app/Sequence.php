@@ -660,12 +660,12 @@ class Sequence
                 if ($dataset_count != 0) {
                     $s .= ',' . "\n";
                 }
-                $s .= '    {"repertoire_file":["' . $t['metadata_name'] . '"], "rearrangement_file":["' . $t['name'] . '"]}';
+                $s .= '    {"repository":"' . $t['rs_url'] . '", repertoire_file":["' . $t['metadata_name'] . '"], "rearrangement_file":["' . $t['name'] . '"]}';
             } else {
                 if ($dataset_count != 0) {
                     $s .= ',' . "\n";
                 }
-                $s .= '    {"repertoire_file":["' . $t['metadata_name'] . '"], "rearrangement_file":["' . $t['name'] . '"]}';
+                $s .= '    {"repository":"' . $t['rs_url'] . '","repertoire_file":["' . $t['metadata_name'] . '"], "rearrangement_file":["' . $t['name'] . '"]}';
             }
             Log::debug('Manifest dataset = ' . $t['metadata_name'] . ', ' . $t['name']);
             $dataset_count++;
