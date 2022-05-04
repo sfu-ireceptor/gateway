@@ -1803,7 +1803,7 @@ class RestService extends Model
 
         return $final_response_list;
     }
-    
+
     public static function cell_list_from_expression_query($filters, $username = '', $expected_nb_cells_by_rs)
     {
         // build list of services to query
