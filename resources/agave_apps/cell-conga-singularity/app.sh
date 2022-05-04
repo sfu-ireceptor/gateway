@@ -31,12 +31,6 @@ AGAVE_JOB_MEMORY_PER_NODE=${AGAVE_JOB_MEMORY_PER_NODE}
 singularity_image="${singularity_image}"
 echo "Singularity image = ${singularity_image}"
 
-# We provide a mechanism for the user to specify a name for the
-# processed data - this is a VDJBase functionality.
-sample_name="${sample_name}"
-echo "Sample name = ${sample_name}"
-
-
 #
 # Tapis App Inputs
 #
@@ -56,10 +50,13 @@ export JOB_ERROR=1
 # Done Tapis setup/processing.
 ########################################################################
 
+GATEWAY_URL="https://gateway-analysis-dev.ireceptor.org"
+echo "IR-INFO: Using Gateway ${GATEWAY_URL}"
+
 # Get the singularity image from the Gateway
-echo "Downloading singularity image from the Gateway"
+echo "Downloading singularity image ${singularity_image} from the Gateway"
 date
-wget -nv https://gateway-analysis.ireceptor.org/singularity/${singularity_image}
+wget -nv ${GATEWAY_URL}/singularity/${singularity_image}
 echo -n "Singularity file downloaded = "
 ls ${singularity_image}
 echo "Done ownloading singularity image from the Gateway"
@@ -71,19 +68,25 @@ date
 GATEWAY_UTIL_DIR=gateway_utilities
 mkdir -p ${GATEWAY_UTIL_DIR}
 pushd ${GATEWAY_UTIL_DIR} > /dev/null
-wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" https://gateway-analysis.ireceptor.org/gateway_utilities/
+wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" ${GATEWAY_URL}/gateway_utilities/
 popd > /dev/null
 echo "Done downloading iReceptor Gateway Utilities"
 date
 
 # Load the iReceptor Gateway bash utility functions.
 source ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/gateway_utilities.sh
+if [ $? -ne 0 ]
+then
+    echo "IR-ERROR: Could not process manifest file ${MANIFEST_FILE}"
+    exit $?
+fi
+
 # This directory is defined in the gateway_utilities.sh. The Gateway
 # relies on this being set. If it isn't set, abort as something has
 # gone wrong with loading the Gateway utilties.
 echo "Gateway analysis directory = ${GATEWAY_ANALYSIS_DIR}"
 if [ -z "${GATEWAY_ANALYSIS_DIR}" ]; then
-        echo "ERROR: GATEWAY_ANALYSIS_DIR not defined, gateway_utilities not loaded correctly."
+        echo "IR-ERROR: GATEWAY_ANALYSIS_DIR not defined, gateway_utilities not loaded correctly."
         exit 1
 fi
 echo "Done loading iReceptor Gateway Utilities"
@@ -98,6 +101,7 @@ INFO_FILE="info.txt"
 MANIFEST_FILE="airr_manifest.json"
 
 # Start
+printf "\n\n"
 printf "START at $(date)\n\n"
 printf "PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n\n"
 printf "MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n\n"
@@ -106,7 +110,7 @@ printf "MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n\n"
 # The gateway utility function splits all data into repertoires and then calls this function
 # for a single repertoire. As such, this function should perform all analysis required for a
 # repertoire.
-function run_analysis()
+function run_cell_analysis()
 # Parameters:
 #     $1 output directory
 #     $2 repository name [string]
@@ -127,7 +131,7 @@ function run_analysis()
     # Remaining variable are the files to process
     local array_of_files=( $@ )
 
-    printf "\nRunning a Repertoire Analysis on ${array_of_files[@]} at $(date)\n"
+    printf "\nRunning a Cell Repertoire Analysis on ${array_of_files[@]} at $(date)\n"
     # Check to see if we are processing a specific repertoire_id
     if [ "${repertoire_id}" != "NULL" ]; then
         file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
@@ -140,9 +144,9 @@ function run_analysis()
         title_string="Total"
     fi
 
-    # Run the VDJBase pipeline within the singularity image on each rearrangement file provided.
+    # Run the Conga pipeline within the singularity image on each rearrangement file provided.
     for filename in "${array_of_files[@]}"; do
-        echo "Running VDJBase on $filename"
+        echo "Running Conga on $filename"
         echo "Mapping ${PWD} to /data"
         echo "Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
         echo "Storing output in /data/${output_directory}"
@@ -175,7 +179,7 @@ function run_analysis()
 # information about the repertoire can be found. 
 #
 # run_analysis() is defined above.
-gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
+gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file"
 
 # Make sure we are back where we started, although the gateway functions should
 # not change the working directory that we are in.
