@@ -1486,14 +1486,8 @@ class RestService extends Model
     //   },
     //   "format": "tsv"
     // }
-    public static function sequences_data($filters, $folder_path, $username = '', $expected_nb_sequences_by_rs, $type = 'rearrangement')
+    public static function sequences_data($filters, $folder_path, $username = '', $expected_nb_sequences_by_rs)
     {
-        $base_uri = 'rearrangement';
-
-        if ($type == 'clone') {
-            $base_uri = 'clone';
-        }
-
         $now = time();
 
         // build list of services to query
@@ -1718,6 +1712,98 @@ class RestService extends Model
         return $final_response_list;
     }
 
+    public static function clones_data($filters, $folder_path, $username = '', $expected_nb_clones_by_rs, $clone_list_by_rs = [])
+    {
+        $now = time();
+
+        // build list of services to query
+        $rs_list = [];
+        foreach (self::findEnabled() as $rs) {
+            if (isset($expected_nb_clones_by_rs[$rs->id]) && ($expected_nb_clones_by_rs[$rs->id] > 0)) {
+                $rs_list[] = $rs;
+            }
+        }
+
+        // count services in each service group
+        $group_list = [];
+        foreach ($rs_list as $rs) {
+            $group = $rs->rest_service_group_code;
+            if ($group) {
+                if (! isset($group_list[$group])) {
+                    $group_list[$group] = 0;
+                }
+                $group_list[$group] += 1;
+            }
+        }
+
+        // prepare request parameters for each service
+        $request_params = [];
+
+        $group_list_count = [];
+        foreach ($rs_list as $rs) {
+            $rs_filters = $filters;
+
+            // if we retrieve clones by clone_id
+            if (count($clone_list_by_rs) > 0) {
+                $query_parameters = [];
+
+                foreach ($clone_list_by_rs as $response) {
+                    if ($response['rs']->id == $rs->id) {
+                        $clone_list = $response['clone_list'];
+                        $rs_filters_json = self::generate_or_json_query($clone_list, $query_parameters);
+                        break;
+                    }
+                }
+            } else {
+                $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+
+                // rename sample id filter for this service:
+                // ir_project_sample_id_list_2 -> repertoire_id
+                $rs_filters['repertoire_id'] = $filters[$sample_id_list_key];
+
+                // remove "ir_project_sample_id_list_*" filters
+                foreach ($rs_filters as $key => $value) {
+                    if (starts_with($key, 'ir_project_sample_id_list_')) {
+                        unset($rs_filters[$key]);
+                    }
+                }
+
+                $query_parameters = [];
+
+                // generate JSON query
+                $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
+            }
+
+            $t = [];
+            $t['rs'] = $rs;
+            $t['url'] = $rs->url . 'clone';
+            $t['params'] = $rs_filters_json;
+            $t['timeout'] = config('ireceptor.service_file_request_timeout');
+
+            // add number suffix for rest services belonging to a group
+            $file_suffix = '';
+            $group = $rs->rest_service_group_code;
+            if ($group && $group_list[$group] > 1) {
+                if (! isset($group_list_count[$group])) {
+                    $group_list_count[$group] = 0;
+                }
+                $group_list_count[$group] += 1;
+                $file_suffix = '_part' . $group_list_count[$group];
+            }
+            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '-clone.json';
+            $request_params[] = $t;
+        }
+
+        $final_response_list = [];
+        // do requests, write data to files
+        if (count($request_params) > 0) {
+            Log::info('Do download requests...');
+            $final_response_list = self::doRequests($request_params);
+        }
+
+        return $final_response_list;
+    }
+    
     public static function cell_list_from_expression_query($filters, $username = '', $expected_nb_cells_by_rs)
     {
         // build list of services to query

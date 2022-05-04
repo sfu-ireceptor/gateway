@@ -128,7 +128,7 @@ class SequenceClone
         File::makeDirectory($folder_path, 0777, true, true);
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filters, $folder_path, $username);
-        $response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_clones_by_rs, 'clone');
+        $response_list = RestService::clones_data($filters, $folder_path, $username, $expected_nb_clones_by_rs);
 
         $file_stats = self::file_stats($response_list, $expected_nb_clones_by_rs);
 
