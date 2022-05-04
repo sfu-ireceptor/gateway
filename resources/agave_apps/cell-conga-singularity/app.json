@@ -75,7 +75,7 @@
         "visible": false,
         "required": true,
         "type": "string",
-        "default": "congates1.sif"
+        "default": "congatest1.sif"
       },
       "details": {
         "label": "Singularity image",
