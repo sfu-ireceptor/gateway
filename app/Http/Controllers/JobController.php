@@ -413,7 +413,7 @@ class JobController extends Controller
                     // a directory per repository and within that a directory per analysis unit.
                     // Currently, the only analysis unit supported is repertoire_id.
                     $analysis_summary = [];
-                    if (File::exists($analysis_folder)) {
+                    if (File::exists($analysis_folder) && is_dir($analysis_folder)) {
                         foreach (scandir($analysis_folder) as $file) {
                             // Look at each file and if it is a folder, process it.
                             if ($file !== '.' && $file !== '..' && is_dir($analysis_folder . '/' . $file)) {
