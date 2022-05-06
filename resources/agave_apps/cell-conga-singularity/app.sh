@@ -150,15 +150,27 @@ function run_cell_analysis()
         echo "Mapping ${PWD} to /data"
         echo "Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
         echo "Storing output in /data/${output_directory}"
-        # Run Conga
-        echo "Should be running ${SCRIPT_DIR}/${singularity_image} from ${PWD}"
-        singularity exec -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/setup_10x_for_conga.py  
-        #singularity exec -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/setup_10x_for_conga.py --filtered_contig_annotations_csvfile /data/filtered_contig_annotations.csv --organism human
 
-        #singularity exec -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/run_conga.py --all --organism human --clones_file /data/filtered_contig_annotations_tcrdist_clones.tsv --gex_data /data/sample_feature_bc_matrix.h5 --gex_data_type 10x_h5 --outfile_prefix /data/HC1-tcr
+        # Convert Rearrangement file to a 10X Contig file
+        CONTIG_PREFIX=10x-contig
+        python3 ${SCRIPT_DIR}/airr-to-cell/rearrangements-to-10x.py ${output_directory}/${rearrangement_file} ${output_directory}/${CONTIG_PREFIX}.csv
+
+        # Generate equivalent 10X Cell files from AIRR Cell/GEX data for input into Conga.
+        python3 ${SCRIPT_DIR}/airr-to-cell/airr-to-10x.py ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
+        
+        # Compress the file because Conga wants it that way!
+        gzip ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
+
+        # Run Conga
+        singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/setup_10x_for_conga.py --filtered_contig_annotations_csvfile /data/${output_directory}/${CONTIG_PREFIX}.csv --organism human
+
+        singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/run_conga.py --all --organism human --clones_file /data/${output_directory}/${CONTIG_PREFIX}_tcrdist_clones.tsv --gex_data /data/${output_directory} --gex_data_type 10x_mtx --outfile_prefix /data/${output_directory}/${file_string}
 
         # Copy the PDF report to the repertoire_id.pdf file for the gateway to use as a summary.
         #cp ${output_directory}/${file_string}/${file_string}_ogrdb_plots.pdf ${output_directory}/${repertoire_id}.pdf
+        # Generate a report.
+        cp ${output_directory}/${file_string}_results_summary.html > ${output_directory}/${repertoire_id}.html
+
         # We don't want to keep around the original TSV file.
         rm -f ${filename}
 
