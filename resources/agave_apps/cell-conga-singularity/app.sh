@@ -158,9 +158,19 @@ function run_cell_analysis()
         # Convert Rearrangement file to a 10X Contig file
         CONTIG_PREFIX=10x-contig
         python3 ${SCRIPT_DIR}/rearrangements-to-10x.py ${output_directory}/${rearrangement_file} ${output_directory}/${CONTIG_PREFIX}.csv
+        if [ $? -ne 0 ]
+        then
+            echo "IR-ERROR: Could not generate rearrangements"
+            continue
+        fi
 
         # Generate equivalent 10X Cell files from AIRR Cell/GEX data for input into Conga.
         python3 ${SCRIPT_DIR}/airr-to-10x.py ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
+        if [ $? -ne 0 ]
+        then
+            echo "IR-ERROR: Could not generate cell/expression data"
+            continue
+        fi
         
         # Compress the file because Conga wants it that way!
         gzip ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
