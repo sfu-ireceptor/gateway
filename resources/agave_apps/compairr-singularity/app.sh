@@ -50,10 +50,11 @@ export JOB_ERROR=1
 # Done Tapis setup/processing.
 ########################################################################
 
+GATEWAY_URL=https://gateway-analysis-dev.ireceptor.org
 # Get the singularity image from the Gateway
-echo "Downloading singularity image from the Gateway"
+echo "Downloading singularity image from Gateway ${GATEWAY_URL}"
 date
-wget -nv https://gateway-analysis.ireceptor.org/singularity/${singularity_image}
+wget -nv ${GATEWAY_URL}/singularity/${singularity_image}
 echo -n "Singularity file downloaded = "
 ls ${singularity_image}
 echo "Done ownloading singularity image from the Gateway"
@@ -65,7 +66,7 @@ date
 GATEWAY_UTIL_DIR=gateway_utilities
 mkdir -p ${GATEWAY_UTIL_DIR}
 pushd ${GATEWAY_UTIL_DIR} > /dev/null
-wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" https://gateway-analysis.ireceptor.org/gateway_utilities/
+wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" ${GATEWAY_URL}/gateway_utilities/
 popd > /dev/null
 echo "Done downloading iReceptor Gateway Utilities"
 date
@@ -106,20 +107,17 @@ function run_analysis()
 #     $2 repository name [string]
 #     $3 repertoire_id ("NULL" if should skip repertoire processing)
 #     $4 repertoire file (Not used if repertoire_id == NULL)
-#     $5-$N rearrangement files (bash doesn't like arrays, so the rest of the parameters
-#        are considered rearrangement files.
+#     $5 manifest file
 {
     # Use local variables - no scope issues please...
     local output_directory=$1
     local repository_name=$2
     local repertoire_id=$3
     local repertoire_file=$4
-    shift
-    shift
-    shift
-    shift
-    # Remaining variable are the files to process
-    local array_of_files=( $@ )
+    local manifest_file=$5
+    # Get a list of rearrangement files to process from the manifest.
+    local array_of_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
+
 
     # Check to see if we are processing a specific repertoire_id
     if [ "${repertoire_id}" != "NULL" ]; then
