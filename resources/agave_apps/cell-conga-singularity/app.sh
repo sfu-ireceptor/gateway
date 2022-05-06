@@ -124,14 +124,18 @@ function run_cell_analysis()
     local repository_name=$2
     local repertoire_id=$3
     local repertoire_file=$4
-    shift
-    shift
-    shift
-    shift
-    # Remaining variable are the files to process
-    local array_of_files=( $@ )
+    local manifest_file=$5
+    echo "Running a Repertoire Analysis with manifest ${manifest_file}"
 
-    printf "\nRunning a Cell Repertoire Analysis on ${array_of_files[@]} at $(date)\n"
+    # Get a list of rearrangement files to process from the manifest.
+    local array_of_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "cell_file"` )
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: Could not process manifest file ${manifest_file}"
+        return
+    fi
+    echo "    Using files ${array_of_files[@]}"
+
     # Check to see if we are processing a specific repertoire_id
     if [ "${repertoire_id}" != "NULL" ]; then
         file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
@@ -153,10 +157,10 @@ function run_cell_analysis()
 
         # Convert Rearrangement file to a 10X Contig file
         CONTIG_PREFIX=10x-contig
-        python3 ${SCRIPT_DIR}/airr-to-cell/rearrangements-to-10x.py ${output_directory}/${rearrangement_file} ${output_directory}/${CONTIG_PREFIX}.csv
+        python3 ${SCRIPT_DIR}/rearrangements-to-10x.py ${output_directory}/${rearrangement_file} ${output_directory}/${CONTIG_PREFIX}.csv
 
         # Generate equivalent 10X Cell files from AIRR Cell/GEX data for input into Conga.
-        python3 ${SCRIPT_DIR}/airr-to-cell/airr-to-10x.py ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
+        python3 ${SCRIPT_DIR}/airr-to-10x.py ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
         
         # Compress the file because Conga wants it that way!
         gzip ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
