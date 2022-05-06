@@ -139,6 +139,9 @@ function gateway_split_repertoire(){
             repertoire_dirname=${repertoire_id}
             mkdir -p ${repository_name}/${repertoire_dirname}
 
+            # Create a manifest file for this analysis unit
+            REPERTOIRE_MANIFEST=${repository_name}/${repertoire_dirname}/manifest.json
+            echo "Manifest file = ${REPERTOIRE_MANIFEST}"
             if [ ${ANALYSIS_TYPE} = "rearrangement_file" ]
             then
                 # Generate a file name for the TSV data for the repertoire.
@@ -149,14 +152,24 @@ function gateway_split_repertoire(){
                 # Command line parameters: inputfile, field_name, field_value, outfile
                 python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter.py $data_file ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
         
+                # Create the repertoire manifest file
+                echo '{"Info":{},"DataSets":[' > $REPERTOIRE_MANIFEST
+                echo "{\"rearrangement_file\":\"${repository_name}/${repertoire_dirname}/${repertoire_datafile}\"}" >> $REPERTOIRE_MANIFEST
+                echo "]}" >> $REPERTOIRE_MANIFEST
+
                 # Call the client supplied "run_analysis" callback function. Parameters:
                 #     $1 output directory
                 #     $2 repository name
                 #     $3 repertoire id ("NULL" if not used)
                 #     $4 repertoire JSON file ["NULL" if not used, required if repertoire_id is specified]
                 #     $5-$N list of data input files
-                data_array=( "${repository_name}/${repertoire_dirname}/${repertoire_datafile}" )
-                run_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${data_array[@]} 
+                echo "Inputs"
+                echo ${repository_name}/${repertoire_dirname}
+                echo ${repository_name}
+                echo ${repertoire_id}
+                echo ${repertoire_file}
+                echo ${REPERTOIRE_MANIFEST}
+                run_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST}
             elif [ ${ANALYSIS_TYPE} = "clone_file" ]
             then
                 # Generate a file name for the TSV data for the repertoire.
@@ -167,14 +180,18 @@ function gateway_split_repertoire(){
                 # Command line parameters: inputfile, field_name, field_value, outfile
                 python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $data_file Clone ${SPLIT_FIELD} ${repertoire_id} > ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
         
+                # Create the repertoire manifest file
+                echo '{"Info":{},"DataSets":[' > $REPERTOIRE_MANIFEST
+                echo "{\"clone_file\":\"${repository_name}/${repertoire_dirname}/${repertoire_datafile}\"}" >> $REPERTOIRE_MANIFEST
+                echo "]}" >> $REPERTOIRE_MANIFEST
+
                 # Call the client supplied "run_analysis" callback function. Parameters:
                 #     $1 output directory
                 #     $2 repository name
                 #     $3 repertoire id ("NULL" if not used)
                 #     $4 repertoire JSON file ["NULL" if not used, required if repertoire_id is specified]
                 #     $5-$N list of data input files
-                data_array=( "${repository_name}/${repertoire_dirname}/${repertoire_datafile}" )
-                run_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${data_array[@]} 
+                run_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST}
             elif [ ${ANALYSIS_TYPE} = "cell_file" ]
             then
                 # Generate a file name for the data for the repertoire.
@@ -185,14 +202,18 @@ function gateway_split_repertoire(){
                 # Command line parameters: inputfile, field_name, field_value, outfile
                 python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $data_file Cell ${SPLIT_FIELD} ${repertoire_id} > ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
         
+                # Create the repertoire manifest file
+                echo '{"Info":{},"DataSets":[' > $REPERTOIRE_MANIFEST
+                echo "{\"cell_file\":\"${repository_name}/${repertoire_dirname}/${repertoire_datafile}\"}" >> $REPERTOIRE_MANIFEST
+                echo "]}" >> $REPERTOIRE_MANIFEST
+
                 # Call the client supplied "run_analysis" callback function. Parameters:
                 #     $1 output directory
                 #     $2 repository name
                 #     $3 repertoire id ("NULL" if not used)
                 #     $4 repertoire JSON file ["NULL" if not used, required if repertoire_id is specified]
                 #     $5-$N list of data input files
-                data_array=( "${repository_name}/${repertoire_dirname}/${repertoire_datafile}" )
-                run_cell_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${data_array[@]} 
+                run_cell_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST}
             fi
 
         done
