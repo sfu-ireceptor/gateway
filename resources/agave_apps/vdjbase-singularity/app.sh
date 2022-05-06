@@ -56,10 +56,11 @@ export JOB_ERROR=1
 # Done Tapis setup/processing.
 ########################################################################
 
+GATEWAY_URL=https://gateway-analysis-dev.ireceptor.org
 # Get the singularity image from the Gateway
-echo "Downloading singularity image from the Gateway"
+echo "Downloading singularity image from Gateway ${GATEWAY_URL}"
 date
-wget -nv https://gateway-analysis.ireceptor.org/singularity/${singularity_image}
+wget -nv ${GATEWAY_URL}/singularity/${singularity_image}
 echo -n "Singularity file downloaded = "
 ls ${singularity_image}
 echo "Done ownloading singularity image from the Gateway"
@@ -71,7 +72,7 @@ date
 GATEWAY_UTIL_DIR=gateway_utilities
 mkdir -p ${GATEWAY_UTIL_DIR}
 pushd ${GATEWAY_UTIL_DIR} > /dev/null
-wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" https://gateway-analysis.ireceptor.org/gateway_utilities/
+wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" ${GATEWAY_URL}/gateway_utilities/
 popd > /dev/null
 echo "Done downloading iReceptor Gateway Utilities"
 date
