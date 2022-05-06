@@ -19,12 +19,13 @@ module load scipy-stack
 ##############################################
 # Get the iRecpetor Gateway utilities from the Gateway
 ##############################################
-echo "Downloading iReceptor Gateway Utilities from the Gateway"
+GATEWAY_URL=https://gateway-analysis-dev.ireceptor.org
+echo "Downloading iReceptor Gateway Utilities from ${GATEWAY_URL}"
 date
 GATEWAY_UTIL_DIR="gateway_utilities"
 mkdir -p ${GATEWAY_UTIL_DIR}
 pushd ${GATEWAY_UTIL_DIR} > /dev/null
-wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" https://gateway-analysis.ireceptor.org/gateway_utilities/
+wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" ${GATEWAY_URL}/gateway_utilities/
 popd > /dev/null
 echo "Done downloading iReceptor Gateway Utilities"
 date
@@ -203,22 +204,24 @@ function run_analysis()
 #     $2 repository name [string]
 #     $3 repertoire_id ("NULL" if should skip repertoire processing)
 #     $4 repertoire file (Not used if repertoire_id == NULL)
-#     $5-$N rearrangement files (bash doesn't like arrays, so the rest of the parameters
-#        are considered rearrangement files.
+#     $5 manifest file
 {
 	# Use local variables - no scope issues please...
 	local output_directory=$1
 	local repository_name=$2
 	local repertoire_id=$3
 	local repertoire_file=$4
-	shift
-	shift
-	shift
-	shift
-	# Remaining variable are the files to process
-	local array_of_files=( $@ )
+    local manifest_file=$5
+	echo "Running a Repertoire Analysis with manifest ${manifest_file}"
 
-	echo "Running a Repertoire Analysis on ${array_of_files[@]}"
+	# Get a list of rearrangement files to process from the manifest.
+    local array_of_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: Could not process manifest file ${manifest_file}"
+        return 
+    fi
+	echo "    Using files ${array_of_files[@]}"
 
 	# Check to see if we are processing a specific repertoire_id
 	if [ "${repertoire_id}" != "${output_directory}" ]; then
@@ -273,7 +276,7 @@ function run_analysis()
 # AIRR manifest JSON file that describes the relationships between
 # AIRR Repertoire JSON files and AIRR TSV files.
 INFO_FILE="info.txt"
-MANIFEST_FILE="airr_manifest.json"
+AIRR_MANIFEST_FILE="airr_manifest.json"
 
 if [ "${split_repertoire}" = "True" ]; then
     echo -e "\nIR-INFO: Splitting data by Repertoire\n"
@@ -282,7 +285,7 @@ if [ "${split_repertoire}" = "True" ]; then
     # user to define a function called run_analysis() that will be
     # called for each repertoire. See the docs in the gateway_utilities.sh file
     # for parameters to this function.
-    gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_split_repertoire ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
 elif [ "${split_repertoire}" = "False" ]; then
     echo -e "\nIR-INFO: Running app on entire data set\n"
     # Run the stats on all the data combined. Unzip the files
@@ -290,15 +293,6 @@ elif [ "${split_repertoire}" = "False" ]; then
 
     # Go into the working directory
     pushd ${GATEWAY_ANALYSIS_DIR} > /dev/null
-
-    # Generate the TSV files from the AIRR manifest
-    tsv_files=( "`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} rearrangement_file`" )
-    if [ $? -ne 0 ]
-    then
-        echo "IR-ERROR: Could not process manifest file ${MANIFEST_FILE}"
-        exit $?
-    fi
-    echo "TSV files = ${tsv_files}"
 
     # Output directory is called "Total"
     # Run the analysis with a token repository name of "ADC" since the
@@ -309,7 +303,7 @@ elif [ "${split_repertoire}" = "False" ]; then
     # the run_analyis function handles.
     outdir="Total"
     mkdir ${outdir}
-    run_analysis ${outdir} "AIRRDataCommons" ${outdir} "NULL" ${tsv_files[@]} 
+    run_analysis ${outdir} "AIRRDataCommons" ${outdir} "NULL" ${AIRR_MANIFEST_FILE}
 
     # Remove the copied ZIP file
     rm -r ${ZIP_FILE}
