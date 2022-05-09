@@ -749,7 +749,7 @@ class SequenceCell
                         }
                     }
                 }
-                 
+
                 // Get the associated expression file
                 foreach ($expression_response_list as $expression_response) {
                     // If the service IDs match, then the files match
