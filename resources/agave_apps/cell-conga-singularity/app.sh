@@ -203,6 +203,10 @@ function run_cell_analysis()
 
     # Copy the Conga summary report to the gateway expected summary for this repertoire
     cp ${output_directory}/${file_string}_results_summary.html ${output_directory}/${repertoire_id}.html
+    # Add the required label file for the Gateway to present the results as a summary.
+    label_file=${output_directory}/${repertoire_id}.txt
+    echo "${title_string}" > ${label_file}
+
 
     # Remove the intermediate files generated for Conga
     rm -f ${output_directory}/${CONTIG_PREFIX}.csv ${output_directory}/${CONTIG_PREFIX}_*
