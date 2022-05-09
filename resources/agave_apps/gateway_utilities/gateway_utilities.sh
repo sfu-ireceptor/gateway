@@ -71,15 +71,25 @@ function gateway_split_repertoire(){
 
     # Determine the files to process. We extract the data files from the airr_manifest.json
     # and store them in an array. The type is one of rearrangement_file, cell_file, clone_file
-    data_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
-    if [ $? -ne 0 ]
+    if [ ${ANALYSIS_TYPE} = "rearrangement_file" ]
     then
-        echo "IR-ERROR: Could not process manifest file ${MANIFEST_FILE}"
-        exit $?
+        data_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
+    elif [ ${ANALYSIS_TYPE} = "clone_file" ]
+    then
+        data_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
+    elif [ ${ANALYSIS_TYPE} = "cell_file" ]
+    then
+        # Cell analyses have three different types of files to process.
+        data_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
+        expression_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "expression_file"` )
+        rearrangement_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "rearrangement_file"` )
     fi
+
+    # Check to make sure we have some data files to process in the manifest file.
     echo "Data files = ${data_files[@]}"
     if [ ${#data_files[@]} -eq 0 ]; then
-        echo "IR-INFO: Could not find any ${ANALYSIS_TYPE} in ${MANIFEST_FILE}"
+        echo "IR-ERROR: Could not find any ${ANALYSIS_TYPE} in ${MANIFEST_FILE}"
+        exit $?
     fi
 
     # Get the repository from the manifest file.
@@ -93,8 +103,11 @@ function gateway_split_repertoire(){
     # For each repository, process the data from it.
     count=0
     for repository_url in "${repository_urls[@]}"; do
+        # Get the files to process for each repository. This assumes that there is
+        # one data file and repertoire file  per repository
         data_file=${data_files[$count]}
         repertoire_file=${repertoire_files[$count]}
+        # Get the repository name (FQDN) of the repository
         repository_name=`echo "$repository_url" | awk -F/ '{print $3}'`
         echo ""
         echo "Processing data from repository ${repository_name}"
@@ -139,9 +152,11 @@ function gateway_split_repertoire(){
             repertoire_dirname=${repertoire_id}
             mkdir -p ${repository_name}/${repertoire_dirname}
 
-            # Create a manifest file for this analysis unit
+            # Generate the manifest file name for this analysis unit
             REPERTOIRE_MANIFEST=${repository_name}/${repertoire_dirname}/manifest.json
             echo "Manifest file = ${REPERTOIRE_MANIFEST}"
+
+            # Based on the type of analysis, split the data out for this reperotire_id
             if [ ${ANALYSIS_TYPE} = "rearrangement_file" ]
             then
                 # Generate a file name for the TSV data for the repertoire.
@@ -154,7 +169,7 @@ function gateway_split_repertoire(){
         
                 # Create the repertoire manifest file
                 echo '{"Info":{},"DataSets":[' > $REPERTOIRE_MANIFEST
-                echo "{\"rearrangement_file\":\"${repository_name}/${repertoire_dirname}/${repertoire_datafile}\"}" >> $REPERTOIRE_MANIFEST
+                echo "{\"rearrangement_file\":[\"${repertoire_datafile}\"]}" >> $REPERTOIRE_MANIFEST
                 echo "]}" >> $REPERTOIRE_MANIFEST
 
                 # Call the client supplied "run_analysis" callback function. Parameters:
@@ -162,7 +177,7 @@ function gateway_split_repertoire(){
                 #     $2 repository name
                 #     $3 repertoire id ("NULL" if not used)
                 #     $4 repertoire JSON file ["NULL" if not used, required if repertoire_id is specified]
-                #     $5-$N list of data input files
+                #     $5 manifest file
                 echo "Inputs"
                 echo ${repository_name}/${repertoire_dirname}
                 echo ${repository_name}
@@ -179,10 +194,15 @@ function gateway_split_repertoire(){
                 # repertoire_id in the SPLIT_FIELD.
                 # Command line parameters: inputfile, field_name, field_value, outfile
                 python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $data_file Clone ${SPLIT_FIELD} ${repertoire_id} > ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
+                if [ $? -ne 0 ]
+                then
+                    echo "IR-ERROR: Could not filter Clone data for ${repertoire_id} from ${data_file}"
+                    continue
+                fi
         
                 # Create the repertoire manifest file
                 echo '{"Info":{},"DataSets":[' > $REPERTOIRE_MANIFEST
-                echo "{\"clone_file\":\"${repository_name}/${repertoire_dirname}/${repertoire_datafile}\"}" >> $REPERTOIRE_MANIFEST
+                echo "{\"clone_file\":[\"${repertoire_datafile}\"]}" >> $REPERTOIRE_MANIFEST
                 echo "]}" >> $REPERTOIRE_MANIFEST
 
                 # Call the client supplied "run_analysis" callback function. Parameters:
@@ -190,29 +210,59 @@ function gateway_split_repertoire(){
                 #     $2 repository name
                 #     $3 repertoire id ("NULL" if not used)
                 #     $4 repertoire JSON file ["NULL" if not used, required if repertoire_id is specified]
-                #     $5-$N list of data input files
+                #     $5 manifest file
                 run_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST}
             elif [ ${ANALYSIS_TYPE} = "cell_file" ]
             then
+                # Get the expression and rearrangement files that accompany this analysis unit.
+                echo "Expression files = ${expression_files[@]}"
+                echo "Rearrangement files = ${rearrangement_files[@]}"
+                expression_file=${expression_files[$count]}
+                rearrangement_file=${rearrangement_files[$count]}
                 # Generate a file name for the data for the repertoire.
-                repertoire_datafile=${repertoire_dirname}".json"
+                cell_datafile=${repertoire_dirname}"-cell.json"
+                gex_datafile=${repertoire_dirname}"-gex.json"
+                rearrangement_datafile=${repertoire_dirname}"-rearrangement.tsv"
     
-                # Filter the input file $data_file and extract all records that have the given
+                # Filter the input file extract all records that have the given
                 # repertoire_id in the SPLIT_FIELD.
                 # Command line parameters: inputfile, field_name, field_value, outfile
-                python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $data_file Cell ${SPLIT_FIELD} ${repertoire_id} > ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
+                python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $data_file Cell ${SPLIT_FIELD} ${repertoire_id} > ${repository_name}/${repertoire_dirname}/${cell_datafile}
+                if [ $? -ne 0 ]
+                then
+                    echo "IR-ERROR: Could not filter Clone data for ${repertoire_id} from ${data_file}"
+                    continue
+                fi
+                # Repeat for expression data.
+                python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $expression_file CellExpression ${SPLIT_FIELD} ${repertoire_id} > ${repository_name}/${repertoire_dirname}/${gex_datafile}
+                if [ $? -ne 0 ]
+                then
+                    echo "IR-ERROR: Could not filter Expression data for ${repertoire_id} from ${expression_file}"
+                    continue
+                fi
+                # Repeat for rearrangement data.
+                #python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter.py $rearrangement_file ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
+                #if [ $? -ne 0 ]
+                #then
+                #    echo "IR-ERROR: Could not filter Rearrangement data for ${repertoire_id} from ${rearrangement_file}"
+                #    continue
+                #fi
+                wget https://gateway-analysis-dev.ireceptor.org/storage/test/single-cell-repo.tsv
+                mv single-cell-repo.tsv ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
         
                 # Create the repertoire manifest file
-                echo '{"Info":{},"DataSets":[' > $REPERTOIRE_MANIFEST
-                echo "{\"cell_file\":\"${repository_name}/${repertoire_dirname}/${repertoire_datafile}\"}" >> $REPERTOIRE_MANIFEST
-                echo "]}" >> $REPERTOIRE_MANIFEST
+                echo '{"Info":{},"DataSets":[{' > $REPERTOIRE_MANIFEST
+                echo "\"cell_file\":[\"${cell_datafile}\"]," >> $REPERTOIRE_MANIFEST
+                echo "\"expression_file\":[\"${gex_datafile}\"]," >> $REPERTOIRE_MANIFEST
+                echo "\"rearrangement_file\":[\"${rearrangement_datafile}\"]" >> $REPERTOIRE_MANIFEST
+                echo "}]}" >> $REPERTOIRE_MANIFEST
 
                 # Call the client supplied "run_analysis" callback function. Parameters:
                 #     $1 output directory
                 #     $2 repository name
                 #     $3 repertoire id ("NULL" if not used)
                 #     $4 repertoire JSON file ["NULL" if not used, required if repertoire_id is specified]
-                #     $5-$N list of data input files
+                #     $5 manifest file
                 run_cell_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST}
             fi
 
