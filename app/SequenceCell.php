@@ -168,7 +168,7 @@ class SequenceCell
             $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_list_by_rs);
         }
 
-        $file_stats = self::file_stats($response_list, $metadata_response_list, $expected_nb_cells_by_rs);
+        $file_stats = self::file_stats($response_list, $expression_response_list, $metadata_response_list, $expected_nb_cells_by_rs);
 
         // if some files are incomplete, log it
         foreach ($file_stats as $t) {
@@ -641,12 +641,12 @@ class SequenceCell
                 if ($dataset_count != 0) {
                     $s .= ',' . "\n";
                 }
-                $s .= '    {"repository":"' . $t['rs_url'] . '", "repertoire_file":["' . $t['metadata_name'] . '"], "cell_file":["' . $t['name'] . '"]}';
+                $s .= '    {"repository":"' . $t['rs_url'] . '", "repertoire_file":["' . $t['metadata_name'] . '"], "cell_file":["' . $t['name'] . '"], "expression_file":["' . $t['expression_name'] . '"]}';
             } else {
                 if ($dataset_count != 0) {
                     $s .= ',' . "\n";
                 }
-                $s .= '    {"repository":"' . $t['rs_url'] . '","repertoire_file":["' . $t['metadata_name'] . '"], "cell_file":["' . $t['name'] . '"]}';
+                $s .= '    {"repository":"' . $t['rs_url'] . '","repertoire_file":["' . $t['metadata_name'] . '"], "cell_file":["' . $t['name'] . '"], "expression_file":["' . $t['expression_name'] . '"]}';
             }
             Log::debug('Manifest dataset = ' . $t['metadata_name'] . ', ' . $t['name']);
             $dataset_count++;
@@ -724,7 +724,7 @@ class SequenceCell
         }
     }
 
-    public static function file_stats($response_list, $metadata_response_list, $expected_nb_cells_by_rs)
+    public static function file_stats($response_list, $expression_response_list, $metadata_response_list, $expected_nb_cells_by_rs)
     {
         Log::debug('Get files stats');
         $file_stats = [];
@@ -746,6 +746,18 @@ class SequenceCell
                         if (isset($metadata_response['data']['file_path'])) {
                             $metadata_file_path = $metadata_response['data']['file_path'];
                             $t['metadata_name'] = basename($metadata_file_path);
+                        }
+                    }
+                }
+                 
+                // Get the associated expression file
+                foreach ($expression_response_list as $expression_response) {
+                    // If the service IDs match, then the files match
+                    if ($rest_service_id == $expression_response['rs']->id) {
+                        // If there is a file path, keep track of the metadata file
+                        if (isset($expression_response['data']['file_path'])) {
+                            $expression_file_path = $expression_response['data']['file_path'];
+                            $t['expression_name'] = basename($expression_file_path);
                         }
                     }
                 }
