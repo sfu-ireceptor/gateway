@@ -93,7 +93,6 @@ class SequenceCell
         return $expected_nb_cells_by_rs;
     }
 
-
     public static function filteredSamplesByRestService($response_list)
     {
         $filtered_samples_by_rs = [];
@@ -160,7 +159,7 @@ class SequenceCell
         }
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
-        if ($query_type == 'cell') {            
+        if ($query_type == 'cell') {
             $cell_id_list_by_data_processing = RestService::cell_id_list_by_data_processing($filters, $username, $expected_nb_cells_by_rs);
             $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_data_processing);
 
