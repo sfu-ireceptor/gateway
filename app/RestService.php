@@ -2018,19 +2018,19 @@ class RestService extends Model
             // dd($cell_list);
             $data_processing_id_list = [];
             foreach ($cell_list as $cell) {
-                if(! isset($cell->data_processing_id) || ! isset($cell->cell_id) ) {
+                if (! isset($cell->data_processing_id) || ! isset($cell->cell_id)) {
                     continue;
                 }
 
                 $data_processing_id = $cell->data_processing_id;
-                if(! isset($data_processing_id_list[$data_processing_id])) {
+                if (! isset($data_processing_id_list[$data_processing_id])) {
                     $data_processing_id_list[$data_processing_id] = [];
                 }
 
                 $cell_id = $cell->cell_id;
                 $data_processing_id_list[$data_processing_id][] = $cell_id;
             }
-            
+
             $final_response_list[$i]['data_processing_id_list'] = $data_processing_id_list;
 
             // don't need this anymore
@@ -2075,26 +2075,24 @@ class RestService extends Model
             $rs_filters = [];
 
             foreach ($cell_id_list_by_data_processing as $response) {
-                if($response['rs']->id != $rs->id) {
+                if ($response['rs']->id != $rs->id) {
                     continue;
                 }
 
                 $data_processing_id_list = $response['data_processing_id_list'];
-    
+
                 $rs_filters_json = self::generate_cell_id_by_data_processing_id_json_query($data_processing_id_list, $query_parameters);
                 // dd($rs_filters_json);
                 break;
             }
-
 
             $t = [];
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'rearrangement';
             $t['params'] = $rs_filters_json;
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
-            
-            $t['params_array'] = $query_parameters;
 
+            $t['params_array'] = $query_parameters;
 
             // add number suffix for rest services belonging to a group
             $file_suffix = '';
