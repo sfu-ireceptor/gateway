@@ -116,8 +116,7 @@ function run_cell_analysis()
 #     $2 repository name [string]
 #     $3 repertoire_id ("NULL" if should skip repertoire processing)
 #     $4 repertoire file (Not used if repertoire_id == NULL)
-#     $5-$N rearrangement files (bash doesn't like arrays, so the rest of the parameters
-#        are considered rearrangement files.
+#     $5 manifest file
 {
     # Use local variables - no scope issues please...
     local output_directory=$1
@@ -125,16 +124,39 @@ function run_cell_analysis()
     local repertoire_id=$3
     local repertoire_file=$4
     local manifest_file=$5
-    echo "Running a Repertoire Analysis with manifest ${manifest_file}"
+    echo "Running a Cell Repertoire Analysis with manifest ${manifest_file}"
 
     # Get a list of rearrangement files to process from the manifest.
-    local array_of_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "cell_file"` )
+    local cell_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "cell_file"` )
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not process manifest file ${manifest_file}"
         return
     fi
-    echo "    Using files ${array_of_files[@]}"
+    if [ ${#cell_files[@]} != 1 ]
+    then
+        echo "IR_ERROR: Conga cell analysis only works with a single cell file."
+        return
+    fi
+    local cell_file_count=${#cell_files[@]}
+    local cell_file=${cell_files[0]}
+    echo "    Using cell file ${cell_file}"
+    local gex_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "expression_file"` )
+    if [ ${#gex_files[@]} != 1 ]
+    then
+        echo "IR_ERROR: Conga cell analysis only works with a single expression file."
+        return
+    fi
+    local gex_file=${gex_files[0]}
+    echo "    Using gex file ${gex_file}"
+    local rearrangement_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
+    if [ ${#rearrangement_files[@]} != 1 ]
+    then
+        echo "IR_ERROR: Conga cell analysis only works with a single rearrangement file."
+        return
+    fi
+    local rearrangement_file=${rearrangement_files[0]}
+    echo "    Using rearrangement file ${rearrangement_files}"
 
     # Check to see if we are processing a specific repertoire_id
     if [ "${repertoire_id}" != "NULL" ]; then
@@ -149,62 +171,64 @@ function run_cell_analysis()
     fi
 
     # Run the Conga pipeline within the singularity image on each rearrangement file provided.
-    for filename in "${array_of_files[@]}"; do
-        echo "Running Conga on $filename"
-        echo "Mapping ${PWD} to /data"
-        echo "Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
-        echo "Storing output in /data/${output_directory}"
+    echo "Running Conga on $filename"
+    echo "Mapping ${PWD} to /data"
+    echo "Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
+    echo "Storing output in /data/${output_directory}"
 
-        # Convert Rearrangement file to a 10X Contig file
-        CONTIG_PREFIX=10x-contig
-        python3 ${SCRIPT_DIR}/rearrangements-to-10x.py ${output_directory}/${rearrangement_file} ${output_directory}/${CONTIG_PREFIX}.csv
-        if [ $? -ne 0 ]
-        then
-            echo "IR-ERROR: Could not generate rearrangements"
-            continue
-        fi
-
-        # Generate equivalent 10X Cell files from AIRR Cell/GEX data for input into Conga.
-        python3 ${SCRIPT_DIR}/airr-to-10x.py ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
-        if [ $? -ne 0 ]
-        then
-            echo "IR-ERROR: Could not generate cell/expression data"
-            continue
-        fi
+    # Generate equivalent 10X Cell files from AIRR Cell/GEX data for input into Conga.
+    python3 ${SCRIPT_DIR}/airr-to-10x.py ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: Could not generate cell/expression data"
+        return
+    fi
         
-        # Compress the file because Conga wants it that way!
-        gzip ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
+    # Compress the file because Conga wants it that way!
+    gzip ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
 
-        # Run Conga
-        singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/setup_10x_for_conga.py --filtered_contig_annotations_csvfile /data/${output_directory}/${CONTIG_PREFIX}.csv --organism human
+    # Convert Rearrangement file to a 10X Contig file
+    CONTIG_PREFIX=10x-contig
+    python3 ${SCRIPT_DIR}/rearrangements-to-10x.py ${output_directory}/${rearrangement_file} ${output_directory}/${CONTIG_PREFIX}.csv
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: Could not generate rearrangements"
+        return
+    fi
 
-        singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/run_conga.py --all --organism human --clones_file /data/${output_directory}/${CONTIG_PREFIX}_tcrdist_clones.tsv --gex_data /data/${output_directory} --gex_data_type 10x_mtx --outfile_prefix /data/${output_directory}/${file_string}
+    # Run Conga
+    singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/setup_10x_for_conga.py --filtered_contig_annotations_csvfile /data/${output_directory}/${CONTIG_PREFIX}.csv --organism human
 
-        # Copy the PDF report to the repertoire_id.pdf file for the gateway to use as a summary.
-        #cp ${output_directory}/${file_string}/${file_string}_ogrdb_plots.pdf ${output_directory}/${repertoire_id}.pdf
-        # Generate a report.
-        cp ${output_directory}/${file_string}_results_summary.html > ${output_directory}/${repertoire_id}.html
+    singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/run_conga.py --all --organism human --clones_file /data/${output_directory}/${CONTIG_PREFIX}_tcrdist_clones.tsv --gex_data /data/${output_directory} --gex_data_type 10x_mtx --outfile_prefix /data/${output_directory}/${file_string}
 
-        # We don't want to keep around the original TSV file.
-        rm -f ${filename}
+    # Copy the Conga summary report to the gateway expected summary for this repertoire
+    cp ${output_directory}/${file_string}_results_summary.html ${output_directory}/${repertoire_id}.html
 
-    done
-    printf "Done running Repertoire Analysis on ${array_of_files[@]} at $(date)\n\n"
+    # Remove the intermediate files generated for Conga
+    rm -f ${output_directory}/${CONTIG_PREFIX}.csv ${output_directory}/${CONTIG_PREFIX}_*
+    rm -f ${output_directory}/features.tsv.gz ${output_directory}/barcodes.tsv.gz ${output_directory}/matrix.mtx.gz ${output_directory}/matrix.mtx.tmp
+
+    # We don't want to keep around the generated data files or the manifest file.
+    rm -f ${cell_file} ${gex_file} ${rearrangement_file} ${manifest_file}
+
+    #done
+    printf "Done running Repertoire Analysis on ${cell_file} at $(date)\n\n"
 }
 
 # Split the data by repertoire. This creates a directory tree in $GATEWAY_ANALYSIS_DIR
 # with a directory per repository and within that a directory per repertoire in
-# that repository. In each repertoire directory there will exist an AIRR TSV
-# file with the data from that repertoire.
+# that repository. In each repertoire directory there will exist an AIRR manifest
+# file and the data (as described in the manifest file) from that repertoire.
 #
 # This gateway utility function uses a callback mechanism, calling the
-# function run_analysis() on each repertoire. The run_analysis function takes
-# as paramenters the TSV files to process, the directory for the repertoire in
+# function run_cell_analysis() on each repertoire (in this case run_cell_analysis 
+# because the type is "cell_file". The run_cell_analysis function takes
+# as paramenters the manifest files to process, the directory for the repertoire in
 # which to store the analysis results, the a string repersenting the repository
 # from which the data came, the repertoire_id, and a repertoire JSON file in which
 # information about the repertoire can be found. 
 #
-# run_analysis() is defined above.
+# run_cell_analysis() is defined above.
 gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file"
 
 # Make sure we are back where we started, although the gateway functions should
@@ -219,8 +243,9 @@ cp *.err ${GATEWAY_ANALYSIS_DIR}
 cp *.out ${GATEWAY_ANALYSIS_DIR}
 
 # Zip up the analysis results for easy download
-echo "ZIPing analysis results"
+echo "ZIPing analysis results - $(date)"
 zip -r ${GATEWAY_ANALYSIS_DIR}.zip ${GATEWAY_ANALYSIS_DIR}
+echo "Done ZIPing analysis results - $(date)"
 
 # We don't want the analysis files to remain - they are in the ZIP file
 echo "Removing analysis output"
@@ -239,8 +264,3 @@ rm -f $ZIP_FILE
 # End
 printf "DONE at $(date)\n\n"
 
-# Handle AGAVE errors
-#printf "AGAVE callback error = ${AGAVE_JOB_CALLBACK_FAILURE} \n\n"
-#if [[ $JOB_ERROR -eq 1 ]]; then
-#    ${AGAVE_JOB_CALLBACK_FAILURE}
-#fi
