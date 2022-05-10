@@ -645,6 +645,8 @@ class Agave
             $response = $exception->getResponse()->getBody()->getContents();
             Log::error($response);
             $this->raiseExceptionIfAgaveError($response);
+
+            return $response;
         }
 
         // return response as object

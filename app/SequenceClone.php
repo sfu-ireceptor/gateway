@@ -156,7 +156,7 @@ class SequenceClone
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
         $response_list = RestService::clones_data($filters, $folder_path, $username, $expected_nb_clones_by_rs);
 
-        $file_stats = self::file_stats($response_list, $expected_nb_clones_by_rs);
+        $file_stats = self::file_stats($response_list, $metadata_response_list, $expected_nb_clones_by_rs);
 
         // if some files are incomplete, log it
         foreach ($file_stats as $t) {
@@ -261,12 +261,15 @@ class SequenceClone
 
         // generate info.txt
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
+        // generate manifest.json
+        $manifest_file_path = self::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
 
         $t = [];
         $t['folder_path'] = $folder_path;
         $t['response_list'] = $response_list;
         $t['metadata_response_list'] = $metadata_response_list;
         $t['info_file_path'] = $info_file_path;
+        $t['manifest_file_path'] = $manifest_file_path;
         $t['is_download_incomplete'] = $is_download_incomplete;
         $t['download_incomplete_info'] = $download_incomplete_info;
         $t['file_stats'] = $file_stats;
@@ -282,6 +285,7 @@ class SequenceClone
         $response_list = $t['response_list'];
         $metadata_response_list = $t['metadata_response_list'];
         $info_file_path = $t['info_file_path'];
+        $manifest_file_path = $t['manifest_file_path'];
         $is_download_incomplete = $t['is_download_incomplete'];
         $download_incomplete_info = $t['download_incomplete_info'];
         $file_stats = $t['file_stats'];
@@ -588,6 +592,52 @@ class SequenceClone
         return $info_file_path;
     }
 
+    public static function generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
+    {
+        // Name of the file we are generating for the download
+        $manifest_file = 'airr_manifest.json';
+
+        // Create the opening object in the JSON file
+        $s = "{\n";
+        // Create the Info block
+        $s .= '  "Info":{},' . "\n";
+
+        $nb_clones_total = 0;
+        $expected_nb_clones_total = 0;
+        foreach ($file_stats as $t) {
+            $nb_clones_total += $t['nb_clones'];
+            $expected_nb_clones_total += $t['expected_nb_clones'];
+        }
+
+        $is_download_incomplete = ($nb_clones_total < $expected_nb_clones_total);
+
+        // Create the DataSets block
+        $s .= '  "DataSets":[' . "\n";
+        $dataset_count = 0;
+        foreach ($file_stats as $t) {
+            if ($is_download_incomplete && ($t['nb_clones'] < $t['expected_nb_clones'])) {
+                if ($dataset_count != 0) {
+                    $s .= ',' . "\n";
+                }
+                $s .= '    {"repertoire_file":["' . $t['metadata_name'] . '"], "clone_file":["' . $t['name'] . '"]}';
+            } else {
+                if ($dataset_count != 0) {
+                    $s .= ',' . "\n";
+                }
+                $s .= '    {"repertoire_file":["' . $t['metadata_name'] . '"], "clone_file":["' . $t['name'] . '"]}';
+            }
+            Log::debug('Manifest dataset = ' . $t['metadata_name'] . ', ' . $t['name']);
+            $dataset_count++;
+        }
+        $s .= "\n  ]\n";
+        $s .= '}' . "\n";
+        $manifest_file_path = $folder_path . '/' . $manifest_file;
+        file_put_contents($manifest_file_path, $s);
+        Log::debug('Writing manifest ' . $manifest_file_path);
+
+        return $manifest_file_path;
+    }
+
     public static function zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path)
     {
         $zipPath = $folder_path . '.zip';
@@ -619,6 +669,7 @@ class SequenceClone
             }
         }
         $zip->addFile($info_file_path, basename($info_file_path));
+        $zip->addFile($manifest_file_path, basename($manifest_file_path));
         $zip->close();
 
         return $zipPath;
@@ -632,7 +683,7 @@ class SequenceClone
         }
     }
 
-    public static function file_stats($response_list, $expected_nb_clones_by_rs)
+    public static function file_stats($response_list, $metadata_response_list, $expected_nb_clones_by_rs)
     {
         Log::debug('Get TSV files stats');
         $file_stats = [];
@@ -645,6 +696,18 @@ class SequenceClone
                 $t['name'] = basename($file_path);
                 $t['rs_url'] = $response['rs']->url;
                 $t['size'] = human_filesize($file_path);
+
+                // Get the associated repertoire file
+                foreach ($metadata_response_list as $metadata_response) {
+                    // If the service IDs match, then the files match
+                    if ($rest_service_id == $metadata_response['rs']->id) {
+                        // If there is a file path, keep track of the metadata file
+                        if (isset($metadata_response['data']['file_path'])) {
+                            $metadata_file_path = $metadata_response['data']['file_path'];
+                            $t['metadata_name'] = basename($metadata_file_path);
+                        }
+                    }
+                }
 
                 // count number of lines
                 $n = 0;

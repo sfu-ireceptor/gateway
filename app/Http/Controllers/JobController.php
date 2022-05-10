@@ -162,6 +162,20 @@ class JobController extends Controller
         $job->updateStatus('WAITING');
         $jobId = $job->id;
 
+        // Extract the query type, either sequence, clone, or cell
+        // Queries look like this: https://gateway-analysis-dev.ireceptor.org/cells?query_id=9982
+        $job_url = $job->url;
+        $query_string = 'query_id=';
+        $query_type = '';
+        if (strpos($job_url, 'sequences?' . $query_string)) {
+            $query_type = 'sequence';
+        } elseif (strpos($job_url, 'clones?' . $query_string)) {
+            $query_type = 'clone';
+        } elseif (strpos($job_url, 'cells?' . $query_string)) {
+            $query_type = 'cell';
+        }
+        Log::debug('JobController::LaunchApp - Job type = ' . $query_type);
+
         $lj = new LocalJob;
         $lj->description = 'Job ' . $jobId . ' (' . $jobDescription . ')';
         // $lg->user = auth()->user()->username;
@@ -173,7 +187,7 @@ class JobController extends Controller
         if ($appId == '999') {
             PrepareDataForThirdPartyAnalysis::dispatch($jobId, $request_data, $gw_username, $localJobId);
         } else {
-            LaunchAgaveJob::dispatch($jobId, $request_data, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $job_params, $localJobId);
+            LaunchAgaveJob::dispatch($jobId, $request_data, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $job_params, $localJobId, $query_type);
         }
 
         return redirect('jobs/view/' . $jobId);
@@ -399,7 +413,7 @@ class JobController extends Controller
                     // a directory per repository and within that a directory per analysis unit.
                     // Currently, the only analysis unit supported is repertoire_id.
                     $analysis_summary = [];
-                    if (File::exists($analysis_folder)) {
+                    if (File::exists($analysis_folder) && is_dir($analysis_folder)) {
                         foreach (scandir($analysis_folder) as $file) {
                             // Look at each file and if it is a folder, process it.
                             if ($file !== '.' && $file !== '..' && is_dir($analysis_folder . '/' . $file)) {

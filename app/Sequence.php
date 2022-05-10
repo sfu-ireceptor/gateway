@@ -555,8 +555,10 @@ class Sequence
             $sam_summary = 'None';
         }
 
-        $sam_query_id = $seq_query_params['sample_query_id'];
-        $sam_query_params = Query::getParams($sam_query_id);
+        // Believe these should not be required - they are done above with an
+        // error check.
+        //$sam_query_id = $seq_query_params['sample_query_id'];
+        //$sam_query_params = Query::getParams($sam_query_id);
 
         // Use the Query class to generate a consistent set of summary info
         // from the query parameters. This returns a single string, containing
@@ -659,12 +661,12 @@ class Sequence
                 if ($dataset_count != 0) {
                     $s .= ',' . "\n";
                 }
-                $s .= '    {"repertoire_file":["' . $t['metadata_name'] . '"], "rearrangement_file":["' . $t['name'] . '"]}';
+                $s .= '    {"repository":"' . $t['rs_url'] . '", repertoire_file":["' . $t['metadata_name'] . '"], "rearrangement_file":["' . $t['name'] . '"]}';
             } else {
                 if ($dataset_count != 0) {
                     $s .= ',' . "\n";
                 }
-                $s .= '    {"repertoire_file":["' . $t['metadata_name'] . '"], "rearrangement_file":["' . $t['name'] . '"]}';
+                $s .= '    {"repository":"' . $t['rs_url'] . '","repertoire_file":["' . $t['metadata_name'] . '"], "rearrangement_file":["' . $t['name'] . '"]}';
             }
             Log::debug('Manifest dataset = ' . $t['metadata_name'] . ', ' . $t['name']);
             $dataset_count++;

@@ -27,15 +27,20 @@ def manifestSummary(json_filename, field_name, verbose, separator=" "):
 
     # Check for a correct Info object.
     if not "DataSets" in json_data:
-        print("ERROR: Expected to find an 'Info' object, none found")
+        print("ERROR: Expected to find a 'DataSets' object, none found")
         return False
 
     # Iterate over the datasets.
     for dataset in json_data['DataSets']:
         # If the filed of interest is available in the data set process it.
         if field_name in dataset:
-            for field_value in dataset[field_name]:
-                print("%s%s"%(field_value, separator),end="")
+            # If we have an array, output all values from the list. If not, 
+            # then just output the value of the field.
+            if isinstance(dataset[field_name], list):
+                for field_value in dataset[field_name]:
+                    print("%s%s"%(field_value, separator),end="")
+            else:
+                print("%s%s"%(str(dataset[field_name]), separator),end="")
     return True
         
 
