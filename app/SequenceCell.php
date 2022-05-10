@@ -160,6 +160,9 @@ class SequenceCell
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
         if ($query_type == 'cell') {
+            $cell_id_list_by_data_processing = RestService::cell_id_list_by_data_processing($filters, $username, $expected_nb_cells_by_rs);
+            $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_data_processing);
+
             $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs);
             $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list);
         } else {
@@ -190,6 +193,14 @@ class SequenceCell
         // did the download fail for some services?
         $failed_rs = [];
         foreach ($response_list as $response) {
+            if ($response['status'] == 'error') {
+                $failed_rs[] = $response['rs'];
+                $is_download_incomplete = true;
+            }
+        }
+
+        // did the sequence download fail for some services?
+        foreach ($sequence_response_list as $response) {
             if ($response['status'] == 'error') {
                 $failed_rs[] = $response['rs'];
                 $is_download_incomplete = true;
@@ -289,6 +300,7 @@ class SequenceCell
         $t['response_list'] = $response_list;
         $t['metadata_response_list'] = $metadata_response_list;
         $t['expression_response_list'] = $expression_response_list;
+        $t['sequence_response_list'] = $sequence_response_list;
         $t['info_file_path'] = $info_file_path;
         $t['manifest_file_path'] = $manifest_file_path;
         $t['is_download_incomplete'] = $is_download_incomplete;
@@ -306,6 +318,7 @@ class SequenceCell
         $response_list = $t['response_list'];
         $metadata_response_list = $t['metadata_response_list'];
         $expression_response_list = $t['expression_response_list'];
+        $sequence_response_list = $t['sequence_response_list'];
         $info_file_path = $t['info_file_path'];
         $manifest_file_path = $t['manifest_file_path'];
         $is_download_incomplete = $t['is_download_incomplete'];
@@ -313,7 +326,7 @@ class SequenceCell
         $file_stats = $t['file_stats'];
 
         // zip files
-        $zip_path = self::zip_files($folder_path, $response_list, $expression_response_list, $metadata_response_list, $info_file_path, $manifest_file_path);
+        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $expression_response_list, $sequence_response_list, $manifest_file_path);
 
         // delete files
         self::delete_files($folder_path);
@@ -691,6 +704,15 @@ class SequenceCell
 
                 file_put_contents($file_path, $json_data);
 
+                Log::debug('Adding to ZIP: ' . $file_path);
+                $zip->addFile($file_path, basename($file_path));
+            }
+        }
+
+        // sequence data
+        foreach ($sequence_response_list as $response) {
+            if (isset($response['data']['file_path'])) {
+                $file_path = $response['data']['file_path'];
                 Log::debug('Adding to ZIP: ' . $file_path);
                 $zip->addFile($file_path, basename($file_path));
             }

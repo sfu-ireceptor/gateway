@@ -15,8 +15,6 @@ class SequenceClone
         // get clones summary
         $response_list_clones_summary = RestService::sequences_summary($filters, $username, true, 'clone');
 
-        // dd($response_list);
-
         // generate stats
         $data = self::process_response($response_list_clones_summary);
 
@@ -95,14 +93,42 @@ class SequenceClone
         return $expected_nb_clones_by_rs;
     }
 
+    public static function filteredSamplesByRestService($response_list)
+    {
+        $filtered_samples_by_rs = [];
+        foreach ($response_list as $response) {
+            $rest_service_id = $response['rs']->id;
+
+            $sample_id_list = [];
+            if (isset($response['data'])) {
+                $sample_list = $response['data'];
+                foreach ($sample_list as $sample) {
+                    if (isset($sample->ir_filtered_clone_count) && ($sample->ir_filtered_clone_count > 0)) {
+                        $sample_id_list[] = $sample->repertoire_id;
+                    }
+                }
+            }
+
+            $filtered_samples_by_rs[$rest_service_id] = $sample_id_list;
+        }
+
+        return $filtered_samples_by_rs;
+    }
+
     public static function clonesTSVFolder($filters, $username, $url = '', $sample_filters = [])
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
+        // do extra clone summary request
+        $response_list = RestService::sequences_summary($filters, $username, false, 'clone');
+
         // do extra clone summary request to get expected number of clones
         // for sanity check after download
         $expected_nb_clones_by_rs = self::expectedSequenceClonesByRestSevice($filters, $username);
+
+        // get filtered list of repertoires ids
+        $filtered_samples_by_rs = self::filteredSamplesByRestService($response_list);
 
         // if total expected nb clones is 0, immediately fail download
         $total_expected_nb_clones = 0;
@@ -127,8 +153,8 @@ class SequenceClone
         $folder_path = $storage_folder . $folder_name;
         File::makeDirectory($folder_path, 0777, true, true);
 
-        $metadata_response_list = RestService::sample_list_repertoire_data($filters, $folder_path, $username);
-        $response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_clones_by_rs, 'clone');
+        $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
+        $response_list = RestService::clones_data($filters, $folder_path, $username, $expected_nb_clones_by_rs);
 
         $file_stats = self::file_stats($response_list, $metadata_response_list, $expected_nb_clones_by_rs);
 

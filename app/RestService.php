@@ -276,6 +276,57 @@ class RestService extends Model
         return $filter_object_json;
     }
 
+    public static function generate_cell_id_by_data_processing_id_json_query($data_processing_id_list, $query_parameters = [])
+    {
+        // build array of filters
+        $filter_list = [];
+        foreach ($data_processing_id_list as $data_processing_id => $cell_id_list) {
+            $filter1 = new \stdClass();
+            $filter1->op = '=';
+            $filter1->content = new \stdClass();
+            $filter1->content->field = 'data_processing_id';
+            $filter1->content->value = $data_processing_id;
+
+            $filter2 = new \stdClass();
+            $filter2->op = 'in';
+            $filter2->content = new \stdClass();
+            $filter2->content->field = 'cell_id';
+            $filter2->content->value = $cell_id_list;
+
+            $filter = new \stdClass();
+            $filter->op = 'and';
+            $filter->content = [];
+            $filter->content[] = $filter1;
+            $filter->content[] = $filter2;
+
+            $filter_list[] = $filter;
+        }
+
+        // build final filter object
+        $filter_object = new \stdClass();
+        if (count($filter_list) == 0) {
+        } elseif (count($filter_list) == 1) {
+            $filter_object->filters = $filter_list[0];
+        } else {
+            $filter_object->filters = new \stdClass();
+            $filter_object->filters->op = 'or';
+            $filter_object->filters->content = [];
+            foreach ($filter_list as $filter) {
+                $filter_object->filters->content[] = $filter;
+            }
+        }
+
+        // add extra parameters
+        foreach ($query_parameters as $key => $value) {
+            $filter_object->{$key} = $value;
+        }
+
+        // convert filter object to JSON
+        $filter_object_json = json_encode($filter_object);
+
+        return $filter_object_json;
+    }
+
     public static function clean_filters($filters)
     {
         // remove empty filters
@@ -1486,14 +1537,8 @@ class RestService extends Model
     //   },
     //   "format": "tsv"
     // }
-    public static function sequences_data($filters, $folder_path, $username = '', $expected_nb_sequences_by_rs, $type = 'rearrangement')
+    public static function sequences_data($filters, $folder_path, $username = '', $expected_nb_sequences_by_rs)
     {
-        $base_uri = 'rearrangement';
-
-        if ($type == 'clone') {
-            $base_uri = 'clone';
-        }
-
         $now = time();
 
         // build list of services to query
@@ -1558,7 +1603,7 @@ class RestService extends Model
 
                     $t = [];
                     $t['rs'] = $rs;
-                    $t['url'] = $rs->url . $base_uri;
+                    $t['url'] = $rs->url . 'rearrangement';
                     $t['params'] = $rs_filters_json;
                     $t['timeout'] = config('ireceptor.service_file_request_chunked_timeout');
 
@@ -1583,7 +1628,7 @@ class RestService extends Model
 
                 $t = [];
                 $t['rs'] = $rs;
-                $t['url'] = $rs->url . $base_uri;
+                $t['url'] = $rs->url . 'rearrangement';
                 $t['params'] = $rs_filters_json;
                 $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
@@ -1718,6 +1763,98 @@ class RestService extends Model
         return $final_response_list;
     }
 
+    public static function clones_data($filters, $folder_path, $username = '', $expected_nb_clones_by_rs, $clone_list_by_rs = [])
+    {
+        $now = time();
+
+        // build list of services to query
+        $rs_list = [];
+        foreach (self::findEnabled() as $rs) {
+            if (isset($expected_nb_clones_by_rs[$rs->id]) && ($expected_nb_clones_by_rs[$rs->id] > 0)) {
+                $rs_list[] = $rs;
+            }
+        }
+
+        // count services in each service group
+        $group_list = [];
+        foreach ($rs_list as $rs) {
+            $group = $rs->rest_service_group_code;
+            if ($group) {
+                if (! isset($group_list[$group])) {
+                    $group_list[$group] = 0;
+                }
+                $group_list[$group] += 1;
+            }
+        }
+
+        // prepare request parameters for each service
+        $request_params = [];
+
+        $group_list_count = [];
+        foreach ($rs_list as $rs) {
+            $rs_filters = $filters;
+
+            // if we retrieve clones by clone_id
+            if (count($clone_list_by_rs) > 0) {
+                $query_parameters = [];
+
+                foreach ($clone_list_by_rs as $response) {
+                    if ($response['rs']->id == $rs->id) {
+                        $clone_list = $response['clone_list'];
+                        $rs_filters_json = self::generate_or_json_query($clone_list, $query_parameters);
+                        break;
+                    }
+                }
+            } else {
+                $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+
+                // rename sample id filter for this service:
+                // ir_project_sample_id_list_2 -> repertoire_id
+                $rs_filters['repertoire_id'] = $filters[$sample_id_list_key];
+
+                // remove "ir_project_sample_id_list_*" filters
+                foreach ($rs_filters as $key => $value) {
+                    if (starts_with($key, 'ir_project_sample_id_list_')) {
+                        unset($rs_filters[$key]);
+                    }
+                }
+
+                $query_parameters = [];
+
+                // generate JSON query
+                $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
+            }
+
+            $t = [];
+            $t['rs'] = $rs;
+            $t['url'] = $rs->url . 'clone';
+            $t['params'] = $rs_filters_json;
+            $t['timeout'] = config('ireceptor.service_file_request_timeout');
+
+            // add number suffix for rest services belonging to a group
+            $file_suffix = '';
+            $group = $rs->rest_service_group_code;
+            if ($group && $group_list[$group] > 1) {
+                if (! isset($group_list_count[$group])) {
+                    $group_list_count[$group] = 0;
+                }
+                $group_list_count[$group] += 1;
+                $file_suffix = '_part' . $group_list_count[$group];
+            }
+            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '-clone.json';
+            $request_params[] = $t;
+        }
+
+        $final_response_list = [];
+        // do requests, write data to files
+        if (count($request_params) > 0) {
+            Log::info('Do download requests...');
+            $final_response_list = self::doRequests($request_params);
+        }
+
+        return $final_response_list;
+    }
+
     public static function cell_list_from_expression_query($filters, $username = '', $expected_nb_cells_by_rs)
     {
         // build list of services to query
@@ -1795,6 +1932,187 @@ class RestService extends Model
                 unset($response['data']);
                 $final_response_list[] = $response;
             }
+        }
+
+        return $final_response_list;
+    }
+
+    public static function cell_id_list_by_data_processing($filters, $username = '', $expected_nb_cells_by_rs)
+    {
+        $now = time();
+
+        // build list of services to query
+        $rs_list = [];
+        foreach (self::findEnabled() as $rs) {
+            if (isset($expected_nb_cells_by_rs[$rs->id]) && ($expected_nb_cells_by_rs[$rs->id] > 0)) {
+                $rs_list[] = $rs;
+            }
+        }
+
+        // count services in each service group
+        $group_list = [];
+        foreach ($rs_list as $rs) {
+            $group = $rs->rest_service_group_code;
+            if ($group) {
+                if (! isset($group_list[$group])) {
+                    $group_list[$group] = 0;
+                }
+                $group_list[$group] += 1;
+            }
+        }
+
+        // prepare request parameters for each service
+        $request_params = [];
+
+        $group_list_count = [];
+        foreach ($rs_list as $rs) {
+            $rs_filters = $filters;
+
+            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+
+            // rename sample id filter for this service:
+            // ir_project_sample_id_list_2 -> repertoire_id
+            $rs_filters['repertoire_id'] = $filters[$sample_id_list_key];
+
+            // remove "ir_project_sample_id_list_*" filters
+            foreach ($rs_filters as $key => $value) {
+                if (starts_with($key, 'ir_project_sample_id_list_')) {
+                    unset($rs_filters[$key]);
+                }
+            }
+
+            $query_parameters = [];
+
+            // generate JSON query
+            $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
+
+            $t = [];
+            $t['rs'] = $rs;
+            $t['url'] = $rs->url . 'cell';
+            $t['params'] = $rs_filters_json;
+            $t['timeout'] = config('ireceptor.service_file_request_timeout');
+
+            // // add number suffix for rest services belonging to a group
+            // $file_suffix = '';
+            // $group = $rs->rest_service_group_code;
+            // if ($group && $group_list[$group] > 1) {
+            //     if (! isset($group_list_count[$group])) {
+            //         $group_list_count[$group] = 0;
+            //     }
+            //     $group_list_count[$group] += 1;
+            //     $file_suffix = '_part' . $group_list_count[$group];
+            // }
+            // $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '-cell.json';
+            $request_params[] = $t;
+        }
+
+        $final_response_list = [];
+        if (count($request_params) > 0) {
+            Log::info('Do cell_id_list_by_repertoire_id() requests...');
+            $final_response_list = self::doRequests($request_params);
+        }
+
+        $data_processing_id_list = [];
+        foreach ($final_response_list as $i => $response) {
+            $cell_list = $response['data']->Cell;
+            // dd($cell_list);
+            $data_processing_id_list = [];
+            foreach ($cell_list as $cell) {
+                if (! isset($cell->data_processing_id) || ! isset($cell->cell_id)) {
+                    continue;
+                }
+
+                $data_processing_id = $cell->data_processing_id;
+                if (! isset($data_processing_id_list[$data_processing_id])) {
+                    $data_processing_id_list[$data_processing_id] = [];
+                }
+
+                $cell_id = $cell->cell_id;
+                $data_processing_id_list[$data_processing_id][] = $cell_id;
+            }
+
+            $final_response_list[$i]['data_processing_id_list'] = $data_processing_id_list;
+
+            // don't need this anymore
+            unset($final_response_list[$i]['data']);
+        }
+
+        return $final_response_list;
+    }
+
+    public static function sequences_data_from_cell_ids($filters, $folder_path, $username = '', $expected_nb_cells_by_rs, $cell_id_list_by_data_processing)
+    {
+        $now = time();
+
+        // build list of services to query
+        $rs_list = [];
+        foreach (self::findEnabled() as $rs) {
+            if (isset($expected_nb_cells_by_rs[$rs->id]) && ($expected_nb_cells_by_rs[$rs->id] > 0)) {
+                $rs_list[] = $rs;
+            }
+        }
+
+        // count services in each service group
+        $group_list = [];
+        foreach ($rs_list as $rs) {
+            $group = $rs->rest_service_group_code;
+            if ($group) {
+                if (! isset($group_list[$group])) {
+                    $group_list[$group] = 0;
+                }
+                $group_list[$group] += 1;
+            }
+        }
+
+        // prepare request parameters for each service
+        $request_params = [];
+
+        $query_parameters = [];
+        $query_parameters['format'] = 'tsv';
+
+        $group_list_count = [];
+        foreach ($rs_list as $rs) {
+            $rs_filters = [];
+
+            foreach ($cell_id_list_by_data_processing as $response) {
+                if ($response['rs']->id != $rs->id) {
+                    continue;
+                }
+
+                $data_processing_id_list = $response['data_processing_id_list'];
+
+                $rs_filters_json = self::generate_cell_id_by_data_processing_id_json_query($data_processing_id_list, $query_parameters);
+                // dd($rs_filters_json);
+                break;
+            }
+
+            $t = [];
+            $t['rs'] = $rs;
+            $t['url'] = $rs->url . 'rearrangement';
+            $t['params'] = $rs_filters_json;
+            $t['timeout'] = config('ireceptor.service_file_request_timeout');
+
+            $t['params_array'] = $query_parameters;
+
+            // add number suffix for rest services belonging to a group
+            $file_suffix = '';
+            $group = $rs->rest_service_group_code;
+            if ($group && $group_list[$group] > 1) {
+                if (! isset($group_list_count[$group])) {
+                    $group_list_count[$group] = 0;
+                }
+                $group_list_count[$group] += 1;
+                $file_suffix = '_part' . $group_list_count[$group];
+            }
+            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '-rearrangement.tsv';
+            $request_params[] = $t;
+        }
+
+        $final_response_list = [];
+        // do requests, write data to files
+        if (count($request_params) > 0) {
+            Log::info('Do download requests...');
+            $final_response_list = self::doRequests($request_params);
         }
 
         return $final_response_list;
