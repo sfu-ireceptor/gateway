@@ -169,9 +169,10 @@ class SequenceCell
             $cell_list_by_rs = RestService::cell_list_from_expression_query($filters, $username, $expected_nb_cells_by_rs);
             $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_list_by_rs);
             $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_list_by_rs);
+            $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_data_processing);
         }
 
-        $file_stats = self::file_stats($response_list, $expression_response_list, $metadata_response_list, $expected_nb_cells_by_rs);
+        $file_stats = self::file_stats($response_list, $expression_response_list, $sequence_response_list, $metadata_response_list, $expected_nb_cells_by_rs);
 
         // if some files are incomplete, log it
         foreach ($file_stats as $t) {
@@ -326,7 +327,7 @@ class SequenceCell
         $file_stats = $t['file_stats'];
 
         // zip files
-        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $expression_response_list, $sequence_response_list, $manifest_file_path);
+        $zip_path = self::zip_files($folder_path, $response_list, $expression_response_list, $sequence_response_list, $metadata_response_list, $info_file_path, $manifest_file_path);
 
         // delete files
         self::delete_files($folder_path);
@@ -654,12 +655,12 @@ class SequenceCell
                 if ($dataset_count != 0) {
                     $s .= ',' . "\n";
                 }
-                $s .= '    {"repository":"' . $t['rs_url'] . '", "repertoire_file":["' . $t['metadata_name'] . '"], "cell_file":["' . $t['name'] . '"], "expression_file":["' . $t['expression_name'] . '"]}';
+                $s .= '    {"repository":"' . $t['rs_url'] . '", "repertoire_file":["' . $t['metadata_name'] . '"], "cell_file":["' . $t['name'] . '"], "expression_file":["' . $t['expression_name'] . '"],"rearrangement_file":["' . $t['rearrangement_name'] . '"]}';
             } else {
                 if ($dataset_count != 0) {
                     $s .= ',' . "\n";
                 }
-                $s .= '    {"repository":"' . $t['rs_url'] . '","repertoire_file":["' . $t['metadata_name'] . '"], "cell_file":["' . $t['name'] . '"], "expression_file":["' . $t['expression_name'] . '"]}';
+                $s .= '    {"repository":"' . $t['rs_url'] . '","repertoire_file":["' . $t['metadata_name'] . '"], "cell_file":["' . $t['name'] . '"], "expression_file":["' . $t['expression_name'] . '"],"rearrangement_file":["' . $t['rearrangement_name'] . '"]}';
             }
             Log::debug('Manifest dataset = ' . $t['metadata_name'] . ', ' . $t['name']);
             $dataset_count++;
@@ -674,7 +675,7 @@ class SequenceCell
         return $manifest_file_path;
     }
 
-    public static function zip_files($folder_path, $response_list, $expression_response_list, $metadata_response_list, $info_file_path, $manifest_file_path)
+    public static function zip_files($folder_path, $response_list, $expression_response_list, $sequence_response_list, $metadata_response_list, $info_file_path, $manifest_file_path)
     {
         $zipPath = $folder_path . '.zip';
         Log::info('Cell: Zip files to ' . $zipPath);
@@ -746,7 +747,7 @@ class SequenceCell
         }
     }
 
-    public static function file_stats($response_list, $expression_response_list, $metadata_response_list, $expected_nb_cells_by_rs)
+    public static function file_stats($response_list, $expression_response_list, $sequence_response_list, $metadata_response_list, $expected_nb_cells_by_rs)
     {
         Log::debug('Get files stats');
         $file_stats = [];
@@ -780,6 +781,18 @@ class SequenceCell
                         if (isset($expression_response['data']['file_path'])) {
                             $expression_file_path = $expression_response['data']['file_path'];
                             $t['expression_name'] = basename($expression_file_path);
+                        }
+                    }
+                }
+
+                // Get the associated sequence file
+                foreach ($sequence_response_list as $sequence_response) {
+                    // If the service IDs match, then the files match
+                    if ($rest_service_id == $sequence_response['rs']->id) {
+                        // If there is a file path, keep track of the metadata file
+                        if (isset($sequence_response['data']['file_path'])) {
+                            $sequence_file_path = $sequence_response['data']['file_path'];
+                            $t['rearrangement_name'] = basename($sequence_file_path);
                         }
                     }
                 }
