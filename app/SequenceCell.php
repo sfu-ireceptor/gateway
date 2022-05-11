@@ -159,7 +159,7 @@ class SequenceCell
         }
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
-        
+
         $response_list = [];
         $expression_response_list = [];
         $sequence_response_list = [];
@@ -301,7 +301,7 @@ class SequenceCell
 
         // generate info.txt
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
-        
+
         // generate manifest.json
         $manifest_file_path = self::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
 
@@ -659,22 +659,22 @@ class SequenceCell
             $dataset->repository = $t['rest_service_name'];
             $dataset->repository_url = $t['rs_url'];
 
-            if(isset($t['metadata_file_name'])) {
+            if (isset($t['metadata_file_name'])) {
                 $dataset->repertoire_file = $t['metadata_file_name'];
             }
 
-            if(isset($t['sequence_file_name'])) {
+            if (isset($t['sequence_file_name'])) {
                 $dataset->rearrangement_file = $t['sequence_file_name'];
             }
 
-            if(isset($t['clone_file_name'])) {
+            if (isset($t['clone_file_name'])) {
                 $dataset->clone_file = $t['clone_file_name'];
             }
 
-            if(isset($t['cell_file_name'])) {
+            if (isset($t['cell_file_name'])) {
                 $dataset->cell_file = $t['cell_file_name'];
             }
-            if(isset($t['expression_file_name'])) {
+            if (isset($t['expression_file_name'])) {
                 $dataset->expression_file = $t['expression_file_name'];
             }
 
