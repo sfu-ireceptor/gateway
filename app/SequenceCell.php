@@ -159,6 +159,11 @@ class SequenceCell
         }
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
+        
+        $response_list = [];
+        $expression_response_list = [];
+        $sequence_response_list = [];
+
         if ($query_type == 'cell') {
             $cell_id_list_by_data_processing = RestService::cell_id_list_by_data_processing($filters, $username, $expected_nb_cells_by_rs);
             $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_data_processing);
@@ -175,7 +180,7 @@ class SequenceCell
             $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_list_by_rs);
         }
 
-        $file_stats = self::file_stats($response_list, $expression_response_list, $metadata_response_list, $expected_nb_cells_by_rs);
+        $file_stats = self::file_stats($response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs);
 
         // if some files are incomplete, log it
         foreach ($file_stats as $t) {
@@ -296,6 +301,7 @@ class SequenceCell
 
         // generate info.txt
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
+        
         // generate manifest.json
         $manifest_file_path = self::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
 
@@ -633,47 +639,52 @@ class SequenceCell
 
     public static function generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
-        // Name of the file we are generating for the download
-        $manifest_file = 'AIRR-manifest.json';
+        $manifest = new \stdClass();
+        $manifest->Info = new \stdClass();
 
-        // Create the opening object in the JSON file
-        $s = "{\n";
-        // Create the Info block
-        $s .= '  "Info":{},' . "\n";
+        $manifest->Info->title = 'AIRR Manifest';
+        $manifest->Info->version = '3.0';
+        $manifest->Info->description = 'List of files for each repository';
 
-        $nb_cells_total = 0;
-        $expected_nb_cells_total = 0;
+        $manifest->Info->contact = new \stdClass();
+        $manifest->Info->contact->name = config('app.name');
+        $manifest->Info->contact->url = config('app.url');
+        $manifest->Info->contact->email = config('ireceptor.email_support');
+
+        $manifest->DataSets = [];
+
         foreach ($file_stats as $t) {
-            $nb_cells_total += $t['nb_cells'];
-            $expected_nb_cells_total += $t['expected_nb_cells'];
-        }
+            $dataset = new \stdClass();
 
-        $is_download_incomplete = ($nb_cells_total < $expected_nb_cells_total);
+            $dataset->repository = $t['rest_service_name'];
+            $dataset->repository_url = $t['rs_url'];
 
-        // Create the DataSets block
-        $s .= '  "DataSets":[' . "\n";
-        $dataset_count = 0;
-        foreach ($file_stats as $t) {
-            if ($is_download_incomplete && ($t['nb_cells'] < $t['expected_nb_cells'])) {
-                if ($dataset_count != 0) {
-                    $s .= ',' . "\n";
-                }
-                $s .= '    {"repository":"' . $t['rs_url'] . '", "repertoire_file":["' . $t['metadata_name'] . '"], "cell_file":["' . $t['name'] . '"], "expression_file":["' . $t['expression_name'] . '"]}';
-            } else {
-                if ($dataset_count != 0) {
-                    $s .= ',' . "\n";
-                }
-                $s .= '    {"repository":"' . $t['rs_url'] . '","repertoire_file":["' . $t['metadata_name'] . '"], "cell_file":["' . $t['name'] . '"], "expression_file":["' . $t['expression_name'] . '"]}';
+            if(isset($t['metadata_file_name'])) {
+                $dataset->repertoire_file = $t['metadata_file_name'];
             }
-            Log::debug('Manifest dataset = ' . $t['metadata_name'] . ', ' . $t['name']);
-            $dataset_count++;
-        }
-        $s .= "\n  ]\n";
-        $s .= '}' . "\n";
 
-        $manifest_file_path = $folder_path . '/' . $manifest_file;
-        file_put_contents($manifest_file_path, $s);
-        Log::debug('Writing manifest ' . $manifest_file_path);
+            if(isset($t['sequence_file_name'])) {
+                $dataset->rearrangement_file = $t['sequence_file_name'];
+            }
+
+            if(isset($t['clone_file_name'])) {
+                $dataset->clone_file = $t['clone_file_name'];
+            }
+
+            if(isset($t['cell_file_name'])) {
+                $dataset->cell_file = $t['cell_file_name'];
+            }
+            if(isset($t['expression_file_name'])) {
+                $dataset->expression_file = $t['expression_file_name'];
+            }
+
+            $manifest->DataSets[] = $dataset;
+        }
+
+        $manifest_json = json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
+        $manifest_file_path = $folder_path . '/' . 'AIRR-manifest.json';
+        file_put_contents($manifest_file_path, $manifest_json);
 
         return $manifest_file_path;
     }
@@ -782,7 +793,7 @@ class SequenceCell
         }
     }
 
-    public static function file_stats($response_list, $expression_response_list, $metadata_response_list, $expected_nb_cells_by_rs)
+    public static function file_stats($response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs)
     {
         Log::debug('Get files stats');
         $file_stats = [];
@@ -796,26 +807,35 @@ class SequenceCell
                 $t['rs_url'] = $response['rs']->url;
                 $t['size'] = human_filesize($file_path);
 
-                // Get the associated repertoire file
-                foreach ($metadata_response_list as $metadata_response) {
-                    // If the service IDs match, then the files match
-                    if ($rest_service_id == $metadata_response['rs']->id) {
-                        // If there is a file path, keep track of the metadata file
-                        if (isset($metadata_response['data']['file_path'])) {
-                            $metadata_file_path = $metadata_response['data']['file_path'];
-                            $t['metadata_name'] = basename($metadata_file_path);
+                // cell file name
+                $t['cell_file_name'] = $t['name'];
+
+                // repertoire file name
+                foreach ($metadata_response_list as $r) {
+                    if ($rest_service_id == $r['rs']->id) {
+                        if (isset($r['data']['file_path'])) {
+                            $file_path = $r['data']['file_path'];
+                            $t['metadata_file_name'] = basename($file_path);
                         }
                     }
                 }
 
-                // Get the associated expression file
-                foreach ($expression_response_list as $expression_response) {
-                    // If the service IDs match, then the files match
-                    if ($rest_service_id == $expression_response['rs']->id) {
-                        // If there is a file path, keep track of the metadata file
-                        if (isset($expression_response['data']['file_path'])) {
-                            $expression_file_path = $expression_response['data']['file_path'];
-                            $t['expression_name'] = basename($expression_file_path);
+                // expression file name
+                foreach ($expression_response_list as $r) {
+                    if ($rest_service_id == $r['rs']->id) {
+                        if (isset($r['data']['file_path'])) {
+                            $file_path = $r['data']['file_path'];
+                            $t['expression_file_name'] = basename($file_path);
+                        }
+                    }
+                }
+
+                // sequence file name
+                foreach ($sequence_response_list as $r) {
+                    if ($rest_service_id == $r['rs']->id) {
+                        if (isset($r['data']['file_path'])) {
+                            $file_path = $r['data']['file_path'];
+                            $t['sequence_file_name'] = basename($file_path);
                         }
                     }
                 }
@@ -840,8 +860,6 @@ class SequenceCell
                 $file_stats[] = $t;
             }
         }
-
-        Log::debug('####### files stats=' . json_encode($file_stats));
 
         return $file_stats;
     }
