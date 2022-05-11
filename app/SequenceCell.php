@@ -167,6 +167,10 @@ class SequenceCell
             $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list);
         } else {
             $cell_list_by_rs = RestService::cell_list_from_expression_query($filters, $username, $expected_nb_cells_by_rs);
+
+            $cell_id_list_by_data_processing = self::generate_cell_id_list_by_data_processing_from_cell_list($cell_list_by_rs);
+            $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_data_processing);
+
             $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_list_by_rs);
             $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_list_by_rs);
         }
@@ -326,7 +330,7 @@ class SequenceCell
         $file_stats = $t['file_stats'];
 
         // zip files
-        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $expression_response_list, $sequence_response_list, $manifest_file_path);
+        $zip_path = self::zip_files($folder_path, $response_list, $expression_response_list, $metadata_response_list, $info_file_path, $sequence_response_list, $manifest_file_path);
 
         // delete files
         self::delete_files($folder_path);
@@ -630,7 +634,7 @@ class SequenceCell
     public static function generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
         // Name of the file we are generating for the download
-        $manifest_file = 'airr_manifest.json';
+        $manifest_file = 'AIRR-manifest.json';
 
         // Create the opening object in the JSON file
         $s = "{\n";
@@ -674,7 +678,37 @@ class SequenceCell
         return $manifest_file_path;
     }
 
-    public static function zip_files($folder_path, $response_list, $expression_response_list, $metadata_response_list, $info_file_path, $manifest_file_path)
+
+    public static function generate_cell_id_list_by_data_processing_from_cell_list($cell_list_by_rs)
+    {
+        foreach ($cell_list_by_rs as $i => $response) {
+                $data_processing_id_list = [];
+
+                $cell_list = $response['cell_list'];
+                foreach ($cell_list as $cell) {
+                    if (! isset($cell['data_processing_id']) || ! isset($cell['cell_id'])) {
+                        continue;
+                    }
+
+                    $data_processing_id = $cell['data_processing_id'];
+                    if (! isset($data_processing_id_list[$data_processing_id])) {
+                        $data_processing_id_list[$data_processing_id] = [];
+                    }
+
+                    $cell_id = $cell['cell_id'];
+                    $data_processing_id_list[$data_processing_id][] = $cell_id;
+                }
+
+                $cell_list_by_rs[$i]['data_processing_id_list'] = $data_processing_id_list;
+
+                // don't need this anymore
+                unset($cell_list_by_rs[$i]['cell_list']);
+        }
+
+        return $cell_list_by_rs;
+}
+
+    public static function zip_files($folder_path, $response_list, $expression_response_list, $metadata_response_list, $info_file_path, $sequence_response_list, $manifest_file_path)
     {
         $zipPath = $folder_path . '.zip';
         Log::info('Cell: Zip files to ' . $zipPath);
@@ -737,6 +771,8 @@ class SequenceCell
 
         return $zipPath;
     }
+
+
 
     public static function delete_files($folder_path)
     {
