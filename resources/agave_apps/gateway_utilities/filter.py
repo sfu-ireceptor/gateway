@@ -34,12 +34,13 @@ if __name__ == "__main__":
 
     # Create file reader.
     try:
-        airr_df_reader = pandas.read_csv(options.filename, sep='\t', chunksize=chunk_size, dtype= {'repertoire_id': str})
+        airr_df_reader = pandas.read_csv(options.filename, sep='\t', chunksize=chunk_size, dtype= {'repertoire_id': str, 'data_processing_id': str})
     except Exception as e:
         print('ERROR: Unable to read TSV file %s'%(options.filename))
         print('ERROR: Reason =' + str(e))
         sys.exit(1)
 
+    print('%s: Searching field %s for value %s'%(sys.argv[0], options.field_name, options.field_value))
     chunk_count = 0
     total_size = 0
     # Loop over the file a chunk at a time.
@@ -58,6 +59,9 @@ if __name__ == "__main__":
             # Keep track of how much data we processed.
             chunk_count = chunk_count + 1
             total_size = total_size + field_df.index.size
+        else:
+            print("Warning: Field " + options.field_name + " not in file " + options.filename)
+
     
     # Print out some info about what was processed.
     if total_size == 0:
