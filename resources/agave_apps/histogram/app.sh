@@ -16,6 +16,14 @@ echo "Running job from ${SCRIPT_DIR}"
 # Load the environment/modules needed.
 module load scipy-stack
 
+# Start
+printf "\n\n"
+printf "START at $(date)\n\n"
+printf "PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n\n"
+printf "MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n\n"
+printf "SLURM JOB ID = ${SLURM_JOB_ID}\n\n"
+printf "\n\n"
+
 ##############################################
 # Get the iRecpetor Gateway utilities from the Gateway
 ##############################################
@@ -87,8 +95,8 @@ function do_histogram()
     # Remaining variable are the files to process
     local array_of_files=( $@ )
 
-    TMP_FILE=tmp.tsv
-    FINAL_FILE=$TMP_FILE
+    # Use a temporary file for output
+    TMP_FILE=${output_dir}/tmp.tsv
 
     # preprocess input files -> tmp.csv
     echo ""
@@ -99,13 +107,13 @@ function do_histogram()
     echo ${variable_name} > $TMP_FILE
     for filename in "${array_of_files[@]}"; do
         echo "    Extracting ${variable_name} from $filename"
-        python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/preprocess.py $filename ${variable_name} >> $TMP_FILE
+        python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/preprocess.py ${output_dir}/$filename ${variable_name} >> $TMP_FILE
     done
 
     # Generate the image file name.
     OFILE_BASE="${file_tag}-${variable_name}"
-    PNG_OFILE=${OFILE_BASE}-histogram.png
-    TSV_OFILE=${OFILE_BASE}-histogram.tsv
+    PNG_OFILE=${output_dir}/${OFILE_BASE}-histogram.png
+    TSV_OFILE=${output_dir}/${OFILE_BASE}-histogram.tsv
 
     # Debugging output
     echo "Input file = $TMP_FILE"
@@ -124,10 +132,6 @@ function do_histogram()
     # change permissions
     chmod 644 $PNG_OFILE
     chmod 644 $TSV_OFILE
-
-    # Move output file to output directory
-    mv $PNG_OFILE ${output_dir}
-    mv $TSV_OFILE ${output_dir}
 
     # Remove the temporary file.
     rm -f $TMP_FILE
@@ -148,6 +152,13 @@ function run_analysis()
     local repertoire_file=$4
     local manifest_file=$5
     echo "Running a Repertoire Analysis with manifest ${manifest_file}"
+    echo "    Working directory = ${output_directory}"
+    echo "    Repository name = ${repository_name}"
+    echo "    Repertoire id = ${repertoire_id}"
+    echo "    Repertoire file = ${repertoire_file}"
+    echo "    Manifest file = ${manifest_file}"
+    echo -n "    Current diretory = "
+    pwd
 
     # Get a list of rearrangement files to process from the manifest.
     local array_of_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
@@ -159,10 +170,21 @@ function run_analysis()
     echo "    Using files ${array_of_files[@]}"
 
     # Check to see if we are processing a specific repertoire_id
-    if [ "${repertoire_id}" != "${output_directory}" ]; then
+    if [ "${repertoire_id}" != "Total" ]; then
         file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
+        if [ $? -ne 0 ]
+        then
+            echo "IR-ERROR: Could not generate repertoire summary from ${repertoire_file}"
+            return
+        fi
         file_string=${repository_name}_${file_string// /}
+
         title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
+        if [ $? -ne 0 ]
+        then
+            echo "IR-ERROR: Could not generate repertoire summary from ${repertoire_file}"
+            return
+        fi
         # TODO: Fix this, it should not be required.
         title_string=${title_string// /}
     else
@@ -171,12 +193,11 @@ function run_analysis()
     fi
 
     # Generate the histogram
-    echo "Running a Repertoire Analysis on ${array_of_files[@]}"
     do_histogram ${VARNAME} $output_directory $file_string $title_string ${array_of_files[@]}
 
     # Generate a label file for the Gateway to use to present this info to the user
     label_file=${output_directory}/${repertoire_id}.txt
-    echo "${repository_name}: ${title_string}" > ${label_file}
+    echo "${title_string}" > ${label_file}
 
     # Generate a summary HTML file for the Gateway to present this info to the user
     html_file=${output_directory}/${repertoire_id}.html
@@ -205,12 +226,6 @@ if [ "${split_repertoire}" = "True" ]; then
     gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
 elif [ "${split_repertoire}" = "False" ]; then
     echo -e "\nIR-INFO: Running app on entire data set\n"
-    # Run the stats on all the data combined. Unzip the files
-    gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
-
-    # Go into the working directory
-    pushd ${GATEWAY_ANALYSIS_DIR} > /dev/null
-
     # Output directory is called "Total"
     # Run the analysis with a token repository name of "ADC" since the
     # analysis is being run on data from the entire ADC.
@@ -219,13 +234,19 @@ elif [ "${split_repertoire}" = "False" ]; then
     # the array elements are expanded into separate parameters, which
     # the run_analyis function handles.
     outdir="Total"
-    mkdir ${outdir}
-    run_analysis ${outdir} "AIRRDataCommons" ${outdir} "NULL" ${MANIFEST_FILE}
+
+    # Run the stats on all the data combined. Unzip the files
+    gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}/${outdir}
+
+    # Go into the working directory
+    #pushd ${GATEWAY_ANALYSIS_DIR} > /dev/null
+
+    run_analysis  ${GATEWAY_ANALYSIS_DIR}/${outdir} "AIRRDataCommons" ${outdir} "NULL" ${GATEWAY_ANALYSIS_DIR}/${outdir}/${MANIFEST_FILE}
 
     # Remove the copied ZIP file
-    rm -r ${ZIP_FILE}
+    #rm -r ${ZIP_FILE}
 
-    popd > /dev/null
+    #popd > /dev/null
 else
     echo "IR-ERROR: Unknown repertoire operation ${split_repertoire}" >&2
     exit 1
