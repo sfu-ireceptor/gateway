@@ -13,23 +13,23 @@ def repertoireSummary(json_filename, repertoire_id, verbose, separator=", "):
     except Exception as e:
         print('ERROR: Unable to read JSON file %s'%(json_filename))
         print('ERROR: Reason =' + str(e))
-        return []
+        return False
 
     # Print out an error if the query failed.
     if len(json_data) == 0:
         print('ERROR: JSON file load for %s failed '%(json_filename))
-        return []
+        return False
 
     # Check for a correct Info object.
     if not "Info" in json_data:
         print("ERROR: Expected to find an 'Info' object, none found")
-        return []
+        return False
 
     # Check for a correct Repertoire object.
     repertoire_key = "Repertoire"
     if not repertoire_key in json_data:
         print("ERROR: Expected to find a 'Repertoire' object, none found")
-        return []
+        return False
 
     # Find the repertoire of interest and print out relevant fields.
     for repertoire in json_data[repertoire_key]:
@@ -44,6 +44,7 @@ def repertoireSummary(json_filename, repertoire_id, verbose, separator=", "):
               sample_json[0]['tissue']['label'], separator,
               sample_json[0]['pcr_target'][0]['pcr_target_locus']
               ))
+    return True
         
 
 def getArguments():
