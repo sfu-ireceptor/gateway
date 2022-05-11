@@ -689,35 +689,34 @@ class SequenceCell
         return $manifest_file_path;
     }
 
-
     public static function generate_cell_id_list_by_data_processing_from_cell_list($cell_list_by_rs)
     {
         foreach ($cell_list_by_rs as $i => $response) {
-                $data_processing_id_list = [];
+            $data_processing_id_list = [];
 
-                $cell_list = $response['cell_list'];
-                foreach ($cell_list as $cell) {
-                    if (! isset($cell['data_processing_id']) || ! isset($cell['cell_id'])) {
-                        continue;
-                    }
-
-                    $data_processing_id = $cell['data_processing_id'];
-                    if (! isset($data_processing_id_list[$data_processing_id])) {
-                        $data_processing_id_list[$data_processing_id] = [];
-                    }
-
-                    $cell_id = $cell['cell_id'];
-                    $data_processing_id_list[$data_processing_id][] = $cell_id;
+            $cell_list = $response['cell_list'];
+            foreach ($cell_list as $cell) {
+                if (! isset($cell['data_processing_id']) || ! isset($cell['cell_id'])) {
+                    continue;
                 }
 
-                $cell_list_by_rs[$i]['data_processing_id_list'] = $data_processing_id_list;
+                $data_processing_id = $cell['data_processing_id'];
+                if (! isset($data_processing_id_list[$data_processing_id])) {
+                    $data_processing_id_list[$data_processing_id] = [];
+                }
 
-                // don't need this anymore
-                unset($cell_list_by_rs[$i]['cell_list']);
+                $cell_id = $cell['cell_id'];
+                $data_processing_id_list[$data_processing_id][] = $cell_id;
+            }
+
+            $cell_list_by_rs[$i]['data_processing_id_list'] = $data_processing_id_list;
+
+            // don't need this anymore
+            unset($cell_list_by_rs[$i]['cell_list']);
         }
 
         return $cell_list_by_rs;
-}
+    }
 
     public static function zip_files($folder_path, $response_list, $expression_response_list, $metadata_response_list, $info_file_path, $sequence_response_list, $manifest_file_path)
     {
@@ -782,8 +781,6 @@ class SequenceCell
 
         return $zipPath;
     }
-
-
 
     public static function delete_files($folder_path)
     {
