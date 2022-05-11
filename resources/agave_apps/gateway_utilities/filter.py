@@ -40,7 +40,7 @@ if __name__ == "__main__":
         print('ERROR: Reason =' + str(e))
         sys.exit(1)
 
-    print('%s: Searching field %s for value %s'%(sys.argv[0], options.field_name, options.field_value))
+    print('Searching field %s for value %s'%(sys.argv[0], options.field_name, options.field_value))
     chunk_count = 0
     total_size = 0
     # Loop over the file a chunk at a time.
