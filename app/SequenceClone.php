@@ -599,7 +599,7 @@ class SequenceClone
         Log::info('Zip files to ' . $zipPath);
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::CREATE);
-        
+
         // clone data
         foreach ($response_list as $response) {
             if (isset($response['data']['file_path'])) {
@@ -662,7 +662,7 @@ class SequenceClone
                 $t['rs_url'] = $response['rs']->url;
                 $t['size'] = human_filesize($file_path);
 
-                 // clone file name
+                // clone file name
                 $t['clone_file_name'] = $t['name'];
 
                 // repertoire file name

@@ -626,7 +626,7 @@ class Sequence
         return $info_file_path;
     }
 
-public static function generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
+    public static function generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
         $manifest = new \stdClass();
 
