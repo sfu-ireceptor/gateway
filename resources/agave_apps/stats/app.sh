@@ -16,6 +16,14 @@ echo "Running job from ${SCRIPT_DIR}"
 # Load the environment/modules needed.
 module load scipy-stack
 
+# Start
+printf "\n\n"
+printf "START at $(date)\n\n"
+printf "PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n\n"
+printf "MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n\n"
+printf "SLURM JOB ID = ${SLURM_JOB_ID}\n\n"
+printf "\n\n"
+
 ##############################################
 # Get the iRecpetor Gateway utilities from the Gateway
 ##############################################
@@ -86,7 +94,7 @@ function do_heatmap()
     # Remaining variable are the files to process
     local array_of_files=( $@ )
     # Temporary file for data
-    TMP_FILE=tmp.tsv
+    TMP_FILE=${output_dir}/tmp.tsv
 
     # preprocess input files -> tmp.csv
     echo "Extracting ${variable1} and ${variable2} from files started at: `date`" 
@@ -96,15 +104,15 @@ function do_heatmap()
     for filename in "${array_of_files[@]}"; do
 	    echo "    Extracting ${variable1} and ${variable2} from $filename"
 	    # Get the columns numbers for the column labels of interest.
-	    x_column=`cat $filename | head -n 1 | awk -F"\t" -v label=${variable1} '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
-	    y_column=`cat $filename | head -n 1 | awk -F"\t" -v label=${variable2} '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+	    x_column=`cat ${output_dir}/$filename | head -n 1 | awk -F"\t" -v label=${variable1} '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+	    y_column=`cat ${output_dir}/$filename | head -n 1 | awk -F"\t" -v label=${variable2} '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
 	    echo "    Columns = ${x_column}, ${y_column}"
 
 	    # Extract the two columns of interest. In this case we want the gene (not including the allele)
 	    # As a result we chop things off at the first star. This also takes care of the case where
 	    # a gened call has multiple calls. Since we drop everthing after the first allele we drop all of
 	    # the other calls as well.
-	    cat $filename | cut -f $x_column,$y_column | awk -v xlabel=${variable1} -v ylabel=${variable2} 'BEGIN {FS="\t"; printf("%s\t%s\n", xlabel, ylabel)} /IG|TR/ {if (index($1,"*") == 0) {xstr = $1} else {xstr=substr($1,0,index($1,"*")-1)};if (index($2,"*") == 0) {ystr = $2} else {ystr=substr($2,0,index($2,"*")-1)};printf("%s\t%s\n",xstr,ystr)}' > $TMP_FILE
+	    cat ${output_dir}/$filename | cut -f $x_column,$y_column | awk -v xlabel=${variable1} -v ylabel=${variable2} 'BEGIN {FS="\t"; printf("%s\t%s\n", xlabel, ylabel)} /IG|TR/ {if (index($1,"*") == 0) {xstr = $1} else {xstr=substr($1,0,index($1,"*")-1)};if (index($2,"*") == 0) {ystr = $2} else {ystr=substr($2,0,index($2,"*")-1)};printf("%s\t%s\n",xstr,ystr)}' > $TMP_FILE
 
     done
     # Generate a set of unique values that we can generate the heatmap on. This is a comma separated
@@ -118,8 +126,8 @@ function do_heatmap()
     echo "${variable2}"
     echo "$xvals"
     echo "$yvals"
-    PNG_OFILE=${file_tag}-${variable1}-${variable2}-heatmap.png
-    TSV_OFILE=${file_tag}-${variable1}-${variable2}-heatmap.tsv
+    PNG_OFILE=${output_dir}/${file_tag}-${variable1}-${variable2}-heatmap.png
+    TSV_OFILE=${output_dir}/${file_tag}-${variable1}-${variable2}-heatmap.tsv
 
     # Generate the heatmap
     python3 ${SCRIPT_DIR}/airr_heatmap.py ${variable1} ${variable2} $xvals $yvals $TMP_FILE $PNG_OFILE $TSV_OFILE "${title}(${variable1},${variable2})"
@@ -127,10 +135,6 @@ function do_heatmap()
     # change permissions
     chmod 644 "$PNG_OFILE"
     chmod 644 "$TSV_OFILE"
-
-    # Move output file to output directory
-    mv $PNG_OFILE ${output_dir}
-    mv $TSV_OFILE ${output_dir}
 
     # Remove the temporary file.
     rm -f $TMP_FILE
@@ -157,7 +161,7 @@ function do_histogram()
     local array_of_files=( $@ )
 
     # Temporary file for data
-    TMP_FILE=tmp.tsv
+    TMP_FILE=${output_dir}/tmp.tsv
 
     # preprocess input files -> tmp.csv
     echo ""
@@ -168,14 +172,13 @@ function do_histogram()
     echo ${variable_name} > $TMP_FILE
     for filename in "${array_of_files[@]}"; do
 	    echo "    Extracting ${variable_name} from $filename"
-	    python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/preprocess.py $filename ${variable_name} >> $TMP_FILE
+	    python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/preprocess.py ${output_dir}/$filename ${variable_name} >> $TMP_FILE
     done
 
-    ##############################################
     # Generate the image file.
     OFILE_BASE="${file_tag}-${variable_name}"
-    PNG_OFILE=${OFILE_BASE}-histogram.png
-    TSV_OFILE=${OFILE_BASE}-histogram.tsv
+    PNG_OFILE=${output_dir}/${OFILE_BASE}-histogram.png
+    TSV_OFILE=${output_dir}/${OFILE_BASE}-histogram.tsv
 
     # Debugging output
     echo "Input file = $TMP_FILE"
@@ -189,10 +192,6 @@ function do_histogram()
     # change permissions
     chmod 644 $PNG_OFILE
     chmod 644 $TSV_OFILE
-
-    # Move output file to output directory
-    mv $PNG_OFILE ${output_dir}
-    mv $TSV_OFILE ${output_dir}
 
     # Remove the temporary file.
     rm -f $TMP_FILE
@@ -213,6 +212,13 @@ function run_analysis()
 	local repertoire_file=$4
     local manifest_file=$5
 	echo "Running a Repertoire Analysis with manifest ${manifest_file}"
+    echo "    Working directory = ${output_directory}"
+    echo "    Repository name = ${repository_name}"
+    echo "    Repertoire id = ${repertoire_id}"
+    echo "    Repertoire file = ${repertoire_file}"
+    echo "    Manifest file = ${manifest_file}"
+    echo -n "    Current diretory = "
+    pwd
 
 	# Get a list of rearrangement files to process from the manifest.
     local array_of_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
@@ -224,15 +230,26 @@ function run_analysis()
 	echo "    Using files ${array_of_files[@]}"
 
 	# Check to see if we are processing a specific repertoire_id
-	if [ "${repertoire_id}" != "${output_directory}" ]; then
+	if [ "${repertoire_id}" != "Total" ]; then
 	    file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
+        if [ $? -ne 0 ]
+        then
+            echo "IR-ERROR: Could not generate repertoire summary from ${repertoire_file}"
+            return 
+        fi
 	    file_string=${repository_name}_${file_string// /}
         title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
+        if [ $? -ne 0 ]
+        then
+            echo "IR-ERROR: Could not generate repertoire summary from ${repertoire_file}"
+            return
+        fi
+
         # TODO: Fix this, it should not be required.
         title_string=${title_string// /}
     else 
-	    file_string="Total"
-	    title_string="Total"
+	    file_string="${repertoire_id}"
+	    title_string="${repertoire_id}"
 	fi
 
 	# Generate the histogram and heatmap stats
@@ -244,12 +261,12 @@ function run_analysis()
     do_heatmap v_call junction_aa_length $output_directory $file_string $title_string ${array_of_files[@]}
     # Remove the TSV files, we don't want to return them
     for filename in "${array_of_files[@]}"; do
-		rm -f $filename
+		rm -f $output_directory/$filename
 	done
 
 	# Generate a label file for the Gateway to use to present this info to the user
 	label_file=${output_directory}/${repertoire_id}.txt
-	echo "${repository_name}: ${title_string}" > ${label_file}
+	echo "${title_string}" > ${label_file}
 
 	# Generate a summary HTML file for the Gateway to present this info to the user
 	html_file=${output_directory}/${repertoire_id}.html
@@ -288,11 +305,6 @@ if [ "${split_repertoire}" = "True" ]; then
     gateway_split_repertoire ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
 elif [ "${split_repertoire}" = "False" ]; then
     echo -e "\nIR-INFO: Running app on entire data set\n"
-    # Run the stats on all the data combined. Unzip the files
-    gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
-
-    # Go into the working directory
-    pushd ${GATEWAY_ANALYSIS_DIR} > /dev/null
 
     # Output directory is called "Total"
     # Run the analysis with a token repository name of "ADC" since the
@@ -302,13 +314,13 @@ elif [ "${split_repertoire}" = "False" ]; then
     # the array elements are expanded into separate parameters, which
     # the run_analyis function handles.
     outdir="Total"
-    mkdir ${outdir}
-    run_analysis ${outdir} "AIRRDataCommons" ${outdir} "NULL" ${AIRR_MANIFEST_FILE}
 
-    # Remove the copied ZIP file
-    rm -r ${ZIP_FILE}
+    # Run the stats on all the data combined. Unzip the files
+    gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}/${outdir}
 
-    popd > /dev/null
+    # Run the stats analysis.
+    run_analysis ${GATEWAY_ANALYSIS_DIR}/${outdir} "AIRRDataCommons" ${outdir} "NULL" ${GATEWAY_ANALYSIS_DIR}/${outdir}/${AIRR_MANIFEST_FILE}
+
 else
     echo "IR-ERROR: Unknown repertoire operation ${split_repertoire}" >&2
     exit 1
