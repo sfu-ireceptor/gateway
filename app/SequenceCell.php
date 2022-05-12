@@ -3,6 +3,7 @@
 namespace App;
 
 use Facades\App\RestService;
+use Facades\App\Sequence;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -303,7 +304,7 @@ class SequenceCell
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
 
         // generate manifest.json
-        $manifest_file_path = self::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
+        $manifest_file_path = Sequence::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
 
         $t = [];
         $t['folder_path'] = $folder_path;
@@ -637,58 +638,6 @@ class SequenceCell
         return $info_file_path;
     }
 
-    public static function generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
-    {
-        $manifest = new \stdClass();
-        $manifest->Info = new \stdClass();
-
-        $manifest->Info->title = 'AIRR Manifest';
-        $manifest->Info->version = '3.0';
-        $manifest->Info->description = 'List of files for each repository';
-
-        $manifest->Info->contact = new \stdClass();
-        $manifest->Info->contact->name = config('app.name');
-        $manifest->Info->contact->url = config('app.url');
-        $manifest->Info->contact->email = config('ireceptor.email_support');
-
-        $manifest->DataSets = [];
-
-        foreach ($file_stats as $t) {
-            $dataset = new \stdClass();
-
-            $dataset->repository = $t['rest_service_name'];
-            $dataset->repository_url = $t['rs_url'];
-
-            if (isset($t['metadata_file_name'])) {
-                $dataset->repertoire_file = $t['metadata_file_name'];
-            }
-
-            if (isset($t['sequence_file_name'])) {
-                $dataset->rearrangement_file = $t['sequence_file_name'];
-            }
-
-            if (isset($t['clone_file_name'])) {
-                $dataset->clone_file = $t['clone_file_name'];
-            }
-
-            if (isset($t['cell_file_name'])) {
-                $dataset->cell_file = $t['cell_file_name'];
-            }
-            if (isset($t['expression_file_name'])) {
-                $dataset->expression_file = $t['expression_file_name'];
-            }
-
-            $manifest->DataSets[] = $dataset;
-        }
-
-        $manifest_json = json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-
-        $manifest_file_path = $folder_path . '/' . 'AIRR-manifest.json';
-        file_put_contents($manifest_file_path, $manifest_json);
-
-        return $manifest_file_path;
-    }
-
     public static function generate_cell_id_list_by_data_processing_from_cell_list($cell_list_by_rs)
     {
         foreach ($cell_list_by_rs as $i => $response) {
@@ -774,6 +723,8 @@ class SequenceCell
         // info.txt
         $zip->addFile($info_file_path, basename($info_file_path));
         Log::debug('Adding to ZIP: ' . $info_file_path);
+
+        // AIRR-manifest.json
         $zip->addFile($manifest_file_path, basename($manifest_file_path));
         Log::debug('Adding to ZIP: ' . $manifest_file_path);
 
