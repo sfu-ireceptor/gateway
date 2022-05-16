@@ -301,38 +301,75 @@ $(document).ready(function() {
 		return false;
 	});
 
-	// update table column visibility using state of corresponding column selector checkboxe
+	// show/hide table column (using current state of corresponding column selector checkbox)
 	function update_column_visibility(column_checkbox) {
-		var columnId = column_checkbox.val();
+		var column_id = column_checkbox.val();
 
 		// show/hide corresponding column
         if(column_checkbox.is(":checked")) {
-        	$('table .' + columnId).removeClass('hidden');
+        	$('table .' + column_id).removeClass('hidden');
         }
         else {
-        	$('table .' + columnId).addClass('hidden');
+        	$('table .' + column_id).addClass('hidden');
         }
+
+        // update column group checkbox status
+        var column_group = column_checkbox.parents('.column_group');
+    	var nb_columns_in_group = 0;
+    	var nb_columns_checked_in_group = 0;
+
+    	$('input[name=table_columns]', column_group).each(function() {
+    		nb_columns_in_group++;
+    		if($(this).is(":checked")) {
+    			nb_columns_checked_in_group++;
+    		}
+        });
+
+    	var column_group_checkbox = $('input[name=table_columns_group]', column_group);
+
+    	if(nb_columns_checked_in_group == nb_columns_in_group) {
+    		column_group_checkbox.prop('checked', true);
+			column_group_checkbox.prop('indeterminate', false);
+    	}
+    	else {
+			column_group_checkbox.prop('checked', false);
+			if(nb_columns_checked_in_group > 0) {
+				column_group_checkbox.prop('indeterminate', true);
+			}
+			else {
+				column_group_checkbox.prop('indeterminate', false);
+			}
+    	}
 	}
 
-	// change column visiblity
-    $('.column_selector input').change(function() {
+	// update all table columns visiblity (using current column selector checkboxes state)
+	function show_hide_columns() {
+		$('.column_selector input[type=checkbox][name=table_columns]').each(function() {
+			update_column_visibility($(this));
+		});
+	}
+
+	// change column visiblity event
+    $('.column_selector input[name=table_columns]').change(function() {
     	update_column_visibility($(this));
 
         // save ids of currently displayed columns in hidden form field
         var columns = [];
-        $('.column_selector input:checked').each(function() {
-        	var columnId = $(this).val().replace(/^col_/, '');
-        	columns.push(columnId);
+        $('.column_selector input[name=table_columns]:checked').each(function() {
+        	var column_id = $(this).val().replace(/^col_/, '');
+        	columns.push(column_id);
         });
         $('input[name=cols]').val(columns.join(','));
     });
 
-	// update all table columns visiblity using column selector checkboxes
-	function show_hide_columns() {
-		$('.column_selector input[type=checkbox]').each(function() {
-			update_column_visibility($(this));
-		});
-	}
+    // change column group event
+    $('.column_selector input[name=table_columns_group]').change(function() {
+    	var new_state = $(this).is(":checked");
+    	var column_group = $(this).parents('.column_group');
+    	$('input[name=table_columns]', column_group).each(function() {
+    		$(this).prop('checked', new_state).change();
+        });
+    });
 
 	// on page load, update table columns visibity 
 	show_hide_columns();
@@ -341,10 +378,10 @@ $(document).ready(function() {
 	$('a.sort_column').click(function() {
         var old_url = this.href,
         	cols = $('input[name=cols]').val();
-            new_url      = old_url + '&cols=' + cols;
+            new_url = old_url + '&cols=' + cols;
         window.location = new_url;
         return false;
-   });
+   	});
 
     // reloading message
     function show_reloading_message() {
