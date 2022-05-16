@@ -278,35 +278,7 @@
 					</h3>
 
 					<!-- table column selector -->
-					<div class="collapse" id="column_selector">
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<h4 class="panel-title">
-									Customize displayed columns
-									<button class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
-										<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-							  			Close
-									</button>
-								</h4>
-							</div>
-					  		<div class="panel-body">
-								<form class="column_selector">
-									@foreach ($field_list_grouped as $field_group)
-										<h5>{{ $field_group['name'] }}</h5>
-										@foreach ($field_group['fields'] as $field)
-											<div class="checkbox">
-												<label>
-													<input name="table_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'col_' . $field['ir_id']}}" {{ in_array($field['ir_id'], $current_columns) ? 'checked="checked"' : '' }}/>
-													@include('help', ['id' => $field['ir_id']])
-													@lang('short.' . $field['ir_id'])
-												</label>
-											</div>		
-										@endforeach
-									@endforeach
-								</form>
-					  		</div>
-						</div>
-					</div>
+					@include('columnSelector')
 
 					<!-- clone data -->
 					<table class="table table-striped table-condensed much_data table-bordered">
