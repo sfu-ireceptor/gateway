@@ -439,52 +439,32 @@ class Sequence
         $new_study_data = [];
 
         foreach ($sample_list as $sample) {
-            // if a sample doesn't have a lab_name.
-            if (isset($sample->lab_name)) {
-                $lab = $sample->lab_name;
-            } else {
-                $lab = '';
-            }
+            // lab name
+            $lab = isset($sample->lab_name) ? $sample->lab_name : '';
 
-            // If we don't have this lab already, create it.
+            // lab
             if (! isset($study_tree[$lab])) {
                 $lab_data['name'] = $lab;
-                if (isset($lab_sequence_count[$lab])) {
-                    $lab_data['total_sequences'] = $lab_sequence_count[$lab];
-                } else {
-                    $lab_data['total_sequences'] = 0;
-                }
+                $lab_data['total_sequences'] = isset($lab_sequence_count[$lab]) ? $lab_sequence_count[$lab] : 0;
                 $study_tree[$lab] = $lab_data;
             }
 
-            // Check to see if the study exists in the lab, and if not, create it.
+            // study title
             if (! isset($sample->study_title)) {
                 $sample->study_title = '';
             }
-            if (! isset($study_tree[$lab]['studies'])) {
-                $new_study_data['study_title'] = $sample->study_title;
-                if (isset($study_sequence_count[$sample->study_title])) {
-                    $new_study_data['total_sequences'] = $study_sequence_count[$sample->study_title];
-                } else {
-                    $new_study_data['total_sequences'] = 0;
-                }
-                $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
-            } else {
-                if (! in_array($sample->study_title, $study_tree[$lab]['studies'])) {
-                    $new_study_data['study_title'] = $sample->study_title;
-                    if (isset($sample->study_url)) {
-                        $new_study_data['study_url'] = $sample->study_url;
-                    } else {
-                        unset($new_study_data['study_url']);
-                    }
-                    if (isset($study_sequence_count[$sample->study_title])) {
-                        $new_study_data['total_sequences'] = $study_sequence_count[$sample->study_title];
-                    } else {
-                        $new_study_data['total_sequences'] = 0;
-                    }
-                    $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
-                }
+            $new_study_data['study_title'] = $sample->study_title;
+
+            // total sequences
+            $new_study_data['total_sequences'] = isset($study_sequence_count[$sample->study_title])? $study_sequence_count[$sample->study_title] : 0;
+        
+            // study url
+            if (isset($sample->study_url)) {
+                $new_study_data['study_url'] = $sample->study_url;
             }
+
+            // add study to tree
+            $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
         }
 
         $rs_data = [];
