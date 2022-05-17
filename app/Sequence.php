@@ -456,8 +456,8 @@ class Sequence
             $new_study_data['study_title'] = $sample->study_title;
 
             // total sequences
-            $new_study_data['total_sequences'] = isset($study_sequence_count[$sample->study_title])? $study_sequence_count[$sample->study_title] : 0;
-        
+            $new_study_data['total_sequences'] = isset($study_sequence_count[$sample->study_title]) ? $study_sequence_count[$sample->study_title] : 0;
+
             // study url
             if (isset($sample->study_url)) {
                 $new_study_data['study_url'] = $sample->study_url;

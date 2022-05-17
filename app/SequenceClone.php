@@ -416,8 +416,8 @@ class SequenceClone
             $new_study_data['study_title'] = $sample->study_title;
 
             // total clones
-            $new_study_data['total_clones'] = isset($study_clone_count[$sample->study_title])? $study_clone_count[$sample->study_title] : 0;
-        
+            $new_study_data['total_clones'] = isset($study_clone_count[$sample->study_title]) ? $study_clone_count[$sample->study_title] : 0;
+
             // study url
             if (isset($sample->study_url)) {
                 $new_study_data['study_url'] = $sample->study_url;
