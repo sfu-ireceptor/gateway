@@ -39,14 +39,17 @@ $(document).ready(function() {
 	});
 
 	// jstree: rest services -> labs -> projects tree
-	$('#rest_service_list').on('ready.jstree', function (e, data) {
-			// hack to make links work
-			// (otherwise the links default behaviour is overrided by jstree)
-	   		$('.jstree-anchor').addClass('jstree-anchor-simple').removeClass('jstree-anchor');
-  	}).jstree();
+	$('#rest_service_list').jstree();
+
+	// jstree: hack to make links work
+	// (otherwise link default behaviour is overrided by jstree)
+	$('#rest_service_list').on('after_open.jstree', function (e, data) {
+		$('.jstree-anchor').removeClass('jstree-anchor').addClass('jstree-anchor-simple');
+  	});
 
 	// rest services modal
 	$('.toggle_modal_rest_service_list_folded').click(function () {
+
 		$('#rest_service_list .rs_node').each(function(){
 			$('#rest_service_list').jstree('close_node', $(this));
 		});
@@ -64,7 +67,6 @@ $(document).ready(function() {
 		return false;
 	});
 
-	
 	// save filters panels state when submitting form
 	$('form.sample_search, form.sequence_search, form.clone_search, form.cell_search').submit(function(){
 		var filters_form = $(this);

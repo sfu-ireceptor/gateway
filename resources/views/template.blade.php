@@ -225,7 +225,7 @@
 		<script src="/js/jquery-1.12.4.min.js"></script>
 		<script src="/js/bootstrap.min.js"></script>
 
-		<script src="/js/jstree.min.js"></script>
+		<script src="/js/jstree.min.js?v=3.3.12"></script>
 		<script src="/js/highcharts/code/highcharts.js"></script>
 		<script src="/js/highcharts/code/highcharts-3d.js"></script>
 		<script src="/js/highcharts/code/modules/data.js"></script>
@@ -237,7 +237,7 @@
 		<script src="/js/pluralize.js"></script>
 
 		<script src="/js/airrvisualization.js?v=12"></script>
-		<script src="/js/main.js?v=80"></script>
+		<script src="/js/main.js?v=81"></script>
 		<script src="/js/admin.js?v=1"></script>
 		<script src="/js/visualization.js?v=20"></script>
 	</body>
