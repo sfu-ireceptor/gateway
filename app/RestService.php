@@ -1926,6 +1926,7 @@ class RestService extends Model
                     $t = [];
                     $t['repertoire_id'] = $e->repertoire_id;
                     $t['cell_id'] = $e->cell_id;
+                    $t['data_processing_id'] = $e->data_processing_id;
                     $l[] = $t;
                 }
                 $response['cell_list'] = $l;
@@ -2012,7 +2013,6 @@ class RestService extends Model
             $final_response_list = self::doRequests($request_params);
         }
 
-        $data_processing_id_list = [];
         foreach ($final_response_list as $i => $response) {
             $cell_list = $response['data']->Cell;
             // dd($cell_list);

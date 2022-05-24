@@ -3,6 +3,7 @@
 namespace App;
 
 use Facades\App\RestService;
+use Facades\App\Sequence;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -159,6 +160,11 @@ class SequenceCell
         }
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
+
+        $response_list = [];
+        $expression_response_list = [];
+        $sequence_response_list = [];
+
         if ($query_type == 'cell') {
             $cell_id_list_by_data_processing = RestService::cell_id_list_by_data_processing($filters, $username, $expected_nb_cells_by_rs);
             $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_data_processing);
@@ -167,12 +173,16 @@ class SequenceCell
             $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list);
         } else {
             $cell_list_by_rs = RestService::cell_list_from_expression_query($filters, $username, $expected_nb_cells_by_rs);
+
+            $cell_id_list_by_data_processing = self::generate_cell_id_list_by_data_processing_from_cell_list($cell_list_by_rs);
+            $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_data_processing);
+
             $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_list_by_rs);
             $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_list_by_rs);
             $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_data_processing);
         }
 
-        $file_stats = self::file_stats($response_list, $expression_response_list, $sequence_response_list, $metadata_response_list, $expected_nb_cells_by_rs);
+        $file_stats = self::file_stats($response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs);
 
         // if some files are incomplete, log it
         foreach ($file_stats as $t) {
@@ -293,8 +303,9 @@ class SequenceCell
 
         // generate info.txt
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
+
         // generate manifest.json
-        $manifest_file_path = self::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
+        $manifest_file_path = Sequence::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
 
         $t = [];
         $t['folder_path'] = $folder_path;
@@ -327,7 +338,7 @@ class SequenceCell
         $file_stats = $t['file_stats'];
 
         // zip files
-        $zip_path = self::zip_files($folder_path, $response_list, $expression_response_list, $sequence_response_list, $metadata_response_list, $info_file_path, $manifest_file_path);
+        $zip_path = self::zip_files($folder_path, $response_list, $expression_response_list, $metadata_response_list, $info_file_path, $sequence_response_list, $manifest_file_path);
 
         // delete files
         self::delete_files($folder_path);
@@ -434,52 +445,32 @@ class SequenceCell
         $new_study_data = [];
 
         foreach ($sample_list as $sample) {
-            // if a sample doesn't have a lab_name.
-            if (isset($sample->lab_name)) {
-                $lab = $sample->lab_name;
-            } else {
-                $lab = '';
-            }
+            // lab name
+            $lab = isset($sample->lab_name) ? $sample->lab_name : '';
 
-            // If we don't have this lab already, create it.
+            // lab
             if (! isset($study_tree[$lab])) {
                 $lab_data['name'] = $lab;
-                if (isset($lab_cell_count[$lab])) {
-                    $lab_data['total_cells'] = $lab_cell_count[$lab];
-                } else {
-                    $lab_data['total_cells'] = 0;
-                }
+                $lab_data['total_cells'] = isset($lab_cell_count[$lab]) ? $lab_cell_count[$lab] : 0;
                 $study_tree[$lab] = $lab_data;
             }
 
-            // Check to see if the study exists in the lab, and if not, create it.
+            // study title
             if (! isset($sample->study_title)) {
                 $sample->study_title = '';
             }
-            if (! isset($study_tree[$lab]['studies'])) {
-                $new_study_data['study_title'] = $sample->study_title;
-                if (isset($study_cell_count[$sample->study_title])) {
-                    $new_study_data['total_cells'] = $study_cell_count[$sample->study_title];
-                } else {
-                    $new_study_data['total_cells'] = 0;
-                }
-                $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
-            } else {
-                if (! in_array($sample->study_title, $study_tree[$lab]['studies'])) {
-                    $new_study_data['study_title'] = $sample->study_title;
-                    if (isset($sample->study_url)) {
-                        $new_study_data['study_url'] = $sample->study_url;
-                    } else {
-                        unset($new_study_data['study_url']);
-                    }
-                    if (isset($study_cell_count[$sample->study_title])) {
-                        $new_study_data['total_cells'] = $study_cell_count[$sample->study_title];
-                    } else {
-                        $new_study_data['total_cells'] = 0;
-                    }
-                    $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
-                }
+            $new_study_data['study_title'] = $sample->study_title;
+
+            // total cells
+            $new_study_data['total_cells'] = isset($study_cell_count[$sample->study_title]) ? $study_cell_count[$sample->study_title] : 0;
+
+            // study url
+            if (isset($sample->study_url)) {
+                $new_study_data['study_url'] = $sample->study_url;
             }
+
+            // add study to tree
+            $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
         }
 
         $rs_data = [];
@@ -628,54 +619,36 @@ class SequenceCell
         return $info_file_path;
     }
 
-    public static function generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
+    public static function generate_cell_id_list_by_data_processing_from_cell_list($cell_list_by_rs)
     {
-        // Name of the file we are generating for the download
-        $manifest_file = 'airr_manifest.json';
+        foreach ($cell_list_by_rs as $i => $response) {
+            $data_processing_id_list = [];
 
-        // Create the opening object in the JSON file
-        $s = "{\n";
-        // Create the Info block
-        $s .= '  "Info":{},' . "\n";
-
-        $nb_cells_total = 0;
-        $expected_nb_cells_total = 0;
-        foreach ($file_stats as $t) {
-            $nb_cells_total += $t['nb_cells'];
-            $expected_nb_cells_total += $t['expected_nb_cells'];
-        }
-
-        $is_download_incomplete = ($nb_cells_total < $expected_nb_cells_total);
-
-        // Create the DataSets block
-        $s .= '  "DataSets":[' . "\n";
-        $dataset_count = 0;
-        foreach ($file_stats as $t) {
-            if ($is_download_incomplete && ($t['nb_cells'] < $t['expected_nb_cells'])) {
-                if ($dataset_count != 0) {
-                    $s .= ',' . "\n";
+            $cell_list = $response['cell_list'];
+            foreach ($cell_list as $cell) {
+                if (! isset($cell['data_processing_id']) || ! isset($cell['cell_id'])) {
+                    continue;
                 }
-                $s .= '    {"repository":"' . $t['rs_url'] . '", "repertoire_file":["' . $t['metadata_name'] . '"], "cell_file":["' . $t['name'] . '"], "expression_file":["' . $t['expression_name'] . '"],"rearrangement_file":["' . $t['rearrangement_name'] . '"]}';
-            } else {
-                if ($dataset_count != 0) {
-                    $s .= ',' . "\n";
+
+                $data_processing_id = $cell['data_processing_id'];
+                if (! isset($data_processing_id_list[$data_processing_id])) {
+                    $data_processing_id_list[$data_processing_id] = [];
                 }
-                $s .= '    {"repository":"' . $t['rs_url'] . '","repertoire_file":["' . $t['metadata_name'] . '"], "cell_file":["' . $t['name'] . '"], "expression_file":["' . $t['expression_name'] . '"],"rearrangement_file":["' . $t['rearrangement_name'] . '"]}';
+
+                $cell_id = $cell['cell_id'];
+                $data_processing_id_list[$data_processing_id][] = $cell_id;
             }
-            Log::debug('Manifest dataset = ' . $t['metadata_name'] . ', ' . $t['name']);
-            $dataset_count++;
+
+            $cell_list_by_rs[$i]['data_processing_id_list'] = $data_processing_id_list;
+
+            // don't need this anymore
+            unset($cell_list_by_rs[$i]['cell_list']);
         }
-        $s .= "\n  ]\n";
-        $s .= '}' . "\n";
 
-        $manifest_file_path = $folder_path . '/' . $manifest_file;
-        file_put_contents($manifest_file_path, $s);
-        Log::debug('Writing manifest ' . $manifest_file_path);
-
-        return $manifest_file_path;
+        return $cell_list_by_rs;
     }
 
-    public static function zip_files($folder_path, $response_list, $expression_response_list, $sequence_response_list, $metadata_response_list, $info_file_path, $manifest_file_path)
+    public static function zip_files($folder_path, $response_list, $expression_response_list, $metadata_response_list, $info_file_path, $sequence_response_list, $manifest_file_path)
     {
         $zipPath = $folder_path . '.zip';
         Log::info('Cell: Zip files to ' . $zipPath);
@@ -731,6 +704,8 @@ class SequenceCell
         // info.txt
         $zip->addFile($info_file_path, basename($info_file_path));
         Log::debug('Adding to ZIP: ' . $info_file_path);
+
+        // AIRR-manifest.json
         $zip->addFile($manifest_file_path, basename($manifest_file_path));
         Log::debug('Adding to ZIP: ' . $manifest_file_path);
 
@@ -747,7 +722,7 @@ class SequenceCell
         }
     }
 
-    public static function file_stats($response_list, $expression_response_list, $sequence_response_list, $metadata_response_list, $expected_nb_cells_by_rs)
+    public static function file_stats($response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs)
     {
         Log::debug('Get files stats');
         $file_stats = [];
@@ -761,26 +736,35 @@ class SequenceCell
                 $t['rs_url'] = $response['rs']->url;
                 $t['size'] = human_filesize($file_path);
 
-                // Get the associated repertoire file
-                foreach ($metadata_response_list as $metadata_response) {
-                    // If the service IDs match, then the files match
-                    if ($rest_service_id == $metadata_response['rs']->id) {
-                        // If there is a file path, keep track of the metadata file
-                        if (isset($metadata_response['data']['file_path'])) {
-                            $metadata_file_path = $metadata_response['data']['file_path'];
-                            $t['metadata_name'] = basename($metadata_file_path);
+                // cell file name
+                $t['cell_file_name'] = $t['name'];
+
+                // repertoire file name
+                foreach ($metadata_response_list as $r) {
+                    if ($rest_service_id == $r['rs']->id) {
+                        if (isset($r['data']['file_path'])) {
+                            $file_path = $r['data']['file_path'];
+                            $t['metadata_file_name'] = basename($file_path);
                         }
                     }
                 }
 
-                // Get the associated expression file
-                foreach ($expression_response_list as $expression_response) {
-                    // If the service IDs match, then the files match
-                    if ($rest_service_id == $expression_response['rs']->id) {
-                        // If there is a file path, keep track of the metadata file
-                        if (isset($expression_response['data']['file_path'])) {
-                            $expression_file_path = $expression_response['data']['file_path'];
-                            $t['expression_name'] = basename($expression_file_path);
+                // expression file name
+                foreach ($expression_response_list as $r) {
+                    if ($rest_service_id == $r['rs']->id) {
+                        if (isset($r['data']['file_path'])) {
+                            $file_path = $r['data']['file_path'];
+                            $t['expression_file_name'] = basename($file_path);
+                        }
+                    }
+                }
+
+                // sequence file name
+                foreach ($sequence_response_list as $r) {
+                    if ($rest_service_id == $r['rs']->id) {
+                        if (isset($r['data']['file_path'])) {
+                            $file_path = $r['data']['file_path'];
+                            $t['sequence_file_name'] = basename($file_path);
                         }
                     }
                 }
@@ -817,8 +801,6 @@ class SequenceCell
                 $file_stats[] = $t;
             }
         }
-
-        Log::debug('####### files stats=' . json_encode($file_stats));
 
         return $file_stats;
     }

@@ -276,7 +276,7 @@ function run_analysis()
 # AIRR manifest JSON file that describes the relationships between
 # AIRR Repertoire JSON files and AIRR TSV files.
 INFO_FILE="info.txt"
-AIRR_MANIFEST_FILE="airr_manifest.json"
+AIRR_MANIFEST_FILE="AIRR-manifest.json"
 
 if [ "${split_repertoire}" = "True" ]; then
     echo -e "\nIR-INFO: Splitting data by Repertoire\n"

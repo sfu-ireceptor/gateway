@@ -90,7 +90,7 @@ module load scipy-stack
 
 # The Gateway provides information about the download in the file info.txt
 INFO_FILE="info.txt"
-MANIFEST_FILE="airr_manifest.json"
+MANIFEST_FILE="AIRR-manifest.json"
 
 # Start
 printf "START at $(date)\n\n"

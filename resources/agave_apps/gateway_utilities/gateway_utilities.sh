@@ -73,7 +73,7 @@ function gateway_split_repertoire(){
     # Move into the working directory to do work...
     pushd ${WORKING_DIR} > /dev/null
 
-    # Determine the files to process. We extract the data files from the airr_manifest.json
+    # Determine the files to process. We extract the data files from the AIRR-manifest.json
     # and store them in an array. The type is one of rearrangement_file, cell_file, clone_file
     if [ ${ANALYSIS_TYPE} = "rearrangement_file" ]
     then
