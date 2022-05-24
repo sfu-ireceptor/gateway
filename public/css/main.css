@@ -1419,11 +1419,11 @@ form.column_selector {
 
 #column_selector .panel-body h5 {
 	margin-top: 25px;
-	margin-bottom: 5px;
+	margin-bottom: 7px;
 	break-after: avoid;
 }
 
-#column_selector .panel-body h5:first-of-type {
+#column_selector .panel-body div:first-of-type h5 {
 	margin-top: 0;
 }
 

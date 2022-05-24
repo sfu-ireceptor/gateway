@@ -3,6 +3,7 @@
 namespace App;
 
 use Facades\App\RestService;
+use Facades\App\Sequence;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -262,7 +263,7 @@ class SequenceClone
         // generate info.txt
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
         // generate manifest.json
-        $manifest_file_path = self::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
+        $manifest_file_path = Sequence::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
 
         $t = [];
         $t['folder_path'] = $folder_path;
@@ -291,7 +292,7 @@ class SequenceClone
         $file_stats = $t['file_stats'];
 
         // zip files
-        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path);
+        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path);
 
         // delete files
         self::delete_files($folder_path);
@@ -398,52 +399,32 @@ class SequenceClone
         $new_study_data = [];
 
         foreach ($sample_list as $sample) {
-            // if a sample doesn't have a lab_name.
-            if (isset($sample->lab_name)) {
-                $lab = $sample->lab_name;
-            } else {
-                $lab = '';
-            }
+            // lab name
+            $lab = isset($sample->lab_name) ? $sample->lab_name : '';
 
-            // If we don't have this lab already, create it.
+            // lab
             if (! isset($study_tree[$lab])) {
                 $lab_data['name'] = $lab;
-                if (isset($lab_clone_count[$lab])) {
-                    $lab_data['total_clones'] = $lab_clone_count[$lab];
-                } else {
-                    $lab_data['total_clones'] = 0;
-                }
+                $lab_data['total_clones'] = isset($lab_clone_count[$lab]) ? $lab_clone_count[$lab] : 0;
                 $study_tree[$lab] = $lab_data;
             }
 
-            // Check to see if the study exists in the lab, and if not, create it.
+            // study title
             if (! isset($sample->study_title)) {
                 $sample->study_title = '';
             }
-            if (! isset($study_tree[$lab]['studies'])) {
-                $new_study_data['study_title'] = $sample->study_title;
-                if (isset($study_clone_count[$sample->study_title])) {
-                    $new_study_data['total_clones'] = $study_clone_count[$sample->study_title];
-                } else {
-                    $new_study_data['total_clones'] = 0;
-                }
-                $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
-            } else {
-                if (! in_array($sample->study_title, $study_tree[$lab]['studies'])) {
-                    $new_study_data['study_title'] = $sample->study_title;
-                    if (isset($sample->study_url)) {
-                        $new_study_data['study_url'] = $sample->study_url;
-                    } else {
-                        unset($new_study_data['study_url']);
-                    }
-                    if (isset($study_clone_count[$sample->study_title])) {
-                        $new_study_data['total_clones'] = $study_clone_count[$sample->study_title];
-                    } else {
-                        $new_study_data['total_clones'] = 0;
-                    }
-                    $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
-                }
+            $new_study_data['study_title'] = $sample->study_title;
+
+            // total clones
+            $new_study_data['total_clones'] = isset($study_clone_count[$sample->study_title]) ? $study_clone_count[$sample->study_title] : 0;
+
+            // study url
+            if (isset($sample->study_url)) {
+                $new_study_data['study_url'] = $sample->study_url;
             }
+
+            // add study to tree
+            $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
         }
 
         $rs_data = [];
@@ -592,58 +573,14 @@ class SequenceClone
         return $info_file_path;
     }
 
-    public static function generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
-    {
-        // Name of the file we are generating for the download
-        $manifest_file = 'airr_manifest.json';
-
-        // Create the opening object in the JSON file
-        $s = "{\n";
-        // Create the Info block
-        $s .= '  "Info":{},' . "\n";
-
-        $nb_clones_total = 0;
-        $expected_nb_clones_total = 0;
-        foreach ($file_stats as $t) {
-            $nb_clones_total += $t['nb_clones'];
-            $expected_nb_clones_total += $t['expected_nb_clones'];
-        }
-
-        $is_download_incomplete = ($nb_clones_total < $expected_nb_clones_total);
-
-        // Create the DataSets block
-        $s .= '  "DataSets":[' . "\n";
-        $dataset_count = 0;
-        foreach ($file_stats as $t) {
-            if ($is_download_incomplete && ($t['nb_clones'] < $t['expected_nb_clones'])) {
-                if ($dataset_count != 0) {
-                    $s .= ',' . "\n";
-                }
-                $s .= '    {"repertoire_file":["' . $t['metadata_name'] . '"], "clone_file":["' . $t['name'] . '"]}';
-            } else {
-                if ($dataset_count != 0) {
-                    $s .= ',' . "\n";
-                }
-                $s .= '    {"repertoire_file":["' . $t['metadata_name'] . '"], "clone_file":["' . $t['name'] . '"]}';
-            }
-            Log::debug('Manifest dataset = ' . $t['metadata_name'] . ', ' . $t['name']);
-            $dataset_count++;
-        }
-        $s .= "\n  ]\n";
-        $s .= '}' . "\n";
-        $manifest_file_path = $folder_path . '/' . $manifest_file;
-        file_put_contents($manifest_file_path, $s);
-        Log::debug('Writing manifest ' . $manifest_file_path);
-
-        return $manifest_file_path;
-    }
-
-    public static function zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path)
+    public static function zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path)
     {
         $zipPath = $folder_path . '.zip';
         Log::info('Zip files to ' . $zipPath);
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::CREATE);
+
+        // clone data
         foreach ($response_list as $response) {
             if (isset($response['data']['file_path'])) {
                 $file_path = $response['data']['file_path'];
@@ -651,6 +588,8 @@ class SequenceClone
                 $zip->addFile($file_path, basename($file_path));
             }
         }
+
+        // repertoire data
         foreach ($metadata_response_list as $response) {
             if (isset($response['data']['file_path'])) {
                 $file_path = $response['data']['file_path'];
@@ -668,8 +607,14 @@ class SequenceClone
                 $zip->addFile($file_path, basename($file_path));
             }
         }
+
+        // info.txt
         $zip->addFile($info_file_path, basename($info_file_path));
+
+        // AIRR-manifest.json
         $zip->addFile($manifest_file_path, basename($manifest_file_path));
+        Log::debug('Adding to ZIP: ' . $manifest_file_path);
+
         $zip->close();
 
         return $zipPath;
@@ -697,14 +642,15 @@ class SequenceClone
                 $t['rs_url'] = $response['rs']->url;
                 $t['size'] = human_filesize($file_path);
 
-                // Get the associated repertoire file
-                foreach ($metadata_response_list as $metadata_response) {
-                    // If the service IDs match, then the files match
-                    if ($rest_service_id == $metadata_response['rs']->id) {
-                        // If there is a file path, keep track of the metadata file
-                        if (isset($metadata_response['data']['file_path'])) {
-                            $metadata_file_path = $metadata_response['data']['file_path'];
-                            $t['metadata_name'] = basename($metadata_file_path);
+                // clone file name
+                $t['clone_file_name'] = $t['name'];
+
+                // repertoire file name
+                foreach ($metadata_response_list as $r) {
+                    if ($rest_service_id == $r['rs']->id) {
+                        if (isset($r['data']['file_path'])) {
+                            $file_path = $r['data']['file_path'];
+                            $t['metadata_file_name'] = basename($file_path);
                         }
                     }
                 }
