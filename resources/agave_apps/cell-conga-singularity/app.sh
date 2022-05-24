@@ -77,7 +77,7 @@ date
 source ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/gateway_utilities.sh
 if [ $? -ne 0 ]
 then
-    echo "IR-ERROR: Could not process manifest file ${MANIFEST_FILE}"
+    echo "IR-ERROR: Could not load GATEWAY UTILIIES"
     exit $?
 fi
 
@@ -105,6 +105,8 @@ printf "\n\n"
 printf "START at $(date)\n\n"
 printf "PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n\n"
 printf "MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n\n"
+printf "SLURM JOB ID = ${SLURM_JOB_ID}\n\n"
+printf "\n\n"
 
 # This function is called by the iReceptor Gateway utilities function gateway_split_repertoire
 # The gateway utility function splits all data into repertoires and then calls this function
@@ -215,7 +217,7 @@ function run_cell_analysis()
     # We don't want to keep around the generated data files or the manifest file.
     rm -f ${cell_file} ${gex_file} ${rearrangement_file} ${manifest_file}
 
-    #done
+    # done
     printf "Done running Repertoire Analysis on ${cell_file} at $(date)\n\n"
 }
 

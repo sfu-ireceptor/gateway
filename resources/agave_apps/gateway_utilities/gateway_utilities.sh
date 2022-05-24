@@ -26,9 +26,12 @@ function gateway_unzip() {
     pushd ${WORKING_DIR} > /dev/null
 
     # Uncompress zip file
-    echo "Extracting files started at: `date`" 
+    echo "Extracting files into ${WORKING_DIR} started at: `date`" 
     unzip -o "$ZIP_FILE" 
     echo "Extracting files finished at: `date`" 
+
+    # Remove the copied ZIP file.
+    rm -f ${ZIP_FILE} 
 
     # Go back to where we started
     popd > /dev/null
@@ -58,13 +61,14 @@ function gateway_split_repertoire(){
     else
         ANALYSIS_TYPE=$5
     fi
-
+    echo "Analysis type = ${ANALYSIS_TYPE}"
 
     # Unzip the iReceptor Gateway ZIP file into the working directory
     gateway_unzip ${ZIP_FILE} ${WORKING_DIR}
 
     # We need a field on which to split the data.
     SPLIT_FIELD="repertoire_id"
+    LINK_FIELD="data_processing_id"
 
     # Move into the working directory to do work...
     pushd ${WORKING_DIR} > /dev/null
@@ -145,6 +149,7 @@ function gateway_split_repertoire(){
         # Create a directory for each repository (mkdir if it isn't already with -p)
         mkdir -p ${repository_name}
         
+        repertoire_count=0
         # For each repertoire_id, extract the data in a directory for that repertoire
         for repertoire_id in "${repertoire_ids[@]}"; do
             # Get a directory name and make the directory
@@ -166,6 +171,11 @@ function gateway_split_repertoire(){
                 # repertoire_id in the SPLIT_FIELD.
                 # Command line parameters: inputfile, field_name, field_value, outfile
                 python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter.py $data_file ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
+                if [ $? -ne 0 ]
+                then
+                    echo "IR-ERROR: Could not filter Rearrangement data for ${repertoire_id} from ${$data_file}"
+                    continue
+                fi
         
                 # Create the repertoire manifest file
                 echo '{"Info":{},"DataSets":[' > $REPERTOIRE_MANIFEST
@@ -227,6 +237,7 @@ function gateway_split_repertoire(){
                 # Filter the input file extract all records that have the given
                 # repertoire_id in the SPLIT_FIELD.
                 # Command line parameters: inputfile, field_name, field_value, outfile
+                echo "Splitting Cell file ${data_file} by ${SPLIT_FIELD} ${repertoire_id}"
                 python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $data_file Cell ${SPLIT_FIELD} ${repertoire_id} > ${repository_name}/${repertoire_dirname}/${cell_datafile}
                 if [ $? -ne 0 ]
                 then
@@ -234,6 +245,7 @@ function gateway_split_repertoire(){
                     continue
                 fi
                 # Repeat for expression data.
+                echo "Splitting Expression file ${expression_file} by ${SPLIT_FIELD} ${repertoire_id}"
                 python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $expression_file CellExpression ${SPLIT_FIELD} ${repertoire_id} > ${repository_name}/${repertoire_dirname}/${gex_datafile}
                 if [ $? -ne 0 ]
                 then
@@ -241,14 +253,29 @@ function gateway_split_repertoire(){
                     continue
                 fi
                 # Repeat for rearrangement data.
-                #python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter.py $rearrangement_file ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
-                #if [ $? -ne 0 ]
-                #then
-                #    echo "IR-ERROR: Could not filter Rearrangement data for ${repertoire_id} from ${rearrangement_file}"
-                #    continue
-                #fi
-                wget https://gateway-analysis-dev.ireceptor.org/storage/test/single-cell-repo.tsv
-                mv single-cell-repo.tsv ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
+                #python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter.py $data_file ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
+                link_ids=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/preprocess-json.py ${repository_name}/${repertoire_dirname}/${cell_datafile} Cell ${LINK_FIELD} | sort -u | awk '{printf("%s ",$0)}'` )
+                if [ ${#link_ids[@]} != 1 ]
+                then
+                    echo "IR_ERROR: Conga analysis expexts a single ${LINK_FIELD} per Cell repertoire."
+                    echo "IR_ERROR: Linlk fields = ${link_ids[@]}."
+                    continue
+                fi
+                link_id=${link_ids[0]}
+                echo "Link ID = -${link_id}-"
+                echo "Link Field = -${LINK_FIELD}-"
+                echo "Input file = ${rearrangement_file}"
+                echo "Output file = ${rearrangement_datafile}"
+
+                echo "Splitting Rearrangement file ${rearrangement_file} by ${LINK_FIELD} ${link_id}"
+                python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter.py $rearrangement_file ${LINK_FIELD} ${link_id} ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
+                if [ $? -ne 0 ]
+                then
+                    echo "IR-ERROR: Could not filter Rearrangement data for ${link_id} from ${rearrangement_file}"
+                    continue
+                fi
+                #wget https://gateway-analysis-dev.ireceptor.org/storage/test/single-cell-repo.tsv
+                #mv single-cell-repo.tsv ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
         
                 # Create the repertoire manifest file
                 echo '{"Info":{},"DataSets":[{' > $REPERTOIRE_MANIFEST
@@ -266,6 +293,7 @@ function gateway_split_repertoire(){
                 run_cell_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST}
             fi
 
+            repertoire_count=$((repertoire_count+1))
         done
         count=$((count+1))
     done
@@ -273,7 +301,7 @@ function gateway_split_repertoire(){
     # Clean up the files we created
     # First the ZIP file
     rm -f ${ZIP_FILE}
-    # Remove any TSV files extracted from the ZIP - they are big and can be re-generated
+    # Remove any data files extracted from the ZIP - they are big and can be re-generated
     for f in "${data_files[@]}"; do
         rm -f $f
     done

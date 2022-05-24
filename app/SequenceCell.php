@@ -179,6 +179,7 @@ class SequenceCell
 
             $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_list_by_rs);
             $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_list_by_rs);
+            $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_data_processing);
         }
 
         $file_stats = self::file_stats($response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs);
@@ -764,6 +765,18 @@ class SequenceCell
                         if (isset($r['data']['file_path'])) {
                             $file_path = $r['data']['file_path'];
                             $t['sequence_file_name'] = basename($file_path);
+                        }
+                    }
+                }
+
+                // Get the associated sequence file
+                foreach ($sequence_response_list as $sequence_response) {
+                    // If the service IDs match, then the files match
+                    if ($rest_service_id == $sequence_response['rs']->id) {
+                        // If there is a file path, keep track of the metadata file
+                        if (isset($sequence_response['data']['file_path'])) {
+                            $sequence_file_path = $sequence_response['data']['file_path'];
+                            $t['rearrangement_name'] = basename($sequence_file_path);
                         }
                     }
                 }
