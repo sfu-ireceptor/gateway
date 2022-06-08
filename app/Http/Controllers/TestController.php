@@ -18,7 +18,7 @@ class TestController extends Controller
         $defaults['base_uri'] = config('app.url');
         $defaults['verify'] = false;    // accept self-signed SSL certificates
         $defaults['cert'] = [storage_path() . '/config/domain.crt', ''];
-        $defaults['ssl_key'] = [storage_path() . '/config/domain.crt'];
+        $defaults['ssl_key'] = [storage_path() . '/config/private.crt'];
 
         try {
             $client = new \GuzzleHttp\Client($defaults);
