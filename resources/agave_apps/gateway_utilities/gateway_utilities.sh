@@ -97,7 +97,7 @@ function gateway_split_repertoire(){
     fi
 
     # Get the repository from the manifest file.
-    repository_urls=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "repository"` )
+    repository_urls=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "repository_url"` )
     echo "Repository URLs = ${repository_urls[@]}"
 
     # Get the Reperotire files from the manifest file.
@@ -173,7 +173,7 @@ function gateway_split_repertoire(){
                 python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter.py $data_file ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
                 if [ $? -ne 0 ]
                 then
-                    echo "IR-ERROR: Could not filter Rearrangement data for ${repertoire_id} from ${$data_file}"
+                    echo "IR-ERROR: Could not filter Rearrangement data for ${repertoire_id} from ${data_file}"
                     continue
                 fi
         
