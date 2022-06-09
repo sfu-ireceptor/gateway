@@ -99,7 +99,7 @@ function do_heatmap()
     # preprocess input files -> tmp.csv
     echo "Extracting ${variable1} and ${variable2} from files started at: `date`" 
     rm -f $TMP_FILE
-    echo "${variable1}\t${variable2}" > $TMP_FILE
+    echo -e "${variable1}\t${variable2}" > $TMP_FILE
 
     for filename in "${array_of_files[@]}"; do
 	    echo "    Extracting ${variable1} and ${variable2} from $filename"
@@ -108,17 +108,15 @@ function do_heatmap()
 	    y_column=`cat ${output_dir}/$filename | head -n 1 | awk -F"\t" -v label=${variable2} '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
 	    echo "    Columns = ${x_column}, ${y_column}"
 
-	    # Extract the two columns of interest. In this case we want the gene (not including the allele)
-	    # As a result we chop things off at the first star. This also takes care of the case where
-	    # a gened call has multiple calls. Since we drop everthing after the first allele we drop all of
-	    # the other calls as well.
-	    cat ${output_dir}/$filename | cut -f $x_column,$y_column | awk -v xlabel=${variable1} -v ylabel=${variable2} 'BEGIN {FS="\t"; printf("%s\t%s\n", xlabel, ylabel)} /IG|TR/ {if (index($1,"*") == 0) {xstr = $1} else {xstr=substr($1,0,index($1,"*")-1)};if (index($2,"*") == 0) {ystr = $2} else {ystr=substr($2,0,index($2,"*")-1)};printf("%s\t%s\n",xstr,ystr)}' > $TMP_FILE
-
+	    # Extract the two columns of interest. In the case of VDJ calls, we want the gene
+        # (not including the allele). As a result we chop things off at the first star.
+        # This also takes care of the case where a gene call has multiple calls. Since
+        # we drop everthing after the first allele we drop all of the other calls as well.
+	    cat ${output_dir}/$filename | cut -f $x_column,$y_column | awk -v xlabel=${variable1} -v ylabel=${variable2} 'BEGIN {FS="\t"} /IG|TR/ {if (index($1,"*") == 0) {xstr = $1} else {xstr=substr($1,0,index($1,"*")-1)};if (index($2,"*") == 0) {ystr = $2} else {ystr=substr($2,0,index($2,"*")-1)};printf("%s\t%s\n",xstr,ystr)}' >> $TMP_FILE
     done
     # Generate a set of unique values that we can generate the heatmap on. This is a comma separated
     # list of unique gene names for each of the two fields of interest.
     xvals=`cat $TMP_FILE | cut -f 1 | awk 'BEGIN {FS=","} {if (NR>1) print($1)}' | sort | uniq | awk '{if (NR>1) printf(",%s", $1); else printf("%s", $1)}'`
-    #yvals=`cat $TMP_FILE | cut -f 2 | awk 'BEGIN {FS=","} /IG/ {print($1)} /TR/ {print($1)}' | sort | uniq | awk '{if (NR>1) printf(",%s", $1); else printf("%s", $1)}'`
     yvals=`cat $TMP_FILE | cut -f 2 | awk 'BEGIN {FS=","} {if (NR>1) print($1)}' | sort | uniq | awk '{if (NR>1) printf(",%s", $1); else printf("%s", $1)}'`
 
     # Finally we generate a heatmap given all of the processed information.
@@ -169,6 +167,7 @@ function do_histogram()
     echo -n "Working from directory: "
     pwd
     echo "Extracting ${variable_name} from files started at: `date`" 
+    rm -f $TMP_FILE
     echo ${variable_name} > $TMP_FILE
     for filename in "${array_of_files[@]}"; do
 	    echo "    Extracting ${variable_name} from $filename"
