@@ -1286,9 +1286,8 @@ class RestService extends Model
 
                         foreach ($response_list_sequences as $response_sequence) {
                             $sequence = $response_sequence['data']->Rearrangement;
-                            Log::debug("sequence len = ". count($sequence));
-                            if (count($sequence) > 0)
-                            {
+                            Log::debug('sequence len = ' . count($sequence));
+                            if (count($sequence) > 0) {
                                 $cell_id_sequence = $sequence[0]->cell_id;
 
                                 if ($cell_id == $cell_id_sequence) {
