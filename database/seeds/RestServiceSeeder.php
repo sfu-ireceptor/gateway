@@ -50,8 +50,8 @@ class RestServiceSeeder extends Seeder
                 'name' => 'IPA 4 Staging',
             ],
             [
-                'url' => 'https://ipa5-staging.ireceptor.org/airr/v1/',
-                'name' => 'IPA 5 Staging', 
+                'url' => 'http://ipa5-staging.ireceptor.org/airr/v1/',
+                'name' => 'IPA 5 Staging',
                 'rest_service_group_code' => 'ipa',
             ],
             [
