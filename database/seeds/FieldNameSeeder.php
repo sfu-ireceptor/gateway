@@ -36,7 +36,8 @@ class FieldNameSeeder extends CsvSeeder
                 42 => 'ir_api_input_type',
             ];
 
-            $this->filename = $this->folder_path . '/' . '1.2.tsv';
+            $file_name = '1.2.tsv';
+            $this->filename = $this->folder_path . '/' . $file_name;
 
             parent::run();
 
@@ -51,6 +52,10 @@ class FieldNameSeeder extends CsvSeeder
             $this->define_default_sequence_fields();
             $this->define_default_clone_fields();
             $this->define_default_cell_fields();
+
+            // add API version
+            $api_version = pathinfo($file_name)['filename'];
+            FieldName::whereNull('api_version')->update(['api_version' => $api_version]);
         });
     }
 
