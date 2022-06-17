@@ -9,7 +9,7 @@ class FieldNameSeeder extends CsvSeeder
     public function __construct()
     {
         $this->table = 'field_name';
-        $this->filename = base_path() . '/database/seeds/data/field_names.tsv';
+        $this->folder_path = base_path() . '/database/seeds/data/field_names';
         $this->offset_rows = 1;
         $this->csv_delimiter = "\t";
     }
@@ -36,8 +36,9 @@ class FieldNameSeeder extends CsvSeeder
                 42 => 'ir_api_input_type',
             ];
 
+            $this->filename = $this->folder_path . '/' . '1.2.tsv';
+
             parent::run();
-            // parent::run();
 
             // delete any empty rows
             DB::table($this->table)->whereNull('ir_id')->delete();
