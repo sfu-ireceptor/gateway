@@ -37,6 +37,7 @@ class FieldNameSeeder extends CsvSeeder
             ];
 
             parent::run();
+            // parent::run();
 
             // delete any empty rows
             DB::table($this->table)->whereNull('ir_id')->delete();
