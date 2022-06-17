@@ -236,7 +236,7 @@
 		<script src="/js/bootstrap-multiselect.js"></script>
 		<script src="/js/pluralize.js"></script>
 
-		<script src="/js/airrvisualization.js?v=13"></script>
+		<script src="/js/airrvisualization.js?v=14"></script>
 		<script src="/js/main.js?v=81"></script>
 		<script src="/js/admin.js?v=1"></script>
 		<script src="/js/visualization.js?v=20"></script>
