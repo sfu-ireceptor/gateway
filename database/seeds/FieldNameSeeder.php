@@ -59,7 +59,6 @@ class FieldNameSeeder extends CsvSeeder
                 $api_version = pathinfo($filename)['filename'];
                 FieldName::whereNull('api_version')->update(['api_version' => $api_version]);
             }
-
         });
     }
 
