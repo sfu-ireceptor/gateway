@@ -36,26 +36,30 @@ class FieldNameSeeder extends CsvSeeder
                 42 => 'ir_api_input_type',
             ];
 
-            $file_name = '1.2.tsv';
-            $this->filename = $this->folder_path . '/' . $file_name;
+            $file_list = dir_to_array($this->folder_path);
 
-            parent::run();
+            foreach ($file_list as $filename) {
+                $this->filename = $filename;
 
-            // delete any empty rows
-            DB::table($this->table)->whereNull('ir_id')->delete();
+                parent::run();
 
-            // add extra fields (gateway specific)
-            $this->add_gateway_specific_fields();
+                // delete any empty rows
+                DB::table($this->table)->whereNull('ir_id')->delete();
 
-            // define default fields and their order
-            $this->define_default_sample_fields();
-            $this->define_default_sequence_fields();
-            $this->define_default_clone_fields();
-            $this->define_default_cell_fields();
+                // add extra fields (gateway specific)
+                $this->add_gateway_specific_fields();
 
-            // add API version
-            $api_version = pathinfo($file_name)['filename'];
-            FieldName::whereNull('api_version')->update(['api_version' => $api_version]);
+                // define default fields and their order
+                $this->define_default_sample_fields();
+                $this->define_default_sequence_fields();
+                $this->define_default_clone_fields();
+                $this->define_default_cell_fields();
+
+                // add API version
+                $api_version = pathinfo($filename)['filename'];
+                FieldName::whereNull('api_version')->update(['api_version' => $api_version]);
+            }
+
         });
     }
 
@@ -144,7 +148,7 @@ class FieldNameSeeder extends CsvSeeder
         ];
 
         foreach ($l as $t) {
-            FieldName::updateOrCreate(['ir_id' => $t['ir_id']], $t);
+            FieldName::create(['ir_id' => $t['ir_id']], $t);
         }
     }
 
