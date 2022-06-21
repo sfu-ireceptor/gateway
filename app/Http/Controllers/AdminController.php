@@ -418,10 +418,9 @@ class AdminController extends Controller
 
         $info = $rs->refreshInfo();
 
-        if(isset($info['error'])) {
+        if (isset($info['error'])) {
             $message = 'An error occurred : ' . $info['error'];
-        }
-        else {
+        } else {
             $chunk_size = $info['chunk_size'] ?? null;
             if ($chunk_size == null) {
                 $message = $rs->name . ' doesn\'t have a max_size. ';
@@ -443,9 +442,8 @@ class AdminController extends Controller
                 $message .= 'Stats are available. ';
             } else {
                 $message .= 'Stats are not available. ';
-            }            
+            }
         }
-
 
         return redirect('admin/databases')->with('notification', $message);
     }
