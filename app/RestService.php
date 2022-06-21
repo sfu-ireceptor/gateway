@@ -58,10 +58,11 @@ class RestService extends Model
             return $info;
         } catch (\Exception $e) {
             $error_message = $e->getMessage();
-            
+
             Log::error($error_message);
 
             $info['error'] = $error_message;
+
             return $info;
         }
     }
