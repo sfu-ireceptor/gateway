@@ -31,8 +31,10 @@ class RestService extends Model
         }
     }
 
-    public function refreshChunkSize()
+    public function refreshInfo()
     {
+        $info = [];
+
         $defaults = [];
         $defaults['base_uri'] = $this->url;
         $defaults['verify'] = false;    // accept self-signed SSL certificates
@@ -44,19 +46,23 @@ class RestService extends Model
             $body = $response->getBody();
             $json = json_decode($body);
 
-            if (isset($json->max_size)) {
-                $this->chunk_size = $json->max_size;
-                $this->save();
+            $this->chunk_size = $json->max_size ?? null;
+            $this->save();
 
-                return $this->chunk_size;
-            }
+            $this->api_version = $json->api->version ?? null;
+            $this->save();
 
-            return null;
+            $info['chunk_size'] = $this->chunk_size;
+            $info['api_version'] = $this->api_version;
+
+            return $info;
         } catch (\Exception $e) {
             $error_message = $e->getMessage();
+            
             Log::error($error_message);
 
-            return $error_message;
+            $info['error'] = $error_message;
+            return $info;
         }
     }
 
