@@ -45,26 +45,29 @@ class RestService extends Model
             $response = $client->get('info');
             $body = $response->getBody();
             $json = json_decode($body);
+            $chunk_size = $json->max_size ?? null;
+            $api_version = $json->api->version ?? null;
+        
+            if($api_version != null) {
+                // keep only major and minor numbers
+               $t = explode('.', $api_version);
+               $api_version = $t[0] . '.' . $t[1]; 
+            }
 
-            $this->chunk_size = $json->max_size ?? null;
+            $this->chunk_size = $chunk_size;
+            $this->api_version = $api_version;
             $this->save();
-
-            $this->api_version = $json->api->version ?? null;
-            $this->save();
-
+            
             $info['chunk_size'] = $this->chunk_size;
             $info['api_version'] = $this->api_version;
 
-            return $info;
         } catch (\Exception $e) {
             $error_message = $e->getMessage();
-
             Log::error($error_message);
-
             $info['error'] = $error_message;
-
-            return $info;
         }
+
+        return $info;
     }
 
     public function refreshStatsCapability()
