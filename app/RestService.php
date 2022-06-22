@@ -47,20 +47,19 @@ class RestService extends Model
             $json = json_decode($body);
             $chunk_size = $json->max_size ?? null;
             $api_version = $json->api->version ?? null;
-        
-            if($api_version != null) {
+
+            if ($api_version != null) {
                 // keep only major and minor numbers
-               $t = explode('.', $api_version);
-               $api_version = $t[0] . '.' . $t[1]; 
+                $t = explode('.', $api_version);
+                $api_version = $t[0] . '.' . $t[1];
             }
 
             $this->chunk_size = $chunk_size;
             $this->api_version = $api_version;
             $this->save();
-            
+
             $info['chunk_size'] = $this->chunk_size;
             $info['api_version'] = $this->api_version;
-
         } catch (\Exception $e) {
             $error_message = $e->getMessage();
             Log::error($error_message);
