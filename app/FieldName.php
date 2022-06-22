@@ -42,9 +42,11 @@ class FieldName extends Model
     }
 
     // return field array for a given field name
-    public static function getField($field_name, $column = 'ir_id')
+    public static function getField($field_name, $column = 'ir_id', $api_version = null)
     {
-        $field = static::where($column, $field_name)->first();
+        $api_version = $api_version ?? config('ireceptor.default_api_version');
+
+        $field = static::where($column, $field_name)->where('api_version', $api_version)->first();
         if ($field != null) {
             $field = $field->toArray();
         }
@@ -53,9 +55,9 @@ class FieldName extends Model
     }
 
     // return field type for a given field name
-    public static function getFieldType($field_id, $column = 'ir_id')
+    public static function getFieldType($field_id, $column = 'ir_id', $api_version = null)
     {
-        $field = static::getField($field_id, $column);
+        $field = static::getField($field_id, $column, $api_version);
 
         $field_type = null;
         if ($field != null) {
@@ -65,15 +67,17 @@ class FieldName extends Model
         return $field_type;
     }
 
-    public static function getSampleFields()
+    public static function getSampleFields($api_version = null)
     {
+        $api_version = $api_version ?? config('ireceptor.default_api_version');
+
         $ir_class_list = ['Repertoire'];
 
         if (config('ireceptor.display_all_ir_fields')) {
             $ir_class_list[] = 'IR_Repertoire';
         }
 
-        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('default_order', 'asc')->get()->toArray();
+        $l = static::whereIn('ir_class', $ir_class_list)->where('api_version', $api_version)->orderBy('default_order', 'asc')->get()->toArray();
 
         return $l;
     }
@@ -161,7 +165,9 @@ class FieldName extends Model
 
     public static function getFieldsGrouped($ir_class_list)
     {
-        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('ir_subclass', 'asc')->orderBy('ir_short', 'asc')->get()->toArray();
+        $api_version = config('ireceptor.default_api_version');
+
+        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('ir_subclass', 'asc')->where('api_version', $api_version)->orderBy('ir_short', 'asc')->get()->toArray();
         $groups = static::getGroups();
 
         $gl = [];
