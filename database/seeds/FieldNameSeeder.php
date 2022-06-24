@@ -41,7 +41,7 @@ class FieldNameSeeder extends CsvSeeder
             foreach ($file_list as $filename) {
                 $this->filename = $filename;
                 echo 'Adding mapping file ' . $filename . "\n";
-                
+
                 parent::run();
 
                 // delete any empty rows
