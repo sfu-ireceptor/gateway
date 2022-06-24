@@ -154,7 +154,7 @@ class RestService extends Model
      * @param  array  $query_parameters  Example: ["facets" => "repertoire_id"]
      * @return string JSON
      */
-    public static function generate_json_query($filters, $query_parameters = [])
+    public static function generate_json_query($filters, $query_parameters = [], $api_version = null)
     {
         // clean filters
         $filters = self::clean_filters($filters);
@@ -165,7 +165,7 @@ class RestService extends Model
         }
 
         // rename filters: internal gateway id -> ADC API name
-        $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query');
+        $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query', $api_version);
 
         // build array of filter clauses
         $filter_list = [];
@@ -393,15 +393,14 @@ class RestService extends Model
         // clean filters for services
         $filters = self::clean_filters($filters);
 
-        // generate filters string (JSON)
-        $filters_json = self::generate_json_query($filters);
-
         // prepare request parameters for all services
         $request_params_all = [];
         foreach ($rest_service_list as $rs) {
             $t = [];
             $t['url'] = $rs->url . 'repertoire';
-            $t['params'] = $filters_json;
+
+            $t['params'] = self::generate_json_query($filters, [], $rs->api_version);
+
             $t['rs'] = $rs;
             $t['timeout'] = config('ireceptor.service_request_timeout_samples');
 
@@ -582,8 +581,6 @@ class RestService extends Model
             $query_parameters = [];
             $query_parameters['facets'] = 'repertoire_id';
 
-            $filters_json = self::generate_json_query($service_filters, $query_parameters);
-
             // prepare parameters for each service
             $t = [];
 
@@ -591,7 +588,7 @@ class RestService extends Model
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'rearrangement';
 
-            $t['params'] = $filters_json;
+            $t['params'] = self::generate_json_query($service_filters, $query_parameters, $rs->api_version);
             $t['timeout'] = config('ireceptor.service_request_timeout');
 
             $request_params[] = $t;
@@ -715,8 +712,6 @@ class RestService extends Model
             $query_parameters = [];
             $query_parameters['facets'] = 'repertoire_id';
 
-            $filters_json = self::generate_json_query($service_filters, $query_parameters);
-
             // prepare parameters for each service
             $t = [];
 
@@ -724,7 +719,7 @@ class RestService extends Model
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'clone';
 
-            $t['params'] = $filters_json;
+            $t['params'] = self::generate_json_query($service_filters, $query_parameters, $rs->api_version);
             $t['timeout'] = config('ireceptor.service_request_timeout');
 
             $request_params[] = $t;
@@ -803,8 +798,6 @@ class RestService extends Model
             $query_parameters = [];
             $query_parameters['facets'] = 'repertoire_id';
 
-            $filters_json = self::generate_json_query($service_filters, $query_parameters);
-
             // prepare parameters for each service
             $t = [];
 
@@ -812,7 +805,7 @@ class RestService extends Model
             $t['rs'] = $rs;
             $t['url'] = $rs->url . $query_type;
 
-            $t['params'] = $filters_json;
+            $t['params'] = self::generate_json_query($service_filters, $query_parameters, $rs->api_version);
             $t['timeout'] = config('ireceptor.service_request_timeout');
 
             $request_params[] = $t;
@@ -1121,8 +1114,7 @@ class RestService extends Model
             $params['from'] = 0;
             $params['size'] = $n;
 
-            $filters_json = self::generate_json_query($service_filters, $params);
-            $t['params'] = $filters_json;
+            $t['params'] = self::generate_json_query($service_filters, $params, $rs->api_version);
 
             $request_params[] = $t;
         }
@@ -1152,10 +1144,7 @@ class RestService extends Model
                         $t['url'] = $rs->url . 'cell';
 
                         $params = [];
-                        // $params['fields'] = ['cell_id', 'value', 'property_expression'];
-
-                        $filters_json = self::generate_json_query($filters, $params);
-                        $t['params'] = $filters_json;
+                        $t['params'] = self::generate_json_query($filters, $params, $rs->api_version);
 
                         $request_params[] = $t;
                     }
@@ -1210,8 +1199,7 @@ class RestService extends Model
                         $params = [];
                         // $params['fields'] = ['cell_id', 'value', 'property_expression'];
 
-                        $filters_json = self::generate_json_query($filters, $params);
-                        $t['params'] = $filters_json;
+                        $t['params'] = self::generate_json_query($filters, $params, $rs->api_version);
 
                         $request_params[] = $t;
                     }
@@ -1279,8 +1267,7 @@ class RestService extends Model
                         $params = [];
                         $params['fields'] = ['v_call', 'c_call', 'junction_aa', 'cell_id', 'clone_id'];
 
-                        $filters_json = self::generate_json_query($filters, $params);
-                        $t['params'] = $filters_json;
+                        $t['params'] = self::generate_json_query($filters, $params, $rs->api_version);
 
                         $request_params[] = $t;
                     }
@@ -1428,13 +1415,11 @@ class RestService extends Model
 
             $query_parameters = [];
 
-            // generate JSON query
-            $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
-
             $t = [];
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'repertoire';
-            $t['params'] = $rs_filters_json;
+            $t['params'] = self::generate_json_query($rs_filters, $query_parameters, $rs->api_version);
+
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
             // add number suffix for rest services belonging to the same group
@@ -1500,13 +1485,11 @@ class RestService extends Model
         foreach ($rs_list as $rs) {
             $query_parameters = [];
 
-            // generate JSON query
-            $rs_filters_json = self::generate_json_query($filters, $query_parameters);
 
             $t = [];
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'repertoire';
-            $t['params'] = $rs_filters_json;
+            $t['params'] = self::generate_json_query($filters, $query_parameters, $rs->api_version);
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
             // add number suffix for rest services belonging to the same group
@@ -1608,12 +1591,11 @@ class RestService extends Model
                     Log::debug('generating query for chunk ' . $i);
                     Log::debug('Current memory usage:' . (memory_get_usage() / 1024 / 1024) . " MiB\n\n");
 
-                    $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
-
                     $t = [];
                     $t['rs'] = $rs;
                     $t['url'] = $rs->url . 'rearrangement';
-                    $t['params'] = $rs_filters_json;
+                    $t['params'] = self::generate_json_query($rs_filters, $query_parameters, $rs->api_version);
+
                     $t['timeout'] = config('ireceptor.service_file_request_chunked_timeout');
 
                     $t['params_array'] = $query_parameters;
@@ -1632,13 +1614,11 @@ class RestService extends Model
                     $request_params_chunking[] = $t;
                 }
             } else {
-                // generate JSON query
-                $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
-
                 $t = [];
                 $t['rs'] = $rs;
                 $t['url'] = $rs->url . 'rearrangement';
-                $t['params'] = $rs_filters_json;
+                $t['params'] = self::generate_json_query($rs_filters, $query_parameters, $rs->api_version);
+
                 $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
                 // add number suffix for rest services belonging to a group
@@ -1831,7 +1811,7 @@ class RestService extends Model
                 $query_parameters = [];
 
                 // generate JSON query
-                $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
+                $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters, $rs->api_version);
             }
 
             $t = [];
@@ -1908,7 +1888,7 @@ class RestService extends Model
             $query_parameters = [];
 
             // generate JSON query
-            $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
+            $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters, $rs->api_version);
 
             $t = [];
             $t['rs'] = $rs;
@@ -1994,7 +1974,7 @@ class RestService extends Model
             $query_parameters = [];
 
             // generate JSON query
-            $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
+            $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters, $rs->api_version);
 
             $t = [];
             $t['rs'] = $rs;
@@ -2186,7 +2166,7 @@ class RestService extends Model
                 $query_parameters = [];
 
                 // generate JSON query
-                $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
+                $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters, $rs->api_version);
             }
 
             $t = [];
@@ -2269,7 +2249,7 @@ class RestService extends Model
                 $query_parameters = [];
 
                 // generate JSON query
-                $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters);
+                $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters, $rs->api_version);
             }
 
             $t = [];
