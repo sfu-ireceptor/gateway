@@ -1485,7 +1485,6 @@ class RestService extends Model
         foreach ($rs_list as $rs) {
             $query_parameters = [];
 
-
             $t = [];
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'repertoire';
