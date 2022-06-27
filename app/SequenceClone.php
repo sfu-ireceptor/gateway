@@ -46,12 +46,17 @@ class SequenceClone
             }
 
             $obj = $response['data'];
-            $clone_list = array_merge($clone_list, data_get($obj, 'Clone', []));
-        }
 
-        // convert any array properties to strings
-        $clone_list = array_map('convert_arrays_to_strings', $clone_list);
-        $clone_list = FieldName::convertObjectList($clone_list, 'ir_adc_api_query', 'ir_id', 'Clone');
+            $rs_clone_list = data_get($obj, 'Clone', []);
+
+            // convert any array properties to strings
+            $rs_clone_list = array_map('convert_arrays_to_strings', $rs_clone_list);
+
+            // convert fields
+            $rs_clone_list = FieldName::convertObjectList($rs_clone_list, 'ir_adc_api_query', 'ir_id', 'Clone', $rs->api_version);
+
+            $clone_list = array_merge($clone_list, $rs_clone_list);
+        }
 
         // add to stats data
         $data['items'] = $clone_list;

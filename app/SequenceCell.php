@@ -46,12 +46,18 @@ class SequenceCell
             }
 
             $obj = $response['data'];
-            $cell_list = array_merge($cell_list, data_get($obj, 'Cell', []));
-        }
 
-        // convert any array properties to strings
-        // $cell_list = array_map('convert_arrays_to_strings', $cell_list);
-        $cell_list = FieldName::convertObjectList($cell_list, 'ir_adc_api_query', 'ir_id', 'Cell');
+
+            $rs_cell_list = data_get($obj, 'Cell', []);
+
+            // convert any array properties to strings
+            $rs_cell_list = array_map('convert_arrays_to_strings', $rs_cell_list);
+
+            // convert fields
+            $rs_cell_list = FieldName::convertObjectList($rs_cell_list, 'ir_adc_api_query', 'ir_id', 'Cell', $rs->api_version);
+
+            $cell_list = array_merge($cell_list, $rs_cell_list);
+        }
 
         // add to stats data
         $data['items'] = $cell_list;
