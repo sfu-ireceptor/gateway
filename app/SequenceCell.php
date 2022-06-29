@@ -47,7 +47,6 @@ class SequenceCell
 
             $obj = $response['data'];
 
-
             $rs_cell_list = data_get($obj, 'Cell', []);
 
             // convert any array properties to strings
