@@ -448,10 +448,18 @@ class AdminController extends Controller
         return redirect('admin/databases')->with('notification', $message);
     }
 
-    public function getFieldNames()
+    public function getFieldNames($api_version = null)
     {
+        $api_version = $api_version ?? config('ireceptor.default_api_version');
+
+        $api_version_list = FieldName::getAPIVersions();
+
+        $field_name_list = FieldName::where('api_version', $api_version)->get()->toArray();
+
         $data = [];
-        $data['field_name_list'] = FieldName::all()->toArray();
+        $data['api_version'] = $api_version;
+        $data['api_version_list'] = $api_version_list;
+        $data['field_name_list'] = $field_name_list;
 
         return view('fieldNames', $data);
     }

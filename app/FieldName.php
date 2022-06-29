@@ -243,4 +243,16 @@ class FieldName extends Model
 
         return static::getFieldsGrouped($ir_class_list);
     }
+
+    public static function getAPIVersions()
+    {
+        $api_version_list = [];
+
+        $l = self::groupBy('api_version')->get('api_version')->toArray();
+        foreach ($l as $t) {
+            $api_version_list[] = $t['api_version'];
+        }
+
+        return $api_version_list;
+    }
 }
