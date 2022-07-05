@@ -5,10 +5,12 @@
 
 @section('content')
 
-<div class="container-fluid clone_container">
-
+<div class="banner_title clones">
 	<h1>2. Clone Search</h1>
 	<p class="sh1">Filter by clone and clone annotation feature</p>
+</div>
+
+<div class="container-fluid clone_container">
 
 	<div class="row">		
 		<div class="col-md-2 filters">
@@ -255,7 +257,7 @@
 							<span class="text">Download all {{number_format($total_filtered_clones)}} clones</span>
 						</a>
 					@else
-						<a href="/clones-download?query_id={{ $query_id }}&amp;n={{ $total_filtered_clones }}&amp;page=clones" class="btn btn-primary pull-right download_clones">
+						<a href="/clones-download?query_id={{ $query_id }}&amp;n={{ $total_filtered_clones }}&amp;page=clones" class="btn btn-clones pull-right download_clones">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 							<span class="text">Download all {{number_format($total_filtered_clones)}} clones <strong>{{ $download_time_estimate ? '(will take up to ' . $download_time_estimate . ')' : ''}}</strong></span>
 						</a>

@@ -684,18 +684,23 @@ footer a:hover {
 
 /* @group page banner */
 
-/*.banner_title {
+.banner_title {
 	margin-top: -20px;
-	padding: 25px 15px;
+	padding: 20px 20px;
 	margin-bottom: 20px;
+	border-right-style: none;
+	border-left-style: none;
+	border-style: solid;
+	border-width: 1px;
 }
 
 .banner_title.clones {
-	background-color: #ffa15a;
+	background-color: #f4e0ce;
+	border-color: #f4a45a;
 }
 
 .banner_title.sequences {
-	background-color: #91dc94;
+	/*background-color: #91dc94;*/
 }
 
 .banner_title.clones h1, .banner_title.sequences h1 {
@@ -706,8 +711,66 @@ footer a:hover {
 	color: inherit;
 	margin-bottom: 0;
 	padding-bottom: 0;
-}*/
+}
 
+.btn-clones {
+  color: #fff;
+  background-color: #e28f50;
+  border-color: #e08038;
+}
+
+.btn-clones:focus,
+.btn-clones.focus {
+  color: #fff;
+  background-color: #e07321;
+  border-color: #8c4510;
+}
+.btn-clones:hover {
+  color: #fff;
+  background-color: #e07321;
+  border-color: #c86113;
+}
+.btn-clones:active,
+.btn-clones.active,
+.open > .dropdown-toggle.btn-clones {
+  color: #fff;
+  background-color: #e07321;
+  background-image: none;
+  border-color: #c86113;
+}
+.btn-clones:active:hover,
+.btn-clones.active:hover,
+.open > .dropdown-toggle.btn-clones:hover,
+.btn-clones:active:focus,
+.btn-clones.active:focus,
+.open > .dropdown-toggle.btn-clones:focus,
+.btn-clones:active.focus,
+.btn-clones.active.focus,
+.open > .dropdown-toggle.btn-clones.focus {
+  color: #fff;
+  background-color: #c86113;
+  border-color: #8c4510;
+}
+.btn-clones.disabled:hover,
+.btn-clones[disabled]:hover,
+fieldset[disabled] .btn-clones:hover,
+.btn-clones.disabled:focus,
+.btn-clones[disabled]:focus,
+fieldset[disabled] .btn-clones:focus,
+.btn-clones.disabled.focus,
+.btn-clones[disabled].focus,
+fieldset[disabled] .btn-clones.focus {
+  background-color: #f0ad4e;
+  border-color: #eea236;
+}
+
+.btn-warning1 {
+  background-color: #eea236;
+}
+
+.btn-warning2 {
+  background-color: #985f0d;
+}
 
 /* @end */
 
