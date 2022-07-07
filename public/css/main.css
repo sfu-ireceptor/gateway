@@ -724,6 +724,18 @@ footer a:hover {
 	padding-bottom: 0;
 }
 
+.badge-sequences {
+  background-color: #4a90e2;
+}
+
+.badge-clones {
+  background-color: #e28f50;
+}
+
+.badge-cells {
+  background-color: #55bf59;
+}
+
 /* @group clones */
 
 .btn-clones {
@@ -835,6 +847,7 @@ fieldset[disabled] .btn-cells.focus {
 /* @end */
 
 /* @group sequences */
+
 
 .btn-sequences {
   color: #fff;
@@ -1291,6 +1304,12 @@ a.download_sequences {
 
 .nav-tabs a {
 	text-decoration: none;
+}
+
+.nav-tabs a .badge {
+	margin-left: 4px;
+	margin-top: -2px;
+	padding: 4px 8px;
 }
 
 /* @end */

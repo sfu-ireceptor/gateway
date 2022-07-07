@@ -289,9 +289,24 @@
 
 				<!-- Sequences/Clones/Cells tabs -->
 				<ul class="nav nav-tabs">
-					<li role="presentation" class="{{ $tab == 'sequence' ? 'active' : '' }}"><a class="sequences" href="/samples?query_id={{ $sample_query_id }}">Sequence Search Results ({{ $nb_samples_with_sequences }})</a></li>
-					<li role="presentation" class="{{ $tab == 'clone' ? 'active' : '' }}"><a class="clones" href="/samples/clone?query_id={{ $sample_query_id }}">Clone Search Results ({{ $nb_samples_with_clones }})</a></li>
-					<li role="presentation" class="{{ $tab == 'cell' ? 'active' : '' }}"><a class="cells" href="/samples/cell?query_id={{ $sample_query_id }}">Cell Search Results ({{ $nb_samples_with_cells }})</a></li>
+					<li role="presentation" class="{{ $tab == 'sequence' ? 'active' : '' }}">
+						<a class="sequences" href="/samples?query_id={{ $sample_query_id }}">
+							Sequence Search Results
+							 <span class="badge badge-sequences">{{ $nb_samples_with_sequences }}</span>
+						</a>
+					</li>
+					<li role="presentation" class="{{ $tab == 'clone' ? 'active' : '' }}">
+						<a class="clones" href="/samples/clone?query_id={{ $sample_query_id }}">
+							Clone Search Results
+							<span class="badge badge-clones">{{ $nb_samples_with_clones }}</span>
+						</a>
+					</li>
+					<li role="presentation" class="{{ $tab == 'cell' ? 'active' : '' }}">
+						<a class="cells" href="/samples/cell?query_id={{ $sample_query_id }}">
+							Cell Search Results
+							<span class="badge badge-cells">{{ $nb_samples_with_cells }}</span>
+						</a>
+					</li>
 				</ul>
 
 				@if (empty($samples_with_sequences))
@@ -375,7 +390,7 @@
 										</h3>
 									</div>
 									<div class="col-md-6 repertoires_button_container">
-										<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
+										<a role="button" class="btn btn-primary btn-sequences browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
 											Browse sequences from {{ $nb_samples }} repertoires →
 										</a>
 									
@@ -556,7 +571,7 @@
 									</div>
 
 									<div class="col-md-6 repertoires_button_container">
-										<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
+										<a role="button" class="btn btn-primary btn-sequences browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
 											Browse sequences from {{ $nb_samples }} repertoires →
 										</a>
 									</div>
@@ -629,7 +644,7 @@
 										</h3>
 									</div>
 									<div class="col-md-6 repertoires_button_container">
-										<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/clones?query_id={{ $sequences_query_id }}">
+										<a role="button" class="btn btn-primary btn-clones browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/clones?query_id={{ $sequences_query_id }}">
 											Browse clones from {{ $nb_samples }} repertoires →
 										</a>
 									
@@ -809,7 +824,7 @@
 									</div>
 
 									<div class="col-md-6 repertoires_button_container">
-										<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/clones?query_id={{ $sequences_query_id }}">
+										<a role="button" class="btn btn-primary btn-clones browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/clones?query_id={{ $sequences_query_id }}">
 											Browse clones from {{ $nb_samples }} repertoires →
 										</a>
 									</div>
@@ -881,7 +896,7 @@
 										</h3>
 									</div>
 									<div class="col-md-6 repertoires_button_container">
-										<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/cells?query_id={{ $sequences_query_id }}">
+										<a role="button" class="btn btn-primary btn-cells browse_cells browse-seq-data-button button_to_enable_on_load"  href="/cells?query_id={{ $sequences_query_id }}">
 											Browse cells from {{ $nb_samples }} repertoires →
 										</a>
 									
@@ -1063,7 +1078,7 @@
 									</div>
 
 									<div class="col-md-6 repertoires_button_container">
-										<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/cells?query_id={{ $sequences_query_id }}">
+										<a role="button" class="btn btn-primary btn-cells browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/cells?query_id={{ $sequences_query_id }}">
 											Browse cells from {{ $nb_samples }} repertoires →
 										</a>
 									</div>
