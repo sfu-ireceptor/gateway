@@ -329,7 +329,7 @@
 						@if ($tab == 'sequence')
 							<div role="tabpanel" class="tab-pane active" id="repertoireSequenceSearchResults">
 								<!-- Statistics -->
-								<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
+								<h3 class="{{ empty($filter_fields) ? 'first' : '' }} statistics-header">Statistics</h3>
 								<div class="statistics">
 									<p>
 										<strong>
@@ -583,7 +583,7 @@
 						@if ($tab == 'clone')
 							<div role="tabpanel" class="tab-pane active" id="repertoireCloneSearchResults">
 								<!-- Statistics -->
-								<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
+								<h3 class="{{ empty($filter_fields) ? 'first' : '' }} statistics-header">Statistics</h3>
 								<div class="statistics">
 									<p>
 										<strong>
@@ -835,7 +835,7 @@
 						@if ($tab == 'cell')
 							<div role="tabpanel" class="tab-pane active" id="repertoireCellSearchResults">
 								<!-- Statistics -->
-								<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
+								<h3 class="{{ empty($filter_fields) ? 'first' : '' }} statistics-header">Statistics</h3>
 								<div class="statistics">
 									<p>
 										<strong>
