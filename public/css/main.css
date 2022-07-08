@@ -524,7 +524,9 @@ a.navbar-brand img {
 
 .navbar-nav .search a,
 .navbar-nav .samples a,
-.navbar-nav .sequences a {
+.navbar-nav .sequences a,
+.navbar-nav .clones a,
+.navbar-nav .cells a {
 	padding-right: 0px;
 	padding-left: 20px;
 }
@@ -542,14 +544,30 @@ a.navbar-brand img {
 }
 
 .navbar-nav .samples a.active,
-.navbar-nav .sequences a.active {
+.navbar-nav .sequences a.active,
+.navbar-nav .clones a.active,
+.navbar-nav .cells a.active {
 	color: black;
 	font-weight: bold;	
 }
 
-.navbar-nav .sequences a {
+.navbar-nav .sequences a,
+.navbar-nav .clones a,
+.navbar-nav .cells a {
 	padding-left: 53px;
 	padding-right: 30px;
+}
+
+.navbar-nav .sequences a.active {
+	background-color: #d7e2f0;
+}
+
+.navbar-nav .clones a.active {
+	background-color: #f4e0ce;
+}
+
+.navbar-nav .cells a.active {
+	background-color: #cdf4cf;
 }
 
 .navbar-nav .search > a::after,
@@ -724,6 +742,11 @@ footer a:hover {
 .banner_title.sequences {
 	background-color: #d7e2f0;
 	border-color: #4a90e2;
+}
+
+.banner_title.samples {
+	background-color: #e7e7e7;
+	border-color: #b2b2b2;	
 }
 
 .banner_title.sequences {

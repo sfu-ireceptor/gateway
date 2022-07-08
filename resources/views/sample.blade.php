@@ -4,10 +4,12 @@
 
 @section('content')
 
-<div class="container-fluid sample_container">
-
+<div class="banner_title samples">
 	<h1>1. Repertoire Metadata Search</h1>
 	<p class="sh1">Filter by study/subject/sample and choose repertoires to analyze relevant sequence data</p>
+</div>
+
+<div class="container-fluid samples_container">
 
 	<div class="row">
 		<div class="col-md-2 filters">

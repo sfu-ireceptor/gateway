@@ -47,7 +47,7 @@
 								</ul>
 							</li>
 							<li role="presentation" class="active sequences">
-								<a href="/samples" class="active inactive">Sequence Quick Search</a>
+								<a href="/samples" class="active">Sequence Quick Search</a>
 							</li>
 				    	@elseif(Request::is('samples*'))
 							<li role="presentation" class="dropdown active search">
@@ -61,7 +61,7 @@
 								</ul>
 							</li>
 							<li role="presentation" class="active samples">
-								<a href="#" class="active inactive">
+								<a href="#" class="active">
 									1. Repertoire Metadata
 								</a>
 							</li>
@@ -84,8 +84,8 @@
 									1. Repertoire Metadata
 								</a>
 							</li>
-							<li role="presentation" class="active sequences">
-								<a href="#" class="active inactive">2. Clones</a>
+							<li role="presentation" class="active clones">
+								<a href="#" class="active">2. Clones</a>
 							</li>
 						@elseif(Request::is('cells*'))
 							<li role="presentation" class="dropdown active search">
@@ -103,8 +103,8 @@
 									1. Repertoire Metadata
 								</a>
 							</li>
-							<li role="presentation" class="active sequences">
-								<a href="#" class="active inactive">2. Cells</a>
+							<li role="presentation" class="active cells">
+								<a href="#" class="active">2. Cells</a>
 							</li>
 						@elseif(Request::is('sequences*'))
 							<li role="presentation" class="dropdown active search">
@@ -123,7 +123,7 @@
 								</a>
 							</li>
 							<li role="presentation" class="active sequences">
-								<a href="#" class="active inactive">2. Sequences</a>
+								<a href="#" class="active">2. Sequences</a>
 							</li>
 						@else
 							<li class="dropdown">

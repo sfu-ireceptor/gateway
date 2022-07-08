@@ -3,10 +3,12 @@
 @section('title', 'Sequence Quick Search')
 
 @section('content')
-<div class="container-fluid sequence_container">
-
+<div class="banner_title sequences">
 	<h1>Sequence Quick Search</h1>
 	<p class="sh1">Filter by sequence and sequence annotation features (e.g. Junction)</p>
+</div>
+
+<div class="container-fluid sequence_container">
 
 	<div class="row loading_contents">
 		<div class="col-md-2 filters">
@@ -205,7 +207,7 @@
 							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
 						</a>
 					@else
-						<a href="/sequences-download?query_id={{ $download_query_id }}&amp;n={{ $total_filtered_sequences }}&amp;page=sequences-quick-search&amp;page_query_id={{ $query_id }}" class="btn btn-primary pull-right download_sequences">
+						<a href="/sequences-download?query_id={{ $download_query_id }}&amp;n={{ $total_filtered_sequences }}&amp;page=sequences-quick-search&amp;page_query_id={{ $query_id }}" class="btn btn-sequences pull-right download_sequences">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences <strong>{{ $download_time_estimate ? '(will take up to ' . $download_time_estimate . ')' : ''}}</strong></span>
 						</a>
