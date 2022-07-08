@@ -1311,6 +1311,7 @@ a.download_sequences {
 
 .nav-tabs  {
 	margin-bottom: 10px;
+	border-bottom-color: #b2b2b2;
 }
 
 .nav-tabs a {
@@ -1321,6 +1322,11 @@ a.download_sequences {
 	margin-left: 4px;
 	margin-top: -2px;
 	padding: 4px 8px;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+	border-color: #b2b2b2;
+	border-bottom-color: transparent;
 }
 
 /* @end */
