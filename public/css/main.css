@@ -251,6 +251,10 @@ form .error {
 	font-size: 14px;
 }
 
+.filters .panel-title a {
+	display: block;
+}
+
 .filters {
 	font-size: 14px;
 }
