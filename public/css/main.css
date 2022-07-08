@@ -410,6 +410,17 @@ table.much_data > tbody > tr > td.stats span.label {
 	padding: 3px 18px;
 }
 
+table.much_data > tbody > tr > td.stats-sequences span.label {
+	background-color: #4a90e2;
+}
+
+table.much_data > tbody > tr > td.stats-clones span.label {
+	background-color: #e28f50;
+}
+
+table.much_data > tbody > tr > td.stats-cells span.label {
+	background-color: #55bf59;
+}
 
 /* @end */
 
@@ -688,10 +699,10 @@ footer a:hover {
 	margin-top: -20px;
 	padding: 20px 20px;
 	margin-bottom: 20px;
-	border-right-style: none;
-	border-left-style: none;
 	border-style: solid;
 	border-width: 1px;
+	border-right-style: none;
+	border-left-style: none;
 	border-bottom-style: none;
 }
 
