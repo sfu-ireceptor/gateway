@@ -666,7 +666,6 @@
 								<table class="table table-striped sample_list table-condensed much_data table-bordered sortable">
 									<thead> 
 										<tr>
-											<th class="stats">Stats</th>
 											@foreach ($field_list as $field)
 												{{-- skip sequence column --}}
 												@if ($field['ir_id'] == 'ir_sequence_count')
@@ -706,23 +705,6 @@
 									<tbody>
 										@foreach ($samples_with_sequences as $sample)
 										<tr>
-											<td class="stats stats-clones">
-												@if(isset($sample->stats) && $sample->stats)
-													<a href="#modal_stats" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-name="{{ $sample->subject_id }} - {{ $sample->sample_id }} - {{ $sample->pcr_target_locus }}" data-toggle="modal" data-target="#statsModal">
-														<span class="label label-primary">
-															<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
-														</span>
-													</a>
-													@if(isset($sample->show_stats_notification))
-														<div class="stats_notification_container">
-															<div class="tooltip left in stats_notification" style="display: block;">
-																<div class="tooltip-arrow" style="top: 50%;"></div>
-																<div class="tooltip-inner">Repertoire statistics<br>are now available.</div>
-															</div>
-														</div>
-													@endif
-												@endif						
-											</td>
 											@foreach ($field_list as $field)
 												
 												{{-- skip sequence column --}}
@@ -918,7 +900,6 @@
 								<table class="table table-striped sample_list table-condensed much_data table-bordered sortable">
 									<thead> 
 										<tr>
-											<th class="stats">Stats</th>
 											@foreach ($field_list as $field)
 												
 												{{-- skip sequence column --}}
@@ -960,23 +941,6 @@
 									<tbody>
 										@foreach ($samples_with_sequences as $sample)
 										<tr>
-											<td class="stats  stats-cells">
-												@if(isset($sample->stats) && $sample->stats)
-													<a href="#modal_stats" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-name="{{ $sample->subject_id }} - {{ $sample->sample_id }} - {{ $sample->pcr_target_locus }}" data-toggle="modal" data-target="#statsModal">
-														<span class="label label-primary">
-															<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
-														</span>
-													</a>
-													@if(isset($sample->show_stats_notification))
-														<div class="stats_notification_container">
-															<div class="tooltip left in stats_notification" style="display: block;">
-																<div class="tooltip-arrow" style="top: 50%;"></div>
-																<div class="tooltip-inner">Repertoire statistics<br>are now available.</div>
-															</div>
-														</div>
-													@endif
-												@endif						
-											</td>
 											@foreach ($field_list as $field)
 											
 												{{-- skip sequence column --}}
