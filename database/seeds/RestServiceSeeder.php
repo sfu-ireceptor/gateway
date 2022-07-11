@@ -138,6 +138,10 @@ class RestServiceSeeder extends Seeder
                 'url' => 'https://agschwab.uni-muenster.de/airr/v1/',
                 'name' => 'University of Münster',
             ],
+            [
+                'url' => 'https://vdjbaseirplus.biu.ac.il/airr/v1/',
+                'name' => 'Bar-Ilan University',
+            ],
         ];
 
         // if grouping is disabled, remove group code
