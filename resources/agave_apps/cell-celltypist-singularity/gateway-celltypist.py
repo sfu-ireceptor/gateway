@@ -12,33 +12,14 @@ def getArguments():
         description=""
     )
 
-    # The directory where the matrix.mtx, features.tsv, and barcodes.tsv files
-    # reside. These files must be compressed.
+    # The filename (with or without full path) for the input file.
     parser.add_argument("input_file", help="The input Anndata file. This is expected to be normalized to a total of 10000 counts per cell and logarithmically scaled")
 
-    # The output file (with or without path) for the h5ad file.
-    parser.add_argument("output_file", help="The Anndata output file")
+    # The output directory (full or relative path) for output
+    parser.add_argument("output_directory", help="The directory where the plotting and report files are saved.")
 
-    # Request normaliztion of the counts for each cell to the given value.
-    parser.add_argument(
-        "--normalize",
-        action="store_true",
-        help="Request each cell count to be normalized")
-
-    # Request normaliztion of the counts for each cell to the given value.
-    parser.add_argument(
-        "--normalize_value",
-        dest="normalize_value",
-        type=float,
-        default=10000.0,
-        help="Request each cell count to be normalized to this value")
-
-    # Perform logarithmic processing - as required by some tools (celltypist)
-    parser.add_argument(
-        "--log1p",
-        dest="log1p",
-        action="store_true",
-        help="Request the data to be transformed to a logarithmic representation.")
+    # The output file (filename only) for the h5ad file.
+    parser.add_argument("output_file", help="The Anndata output filename, will be written to output_directory")
 
     # Handle verbose processing
     parser.add_argument(
@@ -67,7 +48,7 @@ if __name__ == "__main__":
     print(model.cell_types)
 
     # Read in the h5ad file
-    print("IR-INFO: Reading 10X matrix directory " + options.input_file)
+    print("IR-INFO: Reading Cell file " + options.input_file)
     adata = scanpy.read(options.input_file)
 
     # We turn on the majority-voting classifier (majority_voting = True), which refines
@@ -87,9 +68,14 @@ if __name__ == "__main__":
     print(prediction_adata.obs)
 
     # Write the h5ad file
-    print("IR-INFO: Writing output to " + options.output_file)
-    print(adata.uns)
-    prediction_adata.write(options.output_file)
+    print("IR-INFO: Writing output to " + options.output_directory + "/" + options.output_file)
+    prediction_adata.write(options.output_directory + "/" + options.output_file)
+
+    # Write output
+    predictions.to_table(folder = options.output_directory, prefix="", xlsx = True)
+
+    # Plot results
+    predictions.to_plots(folder = options.output_directory, plot_probability = True)
 
     # Done
     sys.exit(0)
