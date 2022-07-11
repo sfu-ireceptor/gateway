@@ -81,7 +81,7 @@ class RestService extends Model
         try {
             $client = new \GuzzleHttp\Client($defaults);
 
-            $response = $client->get('stats');
+            $response = $client->get('stats/rearrangements');
             $body = $response->getBody();
             $json = json_decode($body);
 
