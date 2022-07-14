@@ -377,14 +377,14 @@ class SequenceController extends Controller
 
         // cell type
         $cell_type_ontology_list = [];
-        foreach ($metadata['cell_subset'] as $v) {
+        foreach ($metadata['cell_subset_id'] as $v) {
             $cell_type_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
         $data['cell_type_ontology_list'] = $cell_type_ontology_list;
 
         // organism ontology info
         $subject_organism_ontology_list = [];
-        foreach ($metadata['organism'] as $v) {
+        foreach ($metadata['organism_id'] as $v) {
             $subject_organism_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
         $data['subject_organism_ontology_list'] = $subject_organism_ontology_list;

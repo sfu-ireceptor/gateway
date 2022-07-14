@@ -158,7 +158,6 @@ class SampleController extends Controller
         // cell type
         $cell_type_ontology_list = [];
         foreach ($metadata['cell_subset_id'] as $v) {
-            // dd($metadata['cell_subset']);
             $cell_type_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
