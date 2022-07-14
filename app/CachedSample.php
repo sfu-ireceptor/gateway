@@ -2,10 +2,8 @@
 
 namespace App;
 
-use Jenssegers\Mongodb\Eloquent\Model;
-use App\FieldName;
 use Illuminate\Support\Str;
-
+use Jenssegers\Mongodb\Eloquent\Model;
 
 class CachedSample extends Model
 {

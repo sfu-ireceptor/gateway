@@ -26,8 +26,8 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
-$slice = Str::beforeLast('test_id', '_id');
-dd($slice);
+        $slice = Str::beforeLast('test_id', '_id');
+        dd($slice);
 
         $str = 'test_id';
         // $str2 = $str;
