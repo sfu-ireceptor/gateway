@@ -3,6 +3,9 @@
 namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model;
+use App\FieldName;
+use Illuminate\Support\Str;
+
 
 class CachedSample extends Model
 {
@@ -46,7 +49,7 @@ class CachedSample extends Model
         }
 
         // Distinct values for ontology fields
-        $ontology_fields = ['study_type', 'tissue', 'organism', 'disease_diagnosis', 'cell_subset'];
+        $ontology_fields = FieldName::getOntologyFields();
         foreach ($ontology_fields as $field) {
             $t[$field] = self::distinctOntologyValuesGrouped($field);
         }
@@ -116,8 +119,8 @@ class CachedSample extends Model
         // We are passed in the base field. Ontology fields have
         // the label in the base field and the ID in the base field
         // with an _id on the end.
-        $id_field = $field . '_id';
-        $label_field = $field;
+        $id_field = $field;
+        $label_field = Str::beforeLast($field, '_id');
 
         // Build a query, group by the ontology id_field, no nulls
         $l = self::groupBy([$id_field]);
@@ -131,7 +134,7 @@ class CachedSample extends Model
         // We want to restructure the ontology metadata fields
         foreach ($l as $k => $v) {
             // Add the field, ID, and label to the metadata
-            $v['field'] = $field;
+            $v['field'] = $label_field;
             $v['id'] = $v[$id_field];
             $v['label'] = $v[$label_field];
             // remove useless '_id' key and the original fields

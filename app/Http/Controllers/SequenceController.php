@@ -117,14 +117,12 @@ class SequenceController extends Controller
             $sample_filters = Query::getParams($sample_query_id);
 
             $sample_filter_fields = [];
-            $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id',
-                'disease_diagnosis_id', 'cell_subset_id', ];
             foreach ($sample_filters as $k => $v) {
                 if ($v) {
                     if (is_array($v)) {
                         // If the field is an ontology field, we want the filter fields to
                         // have both label and ID.
-                        if (in_array($k, $ontology_fields)) {
+                        if (in_array($k, FieldName::getOntologyFields())) {
                             // Get the base field (without the _id part). This is how the
                             // metadata is tagged.
                             $base_field = substr($k, 0, strlen($k) - 3);
@@ -471,8 +469,6 @@ class SequenceController extends Controller
 
         // create copy of current filters for display
         $filter_fields = [];
-        $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id',
-            'disease_diagnosis_id', 'cell_subset_id', ];
         foreach ($filters as $k => $v) {
             if ($v) {
                 if (is_array($v)) {
@@ -482,7 +478,7 @@ class SequenceController extends Controller
                     }
                     // If the field is an ontology field, we want the filter fields to
                     // have both label and ID.
-                    elseif (in_array($k, $ontology_fields)) {
+                    elseif (in_array($k, FieldName::getOntologyFields())) {
                         // Get the base field (without the _id part). This is how the
                         // metadata is tagged.
                         $base_field = substr($k, 0, strlen($k) - 3);

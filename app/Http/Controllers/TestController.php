@@ -26,6 +26,17 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
+$slice = Str::beforeLast('test_id', '_id');
+dd($slice);
+
+        $str = 'test_id';
+        // $str2 = $str;
+        $str2 = preg_replace('/_id$/', '', $str);
+        dd($str2);
+
+        $l = FieldName::getOntologyFields();
+        dd($l);
+
         $t = [];
 
         $t1 = [];

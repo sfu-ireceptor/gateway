@@ -127,7 +127,7 @@ class SampleController extends Controller
 
         // study type ontology info
         $study_type_ontology_list = [];
-        foreach ($metadata['study_type'] as $v) {
+        foreach ($metadata['study_type_id'] as $v) {
             $study_type_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
@@ -139,7 +139,7 @@ class SampleController extends Controller
 
         // organism ontology info
         $subject_organism_ontology_list = [];
-        foreach ($metadata['organism'] as $v) {
+        foreach ($metadata['organism_id'] as $v) {
             $subject_organism_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
@@ -157,13 +157,14 @@ class SampleController extends Controller
 
         // cell type
         $cell_type_ontology_list = [];
-        foreach ($metadata['cell_subset'] as $v) {
+        foreach ($metadata['cell_subset_id'] as $v) {
+            // dd($metadata['cell_subset']);
             $cell_type_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
         // tissue ontology info
         $sample_tissue_ontology_list = [];
-        foreach ($metadata['tissue'] as $v) {
+        foreach ($metadata['tissue_id'] as $v) {
             $sample_tissue_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
@@ -175,7 +176,7 @@ class SampleController extends Controller
 
         // disease_diagnosis ontology info
         $subject_disease_diagnosis_ontology_list = [];
-        foreach ($metadata['disease_diagnosis'] as $v) {
+        foreach ($metadata['disease_diagnosis_id'] as $v) {
             $subject_disease_diagnosis_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
@@ -374,14 +375,12 @@ class SampleController extends Controller
 
         // create copy of filters for display
         $filter_fields = [];
-        $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id',
-            'disease_diagnosis_id', 'cell_subset_id', ];
         foreach ($params as $k => $v) {
             if ($v) {
                 if (is_array($v)) {
                     // If the field is an ontology field, we want the filter fields to
                     // have both label and ID.
-                    if (in_array($k, $ontology_fields)) {
+                    if (in_array($k, FieldName::getOntologyFields())) {
                         // Get the base field (without the _id part). This is how the
                         // metadata is tagged.
                         $base_field = substr($k, 0, strlen($k) - 3);
@@ -390,7 +389,7 @@ class SampleController extends Controller
                         // the list of filters that are set.
                         foreach ($v as $element) {
                             // Get the cahced metadata for the field so we can build a label/id string
-                            $field_metadata = $metadata[$base_field];
+                            $field_metadata = $metadata[$k];
                             // Find the element in the metadata and build the filter label string.
                             foreach ($field_metadata as $field_info) {
                                 if ($field_info['id'] == $element) {
