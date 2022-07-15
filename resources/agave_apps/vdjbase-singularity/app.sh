@@ -121,46 +121,101 @@ function run_analysis()
     local repository_name=$2
     local repertoire_id=$3
     local repertoire_file=$4
-    shift
-    shift
-    shift
-    shift
-    # Remaining variable are the files to process
-    local array_of_files=( $@ )
+    local manifest_file=$5
+    echo "Running a Repertoire Analysis with manifest ${manifest_file}"
+    echo "    Working directory = ${output_directory}"
+    echo "    Repository name = ${repository_name}"
+    echo "    Repertoire id = ${repertoire_id}"
+    echo "    Repertoire file = ${repertoire_file}"
+    echo "    Manifest file = ${manifest_file}"
+    echo -n "    Current diretory = "
+    pwd
 
-    printf "\nRunning a Repertoire Analysis on ${array_of_files[@]} at $(date)\n"
+    # Get a list of rearrangement files to process from the manifest.
+    local array_of_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: Could not process manifest file ${manifest_file}"
+        return
+    fi
+    echo "    Using files ${array_of_files[@]}"
+    #echo "Output direcotry:"
+    #ls ${output_directory}
+    #echo "Current directory:"
+    #ls ${PWD}
+    echo " "
+
     # Check to see if we are processing a specific repertoire_id
-    if [ "${repertoire_id}" != "NULL" ]; then
+    if [ "${repertoire_id}" != "Total" ]; then
         file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
+        if [ $? -ne 0 ]
+        then
+            echo "IR-ERROR: Could not generate repertoire summary from ${repertoire_file}"
+            return
+        fi
         file_string=${repository_name}_${file_string// /}
+
         title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
+        if [ $? -ne 0 ]
+        then
+            echo "IR-ERROR: Could not generate repertoire summary from ${repertoire_file}"
+            return
+        fi
         # TODO: Fix this, it should not be required.
         title_string=${title_string// /}
     else
-        file_string="total"
+        file_string="Total"
         title_string="Total"
     fi
 
     # Run the VDJBase pipeline within the singularity image on each rearrangement file provided.
     for filename in "${array_of_files[@]}"; do
-        echo "Running VDJBase on $filename"
-        echo "Mapping ${PWD} to /data"
+        echo "Running VDJBase on ${filename}"
         echo "Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
+        echo "Mapping ${PWD} to /data"
+        echo "Input file = /data/${output_directory}/${filename}"
         echo "Storing output in /data/${output_directory}"
+        echo " " 
+
         # Run VDJBase
-        singularity exec -e -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} vdjbase-pipeline -s ${file_string} -f /data/${filename} -t ${AGAVE_JOB_PROCESSORS_PER_NODE} -o /data/${output_directory}
+        singularity exec -e -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} vdjbase-pipeline -s ${file_string} -f /data/${output_directory}/${filename} -t ${AGAVE_JOB_PROCESSORS_PER_NODE} -o /data/${output_directory}/
+        if [ $? -ne 0 ]
+        then
+            echo "IR-ERROR: Error running VDJBase singularity container on ${filename}"
+            return
+        fi
 
         # Get the germline database info from the repertoire file
         germline_database="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field data_processing.germline_database)"
+        if [ $? -ne 0 ]
+        then
+            echo "IR-ERROR: Could not get germline_database from ${repertoire_file}"
+            return
+        fi
 
         # Get the data processing file info from the repertoire file
         data_processing_files="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field data_processing.data_processing_files)"
+        if [ $? -ne 0 ]
+        then
+            echo "IR-ERROR: Could not get data_processing_files from ${repertoire_file}"
+            return
+        fi
 
         # Get the data processing ID info from the repertoire file
         data_processing_id="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field data_processing.data_processing_id)"
+        if [ $? -ne 0 ]
+        then
+            echo "IR-ERROR: Could not get data_processing_id from ${repertoire_file}"
+            return
+        fi
 
         # Get the sample processing ID info from the repertoire file
         sample_processing_id="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_id ${repertoire_id} --repertoire_field sample.sample_processing_id)"
+        if [ $? -ne 0 ]
+        then
+            echo "IR-ERROR: Could not get sample_processing_id from ${repertoire_file}"
+            return
+        fi
 
         echo "Data processing files = ${data_processing_files}"
         echo "Data processing ID = ${data_processing_id}"
@@ -172,12 +227,12 @@ function run_analysis()
 
         # Generate a label file for the Gateway to use to present this info to the user
         label_file=${output_directory}/${repertoire_id}.txt
-        echo "${repository_name}: ${title_string}" > ${label_file}
+        echo "${title_string}" > ${label_file}
 
         # Copy the PDF report to the repertoire_id.pdf file for the gateway to use as a summary.
         cp ${output_directory}/${file_string}/${file_string}_ogrdb_plots.pdf ${output_directory}/${repertoire_id}.pdf
         # We don't want to keep around the original TSV file.
-        rm -f ${filename}
+        #rm -f ${PWD}/${filename}
 
     done
     printf "Done running Repertoire Analysis on ${array_of_files[@]} at $(date)\n\n"

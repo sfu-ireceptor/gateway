@@ -1282,16 +1282,19 @@ class RestService extends Model
 
                         foreach ($response_list_sequences as $response_sequence) {
                             $sequence = $response_sequence['data']->Rearrangement;
-                            $cell_id_sequence = $sequence[0]->cell_id;
+                            Log::debug('sequence len = ' . count($sequence));
+                            if (count($sequence) > 0) {
+                                $cell_id_sequence = $sequence[0]->cell_id;
 
-                            if ($cell_id == $cell_id_sequence) {
-                                $t->cell_id_cell = $cell_id;
-                                $t->v_call_1 = isset($sequence[0]->v_call) ? $sequence[0]->v_call : '';
-                                $t->junction_aa_1 = isset($sequence[0]->junction_aa) ? $sequence[0]->junction_aa : '';
-                                $t->v_call_2 = isset($sequence[1]->v_call) ? $sequence[1]->v_call : '';
-                                $t->junction_aa_2 = isset($sequence[1]->junction_aa) ? $sequence[1]->junction_aa : '';
+                                if ($cell_id == $cell_id_sequence) {
+                                    $t->cell_id_cell = $cell_id;
+                                    $t->v_call_1 = isset($sequence[0]->v_call) ? $sequence[0]->v_call : '';
+                                    $t->junction_aa_1 = isset($sequence[0]->junction_aa) ? $sequence[0]->junction_aa : '';
+                                    $t->v_call_2 = isset($sequence[1]->v_call) ? $sequence[1]->v_call : '';
+                                    $t->junction_aa_2 = isset($sequence[1]->junction_aa) ? $sequence[1]->junction_aa : '';
 
-                                break;
+                                    break;
+                                }
                             }
                         }
 

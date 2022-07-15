@@ -173,7 +173,7 @@ function run_cell_analysis()
     fi
 
     # Run the Conga pipeline within the singularity image on each rearrangement file provided.
-    echo "Running Conga on $filename"
+    echo "Running Conga on $cell_file"
     echo "Mapping ${PWD} to /data"
     echo "Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
     echo "Storing output in /data/${output_directory}"
@@ -208,7 +208,6 @@ function run_cell_analysis()
     # Add the required label file for the Gateway to present the results as a summary.
     label_file=${output_directory}/${repertoire_id}.txt
     echo "${title_string}" > ${label_file}
-
 
     # Remove the intermediate files generated for Conga
     rm -f ${output_directory}/${CONTIG_PREFIX}.csv ${output_directory}/${CONTIG_PREFIX}_*
