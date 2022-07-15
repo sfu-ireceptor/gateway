@@ -142,6 +142,10 @@ class RestServiceSeeder extends Seeder
                 'url' => 'https://vdjbaseirplus.biu.ac.il/airr/v1/',
                 'name' => 'Bar-Ilan University',
             ],
+            [
+                'url' => 'https://roche-airr.ireceptor.org/airr/v1/',
+                'name' => 'Roche',
+            ],
         ];
 
         // if grouping is disabled, remove group code
