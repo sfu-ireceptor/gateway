@@ -14,6 +14,7 @@ class SampleTest extends TestCase
         'id' => 1,
         'name' => 'Fake Rest Service',
         'display_name' => 'Fake Rest Service',
+        'api_version' => '1.0',
     ];
 
     private $sample = [

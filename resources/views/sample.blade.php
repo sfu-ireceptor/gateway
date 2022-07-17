@@ -4,10 +4,12 @@
 
 @section('content')
 
-<div class="container-fluid sample_container">
-
+<div class="banner_title samples">
 	<h1>1. Repertoire Metadata Search</h1>
 	<p class="sh1">Filter by study/subject/sample and choose repertoires to analyze relevant sequence data</p>
+</div>
+
+<div class="container-fluid samples_container">
 
 	<div class="row">
 		<div class="col-md-2 filters">
@@ -289,9 +291,24 @@
 
 				<!-- Sequences/Clones/Cells tabs -->
 				<ul class="nav nav-tabs">
-					<li role="presentation" class="{{ $tab == 'sequence' ? 'active' : '' }}"><a class="sequences" href="/samples?query_id={{ $sample_query_id }}">Sequence Search Results ({{ $nb_samples_with_sequences }})</a></li>
-					<li role="presentation" class="{{ $tab == 'clone' ? 'active' : '' }}"><a class="clones" href="/samples/clone?query_id={{ $sample_query_id }}">Clone Search Results ({{ $nb_samples_with_clones }})</a></li>
-					<li role="presentation" class="{{ $tab == 'cell' ? 'active' : '' }}"><a class="cells" href="/samples/cell?query_id={{ $sample_query_id }}">Cell Search Results ({{ $nb_samples_with_cells }})</a></li>
+					<li role="presentation" class="{{ $tab == 'sequence' ? 'active' : '' }}">
+						<a class="sequences" href="/samples?query_id={{ $sample_query_id }}">
+							Sequence Search Results
+							 <span class="badge badge-sequences">{{ $nb_samples_with_sequences }}</span>
+						</a>
+					</li>
+					<li role="presentation" class="{{ $tab == 'clone' ? 'active' : '' }}">
+						<a class="clones" href="/samples/clone?query_id={{ $sample_query_id }}">
+							Clone Search Results
+							<span class="badge badge-clones">{{ $nb_samples_with_clones }}</span>
+						</a>
+					</li>
+					<li role="presentation" class="{{ $tab == 'cell' ? 'active' : '' }}">
+						<a class="cells" href="/samples/cell?query_id={{ $sample_query_id }}">
+							Cell Search Results
+							<span class="badge badge-cells">{{ $nb_samples_with_cells }}</span>
+						</a>
+					</li>
 				</ul>
 
 				@if (empty($samples_with_sequences))
@@ -314,7 +331,7 @@
 						@if ($tab == 'sequence')
 							<div role="tabpanel" class="tab-pane active" id="repertoireSequenceSearchResults">
 								<!-- Statistics -->
-								<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
+								<h3 class="{{ empty($filter_fields) ? 'first' : '' }} statistics-header">Statistics</h3>
 								<div class="statistics">
 									<p>
 										<strong>
@@ -375,7 +392,7 @@
 										</h3>
 									</div>
 									<div class="col-md-6 repertoires_button_container">
-										<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
+										<a role="button" class="btn btn-primary btn-sequences browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
 											Browse sequences from {{ $nb_samples }} repertoires →
 										</a>
 									
@@ -437,7 +454,7 @@
 									<tbody>
 										@foreach ($samples_with_sequences as $sample)
 										<tr>
-											<td class="stats">
+											<td class="stats stats-sequences">
 												@if(isset($sample->stats) && $sample->stats)
 													<a href="#modal_stats" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-name="{{ $sample->subject_id }} - {{ $sample->sample_id }} - {{ $sample->pcr_target_locus }}" data-toggle="modal" data-target="#statsModal">
 														<span class="label label-primary">
@@ -556,7 +573,7 @@
 									</div>
 
 									<div class="col-md-6 repertoires_button_container">
-										<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
+										<a role="button" class="btn btn-primary btn-sequences browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
 											Browse sequences from {{ $nb_samples }} repertoires →
 										</a>
 									</div>
@@ -568,7 +585,7 @@
 						@if ($tab == 'clone')
 							<div role="tabpanel" class="tab-pane active" id="repertoireCloneSearchResults">
 								<!-- Statistics -->
-								<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
+								<h3 class="{{ empty($filter_fields) ? 'first' : '' }} statistics-header">Statistics</h3>
 								<div class="statistics">
 									<p>
 										<strong>
@@ -629,7 +646,7 @@
 										</h3>
 									</div>
 									<div class="col-md-6 repertoires_button_container">
-										<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/clones?query_id={{ $sequences_query_id }}">
+										<a role="button" class="btn btn-primary btn-clones browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/clones?query_id={{ $sequences_query_id }}">
 											Browse clones from {{ $nb_samples }} repertoires →
 										</a>
 									
@@ -649,7 +666,6 @@
 								<table class="table table-striped sample_list table-condensed much_data table-bordered sortable">
 									<thead> 
 										<tr>
-											<th class="stats">Stats</th>
 											@foreach ($field_list as $field)
 												{{-- skip sequence column --}}
 												@if ($field['ir_id'] == 'ir_sequence_count')
@@ -689,23 +705,6 @@
 									<tbody>
 										@foreach ($samples_with_sequences as $sample)
 										<tr>
-											<td class="stats">
-												@if(isset($sample->stats) && $sample->stats)
-													<a href="#modal_stats" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-name="{{ $sample->subject_id }} - {{ $sample->sample_id }} - {{ $sample->pcr_target_locus }}" data-toggle="modal" data-target="#statsModal">
-														<span class="label label-primary">
-															<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
-														</span>
-													</a>
-													@if(isset($sample->show_stats_notification))
-														<div class="stats_notification_container">
-															<div class="tooltip left in stats_notification" style="display: block;">
-																<div class="tooltip-arrow" style="top: 50%;"></div>
-																<div class="tooltip-inner">Repertoire statistics<br>are now available.</div>
-															</div>
-														</div>
-													@endif
-												@endif						
-											</td>
 											@foreach ($field_list as $field)
 												
 												{{-- skip sequence column --}}
@@ -809,7 +808,7 @@
 									</div>
 
 									<div class="col-md-6 repertoires_button_container">
-										<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/clones?query_id={{ $sequences_query_id }}">
+										<a role="button" class="btn btn-primary btn-clones browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/clones?query_id={{ $sequences_query_id }}">
 											Browse clones from {{ $nb_samples }} repertoires →
 										</a>
 									</div>
@@ -820,7 +819,7 @@
 						@if ($tab == 'cell')
 							<div role="tabpanel" class="tab-pane active" id="repertoireCellSearchResults">
 								<!-- Statistics -->
-								<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Statistics</h3>
+								<h3 class="{{ empty($filter_fields) ? 'first' : '' }} statistics-header">Statistics</h3>
 								<div class="statistics">
 									<p>
 										<strong>
@@ -881,7 +880,7 @@
 										</h3>
 									</div>
 									<div class="col-md-6 repertoires_button_container">
-										<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/cells?query_id={{ $sequences_query_id }}">
+										<a role="button" class="btn btn-primary btn-cells browse_cells browse-seq-data-button button_to_enable_on_load"  href="/cells?query_id={{ $sequences_query_id }}">
 											Browse cells from {{ $nb_samples }} repertoires →
 										</a>
 									
@@ -901,7 +900,6 @@
 								<table class="table table-striped sample_list table-condensed much_data table-bordered sortable">
 									<thead> 
 										<tr>
-											<th class="stats">Stats</th>
 											@foreach ($field_list as $field)
 												
 												{{-- skip sequence column --}}
@@ -943,23 +941,6 @@
 									<tbody>
 										@foreach ($samples_with_sequences as $sample)
 										<tr>
-											<td class="stats">
-												@if(isset($sample->stats) && $sample->stats)
-													<a href="#modal_stats" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-name="{{ $sample->subject_id }} - {{ $sample->sample_id }} - {{ $sample->pcr_target_locus }}" data-toggle="modal" data-target="#statsModal">
-														<span class="label label-primary">
-															<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
-														</span>
-													</a>
-													@if(isset($sample->show_stats_notification))
-														<div class="stats_notification_container">
-															<div class="tooltip left in stats_notification" style="display: block;">
-																<div class="tooltip-arrow" style="top: 50%;"></div>
-																<div class="tooltip-inner">Repertoire statistics<br>are now available.</div>
-															</div>
-														</div>
-													@endif
-												@endif						
-											</td>
 											@foreach ($field_list as $field)
 											
 												{{-- skip sequence column --}}
@@ -1063,7 +1044,7 @@
 									</div>
 
 									<div class="col-md-6 repertoires_button_container">
-										<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/cells?query_id={{ $sequences_query_id }}">
+										<a role="button" class="btn btn-primary btn-cells browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/cells?query_id={{ $sequences_query_id }}">
 											Browse cells from {{ $nb_samples }} repertoires →
 										</a>
 									</div>

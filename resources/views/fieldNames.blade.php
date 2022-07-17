@@ -5,6 +5,13 @@
 @section('content')
 <div class="container-fluid">
 	<h1>Field names</h1>
+
+	<ul class="nav nav-tabs">
+		@foreach ($api_version_list as $version)
+			<li role="presentation" class="{{ $version == $api_version ? 'active' : '' }}"><a href="/admin/field-names/{{ $version }}">API {{ $version }}</a></li>
+		@endforeach
+	</ul>
+
 	<div class="row">
 		<div class="col-md-12">
 			@if (count($field_name_list) > 0)

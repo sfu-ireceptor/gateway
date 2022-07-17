@@ -165,4 +165,16 @@ return [
     */
 
     'seeders_data_folder' => env('IRECEPTOR_SEEDERS_DATA_FOLDER', base_path() . '/database/seeds/data'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default AIRR API version
+    |--------------------------------------------------------------------------
+    |
+    | Should match a TSV mapping file in
+    | database/seeds/data/field_names
+    |
+    */
+
+    'default_api_version' => env('IRECEPTOR_DEFAULT_API_VERSION', '1.0'),
 ];

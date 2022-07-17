@@ -11,25 +11,28 @@ class FieldName extends Model
     protected $guarded = [];
 
     // convert field names for 1 array
-    public static function convert($data, $from, $to)
+    public static function convert($data, $from, $to, $api_version = null)
     {
-        $mapping = self::all([$from, $to])->toArray();
+        $api_version = $api_version ?? config('ireceptor.default_api_version');
+        $mapping = self::all([$from, $to, 'api_version'])->where('api_version', $api_version)->toArray();
 
         return convert_array_keys($data, $mapping, $from, $to);
     }
 
     // convert field names for a list of arrays
-    public static function convertList($data, $from, $to, $ir_class = '')
+    public static function convertList($data, $from, $to, $ir_class = '', $api_version = null)
     {
-        $mapping = self::all([$from, $to])->toArray();
+        $api_version = $api_version ?? config('ireceptor.default_api_version');
+        $mapping = self::all([$from, $to, 'api_version'])->where('api_version', $api_version)->toArray();
 
         return convert_arrays_keys($data, $mapping, $from, $to, $ir_class);
     }
 
     // convert field names for a list of objects
-    public static function convertObjectList($data, $from, $to, $ir_class = '')
+    public static function convertObjectList($data, $from, $to, $ir_class = '', $api_version = null)
     {
-        $mapping = self::all([$from, $to, 'ir_class'])->toArray();
+        $api_version = $api_version ?? config('ireceptor.default_api_version');
+        $mapping = self::all([$from, $to, 'api_version'])->where('api_version', $api_version)->toArray();
 
         $array_list = convert_arrays_keys($data, $mapping, $from, $to, $ir_class);
 
@@ -42,9 +45,11 @@ class FieldName extends Model
     }
 
     // return field array for a given field name
-    public static function getField($field_name, $column = 'ir_id')
+    public static function getField($field_name, $column = 'ir_id', $api_version = null)
     {
-        $field = static::where($column, $field_name)->first();
+        $api_version = $api_version ?? config('ireceptor.default_api_version');
+
+        $field = static::where($column, $field_name)->where('api_version', $api_version)->first();
         if ($field != null) {
             $field = $field->toArray();
         }
@@ -53,9 +58,9 @@ class FieldName extends Model
     }
 
     // return field type for a given field name
-    public static function getFieldType($field_id, $column = 'ir_id')
+    public static function getFieldType($field_id, $column = 'ir_id', $api_version = null)
     {
-        $field = static::getField($field_id, $column);
+        $field = static::getField($field_id, $column, $api_version);
 
         $field_type = null;
         if ($field != null) {
@@ -65,54 +70,62 @@ class FieldName extends Model
         return $field_type;
     }
 
-    public static function getSampleFields()
+    public static function getSampleFields($api_version = null)
     {
+        $api_version = $api_version ?? config('ireceptor.default_api_version');
+
         $ir_class_list = ['Repertoire'];
 
         if (config('ireceptor.display_all_ir_fields')) {
             $ir_class_list[] = 'IR_Repertoire';
         }
 
-        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('default_order', 'asc')->get()->toArray();
+        $l = static::whereIn('ir_class', $ir_class_list)->where('api_version', $api_version)->orderBy('default_order', 'asc')->get()->toArray();
 
         return $l;
     }
 
-    public static function getSequenceFields()
+    public static function getSequenceFields($api_version = null)
     {
+        $api_version = $api_version ?? config('ireceptor.default_api_version');
+
         $ir_class_list = ['Rearrangement'];
 
         if (config('ireceptor.display_all_ir_fields')) {
             $ir_class_list[] = 'IR_Rearrangement';
         }
 
-        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('default_order', 'asc')->get()->toArray();
+        $l = static::whereIn('ir_class', $ir_class_list)->where('api_version', $api_version)->orderBy('default_order', 'asc')->get()->toArray();
 
         return $l;
     }
 
-    public static function getCloneFields()
+    public static function getCloneFields($api_version = null)
     {
+        $api_version = $api_version ?? config('ireceptor.default_api_version');
+
         $ir_class_list = ['Clone'];
 
         if (config('ireceptor.display_all_ir_fields')) {
             $ir_class_list[] = 'IR_Clone';
         }
 
-        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('default_order', 'asc')->get()->toArray();
+        $l = static::whereIn('ir_class', $ir_class_list)->where('api_version', $api_version)->orderBy('default_order', 'asc')->get()->toArray();
 
         return $l;
     }
 
-    public static function getCellFields()
+    public static function getCellFields($api_version = null)
     {
+        $api_version = $api_version ?? config('ireceptor.default_api_version');
+
         $ir_class_list = ['Cell'];
 
         if (config('ireceptor.display_all_ir_fields')) {
             $ir_class_list[] = 'IR_Cell';
         }
 
-        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('default_order', 'asc')->get()->toArray();
+        $l = static::whereIn('ir_class', $ir_class_list)->where('api_version', $api_version)->orderBy('default_order', 'asc')->get()->toArray();
 
         return $l;
     }
@@ -161,7 +174,9 @@ class FieldName extends Model
 
     public static function getFieldsGrouped($ir_class_list)
     {
-        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('ir_subclass', 'asc')->orderBy('ir_short', 'asc')->get()->toArray();
+        $api_version = config('ireceptor.default_api_version');
+
+        $l = static::whereIn('ir_class', $ir_class_list)->orderBy('ir_subclass', 'asc')->where('api_version', $api_version)->orderBy('ir_short', 'asc')->get()->toArray();
         $groups = static::getGroups();
 
         $gl = [];
@@ -227,5 +242,22 @@ class FieldName extends Model
         }
 
         return static::getFieldsGrouped($ir_class_list);
+    }
+
+    public static function getAPIVersions()
+    {
+        $api_version_list = [];
+
+        $l = self::groupBy('api_version')->get('api_version')->toArray();
+        foreach ($l as $t) {
+            $api_version_list[] = $t['api_version'];
+        }
+
+        return $api_version_list;
+    }
+
+    public static function getOntologyFields()
+    {
+        return ['tissue_id', 'organism_id', 'study_type_id', 'disease_diagnosis_id', 'cell_subset_id'];
     }
 }

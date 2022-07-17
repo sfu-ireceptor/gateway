@@ -9,7 +9,7 @@ class FieldNameSeeder extends CsvSeeder
     public function __construct()
     {
         $this->table = 'field_name';
-        $this->filename = base_path() . '/database/seeds/data/field_names.tsv';
+        $this->folder_path = base_path() . '/database/seeds/data/field_names';
         $this->offset_rows = 1;
         $this->csv_delimiter = "\t";
     }
@@ -36,23 +36,34 @@ class FieldNameSeeder extends CsvSeeder
                 42 => 'ir_api_input_type',
             ];
 
-            parent::run();
+            $file_list = dir_to_array($this->folder_path);
 
-            // delete any empty rows
-            DB::table($this->table)->whereNull('ir_id')->delete();
+            foreach ($file_list as $filename) {
+                $this->filename = $filename;
+                echo 'Adding mapping file ' . $filename . "\n";
 
-            // add extra fields (gateway specific)
-            $this->add_gateway_specific_fields();
+                parent::run();
 
-            // define default fields and their order
-            $this->define_default_sample_fields();
-            $this->define_default_sequence_fields();
-            $this->define_default_clone_fields();
-            $this->define_default_cell_fields();
+                // delete any empty rows
+                DB::table($this->table)->whereNull('ir_id')->delete();
+
+                // add API version
+                $api_version = pathinfo($filename)['filename'];
+                FieldName::whereNull('api_version')->update(['api_version' => $api_version]);
+
+                // add extra fields (gateway specific)
+                $this->add_gateway_specific_fields($api_version);
+
+                // define default fields and their order
+                $this->define_default_sample_fields();
+                $this->define_default_sequence_fields();
+                $this->define_default_clone_fields();
+                $this->define_default_cell_fields();
+            }
         });
     }
 
-    public function add_gateway_specific_fields()
+    public function add_gateway_specific_fields($api_version)
     {
         $l = [];
         $l[] = [
@@ -60,6 +71,7 @@ class FieldNameSeeder extends CsvSeeder
             'ir_short' => 'Repository',
             'ir_class' => 'Repertoire',
             'ir_subclass' => 'other',
+            'api_version' => $api_version,
         ];
 
         $l[] = [
@@ -69,6 +81,7 @@ class FieldNameSeeder extends CsvSeeder
             'ir_subclass' => 'other',
             'airr_description' => 'Search across all metadata fields (case insensitive)',
             'airr_example' => 'cancer tumor',
+            'api_version' => $api_version,
         ];
 
         // HACK: override ir_class from "ir_repertoire" to "repertoire", so this field is displayed by default
@@ -77,6 +90,7 @@ class FieldNameSeeder extends CsvSeeder
             'ir_short' => 'Sequences',
             'ir_class' => 'Repertoire',
             'ir_subclass' => 'other',
+            'api_version' => $api_version,
         ];
 
         $l[] = [
@@ -84,6 +98,7 @@ class FieldNameSeeder extends CsvSeeder
             'ir_short' => 'Clones',
             'ir_class' => 'Repertoire',
             'ir_subclass' => 'other',
+            'api_version' => $api_version,
         ];
 
         $l[] = [
@@ -91,6 +106,7 @@ class FieldNameSeeder extends CsvSeeder
             'ir_short' => 'Cells',
             'ir_class' => 'Repertoire',
             'ir_subclass' => 'other',
+            'api_version' => $api_version,
         ];
 
         // HACK: override ir_class from from "ir_rearrangement" to "rearrangement", so this field is displayed by default
@@ -99,6 +115,7 @@ class FieldNameSeeder extends CsvSeeder
             'ir_short' => 'Junction Length (AA)',
             'ir_class' => 'Rearrangement',
             'ir_subclass' => 'Rearrangement',
+            'api_version' => $api_version,
         ];
 
         // cell fields
@@ -107,6 +124,7 @@ class FieldNameSeeder extends CsvSeeder
             'ir_short' => 'V Gene With Allele (Chain 1)',
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
+            'api_version' => $api_version,
         ];
 
         $l[] = [
@@ -114,12 +132,14 @@ class FieldNameSeeder extends CsvSeeder
             'ir_short' => 'Junction/CDR3 AA (Chain 1)',
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
+            'api_version' => $api_version,
         ];
         $l[] = [
             'ir_id' => 'v_call_2',
             'ir_short' => 'V Gene With Allele (Chain 2)',
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
+            'api_version' => $api_version,
         ];
 
         $l[] = [
@@ -127,6 +147,7 @@ class FieldNameSeeder extends CsvSeeder
             'ir_short' => 'Junction/CDR3 AA (Chain 2)',
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
+            'api_version' => $api_version,
         ];
 
         $l[] = [
@@ -134,10 +155,11 @@ class FieldNameSeeder extends CsvSeeder
             'ir_short' => 'Properties (top 4)',
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
+            'api_version' => $api_version,
         ];
 
         foreach ($l as $t) {
-            FieldName::updateOrCreate(['ir_id' => $t['ir_id']], $t);
+            FieldName::updateOrCreate(['ir_id' => $t['ir_id'], 'api_version' => $api_version], $t);
         }
     }
 

@@ -415,30 +415,51 @@ class AdminController extends Controller
     public function getUpdateChunkSize($id)
     {
         $rs = RestService::find($id);
-        $chunk_size = $rs->refreshChunkSize();
 
-        if ($chunk_size == null) {
-            $message = $rs->name . ' doesn\'t have a max_size';
-        } elseif (is_string($chunk_size)) {
-            $message = 'An error occurred when trying to retrieve max_size from ' . $rs->name . ': ' . $chunk_size;
-        } else {
-            $message = $rs->name . ' max_size was successfully updated to ' . $chunk_size;
-        }
+        $info = $rs->refreshInfo();
 
-        $stats = $rs->refreshStatsCapability();
-        if ($stats) {
-            $message .= '. Stats are available.';
+        if (isset($info['error'])) {
+            $message = 'An error occurred : ' . $info['error'];
         } else {
-            $message .= '. Stats are not available.';
+            $chunk_size = $info['chunk_size'] ?? null;
+            if ($chunk_size == null) {
+                $message = $rs->name . ' doesn\'t have a max_size. ';
+            } elseif (is_string($chunk_size)) {
+                $message = 'An error occurred when trying to retrieve max_size from ' . $rs->name . ': ' . $chunk_size . '. ';
+            } else {
+                $message = $rs->name . ' max_size was successfully updated to ' . $chunk_size . '. ';
+            }
+
+            $api_version = $info['api_version'] ?? null;
+            if ($api_version == null) {
+                $message .= $rs->name . ' did not specify an API version. ';
+            } else {
+                $message .= 'API version is ' . $api_version . '. ';
+            }
+
+            $stats = $rs->refreshStatsCapability();
+            if ($stats) {
+                $message .= 'Stats are available. ';
+            } else {
+                $message .= 'Stats are not available. ';
+            }
         }
 
         return redirect('admin/databases')->with('notification', $message);
     }
 
-    public function getFieldNames()
+    public function getFieldNames($api_version = null)
     {
+        $api_version = $api_version ?? config('ireceptor.default_api_version');
+
+        $api_version_list = FieldName::getAPIVersions();
+
+        $field_name_list = FieldName::where('api_version', $api_version)->get()->toArray();
+
         $data = [];
-        $data['field_name_list'] = FieldName::all()->toArray();
+        $data['api_version'] = $api_version;
+        $data['api_version_list'] = $api_version_list;
+        $data['field_name_list'] = $field_name_list;
 
         return view('fieldNames', $data);
     }

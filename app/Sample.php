@@ -342,7 +342,7 @@ class Sample
     // convert/complete sample list
     public static function convert_sample_list($sample_list, $rs)
     {
-        $sample_field_list = FieldName::getSampleFields();
+        $sample_field_list = FieldName::getSampleFields($rs->api_version);
 
         $new_sample_list = [];
         foreach ($sample_list as $sample) {

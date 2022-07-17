@@ -5,10 +5,12 @@
 
 @section('content')
 
-<div class="container-fluid cell_container">
-
+<div class="banner_title cells">
 	<h1>2. Cell Search</h1>
 	<p class="sh1">Filter by cell and cell annotation feature</p>
+</div>
+
+<div class="container-fluid cell_container">
 
 	<div class="row">		
 		<div class="col-md-2 filters">
@@ -317,7 +319,7 @@
 							<span class="text">Download all {{number_format($total_filtered_cells)}} cells</span>
 						</a>
 					@else
-						<a href="/cells-download?query_id={{ $query_id }}&amp;n={{ $total_filtered_cells }}&amp;page=cells" class="btn btn-primary pull-right download_cells">
+						<a href="/cells-download?query_id={{ $query_id }}&amp;n={{ $total_filtered_cells }}&amp;page=cells" class="btn btn-primary btn-cells pull-right download_cells">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 							<span class="text">Download all {{number_format($total_filtered_cells)}} cells <strong>{{ $download_time_estimate ? '(will take up to ' . $download_time_estimate . ')' : ''}}</strong></span>
 						</a>

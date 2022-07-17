@@ -117,14 +117,12 @@ class SequenceController extends Controller
             $sample_filters = Query::getParams($sample_query_id);
 
             $sample_filter_fields = [];
-            $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id',
-                'disease_diagnosis_id', 'cell_subset_id', ];
             foreach ($sample_filters as $k => $v) {
                 if ($v) {
                     if (is_array($v)) {
                         // If the field is an ontology field, we want the filter fields to
                         // have both label and ID.
-                        if (in_array($k, $ontology_fields)) {
+                        if (in_array($k, FieldName::getOntologyFields())) {
                             // Get the base field (without the _id part). This is how the
                             // metadata is tagged.
                             $base_field = substr($k, 0, strlen($k) - 3);
@@ -379,14 +377,14 @@ class SequenceController extends Controller
 
         // cell type
         $cell_type_ontology_list = [];
-        foreach ($metadata['cell_subset'] as $v) {
+        foreach ($metadata['cell_subset_id'] as $v) {
             $cell_type_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
         $data['cell_type_ontology_list'] = $cell_type_ontology_list;
 
         // organism ontology info
         $subject_organism_ontology_list = [];
-        foreach ($metadata['organism'] as $v) {
+        foreach ($metadata['organism_id'] as $v) {
             $subject_organism_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
         $data['subject_organism_ontology_list'] = $subject_organism_ontology_list;
@@ -471,8 +469,6 @@ class SequenceController extends Controller
 
         // create copy of current filters for display
         $filter_fields = [];
-        $ontology_fields = ['tissue_id', 'organism_id', 'study_type_id',
-            'disease_diagnosis_id', 'cell_subset_id', ];
         foreach ($filters as $k => $v) {
             if ($v) {
                 if (is_array($v)) {
@@ -482,7 +478,7 @@ class SequenceController extends Controller
                     }
                     // If the field is an ontology field, we want the filter fields to
                     // have both label and ID.
-                    elseif (in_array($k, $ontology_fields)) {
+                    elseif (in_array($k, FieldName::getOntologyFields())) {
                         // Get the base field (without the _id part). This is how the
                         // metadata is tagged.
                         $base_field = substr($k, 0, strlen($k) - 3);
