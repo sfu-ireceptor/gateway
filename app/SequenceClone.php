@@ -477,42 +477,8 @@ class SequenceClone
     public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
         $s = '';
-        $s .= '* Summary *' . "\n";
 
-        $nb_clones_total = 0;
-        $expected_nb_clones_total = 0;
-        foreach ($file_stats as $t) {
-            $nb_clones_total += $t['nb_clones'];
-            $expected_nb_clones_total += $t['expected_nb_clones'];
-        }
-
-        $is_download_incomplete = ($nb_clones_total < $expected_nb_clones_total);
-        if ($is_download_incomplete) {
-            $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
-            $s .= 'Total: ' . $nb_clones_total . ' clones, but ' . $expected_nb_clones_total . ' were expected.' . "\n";
-        } else {
-            $s .= 'Total: ' . $nb_clones_total . ' clones' . "\n";
-        }
-
-        foreach ($file_stats as $t) {
-            if ($is_download_incomplete && ($t['nb_clones'] < $t['expected_nb_clones'])) {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_clones'] . ' clones (incomplete, expected ' . $t['expected_nb_clones'] . ' clones) (from ' . $t['rs_url'] . ')' . "\n";
-            } else {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_clones'] . ' clones (from ' . $t['rs_url'] . ')' . "\n";
-            }
-        }
-        $s .= "\n";
-
-        if (! empty($failed_rs)) {
-            $s .= 'Warning: some files are missing because an error occurred while downloading clones from these repositories:' . "\n";
-            foreach ($failed_rs as $rs) {
-                $s .= $rs->name . "\n";
-            }
-        }
-
-        $s .= "\n";
-
-        $s .= '* Metadata filters *' . "\n";
+        $s .= '<p><b>Metadata filters</b></p>' . "\n";
         Log::debug($sample_filters);
         if (count($sample_filters) == 0) {
             $s .= 'None' . "\n";
@@ -526,7 +492,7 @@ class SequenceClone
         }
         $s .= "\n";
 
-        $s .= '* Clone filters *' . "\n";
+        $s .= '<p><b>Clone filters</b></p>' . "\n";
         unset($filters['ir_project_sample_id_list']);
         unset($filters['cols']);
         unset($filters['filters_order']);
@@ -561,7 +527,42 @@ class SequenceClone
         }
         $s .= "\n";
 
-        $s .= '* Source *' . "\n";
+        $s .= '<p><b>Data/Repository Summary</b></p>' . "\n";
+
+        $nb_clones_total = 0;
+        $expected_nb_clones_total = 0;
+        foreach ($file_stats as $t) {
+            $nb_clones_total += $t['nb_clones'];
+            $expected_nb_clones_total += $t['expected_nb_clones'];
+        }
+
+        $is_download_incomplete = ($nb_clones_total < $expected_nb_clones_total);
+        if ($is_download_incomplete) {
+            $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
+            $s .= 'Total: ' . $nb_clones_total . ' clones, but ' . $expected_nb_clones_total . ' were expected.' . "\n";
+        } else {
+            $s .= 'Total: ' . $nb_clones_total . ' clones' . "\n";
+        }
+
+        foreach ($file_stats as $t) {
+            if ($is_download_incomplete && ($t['nb_clones'] < $t['expected_nb_clones'])) {
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_clones'] . ' clones (incomplete, expected ' . $t['expected_nb_clones'] . ' clones) (from ' . $t['rs_url'] . ')' . "\n";
+            } else {
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_clones'] . ' clones (from ' . $t['rs_url'] . ')' . "\n";
+            }
+        }
+        $s .= "\n";
+
+        if (! empty($failed_rs)) {
+            $s .= 'Warning: some files are missing because an error occurred while downloading clones from these repositories:' . "\n";
+            foreach ($failed_rs as $rs) {
+                $s .= $rs->name . "\n";
+            }
+        }
+
+        $s .= "\n";
+
+        $s .= '<p><b>Source</b></p>' . "\n";
         $s .= $url . "\n";
         $date_str_human = date('M j, Y', $now);
         $time_str_human = date('H:i T', $now);

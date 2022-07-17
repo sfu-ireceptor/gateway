@@ -535,11 +535,6 @@ class Sequence
             $sam_summary = 'None';
         }
 
-        // Believe these should not be required - they are done above with an
-        // error check.
-        //$sam_query_id = $seq_query_params['sample_query_id'];
-        //$sam_query_params = Query::getParams($sam_query_id);
-
         // Use the Query class to generate a consistent set of summary info
         // from the query parameters. This returns a single string, containing
         // a set of lines for each parameter (with \n), which is what we want.

@@ -523,42 +523,8 @@ class SequenceCell
     public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
         $s = '';
-        $s .= '* Summary *' . "\n";
 
-        $nb_cells_total = 0;
-        $expected_nb_cells_total = 0;
-        foreach ($file_stats as $t) {
-            $nb_cells_total += $t['nb_cells'];
-            $expected_nb_cells_total += $t['expected_nb_cells'];
-        }
-
-        $is_download_incomplete = ($nb_cells_total < $expected_nb_cells_total);
-        if ($is_download_incomplete) {
-            $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
-            $s .= 'Total: ' . $nb_cells_total . ' cells, but ' . $expected_nb_cells_total . ' were expected.' . "\n";
-        } else {
-            $s .= 'Total: ' . $nb_cells_total . ' cells' . "\n";
-        }
-
-        foreach ($file_stats as $t) {
-            if ($is_download_incomplete && ($t['nb_cells'] < $t['expected_nb_cells'])) {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_cells'] . ' cells (incomplete, expected ' . $t['expected_nb_cells'] . ' cells) (from ' . $t['rs_url'] . ')' . "\n";
-            } else {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_cells'] . ' cells (from ' . $t['rs_url'] . ')' . "\n";
-            }
-        }
-        $s .= "\n";
-
-        if (! empty($failed_rs)) {
-            $s .= 'Warning: some files are missing because an error occurred while downloading cells from these repositories:' . "\n";
-            foreach ($failed_rs as $rs) {
-                $s .= $rs->name . "\n";
-            }
-        }
-
-        $s .= "\n";
-
-        $s .= '* Metadata filters *' . "\n";
+        $s .= '<p><b>Metadata filters</b></p>' . "\n";
         Log::debug($sample_filters);
         if (count($sample_filters) == 0) {
             $s .= 'None' . "\n";
@@ -568,11 +534,11 @@ class SequenceCell
                 $v = implode(' or ', $v);
             }
             // use human-friendly filter name
-            $s .= __('short.' . $k) . ': ' . $v . "\n";
+            $s .= __('short.' . $k) . ': ' . $v . "</br>\n";
         }
-        $s .= "\n";
+        $s .= "</br>\n";
 
-        $s .= '* Cell filters *' . "\n";
+        $s .= '<p><b>Cell filters</b></p>' . "\n";
         unset($filters['ir_project_sample_id_list']);
         unset($filters['cols']);
         unset($filters['filters_order']);
@@ -596,22 +562,56 @@ class SequenceCell
 
         Log::debug($filters);
         if (count($filters) == 0) {
-            $s .= 'None' . "\n";
+            $s .= 'None' . "</br>\n";
         }
         foreach ($filters as $k => $v) {
             if (is_array($v)) {
                 $v = implode(' or ', $v);
             }
             // use human-friendly filter name
-            $s .= __('short.' . $k) . ': ' . $v . "\n";
+            $s .= __('short.' . $k) . ': ' . $v . "</br>\n";
         }
         $s .= "\n";
 
-        $s .= '* Source *' . "\n";
-        $s .= $url . "\n";
+        $s .= '<p><b>Data/Repository Summary</b></p>' . "\n";
+
+        $nb_cells_total = 0;
+        $expected_nb_cells_total = 0;
+        foreach ($file_stats as $t) {
+            $nb_cells_total += $t['nb_cells'];
+            $expected_nb_cells_total += $t['expected_nb_cells'];
+        }
+
+        $is_download_incomplete = ($nb_cells_total < $expected_nb_cells_total);
+        if ($is_download_incomplete) {
+            $s .= 'Warning: some of the files appears to be incomplete:' . "</br>\n";
+            $s .= 'Total: ' . $nb_cells_total . ' cells, but ' . $expected_nb_cells_total . ' were expected.' . "\n";
+        } else {
+            $s .= 'Total: ' . $nb_cells_total . ' cells' . "</br>\n";
+        }
+
+        foreach ($file_stats as $t) {
+            if ($is_download_incomplete && ($t['nb_cells'] < $t['expected_nb_cells'])) {
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_cells'] . ' cells (incomplete, expected ' . $t['expected_nb_cells'] . ' cells) (from ' . $t['rs_url'] . ')' . "</br>\n";
+            } else {
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_cells'] . ' cells (from ' . $t['rs_url'] . ')' . "</br>\n";
+            }
+        }
+        $s .= "\n";
+
+        if (! empty($failed_rs)) {
+            $s .= 'Warning: some files are missing because an error occurred while downloading cells from these repositories:' . "</br>\n";
+            foreach ($failed_rs as $rs) {
+                $s .= $rs->name . "</br>\n";
+            }
+        }
+
+        $s .= "\n";
+        $s .= '<p><b>Source</b></b>' . "\n";
+        $s .= $url . "</br>\n";
         $date_str_human = date('M j, Y', $now);
         $time_str_human = date('H:i T', $now);
-        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "\n";
+        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "</br>\n";
 
         $info_file_path = $folder_path . '/info.txt';
         file_put_contents($info_file_path, $s);
