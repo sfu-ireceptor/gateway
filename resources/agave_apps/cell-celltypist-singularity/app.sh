@@ -200,15 +200,23 @@ function run_cell_analysis()
         --normalize --normalize_value=10000 \
         --log1p
 
-    singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${output_directory}:/data \
+    singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
+        -B ${output_directory}:/data -B ${SCRIPT_DIR}:/localsrc \
         ${SCRIPT_DIR}/${singularity_image} \
-        celltypist \
-        --indata  /data/${repertoire_id}.h5ad \
-        --model Immune_All_Low.pkl \
-        --majority-voting \
-        --outdir /data \
-        --xlsx \
-        --plot-results
+        python /localsrc/gateway-celltypist.py \
+        /data/${repertoire_id}.h5ad \
+        /data \
+        ${repertoire_id}-annotated.h5ad
+
+    #singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${output_directory}:/data \
+    #    ${SCRIPT_DIR}/${singularity_image} \
+    #    celltypist \
+    #    --indata  /data/${repertoire_id}.h5ad \
+    #    --model Immune_All_Low.pkl \
+    #    --majority-voting \
+    #    --outdir /data \
+    #    --xlsx \
+    #    --plot-results
 
     # Copy the CellTypist summary report to the gateway expected summary for this repertoire
     #singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${output_directory}:/data \
@@ -222,7 +230,7 @@ function run_cell_analysis()
     #    --plot-results
 
     # Copy the CellTypist summary report to the gateway expected summary for this repertoire
-    cp ${output_directory}/majority_voting.pdf ${output_directory}/${repertoire_id}.pdf
+    cp ${output_directory}/majority_voting_v2.pdf ${output_directory}/${repertoire_id}.pdf
     # Add the required label file for the Gateway to present the results as a summary.
     label_file=${output_directory}/${repertoire_id}.txt
     echo "${title_string}" > ${label_file}
