@@ -1,5 +1,8 @@
 import sys
+import os
 import argparse
+
+from matplotlib import pyplot
 import scanpy
 import numpy
 import celltypist
@@ -67,15 +70,24 @@ if __name__ == "__main__":
     print("IR-INFO: Prediction observations:")
     print(prediction_adata.obs)
 
-    # Write the h5ad file
-    print("IR-INFO: Writing output to " + options.output_directory + "/" + options.output_file)
-    prediction_adata.write(options.output_directory + "/" + options.output_file)
+    # Export figures with labels external (celltypist plots are messy)
+    scanpy.tl.umap(prediction_adata)
+    scanpy.pl.umap(prediction_adata, color = ['predicted_labels'])
+    pyplot.tight_layout()
+    pyplot.savefig(os.path.join(options.output_directory, 'predicted_labels_v2' + '.pdf'))
+    scanpy.pl.umap(prediction_adata, color = ['majority_voting'])
+    pyplot.tight_layout()
+    pyplot.savefig(os.path.join(options.output_directory, 'majority_voting_v2' + '.pdf'))
 
     # Write output
     predictions.to_table(folder = options.output_directory, prefix="", xlsx = True)
 
     # Plot results
     predictions.to_plots(folder = options.output_directory, plot_probability = True)
+
+    # Write the h5ad file
+    print("IR-INFO: Writing output to " + options.output_directory + "/" + options.output_file)
+    prediction_adata.write(options.output_directory + "/" + options.output_file)
 
     # Done
     sys.exit(0)
