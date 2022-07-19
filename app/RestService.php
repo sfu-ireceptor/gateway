@@ -5,10 +5,9 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Process\Process;
-use Illuminate\Support\Str;
-
 
 class RestService extends Model
 {
@@ -170,16 +169,16 @@ class RestService extends Model
         if ($api_version == '1.0') {
             $ontology_fields = FieldName::getOntologyFields();
             $metadata = Sample::metadata('user');
-            
-            // convert ontology ids to ontology labels 
+
+            // convert ontology ids to ontology labels
             foreach ($filters as $k => $v) {
-                if(in_array($k, $ontology_fields)) {
+                if (in_array($k, $ontology_fields)) {
                     $label_field_name = Str::beforeLast($k, '_id');
                     $label_list = [];
 
                     foreach ($v as $ontology_id) {
                         foreach ($metadata[$k] as $ontology) {
-                            if($ontology['id'] == $ontology_id) {
+                            if ($ontology['id'] == $ontology_id) {
                                 $label_list[] = $ontology['label'];
                             }
                         }
@@ -188,7 +187,7 @@ class RestService extends Model
                     unset($filters[$k]);
                     $filters[$label_field_name] = $label_list;
                 }
-            }                
+            }
         }
 
         // rename filters: internal gateway id -> ADC API name
