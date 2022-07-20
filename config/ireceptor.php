@@ -176,5 +176,5 @@ return [
     |
     */
 
-    'default_api_version' => env('IRECEPTOR_DEFAULT_API_VERSION', '1.0'),
+    'default_api_version' => env('IRECEPTOR_DEFAULT_API_VERSION', '1.2'),
 ];
