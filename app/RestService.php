@@ -170,23 +170,40 @@ class RestService extends Model
             $ontology_fields = FieldName::getOntologyFields();
             $metadata = Sample::metadata('user');
 
-            // convert ontology ids to ontology labels
+            // convert arrays of ontology ids to ontology labels
             foreach ($filters as $k => $v) {
-                if (in_array($k, $ontology_fields)) {
-                    $label_field_name = Str::beforeLast($k, '_id');
-                    $label_list = [];
+                if(is_array($v)) {
+                    if (in_array($k, $ontology_fields)) {
+                        $label_field_name = Str::beforeLast($k, '_id');
+                        $label_list = [];
 
-                    foreach ($v as $ontology_id) {
-                        foreach ($metadata[$k] as $ontology) {
-                            if ($ontology['id'] == $ontology_id) {
-                                $label_list[] = $ontology['label'];
+                        foreach ($v as $ontology_id) {
+                            foreach ($metadata[$k] as $ontology) {
+                                if ($ontology['id'] == $ontology_id) {
+                                    $label_list[] = $ontology['label'];
+                                }
                             }
-                        }
-                    }
+                        }                        
 
-                    unset($filters[$k]);
-                    $filters[$label_field_name] = $label_list;
+                        unset($filters[$k]);
+                        $filters[$label_field_name] = $label_list;
+                    }
                 }
+            }
+
+            // concatenate fields with ontology unit
+            if(isset($filters['collection_time_point_relative']) && isset($filters['collection_time_point_relative_unit_id'])) {
+                $collection_time_point_relative = $filters['collection_time_point_relative'];
+                $collection_time_point_relative_unit_id = $filters['collection_time_point_relative_unit_id'];
+                $collection_time_point_relative_unit_label = '';
+                foreach ($metadata['collection_time_point_relative_unit_id'] as $ontology) {
+                    if ($ontology['id'] == $collection_time_point_relative_unit_id) {
+                        $collection_time_point_relative_unit_label = $ontology['label'];
+                    }
+                }
+
+                unset($filters['collection_time_point_relative_unit_id']);
+                $filters['collection_time_point_relative'] = $collection_time_point_relative . ' ' . $collection_time_point_relative_unit_label;
             }
         }
 
@@ -2032,7 +2049,6 @@ class RestService extends Model
 
         foreach ($final_response_list as $i => $response) {
             $cell_list = $response['data']->Cell;
-            // dd($cell_list);
             $data_processing_id_list = [];
             foreach ($cell_list as $cell) {
                 if (! isset($cell->data_processing_id) || ! isset($cell->cell_id)) {
@@ -2099,7 +2115,6 @@ class RestService extends Model
                 $data_processing_id_list = $response['data_processing_id_list'];
 
                 $rs_filters_json = self::generate_cell_id_by_data_processing_id_json_query($data_processing_id_list, $query_parameters);
-                // dd($rs_filters_json);
                 break;
             }
 

@@ -20,25 +20,47 @@ class FieldNameSeeder extends CsvSeeder
             // delete existing data
             DB::table($this->table)->truncate();
 
-            $this->mapping = [
-                0 => 'ir_id',
-                1 => 'ir_full',
-                2 => 'ir_short',
-                15 => 'airr',
-                16 => 'airr_full',
-                19  => 'ir_class',
-                20 => 'ir_subclass',
-                21 => 'ir_adc_api_query',
-                22 => 'ir_adc_api_response',
-                24 => 'airr_type',
-                25 => 'airr_description',
-                30 => 'airr_example',
-                42 => 'ir_api_input_type',
-            ];
 
             $file_list = dir_to_array($this->folder_path);
 
             foreach ($file_list as $filename) {
+                $api_version = pathinfo($filename)['filename'];
+
+                if($api_version == '1.0') {
+                    $this->mapping = [
+                        0 => 'ir_id',
+                        1 => 'ir_full',
+                        2 => 'ir_short',
+                        14 => 'airr',
+                        15 => 'airr_full',
+                        18  => 'ir_class',
+                        19 => 'ir_subclass',
+                        21 => 'ir_adc_api_query',
+                        22 => 'ir_adc_api_response',
+                        23 => 'airr_type',
+                        24 => 'airr_description',
+                        29 => 'airr_example',
+                        41 => 'ir_api_input_type',
+                    ];                    
+                }
+                elseif($api_version == '1.2') {
+                    $this->mapping = [
+                        0 => 'ir_id',
+                        1 => 'ir_full',
+                        2 => 'ir_short',
+                        15 => 'airr',
+                        16 => 'airr_full',
+                        19  => 'ir_class',
+                        20 => 'ir_subclass',
+                        21 => 'ir_adc_api_query',
+                        22 => 'ir_adc_api_response',
+                        24 => 'airr_type',
+                        25 => 'airr_description',
+                        30 => 'airr_example',
+                        42 => 'ir_api_input_type',
+                    ];
+                }
+
                 $this->filename = $filename;
                 echo 'Adding mapping file ' . $filename . "\n";
 
@@ -48,7 +70,6 @@ class FieldNameSeeder extends CsvSeeder
                 DB::table($this->table)->whereNull('ir_id')->delete();
 
                 // add API version
-                $api_version = pathinfo($filename)['filename'];
                 FieldName::whereNull('api_version')->update(['api_version' => $api_version]);
 
                 // add extra fields (gateway specific)
