@@ -172,7 +172,7 @@ class RestService extends Model
 
             // convert arrays of ontology ids to ontology labels
             foreach ($filters as $k => $v) {
-                if(is_array($v)) {
+                if (is_array($v)) {
                     if (in_array($k, $ontology_fields)) {
                         $label_field_name = Str::beforeLast($k, '_id');
                         $label_list = [];
@@ -183,7 +183,7 @@ class RestService extends Model
                                     $label_list[] = $ontology['label'];
                                 }
                             }
-                        }                        
+                        }
 
                         unset($filters[$k]);
                         $filters[$label_field_name] = $label_list;
@@ -192,7 +192,7 @@ class RestService extends Model
             }
 
             // concatenate fields with ontology unit
-            if(isset($filters['collection_time_point_relative']) && isset($filters['collection_time_point_relative_unit_id'])) {
+            if (isset($filters['collection_time_point_relative']) && isset($filters['collection_time_point_relative_unit_id'])) {
                 $collection_time_point_relative = $filters['collection_time_point_relative'];
                 $collection_time_point_relative_unit_id = $filters['collection_time_point_relative_unit_id'];
                 $collection_time_point_relative_unit_label = '';
