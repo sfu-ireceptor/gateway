@@ -211,7 +211,7 @@ function run_cell_analysis()
 
     # Remove the intermediate files generated for Conga
     rm -f ${output_directory}/${CONTIG_PREFIX}.csv ${output_directory}/${CONTIG_PREFIX}_*
-    rm -f ${output_directory}/features.tsv.gz ${output_directory}/barcodes.tsv.gz ${output_directory}/matrix.mtx.gz ${output_directory}/matrix.mtx.tmp
+    #rm -f ${output_directory}/features.tsv.gz ${output_directory}/barcodes.tsv.gz ${output_directory}/matrix.mtx.gz ${output_directory}/matrix.mtx.tmp
 
     # We don't want to keep around the generated data files or the manifest file.
     rm -f ${cell_file} ${gex_file} ${rearrangement_file} ${manifest_file}
