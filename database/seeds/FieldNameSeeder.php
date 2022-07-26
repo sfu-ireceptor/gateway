@@ -20,13 +20,12 @@ class FieldNameSeeder extends CsvSeeder
             // delete existing data
             DB::table($this->table)->truncate();
 
-
             $file_list = dir_to_array($this->folder_path);
 
             foreach ($file_list as $filename) {
                 $api_version = pathinfo($filename)['filename'];
 
-                if($api_version == '1.0') {
+                if ($api_version == '1.0') {
                     $this->mapping = [
                         0 => 'ir_id',
                         1 => 'ir_full',
@@ -41,9 +40,8 @@ class FieldNameSeeder extends CsvSeeder
                         24 => 'airr_description',
                         29 => 'airr_example',
                         41 => 'ir_api_input_type',
-                    ];                    
-                }
-                elseif($api_version == '1.2') {
+                    ];
+                } elseif ($api_version == '1.2') {
                     $this->mapping = [
                         0 => 'ir_id',
                         1 => 'ir_full',
