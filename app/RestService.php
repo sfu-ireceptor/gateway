@@ -196,12 +196,12 @@ class RestService extends Model
             if (isset($filters['collection_time_point_relative']) || isset($filters['collection_time_point_relative_unit_id'])) {
                 $collection_time_point_relative_legacy = '';
 
-                if(isset($filters['collection_time_point_relative'])) {
+                if (isset($filters['collection_time_point_relative'])) {
                     $collection_time_point_relative_legacy = $filters['collection_time_point_relative'];
                     unset($filters['collection_time_point_relative']);
                 }
 
-                if(isset($filters['collection_time_point_relative_unit_id'])) {
+                if (isset($filters['collection_time_point_relative_unit_id'])) {
                     $collection_time_point_relative_unit_id = $filters['collection_time_point_relative_unit_id'];
                     $collection_time_point_relative_unit_label = '';
                     foreach ($metadata['collection_time_point_relative_unit_id'] as $ontology) {
@@ -210,8 +210,8 @@ class RestService extends Model
                         }
                     }
 
-                    if($collection_time_point_relative_legacy != '') {
-                        $collection_time_point_relative_legacy.=' ';
+                    if ($collection_time_point_relative_legacy != '') {
+                        $collection_time_point_relative_legacy .= ' ';
                     }
 
                     $collection_time_point_relative_legacy .= $collection_time_point_relative_unit_label;

@@ -418,7 +418,6 @@ class AdminController extends Controller
 
         $info = $rs->refreshInfo();
 
-        
         if (isset($info['error'])) {
             $message = 'An error occurred : ' . $info['error'];
         } else {
