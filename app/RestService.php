@@ -216,7 +216,6 @@ class RestService extends Model
 
                     $collection_time_point_relative_legacy .= $collection_time_point_relative_unit_label;
 
-
                     unset($filters['collection_time_point_relative_unit_id']);
                 }
 
