@@ -46,8 +46,9 @@ class RestService extends Model
             $response = $client->get('info');
             $body = $response->getBody();
             $json = json_decode($body);
+
             $chunk_size = $json->max_size ?? null;
-            $api_version = $json->api->version ?? null;
+            $api_version = $json->api->version ?? '1.0';
 
             if ($api_version != null) {
                 // keep only major and minor numbers
@@ -192,18 +193,33 @@ class RestService extends Model
             }
 
             // concatenate fields with ontology unit
-            if (isset($filters['collection_time_point_relative']) && isset($filters['collection_time_point_relative_unit_id'])) {
-                $collection_time_point_relative = $filters['collection_time_point_relative'];
-                $collection_time_point_relative_unit_id = $filters['collection_time_point_relative_unit_id'];
-                $collection_time_point_relative_unit_label = '';
-                foreach ($metadata['collection_time_point_relative_unit_id'] as $ontology) {
-                    if ($ontology['id'] == $collection_time_point_relative_unit_id) {
-                        $collection_time_point_relative_unit_label = $ontology['label'];
-                    }
+            if (isset($filters['collection_time_point_relative']) || isset($filters['collection_time_point_relative_unit_id'])) {
+                $collection_time_point_relative_legacy = '';
+
+                if(isset($filters['collection_time_point_relative'])) {
+                    $collection_time_point_relative_legacy = $filters['collection_time_point_relative'];
+                    unset($filters['collection_time_point_relative']);
                 }
 
-                unset($filters['collection_time_point_relative_unit_id']);
-                $filters['collection_time_point_relative'] = $collection_time_point_relative . ' ' . $collection_time_point_relative_unit_label;
+                if(isset($filters['collection_time_point_relative_unit_id'])) {
+                    $collection_time_point_relative_unit_id = $filters['collection_time_point_relative_unit_id'];
+                    $collection_time_point_relative_unit_label = '';
+                    foreach ($metadata['collection_time_point_relative_unit_id'] as $ontology) {
+                        if ($ontology['id'] == $collection_time_point_relative_unit_id) {
+                            $collection_time_point_relative_unit_label = $ontology['label'];
+                        }
+                    }
+
+                    if($collection_time_point_relative_legacy != '') {
+                        $collection_time_point_relative_legacy.=' ';
+                    }
+
+                    $collection_time_point_relative_legacy .= $collection_time_point_relative_unit_label;
+
+                    unset($filters['collection_time_point_relative_unit_id']);
+                }
+
+                $filters['collection_time_point_relative'] = $collection_time_point_relative_legacy;
             }
         }
 
