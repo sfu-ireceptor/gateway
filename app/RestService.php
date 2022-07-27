@@ -216,6 +216,7 @@ class RestService extends Model
 
                     $collection_time_point_relative_legacy .= $collection_time_point_relative_unit_label;
 
+
                     unset($filters['collection_time_point_relative_unit_id']);
                 }
 
@@ -234,7 +235,7 @@ class RestService extends Model
             // default -> substring query
             $filter->op = 'contains';
 
-            $field_type = FieldName::getFieldType($k, 'ir_adc_api_query');
+            $field_type = FieldName::getFieldType($k, 'ir_adc_api_query', $api_version);
             if (is_array($v)) {
                 $filter->op = 'in';
             } elseif ($k == 'subject.age_min') {

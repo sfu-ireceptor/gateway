@@ -118,7 +118,7 @@ ir_library_source																		IR_Repertoire	IR_Curator			FALSE	string
 ir_igblast_file_name				ir_igblast_file_name	string	FALSE												IR_Repertoire	IR_Curator			FALSE	string																					
 ir_imgt_file_name				ir_imgt_file_name	string	FALSE												IR_Repertoire	IR_Curator			FALSE	string																					
 ir_mixcr_file_name				ir_mixcr_file_name	string	FALSE												IR_Repertoire	IR_Curator			FALSE	string																					
-ir_rearrangement_tool				ir_rearrangement_tool	string	FALSE												IR_Repertoire	IR_Curator			FALSE	string																					
+ir_rearrangement_tool			ir_rearrangement_tool	ir_rearrangement_tool	string	FALSE												IR_Repertoire	IR_Curator			FALSE	string																					
 ir_record_number			ir_record_number	ir_record_number	integer	FALSE												IR_Repertoire	IR_Curator			FALSE	integer																					
 ir_rearrangement_number				ir_rearrangement_number	integer	FALSE												IR_Repertoire	IR_Curator			FALSE	integer																					
 ir_annotation_set_metadata_id				ir_annotation_set_metadata_id	string	FALSE												IR_Repertoire				FALSE	string																					
