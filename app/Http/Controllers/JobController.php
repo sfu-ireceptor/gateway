@@ -314,36 +314,29 @@ class JobController extends Controller
         $ireceptor_error = 'IR-ERROR';
         $gateway_error = 'GW-ERROR';
         // Determine if we should be handling errors.
-        $job_errors = False;
-        if ($job->agave_status == 'FAILED')
-        {
+        $job_errors = false;
+        if ($job->agave_status == 'FAILED') {
             // If the job fails, then we need to handle error messages
-            $job_errors = True;
-        }
-        else
-        {
+            $job_errors = true;
+        } else {
             // If the job error file exists and has an error message then we need to handle errors
-            if (File::exists($folder) && File::exists($err_path))
-            {
+            if (File::exists($folder) && File::exists($err_path)) {
                 $ir_output = [];
                 $gw_output = [];
-                exec('grep '.escapeshellarg($ireceptor_error).' '.$err_path,$ir_output,$result_code);
-                exec('grep '.escapeshellarg($gateway_error).' '.$err_path,$gw_output,$result_code);
-                if (count($ir_output) > 0 || count($gw_output) > 0) 
-                {
-                    $job_errors = True;
+                exec('grep ' . escapeshellarg($ireceptor_error) . ' ' . $err_path, $ir_output, $result_code);
+                exec('grep ' . escapeshellarg($gateway_error) . ' ' . $err_path, $gw_output, $result_code);
+                if (count($ir_output) > 0 || count($gw_output) > 0) {
+                    $job_errors = true;
                 }
             }
             // If the job output file exists and has an error message then we need to handle errors
-            if (File::exists($folder) && File::exists($out_path)) 
-            {
+            if (File::exists($folder) && File::exists($out_path)) {
                 $ir_output = [];
                 $gw_output = [];
-                exec('grep '.escapeshellarg($ireceptor_error).' '.$out_path,$ir_output,$result_code);
-                exec('grep '.escapeshellarg($gateway_error).' '.$out_path,$gw_output,$result_code);
-                if (count($ir_output) > 0 || count($gw_output) > 0) 
-                {
-                    $job_errors = True;
+                exec('grep ' . escapeshellarg($ireceptor_error) . ' ' . $out_path, $ir_output, $result_code);
+                exec('grep ' . escapeshellarg($gateway_error) . ' ' . $out_path, $gw_output, $result_code);
+                if (count($ir_output) > 0 || count($gw_output) > 0) {
+                    $job_errors = true;
                 }
             }
         }
@@ -351,8 +344,7 @@ class JobController extends Controller
         if ($job_errors) {
             $s = '<em>WARNING: This job completed but errors on some stages of the processing were detected. As a result, some repertoires may not have been processed and/or some results may not be fully complete. Please refer to the Error and Output log files for more information.</em><br/>\n';
             // If the Tapis job failed get the error message.
-            if ($job->agave_status == 'FAILED')
-            {
+            if ($job->agave_status == 'FAILED') {
                 // Get the Tapis error status
                 $agave_status = json_decode($this->getAgaveJobJSON($job->id));
                 $s .= '<br/><p><b>TAPIS errors</b></p>\n';
