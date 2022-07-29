@@ -194,7 +194,6 @@ class RestService extends Model
 
             // convert some ontologies to field labels
             if (isset($filters['collection_time_point_relative_unit_id'])) {
-
                 $collection_time_point_relative_unit_id = $filters['collection_time_point_relative_unit_id'];
                 $collection_time_point_relative_unit_label = '';
                 foreach ($metadata['collection_time_point_relative_unit_id'] as $ontology) {
@@ -210,7 +209,6 @@ class RestService extends Model
 
                 $filters['collection_time_point_relative'] = $collection_time_point_relative;
             }
-
         }
 
         // rename filters: internal gateway id -> ADC API name
