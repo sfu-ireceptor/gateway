@@ -210,11 +210,12 @@ class RestService extends Model
                         }
                     }
 
-                    if ($collection_time_point_relative_legacy != '') {
-                        $collection_time_point_relative_legacy .= ' ';
+                    if($collection_time_point_relative_legacy == '') {
+                        $collection_time_point_relative_legacy =  $collection_time_point_relative_unit_label;
                     }
-
-                    $collection_time_point_relative_legacy .= $collection_time_point_relative_unit_label;
+                    else {
+                        $collection_time_point_relative_legacy =  $collection_time_point_relative_unit_label . ' ' . $collection_time_point_relative_legacy;
+                    }
 
                     unset($filters['collection_time_point_relative_unit_id']);
                 }
