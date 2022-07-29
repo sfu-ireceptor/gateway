@@ -192,35 +192,25 @@ class RestService extends Model
                 }
             }
 
-            // concatenate fields with ontology unit
-            if (isset($filters['collection_time_point_relative']) || isset($filters['collection_time_point_relative_unit_id'])) {
-                $collection_time_point_relative_legacy = '';
+            // convert some ontologies to field labels
+            if (isset($filters['collection_time_point_relative_unit_id'])) {
 
-                if (isset($filters['collection_time_point_relative'])) {
-                    $collection_time_point_relative_legacy = $filters['collection_time_point_relative'];
-                    unset($filters['collection_time_point_relative']);
+                $collection_time_point_relative_unit_id = $filters['collection_time_point_relative_unit_id'];
+                $collection_time_point_relative_unit_label = '';
+                foreach ($metadata['collection_time_point_relative_unit_id'] as $ontology) {
+                    if ($ontology['id'] == $collection_time_point_relative_unit_id) {
+                        $collection_time_point_relative_unit_label = $ontology['label'];
+                    }
                 }
 
-                if (isset($filters['collection_time_point_relative_unit_id'])) {
-                    $collection_time_point_relative_unit_id = $filters['collection_time_point_relative_unit_id'];
-                    $collection_time_point_relative_unit_label = '';
-                    foreach ($metadata['collection_time_point_relative_unit_id'] as $ontology) {
-                        if ($ontology['id'] == $collection_time_point_relative_unit_id) {
-                            $collection_time_point_relative_unit_label = $ontology['label'];
-                        }
-                    }
+                $collection_time_point_relative = $filters['collection_time_point_relative'] ?? '';
+                $collection_time_point_relative = $collection_time_point_relative_unit_label . ' ' . $collection_time_point_relative;
 
-                    if ($collection_time_point_relative_legacy == '') {
-                        $collection_time_point_relative_legacy = $collection_time_point_relative_unit_label;
-                    } else {
-                        $collection_time_point_relative_legacy = $collection_time_point_relative_unit_label . ' ' . $collection_time_point_relative_legacy;
-                    }
+                unset($filters['collection_time_point_relative_unit_id']);
 
-                    unset($filters['collection_time_point_relative_unit_id']);
-                }
-
-                $filters['collection_time_point_relative'] = $collection_time_point_relative_legacy;
+                $filters['collection_time_point_relative'] = $collection_time_point_relative;
             }
+
         }
 
         // rename filters: internal gateway id -> ADC API name
