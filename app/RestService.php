@@ -192,7 +192,7 @@ class RestService extends Model
                 }
             }
 
-            // convert some ontologies to field labels
+            // convert collection_time_point_relative_unit_id (ontology id) to label
             if (isset($filters['collection_time_point_relative_unit_id'])) {
                 $collection_time_point_relative_unit_id = $filters['collection_time_point_relative_unit_id'];
                 $collection_time_point_relative_unit_label = '';
@@ -208,6 +208,24 @@ class RestService extends Model
                 unset($filters['collection_time_point_relative_unit_id']);
 
                 $filters['collection_time_point_relative'] = $collection_time_point_relative;
+            }
+
+            // convert template_amount_unit_id (ontology id) to label
+            if (isset($filters['template_amount_unit_id'])) {
+                $template_amount_unit_id = $filters['template_amount_unit_id'];
+                $template_amount_unit_label = '';
+                foreach ($metadata['template_amount_unit_id'] as $ontology) {
+                    if ($ontology['id'] == $template_amount_unit_id) {
+                        $template_amount_unit_label = $ontology['label'];
+                    }
+                }
+
+                $template_amount = $filters['template_amount'] ?? '';
+                $template_amount = $template_amount . ' ' . $template_amount_unit_label;
+
+                unset($filters['template_amount_unit_id']);
+
+                $filters['template_amount'] = $template_amount;
             }
         }
 
