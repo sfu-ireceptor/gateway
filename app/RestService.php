@@ -227,6 +227,16 @@ class RestService extends Model
 
                 $filters['template_amount'] = $template_amount;
             }
+
+            // convert some keywords_study values
+            if (isset($filters['keywords_study'])) {
+                $keywords = $filters['keywords_study'];
+
+                $keywords = Str::replaceFirst('contains_tr', 'contains_tcr', $keywords);
+                $keywords = Str::replaceFirst('contains_schema_cell', 'contains_single_cell', $keywords);
+ 
+                $filters['keywords_study'] = $keywords;
+            }
         }
 
         // rename filters: internal gateway id -> ADC API name
