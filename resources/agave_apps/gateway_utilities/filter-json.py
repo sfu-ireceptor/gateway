@@ -28,7 +28,7 @@ if __name__ == "__main__":
     try:
         start_pos = 0
         file_loc = 0
-        buffer_size = 10000
+        buffer_size = 5000
         buffer_loc = 0
         with open(options.filename, 'r') as f:
             json_str = f.read(buffer_size)
@@ -40,23 +40,36 @@ if __name__ == "__main__":
             if json_str[0] != '{':
                 print('ERROR: JSON file %s has no opening {'%(options.filename))
                 sys.exit(1)
-            print('found {')
+            #print('found {')
             json_str = json_str[1:].strip()
 
             if json_str[0:len(options.block)+2] != '"%s"'%(options.block):
                 print('ERROR: Could not find key "%s" in JSON file %s'%(options.block, options.filename))
                 sys.exit(1)
-            print('found %s'%(options.block))
+            #print('found %s'%(options.block))
 
             json_str = json_str[len(options.block)+2+1:].strip()
             if json_str[0] != '[':
                 print('ERROR: JSON object %s is not an array'%(options.block))
                 sys.exit(1)
-            print('found [')
+            #print('found [')
 
+            
             json_str = json_str[1:].strip()
             processing_object = True
+            object_str_size = 0
+            object_threshold = 4
             while processing_object:
+                # Check to see if the buffere is almost consumed. If we have room
+                # for less than N objects, then read in more data.
+                buffer_remaining = len(json_str)
+                print('size = %d, remaing = %d, obj_size = %s'%(buffer_size,buffer_remaining,object_str_size))
+                if buffer_remaining < object_threshold*object_str_size:
+                    print('we are almost out of buffer')
+                    new_buffer = f.read(buffer_size)
+                    print('#######%s'%(new_buffer))
+                    json_str = json_str + new_buffer
+                    print('new json str length = %d'%(len(json_str)))
                 if json_str[0] != '{':
                     print('ERROR: JSON object expected'%(options.block))
                     sys.exit(1)
@@ -65,7 +78,7 @@ if __name__ == "__main__":
                 location = 0
                 count = 0
                 for character in json_str:
-                    # For ever { increase nesting, } decrease nesting
+                    # For every { increase nesting, } decrease nesting
                     # The first character should be a {
                     if character == '{':
                         nesting = nesting+1
@@ -76,6 +89,10 @@ if __name__ == "__main__":
                     if nesting == 0:
                         #print(json_str[:location+1])
                         json_dict = json.loads(json_str[:location+1])
+                        str_len = len(json_str[:location+1])
+                        if str_len > object_str_size:
+                            object_str_size = str_len
+
                         #print(json_dict)
                         if options.field in json_dict:
                             if json_dict[options.field] == options.value:
