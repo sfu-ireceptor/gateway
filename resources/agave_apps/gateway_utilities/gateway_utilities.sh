@@ -245,6 +245,9 @@ function gateway_split_repertoire(){
                     echo "GW-ERROR: Could not filter Cell data for ${repertoire_id} from ${data_file}"
                     continue
                 fi
+                echo -n "GW-INFO: Done splitting Cell file - "
+                date
+
                 # Repeat for expression data.
                 echo "GW-INFO: Splitting Expression file ${expression_file} by ${SPLIT_FIELD} ${repertoire_id}"
                 python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $expression_file CellExpression ${SPLIT_FIELD} ${repertoire_id} > ${repository_name}/${repertoire_dirname}/${gex_datafile}
@@ -253,6 +256,9 @@ function gateway_split_repertoire(){
                     echo "GW-ERROR: Could not filter Expression data for ${repertoire_id} from ${expression_file}"
                     continue
                 fi
+                echo -n "GW-INFO: Done splitting Expression file - "
+                date
+
                 # Repeat for rearrangement data.
                 #python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter.py $data_file ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
                 link_ids=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/preprocess-json.py ${repository_name}/${repertoire_dirname}/${cell_datafile} Cell ${LINK_FIELD} | sort -u | awk '{printf("%s ",$0)}'` )
@@ -262,6 +268,7 @@ function gateway_split_repertoire(){
                     echo "GW-ERROR: Link fields = ${link_ids[@]}."
                     continue
                 fi
+
                 link_id=${link_ids[0]}
                 echo "GW-INFO: Link ID = -${link_id}-"
                 echo "GW-INFO: Link Field = -${LINK_FIELD}-"
@@ -291,7 +298,11 @@ function gateway_split_repertoire(){
                 #     $3 repertoire id ("NULL" if not used)
                 #     $4 repertoire JSON file ["NULL" if not used, required if repertoire_id is specified]
                 #     $5 manifest file
+                echo -n "GW-INFO: Running Cell analysis ${repository_name}/${repertoire_dirname}"
+                date
                 run_cell_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST}
+                echo -n "GW-INFO: Done running Cell analysis ${repository_name}/${repertoire_dirname}"
+                date
             fi
 
             repertoire_count=$((repertoire_count+1))
