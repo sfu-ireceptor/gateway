@@ -9,10 +9,13 @@ def getArguments():
         description=""
     )
 
-    # API x and y fields to use
+    # Input file name to process
     parser.add_argument("filename")
+    # JSON key for the array that we want to process
     parser.add_argument("block")
+    # The field on which we want to filter
     parser.add_argument("field")
+    # The value for the field that we are filtering
     parser.add_argument("value")
 
     options = parser.parse_args()
@@ -24,151 +27,158 @@ if __name__ == "__main__":
 
     # Get the arguments
     options = getArguments()
+
     # Open the JSON file.
     try:
-        start_pos = 0
-        file_loc = 0
         buffer_size = 5000
-        buffer_loc = 0
         with open(options.filename, 'r') as f:
+
+            # Read in our first buffer_size characters.
             json_str = f.read(buffer_size)
+
+            # Replace any newlines, we want everything to be on a single line
             json_str = json_str.replace('\n',' ')
-            file_loc = buffer_size
+
+            # Strip of any white space in preparation for processing.
             json_str = json_str.strip()
             json_len = len(json_str) 
 
+            # Cell files are JSON objects
             if json_str[0] != '{':
                 print('ERROR: JSON file %s has no opening {'%(options.filename))
                 sys.exit(1)
-            #print('found {')
+            # Look at the next part of the string, excluding white space.
             json_str = json_str[1:].strip()
 
+            # We expect the next object to be the block key (enclosed in quotes of course)
             if json_str[0:len(options.block)+2] != '"%s"'%(options.block):
                 print('ERROR: Could not find key "%s" in JSON file %s'%(options.block, options.filename))
                 sys.exit(1)
-            #print('found %s'%(options.block))
 
+            # Strip off the block key and any new white space
             json_str = json_str[len(options.block)+2+1:].strip()
+            # The block should be an array, so we expect the array character.
             if json_str[0] != '[':
                 print('ERROR: JSON object %s is not an array'%(options.block))
                 sys.exit(1)
-            #print('found [')
-
-            
+            # Strip off the array character and any white space.
             json_str = json_str[1:].strip()
+
+            # If we got this far, we have the correct format for a JSON AIRR expression file.
+            # Print the JSON header for the file, essentially duplicating what we just read.
+            print('{')
+            print('"%s":['%(options.block))
+            
+            # Initalize our loop variables. We track whether we are still processing objects,
+            # the maximum size of the objects in the array we are processing, the threshold that
+            # determines how many objects we want to hold in the buffere before reading more data,
+            # a flag to note whether the file is done processing, and a count of how many objects
+            # we have written.
             processing_object = True
             object_str_size = 0
             object_threshold = 4
+            file_empty = False
+            count = 0
             while processing_object:
                 # Check to see if the buffere is almost consumed. If we have room
-                # for less than N objects, then read in more data.
+                # for less than N objects, then read in more data. Don't read any more 
+                # data if the file is empty.
                 buffer_remaining = len(json_str)
-                print('size = %d, remaing = %d, obj_size = %s'%(buffer_size,buffer_remaining,object_str_size))
-                if buffer_remaining < object_threshold*object_str_size:
-                    print('we are almost out of buffer')
+                if buffer_remaining < object_threshold*object_str_size and not file_empty:
+                    #print('we are almost out of buffer')
+                    #print('size = %d, remaing = %d, obj_size = %s'%(buffer_size,buffer_remaining,object_str_size))
+                    # Read in the new data
                     new_buffer = f.read(buffer_size)
-                    print('#######%s'%(new_buffer))
-                    json_str = json_str + new_buffer
-                    print('new json str length = %d'%(len(json_str)))
+                    # If we are at file end, note it, otherwise add it on to the json string
+                    if len(new_buffer) == 0:
+                        file_empty = True
+                    else:
+                        json_str = json_str + new_buffer
+
+                # Check to make sure that the first charater is an object delimeter. We have run
+                # strip to get rid of any whitespace so anything else is an error.
                 if json_str[0] != '{':
                     print('ERROR: JSON object expected'%(options.block))
                     sys.exit(1)
-                print('found {')
+
+                # Initialize our nesting level and the location in the string.
                 nesting = 0
                 location = 0
-                count = 0
+
+                # Loop over the characters in the string.
                 for character in json_str:
                     # For every { increase nesting, } decrease nesting
-                    # The first character should be a {
+                    # The first character should be a { so nesting should start at 1 after this block
                     if character == '{':
                         nesting = nesting+1
                     elif character == '}':
                         nesting = nesting-1
 
-                    # We have found a full JSON object
+                    # When nesting is 0 we have found as many } as we see {. This means
+                    # we have found a full JSON object
                     if nesting == 0:
-                        #print(json_str[:location+1])
+                        # Convert the string starting at 0 to location+1. Location is the
+                        # location of the } character in this case.
                         json_dict = json.loads(json_str[:location+1])
+                        # Keep track of the larges object size to help with buffer management
                         str_len = len(json_str[:location+1])
                         if str_len > object_str_size:
                             object_str_size = str_len
 
-                        #print(json_dict)
+                        # If the field of interest is in the dictionary
                         if options.field in json_dict:
+                            # and if the field has the value if interest
                             if json_dict[options.field] == options.value:
-                                if ( count > 0 ):
+                                # Print out the object seperator (if after the first object) and
+                                # then proint the dictionary as JSON (with no newline).
+                                if count > 0:
                                     print(',')
-                                print(json.dumps(json_dict))
+                                print(json.dumps(json_dict), end='')
                                 count = count + 1
 
+                        # Strip off the object we just processed from the buffer as well as whitespace
                         json_str = json_str[location+1:].strip()
+
+                        # Check if the next character is the array end character. If so we are
+                        # done.
                         if json_str[0] == ']':
-                            print('Array ended')
+                            # Strip off the ] and whitespace
                             json_str = json_str[1:].strip()
+                            # Check to see if we have a closing object character. If not things are not
+                            # well formed JSON
                             if json_str[0] != '}':
                                 print('ERROR: JSON close object expected')
                                 sys.exit(1)
-                            print('found }')
+
+                            # Keep track of the fact that we are done (exit the loop).
                             processing_object = False
+                            # Break out of the buffer character processing loop.
                             break
                         elif json_str[0] != ',':
+                            # If the current character isn't a ] it must be a , separator
                             print('ERROR: JSON object separator expected')
                             sys.exit(1)
-                        print('found ,')
 
+                        # If we get here we have another object to process. We strip off the , separator
+                        # The next character should therefore be a { to start the new object, which is
+                        # what we want.
                         json_str = json_str[1:].strip()
+                        # Finally break out of the character processing loop, as we want to start over
+                        # with the new object processing with the current json_string in the buffer.
                         break
                     else:
                         # Keep track of where we are in the string
                         location = location + 1
-
-            print('Done')
+            # Print out the JSON closing array and object characters so we have valid JSON.
+            print(']')
+            print('}')
+            # Exit with success!
             sys.exit(0)
-
-
-
-#            while True:
-#                try:
-#                    f.seek(start_pos)
-#                    json_str = f.read(start_pos+buffer_size)
-#                    obj = json.load(f)
-                    #yield obj
-#                    return
-#            except json.JSONDecodeError as e:
-#                obj = json.loads(json_str)
-#                start_pos += e.pos
-##                yield obj
-#            json_dict = json.load(f)
+    # Handle generic exceptions.
     except Exception as e:
         print('ERROR: Unable to read JSON file %s'%(options.filename))
         print('ERROR: Reason =' + str(e))
-        raise
         sys.exit(1)
 
-    # Check to see if the block exists.
-    
-    if options.block in json_dict:
-        print('{')
-        print('"%s":['%(options.block))
-        # If it does, check that it is an array
-        if isinstance(json_dict[options.block], list):
-            # If it is, iterate over the array
-            count = 0
-            for data_object in json_dict[options.block]:
-                # If the field of interest is in the object, print its value.
-                if options.field in data_object:
-                    if data_object[options.field] == options.value:
-                        if ( count > 0 ):
-                            print(',')
-                        print(json.dumps(data_object))
-                        count = count + 1
-        else:
-            print('ERROR: Block object %s in file %s is not an array'%(options.block, options.filename))
-            sys.exit(1)
-        print(']')
-        print('}')
-    else:
-        print('ERROR: Could not find block %s in file %s'%(options.block, options.filename))
-        sys.exit(1)
 
-    sys.exit(0)
+
