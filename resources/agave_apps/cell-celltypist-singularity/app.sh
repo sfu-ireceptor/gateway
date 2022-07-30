@@ -179,12 +179,16 @@ function run_cell_analysis()
     echo "IR-INFO: Storing output in /data/${output_directory}"
 
     # Generate equivalent 10X Cell files from AIRR Cell/GEX data for input into CellTypist.
+    echo -n "IR-INFO: Processing 10X - "
+    date
     python3 ${SCRIPT_DIR}/airr-to-10x.py ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not generate 10X cell/expression data from ${output_directory}/${gex_file}"
         return
     fi
+    echo -n "IR-INFO: Done processing 10X - "
+    date
         
     # Compress the file because CellTypist wants it that way!
     gzip ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
