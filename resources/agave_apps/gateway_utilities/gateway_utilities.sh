@@ -242,7 +242,7 @@ function gateway_split_repertoire(){
                 python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $data_file Cell ${SPLIT_FIELD} ${repertoire_id} > ${repository_name}/${repertoire_dirname}/${cell_datafile}
                 if [ $? -ne 0 ]
                 then
-                    echo "GW-ERROR: Could not filter Clone data for ${repertoire_id} from ${data_file}"
+                    echo "GW-ERROR: Could not filter Cell data for ${repertoire_id} from ${data_file}"
                     continue
                 fi
                 # Repeat for expression data.
