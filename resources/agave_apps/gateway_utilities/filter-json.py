@@ -36,9 +36,6 @@ if __name__ == "__main__":
             # Read in our first buffer_size characters.
             json_str = f.read(buffer_size)
 
-            # Replace any newlines, we want everything to be on a single line
-            json_str = json_str.replace('\n',' ')
-
             # Strip of any white space in preparation for processing.
             json_str = json_str.strip()
             json_len = len(json_str) 
@@ -50,13 +47,26 @@ if __name__ == "__main__":
             # Look at the next part of the string, excluding white space.
             json_str = json_str[1:].strip()
 
-            # We expect the next object to be the block key (enclosed in quotes of course)
-            if json_str[0:len(options.block)+2] != '"%s"'%(options.block):
-                print('ERROR: Could not find key "%s" in JSON file %s'%(options.block, options.filename))
+            # We look for the block key in the string (enclosed in quotes of course)
+            # If we can't find it in the first buffer_size characters we assume it isn't there.
+            # We are cheating here - as we assume everything between the opening { for the object
+            # and the block ket we are interested in is correct JSON. 
+            block_loc = json_str.find('"%s"'%(options.block))
+
+            if block_loc == -1:
+                print('ERROR: Could not find key "%s" in first %d characters of JSON file %s'%(options.block, buffer_size, options.filename))
                 sys.exit(1)
 
             # Strip off the block key and any new white space
-            json_str = json_str[len(options.block)+2+1:].strip()
+            json_str = json_str[block_loc+len(options.block)+2:].strip()
+            
+            # The key should be followed by a separator : 
+            if json_str[0] != ':':
+                print('ERROR: expected JSON : separator')
+                sys.exit(1)
+            # Strip off the array character and any white space.
+            json_str = json_str[1:].strip()
+
             # The block should be an array, so we expect the array character.
             if json_str[0] != '[':
                 print('ERROR: JSON object %s is not an array'%(options.block))
