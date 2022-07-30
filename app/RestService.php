@@ -234,7 +234,7 @@ class RestService extends Model
 
                 $keywords = Str::replaceFirst('contains_tr', 'contains_tcr', $keywords);
                 $keywords = Str::replaceFirst('contains_schema_cell', 'contains_single_cell', $keywords);
- 
+
                 $filters['keywords_study'] = $keywords;
             }
         }
