@@ -6,6 +6,8 @@ use App\FieldName;
 use App\News;
 use App\Sample;
 use Illuminate\Http\Request;
+use App\RestService;
+
 
 class HomeController extends Controller
 {
@@ -83,5 +85,15 @@ class HomeController extends Controller
         $data['sequence_field_list_grouped'] = $sequence_field_list_grouped;
 
         return view('fieldsDefinitions', $data);
+    }
+
+    public function repositories()
+    {
+        $rs_list = RestService::findEnabledPublic();
+
+        $data = [];
+        $data['rs_list'] = $rs_list;
+
+        return view('repositories', $data);
     }
 }

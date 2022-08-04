@@ -50,6 +50,9 @@ class RestService extends Model
             $chunk_size = $json->max_size ?? null;
             $api_version = $json->api->version ?? '1.0';
 
+            $contact_url = $json->contact->url ?? null;
+            $contact_email = $json->contact->email ?? null;
+
             if ($api_version != null) {
                 // keep only major and minor numbers
                 $t = explode('.', $api_version);
@@ -58,6 +61,9 @@ class RestService extends Model
 
             $this->chunk_size = $chunk_size;
             $this->api_version = $api_version;
+            $this->contact_url = $contact_url;
+            $this->contact_email = $contact_email;
+            
             $this->save();
 
             $info['chunk_size'] = $this->chunk_size;
@@ -128,6 +134,51 @@ class RestService extends Model
 
         return $l;
     }
+
+    /**
+     * Returns the services which are enabled, but only one per group (ex: IPA instead of IPA1,IPA2, etc).
+     *
+     * @param  array|null  $field_list  Fields to fetch. Fetches all fields by default.
+     * @return array List of RestService objects
+     */
+    public static function findEnabledPublic($field_list = ['*'])
+    {
+        $l = static::where('hidden', false)->where('enabled', true)->orderBy('name', 'asc')->get($field_list);
+
+        $l2 = [];
+
+        foreach ($l as $rs) {
+            
+            $group_code = $rs->rest_service_group_code;
+            $group_rs = null;
+
+            if($group_code != '') {
+                foreach ($l2 as $rs2) {
+                    if($group_code == $rs2->rest_service_group_code) {
+                        $group_rs = $rs2;
+                        break;
+                    }
+                }
+            }
+            if ($group_rs != null) {
+                $group_rs->nb_sequences += $rs->nb_sequences;
+                $group_rs->nb_clones += $rs->nb_clones;
+                $group_rs->nb_cells += $rs->nb_cells;
+            }
+            else {
+                $group_name = RestServiceGroup::nameForCode($group_code);
+
+                // add display name
+                $rs->display_name = $group_name ? $group_name : $rs->name;
+                $l2[] = $rs;
+            }
+        }
+
+
+
+        return $l2;
+    }
+
 
     /**
      * Returns the services which can be enabled.
