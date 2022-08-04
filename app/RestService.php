@@ -63,7 +63,7 @@ class RestService extends Model
             $this->api_version = $api_version;
             $this->contact_url = $contact_url;
             $this->contact_email = $contact_email;
-            
+
             $this->save();
 
             $info['chunk_size'] = $this->chunk_size;
@@ -148,13 +148,12 @@ class RestService extends Model
         $l2 = [];
 
         foreach ($l as $rs) {
-            
             $group_code = $rs->rest_service_group_code;
             $group_rs = null;
 
-            if($group_code != '') {
+            if ($group_code != '') {
                 foreach ($l2 as $rs2) {
-                    if($group_code == $rs2->rest_service_group_code) {
+                    if ($group_code == $rs2->rest_service_group_code) {
                         $group_rs = $rs2;
                         break;
                     }
@@ -164,8 +163,7 @@ class RestService extends Model
                 $group_rs->nb_sequences += $rs->nb_sequences;
                 $group_rs->nb_clones += $rs->nb_clones;
                 $group_rs->nb_cells += $rs->nb_cells;
-            }
-            else {
+            } else {
                 $group_name = RestServiceGroup::nameForCode($group_code);
 
                 // add display name
@@ -174,11 +172,8 @@ class RestService extends Model
             }
         }
 
-
-
         return $l2;
     }
-
 
     /**
      * Returns the services which can be enabled.
