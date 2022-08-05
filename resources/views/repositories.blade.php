@@ -29,11 +29,12 @@
 						<th>Name</th>
 						<th>Website</th>
 						<th>Email</th>
+						<th>Studies</th>
 						<th>Repertoires</th>
 						<th>Sequences</th>
 						<th>Clones</th>
 						<th>Cells</th>
-						<th>AIRR API Version</th>
+						<th>API</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -42,6 +43,7 @@
 							<td>{{ $rs->display_name }}</td>	
 							<td><a href='{{ $rs->contact_url }}'>{{ $rs->contact_url }}</a></td>	
 							<td><a href="mailto:{{ $rs->contact_email }}">{{ $rs->contact_email }}</a></td>	
+							<td>{{ $rs->nb_studies }}</a></td>
 							<td>{{ $rs->nb_samples }}</a></td>
 							<td>
 								<span title="{{ number_format($rs->nb_sequences) }}">

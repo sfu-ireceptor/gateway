@@ -456,7 +456,7 @@
 										<tr>
 											<td class="stats stats-sequences">
 												@if(isset($sample->stats) && $sample->stats)
-													<a href="#modal_stats" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-name="{{ $sample->subject_id }} - {{ $sample->sample_id }} - {{ $sample->pcr_target_locus }}" data-toggle="modal" data-target="#statsModal">
+													<a href="#modal_stats" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-name="{{ $sample->subject_id ?? '' }} - {{ $sample->sample_id ?? '' }} - {{ $sample->pcr_target_locus ?? '' }}" data-toggle="modal" data-target="#statsModal">
 														<span class="label label-primary">
 															<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
 														</span>
