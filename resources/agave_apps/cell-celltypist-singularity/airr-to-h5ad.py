@@ -2,50 +2,78 @@ import sys
 import argparse
 import json
 import time
-import pandas as pd
-import numpy as np
-import anndata as ad
+import pandas
+import numpy
+import scanpy
+import anndata
 from scipy.sparse import csr_matrix
 from scipy import sparse
 from pandas.api.types import CategoricalDtype
 
 def createAnnData(cell_dict_array, field, value):
-    df = pd.DataFrame.from_records(cell_dict_array)
-    #print(df)
-    #print(df['cell_id'])
-    #print(type(df['cell_id']))
+    # Get a data frame from the array of cells dictionary
+    df = pandas.DataFrame.from_records(cell_dict_array)
+
+    # Get the unique cells
     cells = df["cell_id"].unique()
+    
+    # Get the unique property labels and IDs. 
     property_dict_array = df["property"]
-    #print(property_dict_array)
-    #properties = df["property"].label.unique()
-    label_series = pd.Series([d['label'] for d in property_dict_array])
-    properties = label_series.unique()
-    #print(properties)
-    shape = (len(cells), len(properties))
-    # Create indices for cells and properties
-    cell_cat = CategoricalDtype(categories=sorted(cells), ordered=True)
-    property_cat = CategoricalDtype(categories=sorted(properties), ordered=True)
+    label_series = pandas.Series([d['label'] for d in property_dict_array])
+    id_series = pandas.Series([d['id'] for d in property_dict_array])
+    property_labels = label_series.unique()
+    property_ids = id_series.unique()
+
+    # Get the shape of our object (cells x properties)
+    shape = (len(cells), len(property_labels))
+    #shape = (len(cells), len(property_ids))
+    
+    # Create categorical cells and properties
+    cell_cat = CategoricalDtype(cells)
+    property_cat = CategoricalDtype(property_labels)
+    #property_cat = CategoricalDtype(property_ids)
+
+    # Create our indexes 
     cell_index = df["cell_id"].astype(cell_cat).cat.codes
     property_index = label_series.astype(property_cat).cat.codes
+    #property_index = id_series.astype(property_cat).cat.codes
+
     # Create the sparse matrix
     coo = sparse.coo_matrix((df["value"], (cell_index, property_index)), shape=shape)
     csr = coo.tocsr()
-    #print(csr)
 
-    adata = ad.AnnData(csr, dtype=np.float64)
+    # Create the AnnData object from the sparse matrix
+    adata = anndata.AnnData(csr, dtype=numpy.float64)
+
+    # Assign some useful observation attributes (cell_id, partition field, partition value)
     adata.obs['cell_id'] = cells
     adata.obs['field'] = field
     adata.obs['value'] = value
-    adata.var['property'] = properties
-    #adata.obs_names = cells
-    #adata.var_names = properties
 
-    adata.var_names_make_unique()
+    # Assign some useful variable attributes (property.id and property.label)
+    # If the number of IDs is different than the number of labels, then we have
+    # a ontology ID/label conflict, so don't assign the labels and print a warning.
+    adata.var['property.label'] = property_labels
+    #print(adata.var['property.label'])
+    if len(property_labels) == len(property_ids):
+        adata.var['property.id'] = property_ids
+        #print(adata.var['property.id'])
+    else:
+        print('IR-INFO: property labels and ids do not match, not storing IDs')
 
-    print(adata)
+    # Assign the observation and variable names (cell_id and property.id)
+    adata.obs_names = cells
+    adata.var_names = property_labels
+    #adata.var_names = property_ids
+
+    # Make the var names unique
+    #adata.var_names_make_unique()
+
+    # Return the data structure.
+    # print(adata.to_df())
     return adata
 
-def generateH5AD(gex_filename, output_file, block, field, value):
+def generateH5AD(gex_filename, block, field, value):
     # Keep track of the number of properties
     count = 0
     # An array to hold the anndata objects in
@@ -210,15 +238,17 @@ def generateH5AD(gex_filename, output_file, block, field, value):
             print('Adding %d at end of file processing'%(len(cell_array)))
             adata_array.append(createAnnData(cell_array, field, value))
 
-        ad_concat = ad.concat(adata_array)
+        ad_concat = anndata.concat(adata_array, join='outer', merge='first',  label='concat_dataset')
+        # WARNING - THIS IS INCORRECT - we need to merge cells if they have the same name
+        # NOT rename them!!! DOING THIS FOR DEBUGGING ONLY
         ad_concat.obs_names_make_unique()
         print('Length of adata_array = %d'%(len(adata_array)))
+        #print(adata_array)
         print('Number of properties = %s'%(count))
-        print(ad_concat)
-        print(ad_concat.obs['cell_id'])
-        print(ad_concat.obs['field'])
-        print(ad_concat.obs['value'])
-        ad_concat.write(output_file)
+        print(ad_concat.to_df())
+        #print(ad_concat.obs['cell_id'])
+        #print(ad_concat.obs['field'])
+        #print(ad_concat.obs['value'])
 
 
     # Handle generic exceptions.
@@ -228,7 +258,7 @@ def generateH5AD(gex_filename, output_file, block, field, value):
         print('ERROR: Reason =' + str(e))
         sys.exit(1)
 
-    return True
+    return ad_concat 
     
 def getArguments():
     # Set up the command line parser
@@ -249,6 +279,27 @@ def getArguments():
     # The value for the field that we are filtering
     parser.add_argument("value")
 
+    # Request normaliztion of the counts for each cell to the given value.
+    parser.add_argument(
+        "--normalize",
+        action="store_true",
+        help="Request each cell count to be normalized")
+
+    # Request normaliztion of the counts for each cell to the given value.
+    parser.add_argument(
+        "--normalize_value",
+        dest="normalize_value",
+        type=float,
+        default=10000.0,
+        help="Request each cell count to be normalized to this value")
+
+    # Perform logarithmic processing - as required by some tools (celltypist)
+    parser.add_argument(
+        "--log1p",
+        dest="log1p",
+        action="store_true",
+        help="Request the data to be transformed to a logarithmic representation.")
+
     # Verbosity flag
     parser.add_argument(
         "-v",
@@ -266,10 +317,25 @@ if __name__ == "__main__":
     options = getArguments()
 
     # Generate an H5AD file from the GEX file.
-    success = generateH5AD(options.airr_gex_file, options.output_file,
-                           options.block, options.field, options.value)
+    adata = generateH5AD(options.airr_gex_file, options.block, options.field, options.value)
 
     # Return success if successful
-    if not success:
+    if adata is None: 
         print('ERROR: Unable to process AIRR GEX file %s'%(options.airr_gex_file))
         sys.exit(1)
+
+    # If normalization requested, normalize. Default normalize to 1.
+    if options.normalize:
+        print("IR-INFO: Normalizing cell counts to %f"%(options.normalize_value))
+        scanpy.pp.normalize_total(adata, target_sum=options.normalize_value)
+
+    # If log scaling requested, do it.
+    if options.log1p:
+        print("IR-INFO: Performing log scaling" )
+        scanpy.pp.log1p(adata)
+        # scanpy has a bug, doesn't save "None" data into files.
+        # log1p sets base = None, so we want to change it toe numpy.e
+        adata.uns["log1p"]["base"]=numpy.e
+
+    # Write the output to the output file.
+    adata.write(options.output_file)
