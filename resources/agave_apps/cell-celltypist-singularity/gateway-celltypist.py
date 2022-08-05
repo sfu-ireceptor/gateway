@@ -75,10 +75,10 @@ if __name__ == "__main__":
 
     # Export figures with labels external (celltypist plots are messy)
     scanpy.tl.umap(prediction_adata)
-    scanpy.pl.umap(prediction_adata, color = ['predicted_labels'], title = options.title + ' (CellTypist-majority vote)')
+    scanpy.pl.umap(prediction_adata, color = ['predicted_labels'], title = options.title + ' (majority)')
     pyplot.tight_layout()
     pyplot.savefig(os.path.join(options.output_directory, 'predicted_labels_v2' + '.pdf'))
-    scanpy.pl.umap(prediction_adata, color = ['majority_voting'], title = options.title + ' (CellTypist-majority vote)')
+    scanpy.pl.umap(prediction_adata, color = ['majority_voting'], title = options.title + ' (majority)')
     pyplot.tight_layout()
     pyplot.savefig(os.path.join(options.output_directory, 'majority_voting_v2' + '.pdf'))
 
