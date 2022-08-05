@@ -179,43 +179,65 @@ function run_cell_analysis()
     echo "IR-INFO: Storing output in /data/${output_directory}"
 
     # Generate equivalent 10X Cell files from AIRR Cell/GEX data for input into CellTypist.
-    echo -n "IR-INFO: Processing 10X - "
-    date
-    python3 ${SCRIPT_DIR}/airr-to-10x.py ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
-    if [ $? -ne 0 ]
-    then
-        echo "IR-ERROR: Could not generate 10X cell/expression data from ${output_directory}/${gex_file}"
-        return
-    fi
-    echo -n "IR-INFO: Done processing 10X - "
-    date
+#    echo -n "IR-INFO: Processing 10X - "
+#    date
+#    python3 ${SCRIPT_DIR}/airr-to-10x.py ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
+#    if [ $? -ne 0 ]
+#    then
+#        echo "IR-ERROR: Could not generate 10X cell/expression data from ${output_directory}/${gex_file}"
+#        return
+#    fi
+#    echo -n "IR-INFO: Done processing 10X - "
+#    date
         
     # Compress the file because CellTypist wants it that way!
-    gzip ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
+#    gzip ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
 
     # Convert 10X cell data to h5ad AnnDatga file - normalized to 10,000 counts per cell and 
     # converted to logarithmic data.
+#    singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
+#        -B ${output_directory}:/data -B ${SCRIPT_DIR}:/localsrc \
+#        ${SCRIPT_DIR}/${singularity_image} python \
+#        /localsrc/10Xmtx-to-h5ad.py \
+#        /data \
+#        /data/${repertoire_id}.h5ad \
+#        --normalize --normalize_value=10000 \
+#        --log1p
+#    if [ $? -ne 0 ]
+#    then
+#        echo "IR-ERROR: Could not convert 10X data to h5ad"
+#        return
+#    fi
+
+    echo -n "IR-INFO: Processing GEX data - "
+    date
+
     singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
         -B ${output_directory}:/data -B ${SCRIPT_DIR}:/localsrc \
         ${SCRIPT_DIR}/${singularity_image} python \
-        /localsrc/10Xmtx-to-h5ad.py \
-        /data \
+        /localsrc/airr-to-h5ad.py\
+        /data/${gex_file} \
         /data/${repertoire_id}.h5ad \
+        CellExpression repertoire_id ${repertoire_id} \
         --normalize --normalize_value=10000 \
         --log1p
     if [ $? -ne 0 ]
     then
-        echo "IR-ERROR: Could not convert 10X data to h5ad"
+        echo "IR-ERROR: Could not convert AIRR GEX data to h5ad"
         return
     fi
 
+    echo -n "IR-INFO: Done processing GEX data - "
+    date
+    
     singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
         -B ${output_directory}:/data -B ${SCRIPT_DIR}:/localsrc \
         ${SCRIPT_DIR}/${singularity_image} \
         python /localsrc/gateway-celltypist.py \
         /data/${repertoire_id}.h5ad \
         /data \
-        ${repertoire_id}-annotated.h5ad
+        ${repertoire_id}-annotated.h5ad \
+        ${title_string}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: CellTypist failed on file ${repertoire_id}.h5ad"
