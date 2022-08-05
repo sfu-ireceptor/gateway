@@ -375,7 +375,7 @@ class Sample
             // add rest service id/name
             $new_sample->rest_service_id = $rs->id;
             $new_sample->rest_service_name = $rs->display_name;
-            $new_sample->rest_service_group_code = $rs->rest_service_group_code;
+            $new_sample->rest_service_group_code = $rs->rest_service_group_code ?? null;
 
             // add study URL
             $new_sample = self::generate_study_urls($new_sample);
