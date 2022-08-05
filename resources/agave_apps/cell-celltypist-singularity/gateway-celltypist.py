@@ -24,6 +24,9 @@ def getArguments():
     # The output file (filename only) for the h5ad file.
     parser.add_argument("output_file", help="The Anndata output filename, will be written to output_directory")
 
+    # The output file (filename only) for the h5ad file.
+    parser.add_argument("title", help="The title to use for the figures.")
+
     # Handle verbose processing
     parser.add_argument(
         "-v",
@@ -72,10 +75,10 @@ if __name__ == "__main__":
 
     # Export figures with labels external (celltypist plots are messy)
     scanpy.tl.umap(prediction_adata)
-    scanpy.pl.umap(prediction_adata, color = ['predicted_labels'])
+    scanpy.pl.umap(prediction_adata, color = ['predicted_labels'], title = options.title + ' (CellTypist-majority vote)')
     pyplot.tight_layout()
     pyplot.savefig(os.path.join(options.output_directory, 'predicted_labels_v2' + '.pdf'))
-    scanpy.pl.umap(prediction_adata, color = ['majority_voting'])
+    scanpy.pl.umap(prediction_adata, color = ['majority_voting'], title = options.title + ' (CellTypist-majority vote)')
     pyplot.tight_layout()
     pyplot.savefig(os.path.join(options.output_directory, 'majority_voting_v2' + '.pdf'))
 
