@@ -244,7 +244,6 @@ class Sample
                 $sample_list = $sample_list_result;
             }
 
-
             // filter by sequence count if needed
             if (isset($filters['ir_sequence_count'])) {
                 $sample_list_result = [];
@@ -264,7 +263,6 @@ class Sample
                 $response_list[$i]['data'] = $sample_list_result;
                 $sample_list = $sample_list_result;
             }
-
 
             // break up repertoires based on type (if it has sequences, clones, cells)
             $samples_with_sequences = [];
@@ -296,7 +294,6 @@ class Sample
             $sample_list = $sample_list_result;
 
             $sample_list = self::convert_sample_list($sample_list, $rs);
-
 
             $sample_list_all = array_merge($sample_list_all, $sample_list);
         }
