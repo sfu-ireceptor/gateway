@@ -23,6 +23,12 @@ def getArguments():
 
 
 # A simple program that takes a JSON file and extracts the specified field.
+# Assumes that the JSON file is an AIRR file, and has a typical AIRR JSON
+# structure with an Info block and then one of the AIRR JSON array blocks
+# for either Cells/Expression/Repertoire, etc. The code acually does not
+# check the JSON file structure up to the block of interest, and assumes 
+# correct JSON. This is NOT a JSON syntax checker, use another tool if you
+# need that capability.
 if __name__ == "__main__":
 
     # Get the arguments
@@ -40,7 +46,7 @@ if __name__ == "__main__":
             json_str = json_str.strip()
             json_len = len(json_str) 
 
-            # Cell files are JSON objects
+            # AIRR JSON files are JSON objects
             if json_str[0] != '{':
                 print('ERROR: JSON file %s has no opening {'%(options.filename))
                 sys.exit(1)
@@ -49,8 +55,8 @@ if __name__ == "__main__":
 
             # We look for the block key in the string (enclosed in quotes of course)
             # If we can't find it in the first buffer_size characters we assume it isn't there.
-            # We are cheating here - as we assume everything between the opening { for the object
-            # and the block ket we are interested in is correct JSON. 
+            # We are cheating here - as we assume everything between the opening { for
+            # the object and the block key we are interested in is correct JSON. 
             block_loc = json_str.find('"%s"'%(options.block))
 
             if block_loc == -1:
@@ -81,9 +87,9 @@ if __name__ == "__main__":
             
             # Initalize our loop variables. We track whether we are still processing objects,
             # the maximum size of the objects in the array we are processing, the threshold that
-            # determines how many objects we want to hold in the buffere before reading more data,
-            # a flag to note whether the file is done processing, and a count of how many objects
-            # we have written.
+            # determines how many objects we hold in the buffer before reading more data,
+            # a flag to note whether the file is done processing, and a count of how many
+            # objects we have written.
             processing_object = True
             object_str_size = 0
             object_threshold = 4
