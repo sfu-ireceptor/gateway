@@ -155,6 +155,11 @@ function run_analysis()
 
 	    # Run ImmunArch
         singularity exec -e -B ${PWD}:/data -B ${SCRIPT_DIR}:/localsrc ${SCRIPT_DIR}/${singularity_image} Rscript /localsrc/immunarch.R /data/${output_directory} /data/${output_directory}
+        if [ $? -ne 0 ]
+        then
+            echo "IR-ERROR: Immunarch failed on file ${output_directory}"
+            return
+        fi
 
 	    # Remove the repertoire TSV file, we don't want to keep it around as part of the analysis results.
 	    rm -f ${PWD}/${output_directory}/${filename}
