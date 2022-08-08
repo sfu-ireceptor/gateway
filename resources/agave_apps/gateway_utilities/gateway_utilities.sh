@@ -298,15 +298,17 @@ function gateway_split_repertoire(){
                 #     $3 repertoire id ("NULL" if not used)
                 #     $4 repertoire JSON file ["NULL" if not used, required if repertoire_id is specified]
                 #     $5 manifest file
-                echo -n "GW-INFO: Running Cell analysis ${repository_name}/${repertoire_dirname}"
+                echo -n "GW-INFO: Running Cell analysis ${repository_name}/${repertoire_dirname} - "
                 date
                 run_cell_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST}
-                echo -n "GW-INFO: Done running Cell analysis ${repository_name}/${repertoire_dirname}"
+                echo -n "GW-INFO: Done running Cell analysis ${repository_name}/${repertoire_dirname} - "
                 date
             fi
 
             repertoire_count=$((repertoire_count+1))
         done
+        echo "GW-INFO:" 
+        echo "GW-INFO:" 
         count=$((count+1))
     done
 
