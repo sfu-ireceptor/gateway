@@ -173,7 +173,7 @@ function run_cell_analysis()
     fi
 
     # Run the CellTypist pipeline within the singularity image on each rearrangement file provided.
-    echo "IR-INFO: Running CellTypist on $cell_file"
+    echo "IR-INFO: Running CellTypist on $gex_file"
     echo "IR-INFO: Mapping ${PWD} to /data"
     echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
     echo "IR-INFO: Storing output in /data/${output_directory}"
@@ -209,7 +209,7 @@ function run_cell_analysis()
 #        return
 #    fi
 
-    echo -n "IR-INFO: Processing GEX data - "
+    echo -n "IR-INFO: Processing GEX data ${gex_file} - "
     date
 
     singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
@@ -230,6 +230,8 @@ function run_cell_analysis()
     echo -n "IR-INFO: Done processing GEX data - "
     date
     
+    echo -n "IR-INFO: Running CellTpist on ${repertoire_id}.h5ad - "
+    date
     singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
         -B ${output_directory}:/data -B ${SCRIPT_DIR}:/localsrc \
         ${SCRIPT_DIR}/${singularity_image} \
@@ -243,6 +245,8 @@ function run_cell_analysis()
         echo "IR-ERROR: CellTypist failed on file ${repertoire_id}.h5ad"
         return
     fi
+    echo -n "IR-INFO: Done running CellTpist on ${repertoire_id}.h5ad - "
+    date
 
     #singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${output_directory}:/data \
     #    ${SCRIPT_DIR}/${singularity_image} \
@@ -266,17 +270,28 @@ function run_cell_analysis()
     #    --plot-results
 
     # Copy the CellTypist summary report to the gateway expected summary for this repertoire
+    echo "IR-INFO: Copying ${output_directory}/majority_voting_v2.pdf to ${output_directory}/${repertoire_id}.pdf"
     cp ${output_directory}/majority_voting_v2.pdf ${output_directory}/${repertoire_id}.pdf
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: Could not copy summary file ${output_directory}/majority_voting_v2.pdf"
+    fi
     # Add the required label file for the Gateway to present the results as a summary.
     label_file=${output_directory}/${repertoire_id}.txt
+    echo "IR-INFO: Generating label file ${label_file}"
     echo "${title_string}" > ${label_file}
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: Could not generate label file ${label_file}"
+    fi
+    echo "IR-INFO: Done generating label file ${label_file}"
 
     # Remove the intermediate files generated for CellTypist
     rm -f ${output_directory}/${CONTIG_PREFIX}.csv ${output_directory}/${CONTIG_PREFIX}_*
     #rm -f ${output_directory}/features.tsv.gz ${output_directory}/barcodes.tsv.gz ${output_directory}/matrix.mtx.gz ${output_directory}/matrix.mtx.tmp
 
     # We don't want to keep around the generated data files or the manifest file.
-    rm -f ${cell_file} ${gex_file} ${rearrangement_file} ${manifest_file}
+    #rm -f ${cell_file} ${gex_file} ${rearrangement_file} ${manifest_file}
 
     # done
     printf "IR-INFO: Done running Repertoire Analysis on ${cell_file} at $(date)\n"
