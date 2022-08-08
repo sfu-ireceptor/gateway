@@ -80,7 +80,7 @@
 										<li>
 											<a href="/admin/update-chunk-size/{{ $rs->id }}">
 												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
-												Refresh max_size, stats, API version
+												Refresh <code>/info</code> data
 											</a>
 										</li>
 										<li role="separator" class="divider"></li>
