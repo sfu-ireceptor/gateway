@@ -13,10 +13,12 @@ from pandas.api.types import CategoricalDtype
 
 def createAnnData(cell_dict_array, field, value):
     # Get a data frame from the array of cells dictionary
+    print('IR-INFO: CreateAnnData - creating pandas data frame %d'%(time.perf_counter()), flush=True)
     df = pandas.DataFrame.from_records(cell_dict_array)
 
     # Get the unique cells
     cells = df["cell_id"].unique()
+    print('IR-INFO: number of cells = %d'%(len(cells)), flush=True)
     
     # Get the unique property labels and IDs. 
     property_dict_array = df["property"]
@@ -40,13 +42,17 @@ def createAnnData(cell_dict_array, field, value):
     #property_index = id_series.astype(property_cat).cat.codes
 
     # Create the sparse matrix
+    print('IR-INFO: Creating coo matrix %d'%(time.perf_counter()), flush=True)
     coo = sparse.coo_matrix((df["value"], (cell_index, property_index)), shape=shape)
+    print('IR-INFO: Creating csr matrix %d'%(time.perf_counter()), flush=True)
     csr = coo.tocsr()
 
     # Create the AnnData object from the sparse matrix
+    print('IR-INFO: Creating adata %d'%(time.perf_counter()), flush=True)
     adata = anndata.AnnData(csr, dtype=numpy.float64)
 
     # Assign some useful observation attributes (cell_id, partition field, partition value)
+    print('IR-INFO: Assigning attributes %d'%(time.perf_counter()), flush=True)
     adata.obs['cell_id'] = cells
     adata.obs['field'] = field
     adata.obs['value'] = value
@@ -72,6 +78,7 @@ def createAnnData(cell_dict_array, field, value):
 
     # Return the data structure.
     # print(adata.to_df())
+    print('IR-INFO: Finished createAnnData %d'%(time.perf_counter()), flush=True)
     return adata
 
 def skipWhite(str_buffer, str_loc):
@@ -96,7 +103,8 @@ def generateH5AD(gex_filename, block, field, value):
     # Open the JSON file.
     try:
         buffer_size = 1*1024*1024*1024
-        #buffer_size = 5*1024*1024
+        buffer_size = 100*1024*1024
+        #buffer_size = 10*1024*1024
         slow = False
         with open(gex_filename, 'r') as f:
 
@@ -104,21 +112,21 @@ def generateH5AD(gex_filename, block, field, value):
             t_start = time.perf_counter()
             json_buffer = f.read(buffer_size)
             json_loc = 0
-            json_str = json_buffer
-            print(id(json_buffer))
-            print(id(json_str))
+            #json_str = json_buffer
+            #print(id(json_buffer))
+            #print(id(json_str))
 
-            count = 0
-            for character in json_str:
-                if not character in string.whitespace:
-                    break
-                count = count + 1
-            my_str = json_str[count:]
-            print(id(my_str))
+            #count = 0
+            #for character in json_str:
+            #    if not character in string.whitespace:
+            #        break
+            #    count = count + 1
+            #my_str = json_str[count:]
+            #print(id(my_str))
             # Strip of any white space in preparation for processing.
             #json_str = json_str.lstrip()
-            json_str = mystrip(json_str) if slow == False else json_str.lstrip()
-            print(id(json_str))
+            #json_str = mystrip(json_str) if slow == False else json_str.lstrip()
+            #print(id(json_str))
             json_loc = skipWhite(json_buffer, json_loc)
 
             # AIRR JSON files are JSON objects
@@ -192,7 +200,7 @@ def generateH5AD(gex_filename, block, field, value):
                     adata_array.append(createAnnData(cell_array, field, value))
                     t_end = time.perf_counter()
                     print('IR-INFO: property count = %d, array length = %d (%d s)'%
-                         (count,len(adata_array),t_end-t_start))
+                         (count,len(adata_array),t_end-t_start), flush=True)
 
                     cell_array = []
                     # Read in the new data
@@ -305,7 +313,7 @@ def generateH5AD(gex_filename, block, field, value):
         # We are done. Check to see if we have any data in the last cell_array,
         # if so create an anndata object for it and append it to our array
         if len(cell_array) > 0:
-            print('IR-INFO: Adding %d at end of file processing'%(len(cell_array)))
+            print('IR-INFO: Adding %d at end of file processing'%(len(cell_array)), flush=True)
             adata_array.append(createAnnData(cell_array, field, value))
 
         ad_concat = anndata.concat(adata_array, join='outer', merge='first',  label='concat_dataset')
@@ -412,6 +420,7 @@ if __name__ == "__main__":
     print("IR-INFO: Writing file %s"%(options.output_file))
     adata.write(options.output_file)
     print("IR-INFO: Done writing file %s"%(options.output_file))
+    print(adata.to_df())
     total_end = time.perf_counter()
     print('IR-INFO: Total time = %d s'%(total_end-total_start))
 
