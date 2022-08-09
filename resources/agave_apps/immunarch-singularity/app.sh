@@ -43,6 +43,13 @@ else
         ZIP_FILE=${download_file}
 fi
 
+# Many of our TAPIS Apps have a split_reperotire variable, so to keep thinks
+# consistent we define it here if it isn't provided by the App.
+# Immunarch by default splits repertoires.
+if [ -z "${split_repertoire}" ]; then
+        split_repertoire="True"
+fi
+
 # If you want to tell Tapis that the job failed
 export JOB_ERROR=1
 
@@ -115,13 +122,13 @@ function run_analysis()
     local repertoire_id=$3
     local repertoire_file=$4
     local manifest_file=$5
-    echo "Running a Repertoire Analysis with manifest ${manifest_file}"
-    echo "    Working directory = ${output_directory}"
-    echo "    Repository name = ${repository_name}"
-    echo "    Repertoire id = ${repertoire_id}"
-    echo "    Repertoire file = ${repertoire_file}"
-    echo "    Manifest file = ${manifest_file}"
-    echo -n "    Current diretory = "
+    echo "IR-INFO: Running a Repertoire Analysis with manifest ${manifest_file}"
+    echo "IR-INFO:     Working directory = ${output_directory}"
+    echo "IR-INFO:     Repository name = ${repository_name}"
+    echo "IR-INFO:     Repertoire id = ${repertoire_id}"
+    echo "IR-INFO:     Repertoire file = ${repertoire_file}"
+    echo "IR-INFO:     Manifest file = ${manifest_file}"
+    echo -n "IR-INFO:     Current diretory = "
     pwd
 
     # Get a list of rearrangement files to process from the manifest.
@@ -131,30 +138,34 @@ function run_analysis()
         echo "IR-ERROR: Could not process manifest file ${manifest_file}"
         return
     fi
-    echo "    Using files ${array_of_files[@]}"
+    echo "IR-INFO:     Using files ${array_of_files[@]}"
 
 
     # Check to see if we are processing a specific repertoire_id
     if [ "${repertoire_id}" != "Total" ]; then
+        # Set the R program if we are doing a repertoire by repertoire analysis.
+        r_program='immunarch.R'
         file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
         file_string=${repository_name}_${file_string// /}
         title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
         # TODO: Fix this, it should not be required.
         title_string=${title_string// /}
     else
+        # Set the R program if we are doing a comparative analysis.
+        r_program='immunarch_group.R'
         file_string="Total"
         title_string="Total"
     fi
     
     for filename in "${array_of_files[@]}"; do
-        echo "Running ImmunArch on $filename"
-	    echo "Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
-	    echo "Mapping ${PWD} to /data"
-        echo "Input file = /data/${output_directory}/${filename}"
-	    echo "Storing output in /data/${output_directory}"
+        echo "IR-INFO: Running ImmunArch on $filename"
+	    echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
+	    echo "IR-INFO: Mapping ${PWD} to /data"
+        echo "IR-INFO: Input file = /data/${output_directory}/${filename}"
+	    echo "IR-INFO: Storing output in /data/${output_directory}"
 
 	    # Run ImmunArch
-        singularity exec -e -B ${PWD}:/data -B ${SCRIPT_DIR}:/localsrc ${SCRIPT_DIR}/${singularity_image} Rscript /localsrc/immunarch.R /data/${output_directory} /data/${output_directory}
+        singularity exec -e -B ${PWD}:/data -B ${SCRIPT_DIR}:/localsrc ${SCRIPT_DIR}/${singularity_image} Rscript /localsrc/${r_program} /data/${output_directory} /data/${output_directory}
         if [ $? -ne 0 ]
         then
             echo "IR-ERROR: Immunarch failed on file ${output_directory}"
@@ -162,7 +173,7 @@ function run_analysis()
         fi
 
 	    # Remove the repertoire TSV file, we don't want to keep it around as part of the analysis results.
-	    rm -f ${PWD}/${output_directory}/${filename}
+	    #rm -f ${PWD}/${output_directory}/${filename}
         # Remove the generated manifest file.
 	    rm -f ${manifest_file}
 
@@ -170,31 +181,73 @@ function run_analysis()
         label_file=${output_directory}/${repertoire_id}.txt
         echo "${title_string}" > ${label_file}
 
-        # Copy a summary output report to the repertoire_id.pdf file for the
+        # Generate a summary output report for the analysis for the
         # gateway to use as a summary.
-        cp ${output_directory}/len.pdf ${output_directory}/${repertoire_id}.pdf
-        # Add the required label file for the Gateway to present the results as a summary.
-        label_file=${output_directory}/${repertoire_id}.txt
-        echo "${title_string}" > ${label_file}
+        html_file=${output_directory}/${repertoire_id}.html
+        printf "<h1>Immunarch Summary Analysis</h1>\n" > ${html_file}
+        printf "<h2>Data Summary</h2>\n" >> ${html_file}
+        cat info.txt >> ${html_file}
+        printf "<h2>Analysis</h2>\n" >> ${html_file}
+        printf "<h3>Clonotype proportion</h3>\n" >> ${html_file}
+        printf '<img src="%s" width="800">' clonal_homeo.png >> ${html_file}
+        printf "<h3>Rare clonotype proportion</h3>\n" >> ${html_file}
+        printf '<img src="%s" width="800">' clonal_rare.png >> ${html_file}
+        printf "<h3>Clonotype abundance</h3>\n" >> ${html_file}
+        printf '<img src="%s" width="800">' count.png >> ${html_file}
+        printf "<h3>Gene usage (normalized)</h3>\n" >> ${html_file}
+        printf '<img src="%s" width="800">' gene_family_usage_normalized.png >> ${html_file}
+        printf "<h3>Gene usage</h3>\n" >> ${html_file}
+        printf '<img src="%s" width="800">' gene_usage_normalized.png >> ${html_file}
+        printf "<h3>CDR3 length distribution</h3>\n" >> ${html_file}
+        printf '<img src="%s" width="800">' len.png >> ${html_file}
 
     done
     printf "Done Repertoire Analysis on ${array_of_files[@]} at $(date)\n\n"
 }
 
-# Split the data by repertoire. This creates a directory tree in $GATEWAY_ANALYSIS_DIR
-# with a directory per repository and within that a directory per repertoire in
-# that repository. In each repertoire directory there will exist an AIRR TSV
-# file with the data from that repertoire.
-#
-# This gateway utility function uses a callback mechanism, calling the
-# function run_analysis() on each repertoire. The run_analysis function takes
-# as paramenters the TSV files to process, the directory for the repertoire in
-# which to store the analysis results, the a string repersenting the repository
-# from which the data came, the repertoire_id, and a repertoire JSON file in which
-# information about the repertoire can be found. 
-#
-# run_analysis() is defined above.
-gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
+if [ "${split_repertoire}" = "True" ]; then
+    echo -e "IR-INFO:\nIR-INFO: Splitting data by Repertoire"
+    echo "IR-INFO:"
+    # Split the data by repertoire. This creates a directory tree in $GATEWAY_ANALYSIS_DIR
+    # with a directory per repository and within that a directory per repertoire in
+    # that repository. In each repertoire directory there will exist an AIRR TSV
+    # file with the data from that repertoire.
+    #
+    # This gateway utility function uses a callback mechanism, calling the
+    # function run_analysis() on each repertoire. The run_analysis function takes
+    # as paramenters the TSV files to process, the directory for the repertoire in
+    # which to store the analysis results, the a string repersenting the repository
+    # from which the data came, the repertoire_id, and a repertoire JSON file in which
+    # information about the repertoire can be found. 
+    #
+    # run_analysis() is defined above.
+    gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
+elif [ "${split_repertoire}" = "False" ]; then
+    echo -e "IR-INFO:\nIR-INFO: Running app on entire data set"
+    echo "IR-INFO:"
+
+    # Output directory is called "Total"
+    # Run the analysis with a token repository name of "ADC" since the
+    # analysis is being run on data from the entire ADC.
+    # repertoire_id and repository should be "NULL"
+    # Lastly, provide the list of TSV files to process. Remember that
+    # the array elements are expanded into separate parameters, which
+    # the run_analyis function handles.
+    outdir="Total"
+
+    # Run the stats on all the data combined. Unzip the files
+    gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}/${outdir}
+
+    # Run the stats analysis.
+    run_analysis ${GATEWAY_ANALYSIS_DIR}/${outdir} "AIRRDataCommons" ${outdir} "NULL" ${GATEWAY_ANALYSIS_DIR}/${outdir}/${MANIFEST_FILE}
+
+else
+    echo "IR-ERROR: Unknown repertoire operation ${split_repertoire}" >&2
+    exit 1
+fi
+
+
+#gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 # Make sure we are back where we started, although the gateway functions should
 # not change the working directory that we are in.
