@@ -187,7 +187,7 @@ def generateH5AD(gex_filename, block, field, value):
             file_empty = False
             cell_array = []
             while processing_object:
-                # Check to see if the buffere is almost consumed. If we have room
+                # Check to see if the buffer is almost consumed. If we have room
                 # for less than N objects, then read in more data. Don't read any more
                 # data if the file is empty.
                 #buffer_remaining = len(json_str)
@@ -218,7 +218,7 @@ def generateH5AD(gex_filename, block, field, value):
                 # strip to get rid of any whitespace so anything else is an error.
                 #if json_str[0] != '{':
                 if json_buffer[json_loc] != '{':
-                    print('IR-ERROR: JSON object expected'%(block))
+                    print('IR-ERROR: JSON object ({) expected')
                     sys.exit(1)
 
                 # Initialize our nesting level and the location in the string.
