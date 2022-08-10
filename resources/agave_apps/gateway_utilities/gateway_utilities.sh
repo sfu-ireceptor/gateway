@@ -204,7 +204,7 @@ function gateway_split_repertoire(){
                 # Filter the input file $data_file and extract all records that have the given
                 # repertoire_id in the SPLIT_FIELD.
                 # Command line parameters: inputfile, field_name, field_value, outfile
-                python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $data_file Clone ${SPLIT_FIELD} ${repertoire_id} > ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
+                python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $data_file Clone ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
                 if [ $? -ne 0 ]
                 then
                     echo "GW-ERROR: Could not filter Clone data for ${repertoire_id} from ${data_file}"
@@ -239,7 +239,7 @@ function gateway_split_repertoire(){
                 # repertoire_id in the SPLIT_FIELD.
                 # Command line parameters: inputfile, field_name, field_value, outfile
                 echo "GW-INFO: Splitting Cell file ${data_file} by ${SPLIT_FIELD} ${repertoire_id}"
-                python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $data_file Cell ${SPLIT_FIELD} ${repertoire_id} > ${repository_name}/${repertoire_dirname}/${cell_datafile}
+                python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $data_file Cell ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${cell_datafile}
                 if [ $? -ne 0 ]
                 then
                     echo "GW-ERROR: Could not filter Cell data for ${repertoire_id} from ${data_file}"
@@ -250,7 +250,7 @@ function gateway_split_repertoire(){
 
                 # Repeat for expression data.
                 echo "GW-INFO: Splitting Expression file ${expression_file} by ${SPLIT_FIELD} ${repertoire_id}"
-                python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $expression_file CellExpression ${SPLIT_FIELD} ${repertoire_id} > ${repository_name}/${repertoire_dirname}/${gex_datafile}
+                python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $expression_file CellExpression ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${gex_datafile}
                 if [ $? -ne 0 ]
                 then
                     echo "GW-ERROR: Could not filter Expression data for ${repertoire_id} from ${expression_file}"
