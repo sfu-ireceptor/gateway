@@ -211,9 +211,12 @@ def generateH5AD(gex_filename, block, field, value):
                         file_empty = True
                     else:
                         #json_str = json_str + new_buffer
-                        json_buffer = json_buffer[json_loc:] + new_buffer
+                        old_buffer = json_buffer[json_loc:]
+                        json_buffer = old_buffer + new_buffer
                         json_loc = 0
+                        buffer_size = len(json_buffer)
                         #print(json_buffer)
+
                 # Check to make sure that the first charater is an object delimeter. We have run
                 # strip to get rid of any whitespace so anything else is an error.
                 #if json_str[0] != '{':
