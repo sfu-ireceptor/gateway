@@ -2,16 +2,17 @@ $(document).ready(function() {
     $('.chart').each(function() {
         var chart = $(this),
             chartData = chart.data('chartData'),
+            chartType = chart.data('chartType'),
             data = chartData.data,
             title = chartData.title,
-            chartConfig = generateChartConfig(data, title);
+            chartConfig = generateChartConfig(data, chartType, title);
         
         chart.highcharts(chartConfig);
     });
 });
 
 
-function generateChartConfig(data, fieldTitle)
+function generateChartConfig(data, chartType, fieldTitle)
 {
     var level = 3;
     var internalLabels = true;
@@ -76,13 +77,18 @@ function generateChartConfig(data, fieldTitle)
     else labelDistance = 3;
 
     // default settings
-    var colors = ['#7cb5ec', '#f4a45a', '#6bc287', '#9e7bc4', '#c47b87', '#fb9f89', '#e6e0a1', '#ebcfc4', '#e8e6d9', '#999999'];
+    if(chartType == 'clones') {
+        var colors = ['#FFCEA8', '#FFB57D', '#e28f50', '#CE7129', '#A05013'];
+    }
+    else if(chartType == 'cells') {
+        var colors = ['#B0EAB4', '#7FD685', '#55bf59', '#35A53C', '#1B8A22'];
+    }
+    else {
+        var colors = ['#9EC5F4', '#6FA7EB', '#4A8FE2', '#2878D7', '#0C62C8'];
+    }
+
     var class_name = 'chart_label';
     var n = data.length;
-
-    // make sure that the smaller slice is black
-    var black_level = Math.min(level, (n-1));
-    colors[black_level] = '#4a4a4a';
 
     // if no values, don't display a chart
     if(data.length == 1 && data[0]['name'] == 'None') {

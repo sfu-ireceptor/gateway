@@ -615,12 +615,12 @@
 
 									<div class="charts">
 										<div class="row">
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart1']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart2']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart3']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart4']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart5']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart6']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart1']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart2']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart3']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart4']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart5']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart6']) !!}"></div>
 										</div>
 									</div>
 									
@@ -850,12 +850,12 @@
 
 									<div class="charts">
 										<div class="row">
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart1']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart2']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart3']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart4']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart5']) !!}"></div>
-											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart6']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart1']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart2']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart3']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart4']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart5']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart6']) !!}"></div>
 										</div>
 									</div>
 									
