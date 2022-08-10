@@ -230,6 +230,8 @@ function run_cell_analysis()
     echo -n "IR-INFO: Done processing GEX data - "
     date
     
+    # Run CellTypist using our internal code that produces slightly modified 
+    # graphs and output.
     echo -n "IR-INFO: Running CellTpist on ${repertoire_id}.h5ad - "
     date
     singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
@@ -247,27 +249,6 @@ function run_cell_analysis()
     fi
     echo -n "IR-INFO: Done running CellTpist on ${repertoire_id}.h5ad - "
     date
-
-    #singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${output_directory}:/data \
-    #    ${SCRIPT_DIR}/${singularity_image} \
-    #    celltypist \
-    #    --indata  /data/${repertoire_id}.h5ad \
-    #    --model Immune_All_Low.pkl \
-    #    --majority-voting \
-    #    --outdir /data \
-    #    --xlsx \
-    #    --plot-results
-
-    # Copy the CellTypist summary report to the gateway expected summary for this repertoire
-    #singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${output_directory}:/data \
-    #    ${SCRIPT_DIR}/${singularity_image} \
-    #    celltypist \
-    #    --indata  /data/${repertoire_id}.h5ad \
-    #    --model Immune_All_Low.pkl \
-    #    --outdir /data \
-    #    --mode best_match \
-    #    --xlsx \
-    #    --plot-results
 
     # Copy the CellTypist summary report to the gateway expected summary for this repertoire
     echo "IR-INFO: Copying ${output_directory}/majority_voting_v2.pdf to ${output_directory}/${repertoire_id}.pdf"
@@ -288,10 +269,9 @@ function run_cell_analysis()
 
     # Remove the intermediate files generated for CellTypist
     rm -f ${output_directory}/${CONTIG_PREFIX}.csv ${output_directory}/${CONTIG_PREFIX}_*
-    #rm -f ${output_directory}/features.tsv.gz ${output_directory}/barcodes.tsv.gz ${output_directory}/matrix.mtx.gz ${output_directory}/matrix.mtx.tmp
 
     # We don't want to keep around the generated data files or the manifest file.
-    #rm -f ${cell_file} ${gex_file} ${rearrangement_file} ${manifest_file}
+    rm -f ${cell_file} ${gex_file} ${rearrangement_file} ${manifest_file}
 
     # done
     printf "IR-INFO: Done running Repertoire Analysis on ${cell_file} at $(date)\n"
