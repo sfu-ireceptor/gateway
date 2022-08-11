@@ -239,7 +239,7 @@
 		<script src="/js/airrvisualization.js?v=14"></script>
 		<script src="/js/main.js?v=81"></script>
 		<script src="/js/admin.js?v=1"></script>
-		<script src="/js/visualization.js?v=21"></script>
+		<script src="/js/visualization.js?v=22"></script>
 	</body>
 
 </html>

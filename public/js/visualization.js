@@ -93,16 +93,15 @@ function generateChartConfig(data, chartType, fieldTitle)
     // if no values, don't display a chart
     if(data.length == 1 && data[0]['name'] == 'None') {
         colors = ['transparent'];
-        truncateLabels = 15;
-        labelDistance = -58;
+        truncateLabels = 20;
+        labelDistance = -60;
         class_name = 'chart_label_nodata';
         n = 0;
     }
-    // if only 1 value, use a muted color for the chart
+    // if only 1 value, center text
     else if(data.length == 1) {
-        colors = ['#e4e4e4'];
-        truncateLabels = 15;
-        labelDistance = -58;
+        truncateLabels = 20;
+        labelDistance = -60;
     }
 
     Highcharts.setOptions({
