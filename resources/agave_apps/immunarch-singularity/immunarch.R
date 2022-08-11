@@ -1,4 +1,5 @@
 library(immunarch)
+library(xtable)
 
 # test for arguments
 args = commandArgs(trailingOnly=TRUE)
@@ -36,6 +37,12 @@ ggsave(paste(output_dir, "len.png", sep="/"), plot = exp_len_vis, device = "png"
 #exp_len_grp <- repExplore(data$data, .method = "len")
 #exp_len_grp_vis <- vis(exp_len, .by = c("Status"), .meta = data$meta)
 #ggsave(paste(output_dir, "len_grp.png", sep="/"), plot = exp_len_grp_vis, device = "png")
+
+# Top 10 clones
+print('top_10_clones.tsv')
+top_10 <- top(data$data[[1]], .n = 10)
+write.table(top_10, file = paste(output_dir, "top_10_clones.tsv", sep="/"), sep = "\t",row.names=FALSE)
+print(xtable(top_10[,c(1,2,4,5,7)]), type = "html", file=paste(output_dir, "top_10_clones.html", sep="/"))
 
 # number of clones (i.e., cells) per input repertoire
 print('clones.png')

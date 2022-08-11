@@ -157,7 +157,21 @@ function gateway_split_repertoire(){
             echo "GW-INFO: File $data_file has repertoire_id = ${repertoire_id}"
             repertoire_dirname=${repertoire_id}
             mkdir -p ${repository_name}/${repertoire_dirname}
+            if [ $? -ne 0 ]
+            then
+                echo "GW-ERROR: Could not repertoire directory ${repository_name}/${repertoire_dirname}"
+                continue
+            fi
 
+            # Copy the HTML resources for the Apps
+            echo "GW-INFO: Copying HTML assets"
+            mkdir -p ${repository_name}/${repertoire_dirname}/assets
+            cp -r ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/assets/* ${repository_name}/${repertoire_dirname}/assets
+            if [ $? -ne 0 ]
+            then
+                echo "GW-ERROR: Could not create HTML asset directory"
+            fi
+             
             # Generate the manifest file name for this analysis unit
             REPERTOIRE_MANIFEST=${repository_name}/${repertoire_dirname}/manifest.json
             echo "GW-INFO: Manifest file = ${REPERTOIRE_MANIFEST}"

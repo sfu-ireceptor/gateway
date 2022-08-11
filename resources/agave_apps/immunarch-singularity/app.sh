@@ -161,11 +161,17 @@ function run_analysis()
         echo "IR-INFO: Running ImmunArch on $filename"
 	    echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
 	    echo "IR-INFO: Mapping ${PWD} to /data"
-        echo "IR-INFO: Input file = /data/${output_directory}/${filename}"
+        echo "IR-INFO: Input data = /data/${output_directory}/data"
 	    echo "IR-INFO: Storing output in /data/${output_directory}"
 
+        # Immunarch is very permissive, it tries to process everything in the directory.
+        # We want it only to process the data files, so we create a temporary directory
+        # for this so immunarch doesn't try and do other weird things like analyze images
+        mkdir ${PWD}/${output_directory}/data
+        mv ${PWD}/${output_directory}/${filename} ${PWD}/${output_directory}/data/${filename}
+
 	    # Run ImmunArch
-        singularity exec -e -B ${PWD}:/data -B ${SCRIPT_DIR}:/localsrc ${SCRIPT_DIR}/${singularity_image} Rscript /localsrc/${r_program} /data/${output_directory} /data/${output_directory}
+        singularity exec -e -B ${PWD}:/data -B ${SCRIPT_DIR}:/localsrc ${SCRIPT_DIR}/${singularity_image} Rscript /localsrc/${r_program} /data/${output_directory}/data /data/${output_directory}
         if [ $? -ne 0 ]
         then
             echo "IR-ERROR: Immunarch failed on file ${output_directory}"
@@ -173,7 +179,8 @@ function run_analysis()
         fi
 
 	    # Remove the repertoire TSV file, we don't want to keep it around as part of the analysis results.
-	    #rm -f ${PWD}/${output_directory}/${filename}
+	    #rm -f ${PWD}/${output_directory}/data/${filename}
+
         # Remove the generated manifest file.
 	    rm -f ${manifest_file}
 
@@ -184,22 +191,49 @@ function run_analysis()
         # Generate a summary output report for the analysis for the
         # gateway to use as a summary.
         html_file=${output_directory}/${repertoire_id}.html
-        printf "<h1>Immunarch Summary Analysis</h1>\n" > ${html_file}
+
+        # Generate the HTML main block
+        printf '<!DOCTYPE HTML5>\n' > ${html_file}
+        printf '<html lang="en" dir="ltr">' >> ${html_file}
+
+        # Generate a normal looking iReceptor header
+        printf '<head>\n' >>  ${html_file}
+        cat ${output_directory}/assets/head-template.html >> ${html_file}
+        printf "<title>Immunarch: %s</title>\n" ${title_string} >> ${html_file}
+        printf '</head>\n' >>  ${html_file}
+
+        # Generate an iReceptor top bar for the page
+        cat ${output_directory}/assets/top-bar-template.html >> ${html_file}
+
+        # Generate a normal looking iReceptor header
+        printf '<div class="container job_container">'  >> ${html_file}
+
+        # Generate the output from the analysis.
+        printf "<h2>Immunarch: %s</h1>\n" ${title_string} >> ${html_file}
         printf "<h2>Data Summary</h2>\n" >> ${html_file}
         cat info.txt >> ${html_file}
         printf "<h2>Analysis</h2>\n" >> ${html_file}
-        printf "<h3>Clonotype proportion</h3>\n" >> ${html_file}
-        printf '<img src="%s" width="800">' clonal_homeo.png >> ${html_file}
-        printf "<h3>Rare clonotype proportion</h3>\n" >> ${html_file}
-        printf '<img src="%s" width="800">' clonal_rare.png >> ${html_file}
-        printf "<h3>Clonotype abundance</h3>\n" >> ${html_file}
-        printf '<img src="%s" width="800">' count.png >> ${html_file}
-        printf "<h3>Gene usage (normalized)</h3>\n" >> ${html_file}
-        printf '<img src="%s" width="800">' gene_family_usage_normalized.png >> ${html_file}
-        printf "<h3>Gene usage</h3>\n" >> ${html_file}
-        printf '<img src="%s" width="800">' gene_usage_normalized.png >> ${html_file}
-        printf "<h3>CDR3 length distribution</h3>\n" >> ${html_file}
-        printf '<img src="%s" width="800">' len.png >> ${html_file}
+        printf "<h3>Top Clones</h3>\n" >> ${html_file}
+        printf '<iframe src="%s" width="800" height="300" style="border: none;" seamless></iframe>\n' top_10_clones.html >> ${html_file}
+        # The below would be more elegant but it is HTML5 and doesn't work
+        #printf "<h3>Top Clones 2</h3>\n" >> ${html_file}
+        #printf '<link href="%s" rel="import" />\n' top_10_clones.html >> ${html_file}
+        printf '<img src="%s" width="800">\n' clonal_homeo.png >> ${html_file}
+        printf '<img src="%s" width="800">\n' clonal_rare.png >> ${html_file}
+        printf '<img src="%s" width="800">\n' count.png >> ${html_file}
+        printf '<img src="%s" width="800">\n' gene_family_usage_normalized.png >> ${html_file}
+        printf '<img src="%s" width="800">\n' gene_usage_normalized.png >> ${html_file}
+        printf '<img src="%s" width="800">\n' len.png >> ${html_file}
+
+        # End of main div container
+        printf '</div>' >> ${html_file}
+
+        # Use the normal iReceptor footer.
+        cat ${output_directory}/assets/footer.html >> ${html_file}
+
+        # Generate end body end HTML
+        printf '</body>' >> ${html_file}
+        printf '</html>' >> ${html_file}
 
     done
     printf "Done Repertoire Analysis on ${array_of_files[@]} at $(date)\n\n"

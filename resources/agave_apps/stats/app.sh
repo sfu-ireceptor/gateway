@@ -269,7 +269,24 @@ function run_analysis()
 
 	# Generate a summary HTML file for the Gateway to present this info to the user
 	html_file=${output_directory}/${repertoire_id}.html
-	printf "<h1>iReceptor Stats Analysis</h1>\n" > ${html_file}
+
+    # Generate the HTML main block
+    printf '<!DOCTYPE HTML5>\n' > ${html_file}
+    printf '<html lang="en" dir="ltr">' >> ${html_file}
+
+    # Generate a normal looking iReceptor header
+    printf '<head>\n' >>  ${html_file}
+    cat ${output_directory}/assets/head-template.html >> ${html_file}
+    printf "<title>Stats: %s</title>\n" ${title_string} >> ${html_file}
+    printf '</head>\n' >>  ${html_file}
+
+    # Generate an iReceptor top bar for the page
+    cat ${output_directory}/assets/top-bar-template.html >> ${html_file}
+
+    # Generate a normal looking iReceptor header
+    printf '<div class="container job_container">'  >> ${html_file}
+
+	printf "<h2>Stats: %s</h2>\n" ${title_string} >> ${html_file}
 	printf "<h2>Data Summary</h2>\n" >> ${html_file}
 	cat info.txt >> ${html_file}
 	printf "<h2>Analysis</h2>\n" >> ${html_file}
@@ -285,6 +302,16 @@ function run_analysis()
 	printf '<img src="%s-j_call-histogram.png" width="800">' ${file_string} >> ${html_file}
 	printf "<h3>Junction AA Length</h3>\n" >> ${html_file}
 	printf '<img src="%s-junction_aa_length-histogram.png" width="800">' ${file_string} >> ${html_file}
+    # End of main div container
+    printf '</div>' >> ${html_file}
+
+    # Use the normal iReceptor footer.
+    cat ${output_directory}/assets/footer.html >> ${html_file}
+
+    # Generate end body end HTML
+    printf '</body>' >> ${html_file}
+    printf '</html>' >> ${html_file}
+
 }
 
 # Set up the required variables. An iReceptor Gateway download consists
