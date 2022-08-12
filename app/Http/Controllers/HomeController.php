@@ -97,12 +97,10 @@ class HomeController extends Controller
             foreach ($sample_data['rs_list'] as $rs_data) {
                 if ($rs_data['rs_id'] == $rs->id) {
                     $rs_list[$i]->nb_studies += $rs_data['total_studies'];
+                } elseif ($rs_data['rs_group_code'] != null && $rs_data['rs_group_code'] == $rs->rest_service_group_code) {
+                    $rs_list[$i]->nb_studies += $rs_data['total_studies'];
                 }
-                else if ($rs_data['rs_group_code'] != null && $rs_data['rs_group_code'] == $rs->rest_service_group_code)
-                 {
-$rs_list[$i]->nb_studies += $rs_data['total_studies'];
-                 }  
-           }
+            }
         }
 
         $data = [];
