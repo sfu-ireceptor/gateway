@@ -430,7 +430,7 @@ class AdminController extends Controller
                 $message = $rs->name . ' max_size was successfully updated to ' . $chunk_size . '. ';
             }
 
-            $api_version = $info['api_version'] ?? null;
+            $api_version = $info['api_version'] ?? '1.0';
             if ($api_version == null) {
                 $message .= $rs->name . ' did not specify an API version. ';
             } else {

@@ -292,6 +292,7 @@ class Sample
 
             $response_list[$i]['data'] = $sample_list_result;
             $sample_list = $sample_list_result;
+
             $sample_list = self::convert_sample_list($sample_list, $rs);
 
             $sample_list_all = array_merge($sample_list_all, $sample_list);
@@ -371,6 +372,7 @@ class Sample
             // add rest service id/name
             $new_sample->rest_service_id = $rs->id;
             $new_sample->rest_service_name = $rs->display_name;
+            $new_sample->rest_service_group_code = $rs->rest_service_group_code ?? null;
 
             // add study URL
             $new_sample = self::generate_study_urls($new_sample);
@@ -387,9 +389,11 @@ class Sample
         $samples_by_rs = [];
         foreach ($sample_list as $sample) {
             $rs_id = $sample->rest_service_id;
+            $rs_group_code = $sample->rest_service_group_code;
 
             if (! isset($samples_by_rs[$rs_id])) {
                 $samples_by_rs[$rs_id]['name'] = $sample->rest_service_name;
+                $samples_by_rs[$rs_id]['rs_group_code'] = $rs_group_code;
                 $samples_by_rs[$rs_id]['sample_list'] = [];
             }
 
@@ -416,8 +420,9 @@ class Sample
         $data['rs_list'] = [];
         $data['total'] = 0;
 
-        foreach ($samples_by_rs as $t) {
+        foreach ($samples_by_rs as $rs_id => $t) {
             $rs_name = $t['name'];
+            $rs_group_code = $t['rs_group_code'];
             $sample_list = $t['sample_list'];
 
             // calculate summary statistics
@@ -510,6 +515,8 @@ class Sample
             // rest service data
             $rs_data = [];
             $rs_data['rs_name'] = $rs_name;
+            $rs_data['rs_group_code'] = $rs_group_code;
+            $rs_data['rs_id'] = $rs_id;
             $rs_data['study_tree'] = $study_tree;
             $rs_data['total_samples'] = count($sample_list);
             $rs_data['total_labs'] = count($lab_list);

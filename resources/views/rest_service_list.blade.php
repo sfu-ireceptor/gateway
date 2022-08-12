@@ -70,6 +70,8 @@
 						@endforeach
 					</ul>
 				</div>
+
+				<p class="repositories"><a href="/repositories">See all AIRR Data Commons repositories queried by the iReceptor Gateway</a></p>
 			</div>
 
 	      	<div class="modal-footer">

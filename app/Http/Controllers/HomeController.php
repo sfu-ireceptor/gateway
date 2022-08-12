@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\FieldName;
 use App\News;
+use App\RestService;
 use App\Sample;
 use Illuminate\Http\Request;
 
@@ -83,5 +84,28 @@ class HomeController extends Controller
         $data['sequence_field_list_grouped'] = $sequence_field_list_grouped;
 
         return view('fieldsDefinitions', $data);
+    }
+
+    public function repositories()
+    {
+        $rs_list = RestService::findEnabledPublic();
+
+        // count studies for each repository
+        $sample_data = Sample::find([], 'titi');
+        foreach ($rs_list as $i => $rs) {
+            $rs_list[$i]->nb_studies = 0;
+            foreach ($sample_data['rs_list'] as $rs_data) {
+                if ($rs_data['rs_id'] == $rs->id) {
+                    $rs_list[$i]->nb_studies += $rs_data['total_studies'];
+                } elseif ($rs_data['rs_group_code'] != null && $rs_data['rs_group_code'] == $rs->rest_service_group_code) {
+                    $rs_list[$i]->nb_studies += $rs_data['total_studies'];
+                }
+            }
+        }
+
+        $data = [];
+        $data['rs_list'] = $rs_list;
+
+        return view('repositories', $data);
     }
 }

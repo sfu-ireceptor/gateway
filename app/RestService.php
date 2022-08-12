@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Process\Process;
 
@@ -45,8 +46,12 @@ class RestService extends Model
             $response = $client->get('info');
             $body = $response->getBody();
             $json = json_decode($body);
+
             $chunk_size = $json->max_size ?? null;
-            $api_version = $json->api->version ?? null;
+            $api_version = $json->api->version ?? '1.0';
+
+            $contact_url = $json->contact->url ?? null;
+            $contact_email = $json->contact->email ?? null;
 
             if ($api_version != null) {
                 // keep only major and minor numbers
@@ -56,6 +61,9 @@ class RestService extends Model
 
             $this->chunk_size = $chunk_size;
             $this->api_version = $api_version;
+            $this->contact_url = $contact_url;
+            $this->contact_email = $contact_email;
+
             $this->save();
 
             $info['chunk_size'] = $this->chunk_size;
@@ -128,6 +136,47 @@ class RestService extends Model
     }
 
     /**
+     * Returns the services which are enabled, but only one per group (ex: IPA instead of IPA1,IPA2, etc).
+     *
+     * @param  array|null  $field_list  Fields to fetch. Fetches all fields by default.
+     * @return array List of RestService objects
+     */
+    public static function findEnabledPublic($field_list = ['*'])
+    {
+        $l = static::where('hidden', false)->where('enabled', true)->orderBy('name', 'asc')->get($field_list);
+
+        $l2 = [];
+
+        foreach ($l as $rs) {
+            $group_code = $rs->rest_service_group_code;
+            $group_rs = null;
+
+            if ($group_code != '') {
+                foreach ($l2 as $rs2) {
+                    if ($group_code == $rs2->rest_service_group_code) {
+                        $group_rs = $rs2;
+                        break;
+                    }
+                }
+            }
+            if ($group_rs != null) {
+                $group_rs->nb_samples += $rs->nb_samples;
+                $group_rs->nb_sequences += $rs->nb_sequences;
+                $group_rs->nb_clones += $rs->nb_clones;
+                $group_rs->nb_cells += $rs->nb_cells;
+            } else {
+                $group_name = RestServiceGroup::nameForCode($group_code);
+
+                // add display name
+                $rs->display_name = $group_name ? $group_name : $rs->name;
+                $l2[] = $rs;
+            }
+        }
+
+        return $l2;
+    }
+
+    /**
      * Returns the services which can be enabled.
      *
      * @param  array|null  $field_list  Fields to fetch. Fetches all fields by default.
@@ -164,6 +213,79 @@ class RestService extends Model
             $filters['age_unit'] = 'year';
         }
 
+        // if API version is 1.0
+        if ($api_version == '1.0') {
+            $ontology_fields = FieldName::getOntologyFields();
+            $metadata = Sample::metadata('user');
+
+            // convert arrays of ontology ids to ontology labels
+            foreach ($filters as $k => $v) {
+                if (is_array($v)) {
+                    if (in_array($k, $ontology_fields)) {
+                        $label_field_name = Str::beforeLast($k, '_id');
+                        $label_list = [];
+
+                        foreach ($v as $ontology_id) {
+                            foreach ($metadata[$k] as $ontology) {
+                                if ($ontology['id'] == $ontology_id) {
+                                    $label_list[] = $ontology['label'];
+                                }
+                            }
+                        }
+
+                        unset($filters[$k]);
+                        $filters[$label_field_name] = $label_list;
+                    }
+                }
+            }
+
+            // convert collection_time_point_relative_unit_id (ontology id) to label
+            if (isset($filters['collection_time_point_relative_unit_id'])) {
+                $collection_time_point_relative_unit_id = $filters['collection_time_point_relative_unit_id'];
+                $collection_time_point_relative_unit_label = '';
+                foreach ($metadata['collection_time_point_relative_unit_id'] as $ontology) {
+                    if ($ontology['id'] == $collection_time_point_relative_unit_id) {
+                        $collection_time_point_relative_unit_label = $ontology['label'];
+                    }
+                }
+
+                $collection_time_point_relative = $filters['collection_time_point_relative'] ?? '';
+                $collection_time_point_relative = $collection_time_point_relative_unit_label . ' ' . $collection_time_point_relative;
+
+                unset($filters['collection_time_point_relative_unit_id']);
+
+                $filters['collection_time_point_relative'] = $collection_time_point_relative;
+            }
+
+            // convert template_amount_unit_id (ontology id) to label
+            if (isset($filters['template_amount_unit_id'])) {
+                $template_amount_unit_id = $filters['template_amount_unit_id'];
+                $template_amount_unit_label = '';
+                foreach ($metadata['template_amount_unit_id'] as $ontology) {
+                    if ($ontology['id'] == $template_amount_unit_id) {
+                        $template_amount_unit_label = $ontology['label'];
+                    }
+                }
+
+                $template_amount = $filters['template_amount'] ?? '';
+                $template_amount = $template_amount . ' ' . $template_amount_unit_label;
+
+                unset($filters['template_amount_unit_id']);
+
+                $filters['template_amount'] = $template_amount;
+            }
+
+            // convert some keywords_study values
+            if (isset($filters['keywords_study'])) {
+                $keywords = $filters['keywords_study'];
+
+                $keywords = Str::replaceFirst('contains_tr', 'contains_tcr', $keywords);
+                $keywords = Str::replaceFirst('contains_schema_cell', 'contains_single_cell', $keywords);
+
+                $filters['keywords_study'] = $keywords;
+            }
+        }
+
         // rename filters: internal gateway id -> ADC API name
         $filters = FieldName::convert($filters, 'ir_id', 'ir_adc_api_query', $api_version);
 
@@ -175,7 +297,7 @@ class RestService extends Model
             // default -> substring query
             $filter->op = 'contains';
 
-            $field_type = FieldName::getFieldType($k, 'ir_adc_api_query');
+            $field_type = FieldName::getFieldType($k, 'ir_adc_api_query', $api_version);
             if (is_array($v)) {
                 $filter->op = 'in';
             } elseif ($k == 'subject.age_min') {
@@ -2006,7 +2128,6 @@ class RestService extends Model
 
         foreach ($final_response_list as $i => $response) {
             $cell_list = $response['data']->Cell;
-            // dd($cell_list);
             $data_processing_id_list = [];
             foreach ($cell_list as $cell) {
                 if (! isset($cell->data_processing_id) || ! isset($cell->cell_id)) {
@@ -2073,7 +2194,6 @@ class RestService extends Model
                 $data_processing_id_list = $response['data_processing_id_list'];
 
                 $rs_filters_json = self::generate_cell_id_by_data_processing_id_json_query($data_processing_id_list, $query_parameters);
-                // dd($rs_filters_json);
                 break;
             }
 

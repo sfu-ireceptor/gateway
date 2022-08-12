@@ -1489,6 +1489,10 @@ a.download_sequences {
     content: "\002b";
 }
 
+#rest_service_list .repositories {
+	margin-top: 20px;
+}
+
 /* @end */
 
 /* @group pie charts */
