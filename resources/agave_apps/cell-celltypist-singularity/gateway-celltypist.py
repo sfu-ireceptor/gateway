@@ -80,7 +80,7 @@ if __name__ == "__main__":
     scanpy.pl.umap(prediction_adata, color = ['predicted_labels'], title = options.title + ' (majority)')
     pyplot.tight_layout()
     pyplot.savefig(os.path.join(options.output_directory, 'predicted_labels_v2' + '.pdf'))
-    scanpy.pl.umap(prediction_adata, color = ['majority_voting'], title = options.title + ' (majority)')
+    scanpy.pl.umap(prediction_adata, color = ['majority_voting'], title = 'CellTypist (majority vote)')
     pyplot.tight_layout()
     pyplot.savefig(os.path.join(options.output_directory, 'majority_voting_v2' + '.pdf'))
 
