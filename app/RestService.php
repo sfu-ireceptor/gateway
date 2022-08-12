@@ -160,6 +160,7 @@ class RestService extends Model
                 }
             }
             if ($group_rs != null) {
+                $group_rs->nb_samples += $rs->nb_samples;
                 $group_rs->nb_sequences += $rs->nb_sequences;
                 $group_rs->nb_clones += $rs->nb_clones;
                 $group_rs->nb_cells += $rs->nb_cells;
