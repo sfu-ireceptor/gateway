@@ -227,20 +227,19 @@ class JobController extends Controller
             $zip_folder = $analysis_folder;
             if (File::exists($zip_file) && ! File::exists($zip_folder)) {
                 Log::debug('JobController::getView - UNZIPing analysis folder');
-                # Note: We us system(unzip) rather than zip.extractTo(). The extract to
-                # function was returning with no error message - and was failing on unzip
-                # of large studies. Even when error checking was done, behaviour was not
-                # as expected.
-                # Old code:
-                #   $zip = new ZipArchive();
-                #   $zip->open($zip_file, ZipArchive::RDONLY);
-                #   $zip->extractTo($folder);
-                #   $zip->close();
-                # Note: system() outputs to stdout so redirect to /dev/null is necessary
-                # as the JOb view will display the output.
-                $unzip_result = system("unzip " . $zip_file . ' -d ' . $folder . ' > /dev/null');
-                if ($unzip_result === FALSE)
-                {
+                // Note: We us system(unzip) rather than zip.extractTo(). The extract to
+                // function was returning with no error message - and was failing on unzip
+                // of large studies. Even when error checking was done, behaviour was not
+                // as expected.
+                // Old code:
+                //   $zip = new ZipArchive();
+                //   $zip->open($zip_file, ZipArchive::RDONLY);
+                //   $zip->extractTo($folder);
+                //   $zip->close();
+                // Note: system() outputs to stdout so redirect to /dev/null is necessary
+                // as the JOb view will display the output.
+                $unzip_result = system('unzip ' . $zip_file . ' -d ' . $folder . ' > /dev/null');
+                if ($unzip_result === false) {
                     Log::debug('JobController::getView - Could not unZIP file');
                 }
                 Log::debug('JobController::getView - done UNZIP of analysis folder');
