@@ -203,15 +203,55 @@ function run_cell_analysis()
 
     singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/run_conga.py --all --organism human --clones_file /data/${output_directory}/${CONTIG_PREFIX}_tcrdist_clones.tsv --gex_data /data/${output_directory} --gex_data_type 10x_mtx --outfile_prefix /data/${output_directory}/${file_string}
 
+
+    # Generate a summary HTML file for the Gateway to present this info to the user
+    html_file=${output_directory}/${repertoire_id}.html
+
+    # Generate the HTML main block
+    printf '<!DOCTYPE HTML5>\n' > ${html_file}
+    printf '<html lang="en" dir="ltr">' >> ${html_file}
+
+    # Generate a normal looking iReceptor header
+    printf '<head>\n' >>  ${html_file}
+    cat ${output_directory}/assets/head-template.html >> ${html_file}
+    printf "<title>Conga: %s</title>\n" ${title_string} >> ${html_file}
+    printf '</head>\n' >>  ${html_file}
+
+    # Generate an iReceptor top bar for the page
+    cat ${output_directory}/assets/top-bar-template.html >> ${html_file}
+
+    # Generate a normal looking iReceptor header
+    printf '<div class="container job_container">'  >> ${html_file}
+    printf "<h2>Conga: %s</h2>\n" ${title_string} >> ${html_file}
+
+    printf "<h2>Data Summary</h2>\n" >> ${html_file}
+    cat info.txt >> ${html_file}
+    printf "<h2>Analysis</h2>\n" >> ${html_file}
+
+        printf "<h3>Cell Typist, Majority Vote</h3>\n" >> ${html_file}
+    printf "<h3>%s</h3>\n" ${title_string} >> ${html_file}
+    printf '<iframe src="%s" width="100%%", height="700px"></iframe>\n' ${file_string}_results_summary.html >> ${html_file}
+
+    # End of main div container
+    printf '</div>' >> ${html_file}
+
+    # Use the normal iReceptor footer.
+    cat ${output_directory}/assets/footer.html >> ${html_file}
+
+    # Generate end body end HTML
+    printf '</body>' >> ${html_file}
+    printf '</html>' >> ${html_file}
+
+
     # Copy the Conga summary report to the gateway expected summary for this repertoire
-    cp ${output_directory}/${file_string}_results_summary.html ${output_directory}/${repertoire_id}.html
+    #cp ${output_directory}/${file_string}_results_summary.html ${output_directory}/${repertoire_id}.html
     # Add the required label file for the Gateway to present the results as a summary.
     label_file=${output_directory}/${repertoire_id}.txt
     echo "${title_string}" > ${label_file}
 
     # Remove the intermediate files generated for Conga
     rm -f ${output_directory}/${CONTIG_PREFIX}.csv ${output_directory}/${CONTIG_PREFIX}_*
-    rm -f ${output_directory}/features.tsv.gz ${output_directory}/barcodes.tsv.gz ${output_directory}/matrix.mtx.gz ${output_directory}/matrix.mtx.tmp
+    #rm -f ${output_directory}/features.tsv.gz ${output_directory}/barcodes.tsv.gz ${output_directory}/matrix.mtx.gz ${output_directory}/matrix.mtx.tmp
 
     # We don't want to keep around the generated data files or the manifest file.
     rm -f ${cell_file} ${gex_file} ${rearrangement_file} ${manifest_file}

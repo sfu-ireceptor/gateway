@@ -539,11 +539,6 @@ class Sequence
             $sam_summary = 'None';
         }
 
-        // Believe these should not be required - they are done above with an
-        // error check.
-        //$sam_query_id = $seq_query_params['sample_query_id'];
-        //$sam_query_params = Query::getParams($sam_query_id);
-
         // Use the Query class to generate a consistent set of summary info
         // from the query parameters. This returns a single string, containing
         // a set of lines for each parameter (with \n), which is what we want.
@@ -743,13 +738,14 @@ class Sequence
                 foreach ($metadata_response_list as $r) {
                     if ($rest_service_id == $r['rs']->id) {
                         if (isset($r['data']['file_path'])) {
-                            $file_path = $r['data']['file_path'];
-                            $t['metadata_file_name'] = basename($file_path);
+                            $repertoire_file_path = $r['data']['file_path'];
+                            $t['metadata_file_name'] = basename($repertoire_file_path);
                         }
                     }
                 }
 
                 // count number of lines
+                Log::debug('Get TSV files stats for ' . $file_path);
                 $n = 0;
                 $f = fopen($file_path, 'r');
                 while (! feof($f)) {
@@ -767,6 +763,7 @@ class Sequence
                     Log::error('rest_service ' . $rest_service_id . ' is missing from $expected_nb_sequences_by_rs array');
                     Log::error($expected_nb_sequences_by_rs);
                 }
+                Log::debug('Counts: total = ' . $t['nb_sequences'] . ' expected = ' . $t['expected_nb_sequences']);
                 $t['query_log_id'] = $response['query_log_id'];
                 $t['rest_service_name'] = $response['rs']->name;
                 $t['incomplete'] = ($t['nb_sequences'] != $t['expected_nb_sequences']);

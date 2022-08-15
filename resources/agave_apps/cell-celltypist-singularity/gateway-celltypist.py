@@ -1,5 +1,8 @@
 import sys
+import os
 import argparse
+
+from matplotlib import pyplot
 import scanpy
 import numpy
 import celltypist
@@ -21,6 +24,9 @@ def getArguments():
     # The output file (filename only) for the h5ad file.
     parser.add_argument("output_file", help="The Anndata output filename, will be written to output_directory")
 
+    # The output file (filename only) for the h5ad file.
+    parser.add_argument("title", help="The title to use for the figures.")
+
     # Handle verbose processing
     parser.add_argument(
         "-v",
@@ -39,16 +45,16 @@ if __name__ == "__main__":
 
     # Output some cell typist info about the models
     print("IR-INFO: CellTypist data models:")
-    print(models.models_description())
+    print(models.models_description(), flush=True)
 
     # Load in a default model
     model = models.Model.load(model = 'Immune_All_Low.pkl')
     print("IR-INFO: Default model info:")
     print(model)
-    print(model.cell_types)
+    print(model.cell_types, flush=True)
 
     # Read in the h5ad file
-    print("IR-INFO: Reading Cell file " + options.input_file)
+    print("IR-INFO: Reading Cell file " + options.input_file, flush=True)
     adata = scanpy.read(options.input_file)
 
     # We turn on the majority-voting classifier (majority_voting = True), which refines
@@ -65,17 +71,28 @@ if __name__ == "__main__":
     # Get an `AnnData` with predicted labels embedded into the cell metadata columns.
     prediction_adata = predictions.to_adata()
     print("IR-INFO: Prediction observations:")
-    print(prediction_adata.obs)
+    print(prediction_adata.obs, flush=True)
+    print(prediction_adata.to_df(), flush=True)
 
-    # Write the h5ad file
-    print("IR-INFO: Writing output to " + options.output_directory + "/" + options.output_file)
-    prediction_adata.write(options.output_directory + "/" + options.output_file)
+
+    # Export figures with labels external (celltypist plots are messy)
+    scanpy.tl.umap(prediction_adata)
+    scanpy.pl.umap(prediction_adata, color = ['predicted_labels'], title = options.title + ' (majority)')
+    pyplot.tight_layout()
+    pyplot.savefig(os.path.join(options.output_directory, 'predicted_labels_v2' + '.pdf'))
+    scanpy.pl.umap(prediction_adata, color = ['majority_voting'], title = 'CellTypist (majority vote)')
+    pyplot.tight_layout()
+    pyplot.savefig(os.path.join(options.output_directory, 'majority_voting_v2' + '.pdf'))
 
     # Write output
     predictions.to_table(folder = options.output_directory, prefix="", xlsx = True)
 
     # Plot results
     predictions.to_plots(folder = options.output_directory, plot_probability = True)
+
+    # Write the h5ad file
+    print("IR-INFO: Writing output to " + options.output_directory + "/" + options.output_file, flush=True)
+    prediction_adata.write(options.output_directory + "/" + options.output_file)
 
     # Done
     sys.exit(0)

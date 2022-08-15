@@ -227,10 +227,22 @@ class JobController extends Controller
             $zip_folder = $analysis_folder;
             if (File::exists($zip_file) && ! File::exists($zip_folder)) {
                 Log::debug('JobController::getView - UNZIPing analysis folder');
-                $zip = new ZipArchive();
-                $zip->open($zip_file, ZipArchive::RDONLY);
-                $zip->extractTo($folder);
-                $zip->close();
+                // Note: We us system(unzip) rather than zip.extractTo(). The extract to
+                // function was returning with no error message - and was failing on unzip
+                // of large studies. Even when error checking was done, behaviour was not
+                // as expected.
+                // Old code:
+                //   $zip = new ZipArchive();
+                //   $zip->open($zip_file, ZipArchive::RDONLY);
+                //   $zip->extractTo($folder);
+                //   $zip->close();
+                // Note: system() outputs to stdout so redirect to /dev/null is necessary
+                // as the JOb view will display the output.
+                $unzip_result = system('unzip ' . $zip_file . ' -d ' . $folder . ' > /dev/null');
+                if ($unzip_result === false) {
+                    Log::debug('JobController::getView - Could not unZIP file');
+                }
+                Log::debug('JobController::getView - done UNZIP of analysis folder');
             }
             if (File::exists($zip_file)) {
                 $data['analysis_download_url'] = $zip_file;
@@ -307,11 +319,49 @@ class JobController extends Controller
         $output_file = 'irec-job-' . $job['id'] . '-' . $job['agave_id'] . '.out';
         $error_file = 'irec-job-' . $job['id'] . '-' . $job['agave_id'] . '.err';
         $data['error_summary'] = [];
+        $err_path = $analysis_folder . '/' . $error_file;
+        $out_path = $analysis_folder . '/' . $output_file;
+
+        // Error strings we expect to see if an error occured in an App
+        $ireceptor_error = 'IR-ERROR';
+        $gateway_error = 'GW-ERROR';
+        // Determine if we should be handling errors.
+        $job_errors = false;
         if ($job->agave_status == 'FAILED') {
-            // Get the Tapis error status
-            $agave_status = json_decode($this->getAgaveJobJSON($job->id));
-            $s = '<p><b>TAPIS errors</b></p>\n';
-            $s .= strval($agave_status->result->lastStatusMessage) . '<br/>\n';
+            // If the job fails, then we need to handle error messages
+            $job_errors = true;
+        } else {
+            // If the job error file exists and has an error message then we need to handle errors
+            if (File::exists($folder) && File::exists($err_path)) {
+                $ir_output = [];
+                $gw_output = [];
+                exec('grep ' . escapeshellarg($ireceptor_error) . ' ' . $err_path, $ir_output, $result_code);
+                exec('grep ' . escapeshellarg($gateway_error) . ' ' . $err_path, $gw_output, $result_code);
+                if (count($ir_output) > 0 || count($gw_output) > 0) {
+                    $job_errors = true;
+                }
+            }
+            // If the job output file exists and has an error message then we need to handle errors
+            if (File::exists($folder) && File::exists($out_path)) {
+                $ir_output = [];
+                $gw_output = [];
+                exec('grep ' . escapeshellarg($ireceptor_error) . ' ' . $out_path, $ir_output, $result_code);
+                exec('grep ' . escapeshellarg($gateway_error) . ' ' . $out_path, $gw_output, $result_code);
+                if (count($ir_output) > 0 || count($gw_output) > 0) {
+                    $job_errors = true;
+                }
+            }
+        }
+
+        if ($job_errors) {
+            $s = '<em>WARNING: This job completed but errors on some stages of the processing were detected. As a result, some repertoires may not have been processed and/or some results may not be fully complete. Please refer to the Error and Output log files for more information.</em><br/>\n';
+            // If the Tapis job failed get the error message.
+            if ($job->agave_status == 'FAILED') {
+                // Get the Tapis error status
+                $agave_status = json_decode($this->getAgaveJobJSON($job->id));
+                $s .= '<br/><p><b>TAPIS errors</b></p>\n';
+                $s .= strval($agave_status->result->lastStatusMessage) . '<br/>\n';
+            }
 
             // Get the relevant iReceptor Gateway error messages. These come from the
             // normal job ourput and error files, but are tagged with either "IR-ERROR" or
@@ -320,72 +370,88 @@ class JobController extends Controller
 
             // If there is an error, Tapis doesn't by default download the files, so if
             // it doesn't exist download it and save it. If it does exist open it.
-            $response = '';
-            $err_path = $analysis_folder . '/' . $error_file;
+            $stderr_response = '';
             if (File::exists($folder) && ! File::exists($err_path)) {
                 // Tapis command to get the file.
                 $agave = new Agave;
                 $token = auth()->user()->password;
-                $response = $agave->getJobOutputFile($job->agave_id, $token, $error_file);
+                $stderr_response = $agave->getJobOutputFile($job->agave_id, $token, $error_file);
                 // Check for the analysis directory, create if it doesn't exist.
                 if (! File::exists($analysis_folder)) {
                     mkdir($analysis_folder);
                 }
                 // Write it to disk so it is cached.
                 $filehandle = fopen($err_path, 'w');
-                fwrite($filehandle, $response);
+                fwrite($filehandle, $stderr_response);
             } elseif (File::exists($folder) && File::exists($err_path)) {
                 // If it already exists, then open it.
                 $filehandle = fopen($err_path, 'r');
                 if (filesize($err_path) > 0) {
-                    $response = fread($filehandle, filesize($err_path));
+                    $stderr_response = fread($filehandle, filesize($err_path));
                 } else {
-                    $response = '';
-                }
-            }
-            // Extract the error messages from the App for the Gateway.
-            $s .= '<br/><p><b>iReceptor Gateway errors</b></p>\n';
-            $string_list = explode(PHP_EOL, $response);
-            $ireceptor_error = 'IR-ERROR';
-            foreach ($string_list as $line) {
-                if (substr($line, 0, strlen($ireceptor_error)) == $ireceptor_error) {
-                    $s .= $line . '<br/>\n';
+                    $stderr_response = '';
                 }
             }
 
             // Repeat for the output log file for the job. Download if not here, add to messages
             // if info available.
-            $out_path = $analysis_folder . '/' . $output_file;
+            $stdout_response = '';
             if (File::exists($folder) && ! File::exists($out_path)) {
                 // Tapis command to get the file.
                 $agave = new Agave;
                 $token = auth()->user()->password;
-                $response = $agave->getJobOutputFile($job->agave_id, $token, $output_file);
+                $stdout_response = $agave->getJobOutputFile($job->agave_id, $token, $output_file);
                 // Check for the analysis directory, create if it doesn't exist.
                 if (! File::exists($analysis_folder)) {
                     mkdir($analysis_folder);
                 }
                 // Write it to disk so it is cached.
                 $filehandle = fopen($out_path, 'w');
-                fwrite($filehandle, $response);
+                fwrite($filehandle, $stdout_response);
             } elseif (File::exists($folder) && File::exists($out_path)) {
                 // If it already exists, then open it.
                 $filehandle = fopen($out_path, 'r');
                 if (filesize($out_path) > 0) {
-                    $response = fread($filehandle, filesize($out_path));
+                    $stdout_response = fread($filehandle, filesize($out_path));
                 } else {
-                    $response = '';
+                    $stdout_response = '';
                 }
             }
-            // Extract the info messages from the App for the Gateway.
-            $s .= '<br/><p><b>iReceptor Gateway info messages</b></p>\n';
-            $string_list = explode(PHP_EOL, $response);
-            $ireceptor_error = 'IR-INFO';
+
+            // Extract the error messages from the App for the Gateway.
+            $s .= '<br/><p><b>iReceptor Gateway errors (Analysis Error Log)</b></p>\n';
+            $string_list = explode(PHP_EOL, $stderr_response);
             foreach ($string_list as $line) {
-                if (substr($line, 0, strlen($ireceptor_error)) == $ireceptor_error) {
+                if (substr($line, 0, strlen($gateway_error)) == $gateway_error ||
+                    substr($line, 0, strlen($ireceptor_error)) == $ireceptor_error) {
                     $s .= $line . '<br/>\n';
                 }
             }
+            // Extract the error messages from the App stdout for the Gateway.
+            $s .= '<br/><p><b>iReceptor Gateway errors (Analysis Output Log)</b></p>\n';
+            $string_list = explode(PHP_EOL, $stdout_response);
+            foreach ($string_list as $line) {
+                if (substr($line, 0, strlen($gateway_error)) == $gateway_error ||
+                    substr($line, 0, strlen($ireceptor_error)) == $ireceptor_error) {
+                    $s .= $line . '<br/>\n';
+                }
+            }
+
+            // Extract the info messages from the App for the Gateway.
+            /*
+            $s .= '<br/><p><b>iReceptor Gateway output messages</b></p>\n';
+            $string_list = explode(PHP_EOL, $stdout_response);
+            $ireceptor_info = 'IR-INFO';
+            $gateway_info = 'GW-INFO';
+            foreach ($string_list as $line) {
+                if (substr($line, 0, strlen($ireceptor_error)) == $ireceptor_error ||
+                    substr($line, 0, strlen($gateway_error)) == $gateway_error ||
+                    substr($line, 0, strlen($ireceptor_info)) == $ireceptor_info ||
+                    substr($line, 0, strlen($gateway_info)) == $gateway_info) {
+                    $s .= $line . '<br/>\n';
+                }
+            }
+            */
 
             // Save the exploded error summary message in the data for the view.
             $data['error_summary'] = explode('\n', $s);
