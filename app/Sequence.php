@@ -763,7 +763,7 @@ class Sequence
                     Log::error('rest_service ' . $rest_service_id . ' is missing from $expected_nb_sequences_by_rs array');
                     Log::error($expected_nb_sequences_by_rs);
                 }
-                Log::debug('Counts: total = ' . $t['nb_sequences'] . ' expected = ' . $t['expected_nb_sequences'] );
+                Log::debug('Counts: total = ' . $t['nb_sequences'] . ' expected = ' . $t['expected_nb_sequences']);
                 $t['query_log_id'] = $response['query_log_id'];
                 $t['rest_service_name'] = $response['rs']->name;
                 $t['incomplete'] = ($t['nb_sequences'] != $t['expected_nb_sequences']);
