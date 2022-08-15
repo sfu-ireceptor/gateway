@@ -1002,11 +1002,11 @@ fieldset[disabled] .btn-sequences.focus {
 }
 
 .intro {
-	margin-bottom: 20px;
-	margin-top: 20px;
+	margin-bottom: 37px;
+	margin-top: 17px;
 	background-color: transparent;
 	border-radius: 6px;
-	font: 22px/29px "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font: 22px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;
 	padding: 0 60px 0 0;
 }
 
