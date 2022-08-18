@@ -277,7 +277,7 @@ function run_cell_analysis()
     rm -f ${output_directory}/${CONTIG_PREFIX}.csv ${output_directory}/${CONTIG_PREFIX}_*
 
     # We don't want to keep around the generated data files or the manifest file.
-    rm -f ${cell_file} ${gex_file} ${rearrangement_file} ${manifest_file}
+    rm -f ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/${rearrangement_file} ${output_directory}/${manifest_file}
 
     # done
     printf "IR-INFO: Done running Repertoire Analysis on ${cell_file} at $(date)\n"
