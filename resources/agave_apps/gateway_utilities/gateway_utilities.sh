@@ -333,6 +333,12 @@ function gateway_split_repertoire(){
     for f in "${data_files[@]}"; do
         rm -f $f
     done
+    for f in "${expression_files[@]}"; do
+        rm -f $f
+    done
+    for f in "${rearrangement_files[@]}"; do
+        rm -f $f
+    done
 
     # Return to the directory we started from.
     popd > /dev/null
