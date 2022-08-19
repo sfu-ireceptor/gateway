@@ -103,6 +103,15 @@ class SampleController extends Controller
             return redirect($page_uri . '?query_id=' . $new_query_id);
         }
 
+        // if there's a "rest_service_name" parameter, generate new query_id and redirect to it
+        if ($request->has('rest_service_name')) {
+            $filters = Query::getParams($request->input('rest_service_name'));
+            $filters['rest_service_name'] = $request->input('rest_service_name');
+            $new_query_id = Query::saveParams($filters, 'samples');
+
+            return redirect($page_uri . '?query_id=' . $new_query_id);
+        }
+
         // if there's a "sort_column" parameter, generate new query_id and redirect to it
         if ($request->has('sort_column')) {
             $filters = Query::getParams($request->input('query_id'));
