@@ -1833,7 +1833,11 @@ form.column_selector {
 	position: absolute;
 	top: 12px;
 	right: 15px;
+}
+
+.repository .logo img {
 	max-width: 110px;
+	max-height: 56px;	
 }
 
 .repository ul {

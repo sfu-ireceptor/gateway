@@ -139,6 +139,8 @@ class RestServiceSeeder extends Seeder
             [
                 'url' => 'http://irec.i3lab.fr/airr/v1/',
                 'name' => 'i3 AIRR',
+                'country' => 'France',
+                'logo' => '',
             ],
             [
                 'url' => 'https://stats-staging.ireceptor.org/airr/v1/',
@@ -147,6 +149,8 @@ class RestServiceSeeder extends Seeder
             [
                 'url' => 'https://scireptor.dkfz.de/airr/v1/',
                 'name' => 'sciReptor',
+                'country' => 'Germany',
+                'logo' => 'dkfz.png',
             ],
             [
                 'url' => 'https://ireceptor-us.medgenome.com/airr/v1/',
@@ -155,11 +159,14 @@ class RestServiceSeeder extends Seeder
             [
                 'url' => 'http://airr-seq.vdjbase.org/airr/v1/',
                 'name' => 'VDJbase',
+                'country' => 'Israel',
+                'logo' => 'vdjbase.png',
             ],
             [
                 'url' => 'http://secure.ireceptor.org/middleware/airr/v1/',
                 'name' => 'Secure IPA1',
-            ],
+                'country' => 'Canada',
+                'logo' => 'ireceptor.png',            ],
             [
                 'url' => 'http://turnkey-test2.ireceptor.org/airr/v2/',
                 'name' => 'ADC Turnkey 2 V2',
@@ -170,7 +177,7 @@ class RestServiceSeeder extends Seeder
                 'url' => 'http://154.127.124.38:2222/airr/v1/',
                 'name' => 'NICD - South Africa',
                 'country' => 'South Africa',
-                'logo' => '',
+                'logo' => 'nicd.jpg',
             ],
             [
                 'url' => 'http://single-cell.ireceptor.org/airr/v1/',
@@ -182,6 +189,7 @@ class RestServiceSeeder extends Seeder
                 'url' => 'https://agschwab.uni-muenster.de/airr/v1/',
                 'name' => 'University of Münster',
                 'country' => 'Germany',
+                'logo' => 'munster.jpg',
             ],
             [
                 'url' => 'https://vdjbaseirplus.biu.ac.il/airr/v1/',
@@ -190,6 +198,8 @@ class RestServiceSeeder extends Seeder
             [
                 'url' => 'https://roche-airr.ireceptor.org/airr/v1/',
                 'name' => 'Roche',
+                'country' => 'Canada',
+                'logo' => 'roche.png',
             ],
         ];
 

@@ -20,7 +20,9 @@
 						<h3 class="panel-title">{{ $rs->display_name }}</h3>
 						<h4>{{ $rs->country }}</h4>
 						@if ($rs->logo != '')
-							<img class="logo" src="/images/repositories/{{ $rs->logo }}" />
+							<a class="logo" href="{{ $rs->contact_url }}" target="_blank" >
+								<img src="/images/repositories/{{ $rs->logo }}" />
+							</a>							
 						@endif
 					</div>
 					
