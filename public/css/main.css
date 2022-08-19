@@ -1809,18 +1809,21 @@ form.column_selector {
 .repository .panel-default > .panel-heading {
 	position: relative;
 	background-color: white;
-	padding-top: 18px;
+	padding-top: 12px;
+	height: 89px;
 }
 
 .repository .panel-heading h3 {
 	font-size: 22px;
+	max-width: 216px;
+	line-height: 22px;
 }
 
 .repository .panel-heading h4 {
 	color: gray;
 	font-size: 14px;
 	font-weight: normal;
-	margin-top: 0;
+	margin-top: 3px;
 	min-height: 16px;
 }
 
