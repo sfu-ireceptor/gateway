@@ -14,7 +14,7 @@ class RestService extends Model
     protected $table = 'rest_service';
 
     protected $fillable = [
-        'url', 'name', 'username', 'password', 'enabled', 'version', 'nb_sequences', 'country', 'logo', 
+        'url', 'name', 'username', 'password', 'enabled', 'version', 'nb_sequences', 'country', 'logo',
     ];
 
     public $display_name = '';
@@ -169,7 +169,7 @@ class RestService extends Model
 
                 // add display name
                 $rs->display_name = $group_name ? $group_name : $rs->name;
-                
+
                 $l2[] = $rs;
             }
         }

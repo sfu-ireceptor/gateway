@@ -9,7 +9,7 @@ class RestServiceGroup extends Model
     protected $table = 'rest_service_group';
 
     protected $fillable = [
-        'code', 'name', 'country', 'logo'
+        'code', 'name', 'country', 'logo',
     ];
 
     public static function nameForCode($code)
