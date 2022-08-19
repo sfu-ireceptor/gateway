@@ -103,6 +103,8 @@ class HomeController extends Controller
             }
         }
 
+        // dd($rs_list);
+
         $data = [];
         $data['rs_list'] = $rs_list;
 

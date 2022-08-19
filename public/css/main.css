@@ -1806,12 +1806,14 @@ form.column_selector {
 	font-size: 16px;
 }
 
-.repository .panel-heading {
+.repository .panel-default > .panel-heading {
 	position: relative;
+	background-color: white;
+	padding-top: 18px;
 }
 
 .repository .panel-heading h3 {
-	font-size: 24px;
+	font-size: 22px;
 }
 
 .repository .panel-heading h4 {
@@ -1819,10 +1821,17 @@ form.column_selector {
 	font-size: 14px;
 	font-weight: normal;
 	margin-top: 0;
+	min-height: 16px;
 }
+
+.repository .panel-body {
+	background-color: #f5f5f5;	
+	
+}
+
 .repository .logo {
 	position: absolute;
-	top: 10px;
+	top: 12px;
 	right: 15px;
 	max-width: 110px;
 }
@@ -1850,15 +1859,18 @@ form.column_selector {
 
 }
 
+.repository .panel-default > .panel-footer {
+	background-color: white;
+	line-height: 1.5;
+}
+
 .repository .panel-footer strong {
 	font-size: 14px;
 }
 
 .repository .panel-footer a.email {
-	text-decoration: none;
-} {
-	
-}
+
+} 
 
 
 /* @end */
