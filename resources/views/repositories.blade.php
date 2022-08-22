@@ -32,14 +32,24 @@
 								<ul>
 									<li>{{ $rs->nb_studies }} {{ str_plural('study', $rs->nb_studies)}}</li>
 									<li>{{ $rs->nb_samples }} {{ str_plural('repertoire', $rs->nb_samples)}}</li>
-									<li class="nb_sequences">{{ human_number($rs->nb_sequences) }} {{ str_plural('sequence', $rs->nb_sequences)}}</li> 
+									<li>{{ human_number($rs->nb_sequences) }} {{ str_plural('sequence', $rs->nb_sequences)}}</li>
+									@if($rs->nb_clones > 0)
+										<li>{{ human_number($rs->nb_clones) }} {{ str_plural('clone', $rs->nb_clones)}}</li>
+									@endif
+									@if($rs->nb_cells > 0)
+										<li>{{ human_number($rs->nb_cells) }} {{ str_plural('cell', $rs->nb_cells)}}</li>
+									@endif
 								</ul>
 							</div>
-							<div class="col-md-5 browse-data">
-								<a role="button" class="btn btn-primary"  href="/samples?rest_service_name={{ $rs->display_name }}">
-									Browse data →
-								</a>
-							</div>				
+
+							@if(Auth::check())
+								<div class="col-md-5 browse-data">
+									<a role="button" class="btn btn-primary"  href="/samples?rest_service_name={{ $rs->display_name }}">
+										Browse data →
+									</a>
+								</div>
+							@endif
+
 						</div>
 					</div>
 
@@ -58,6 +68,10 @@
 
 				</div>
 			</div>
+			@if( ! $loop->last && ($loop->iteration % 3 == 0))
+				</div>
+				<div class="row">
+			@endif
 		@endforeach
 	</div>
 

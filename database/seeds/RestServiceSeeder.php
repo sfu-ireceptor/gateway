@@ -199,7 +199,7 @@ class RestServiceSeeder extends Seeder
                 'url' => 'https://roche-airr.ireceptor.org/airr/v1/',
                 'name' => 'Roche',
                 'country' => 'Canada',
-                'logo' => 'roche.png',
+                'logo' => 'ireceptor.png',
             ],
         ];
 
