@@ -13,7 +13,7 @@
 		<link rel="stylesheet" href="/css/bootstrap.min.css" />
 		<link href="/css/bootstrap-multiselect.css" rel="stylesheet" />
 		<link href="/css/jstree/default/style.min.css" rel="stylesheet" />
-		<link href="/css/main.css?v=72" rel="stylesheet" />
+		<link href="/css/main.css?v=76" rel="stylesheet" />
 
 		<!-- IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -152,6 +152,7 @@
 							<li><a href="https://ireceptor.org/node/99" class="external" target="_blank"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Frequently Asked Questions</a></li>
 							<li><a href="http://ireceptor.org/platform/doc" class="external" target="_blank"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> iReceptor Gateway documentation</a></li>
 							<li role="separator" class="divider"></li>
+							<li><a href="/repositories"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Repositories</a></li>
 							<li><a href="/fields-definitions"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Data elements definitions</a></li>
 						</ul>
 					</li>

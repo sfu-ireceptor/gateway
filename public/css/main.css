@@ -1002,11 +1002,11 @@ fieldset[disabled] .btn-sequences.focus {
 }
 
 .intro {
-	margin-bottom: 20px;
-	margin-top: 20px;
+	margin-bottom: 37px;
+	margin-top: 17px;
 	background-color: transparent;
 	border-radius: 6px;
-	font: 22px/29px "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font: 22px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;
 	padding: 0 60px 0 0;
 }
 
@@ -1794,6 +1794,90 @@ form.column_selector {
 	display: inline;
 }
 
+
+
+/* @end */
+
+/* @group repositories page */
+
+.repositories_intro {
+	margin-bottom: 30px;
+	margin-top: -20px;
+	font-size: 16px;
+}
+
+.repository .panel-default > .panel-heading {
+	position: relative;
+	background-color: white;
+	padding-top: 12px;
+	height: 89px;
+}
+
+.repository .panel-heading h3 {
+	font-size: 22px;
+	max-width: 216px;
+	line-height: 22px;
+}
+
+.repository .panel-heading h4 {
+	color: gray;
+	font-size: 14px;
+	font-weight: normal;
+	margin-top: 3px;
+	min-height: 16px;
+}
+
+.repository .panel-body {
+	background-color: #f5f5f5;	
+	
+}
+
+.repository .logo {
+	position: absolute;
+	top: 12px;
+	right: 15px;
+}
+
+.repository .logo img {
+	max-width: 110px;
+	max-height: 56px;	
+}
+
+.repository ul {
+	list-style-type: none;
+	padding: 0;
+	margin-bottom: 0;
+}
+
+.repository .browse-data {
+	text-align: right;
+}
+
+.repository .nb_sequences {
+	background-color: #c3d9f4;
+	border-radius: 13px;
+	display: inline-block;
+
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 5px;
+	padding-bottom: 7px;
+	margin-top: 4px;
+
+}
+
+.repository .panel-default > .panel-footer {
+	background-color: white;
+	line-height: 1.5;
+}
+
+.repository .panel-footer strong {
+	font-size: 14px;
+}
+
+.repository .panel-footer a.email {
+
+} 
 
 
 /* @end */
