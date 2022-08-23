@@ -228,8 +228,7 @@ function run_cell_analysis()
     cat info.txt >> ${html_file}
     printf "<h2>Analysis</h2>\n" >> ${html_file}
 
-        printf "<h3>Cell Typist, Majority Vote</h3>\n" >> ${html_file}
-    printf "<h3>%s</h3>\n" ${title_string} >> ${html_file}
+    printf "<h3>Conga Analysis: %s</h3>\n" ${title_string} >> ${html_file}
     printf '<iframe src="%s" width="100%%", height="700px"></iframe>\n' ${file_string}_results_summary.html >> ${html_file}
 
     # End of main div container
@@ -251,10 +250,10 @@ function run_cell_analysis()
 
     # Remove the intermediate files generated for Conga
     rm -f ${output_directory}/${CONTIG_PREFIX}.csv ${output_directory}/${CONTIG_PREFIX}_*
-    #rm -f ${output_directory}/features.tsv.gz ${output_directory}/barcodes.tsv.gz ${output_directory}/matrix.mtx.gz ${output_directory}/matrix.mtx.tmp
+    rm -f ${output_directory}/features.tsv.gz ${output_directory}/barcodes.tsv.gz ${output_directory}/matrix.mtx.gz ${output_directory}/matrix.mtx.tmp
 
     # We don't want to keep around the generated data files or the manifest file.
-    rm -f ${cell_file} ${gex_file} ${rearrangement_file} ${manifest_file}
+    rm -f ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/${rearrangement_file} ${output_directory}/${manifest_file}
 
     # done
     printf "Done running Repertoire Analysis on ${cell_file} at $(date)\n\n"

@@ -175,6 +175,7 @@ function gateway_split_repertoire(){
             # Generate the manifest file name for this analysis unit
             REPERTOIRE_MANIFEST=${repository_name}/${repertoire_dirname}/manifest.json
             echo "GW-INFO: Manifest file = ${REPERTOIRE_MANIFEST}"
+            echo "GW-INFO: Analyis type = ${ANALYSIS_TYPE}"
 
             # Based on the type of analysis, split the data out for this reperotire_id
             if [ ${ANALYSIS_TYPE} = "rearrangement_file" ]
@@ -224,6 +225,8 @@ function gateway_split_repertoire(){
                     echo "GW-ERROR: Could not filter Clone data for ${repertoire_id} from ${data_file}"
                     continue
                 fi
+                echo -n "GW-INFO: Clone file contains: "
+                wc -l ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
         
                 # Create the repertoire manifest file
                 echo '{"Info":{},"DataSets":[' > $REPERTOIRE_MANIFEST
@@ -331,6 +334,12 @@ function gateway_split_repertoire(){
     rm -f ${ZIP_FILE}
     # Remove any data files extracted from the ZIP - they are big and can be re-generated
     for f in "${data_files[@]}"; do
+        rm -f $f
+    done
+    for f in "${expression_files[@]}"; do
+        rm -f $f
+    done
+    for f in "${rearrangement_files[@]}"; do
         rm -f $f
     done
 
