@@ -23,7 +23,7 @@ class FieldName extends Model
     public static function convertList($data, $from, $to, $ir_class = '', $api_version = null)
     {
         $api_version = $api_version ?? config('ireceptor.default_api_version');
-        $mapping = self::all([$from, $to, 'api_version'])->where('api_version', $api_version)->toArray();
+        $mapping = self::all([$from, $to, 'api_version', 'ir_class'])->where('api_version', $api_version)->toArray();
 
         return convert_arrays_keys($data, $mapping, $from, $to, $ir_class);
     }
@@ -31,9 +31,14 @@ class FieldName extends Model
     // convert field names for a list of objects
     public static function convertObjectList($data, $from, $to, $ir_class = '', $api_version = null)
     {
-        $api_version = $api_version ?? config('ireceptor.default_api_version');
-        $mapping = self::all([$from, $to, 'api_version'])->where('api_version', $api_version)->toArray();
 
+        // dd($ir_class);
+        // debug_print_backtrace();
+        // die();
+        $api_version = $api_version ?? config('ireceptor.default_api_version');
+        $mapping = self::all([$from, $to, 'api_version', 'ir_class'])->where('api_version', $api_version)->toArray();
+
+        // dd($mapping);
         $array_list = convert_arrays_keys($data, $mapping, $from, $to, $ir_class);
 
         $object_list = [];
