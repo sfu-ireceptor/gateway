@@ -79,30 +79,80 @@ class RestService extends Model
 
     public function refreshStatsCapability()
     {
-        $rs_base_url = str_replace('airr/v1/', '', $this->url);
-        $rs_stats_url = $rs_base_url . 'irplus/v1/';
+        // get one repertoire id from that repository
+        $repertoire_id = null;
 
         $defaults = [];
-        $defaults['base_uri'] = $rs_stats_url;
+        $defaults['base_uri'] = $this->url;
         $defaults['verify'] = false;    // accept self-signed SSL certificates
-
-        try {
+        
+        try {     
             $client = new \GuzzleHttp\Client($defaults);
 
-            $response = $client->get('stats/rearrangements');
+            $options = [];
+            $options['headers'] = ['Content-Type' => 'application/json'];
+
+            $params = [];
+            $params['from'] = 0;
+            $params['size'] = 1;
+            $options['body'] = self::generate_json_query([], $params);
+
+            $response = $client->post('repertoire', $options);
             $body = $response->getBody();
             $json = json_decode($body);
 
-            if (isset($json->result)) {
-                $this->stats = true;
-                $this->save();
-
-                return true;
-            }
+            $repertoire_id = $json->Repertoire[0]->repertoire_id;
         } catch (\Exception $e) {
             $error_message = $e->getMessage();
             Log::error($error_message);
         }
+
+        if($repertoire_id != null) {
+            // try stats for that repertoire id
+            $rs_base_url = str_replace('airr/v1/', '', $this->url);
+            $rs_stats_url = $rs_base_url . 'irplus/v1/';
+
+            $defaults = [];
+            $defaults['base_uri'] = $rs_stats_url;
+            $defaults['verify'] = false;    // accept self-signed SSL certificates
+
+            try {
+                $client = new \GuzzleHttp\Client($defaults);
+
+                $repertoire_object = new \stdClass();
+                $repertoire_object->repertoire = new \stdClass();
+                $repertoire_object->repertoire->repertoire_id = $repertoire_id;
+                $repertoire_list = [];
+                $repertoire_list[] = $repertoire_object;
+                $statistics_list = [];
+                $statistics_list[] = 'rearrangement_count';
+
+                $filter_object = new \stdClass();
+                $filter_object->repertoires = $repertoire_list;
+                $filter_object->statistics = $statistics_list;
+                $filter_object_json = json_encode($filter_object);
+
+                $options = [];
+                $options['headers'] = ['Content-Type' => 'application/json'];
+                $options['body'] = $filter_object_json;
+
+                $response = $client->post('stats/rearrangement/count', $options);
+                $body = $response->getBody();
+                $json = json_decode($body);
+
+                if (isset($json->Result)) {
+                    $this->stats = true;
+                    $this->save();
+                    return true;
+                }
+            } catch (\Exception $e) {
+                $error_message = $e->getMessage();
+                Log::error($error_message);
+            }            
+        }
+
+        $this->stats = false;
+        $this->save();
 
         return false;
     }
