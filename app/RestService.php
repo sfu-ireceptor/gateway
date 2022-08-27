@@ -85,8 +85,8 @@ class RestService extends Model
         $defaults = [];
         $defaults['base_uri'] = $this->url;
         $defaults['verify'] = false;    // accept self-signed SSL certificates
-        
-        try {     
+
+        try {
             $client = new \GuzzleHttp\Client($defaults);
 
             $options = [];
@@ -107,7 +107,7 @@ class RestService extends Model
             Log::error($error_message);
         }
 
-        if($repertoire_id != null) {
+        if ($repertoire_id != null) {
             // try stats for that repertoire id
             $rs_base_url = str_replace('airr/v1/', '', $this->url);
             $rs_stats_url = $rs_base_url . 'irplus/v1/';
@@ -143,12 +143,13 @@ class RestService extends Model
                 if (isset($json->Result)) {
                     $this->stats = true;
                     $this->save();
+
                     return true;
                 }
             } catch (\Exception $e) {
                 $error_message = $e->getMessage();
                 Log::error($error_message);
-            }            
+            }
         }
 
         $this->stats = false;
