@@ -379,65 +379,65 @@
 								<!-- Tab panes -->
 								<div class="tab-content">
 									@php $count = 0 @endphp
-								        @foreach ($app_list as $app)
-						                            @if ( $count === 0)
+								    @foreach ($app_list as $app)
+						                @if ( $count === 0)
 									      <div role="tabpanel" class="tab-pane active" id="{{$app['app_tag']}}">
-                                                                            @else
+                                        @else
 									      <div role="tabpanel" class="tab-pane" id="{{$app['app_tag']}}">
-                                                                            @endif
-						    				{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', $app['app_id']) }}
-                                                                                        <div class="row">
-										            <div class="col-md-10">
-											        <h3>{{$app['description']}} <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$app['info']}}</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span></h3>
-                                                                                            </div>
-                                                                                        </div>
-								                        @foreach ($app['parameter_list'] as $parameter)
-									  	          <div class="row">
-										             <div class="col-md-3">
-											          <div class="form-group">
-												      {{ Form::label($parameter['label'], $parameter['name']) }}
-											              <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$parameter['description']}}</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span>
-						                                                      @if ( ! empty($parameter['choices']) )
-												        {{ Form::select($parameter['label'], $parameter['choices'], '', array('class' => 'form-control')) }}
-                                                                                                      @else
-									                                {{ Form::text($parameter['label'], $parameter['default'], array('class' => 'form-control')) }}
-                                                                                                      @endif
-										                  </div>
-											     </div>
-											  </div>
-							                                @endforeach
-                                                                                        <div class="row">
-										            <div class="col-md-10">
-											        <h3>Job control parameters<span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>Parameters to control job resources used</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span></h3>
-                                                                                            </div>
-                                                                                        </div>
-								                        @foreach ($app['job_parameter_list'] as $job_parameter)
-									  	          <div class="row">
-										             <div class="col-md-3">
-											          <div class="form-group">
-												      {{ Form::label($job_parameter['label'], $job_parameter['name']) }}
-											              <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$job_parameter['description']}}</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span>
-						                                                      @if ( ! empty($job_parameter['choices']) )
-												        {{ Form::select($job_parameter['label'], $job_parameter['choices'], '', array('class' => 'form-control')) }}
-                                                                                                      @else
-									                                {{ Form::text($job_parameter['label'], $job_parameter['default'], array('class' => 'form-control')) }}
-                                                                                                      @endif
-										                  </div>
-											     </div>
-											  </div>
-							                                @endforeach
+                                        @endif
+						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
+										{{ Form::hidden('filters_json', $filters_json) }}
+										{{ Form::hidden('data_url', $url) }}
+										{{ Form::hidden('app_id', $app['app_id']) }}
+                                        <!-- Application parameters  -->
+                                        <div class="row"> <div class="col-md-10">
+										    <h3>{{$app['description']}} <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$app['info']}}</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span></h3>
+                                        </div> </div>
+								        @foreach ($app['parameter_list'] as $parameter)
+									  	    <div class="row"> <div class="col-md-3"> <div class="form-group">
+											    {{ Form::label($parameter['label'], $parameter['name']) }}
+                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$parameter['description']}}</p>" data-trigger="hover" tabindex="0">
+                                                <span class="glyphicon glyphicon-question-sign">
+                                                </span></span>
+						                        @if ( ! empty($parameter['choices']) )
+												    {{ Form::select($parameter['label'], $parameter['choices'], '', array('class' => 'form-control')) }}
+                                                @else
+									                {{ Form::text($parameter['label'], $parameter['default'], array('class' => 'form-control')) }}
+                                                @endif
+										    </div> </div> </div>
+							            @endforeach
+                                        <!-- Job control parameters  -->
+                                        <!-- 
+                                        <div class="row"> <div class="col-md-10">
+                                            <h3>Job control parameters
+                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>Parameters to control job resources used</p>" data-trigger="hover" tabindex="0"> 
+                                                <span class="glyphicon glyphicon-question-sign">
+                                                </span></span>
+                                            </h3>
+                                        </div> </div>
+								        @foreach ($app['job_parameter_list'] as $job_parameter)
+									  	    <div class="row"> <div class="col-md-3"> <div class="form-group">
+												{{ Form::label($job_parameter['label'], $job_parameter['name']) }}
+                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$job_parameter['description']}}</p>" data-trigger="hover" tabindex="0"> 
+                                                <span class="glyphicon glyphicon-question-sign">
+                                                </span></span>
 
-											{{ Form::submit('Submit ' . $app['name'] . ' analysis job', array('class' => 'btn btn-primary')) }}
+						                        @if ( ! empty($job_parameter['choices']) )
+												    {{ Form::select($job_parameter['label'], $job_parameter['choices'], '', array('class' => 'form-control')) }}
+                                                @else
+									                {{ Form::text($job_parameter['label'], $job_parameter['default'], array('class' => 'form-control')) }}
+                                                @endif
+										    </div> </div> </div>
+							            @endforeach
+                                        -->
+
+										{{ Form::submit('Submit ' . $app['name'] . ' analysis job', array('class' => 'btn btn-primary')) }}
 										{{ Form::close() }}
-									    </div>
+									    </div> <!-- tabpanel -->
 									    @php $count = $count + 1 @endphp
-                                                                        @endforeach
-
-								</div>
-							</div>
+                                    @endforeach
+								</div> <!-- tabcontent -->
+							</div> <!-- analysis_apps_tabpanel -->
 						@else
 							<p>Sorry, analyses of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future.</p>
 						@endif
