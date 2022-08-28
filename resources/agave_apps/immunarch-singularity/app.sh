@@ -210,8 +210,6 @@ function run_analysis()
 
         # Generate the output from the analysis.
         printf "<h2>Immunarch: %s</h1>\n" ${title_string} >> ${html_file}
-        printf "<h2>Data Summary</h2>\n" >> ${html_file}
-        cat info.txt >> ${html_file}
         printf "<h2>Analysis</h2>\n" >> ${html_file}
         printf "<h3>Top Clones</h3>\n" >> ${html_file}
         printf '<iframe src="%s" width="800" height="300" style="border: none;" seamless></iframe>\n' top_10_clones.html >> ${html_file}

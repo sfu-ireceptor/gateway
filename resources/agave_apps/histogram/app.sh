@@ -219,8 +219,6 @@ function run_analysis()
     printf '<div class="container job_container">'  >> ${html_file}
 
     printf "<h2>Histogram: %s</h2>\n" ${title_string} >> ${html_file}
-    printf "<h2>Data Summary</h2>\n" >> ${html_file}
-    cat info.txt >> ${html_file}
     printf "<h2>Analysis</h2>\n" >> ${html_file}
     printf '<img src="%s-%s-histogram.png" width="800">' ${file_string} ${VARNAME} >> ${html_file}
 
@@ -263,6 +261,15 @@ elif [ "${split_repertoire}" = "False" ]; then
 
     # Run the stats on all the data combined. Unzip the files
     gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}/${outdir}
+
+    # Copy the HTML resources for the Apps
+    echo "IR-INFO: Copying HTML assets"
+    mkdir -p ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
+    cp -r ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/assets/* ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: Could not create HTML asset directory"
+    fi
 
     # Go into the working directory
     #pushd ${GATEWAY_ANALYSIS_DIR} > /dev/null
