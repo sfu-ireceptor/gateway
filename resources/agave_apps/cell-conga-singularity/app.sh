@@ -224,8 +224,6 @@ function run_cell_analysis()
     printf '<div class="container job_container">'  >> ${html_file}
     printf "<h2>Conga: %s</h2>\n" ${title_string} >> ${html_file}
 
-    printf "<h2>Data Summary</h2>\n" >> ${html_file}
-    cat info.txt >> ${html_file}
     printf "<h2>Analysis</h2>\n" >> ${html_file}
 
     printf "<h3>Conga Analysis: %s</h3>\n" ${title_string} >> ${html_file}
