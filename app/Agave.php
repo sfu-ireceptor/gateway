@@ -13,6 +13,7 @@ class Agave
     private $jobParameters;
     private $maxRunTime;
     private $processorsPerNode;
+    private $memoryPerProcessor;
 
     public function __construct()
     {
@@ -24,8 +25,10 @@ class Agave
 
         // Maximum run time for a job in hours.
         $this->maxRunTime = 96;
-        // Maximum number of processors per job
-        $this->processorsPerNode = 24;
+        // Maximum number of processors per job. For now all serial jobs.
+        $this->processorsPerNode = 1;
+        // Amount of memory per processor (in GB)
+        $this->memoryPerProcessor = 8;
 
         // Set up the default job contorl parameters used by AGAVE
         $this->jobParameters = [];
@@ -35,7 +38,7 @@ class Agave
         $job_parameter['type'] = 'string';
         $job_parameter['name'] = 'Maximum run time (hh:mm:ss)';
         $job_parameter['description'] = 'Maximum run time for the job in hh:mm:ss. If the job takes longer than this to complete, the job will be terminated. A run time of longer than ' . strval($this->maxRunTime) . ' hours is not allowed.';
-        $job_parameter['default'] = '01:00:00';
+        $job_parameter['default'] = strval($this->maxRunTime). ':00:00';
         $this->jobParameters[$job_parameter['label']] = $job_parameter;
 
         // Processors per node parameter
@@ -44,7 +47,7 @@ class Agave
         $job_parameter['type'] = 'integer';
         $job_parameter['name'] = 'Number of CPUs (max ' . strval($this->processorsPerNode) . ')';
         $job_parameter['description'] = 'Number of CPUs used by the job, with a maximum of ' . strval($this->processorsPerNode) . ' per job. Note not all jobs will scale well so adding more CPUs may not reduce execution time.';
-        $job_parameter['default'] = 1;
+        $job_parameter['default'] = $this->processorsPerNode;
         $this->jobParameters[$job_parameter['label']] = $job_parameter;
 
         // Memory per node parameter
@@ -373,7 +376,7 @@ class Agave
                     'maxNodes' => 1,
                     'maxProcessorsPerNode' => $this->processorsPerNode,
                     'maxMemoryPerNode' => '64GB',
-                    'customDirectives' => '--mem-per-cpu=4G',
+                    'customDirectives' => '--mem-per-cpu=' . $this->memoryPerProcessor . 'G',
                 ],
             ],
 
@@ -485,6 +488,11 @@ class Agave
                 } else {
                     $t[$job_parameter_info['label']] = $job_params[$job_parameter_info['label']];
                 }
+            }
+            else
+            {
+                Log::debug('   getJobConfig: default value = ' . $job_parameter_info['default']);
+                $t[$job_parameter_info['label']] = $job_parameter_info['default'];
             }
         }
 
