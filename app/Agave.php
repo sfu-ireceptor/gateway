@@ -38,7 +38,7 @@ class Agave
         $job_parameter['type'] = 'string';
         $job_parameter['name'] = 'Maximum run time (hh:mm:ss)';
         $job_parameter['description'] = 'Maximum run time for the job in hh:mm:ss. If the job takes longer than this to complete, the job will be terminated. A run time of longer than ' . strval($this->maxRunTime) . ' hours is not allowed.';
-        $job_parameter['default'] = strval($this->maxRunTime). ':00:00';
+        $job_parameter['default'] = strval($this->maxRunTime) . ':00:00';
         $this->jobParameters[$job_parameter['label']] = $job_parameter;
 
         // Processors per node parameter
@@ -488,9 +488,7 @@ class Agave
                 } else {
                     $t[$job_parameter_info['label']] = $job_params[$job_parameter_info['label']];
                 }
-            }
-            else
-            {
+            } else {
                 Log::debug('   getJobConfig: default value = ' . $job_parameter_info['default']);
                 $t[$job_parameter_info['label']] = $job_parameter_info['default'];
             }
