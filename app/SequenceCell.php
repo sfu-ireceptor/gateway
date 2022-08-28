@@ -748,8 +748,8 @@ class SequenceCell
                 foreach ($metadata_response_list as $r) {
                     if ($rest_service_id == $r['rs']->id) {
                         if (isset($r['data']['file_path'])) {
-                            $file_path = $r['data']['file_path'];
-                            $t['metadata_file_name'] = basename($file_path);
+                            $repertoire_file_path = $r['data']['file_path'];
+                            $t['metadata_file_name'] = basename($repertoire_file_path);
                         }
                     }
                 }
@@ -758,8 +758,8 @@ class SequenceCell
                 foreach ($expression_response_list as $r) {
                     if ($rest_service_id == $r['rs']->id) {
                         if (isset($r['data']['file_path'])) {
-                            $file_path = $r['data']['file_path'];
-                            $t['expression_file_name'] = basename($file_path);
+                            $expression_file_path = $r['data']['file_path'];
+                            $t['expression_file_name'] = basename($expression_file_path);
                         }
                     }
                 }
@@ -768,8 +768,8 @@ class SequenceCell
                 foreach ($sequence_response_list as $r) {
                     if ($rest_service_id == $r['rs']->id) {
                         if (isset($r['data']['file_path'])) {
-                            $file_path = $r['data']['file_path'];
-                            $t['sequence_file_name'] = basename($file_path);
+                            $sequence_file_path = $r['data']['file_path'];
+                            $t['sequence_file_name'] = basename($sequence_file_path);
                         }
                     }
                 }

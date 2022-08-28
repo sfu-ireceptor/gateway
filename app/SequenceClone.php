@@ -655,8 +655,8 @@ class SequenceClone
                 foreach ($metadata_response_list as $r) {
                     if ($rest_service_id == $r['rs']->id) {
                         if (isset($r['data']['file_path'])) {
-                            $file_path = $r['data']['file_path'];
-                            $t['metadata_file_name'] = basename($file_path);
+                            $repertoire_file_path = $r['data']['file_path'];
+                            $t['metadata_file_name'] = basename($repertoire_file_path);
                         }
                     }
                 }
