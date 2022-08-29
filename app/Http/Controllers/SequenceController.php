@@ -125,13 +125,12 @@ class SequenceController extends Controller
                         if (in_array($k, FieldName::getOntologyFields())) {
                             // Get the base field (without the _id part). This is how the
                             // metadata is tagged.
-                            $base_field = substr($k, 0, strlen($k) - 3);
                             $filter_info = '';
                             // For each element in the filter parameters... This is essentially
                             // the list of filters that are set.
                             foreach ($v as $element) {
-                                // Get the cahced metadata for the field so we can build a label/id string
-                                $field_metadata = $metadata[$base_field];
+                                // Get the cached metadata for the field so we can build a label/id string
+                                $field_metadata = $metadata[$k];
                                 // Find the element in the metadata and build the filter label string.
                                 foreach ($field_metadata as $field_info) {
                                     if ($field_info['id'] == $element) {
@@ -481,13 +480,12 @@ class SequenceController extends Controller
                     elseif (in_array($k, FieldName::getOntologyFields())) {
                         // Get the base field (without the _id part). This is how the
                         // metadata is tagged.
-                        $base_field = substr($k, 0, strlen($k) - 3);
                         $filter_info = '';
                         // For each element in the filter parameters... This is essentially
                         // the list of filters that are set.
                         foreach ($v as $element) {
                             // Get the cahced metadata for the field so we can build a label/id string
-                            $field_metadata = $metadata[$base_field];
+                            $field_metadata = $metadata[$k];
                             // Find the element in the metadata and build the filter label string.
                             foreach ($field_metadata as $field_info) {
                                 if ($field_info['id'] == $element) {

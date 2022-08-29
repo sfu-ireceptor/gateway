@@ -26,6 +26,37 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
+
+        $defaults = [];
+        $defaults['base_uri'] = 'http://covid19-1.ireceptor.org/airr/v1/';
+        $defaults['verify'] = false;    // accept self-signed SSL certificates
+        $client = new \GuzzleHttp\Client($defaults);
+
+        $options = [];
+        $options['headers'] = ['Content-Type' => 'application/json'];
+
+
+        $params = [];
+        $params['from'] = 0;
+        $params['size'] = 1;
+        $options['body'] = RestService::generate_json_query([], $params);
+
+                // $options['body'] = '{}';
+                // $options['body'] = RestService::generate_json_query([], $params);
+
+                // dd($options['body']);
+
+        $response = $client->post('repertoire', $options);
+        $body = $response->getBody();
+        $json = json_decode($body);
+        echo $json->Repertoire[0]->repertoire_id;
+        die();
+            dd($json);
+
+dd('ok');
+
+
+
         $slice = Str::beforeLast('test_id', '_id');
         dd($slice);
 
