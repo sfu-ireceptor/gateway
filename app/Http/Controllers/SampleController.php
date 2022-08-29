@@ -390,7 +390,6 @@ class SampleController extends Controller
                     if (in_array($k, FieldName::getOntologyFields())) {
                         // Get the base field (without the _id part). This is how the
                         // metadata is tagged.
-                        $base_field = substr($k, 0, strlen($k) - 3);
                         $filter_info = '';
                         // For each element in the filter parameters... This is essentially
                         // the list of filters that are set.
