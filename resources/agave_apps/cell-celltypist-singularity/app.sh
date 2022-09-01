@@ -81,7 +81,7 @@ source ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/gateway_utilities.sh
 if [ $? -ne 0 ]
 then
     echo "IR-ERROR: Could not load GATEWAY UTILIIES"
-    exit $?
+    exit 1
 fi
 
 # This directory is defined in the gateway_utilities.sh. The Gateway

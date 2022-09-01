@@ -4,7 +4,7 @@
 
 # Get the script directory where all the code is.
 SCRIPT_DIR=`pwd`
-echo "Running job from ${SCRIPT_DIR}"
+echo "IR-INFO: Running job from ${SCRIPT_DIR}"
 
 ########################################################################
 # Tapis configuration/settings
@@ -38,7 +38,7 @@ GATEWAY_URL="${ir_gateway_url}"
 # on the Gateway because we only want to run singularity images that are approved
 # by the gateway.
 singularity_image="${singularity_image}"
-echo "Singularity image = ${singularity_image}"
+echo "IR-INFO: Singularity image = ${singularity_image}"
 
 #
 # Tapis App Inputs
@@ -67,23 +67,23 @@ export JOB_ERROR=1
 ########################################################################
 
 # Get the singularity image from the Gateway
-echo "Downloading singularity image from Gateway ${GATEWAY_URL}"
+echo "IR-INFO: Downloading singularity image from Gateway ${GATEWAY_URL}"
 date
 wget -nv ${GATEWAY_URL}/singularity/${singularity_image}
-echo -n "Singularity file downloaded = "
+echo -n "IR-INFO: Singularity file downloaded = "
 ls ${singularity_image}
-echo "Done ownloading singularity image from the Gateway"
+echo "IR-INFO: Done ownloading singularity image from the Gateway"
 date
 
 # Get the iRecpetor Gateway utilities from the Gateway
-echo "Downloading iReceptor Gateway Utilities from the Gateway"
+echo "IR-INFO: Downloading iReceptor Gateway Utilities from the Gateway"
 date
 GATEWAY_UTIL_DIR=gateway_utilities
 mkdir -p ${GATEWAY_UTIL_DIR}
 pushd ${GATEWAY_UTIL_DIR} > /dev/null
 wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" ${GATEWAY_URL}/gateway_utilities/
 popd > /dev/null
-echo "Done downloading iReceptor Gateway Utilities"
+echo "IR-INFO: Done downloading iReceptor Gateway Utilities"
 date
 
 # Load the iReceptor Gateway bash utility functions.
@@ -91,12 +91,12 @@ source ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/gateway_utilities.sh
 # This directory is defined in the gateway_utilities.sh. The Gateway
 # relies on this being set. If it isn't set, abort as something has
 # gone wrong with loading the Gateway utilties.
-echo "Gateway analysis directory = ${GATEWAY_ANALYSIS_DIR}"
+echo "IR-INFO: Gateway analysis directory = ${GATEWAY_ANALYSIS_DIR}"
 if [ -z "${GATEWAY_ANALYSIS_DIR}" ]; then
-	echo "ERROR: GATEWAY_ANALYSIS_DIR not defined, gateway_utilities not loaded correctly."
+	echo "IR-ERROR: GATEWAY_ANALYSIS_DIR not defined, gateway_utilities not loaded correctly."
         exit 1
 fi
-echo "Done loading iReceptor Gateway Utilities"
+echo "IR-INFO: Done loading iReceptor Gateway Utilities"
 
 
 # Load any modules that are required by the App. 
@@ -108,9 +108,9 @@ INFO_FILE="info.txt"
 MANIFEST_FILE="AIRR-manifest.json"
 
 # Start
-printf "START at $(date)\n\n"
-printf "PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n\n"
-printf "MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n\n"
+printf "IR-INFO: START at $(date)\n\n"
+printf "IR-INFO: PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n\n"
+printf "IR-INFO: MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n\n"
 
 # This function is called by the iReceptor Gateway utilities function gateway_split_repertoire
 # The gateway utility function splits all data into repertoires and then calls this function
@@ -242,7 +242,7 @@ function run_analysis()
         printf '</html>' >> ${html_file}
 
     done
-    printf "Done Repertoire Analysis on ${array_of_files[@]} at $(date)\n\n"
+    printf "IR-INFO: Done Repertoire Analysis on ${array_of_files[@]} at $(date)\n\n"
 }
 
 if [ "${split_repertoire}" = "True" ]; then
@@ -301,11 +301,11 @@ cp *.err ${GATEWAY_ANALYSIS_DIR}
 cp *.out ${GATEWAY_ANALYSIS_DIR}
 
 # Zip up the analysis results for easy download
-echo "ZIPing analysis results"
+echo "IR-INFO: ZIPing analysis results"
 zip -r ${GATEWAY_ANALYSIS_DIR}.zip ${GATEWAY_ANALYSIS_DIR}
 
 # We don't want the analysis files to remain - they are in the ZIP file
-echo "Removing analysis output"
+echo "IR-INFO: Removing analysis output"
 rm -rf ${GATEWAY_ANALYSIS_DIR}
 
 # We don't want to copy around the singularity image everywhere.
@@ -315,11 +315,11 @@ rm -f ${singularity_image}
 rm -rf ${GATEWAY_UTIL_DIR}
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
-echo "Removing original ZIP file $ZIP_FILE"
+echo "IR-INFO: Removing original ZIP file $ZIP_FILE"
 rm -f $ZIP_FILE
 
 # End
-printf "DONE at $(date)\n\n"
+printf "IR-INFO: DONE at $(date)\n\n"
 
 # Handle AGAVE errors
 #printf "AGAVE callback error = ${AGAVE_JOB_CALLBACK_FAILURE} \n\n"
