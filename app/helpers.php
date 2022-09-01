@@ -232,7 +232,17 @@ if (! function_exists('convert_arrays_to_strings')) {
     {
         foreach ($o as $k => $v) {
             if (is_array($v)) {
-                $o->$k = json_encode($v);
+                $new_array = [];
+                foreach ($v as $array_item) {
+                    $array_item_as_string = '';
+                    if (is_array($array_item) || is_object($array_item)) {
+                        $array_item_as_string = json_encode($array_item);
+                    } else {
+                        $array_item_as_string = $array_item;
+                    }
+                    $new_array[] = $array_item;
+                }
+                $o->$k = implode(', ', $new_array);
             }
         }
 
