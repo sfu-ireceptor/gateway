@@ -227,6 +227,8 @@ function run_cell_analysis()
     printf "<h2>Analysis</h2>\n" >> ${html_file}
 
     printf "<h3>Conga Analysis: %s</h3>\n" ${title_string} >> ${html_file}
+    sed -i 's/gex_clusters_tcrdist_trees.png/gex_clusters_tcrdist_trees.svg/g' ${output_directory}/${file_string}_results_summary.html
+    sed -i 's/conga_threshold_tcrdist_tree.png/conga_threshold_tcrdist_tree.svg/g' ${output_directory}/${file_string}_results_summary.html
     printf '<iframe src="%s" width="100%%", height="700px"></iframe>\n' ${file_string}_results_summary.html >> ${html_file}
 
     # End of main div container
