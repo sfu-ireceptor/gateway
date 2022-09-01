@@ -200,6 +200,7 @@ class Agave
             // the App in the hidden App parameter ir_hint.
             $param_count = 0;
             $gateway_count = -1;
+            $app_info = [];
             if (array_key_exists('parameters', $app_config)) {
                 $parameters = $app_config['parameters'];
                 // Loop over the parameters and check for special ir_ parameters
@@ -235,7 +236,6 @@ class Agave
             // Store the object in a dictionary keyed with 'config'. We do this because
             // we anticipate needing more information about the App that will be
             // separate from the Tapis App.
-            $app_info = [];
             $app_info['config'] = $app_config;
 
             // Save this app template keyed by the name/tag/dir
