@@ -198,7 +198,7 @@ class JobController extends Controller
         $job = Job::findJobForUser($id, auth()->user()->id);
         //$job = Job::where('id', '=', $id)->first();
         if ($job == null) {
-            return App::abort(401, 'Not authorized.');
+            abort(401, 'Not authorized.');
         }
 
         $data = [];
