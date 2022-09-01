@@ -214,8 +214,7 @@ class Agave
                         // Get the object attribute - this tells us which AIRR object type this
                         // App can be applied to (e.g. Rearrangement, Clone, Cell).
                         $app_info['object'] = $hint_obj->object;
-                    }
-                    elseif (array_key_exists('id', $parameter) && $parameter['id'] == 'ir_gateway_url'){
+                    } elseif (array_key_exists('id', $parameter) && $parameter['id'] == 'ir_gateway_url') {
                         // The Tapis App uses ir_gateway_url to provide the URL of the source
                         // gateway that is submitting the job. This used to get assets specific
                         // to the given gateway.
@@ -229,7 +228,7 @@ class Agave
 
             // Overwrite the gateway URL parameter configuration if we got one.
             if ($gateway_count >= 0) {
-                Log::debug('updateAppTemplates: replacing ' . json_encode($app_config['parameters'][$gateway_count]) );
+                Log::debug('updateAppTemplates: replacing ' . json_encode($app_config['parameters'][$gateway_count]));
                 $app_config['parameters'][$gateway_count] = $gateway_param;
             }
 
