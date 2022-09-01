@@ -195,18 +195,17 @@ class Agave
                 Log::debug('updateAppTemplates: Error: ' . $e->getMessage());
             }
             $app_config = json_decode($app_json, true);
-            // Store the object in a dictionary keyed with 'config'. We do this because
-            // we anticipate needing more information about the App that will be
-            // separate from the Tapis App.
-            $app_info = [];
-            $app_info['config'] = $app_config;
             // We want to store information about the app that is useful in helping us
             // determine when to use it. This information is encoded in a JSON string in
             // the App in the hidden App parameter ir_hint.
+            $param_count = 0;
+            $gateway_count = -1;
             if (array_key_exists('parameters', $app_config)) {
                 $parameters = $app_config['parameters'];
-                // Loop over the parameters and check for an ir_hints parameter.
+                // Loop over the parameters and check for special ir_ parameters
                 foreach ($parameters as $parameter) {
+                    // ir_hints provides hints to the Gateway as to the capabilities
+                    // of the App.
                     if (array_key_exists('id', $parameter) && $parameter['id'] == 'ir_hints') {
                         // If we found a JSON hint decode it
                         $hint_obj = json_decode($parameter['value']['default']);
@@ -215,8 +214,29 @@ class Agave
                         // App can be applied to (e.g. Rearrangement, Clone, Cell).
                         $app_info['object'] = $hint_obj->object;
                     }
+                    elseif (array_key_exists('id', $parameter) && $parameter['id'] == 'ir_gateway_url'){
+                        // The Tapis App uses ir_gateway_url to provide the URL of the source
+                        // gateway that is submitting the job. This used to get assets specific
+                        // to the given gateway.
+                        $gateway_param = $parameter;
+                        $gateway_param['value']['default'] = config('app.url');
+                        $gateway_count = $param_count;
+                    }
+                    $param_count = $param_count + 1;
                 }
             }
+
+            // Overwrite the gateway URL parameter configuration if we got one.
+            if ($gateway_count >= 0) {
+                Log::debug('updateAppTemplates: replacing ' . json_encode($app_config['parameters'][$gateway_count]) );
+                $app_config['parameters'][$gateway_count] = $gateway_param;
+            }
+
+            // Store the object in a dictionary keyed with 'config'. We do this because
+            // we anticipate needing more information about the App that will be
+            // separate from the Tapis App.
+            $app_info = [];
+            $app_info['config'] = $app_config;
 
             // Save this app template keyed by the name/tag/dir
             $this->appTemplates[$app_dir] = $app_info;

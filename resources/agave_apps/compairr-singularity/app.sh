@@ -25,6 +25,10 @@ AGAVE_JOB_MEMORY_PER_NODE=${AGAVE_JOB_MEMORY_PER_NODE}
 # use command line arguments so we can test from the command line.
 #
 
+# Tapis parameter ir_gateway_url contains the URL of the source gateway. Use
+# this to gather iReceptor Gateway specific resources if needed.
+GATEWAY_URL="${ir_gateway_url}"
+
 # We pass a singularity image to get from the Gateway. This image is provided
 # on the Gateway because we only want to run singularity images that are approved
 # by the gateway.
@@ -50,7 +54,6 @@ export JOB_ERROR=1
 # Done Tapis setup/processing.
 ########################################################################
 
-GATEWAY_URL=https://gateway-analysis-dev.ireceptor.org
 # Get the singularity image from the Gateway
 echo "Downloading singularity image from Gateway ${GATEWAY_URL}"
 date

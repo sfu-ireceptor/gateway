@@ -24,10 +24,18 @@ printf "MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n\n"
 printf "SLURM JOB ID = ${SLURM_JOB_ID}\n\n"
 printf "\n\n"
 
+#
+# Tapis App Parameters: Will be subsituted by Tapis. If they don't exist
+# use command line arguments so we can test from the command line.
+#
+
+# Tapis parameter ir_gateway_url contains the URL of the source gateway. Use
+# this to gather iReceptor Gateway specific resources if needed.
+GATEWAY_URL="${ir_gateway_url}"
+
 ##############################################
 # Get the iRecpetor Gateway utilities from the Gateway
 ##############################################
-GATEWAY_URL=https://gateway-analysis-dev.ireceptor.org
 echo "Downloading iReceptor Gateway Utilities from the Gateway ${GATEWAY_URL}"
 date
 GATEWAY_UTIL_DIR="gateway_utilities"

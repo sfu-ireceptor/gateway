@@ -90,6 +90,26 @@
       }
     },
     {
+      "id": "ir_gateway_url",
+      "value": {
+        "visible": false,
+        "required": true,
+        "type": "string",
+        "default": ""
+      },
+      "details": {
+        "label": "Gateway URL (hidden)",
+        "description": "The URL for the Gateway. Used to get resources to run jobs (singularity images, gateway_utilities). This is set by the Gateway and is not changed by the user."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
+    },
+    {
       "id": "ir_hints",
       "value": {
         "visible": false,
