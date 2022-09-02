@@ -262,6 +262,9 @@ if [ "${split_repertoire}" = "True" ]; then
     #
     # run_analysis() is defined above.
     gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_run_analysis ${INFO_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_cleanup ${ZIP_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+
 elif [ "${split_repertoire}" = "False" ]; then
     echo -e "IR-INFO:\nIR-INFO: Running app on entire data set"
     echo "IR-INFO:"

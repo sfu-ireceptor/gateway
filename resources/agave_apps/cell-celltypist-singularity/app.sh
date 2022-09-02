@@ -109,6 +109,8 @@ printf "IR-INFO: START at $(date)\n"
 printf "IR-INFO: PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n"
 printf "IR-INFO: MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n"
 printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
+printf "IR-INFO: "
+lscpu | grep "Model name"
 printf "IR-INFO:\nIR-INFO:\n"
 
 # This function is called by the iReceptor Gateway utilities function gateway_split_repertoire
@@ -181,35 +183,31 @@ function run_cell_analysis()
     echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
     echo "IR-INFO: Storing output in /data/${output_directory}"
 
-    # Generate h5ad file from AIRR GEX file.
-    echo -n "IR-INFO: Processing GEX data ${gex_file} - "
+    # log1p normalize the data for CellTypist
+    echo -n "IR-INFO: log1p normalizing ${gex_file} - "
     date
+    mv ${output_directory}/${gex_file} ${output_directory}/${gex_file}.tmp.h5ad
     singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
         -B ${output_directory}:/data -B ${SCRIPT_DIR}:/localsrc \
         ${SCRIPT_DIR}/${singularity_image} python \
-        /localsrc/airr-to-h5ad.py\
-        /data/${gex_file} \
-        /data/${repertoire_id}.h5ad \
-        CellExpression repertoire_id ${repertoire_id} \
-        --normalize --normalize_value=10000 \
-        --log1p
+        /localsrc/h5ad-log1pnormalize.py\
+        /data/${gex_file}.tmp.h5ad \
+        /data/${gex_file} 
     if [ $? -ne 0 ]
     then
-        echo "IR-ERROR: Could not convert AIRR GEX data to h5ad"
+        echo "IR-ERROR: Could not log1p normalize the data"
         return
     fi
-    echo -n "IR-INFO: Done processing GEX data - "
-    date
     
     # Run CellTypist using our internal code that produces slightly modified 
     # graphs and output.
-    echo -n "IR-INFO: Running CellTpist on ${repertoire_id}.h5ad - "
+    echo -n "IR-INFO: Running CellTpist on ${gex_file} - "
     date
     singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
         -B ${output_directory}:/data -B ${SCRIPT_DIR}:/localsrc \
         ${SCRIPT_DIR}/${singularity_image} \
         python /localsrc/gateway-celltypist.py \
-        /data/${repertoire_id}.h5ad \
+        /data/${gex_file} \
         /data \
         ${repertoire_id}-annotated.h5ad \
         ${title_string}
@@ -298,7 +296,9 @@ function run_cell_analysis()
 # information about the repertoire can be found. 
 #
 # run_cell_analysis() is defined above.
-gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file"
+gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file" ${SCRIPT_DIR}/${singularity_image}
+gateway_run_analysis ${INFO_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file"
+gateway_cleanup ${ZIP_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 # Make sure we are back where we started, although the gateway functions should
 # not change the working directory that we are in.

@@ -345,6 +345,10 @@ if [ "${split_repertoire}" = "True" ]; then
     # called for each repertoire. See the docs in the gateway_utilities.sh file
     # for parameters to this function.
     gateway_split_repertoire ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR} "clone_file"
+    gateway_run_analysis ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR} "clone_file"
+    gateway_cleanup ${ZIP_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+
+
 elif [ "${split_repertoire}" = "False" ]; then
     echo -e "IR-INFO:\nIR-INFO: Running app on entire data set"
     echo "IR-INFO:"

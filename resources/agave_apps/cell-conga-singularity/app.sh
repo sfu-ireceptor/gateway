@@ -182,15 +182,15 @@ function run_cell_analysis()
     echo "IR-INFO: Storing output in /data/${output_directory}"
 
     # Generate equivalent 10X Cell files from AIRR Cell/GEX data for input into Conga.
-    python3 ${SCRIPT_DIR}/airr-to-10x.py ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
-    if [ $? -ne 0 ]
-    then
-        echo "IR-ERROR: Could not generate cell/expression data"
-        return
-    fi
+    ###python3 ${SCRIPT_DIR}/airr-to-10x.py ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
+    ###if [ $? -ne 0 ]
+    ###then
+        ###echo "IR-ERROR: Could not generate cell/expression data"
+        ###return
+    ###fi
         
     # Compress the file because Conga wants it that way!
-    gzip ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
+    ###gzip ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
 
     # Convert Rearrangement file to a 10X Contig file
     CONTIG_PREFIX=10x-contig
@@ -203,8 +203,19 @@ function run_cell_analysis()
 
     # Run Conga
     singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/setup_10x_for_conga.py --filtered_contig_annotations_csvfile /data/${output_directory}/${CONTIG_PREFIX}.csv --organism human
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: Conga setup_10x_for_conga failed on ${output_directory}/${CONTIG_PREFIX}.csv"
+        return
+    fi
 
-    singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/run_conga.py --all --organism human --clones_file /data/${output_directory}/${CONTIG_PREFIX}_tcrdist_clones.tsv --gex_data /data/${output_directory} --gex_data_type 10x_mtx --outfile_prefix /data/${output_directory}/${file_string}
+    ###singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/run_conga.py --all --organism human --clones_file /data/${output_directory}/${CONTIG_PREFIX}_tcrdist_clones.tsv --gex_data /data/${output_directory} --gex_data_type 10x_mtx --outfile_prefix /data/${output_directory}/${file_string}
+    singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/run_conga.py --all --organism human --clones_file /data/${output_directory}/${CONTIG_PREFIX}_tcrdist_clones.tsv --gex_data /data/${output_directory}/${gex_file} --gex_data_type h5ad --outfile_prefix /data/${output_directory}/${file_string}
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: Conga failed on ${CONTIG_PREFIX}_tcrdist_clones.tsv and ${gex_file}"
+        return
+    fi
 
 
     # Generate a summary HTML file for the Gateway to present this info to the user
@@ -276,7 +287,10 @@ function run_cell_analysis()
 # information about the repertoire can be found. 
 #
 # run_cell_analysis() is defined above.
-gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file"
+gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file" ${SCRIPT_DIR}/${singularity_image}
+gateway_run_analysis ${INFO_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file"
+gateway_cleanup ${ZIP_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+
 
 # Make sure we are back where we started, although the gateway functions should
 # not change the working directory that we are in.
