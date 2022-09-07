@@ -87,9 +87,18 @@ def generateH5AD(gex_filename, block, field, buffer_size):
     #count = 0
     # An array to hold the anndata objects in
     #adata_array = []
-    # An array to hold the repertoire objects
+    # Dictionaries, keyed on repertoire_id, to hold info for each repertoire.
+
+    # We have arrays of adata objects per repertoire. These are concatenated 
+    # at the end to create a single adata object per repertoire
     repertoire_cell_adata_array = dict()
+    # We have JSON object arrays per repertoire. These are transient as we
+    # process JSON data, and get transformed into adata objects after a
+    # fixed number of objects are processed.
     repertoire_cell_json_array = dict()
+    # We keep track of the cell IDs for each repertoire.
+    repertoire_cell_id_array = dict()
+    # We also track the number of properties processed per repertoire.
     repertoire_property_count = dict()
     # Open the JSON file.
     try:
@@ -149,7 +158,6 @@ def generateH5AD(gex_filename, block, field, buffer_size):
             object_str_size = 0
             object_threshold = 4
             file_empty = False
-            #cell_array = []
             while processing_object:
                 # Check to see if the buffer is almost consumed. If we have room
                 # for less than N objects, then read in more data. Don't read any more
@@ -158,9 +166,15 @@ def generateH5AD(gex_filename, block, field, buffer_size):
                 if buffer_remaining < object_threshold*object_str_size and not file_empty:
                     # Loop over the data we have gathered in json array for each repertoire_id
                     for my_key in repertoire_cell_json_array:
+                        # If we don't have an adata array for this key, create an empty array
                         if not my_key in repertoire_cell_adata_array:
                             repertoire_cell_adata_array[my_key] = []
+                        # If we have some data in the JSON array for this key, create the Anndata
+                        # object from that JSON data and add it to the adata array.
                         if len(repertoire_cell_json_array[my_key]) > 0:
+                            # Create an AnnData stucture from the array of cells and append that
+                            # to the array of AnnData objects. We concatenate all the partial files
+                            # at the end.
                             repertoire_cell_adata_array[my_key].append(createAnnData(repertoire_cell_json_array[my_key], field, my_key))
                             print('IR-INFO: reperotire_id = %s, new = %d, total = %d, adata length = %d'% (
                                   my_key,
@@ -168,19 +182,14 @@ def generateH5AD(gex_filename, block, field, buffer_size):
                                   repertoire_property_count[my_key], 
                                   len(repertoire_cell_adata_array[my_key])),
                                   flush=True)
+                        # We want to reset the JSON array, since all the records have been added above.
                         repertoire_cell_json_array[my_key] = []
 
-                    # Create an AnnData stucture from the array of cells and append that
-                    # to the array of AnnData objects. We concatenate all the partial files
-                    # at the end.
-                    #if len(cell_array) > 0:
-                    #    adata_array.append(createAnnData(cell_array, field, value))
                     t_end = time.perf_counter()
                     print('IR-INFO: time = %d s'% (t_end-t_start), flush=True)
 
-                    # Reset the cell array and read in the new data
+                    # Read in the new data
                     t_start = time.perf_counter()
-                    #cell_array = []
                     new_buffer = f.read(buffer_size)
                     # If we are at file end, note it, and continue processing
                     # If we added new data, create a new buffer with the rest of the
@@ -227,22 +236,26 @@ def generateH5AD(gex_filename, block, field, buffer_size):
                         if str_len > object_str_size:
                             object_str_size = str_len
 
+                        # If we don't have a key for the field of interest in our count,
+                        # create it and set it to 0
                         if not json_dict[field] in repertoire_property_count:
                             repertoire_property_count[json_dict[field]] = 0
+                        # If we don't have a key for the field of interest in json array,
+                        # create it and set it to an empty array.
                         if not json_dict[field] in repertoire_cell_json_array:
                             repertoire_cell_json_array[json_dict[field]] = []
-                        repertoire_cell_json_array[json_dict[field]].append(json_dict)
-                        repertoire_property_count[json_dict[field]] = repertoire_property_count[json_dict[field]] + 1
-                        # Maybe check here for changes in repertoire_id, and create an
-                        # anndata object when it changes so we avoid duplicate cell_ids
+                        # If we don't have a key for the field of interest in our cell_id array,
+                        # create it and set it to an empty array.
+                        if not json_dict[field] in repertoire_cell_id_array:
+                            repertoire_cell_id_array[json_dict[field]] = []
 
-                        # If the field of interest is in the dictionary
-                        #if field in json_dict:
-                        #    # and if the field has the value of interest
-                        #    if json_dict[field] == value:
-                        ###        # Add the dictionary for the JSON object to our cell array
-                        #        cell_array.append(json_dict)
-                        #        count = count + 1
+                        # Add the JSON object to the array for this repertoire
+                        repertoire_cell_json_array[json_dict[field]].append(json_dict)
+                        # Check to see if we have this cell_id for this repertoire
+                        if not json_dict['cell_id'] in repertoire_cell_id_array[json_dict[field]]:
+                            repertoire_cell_id_array[json_dict[field]].append(json_dict['cell_id'])
+                        # And increment the could for this repertoire.
+                        repertoire_property_count[json_dict[field]] = repertoire_property_count[json_dict[field]] + 1
 
                         # Strip off the object we just processed from the buffer as
                         # well as whitespace
@@ -284,10 +297,6 @@ def generateH5AD(gex_filename, block, field, buffer_size):
 
         # We are done. Check to see if we have any data in the last cell_array,
         # if so create an anndata object for it and append it to our anndata array
-        #if len(cell_array) > 0:
-        #    print('IR-INFO: Adding %d at end of file processing'%(len(cell_array)), flush=True)
-        #    adata_array.append(createAnnData(cell_array, field, value))
-
         # Loop over the data we have gathered in json array for each repertoire_id
         for my_key in repertoire_cell_json_array:
             if not my_key in repertoire_cell_adata_array:
@@ -310,28 +319,53 @@ def generateH5AD(gex_filename, block, field, buffer_size):
         andata_concat = dict()
         for my_key in repertoire_cell_adata_array:
             print('IR-INFO: Concat for %s = %s'%(field, my_key))
-            andata_concat[my_key] = anndata.concat(repertoire_cell_adata_array[my_key],
+            # Get the concatenated object - this will have duplicates.
+            ad_concat = anndata.concat(repertoire_cell_adata_array[my_key],
                                             join='outer', merge='first', label='concat_dataset')
-            # WARNING - THIS IS INCORRECT - we need to merge cells if they have the same name
-            # NOT rename them!!! DOING THIS FOR DEBUGGING ONLY
+
+            # Determine the cells that are duplicated
+            duplicated = ad_concat.obs.index.duplicated(keep='first')
+            # Get the list of cell names for the duplicated cells
+            obs_duplicated = ad_concat.obs_names[duplicated]
+
+            # Create an andata structure with no duplicates. Note each record
+            # with a duplicate will have a partial record in this data set. We
+            # later remove this and the duplicate record.
+            adata_nodup = ad_concat[~duplicated, :]
+
+            # For each duplicated cell, we create a andata structure that contains
+            # the sum of the observations from the partial cell record.
+            cell_sum_dict = dict()
+            for obs in obs_duplicated:
+                # Get a data frame for the partial records for this cell observation.
+                cell_df = ad_concat[obs,:].to_df()
+                # Sum the observations across the partial records.
+                cell_sum = cell_df.sum(axis=0)
+                # Create an andata object that is the complete record for this cell.
+                cell_sum_dict[obs] = anndata.AnnData(pandas.DataFrame([cell_sum.values], columns=cell_sum.index, index=[obs]),dtype=numpy.float64)
+                print('IR-INFO: Computing complete record for Cell ID = %s'%(obs))
+
+            # Now that we have a sum for each record, we need to clean up the partials,
+            # and add in the full record.
+            for obs in obs_duplicated:
+                # Get the list of cell_ids we want to keep. All except the current obs
+                no_obs_list = [name for name in adata_nodup.obs_names if not name == obs]
+                # Select those cells we want to keep.
+                adata_nodup = adata_nodup[no_obs_list, : ]
+                # Add the computed full record for the cell we computed above.
+                adata_nodup = anndata.concat([adata_nodup,cell_sum_dict[obs]])
+
+            # Keep track of the record with no duplicates.
+            andata_concat[my_key] = adata_nodup
+            # This should not be necessary, but just in case, we remove duplicates, as 
+            # most tools will fail if there are duplicate cell_ids.
             andata_concat[my_key].obs_names_make_unique()
             print('IR-INFO: Length of adata_array = %d'%(len(repertoire_cell_adata_array[my_key])))
             print('IR-INFO: Number of total properties = %d'%(repertoire_property_count[my_key]))
             print('IR-INFO: Number of unique properties = %d'%(len(andata_concat[my_key].var_names)))
-            print('IR-INFO: Number of unique cells = %d'%(len(andata_concat[my_key].obs_names)))
-            #print(andata_concat[my_key].to_df())
-
-        #ad_concat = anndata.concat(adata_array, join='outer', merge='first',
-        #                           label='concat_dataset')
-        #concat_end = time.perf_counter()
-        #print('IR-INFO: AnnData concatentation time = %d s'%(concat_end-concat_start))
-        # WARNING - THIS IS INCORRECT - we need to merge cells if they have the same name
-        # NOT rename them!!! DOING THIS FOR DEBUGGING ONLY
-        #ad_concat.obs_names_make_unique()
-        #print('IR-INFO: Length of adata_array = %d'%(len(adata_array)))
-        #print('IR-INFO: Number of properties = %d,%d'%(count, len(ad_concat.var_names)))
-        #print('IR-INFO: Number of cells = %d'%(len(ad_concat.obs_names)))
-        #print(ad_concat.to_df())
+            print('IR-INFO: Number of unique cells = %d (%d)'%(
+                   len(andata_concat[my_key].obs_names),
+                   len(repertoire_cell_id_array[my_key])))
 
     # Handle generic exceptions.
     except Exception as e:
@@ -341,7 +375,6 @@ def generateH5AD(gex_filename, block, field, buffer_size):
         sys.exit(1)
 
     # Return the conctatnated AnnData object.
-    #return ad_concat 
     return andata_concat
     
 def getArguments():
