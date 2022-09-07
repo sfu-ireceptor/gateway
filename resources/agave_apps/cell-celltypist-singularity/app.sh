@@ -117,13 +117,14 @@ printf "IR-INFO:\nIR-INFO:\n"
 # The gateway utility function splits all data into repertoires and then calls this function
 # for a single repertoire. As such, this function should perform all analysis required for a
 # repertoire.
-function run_cell_analysis()
+function run_analysis()
 # Parameters:
 #     $1 output directory
 #     $2 repository name [string]
 #     $3 repertoire_id ("NULL" if should skip repertoire processing)
 #     $4 repertoire file (Not used if repertoire_id == NULL)
 #     $5 manifest file
+#     $6 analysis type
 {
     # Use local variables - no scope issues please...
     local output_directory=$1
@@ -131,6 +132,7 @@ function run_cell_analysis()
     local repertoire_id=$3
     local repertoire_file=$4
     local manifest_file=$5
+    local analysis_type=$6
     echo "IR-INFO: Running a Cell Repertoire Analysis with manifest ${manifest_file}"
 
     # Get a list of rearrangement files to process from the manifest.
@@ -287,15 +289,16 @@ function run_cell_analysis()
 # that repository. In each repertoire directory there will exist an AIRR manifest
 # file and the data (as described in the manifest file) from that repertoire.
 #
-# This gateway utility function uses a callback mechanism, calling the
-# function run_cell_analysis() on each repertoire (in this case run_cell_analysis 
-# because the type is "cell_file". The run_cell_analysis function takes
-# as paramenters the manifest files to process, the directory for the repertoire in
-# which to store the analysis results, the a string repersenting the repository
-# from which the data came, the repertoire_id, and a repertoire JSON file in which
-# information about the repertoire can be found. 
+# The gateway utilities use a callback mechanism, calling the
+# function run_analysis() on each repertoire. The run_analysis function
+# is locally provided and should do all of the processing for a single
+# repertoire.
 #
-# run_cell_analysis() is defined above.
+# So the pipeline is:
+#    - Split the data into repertoire directories as described above
+#    - Run the analysis on each repertoire, calling run_analysis for each
+#    - Cleanup the intermediate files created by the split process.
+# run_analysis() is defined above.
 gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file" ${SCRIPT_DIR}/${singularity_image}
 gateway_run_analysis ${INFO_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file"
 gateway_cleanup ${ZIP_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}

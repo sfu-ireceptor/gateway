@@ -96,7 +96,7 @@ function gateway_cleanup(){
 
     # Clean up the files we created. First the ZIP file
     echo "GW-INFO: Removing ${ZIP_FILE}"
-    #rm -f ${ZIP_FILE}
+    rm -f ${ZIP_FILE}
 
     # Remove any data files extracted from the ZIP - they are big and can be re-generated
     for f in "${data_files[@]}"; do
@@ -273,12 +273,10 @@ function gateway_run_analysis(){
                 #     $5 manifest file
                 echo -n "GW-INFO: Running Cell analysis ${repository_name}/${repertoire_dirname} - "
                 date
-                run_cell_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST} ${ANALYSIS_TYPE}
+                run_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST} ${ANALYSIS_TYPE}
                 echo -n "GW-INFO: Done running Cell analysis ${repository_name}/${repertoire_dirname} - "
                 date
-
             fi
-
 
             repertoire_count=$((repertoire_count+1))
         done
@@ -413,6 +411,11 @@ function gateway_split_repertoire(){
         # Create a directory for each repository (mkdir if it isn't already with -p)
         mkdir -p ${repository_name}
         
+        #
+        # Perform any repertoire by repertoire data transformation. Some data is split
+        # a repertoire at a time, some data is split into repertoires as one operation
+        # on a single file (see below).
+        #
         repertoire_count=0
         # For each repertoire_id, extract the data in a directory for that repertoire
         for repertoire_id in "${repertoire_ids[@]}"; do
@@ -461,19 +464,6 @@ function gateway_split_repertoire(){
                 echo "{\"rearrangement_file\":[\"${repertoire_datafile}\"]}" >> $REPERTOIRE_MANIFEST
                 echo "]}" >> $REPERTOIRE_MANIFEST
 
-                # Call the client supplied "run_analysis" callback function. Parameters:
-                #     $1 output directory
-                #     $2 repository name
-                #     $3 repertoire id ("NULL" if not used)
-                #     $4 repertoire JSON file ["NULL" if not used, required if repertoire_id is specified]
-                #     $5 manifest file
-                #echo "Inputs"
-                #echo ${repository_name}/${repertoire_dirname}
-                #echo ${repository_name}
-                #echo ${repertoire_id}
-                #echo ${repertoire_file}
-                #echo ${REPERTOIRE_MANIFEST}
-                #run_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST}
             elif [ ${ANALYSIS_TYPE} = "clone_file" ]
             then
                 # Generate a file name for the TSV data for the repertoire.
@@ -496,13 +486,6 @@ function gateway_split_repertoire(){
                 echo "{\"clone_file\":[\"${repertoire_datafile}\"]}" >> $REPERTOIRE_MANIFEST
                 echo "]}" >> $REPERTOIRE_MANIFEST
 
-                # Call the client supplied "run_analysis" callback function. Parameters:
-                #     $1 output directory
-                #     $2 repository name
-                #     $3 repertoire id ("NULL" if not used)
-                #     $4 repertoire JSON file ["NULL" if not used, required if repertoire_id is specified]
-                #     $5 manifest file
-                #run_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST}
             elif [ ${ANALYSIS_TYPE} = "cell_file" ]
             then
                 # Get the expression and rearrangement files that accompany this analysis unit.
@@ -528,19 +511,12 @@ function gateway_split_repertoire(){
                 echo -n "GW-INFO: Done splitting Cell file - "
                 date
 
-                # Repeat for expression data.
-                ###echo "GW-INFO: Splitting Expression file ${expression_file} by ${SPLIT_FIELD} ${repertoire_id}"
-                ###python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter-json.py $expression_file CellExpression ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${gex_datafile}
-                ###if [ $? -ne 0 ]
-                ###then
-                ###    echo "GW-ERROR: Could not filter Expression data for ${repertoire_id} from ${expression_file}"
-                ###    continue
-                ###fi
-                ###echo -n "GW-INFO: Done splitting Expression file - "
-                ###date
+                # NOTE: Expression data is not split repertoire by repertoire. It is
+                # split into many repertoire files at one time (see below).
 
-                # Repeat for rearrangement data.
-                #python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter.py $data_file ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
+                # Handle the rearrangement files. 
+                # First we get a set of unique linking field IDs from the Cell file, all on one line, space separated. 
+                # We expect only one of these per repertoire.
                 link_ids=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/preprocess-json.py ${repository_name}/${repertoire_dirname}/${cell_datafile} Cell ${LINK_FIELD} | sort -u | awk '{printf("%s ",$0)}'` )
                 if [ ${#link_ids[@]} != 1 ]
                 then
@@ -549,12 +525,12 @@ function gateway_split_repertoire(){
                     continue
                 fi
 
+                # Filter the rearrangement file based on the Link field and the link ID we got above.
                 link_id=${link_ids[0]}
                 echo "GW-INFO: Link ID = -${link_id}-"
                 echo "GW-INFO: Link Field = -${LINK_FIELD}-"
                 echo "GW-INFO: Input file = ${rearrangement_file}"
                 echo "GW-INFO: Output file = ${rearrangement_datafile}"
-
                 echo "GW-INFO: Splitting Rearrangement file ${rearrangement_file} by ${LINK_FIELD} ${link_id}"
                 python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter.py $rearrangement_file ${LINK_FIELD} ${link_id} ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
                 if [ $? -ne 0 ]
@@ -562,44 +538,38 @@ function gateway_split_repertoire(){
                     echo "GW-ERROR: Could not filter Rearrangement data for ${link_id} from ${rearrangement_file}"
                     continue
                 fi
-                #wget https://gateway-analysis-dev.ireceptor.org/storage/test/single-cell-repo.tsv
-                #mv single-cell-repo.tsv ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
         
                 # Create the repertoire manifest file. NOTE: We don't create the GEX file here, it
-                # is created at the same time as all of the GEX data for all of the repertoires.
+                # is created at the same time as all of the GEX data for all of the repertoires, but
+                # we do add it to the manifest file here.
                 echo '{"Info":{},"DataSets":[{' > $REPERTOIRE_MANIFEST
                 echo "\"cell_file\":[\"${cell_datafile}\"]," >> $REPERTOIRE_MANIFEST
                 echo "\"expression_file\":[\"${gex_datafile}\"]," >> $REPERTOIRE_MANIFEST
                 echo "\"rearrangement_file\":[\"${rearrangement_datafile}\"]" >> $REPERTOIRE_MANIFEST
                 echo "}]}" >> $REPERTOIRE_MANIFEST
-
-                # Call the client supplied "run_analysis" callback function. Parameters:
-                #     $1 output directory
-                #     $2 repository name
-                #     $3 repertoire id ("NULL" if not used)
-                #     $4 repertoire JSON file ["NULL" if not used, required if repertoire_id is specified]
-                #     $5 manifest file
-                #echo -n "GW-INFO: Running Cell analysis ${repository_name}/${repertoire_dirname} - "
-                #date
-                #run_cell_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST}
-                #echo -n "GW-INFO: Done running Cell analysis ${repository_name}/${repertoire_dirname} - "
-                date
             fi
 
+            # Increase our count so we loop through the repertoires correctly.
             repertoire_count=$((repertoire_count+1))
         done
 
-
+        #
+        # Perform any bulk data transformation (data is split into repertoires in one step). Most
+        # data is currently processed a repertoire at a time. Doing it all at once is more
+        # efficient. 
+        #
+        # Currently we do this for cell GEX files only.
         if [ ${ANALYSIS_TYPE} = "cell_file" ]
         then
             echo "GW-INFO: Splitting Expression file ${expression_file} by ${SPLIT_FIELD}"
-            #python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/gateway-airr-to-h5ad.py $expression_file CellExpression ${SPLIT_FIELD} 
-            #SPLIT_SIF_FILE=${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/${GATEWAY_SINGULARITY}
             echo "GW-INFO: Using ${GATEWAY_SINGULARITY} to split the file."
-            #    ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/${GATEWAY_SINGULARITY} \
-            #    --normalize \
-            #    --log1p \
 
+            # Split the GEX input file into N files one per repertoire, converting the
+            # data from JSON to h5ad for downstream processing. Output goes in the
+            # current directory. Output files are named $repertoire_id.h5ad. 
+            #
+            # The code is run in a singularity container so that we can ensure
+            # that all the requirements are present. 
             singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
                 -B ${PWD}:/data -B ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}:/localsrc \
                 ${GATEWAY_SINGULARITY} \
@@ -615,13 +585,15 @@ function gateway_split_repertoire(){
             fi
 
             repertoire_count=0
-            # For each repertoire_id, extract the data in a directory for that repertoire
+            # For each repertoire, move h5ad file into the correct directory for that
+            # repertoire.
             for repertoire_id in "${repertoire_ids[@]}"; do
-                # Get a directory name and make the directory
+                # Get the directory based on the recipe from above. A directory
+                # per repertoire.
                 repertoire_dirname=${repertoire_id}
                 echo "GW-INFO: Moving ${repertoire_id}.h5ad to analysis file ${repository_name}/${repertoire_dirname}/${repertoire_id}-gex.h5ad"
-                # ${repertoire_id} ${repository_name}/${repertoire_dirname}/${gex_datafile}
-                # Move the file into the directory.
+                # Move the file into the directory with the appropriate name, matching the file
+                # naming convention as per the above repertoire split methodology.
                 mv ${repertoire_id}.h5ad ${repository_name}/${repertoire_dirname}/${repertoire_id}-gex.h5ad
                 if [ $? -ne 0 ]
                 then
@@ -637,20 +609,6 @@ function gateway_split_repertoire(){
         echo "GW-INFO:" 
         count=$((count+1))
     done
-
-    # Clean up the files we created
-    # First the ZIP file
-    #rm -f ${ZIP_FILE}
-    # Remove any data files extracted from the ZIP - they are big and can be re-generated
-    #for f in "${data_files[@]}"; do
-    #    rm -f $f
-    #done
-    #for f in "${expression_files[@]}"; do
-    #    rm -f $f
-    #done
-    #for f in "${rearrangement_files[@]}"; do
-    #    rm -f $f
-    #done
 
     # Return to the directory we started from.
     popd > /dev/null
