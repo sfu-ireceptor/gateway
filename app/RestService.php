@@ -1357,7 +1357,7 @@ class RestService extends Model
                     // add expression data
                     $request_params = [];
                     foreach ($response['data']->Cell as $t) {
-                        $cell_id = $t->cell_id;
+                        $cell_id = $t->adc_annotation_cell_id;
                         $data_processing_id = $t->data_processing_id;
 
                         $filters = [];
@@ -1383,7 +1383,7 @@ class RestService extends Model
                     // add expression data to cell data
                     $cell_list_merged = [];
                     foreach ($response['data']->Cell as $t) {
-                        $cell_id = $t->cell_id;
+                        $cell_id = $t->adc_annotation_cell_id;
                         $data_processing_id = $t->data_processing_id;
 
                         foreach ($response_list_expressions as $response_expression) {
@@ -1425,7 +1425,7 @@ class RestService extends Model
                 if (isset($response['data']->Cell)) {
                     $request_params = [];
                     foreach ($response['data']->Cell as $t) {
-                        $cell_id = $t->cell_id;
+                        $cell_id = $t->adc_annotation_cell_id;
                         $data_processing_id = $t->data_processing_id;
 
                         $filters = [];
@@ -1451,7 +1451,7 @@ class RestService extends Model
                     // add sequence data to cell data
                     $cell_list_merged = [];
                     foreach ($response['data']->Cell as $t) {
-                        $cell_id = $t->cell_id;
+                        $cell_id = $t->adc_annotation_cell_id;
                         $data_processing_id = $t->data_processing_id;
 
                         foreach ($response_list_sequences as $response_sequence) {
