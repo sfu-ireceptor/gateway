@@ -2182,7 +2182,7 @@ class RestService extends Model
             $cell_list = $response['data']->Cell;
             $data_processing_id_list = [];
             foreach ($cell_list as $cell) {
-                if (! isset($cell->data_processing_id) || ! isset($cell->cell_id)) {
+                if (! isset($cell->data_processing_id) || ! isset($cell->adc_annotation_cell_id)) {
                     continue;
                 }
 
@@ -2191,7 +2191,7 @@ class RestService extends Model
                     $data_processing_id_list[$data_processing_id] = [];
                 }
 
-                $cell_id = $cell->cell_id;
+                $cell_id = $cell->adc_annotation_cell_id;
                 $data_processing_id_list[$data_processing_id][] = $cell_id;
             }
 
