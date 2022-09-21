@@ -379,7 +379,7 @@ class Agave
         return $this->doGETRequest($url, $token, true);
     }
 
-    public function deleteJob($job_id, $token)
+    public function killJob($job_id, $token)
     {
         $url = '/jobs/v2/' . $job_id;
 
