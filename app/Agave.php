@@ -384,7 +384,8 @@ class Agave
         $url = '/jobs/v2/' . $job_id;
 
         // Send the kill action to the Agave job.
-        $config = array('action' => 'kill') ;
+        $config = ['action' => 'kill'];
+
         return $this->doPOSTRequestWithJSON($url, $token, $config);
     }
 
