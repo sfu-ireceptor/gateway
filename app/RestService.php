@@ -1309,7 +1309,7 @@ class RestService extends Model
 
                         $filters = [];
                         $filters['data_processing_id_cell'] = $data_processing_id;
-                        $filters['cell_id_cell'] = $cell_id;
+                        $filters['ir_cell_id_cell'] = $cell_id;
 
                         // prepare parameters for each service
                         $t = [];
@@ -1335,7 +1335,7 @@ class RestService extends Model
                             $cell_list = $response_cell['data']->Cell;
 
                             if (isset($cell_list[0])) {
-                                $cell_id_cell = $cell_list[0]->cell_id;
+                                $cell_id_cell = $cell_list[0]->adc_annotation_cell_id;
 
                                 if ($cell_id == $cell_id_cell) {
                                     $cell_data = $response_cell['data']->Cell[0];
