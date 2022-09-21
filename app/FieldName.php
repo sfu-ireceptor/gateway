@@ -31,15 +31,14 @@ class FieldName extends Model
     // convert field names for a list of objects
     public static function convertObjectList($data, $from, $to, $ir_class = '', $api_version = null)
     {
-
-        // dd($ir_class);
-        // debug_print_backtrace();
-        // die();
         $api_version = $api_version ?? config('ireceptor.default_api_version');
         $mapping = self::all([$from, $to, 'api_version', 'ir_class'])->where('api_version', $api_version)->toArray();
 
-        // dd($mapping);
         $array_list = convert_arrays_keys($data, $mapping, $from, $to, $ir_class);
+
+        if (config('ireceptor.display_all_ir_fields')) {
+            $array_list = convert_arrays_keys($array_list, $mapping, $from, $to, 'IR_' . $ir_class);
+        }
 
         $object_list = [];
         foreach ($array_list as $a) {

@@ -87,7 +87,7 @@ class Sequence
             $rs_sequence_list = array_map('convert_arrays_to_strings', $rs_sequence_list);
 
             // convert fields
-            $rs_sequence_list = FieldName::convertObjectList($rs_sequence_list, 'ir_adc_api_query', 'ir_id', 'Rearrangement', $rs->api_version);
+            $rs_sequence_list = FieldName::convertObjectList($rs_sequence_list, 'ir_adc_api_response', 'ir_id', 'Rearrangement', $rs->api_version);
 
             $sequence_list = array_merge($sequence_list, $rs_sequence_list);
         }
