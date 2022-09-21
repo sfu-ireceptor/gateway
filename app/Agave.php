@@ -379,6 +379,15 @@ class Agave
         return $this->doGETRequest($url, $token, true);
     }
 
+    public function deleteJob($job_id, $token)
+    {
+        $url = '/jobs/v2/' . $job_id;
+
+        // Send the kill action to the Agave job.
+        $config = array('action' => 'kill') ;
+        return $this->doPOSTRequestWithJSON($url, $token, $config);
+    }
+
     public function getExcutionSystemConfig($name, $host, $port, $username, $privateKey, $publicKey)
     {
         $t = [
