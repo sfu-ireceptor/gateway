@@ -137,6 +137,7 @@ Route::middleware('auth')->group(function () {
         Route::get('agave-history/{id}', 'JobController@getAgaveHistory');
         Route::get('status/{id}', 'JobController@getStatus');
         Route::get('delete/{id}', 'JobController@getDelete');
+        Route::get('cancel/{id}', 'JobController@getCancel');
     });
 
     Route::prefix('admin')->group(function () {
