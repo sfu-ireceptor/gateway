@@ -9,8 +9,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
-
 
 class ProcessAgaveNotification implements ShouldQueue
 {
@@ -44,12 +42,14 @@ class ProcessAgaveNotification implements ShouldQueue
         // deleted the job already.
         if ($job == null) {
             $localJob->setFinished();
+
             return;
         }
 
         // ignore the status update if the job has already FAILED or is FINISHED
         if ($job->agave_status == 'FAILED' || $job->agave_status == 'FINISHED') {
             $localJob->setFinished();
+
             return;
         }
 
