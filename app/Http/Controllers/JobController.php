@@ -42,7 +42,7 @@ class JobController extends Controller
 
         // These variables are used to update the state of the web page. They
         // essentially map to <span> elements in the HTML and are updated through
-        // the JS code in main.js
+        // the JS code in main.js - in the Jobs section.
         $data['status'] = $job->status;
         $data['agave_status'] = $job->agave_status;
         $data['submission_date_relative'] = $job->createdAtRelative();
@@ -596,12 +596,44 @@ class JobController extends Controller
         echo $job->agave_status;
     }
 
+    public function getCancel($id)
+    {
+        // Get the job
+        $userId = auth()->user()->id;
+        $job = Job::get($id, $userId);
+
+        // If we found one, clean up
+        if ($job != null) {
+            // Clean up the running AGAVE job if not finished.
+            if (isset($job['agave_status']) and $job['agave_status'] != 'FINISHED'){
+                Log::debug('Deleting AGAVE job ' . $job['agave_id']);
+                $agave = new Agave;
+                $token = auth()->user()->password;
+                // Kill the job and update the status.
+                $response = $agave->killJob($job['agave_id'], $token);
+                $job->updateStatus('STOPPED');
+            }
+        }
+        return redirect('jobs/view/'.$id);
+    }
+
     public function getDelete($id)
     {
         $userId = auth()->user()->id;
         $job = Job::get($id, $userId);
 
+        Log::debug($job);
         if ($job != null) {
+            // Clean up the running AGAVE job if not finished.
+            if (isset($job['agave_status']) and $job['agave_status'] != 'FINISHED'){
+                Log::debug('Deleting AGAVE job ' . $job['agave_id']);
+                $agave = new Agave;
+                $token = auth()->user()->password;
+                // Kill the job and update the status.
+                $response = $agave->killJob($job['agave_id'], $token);
+                $job->updateStatus('STOPPED');
+            }
+
             // delete job files
             if ($job['input_folder']) { // IMPORTANT: this "if" prevents accidental deletion of ALL jobs data
                 $dataFolder = 'data/' . $job['input_folder'];
