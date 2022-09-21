@@ -12,6 +12,10 @@ from scipy import sparse
 from pandas.api.types import CategoricalDtype
 
 def createAnnData(cell_dict_array, field, value):
+    # cell_dict_array: An array of JSON expression objects for a single repertoire
+    # field: The field (repertoire_id) we are using for processing 
+    # value: The value of field for the repertoire we are processing.
+    
     # Get a data frame from the array of cells dictionary
     #print('IR-INFO: CreateAnnData - creating pandas data frame %d'%(time.perf_counter()), flush=True)
     df = pandas.DataFrame.from_records(cell_dict_array)
@@ -19,6 +23,8 @@ def createAnnData(cell_dict_array, field, value):
     # Get the unique cells
     cells = df["cell_id"].unique()
     #print('IR-INFO: number of cells = %d'%(len(cells)), flush=True)
+    #print('IR-INFO: field = %s, value = %s'%(field, value), flush=True)
+    #print('IR-INFO: cells = %s'%(str(cells)), flush=True)
     
     # Get the unique property labels and IDs. 
     property_dict_array = df["property"]
@@ -230,6 +236,7 @@ def generateH5AD(gex_filename, block, field, buffer_size):
                         # location of the } character in this case.
                         object_string = json_buffer[object_start:json_loc+1]
                         json_dict = json.loads(object_string)
+                        #json_dict['cell_id'] = json_dict['cell_id'] + '-' + json_dict[field] + '-' + json_dict['data_processing_id'] + '-' + json_dict['sample_processing_id']
 
                         # Keep track of the largest object size to help with buffer management
                         str_len = len(object_string)
