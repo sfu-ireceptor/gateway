@@ -81,7 +81,7 @@ source ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/gateway_utilities.sh
 if [ $? -ne 0 ]
 then
     echo "IR-ERROR: Could not load GATEWAY UTILIIES"
-    exit $?
+    exit 1
 fi
 
 # This directory is defined in the gateway_utilities.sh. The Gateway
@@ -109,19 +109,22 @@ printf "IR-INFO: START at $(date)\n"
 printf "IR-INFO: PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n"
 printf "IR-INFO: MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n"
 printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
+printf "IR-INFO: "
+lscpu | grep "Model name"
 printf "IR-INFO:\nIR-INFO:\n"
 
 # This function is called by the iReceptor Gateway utilities function gateway_split_repertoire
 # The gateway utility function splits all data into repertoires and then calls this function
 # for a single repertoire. As such, this function should perform all analysis required for a
 # repertoire.
-function run_cell_analysis()
+function run_analysis()
 # Parameters:
 #     $1 output directory
 #     $2 repository name [string]
 #     $3 repertoire_id ("NULL" if should skip repertoire processing)
 #     $4 repertoire file (Not used if repertoire_id == NULL)
 #     $5 manifest file
+#     $6 analysis type
 {
     # Use local variables - no scope issues please...
     local output_directory=$1
@@ -129,6 +132,7 @@ function run_cell_analysis()
     local repertoire_id=$3
     local repertoire_file=$4
     local manifest_file=$5
+    local analysis_type=$6
     echo "IR-INFO: Running a Cell Repertoire Analysis with manifest ${manifest_file}"
 
     # Get a list of rearrangement files to process from the manifest.
@@ -181,35 +185,31 @@ function run_cell_analysis()
     echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
     echo "IR-INFO: Storing output in /data/${output_directory}"
 
-    # Generate h5ad file from AIRR GEX file.
-    echo -n "IR-INFO: Processing GEX data ${gex_file} - "
+    # log1p normalize the data for CellTypist
+    echo -n "IR-INFO: log1p normalizing ${gex_file} - "
     date
+    mv ${output_directory}/${gex_file} ${output_directory}/${gex_file}.tmp.h5ad
     singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
         -B ${output_directory}:/data -B ${SCRIPT_DIR}:/localsrc \
         ${SCRIPT_DIR}/${singularity_image} python \
-        /localsrc/airr-to-h5ad.py\
-        /data/${gex_file} \
-        /data/${repertoire_id}.h5ad \
-        CellExpression repertoire_id ${repertoire_id} \
-        --normalize --normalize_value=10000 \
-        --log1p
+        /localsrc/h5ad-log1pnormalize.py\
+        /data/${gex_file}.tmp.h5ad \
+        /data/${gex_file} 
     if [ $? -ne 0 ]
     then
-        echo "IR-ERROR: Could not convert AIRR GEX data to h5ad"
+        echo "IR-ERROR: Could not log1p normalize the data"
         return
     fi
-    echo -n "IR-INFO: Done processing GEX data - "
-    date
     
     # Run CellTypist using our internal code that produces slightly modified 
     # graphs and output.
-    echo -n "IR-INFO: Running CellTpist on ${repertoire_id}.h5ad - "
+    echo -n "IR-INFO: Running CellTpist on ${gex_file} - "
     date
     singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
         -B ${output_directory}:/data -B ${SCRIPT_DIR}:/localsrc \
         ${SCRIPT_DIR}/${singularity_image} \
         python /localsrc/gateway-celltypist.py \
-        /data/${repertoire_id}.h5ad \
+        /data/${gex_file} \
         /data \
         ${repertoire_id}-annotated.h5ad \
         ${title_string}
@@ -289,16 +289,19 @@ function run_cell_analysis()
 # that repository. In each repertoire directory there will exist an AIRR manifest
 # file and the data (as described in the manifest file) from that repertoire.
 #
-# This gateway utility function uses a callback mechanism, calling the
-# function run_cell_analysis() on each repertoire (in this case run_cell_analysis 
-# because the type is "cell_file". The run_cell_analysis function takes
-# as paramenters the manifest files to process, the directory for the repertoire in
-# which to store the analysis results, the a string repersenting the repository
-# from which the data came, the repertoire_id, and a repertoire JSON file in which
-# information about the repertoire can be found. 
+# The gateway utilities use a callback mechanism, calling the
+# function run_analysis() on each repertoire. The run_analysis function
+# is locally provided and should do all of the processing for a single
+# repertoire.
 #
-# run_cell_analysis() is defined above.
-gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file"
+# So the pipeline is:
+#    - Split the data into repertoire directories as described above
+#    - Run the analysis on each repertoire, calling run_analysis for each
+#    - Cleanup the intermediate files created by the split process.
+# run_analysis() is defined above.
+gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file" ${SCRIPT_DIR}/${singularity_image}
+gateway_run_analysis ${INFO_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file"
+gateway_cleanup ${ZIP_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 # Make sure we are back where we started, although the gateway functions should
 # not change the working directory that we are in.

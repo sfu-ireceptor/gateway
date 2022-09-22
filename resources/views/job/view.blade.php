@@ -112,7 +112,7 @@
             <h2>Job Summary</h2>
             <div class="summary">
             @foreach ($job_summary as $summary_line)
-		{!! $summary_line !!}
+		        {!! $summary_line !!}
             @endforeach
 	    </div>
 	@endif
@@ -134,19 +134,23 @@
 		
 	@endif
 
+
+	@if ($job->agave_id != '' && ($job->agave_status != 'FINISHED'  && $job->agave_status != 'FAILED' && $job->agave_status != 'STOPPED' ))
+		<h2>Job Control </h2>
+	    <div class="job_stop">
+	    <p>
+		    <a href="/jobs/cancel/{{ $job->id }}">
+			    <button type="button" class="btn btn-default" aria-label="Cancel">
+			      <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Cancel this job
+			    </button>
+		    </a>
+	    </p>
+        </div>
+    @endif
+
 	<div class="job_steps">
 		@include('job/steps')
 	</div>
-
-
-	<p>
-		<a href="/jobs/delete/{{ $job->id }}">
-			<button type="button" class="btn btn-default" aria-label="Delete">
-			  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete this job
-			</button>
-		</a>
-	</p>
-
 
 <!-- 
 	jobs-history -V {{ $job->agave_id }}

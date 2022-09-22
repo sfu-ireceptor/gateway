@@ -245,6 +245,10 @@ STR;
                 $progress = 100;
                 $status = 3;
                 break;
+            case 'STOPPED':
+                $progress = 100;
+                $status = 3;
+                break;
         }
 
         $this->agave_status = $str;
