@@ -245,10 +245,14 @@ class FieldNameSeeder extends CsvSeeder
     public function define_default_clone_fields()
     {
         $l = [];
+        $l[] = ['id' => 'ir_clone_id_clone', 'visible' => true];
+        $l[] = ['id' => 'clone_abundance_clone', 'visible' => true];
+        $l[] = ['id' => 'sequence_count_clone', 'visible' => true];
         $l[] = ['id' => 'v_call_clone', 'visible' => true];
         $l[] = ['id' => 'd_call_clone', 'visible' => true];
         $l[] = ['id' => 'j_call_clone', 'visible' => true];
         $l[] = ['id' => 'junction_aa_clone', 'visible' => true];
+        $l[] = ['id' => 'clone_id_clone', 'visible' => true];
 
         foreach ($l as $i => $t) {
             FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);
