@@ -1325,7 +1325,7 @@ class RestService extends Model
 
                     $response_list_cells = self::doRequests($request_params);
 
-                    // add expression data to cell data
+                    // add cell data to expression data
                     $cell_list_merged = [];
                     foreach ($response['data']->CellExpression as $t) {
                         $cell_id = $t->cell_id;
@@ -1354,6 +1354,7 @@ class RestService extends Model
                 }
 
                 if (isset($response['data']->Cell)) {
+
                     // add expression data
                     $request_params = [];
                     foreach ($response['data']->Cell as $t) {
@@ -1414,7 +1415,6 @@ class RestService extends Model
                                 }
                             }
                         }
-
                         $cell_list_merged[] = $t;
                     }
 
@@ -1461,7 +1461,6 @@ class RestService extends Model
                                 $cell_id_sequence = $sequence[0]->cell_id;
 
                                 if ($cell_id == $cell_id_sequence) {
-                                    $t->cell_id_cell = $cell_id;
                                     $t->v_call_1 = isset($sequence[0]->v_call) ? $sequence[0]->v_call : '';
                                     $t->junction_aa_1 = isset($sequence[0]->junction_aa) ? $sequence[0]->junction_aa : '';
                                     $t->v_call_2 = isset($sequence[1]->v_call) ? $sequence[1]->v_call : '';
