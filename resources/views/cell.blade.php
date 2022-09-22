@@ -87,93 +87,6 @@
 							</div>
 						</div>
 					</div>
-
-				<!-- 	<div class="panel panel-default">
-						<div class="panel-heading" role="tab" id="headingOne">
-							<h4 class="panel-title">
-								<a role="button" class="{{ in_array('0', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-									Filter by VDJ
-								</a>
-							</h4>
-						</div>
-						<div id="collapseOne" class="panel-collapse collapse {{ in_array('0', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingOne">
-							<div class="panel-body">
-								<div class="form-group">
-									{{ Form::label('v_call',  __('short.v_call')) }}
-									@include('help', ['id' => 'v_call'])
-									{{ Form::text('v_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of cells are found.', 'data-placement' => 'bottom')) }}
-								</div>
-
-								<div class="form-group">
-									{{ Form::label('j_call', __('short.j_call')) }}
-									@include('help', ['id' => 'j_call'])
-									{{ Form::text('j_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of cells are found.', 'data-placement' => 'bottom')) }}
-								</div>
-
-								<div class="form-group">
-									{{ Form::label('d_call', __('short.d_call')) }}
-									@include('help', ['id' => 'd_call'])
-									{{ Form::text('d_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of cells are found.', 'data-placement' => 'bottom')) }}
-								</div>
-
-								<p class="button_container">
-									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
-								</p>
-
-							</div>
-						</div>
-					</div> -->
-
-				<!-- 	<div class="panel panel-default">
-						<div class="panel-heading" role="tab" id="headingTwo">
-							<h4 class="panel-title">
-								<a role="button" class="{{ in_array('1', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-									Filter by Junction AA
-								</a>
-							</h4>
-						</div>
-						<div id="collapseTwo" class="panel-collapse collapse {{ in_array('1', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingTwo">
-							<div class="panel-body">
-								<div class="form-group">
-									{{ Form::label('junction_aa', __('short.junction_aa')) }}
-									@include('help', ['id' => 'junction_aa'])
-									{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided, minimum of 4 AA required). Will take a long time if millions of cells are found.', 'data-placement' => 'bottom')) }}
-								</div>
-
-								<div class="form-group">
-									{{ Form::label('junction_aa_length', __('short.ir_junction_aa_length')) }}
-									{{ Form::text('ir_junction_aa_length', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact value match. Will take a long time if millions of cells are found.', 'data-placement' => 'bottom')) }}
-								</div>
-
-								<p class="button_container">
-									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
-								</p>
-
-							</div>
-						</div>
-					</div> -->
-
-<!-- 					<div class="panel panel-default">
-						<div class="panel-heading" role="tab" id="headingThree">
-							<h4 class="panel-title">
-								<a role="button" class="{{ in_array('2', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-									Advanced filters
-								</a>
-							</h4>
-						</div>
-						<div id="collapseThree" class="panel-collapse collapse {{ in_array('2', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingThree">
-							<div class="panel-body">
-								<div class="form-group">
-									{{ Form::label('productive', __('short.productive')) }}
-									{{ Form::select('productive', $functional_list, '', array('class' => 'form-control')) }}
-								</div>
-								<p class="button_container">
-									{{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
-								</p>
-							</div>
-						</div>
-					</div>
- -->
 				</div>		
 
 			{{ Form::close() }}				
@@ -305,7 +218,6 @@
 								<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($charts_data['chart3']) !!}"></div>
 								<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($charts_data['chart4']) !!}"></div>
 								<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($charts_data['chart5']) !!}"></div>
-								<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($charts_data['chart6']) !!}"></div>
 							</div>
 						</div>
 									
