@@ -1456,15 +1456,39 @@ class RestService extends Model
 
                         foreach ($response_list_sequences as $response_sequence) {
                             $sequence = $response_sequence['data']->Rearrangement;
-                            Log::debug('sequence len = ' . count($sequence));
                             if (count($sequence) > 0) {
                                 $cell_id_sequence = $sequence[0]->cell_id;
 
                                 if ($cell_id == $cell_id_sequence) {
-                                    $t->v_call_1 = isset($sequence[0]->v_call) ? $sequence[0]->v_call : '';
-                                    $t->junction_aa_1 = isset($sequence[0]->junction_aa) ? $sequence[0]->junction_aa : '';
-                                    $t->v_call_2 = isset($sequence[1]->v_call) ? $sequence[1]->v_call : '';
-                                    $t->junction_aa_2 = isset($sequence[1]->junction_aa) ? $sequence[1]->junction_aa : '';
+                                    $v_call_1 = isset($sequence[0]->v_call) ? $sequence[0]->v_call : '';
+                                    $junction_aa_1 = isset($sequence[0]->junction_aa) ? $sequence[0]->junction_aa : '';
+                                    $v_call_2 = isset($sequence[1]->v_call) ? $sequence[1]->v_call : '';
+                                    $junction_aa_2 = isset($sequence[1]->junction_aa) ? $sequence[1]->junction_aa : '';
+
+                                    // array_filter() removes any empty values from the array
+                                    $chain1 = implode(', ', array_filter([$v_call_1, $junction_aa_1]));
+                                    $chain2 = implode(', ', array_filter([$v_call_2, $junction_aa_2]));
+
+                                    // chain 1 is always IGH/TRA/TRG locus
+                                    // chain 2  is always IGK/IGL/TRB/TRD locus
+                                    $invert_chains = false;
+
+                                    if(Str::startsWith($v_call_2, ['IGH', 'TRA', 'TRG'])) {
+                                        $invert_chains = true;
+                                    }
+                                    else if (Str::startsWith($v_call_1, ['IGK', 'IGL', 'TRB', 'TRD']))
+                                    {
+                                        $invert_chains = true;
+                                    }
+
+                                    if($invert_chains) {
+                                        $tmp_chain = $chain1;
+                                        $chain1 = $chain2;
+                                        $chain2 = $tmp_chain;
+                                    }
+
+                                    $t->chain1 = $chain1;
+                                    $t->chain2 = $chain2;
 
                                     break;
                                 }

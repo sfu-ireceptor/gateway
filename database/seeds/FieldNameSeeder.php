@@ -139,31 +139,16 @@ class FieldNameSeeder extends CsvSeeder
 
         // cell fields
         $l[] = [
-            'ir_id' => 'v_call_1',
-            'ir_short' => 'V Gene With Allele (Chain 1)',
+            'ir_id' => 'chain1',
+            'ir_short' => 'Chain 1',
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
             'api_version' => $api_version,
         ];
 
         $l[] = [
-            'ir_id' => 'junction_aa_1',
-            'ir_short' => 'Junction/CDR3 AA (Chain 1)',
-            'ir_class' => 'Cell',
-            'ir_subclass' => 'Cell',
-            'api_version' => $api_version,
-        ];
-        $l[] = [
-            'ir_id' => 'v_call_2',
-            'ir_short' => 'V Gene With Allele (Chain 2)',
-            'ir_class' => 'Cell',
-            'ir_subclass' => 'Cell',
-            'api_version' => $api_version,
-        ];
-
-        $l[] = [
-            'ir_id' => 'junction_aa_2',
-            'ir_short' => 'Junction/CDR3 AA (Chain 2)',
+            'ir_id' => 'chain2',
+            'ir_short' => 'Chain 2',
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
             'api_version' => $api_version,
@@ -229,10 +214,8 @@ class FieldNameSeeder extends CsvSeeder
         $l = [];
         $l[] = ['id' => 'cell_id', 'visible' => true];
         $l[] = ['id' => 'cell_id_cell', 'visible' => true];
-        $l[] = ['id' => 'v_call_1', 'visible' => true];
-        $l[] = ['id' => 'junction_aa_1', 'visible' => true];
-        $l[] = ['id' => 'v_call_2', 'visible' => true];
-        $l[] = ['id' => 'junction_aa_2', 'visible' => true];
+        $l[] = ['id' => 'chain1', 'visible' => true];
+        $l[] = ['id' => 'chain2', 'visible' => true];
         $l[] = ['id' => 'expression_label_list', 'visible' => true];
 
         foreach ($l as $i => $t) {
