@@ -12,7 +12,6 @@ use App\Query;
 use App\System;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use ZipArchive;
 
@@ -651,13 +650,13 @@ class JobController extends Controller
                 $job->updateStatus('STOPPED');
             }
 
-            // Delete job files. The job files are in a folder that consits of the 
+            // Delete job files. The job files are in a folder that consits of the
             // internal job name (ir_2022-09-23_0128_632d0bb8e7797) with _output as
             // the suffix.
             if ($job['input_folder']) { // IMPORTANT: this "if" prevents accidental deletion of ALL jobs data
                 $dataFolder = 'storage/' . $job['input_folder'];
                 Log::debug('Deleting files in ' . $dataFolder);
-                if (!File::deleteDirectory($dataFolder)) {
+                if (! File::deleteDirectory($dataFolder)) {
                     Log::info('Unable to delete files in ' . $dataFolder);
                 }
 
@@ -666,10 +665,9 @@ class JobController extends Controller
                 $folder_name = basename($job['input_folder']);
                 $zip_file = substr($folder_name, 0, strpos($folder_name, '_output')) . '.zip';
                 Log::debug('Removing ZIP file ' . $zip_file);
-                if (!File::delete('storage/' . $zip_file)) {
+                if (! File::delete('storage/' . $zip_file)) {
                     Log::info('Unable to delete ZIP file ' . $zip_file);
                 }
-
             }
 
             // delete job history

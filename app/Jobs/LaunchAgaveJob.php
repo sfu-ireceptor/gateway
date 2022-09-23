@@ -123,14 +123,13 @@ class LaunchAgaveJob implements ShouldQueue
                 Log::debug('Job input ' . $key . ' = ' . $value);
             }
 
-            // Since we have the ZIP file of the download, we don't need to keep the 
+            // Since we have the ZIP file of the download, we don't need to keep the
             // original data file directory. We are a bit careful that we don't remove
             // all of the data in $base_path if we have an obscure error condition where
             // $base_name is empty.
             if ($t['base_name'] != '') {
                 File::deleteDirectory($base_path . $t['base_name']);
             }
-
 
             //$executionSystem = System::getCurrentSystem($this->gw_username);
 
@@ -141,7 +140,7 @@ class LaunchAgaveJob implements ShouldQueue
             $archive_folder_path = $base_path . $archive_folder;
             Log::debug('Creating archive folder: ' . $archive_folder_path);
             $old = umask(0);
-            #File::makeDirectory($archive_folder_path, 0770, true, true);
+            //File::makeDirectory($archive_folder_path, 0770, true, true);
             mkdir($archive_folder_path, 0770);
             //mkdir($archive_folder_path, 0777);
             umask($old);
