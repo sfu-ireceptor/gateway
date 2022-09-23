@@ -1471,7 +1471,7 @@ class RestService extends Model
 
                                     // chain 1 is always IGH/TRA/TRG locus
                                     // chain 2  is always IGK/IGL/TRB/TRD locus
-                                    if(Str::startsWith($v_call_2, ['IGH', 'TRA', 'TRG']) || Str::startsWith($v_call_1, ['IGK', 'IGL', 'TRB', 'TRD'])) {
+                                    if (Str::startsWith($v_call_2, ['IGH', 'TRA', 'TRG']) || Str::startsWith($v_call_1, ['IGK', 'IGL', 'TRB', 'TRD'])) {
                                         $tmp_chain = $chain1;
                                         $chain1 = $chain2;
                                         $chain2 = $tmp_chain;
