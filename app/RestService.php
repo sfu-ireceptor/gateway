@@ -1471,17 +1471,7 @@ class RestService extends Model
 
                                     // chain 1 is always IGH/TRA/TRG locus
                                     // chain 2  is always IGK/IGL/TRB/TRD locus
-                                    $invert_chains = false;
-
-                                    if(Str::startsWith($v_call_2, ['IGH', 'TRA', 'TRG'])) {
-                                        $invert_chains = true;
-                                    }
-                                    else if (Str::startsWith($v_call_1, ['IGK', 'IGL', 'TRB', 'TRD']))
-                                    {
-                                        $invert_chains = true;
-                                    }
-
-                                    if($invert_chains) {
+                                    if(Str::startsWith($v_call_2, ['IGH', 'TRA', 'TRG']) || Str::startsWith($v_call_1, ['IGK', 'IGL', 'TRB', 'TRD'])) {
                                         $tmp_chain = $chain1;
                                         $chain1 = $chain2;
                                         $chain2 = $tmp_chain;
