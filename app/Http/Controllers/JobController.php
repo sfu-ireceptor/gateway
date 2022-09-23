@@ -12,6 +12,7 @@ use App\Query;
 use App\System;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use ZipArchive;
 
@@ -49,6 +50,19 @@ class JobController extends Controller
         $data['run_time'] = $job->totalTime();
         $data['job_url'] = $job->url;
         $data['job'] = $job;
+        $data['job_summary'] = [];
+        $data['job_control'] = '';
+        if ($job->agave_id != '') {
+            $agave_status = json_decode($this->getAgaveJobJSON($job->id));
+            $s = '<p><b>Job Parameters</b></p>';
+            $s .= 'Number of cores = ' . strval($agave_status->result->processorsPerNode) . '<br/>\n';
+            $s .= 'Maximum run time = ' . strval($agave_status->result->maxHours) . ' hours<br/>\n';
+            $data['job_summary'] = explode('\n', $s);
+        }
+
+        if ($job->agave_id != '') {
+            $data['job_control'] = 'ACTIVE';
+        }
 
         $d = [];
         $d['job'] = $job;
@@ -106,7 +120,6 @@ class JobController extends Controller
 
             // Get the App config for the app in question.
             Log::info('Processing App ' . $appId);
-            $agave->updateAppTemplates();
             $app_info = $agave->getAppTemplate($appId);
             $app_config = $app_info['config'];
 
@@ -306,13 +319,16 @@ class JobController extends Controller
 
         // Generate a set of job summary comments for the Tapis part of the job.
         $data['job_summary'] = [];
-        Log::debug('AGAVE ID = ' . strval($job->agave_id));
         if ($job->agave_id != '') {
             $agave_status = json_decode($this->getAgaveJobJSON($job->id));
             $s = '<p><b>Job Parameters</b></p>';
             $s .= 'Number of cores = ' . strval($agave_status->result->processorsPerNode) . '<br/>\n';
             $s .= 'Maximum run time = ' . strval($agave_status->result->maxHours) . ' hours<br/>\n';
             $data['job_summary'] = explode('\n', $s);
+        }
+
+        if ($job->agave_id != '') {
+            $data['job_control'] = 'ACTIVE';
         }
 
         // Generate some Error summary information if the job failed
@@ -626,7 +642,7 @@ class JobController extends Controller
         Log::debug($job);
         if ($job != null) {
             // Clean up the running AGAVE job if not finished.
-            if (isset($job['agave_status']) and $job['agave_status'] != 'FINISHED') {
+            if (isset($job['agave_status']) and $job['agave_status'] != 'FINISHED' and $job['agave_status'] != 'STOPPED') {
                 Log::debug('Deleting AGAVE job ' . $job['agave_id']);
                 $agave = new Agave;
                 $token = auth()->user()->password;
@@ -635,10 +651,25 @@ class JobController extends Controller
                 $job->updateStatus('STOPPED');
             }
 
-            // delete job files
+            // Delete job files. The job files are in a folder that consits of the 
+            // internal job name (ir_2022-09-23_0128_632d0bb8e7797) with _output as
+            // the suffix.
             if ($job['input_folder']) { // IMPORTANT: this "if" prevents accidental deletion of ALL jobs data
-                $dataFolder = 'data/' . $job['input_folder'];
-                File::deleteDirectory($dataFolder);
+                $dataFolder = 'storage/' . $job['input_folder'];
+                Log::debug('Deleting files in ' . $dataFolder);
+                if (!File::deleteDirectory($dataFolder)) {
+                    Log::info('Unable to delete files in ' . $dataFolder);
+                }
+
+                // The ZIP file has the same base job ID (ir_2022-09-23_0128_632d0bb8e7797)
+                // with a .zip suffix.
+                $folder_name = basename($job['input_folder']);
+                $zip_file = substr($folder_name, 0, strpos($folder_name, '_output')) . '.zip';
+                Log::debug('Removing ZIP file ' . $zip_file);
+                if (!File::delete('storage/' . $zip_file)) {
+                    Log::info('Unable to delete ZIP file ' . $zip_file);
+                }
+
             }
 
             // delete job history
