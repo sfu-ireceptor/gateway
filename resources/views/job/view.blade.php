@@ -110,7 +110,7 @@
 
         @if (count($job_summary) > 0)
             <h2>Job Summary</h2>
-            <div class="summary">
+            <div class="job_summary">
             @foreach ($job_summary as $summary_line)
 		        {!! $summary_line !!}
             @endforeach
@@ -137,7 +137,7 @@
 
 	@if ($job->agave_id != '' && ($job->agave_status != 'FINISHED'  && $job->agave_status != 'FAILED' && $job->agave_status != 'STOPPED' ))
 		<h2>Job Control </h2>
-	    <div class="job_stop">
+	    <div class="job_control">
 	    <p>
 		    <a href="/jobs/cancel/{{ $job->id }}">
 			    <button type="button" class="btn btn-default" aria-label="Cancel">

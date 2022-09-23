@@ -527,6 +527,8 @@ $(document).ready(function() {
 						$('.run_time').html(data['run_time']);
 						$('.job_url').html(data['job_url']);
 						$('.summary').html(data['summary']);
+						$('.job_summary').html(data['job_summary']);
+						$('.job_control').html(data['job_control']);
 						document.title = data['agave_status'];
 
 						if (data['status'] >= 2) {
