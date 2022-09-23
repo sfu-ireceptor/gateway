@@ -102,7 +102,7 @@ class LaunchAgaveJob implements ShouldQueue
                 unset($sample_filter_fields['extra_field']);
             }
 
-            // Generated the file
+            // Generate the ZIP file for the data that meets the query criteria.
             if ($this->jobType == 'sequence') {
                 $t = Sequence::sequencesTSV($filters, $this->gw_username, $job->url, $sample_filter_fields);
             } elseif ($this->jobType == 'clone') {
@@ -110,26 +110,45 @@ class LaunchAgaveJob implements ShouldQueue
             } elseif ($this->jobType == 'cell') {
                 $t = SequenceCell::cellsTSV($filters, $this->gw_username, $job->url, $sample_filter_fields);
             }
+            // Get the path to where the data and ZIP file is.
+            $base_path = $t['base_path'];
+            // Get the public storage path (this is relative to the gateway's public data).
             $dataFilePath = $t['public_path'];
 
             // The Gateway sets the download_file input as it controls the data
             // that is processed by the application.
-            $inputs['download_file'] = 'agave://' . $this->systemStaging . '/' . basename($dataFilePath);
+            //$inputs['download_file'] = 'agave://' . $this->systemStaging . '/' . basename($dataFilePath);
+            $inputs['download_file'] = 'agave://' . $this->systemStaging . '/' . $t['zip_name'];
             foreach ($inputs as $key => $value) {
                 Log::debug('Job input ' . $key . ' = ' . $value);
             }
 
-            $executionSystem = System::getCurrentSystem($this->gw_username);
+            // Since we have the ZIP file of the download, we don't need to keep the 
+            // original data file directory. We are a bit careful that we don't remove
+            // all of the data in $base_path if we have an obscure error condition where
+            // $base_name is empty.
+            if ($t['base_name'] != '') {
+                File::deleteDirectory($base_path . $t['base_name']);
+            }
 
-            $storage_folder_path = storage_path() . '/app/public/';
-            $archive_folder = basename($dataFilePath, '.zip') . '_output';
-            $archive_folder_path = $storage_folder_path . $archive_folder;
+
+            //$executionSystem = System::getCurrentSystem($this->gw_username);
+
+            //$storage_folder_path = storage_path() . '/app/public/';
+            //$archive_folder = basename($dataFilePath, '.zip') . '_output';
+            //$archive_folder_path = $storage_folder_path . $archive_folder;
+            $archive_folder = $t['base_name'] . '_output';
+            $archive_folder_path = $base_path . $archive_folder;
             Log::debug('Creating archive folder: ' . $archive_folder_path);
             $old = umask(0);
-            mkdir($archive_folder_path, 0777);
+            #File::makeDirectory($archive_folder_path, 0770, true, true);
+            mkdir($archive_folder_path, 0770);
+            //mkdir($archive_folder_path, 0777);
             umask($old);
 
             $job->input_folder = $archive_folder;
+            //$job->base_folder = $base_path;
+            //$job->zip_file = $t['zip_name'];
             $job->save();
 
             // refresh AGAVE token

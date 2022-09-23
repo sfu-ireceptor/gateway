@@ -187,12 +187,13 @@ class Sequence
         $storage_folder = storage_path() . '/app/public/';
         $now = time();
         $time_str = date('Y-m-d_Hi', $now);
-        $folder_name = 'ir_' . $time_str . '_' . uniqid();
-        $folder_path = $storage_folder . $folder_name;
+        $base_name = 'ir_' . $time_str . '_' . uniqid();
+        $folder_path = $storage_folder . $base_name;
 
         Log::debug('Creating directory: ' . $folder_path);
         $old = umask(0);
-        mkdir($folder_path, 0777);
+        //mkdir($folder_path, 0777);
+        mkdir($folder_path, 0770);
         umask($old);
         // File::makeDirectory($folder_path, 0777, true, true);
 
@@ -310,6 +311,8 @@ class Sequence
         $manifest_file_path = self::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
 
         $t = [];
+        $t['base_path'] = $storage_folder;
+        $t['base_name'] = $base_name;
         $t['folder_path'] = $folder_path;
         $t['response_list'] = $response_list;
         $t['metadata_response_list'] = $metadata_response_list;
@@ -326,6 +329,8 @@ class Sequence
     {
         $t = self::sequencesTSVFolder($filters, $username, $url, $sample_filters);
 
+        $base_path = $t['base_path'];
+        $base_name = $t['base_name'];
         $folder_path = $t['folder_path'];
         $response_list = $t['response_list'];
         $metadata_response_list = $t['metadata_response_list'];
@@ -345,6 +350,9 @@ class Sequence
 
         $t = [];
         $t['size'] = filesize($zip_path);
+        $t['base_path'] = $base_path;
+        $t['base_name'] = $base_name;
+        $t['zip_name'] = $base_name . '.zip';
         $t['system_path'] = $zip_path;
         $t['public_path'] = $zip_public_path;
         $t['is_download_incomplete'] = $is_download_incomplete;
