@@ -186,7 +186,7 @@ class Agave
             // app.json file that is the Tapis definition of the App. We use this
             // to determine how to submit the App to Tapis and to build the UI.
             $file_path = resource_path('agave_apps/' . $app_dir . '/app.json');
-            Log::debug('updateAppTemplates: Trying to open App file ' . $file_path);
+            //Log::debug('updateAppTemplates: Trying to open App file ' . $file_path);
             // Open the file and convert the JSON to an object.
             try {
                 $app_json = file_get_contents($file_path);
@@ -210,7 +210,7 @@ class Agave
                     if (array_key_exists('id', $parameter) && $parameter['id'] == 'ir_hints') {
                         // If we found a JSON hint decode it
                         $hint_obj = json_decode($parameter['value']['default']);
-                        Log::debug('updateAppTemplates: hint_obj = ' . json_encode($hint_obj));
+                        //Log::debug('updateAppTemplates: hint_obj = ' . json_encode($hint_obj));
                         // Get the object attribute - this tells us which AIRR object type this
                         // App can be applied to (e.g. Rearrangement, Clone, Cell).
                         $app_info['object'] = $hint_obj->object;
@@ -228,7 +228,7 @@ class Agave
 
             // Overwrite the gateway URL parameter configuration if we got one.
             if ($gateway_count >= 0) {
-                Log::debug('updateAppTemplates: replacing ' . json_encode($app_config['parameters'][$gateway_count]));
+                //Log::debug('updateAppTemplates: replacing ' . json_encode($app_config['parameters'][$gateway_count]));
                 $app_config['parameters'][$gateway_count] = $gateway_param;
             }
 
