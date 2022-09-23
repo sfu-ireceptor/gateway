@@ -212,7 +212,6 @@ class FieldNameSeeder extends CsvSeeder
     public function define_default_cell_fields()
     {
         $l = [];
-        $l[] = ['id' => 'cell_id', 'visible' => true];
         $l[] = ['id' => 'cell_id_cell', 'visible' => true];
         $l[] = ['id' => 'chain1', 'visible' => true];
         $l[] = ['id' => 'chain2', 'visible' => true];
