@@ -53,7 +53,7 @@ class SequenceClone
             $rs_clone_list = array_map('convert_arrays_to_strings', $rs_clone_list);
 
             // convert fields
-            $rs_clone_list = FieldName::convertObjectList($rs_clone_list, 'ir_adc_api_query', 'ir_id', 'Clone', $rs->api_version);
+            $rs_clone_list = FieldName::convertObjectList($rs_clone_list, 'ir_adc_api_response', 'ir_id', 'Clone', $rs->api_version);
 
             $clone_list = array_merge($clone_list, $rs_clone_list);
         }

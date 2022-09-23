@@ -53,7 +53,7 @@ class SequenceCell
             $rs_cell_list = array_map('convert_arrays_to_strings', $rs_cell_list);
 
             // convert fields
-            $rs_cell_list = FieldName::convertObjectList($rs_cell_list, 'ir_adc_api_query', 'ir_id', 'Cell', $rs->api_version);
+            $rs_cell_list = FieldName::convertObjectList($rs_cell_list, 'ir_adc_api_response', 'ir_id', 'Cell', $rs->api_version);
 
             $cell_list = array_merge($cell_list, $rs_cell_list);
         }
