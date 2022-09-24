@@ -140,7 +140,7 @@ class FieldNameSeeder extends CsvSeeder
         // cell fields
         $l[] = [
             'ir_id' => 'chain1',
-            'ir_short' => 'Chain 1',
+            'ir_short' => 'Chain 1 (V Gene, CDR3)',
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
             'api_version' => $api_version,
@@ -148,7 +148,7 @@ class FieldNameSeeder extends CsvSeeder
 
         $l[] = [
             'ir_id' => 'chain2',
-            'ir_short' => 'Chain 2',
+            'ir_short' => 'Chain 2 (V Gene, CDR3)',
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
             'api_version' => $api_version,
@@ -212,10 +212,11 @@ class FieldNameSeeder extends CsvSeeder
     public function define_default_cell_fields()
     {
         $l = [];
-        $l[] = ['id' => 'cell_id_cell', 'visible' => true];
+        $l[] = ['id' => 'ir_cell_id_cell', 'visible' => true];
         $l[] = ['id' => 'chain1', 'visible' => true];
         $l[] = ['id' => 'chain2', 'visible' => true];
         $l[] = ['id' => 'expression_label_list', 'visible' => true];
+        $l[] = ['id' => 'cell_id_cell', 'visible' => true];
 
         foreach ($l as $i => $t) {
             FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);
