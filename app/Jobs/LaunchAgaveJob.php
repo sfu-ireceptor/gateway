@@ -131,24 +131,15 @@ class LaunchAgaveJob implements ShouldQueue
                 File::deleteDirectory($base_path . $t['base_name']);
             }
 
-
-            //$executionSystem = System::getCurrentSystem($this->gw_username);
-
-            //$storage_folder_path = storage_path() . '/app/public/';
-            //$archive_folder = basename($dataFilePath, '.zip') . '_output';
-            //$archive_folder_path = $storage_folder_path . $archive_folder;
+            // Create the folder for storing the output (job base_name with _output suffix) 
+            // from the job and store the name in the database
             $archive_folder = $t['base_name'] . '_output';
             $archive_folder_path = $base_path . $archive_folder;
             Log::debug('Creating archive folder: ' . $archive_folder_path);
             $old = umask(0);
-            #File::makeDirectory($archive_folder_path, 0770, true, true);
             mkdir($archive_folder_path, 0770);
-            //mkdir($archive_folder_path, 0777);
             umask($old);
-
             $job->input_folder = $archive_folder;
-            //$job->base_folder = $base_path;
-            //$job->zip_file = $t['zip_name'];
             $job->save();
 
             // refresh AGAVE token
