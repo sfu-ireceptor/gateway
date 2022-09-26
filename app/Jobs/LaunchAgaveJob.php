@@ -123,7 +123,7 @@ class LaunchAgaveJob implements ShouldQueue
                 Log::debug('Job input ' . $key . ' = ' . $value);
             }
 
-            // Since we have the ZIP file of the download, we don't need to keep the 
+            // Since we have the ZIP file of the download, we don't need to keep the
             // original data file directory. We are a bit careful that we don't remove
             // all of the data in $base_path if we have an obscure error condition where
             // $base_name is empty.
