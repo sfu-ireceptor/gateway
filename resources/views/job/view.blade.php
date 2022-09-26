@@ -108,14 +108,14 @@
 	    </div>
 	@endif
 
-        @if (count($job_summary) > 0)
+    <div class="job_summary">
+    @if (count($job_summary) > 0)
             <h2>Job Summary</h2>
-            <div class="job_summary">
             @foreach ($job_summary as $summary_line)
 		        {!! $summary_line !!}
             @endforeach
-	    </div>
 	@endif
+	</div>
 
 	@if (count($files) > 0 && $job->app == 'Third-party analysis')
 		<h2>BRepertoire</h2>
@@ -135,9 +135,10 @@
 	@endif
 
 
+	<div class="job_control">
+    <p>Hello job_control</p>
 	@if ($job->agave_id != '' && ($job->agave_status != 'FINISHED'  && $job->agave_status != 'FAILED' && $job->agave_status != 'STOPPED' ))
 		<h2>Job Control </h2>
-	    <div class="job_control">
 	    <p>
 		    <a href="/jobs/cancel/{{ $job->id }}">
 			    <button type="button" class="btn btn-default" aria-label="Cancel">
@@ -145,8 +146,9 @@
 			    </button>
 		    </a>
 	    </p>
-        </div>
     @endif
+    <p>Goodbye job_control</p>
+    </div>
 
 	<div class="job_steps">
 		@include('job/steps')
