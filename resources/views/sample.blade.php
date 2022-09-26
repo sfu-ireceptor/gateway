@@ -378,7 +378,7 @@
 								@include('columnSelector')
 
 								<div class="row">
-									<div class="col-md-6">
+									<div class="col-md-5">
 										<h3>
 											Individual Repertoires
 
@@ -392,7 +392,7 @@
 											</a>
 										</h3>
 									</div>
-									<div class="col-md-6 repertoires_button_container">
+									<div class="col-md-7 repertoires_button_container">
 										<a role="button" class="btn btn-primary btn-sequences browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
 											Browse sequences from {{ $nb_samples }} repertoires →
 										</a>
