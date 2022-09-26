@@ -9,7 +9,6 @@ use App\Query;
 use App\Sequence;
 use App\SequenceCell;
 use App\SequenceClone;
-use App\System;
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -131,7 +130,7 @@ class LaunchAgaveJob implements ShouldQueue
                 File::deleteDirectory($base_path . $t['base_name']);
             }
 
-            // Create the folder for storing the output (job base_name with _output suffix) 
+            // Create the folder for storing the output (job base_name with _output suffix)
             // from the job and store the name in the database
             $archive_folder = $t['base_name'] . '_output';
             $archive_folder_path = $base_path . $archive_folder;
