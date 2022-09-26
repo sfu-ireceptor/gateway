@@ -192,10 +192,8 @@ class Sequence
 
         Log::debug('Creating directory: ' . $folder_path);
         $old = umask(0);
-        //mkdir($folder_path, 0777);
         mkdir($folder_path, 0770);
         umask($old);
-        // File::makeDirectory($folder_path, 0777, true, true);
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
         $response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_sequences_by_rs);
