@@ -16,6 +16,7 @@
 
 			<h3 class="first">Filters</h3>
 
+
 			{{ Form::open(array('url' => $page_uri, 'role' => 'form', 'method' => 'post', 'class' => 'sample_search show_reloading_message')) }}
 				<input type="hidden" name="project_id_list" />
 				<input type="hidden" name="cols" value="{{ $current_columns_str }}" />
@@ -395,16 +396,18 @@
 										<a role="button" class="btn btn-primary btn-sequences browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
 											Browse sequences from {{ $nb_samples }} repertoires →
 										</a>
-									
-										<a href="/samples/tsv?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as TSV">
-											<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-											<span class="text">TSV</span>
-										</a>
 
-										<a href="/samples/json?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as JSON">
-											<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-											<span class="text">JSON</span>
-										</a>							
+										<div class="btn-group download_repertoires">
+											<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+												<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+												<span class="text">Download repertoire metadata</span>
+												<span class="caret"></span>
+											</button>
+											<ul class="dropdown-menu">
+												<li><a href="/samples/tsv?query_id={{ $sample_query_id }}">TSV</a></li>
+												<li><a href="/samples/json?query_id={{ $sample_query_id }}">JSON</a></li>
+											</ul>
+										</div>
 									</div>
 								</div>
 								
