@@ -74,6 +74,21 @@ class Agave
         //$this->jobParameters[$job_parameter['label']] = $job_parameter;
     }
 
+    public function maxRunTime()
+    {
+        return $this->maxRunTime;
+    }
+
+    public function processorsPerNode()
+    {
+        return $this->processorsPerNode;
+    }
+
+    public function memoryPerProcessor()
+    {
+        return $this->memoryPerProcessor;
+    }
+
     public function isUp()
     {
         $url = config('services.agave.tenant_url');
