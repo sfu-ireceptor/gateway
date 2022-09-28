@@ -407,7 +407,7 @@
 										    </div> </div> </div>
 							            @endforeach
                                         <!-- Job control parameters  -->
-                                        <!-- 
+                                        <!-- For now users can't change these...
                                         <div class="row"> <div class="col-md-10">
                                             <h3>Job control parameters
                                                 <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>Parameters to control job resources used</p>" data-trigger="hover" tabindex="0"> 
