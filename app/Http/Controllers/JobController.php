@@ -49,30 +49,42 @@ class JobController extends Controller
         $data['run_time'] = $job->totalTime();
         $data['job_url'] = $job->url;
         $data['job'] = $job;
+
+        // Create an Agave object to work with. This is constant across all jobs.
+        $agave = new Agave;
+        // Build the job_summary block HTML 
         $data['job_summary'] = [];
-        $data['job_control'] = '';
-        if ($job->agave_id != '') {
-            $agave_status = json_decode($this->getAgaveJobJSON($job->id));
-            $s = '<p><b>Job Parameters</b></p>';
-            $s .= 'Number of cores = ' . strval($agave_status->result->processorsPerNode) . '<br/>\n';
-            $s .= 'Maximum run time = ' . strval($agave_status->result->maxHours) . ' hours<br/>\n';
-            $data['job_summary'] = explode('\n', $s);
-        }
+        $s = '<p><b>Job Parameters</b></p>';
+        $s .= 'Number of cores = ' . strval($agave->processorsPerNode()) . '<br/>\n';
+        $s .= 'Maximum memory per core = ' . strval($agave->memoryPerProcessor()) . ' GB<br/>\n';
+        $s .= 'Maximum run time = ' . strval($agave->maxRunTime()) . ' hours<br/>\n';
+        $data['job_summary'] = explode('\n', $s);
 
-        if ($job->agave_id != '') {
-            $data['job_control'] = 'ACTIVE';
-        }
+        // Build the job control button HTML. This is rendered by the blade,
+        // and controls when the job control button is enabled or not.
+        $data['job_control_button'] = [];
+        $s = '';
+        $s .= '<a href="/jobs/cancel/'. $job->id . '">';
+        if ($job->agave_id == '')
+            $s .= '<button type="button" class="btn btn-primary" aria-label="Cancel" disabled="disabled">';
+        else
+            $s .= '<button type="button" class="btn btn-primary" aria-label="Cancel">';
+        $s .= '<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Cancel this job';
+        $s .= '</button></a>';
+        $data['job_control_button'] = explode('\n', $s);
 
+        // Build the job progress info
         $d = [];
         $d['job'] = $job;
         $data['progress'] = view()->make('job/progress', $d)->render();
 
+        // Build the job steps info
         $d = [];
         $d['steps'] = JobStep::findAllForJob($job_id);
         $data['steps'] = view()->make('job/steps', $d)->render();
 
+        // Encode the data and return it.
         $json = json_encode($data);
-
         return $json;
     }
 
@@ -318,17 +330,27 @@ class JobController extends Controller
 
         // Generate a set of job summary comments for the Tapis part of the job.
         $data['job_summary'] = [];
-        if ($job->agave_id != '') {
-            $agave_status = json_decode($this->getAgaveJobJSON($job->id));
-            $s = '<p><b>Job Parameters</b></p>';
-            $s .= 'Number of cores = ' . strval($agave_status->result->processorsPerNode) . '<br/>\n';
-            $s .= 'Maximum run time = ' . strval($agave_status->result->maxHours) . ' hours<br/>\n';
-            $data['job_summary'] = explode('\n', $s);
-        }
+        // Create an Agave object to work with. This is constant across all jobs.
+        $agave = new Agave;
+        // Build the job summary HTML. This is rendered by the blade.
+        $s = '<p><b>Job Parameters</b></p>';
+        $s .= 'Number of cores = ' . strval($agave->processorsPerNode()) . '<br/>\n';
+        $s .= 'Maximum memory per core = ' . strval($agave->memoryPerProcessor()) . ' GB<br/>\n';
+        $s .= 'Maximum run time = ' . strval($agave->maxRunTime()) . ' hours<br/>\n';
+        $data['job_summary'] = explode('\n', $s);
 
-        if ($job->agave_id != '') {
-            $data['job_control'] = 'ACTIVE';
-        }
+
+        // Build the job control button HTML. This is rendered by the blade,
+        // and controls when the job control button is enabled or not.
+        $s = '';
+        $s .= '<a href="/jobs/cancel/'. $job->id . '">';
+        if ($job->agave_id == '')
+            $s .= '<button type="button" class="btn btn-primary" aria-label="Cancel" disabled="disabled">';
+        else
+            $s .= '<button type="button" class="btn btn-primary" aria-label="Cancel">';
+        $s .= '<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Cancel this job';
+        $s .= '</button></a>';
+        $data['job_control_button'] = explode('\n', $s);
 
         // Generate some Error summary information if the job failed
         $output_file = 'irec-job-' . $job['id'] . '-' . $job['agave_id'] . '.out';
