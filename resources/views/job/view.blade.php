@@ -108,13 +108,12 @@
 	    </div>
 	@endif
 
+    <h2>Job Summary</h2>
+    <!-- <div class="job_summary" style="background-color: yellow;"> -->
     <div class="job_summary">
-    @if (count($job_summary) > 0)
-            <h2>Job Summary</h2>
             @foreach ($job_summary as $summary_line)
 		        {!! $summary_line !!}
             @endforeach
-	@endif
 	</div>
 
 	@if (count($files) > 0 && $job->app == 'Third-party analysis')
@@ -135,19 +134,36 @@
 	@endif
 
 
-	<div class="job_control">
-    <p>Hello job_control</p>
-	@if ($job->agave_id != '' && ($job->agave_status != 'FINISHED'  && $job->agave_status != 'FAILED' && $job->agave_status != 'STOPPED' ))
-		<h2>Job Control </h2>
+    <!-- <div class="job_control" style="background-color: yellow;"> -->
+    <div class="job_control">
+    @if ($job->agave_status != 'FINISHED'  && $job->agave_status != 'FAILED' && $job->agave_status != 'STOPPED' )
+
+	<h2>Job Control 
+</h2>
 	    <p>
+            <div class="job_control_button">
+                    @foreach ($job_control_button as $button_line)
+		                {!! $button_line !!}
+                    @endforeach
+<!--
 		    <a href="/jobs/cancel/{{ $job->id }}">
 			    <button type="button" class="btn btn-default" aria-label="Cancel">
-			      <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Cancel this job
+			    <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Cancel this job
 			    </button>
 		    </a>
+-->
+            </div>
+<!--
+            <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>Jobs can only be cancelled after Data Federation is complete</p>" data-trigger="hover" tabindex="0">
+            <span class="glyphicon glyphicon-question-sign">
+            </span></span>
+-->
 	    </p>
+        
+        @if ($job->agave_id == '' )
+            <p>Note: Jobs can only be cancelled after Data Federation is complete</p>
+        @endif
     @endif
-    <p>Goodbye job_control</p>
     </div>
 
 	<div class="job_steps">
