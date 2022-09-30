@@ -520,7 +520,7 @@ function gateway_split_repertoire(){
                 link_ids=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/preprocess-json.py ${repository_name}/${repertoire_dirname}/${cell_datafile} Cell ${LINK_FIELD} | sort -u | awk '{printf("%s ",$0)}'` )
                 if [ ${#link_ids[@]} != 1 ]
                 then
-                    echo "GW-ERROR: Analysis expexts a single ${LINK_FIELD} per Cell repertoire."
+                    echo "GW-ERROR: Analysis expects a single ${LINK_FIELD} per Cell repertoire."
                     echo "GW-ERROR: Link fields = ${link_ids[@]}."
                     continue
                 fi
