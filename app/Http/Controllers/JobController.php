@@ -52,7 +52,7 @@ class JobController extends Controller
 
         // Create an Agave object to work with. This is constant across all jobs.
         $agave = new Agave;
-        // Build the job_summary block HTML 
+        // Build the job_summary block HTML
         $data['job_summary'] = [];
         $s = '<p><b>Job Parameters</b></p>';
         $s .= 'Number of cores = ' . strval($agave->processorsPerNode()) . '<br/>\n';
@@ -64,11 +64,12 @@ class JobController extends Controller
         // and controls when the job control button is enabled or not.
         $data['job_control_button'] = [];
         $s = '';
-        $s .= '<a href="/jobs/cancel/'. $job->id . '">';
-        if ($job->agave_id == '')
+        $s .= '<a href="/jobs/cancel/' . $job->id . '">';
+        if ($job->agave_id == '') {
             $s .= '<button type="button" class="btn btn-primary" aria-label="Cancel" disabled="disabled">';
-        else
+        } else {
             $s .= '<button type="button" class="btn btn-primary" aria-label="Cancel">';
+        }
         $s .= '<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Cancel this job';
         $s .= '</button></a>';
         $data['job_control_button'] = explode('\n', $s);
@@ -85,6 +86,7 @@ class JobController extends Controller
 
         // Encode the data and return it.
         $json = json_encode($data);
+
         return $json;
     }
 
@@ -339,15 +341,15 @@ class JobController extends Controller
         $s .= 'Maximum run time = ' . strval($agave->maxRunTime()) . ' hours<br/>\n';
         $data['job_summary'] = explode('\n', $s);
 
-
         // Build the job control button HTML. This is rendered by the blade,
         // and controls when the job control button is enabled or not.
         $s = '';
-        $s .= '<a href="/jobs/cancel/'. $job->id . '">';
-        if ($job->agave_id == '')
+        $s .= '<a href="/jobs/cancel/' . $job->id . '">';
+        if ($job->agave_id == '') {
             $s .= '<button type="button" class="btn btn-primary" aria-label="Cancel" disabled="disabled">';
-        else
+        } else {
             $s .= '<button type="button" class="btn btn-primary" aria-label="Cancel">';
+        }
         $s .= '<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> Cancel this job';
         $s .= '</button></a>';
         $data['job_control_button'] = explode('\n', $s);
