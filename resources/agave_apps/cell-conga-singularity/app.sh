@@ -105,10 +105,12 @@ MANIFEST_FILE="AIRR-manifest.json"
 
 # Start
 printf "IR-INFO: \nIR-INFO: \n"
-printf "IR-INFO: START at $(date)\n\n"
-printf "IR-INFO: PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n\n"
-printf "IR-INFO: MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n\n"
-printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n\n"
+printf "IR-INFO: START at $(date)\n"
+printf "IR-INFO: PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n"
+printf "IR-INFO: MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n"
+printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
+printf "IR-INFO: "
+lscpu | grep "Model name"
 printf "IR-INFO: \nIR-INFO: \n"
 
 # This function is called by the iReceptor Gateway utilities function gateway_run_analysis
@@ -131,18 +133,21 @@ function run_analysis()
     local repertoire_file=$4
     local manifest_file=$5
     local analysis_type=$6
-    echo "IR-INFO: Running a Cell Repertoire Analysis with manifest ${manifest_file}"
+    echo "IR-INFO: Running a Cell Repertoire Analysis on ${repertoire_id}"
+    echo "IR-INFO:     Using manifest file ${manifest_file}"
 
     # Get a list of rearrangement files to process from the manifest.
     local cell_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "cell_file"` )
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not process manifest file ${manifest_file}"
+        echo "IR-ERROR: Processing for repertoire ${repertoire_id} not completed."
         return
     fi
     if [ ${#cell_files[@]} != 1 ]
     then
         echo "IR_ERROR: Conga cell analysis only works with a single cell file."
+        echo "IR-ERROR: Processing for repertoire ${repertoire_id} not completed."
         return
     fi
     local cell_file_count=${#cell_files[@]}
@@ -152,6 +157,7 @@ function run_analysis()
     if [ ${#gex_files[@]} != 1 ]
     then
         echo "IR_ERROR: Conga cell analysis only works with a single expression file."
+        echo "IR-ERROR: Processing for repertoire ${repertoire_id} not completed."
         return
     fi
     local gex_file=${gex_files[0]}
@@ -160,6 +166,7 @@ function run_analysis()
     if [ ${#rearrangement_files[@]} != 1 ]
     then
         echo "IR_ERROR: Conga cell analysis only works with a single rearrangement file."
+        echo "IR-ERROR: Processing for repertoire ${repertoire_id} not completed."
         return
     fi
     local rearrangement_file=${rearrangement_files[0]}
@@ -183,42 +190,85 @@ function run_analysis()
     echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
     echo "IR-INFO: Storing output in /data/${output_directory}"
 
-    # Generate equivalent 10X Cell files from AIRR Cell/GEX data for input into Conga.
-    ###python3 ${SCRIPT_DIR}/airr-to-10x.py ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
-    ###if [ $? -ne 0 ]
-    ###then
-        ###echo "IR-ERROR: Could not generate cell/expression data"
-        ###return
-    ###fi
-        
-    # Compress the file because Conga wants it that way!
-    ###gzip ${output_directory}/features.tsv ${output_directory}/barcodes.tsv ${output_directory}/matrix.mtx
-
     # Convert Rearrangement file to a 10X Contig file
     CONTIG_PREFIX=10x-contig
     python3 ${SCRIPT_DIR}/rearrangements-to-10x.py ${output_directory}/${rearrangement_file} ${output_directory}/${CONTIG_PREFIX}.csv
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not generate rearrangements"
+        echo "IR-ERROR: Processing for repertoire ${repertoire_id} (${title_string}) not completed."
         return
     fi
 
-    # Run Conga
-    singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/setup_10x_for_conga.py --filtered_contig_annotations_csvfile /data/${output_directory}/${CONTIG_PREFIX}.csv --organism human
+    # Get the field that links cell data to rearrangement data.
+    repertoire_link_field=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_field.py --json_filename ${repertoire_file} --repertoire_field data_processing.data_processing_id --repertoire_id ${repertoire_id}`
+
+    # Get the first N cellds from the cell data file. We use the adc_annotation_cell_id 
+    # field to check against the rerrangement cell_id.
+    cells_to_check=20
+    cell_ids=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/preprocess-json.py ${output_directory}/${cell_file} Cell adc_annotation_cell_id | head -${cells_to_check} | awk '{if (NR>1) printf("|%s", $1); else printf("%s", $1)}'`
+
+    # Get the column number of the v_call field in the rearrangement file.
+    column_header='v_call'
+    column_number=`cat ${output_directory}/${rearrangement_file} | head -n 1 | awk -F"\t" -v label=${column_header} '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+
+    # Check the first N cell's in the rearrangement file and extract the list
+    # of cell type in the data (IG or TR)
+    repertoire_locus=( `egrep "${cell_ids}" ${output_directory}/${rearrangement_file} | cut -f ${column_number} | tail --lines=+2 | awk '{printf("%s\n", substr($1,0,2))}' | sort -u | awk '{printf("%s  ",$0)}'` )
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: Could not get a cell type for repertoire ${repertoire_id}"
+        echo "IR-ERROR: Processing for repertoire ${repertoire_id} (${title_string}) not completed."
+        return
+    fi
+
+    # Check to see if there is only one cell type in the data.
+    if [ ${#repertoire_locus[@]} != 1 ]
+    then
+        echo "IR-ERROR: Conga cell analysis requires a single cell type (repertoire_id = ${repertoire_id}, cell types = ${repertoire_locus[@]})."
+        echo "IR-ERROR: Processing for repertoire ${repertoire_id} (${title_string}) not completed."
+        return
+    fi
+
+    # If there is only one, check to see if it is TR cell type, if so then we are good,
+    # if not it is an error.
+    repertoire_locus=${repertoire_locus[0]}
+
+    if [ "${repertoire_locus}" == "TR" ]
+    then
+        conga_type="human"
+    # Code to add when Conga's IG processing gets better.    
+    #elif [ "${repertoire_locus}" == "IG" ]
+    #then
+    #    conga_type="human_ig"
+    else
+        echo "IR-ERROR: Conga cell analysis can only run on TR repertoires (repertoire_id = ${repertoire_id}, cell type = ${repertoire_locus})."
+        echo "IR-ERROR: Processing for repertoire ${repertoire_id} (${title_string}) not completed."
+        return
+    fi
+    echo "IR-INFO: Column header = ${column_header}"
+    echo "IR-INFO: Column number = ${column_number}"
+    echo "IR-INFO: Locus = ${repertoire_locus[@]}"
+    echo "IR-INFO: Data Processing ID = ${repertoire_link_field}"
+    echo "IR-INFO: Conga analysis type = ${conga_type}"
+
+    # Run Conga setup for processing.
+    singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/setup_10x_for_conga.py --filtered_contig_annotations_csvfile /data/${output_directory}/${CONTIG_PREFIX}.csv --organism ${conga_type}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Conga setup_10x_for_conga failed on ${output_directory}/${CONTIG_PREFIX}.csv"
+        echo "IR-ERROR: Processing for repertoire ${repertoire_id} (${title_string}) not completed."
         return
     fi
 
-    ###singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/run_conga.py --all --organism human --clones_file /data/${output_directory}/${CONTIG_PREFIX}_tcrdist_clones.tsv --gex_data /data/${output_directory} --gex_data_type 10x_mtx --outfile_prefix /data/${output_directory}/${file_string}
-    singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/run_conga.py --all --organism human --clones_file /data/${output_directory}/${CONTIG_PREFIX}_tcrdist_clones.tsv --gex_data /data/${output_directory}/${gex_file} --gex_data_type h5ad --outfile_prefix /data/${output_directory}/${file_string}
+    # Run Conga proper on the data.
+    singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/run_conga.py --all --organism ${conga_type} --clones_file /data/${output_directory}/${CONTIG_PREFIX}_tcrdist_clones.tsv --gex_data /data/${output_directory}/${gex_file} --gex_data_type h5ad --outfile_prefix /data/${output_directory}/${file_string}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Conga failed on ${CONTIG_PREFIX}_tcrdist_clones.tsv and ${gex_file}"
+        echo "IR-ERROR: Processing for repertoire ${repertoire_id} not completed."
         return
     fi
-
 
     # Generate a summary HTML file for the Gateway to present this info to the user
     html_file=${output_directory}/${repertoire_id}.html
