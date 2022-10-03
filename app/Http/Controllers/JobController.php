@@ -614,10 +614,9 @@ class JobController extends Controller
                                                 $summary_file = $repository_dir . '/' . $file . '/' . $file . '.html';
                                             } elseif (File::exists($repository_dir . '/' . $file . '/' . $file . '.pdf')) {
                                                 $summary_file = $repository_dir . '/' . $file . '/' . $file . '.pdf';
-                                            } elseif (File::exists($analysis_folder . '/' . $file . '/' . $file . '.tsv')) {
-                                                $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.tsv';
+                                            } elseif (File::exists($repository_dir . '/' . $file . '/' . $file . '.tsv')) {
+                                                $summary_file = $repository_dir . '/' . $file . '/' . $file . '.tsv';
                                             }
-                                            Log::debug('summary_file = ' . $summary_file);
                                             $label_file = $repository_dir . '/' . $file . '/' . $file . '.txt';
                                             // If they exist, process them
                                             if (File::exists($summary_file) && File::exists($label_file)) {
