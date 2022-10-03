@@ -638,7 +638,7 @@ class JobController extends Controller
                     // Store the analysis summary in the data block returned to the Job view.
                     $data['analysis_summary'] = $analysis_summary;
                 } elseif ($job->agave_status == 'FINISHED') {
-                    // In the case where the job is FINISHED and there are no output files, 
+                    // In the case where the job is FINISHED and there are no output files,
                     // inform user data is not available. Note: this handles the case where
                     // the Gateway cleanup removes all the files but the directory structure
                     // still exists for some reason. So we check the count of
@@ -649,7 +649,7 @@ class JobController extends Controller
                 }
             } else {
                 // In the case where the job is FINISHED and there are no output files, tell the user
-                // that the data is no longer available. 
+                // that the data is no longer available.
                 $msg = "<b>NOTE</b>: The data from this analysis has been removed as the archive timeout has expired, please re-run this analysis to reproduce the data.<br/><br/>\n";
                 $msg .= "<em>Remember that these analyses can be resource intensive so please remember to download your analysis results once the analysis is finished if you want to maintain a copy! Re-running analysis jobs is a waste of computational resources and will negatively impact all users of the iReceptor Platform.</em><br/>\n";
                 $data['filesHTML'] = $msg;
