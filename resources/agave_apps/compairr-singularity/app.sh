@@ -167,7 +167,7 @@ function run_analysis()
         label_file=${output_directory}/${repertoire_id}.txt
         echo "${title_string}" > ${label_file}
 
-        # Copy the TSV file report to the repertoire_id.pdf file for the gateway to use as a summary.
+        # Copy the TSV file report to the repertoire_id.tsv file for the gateway to use as a summary.
         cp ${output_directory}/${file_string}.tsv ${output_directory}/${repertoire_id}.tsv
 
     done
@@ -188,6 +188,8 @@ function run_analysis()
 #
 # run_analysis() is defined above.
 gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
+gateway_run_analysis ${INFO_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+gateway_cleanup ${ZIP_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 # Make sure we are back where we started, although the gateway functions should
 # not change the working directory that we are in.
