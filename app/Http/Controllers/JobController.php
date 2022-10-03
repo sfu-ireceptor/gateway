@@ -360,6 +360,7 @@ class JobController extends Controller
         $data['error_summary'] = [];
         $err_path = $analysis_folder . '/' . $error_file;
         $out_path = $analysis_folder . '/' . $output_file;
+        $info_path = $analysis_folder . '/' . $info_file;
 
         // Error strings we expect to see if an error occured in an App
         $ireceptor_error = 'IR-ERROR';
@@ -386,6 +387,16 @@ class JobController extends Controller
                 $gw_output = [];
                 exec('grep ' . escapeshellarg($ireceptor_error) . ' ' . $out_path, $ir_output, $result_code);
                 exec('grep ' . escapeshellarg($gateway_error) . ' ' . $out_path, $gw_output, $result_code);
+                if (count($ir_output) > 0 || count($gw_output) > 0) {
+                    $job_errors = true;
+                }
+            }
+            // If the job info file exists and has an error message then we need to handle errors
+            if (File::exists($folder) && File::exists($out_path)) {
+                $ir_output = [];
+                $gw_output = [];
+                exec('grep ' . escapeshellarg($ireceptor_error) . ' ' . $info_path, $ir_output, $result_code);
+                exec('grep ' . escapeshellarg($gateway_error) . ' ' . $info_path, $gw_output, $result_code);
                 if (count($ir_output) > 0 || count($gw_output) > 0) {
                     $job_errors = true;
                 }
@@ -457,6 +468,45 @@ class JobController extends Controller
                 }
             }
 
+            // Repeat for the info for the job. Download if not here, add to messages
+            // if info available.
+            $info_response = '';
+            if (File::exists($folder) && ! File::exists($info_path)) {
+                // Tapis command to get the file.
+                $agave = new Agave;
+                $token = auth()->user()->password;
+                $info_response = $agave->getJobOutputFile($job->agave_id, $token, $info_file);
+                $info_object = json_decode($info_response);
+
+                // Catch the case when the info file doesn't exist on the Tapis compute side.
+                if ($info_object == null) {
+                    // Check for the analysis directory, create if it doesn't exist.
+                    if (! File::exists($analysis_folder)) {
+                        mkdir($analysis_folder);
+                    }
+                    // Write it to disk so it is cached.
+                    $filehandle = fopen($info_path, 'w');
+                    fwrite($filehandle, $info_response);
+                }
+            } elseif (File::exists($folder) && File::exists($info_path)) {
+                // If it already exists, then open it.
+                $filehandle = fopen($info_path, 'r');
+                if (filesize($info_path) > 0) {
+                    $info_response = fread($filehandle, filesize($info_path));
+                } else {
+                    $info_response = '';
+                }
+            }
+
+            // Extract the error messages from the App for the Gateway.
+            $s .= '<br/><p><b>iReceptor Gateway download errors (Download info file)</b></p>\n';
+            $string_list = explode(PHP_EOL, $info_response);
+            foreach ($string_list as $line) {
+                if (substr($line, 0, strlen($gateway_error)) == $gateway_error ||
+                    substr($line, 0, strlen($ireceptor_error)) == $ireceptor_error) {
+                    $s .= $line . '<br/>\n';
+                }
+            }
             // Extract the error messages from the App for the Gateway.
             $s .= '<br/><p><b>iReceptor Gateway errors (Analysis Error Log)</b></p>\n';
             $string_list = explode(PHP_EOL, $stderr_response);
@@ -533,7 +583,10 @@ class JobController extends Controller
                                     $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.html';
                                 } elseif (File::exists($analysis_folder . '/' . $file . '/' . $file . '.pdf')) {
                                     $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.pdf';
+                                } elseif (File::exists($analysis_folder . '/' . $file . '/' . $file . '.tsv')) {
+                                    $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.tsv';
                                 }
+                                Log::debug('summary_file = ' . $summary_file);
                                 // Build the label file name
                                 $label_file = $analysis_folder . '/' . $file . '/' . $file . '.txt';
                                 // If both files exist, build a summary object for the Gateway so that it can present
@@ -561,7 +614,10 @@ class JobController extends Controller
                                                 $summary_file = $repository_dir . '/' . $file . '/' . $file . '.html';
                                             } elseif (File::exists($repository_dir . '/' . $file . '/' . $file . '.pdf')) {
                                                 $summary_file = $repository_dir . '/' . $file . '/' . $file . '.pdf';
+                                            } elseif (File::exists($analysis_folder . '/' . $file . '/' . $file . '.tsv')) {
+                                                $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.tsv';
                                             }
+                                            Log::debug('summary_file = ' . $summary_file);
                                             $label_file = $repository_dir . '/' . $file . '/' . $file . '.txt';
                                             // If they exist, process them
                                             if (File::exists($summary_file) && File::exists($label_file)) {
@@ -583,14 +639,21 @@ class JobController extends Controller
                     // Store the analysis summary in the data block returned to the Job view.
                     $data['analysis_summary'] = $analysis_summary;
                 } elseif ($job->agave_status == 'FINISHED') {
-                    // In the case where the job is FINISHED and there are no output files, tell the user
-                    // that the data is no longer available. Note: the current Gateway cleanup removes all
-                    // the files but the directory structure still exists. So it has to be the count of
-                    // actual files that is used to determine if the analysis has been removed or not.
+                    // In the case where the job is FINISHED and there are no output files, 
+                    // inform user data is not available. Note: this handles the case where
+                    // the Gateway cleanup removes all the files but the directory structure
+                    // still exists for some reason. So we check the count of
+                    // actual files to determine if the analysis has been removed or not.
                     $msg = "<b>NOTE</b>: The data from this analysis has been removed as the archive timeout has expired, please re-run this analysis to reproduce the data.<br/><br/>\n";
                     $msg .= "<em>Remember that these analyses can be resource intensive so please remember to download your analysis results once the analysis is finished if you want to maintain a copy! Re-running analysis jobs is a waste of computational resources and will negatively impact all users of the iReceptor Platform.</em><br/>\n";
                     $data['filesHTML'] = $msg;
                 }
+            } else {
+                // In the case where the job is FINISHED and there are no output files, tell the user
+                // that the data is no longer available. 
+                $msg = "<b>NOTE</b>: The data from this analysis has been removed as the archive timeout has expired, please re-run this analysis to reproduce the data.<br/><br/>\n";
+                $msg .= "<em>Remember that these analyses can be resource intensive so please remember to download your analysis results once the analysis is finished if you want to maintain a copy! Re-running analysis jobs is a waste of computational resources and will negatively impact all users of the iReceptor Platform.</em><br/>\n";
+                $data['filesHTML'] = $msg;
             }
         }
 
