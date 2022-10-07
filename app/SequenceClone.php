@@ -493,16 +493,16 @@ class SequenceClone
         $s .= '<p><b>Metadata filters</b></p>' . "\n";
         Log::debug($sample_filters);
         if (count($sample_filters) == 0) {
-            $s .= 'None' . "\n";
+            $s .= 'None' . "<br/>\n";
         }
         foreach ($sample_filters as $k => $v) {
             if (is_array($v)) {
                 $v = implode(' or ', $v);
             }
             // use human-friendly filter name
-            $s .= __('short.' . $k) . ': ' . $v . "\n";
+            $s .= __('short.' . $k) . ': ' . $v . "<br/>\n";
         }
-        $s .= "\n";
+        $s .= "<br/>\n";
 
         $s .= '<p><b>Clone filters</b></p>' . "\n";
         unset($filters['ir_project_sample_id_list']);
@@ -528,16 +528,16 @@ class SequenceClone
 
         Log::debug($filters);
         if (count($filters) == 0) {
-            $s .= 'None' . "\n";
+            $s .= 'None' . "<br/>\n";
         }
         foreach ($filters as $k => $v) {
             if (is_array($v)) {
                 $v = implode(' or ', $v);
             }
             // use human-friendly filter name
-            $s .= __('short.' . $k) . ': ' . $v . "\n";
+            $s .= __('short.' . $k) . ': ' . $v . "<br/>\n";
         }
-        $s .= "\n";
+        $s .= "<br/>\n";
 
         $s .= '<p><b>Data/Repository Summary</b></p>' . "\n";
 
@@ -550,35 +550,34 @@ class SequenceClone
 
         $is_download_incomplete = ($nb_clones_total < $expected_nb_clones_total);
         if ($is_download_incomplete) {
-            $s .= 'Warning: some of the files appears to be incomplete:' . "\n";
-            $s .= 'Total: ' . $nb_clones_total . ' clones, but ' . $expected_nb_clones_total . ' were expected.' . "\n";
+            $s .= 'GW-ERROR: some of the files appears to be incomplete:' . "<br/>\n";
+            $s .= 'Total: ' . $nb_clones_total . ' clones, but ' . $expected_nb_clones_total . ' were expected.' . "<br/>\n";
         } else {
-            $s .= 'Total: ' . $nb_clones_total . ' clones' . "\n";
+            $s .= 'Total: ' . $nb_clones_total . ' clones' . "<br/>\n";
         }
 
         foreach ($file_stats as $t) {
             if ($is_download_incomplete && ($t['nb_clones'] < $t['expected_nb_clones'])) {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_clones'] . ' clones (incomplete, expected ' . $t['expected_nb_clones'] . ' clones) (from ' . $t['rs_url'] . ')' . "\n";
+                $s .= 'GW-ERROR: ' . $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_clones'] . ' clones (incomplete, expected ' . $t['expected_nb_clones'] . ' clones) (from ' . $t['rs_url'] . ')' . "<br/>\n";
             } else {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_clones'] . ' clones (from ' . $t['rs_url'] . ')' . "\n";
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_clones'] . ' clones (from ' . $t['rs_url'] . ')' . "<br/>\n";
             }
         }
-        $s .= "\n";
 
         if (! empty($failed_rs)) {
-            $s .= 'Warning: some files are missing because an error occurred while downloading clones from these repositories:' . "\n";
+            $s .= 'GW-ERROR: some files are missing because an error occurred while downloading clones from these repositories:' . "<br/>\n";
             foreach ($failed_rs as $rs) {
-                $s .= $rs->name . "\n";
+            $s .= 'GW-ERROR: ' . $rs->name . "<br/>\n";
             }
         }
 
-        $s .= "\n";
+        $s .= "<br/>\n";
 
         $s .= '<p><b>Source</b></p>' . "\n";
-        $s .= $url . "\n";
+        $s .= $url . "<br/>\n";
         $date_str_human = date('M j, Y', $now);
         $time_str_human = date('H:i T', $now);
-        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "\n";
+        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "<br/>\n";
 
         $info_file_path = $folder_path . '/info.txt';
         file_put_contents($info_file_path, $s);

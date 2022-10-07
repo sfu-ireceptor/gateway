@@ -584,7 +584,7 @@ class SequenceCell
             // use human-friendly filter name
             $s .= __('short.' . $k) . ': ' . $v . "</br>\n";
         }
-        $s .= "\n";
+        $s .= "</br>\n";
 
         $s .= '<p><b>Data/Repository Summary</b></p>' . "\n";
 
@@ -597,30 +597,29 @@ class SequenceCell
 
         $is_download_incomplete = ($nb_cells_total < $expected_nb_cells_total);
         if ($is_download_incomplete) {
-            $s .= 'Warning: some of the files appears to be incomplete:' . "</br>\n";
-            $s .= 'Total: ' . $nb_cells_total . ' cells, but ' . $expected_nb_cells_total . ' were expected.' . "\n";
+            $s .= 'GW-ERROR: some of the files appears to be incomplete:' . "</br>\n";
+            $s .= 'Total: ' . $nb_cells_total . ' cells, but ' . $expected_nb_cells_total . ' were expected.' . "</br>\n";
         } else {
             $s .= 'Total: ' . $nb_cells_total . ' cells' . "</br>\n";
         }
 
         foreach ($file_stats as $t) {
             if ($is_download_incomplete && ($t['nb_cells'] < $t['expected_nb_cells'])) {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_cells'] . ' cells (incomplete, expected ' . $t['expected_nb_cells'] . ' cells) (from ' . $t['rs_url'] . ')' . "</br>\n";
+                $s .= 'GW-ERROR: ' . $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_cells'] . ' cells (incomplete, expected ' . $t['expected_nb_cells'] . ' cells) (from ' . $t['rs_url'] . ')' . "</br>\n";
             } else {
                 $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_cells'] . ' cells (from ' . $t['rs_url'] . ')' . "</br>\n";
             }
         }
-        $s .= "\n";
 
         if (! empty($failed_rs)) {
-            $s .= 'Warning: some files are missing because an error occurred while downloading cells from these repositories:' . "</br>\n";
+            $s .= 'GW-ERROR: some files are missing because an error occurred while downloading cells from these repositories:' . "</br>\n";
             foreach ($failed_rs as $rs) {
-                $s .= $rs->name . "</br>\n";
+                $s .= 'GW-ERROR: ' . $rs->name . "</br>\n";
             }
         }
+        $s .= "</br>\n";
 
-        $s .= "\n";
-        $s .= '<p><b>Source</b></b>' . "\n";
+        $s .= '<p><b>Source</b></p>' . "\n";
         $s .= $url . "</br>\n";
         $date_str_human = date('M j, Y', $now);
         $time_str_human = date('H:i T', $now);

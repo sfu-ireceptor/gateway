@@ -575,7 +575,7 @@ class Sequence
 
         $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
         if ($is_download_incomplete) {
-            $s .= 'Warning: some of the files appears to be incomplete:' . "<br/>\n";
+            $s .= 'GW-ERROR: some of the downloaded files appear to be incomplete:' . "<br/>\n";
             $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "<br/>\n";
         } else {
             $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "<br/>\n";
@@ -583,16 +583,16 @@ class Sequence
 
         foreach ($file_stats as $t) {
             if ($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences) (from ' . $t['rs_url'] . ')' . "<br/>\n";
+                $s .= 'GW-ERROR: ' . $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences) (from ' . $t['rs_url'] . ')' . "<br/>\n";
             } else {
                 $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (from ' . $t['rs_url'] . ')' . "<br/>\n";
             }
         }
 
         if (! empty($failed_rs)) {
-            $s .= 'Warning: some files are missing because an error occurred while downloading sequences from these repositories:' . "<br/>\n";
+            $s .= 'GW-ERROR: some files are missing because an error occurred while downloading sequences from these repositories:' . "<br/>\n";
             foreach ($failed_rs as $rs) {
-                $s .= $rs->name . "<br/>\n";
+                $s .= 'GW-ERROR: ' . $rs->name . "<br/>\n";
             }
         }
         $s .= "<br/>\n";
