@@ -567,7 +567,7 @@ class SequenceClone
         if (! empty($failed_rs)) {
             $s .= 'GW-ERROR: some files are missing because an error occurred while downloading clones from these repositories:' . "<br/>\n";
             foreach ($failed_rs as $rs) {
-            $s .= 'GW-ERROR: ' . $rs->name . "<br/>\n";
+                $s .= 'GW-ERROR: ' . $rs->name . "<br/>\n";
             }
         }
 
