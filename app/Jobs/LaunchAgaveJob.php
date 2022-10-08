@@ -63,6 +63,19 @@ class LaunchAgaveJob implements ShouldQueue
     public function handle()
     {
         try {
+            // refresh AGAVE token
+            $agave = new Agave;
+            $user = User::where('username', $this->gw_username)->first();
+            if ($user == null) {
+                throw new \Exception('User ' . $this->gw_username . ' could not be found in local database.');
+            }
+            $rt = $user->refresh_token;
+            $r = $agave->renewToken($rt);
+            $user->updateToken($r);
+            $user->save();
+            $this->token = $user->password;
+
+            // Get the local Job
             $localJob = LocalJob::find($this->localJobId);
             $localJob->setRunning();
 
@@ -141,7 +154,7 @@ class LaunchAgaveJob implements ShouldQueue
             $job->input_folder = $archive_folder;
             $job->save();
 
-            // refresh AGAVE token
+            // refresh AGAVE token again, as downloads can take a long time.
             $agave = new Agave;
             $user = User::where('username', $this->gw_username)->first();
             if ($user == null) {

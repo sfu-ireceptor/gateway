@@ -9,6 +9,7 @@ use App\Jobs\PrepareDataForThirdPartyAnalysis;
 use App\JobStep;
 use App\LocalJob;
 use App\Query;
+use App\User;
 use App\System;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -103,9 +104,20 @@ class JobController extends Controller
     public function postLaunchApp(Request $request)
     {
         $request_data = $request->all();
-
+        // Get the username.
         $gw_username = auth()->user()->username;
-        $token = auth()->user()->password;
+
+        // refresh AGAVE token for the user
+        $agave = new Agave;
+        $user = User::where('username', $gw_username)->first();
+        if ($user == null) {
+            throw new \Exception('User ' . $gw_username . ' could not be found in local database.');
+        }
+        $rt = $user->refresh_token;
+        $r = $agave->renewToken($rt);
+        $user->updateToken($r);
+        $user->save();
+        $token = $user->password;
 
         // create systems
         System::createDefaultSystemsForUser($gw_username, $token);
