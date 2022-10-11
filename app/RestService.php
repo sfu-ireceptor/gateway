@@ -2338,7 +2338,7 @@ class RestService extends Model
                             unset($cell_list[$i]['cell_id']);
                             $cell_list[$i]['adc_annotation_cell_id'] = $cell_id;
                         }
-                        
+
                         $rs_filters_json = self::generate_or_json_query($cell_list, $query_parameters);
                         break;
                     }
