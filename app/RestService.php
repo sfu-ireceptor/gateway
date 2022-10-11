@@ -412,24 +412,23 @@ class RestService extends Model
     {
         // build array of filters
         $filter_list = [];
-        foreach ($filters as $k => $t) {
-            $filter1 = new \stdClass();
-            $filter1->op = '=';
-            $filter1->content = new \stdClass();
-            $filter1->content->field = 'repertoire_id';
-            $filter1->content->value = $t['repertoire_id'];
 
-            $filter2 = new \stdClass();
-            $filter2->op = '=';
-            $filter2->content = new \stdClass();
-            $filter2->content->field = 'cell_id';
-            $filter2->content->value = $t['cell_id'];
+        foreach ($filters as $field_list) {
+            $sub_filter_list = [];
+
+            foreach ($field_list as $k => $v) {
+                $filter = new \stdClass();
+                $filter->op = '=';
+                $filter->content = new \stdClass();
+                $filter->content->field = $k;
+                $filter->content->value = $v;
+
+                $sub_filter_list[] = $filter;
+            }
 
             $filter = new \stdClass();
             $filter->op = 'and';
-            $filter->content = [];
-            $filter->content[] = $filter1;
-            $filter->content[] = $filter2;
+            $filter->content = $sub_filter_list;
 
             $filter_list[] = $filter;
         }
@@ -2332,6 +2331,14 @@ class RestService extends Model
                 foreach ($cell_list_by_rs as $response) {
                     if ($response['rs']->id == $rs->id) {
                         $cell_list = $response['cell_list'];
+
+                        // use "adc_annotation_cell_id" as cell id connector
+                        foreach ($cell_list as $i => $cell) {
+                            $cell_id = $cell['cell_id'];
+                            unset($cell_list[$i]['cell_id']);
+                            $cell_list[$i]['adc_annotation_cell_id'] = $cell_id;
+                        }
+                        
                         $rs_filters_json = self::generate_or_json_query($cell_list, $query_parameters);
                         break;
                     }
