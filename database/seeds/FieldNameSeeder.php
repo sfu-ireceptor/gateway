@@ -139,31 +139,16 @@ class FieldNameSeeder extends CsvSeeder
 
         // cell fields
         $l[] = [
-            'ir_id' => 'v_call_1',
-            'ir_short' => 'V Gene With Allele (Chain 1)',
+            'ir_id' => 'chain1',
+            'ir_short' => 'Chain 1 (V Gene, CDR3)',
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
             'api_version' => $api_version,
         ];
 
         $l[] = [
-            'ir_id' => 'junction_aa_1',
-            'ir_short' => 'Junction/CDR3 AA (Chain 1)',
-            'ir_class' => 'Cell',
-            'ir_subclass' => 'Cell',
-            'api_version' => $api_version,
-        ];
-        $l[] = [
-            'ir_id' => 'v_call_2',
-            'ir_short' => 'V Gene With Allele (Chain 2)',
-            'ir_class' => 'Cell',
-            'ir_subclass' => 'Cell',
-            'api_version' => $api_version,
-        ];
-
-        $l[] = [
-            'ir_id' => 'junction_aa_2',
-            'ir_short' => 'Junction/CDR3 AA (Chain 2)',
+            'ir_id' => 'chain2',
+            'ir_short' => 'Chain 2 (V Gene, CDR3)',
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
             'api_version' => $api_version,
@@ -227,15 +212,11 @@ class FieldNameSeeder extends CsvSeeder
     public function define_default_cell_fields()
     {
         $l = [];
-        $l[] = ['id' => 'cell_id', 'visible' => true];
-        $l[] = ['id' => 'cell_id_cell', 'visible' => true];
-        $l[] = ['id' => 'expression_study_method_cell', 'visible' => true];
-        $l[] = ['id' => 'virtual_pairing_cell', 'visible' => true];
-        $l[] = ['id' => 'v_call_1', 'visible' => true];
-        $l[] = ['id' => 'junction_aa_1', 'visible' => true];
-        $l[] = ['id' => 'v_call_2', 'visible' => true];
-        $l[] = ['id' => 'junction_aa_2', 'visible' => true];
+        $l[] = ['id' => 'ir_cell_id_cell', 'visible' => true];
+        $l[] = ['id' => 'chain1', 'visible' => true];
+        $l[] = ['id' => 'chain2', 'visible' => true];
         $l[] = ['id' => 'expression_label_list', 'visible' => true];
+        $l[] = ['id' => 'cell_id_cell', 'visible' => true];
 
         foreach ($l as $i => $t) {
             FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);
@@ -245,10 +226,14 @@ class FieldNameSeeder extends CsvSeeder
     public function define_default_clone_fields()
     {
         $l = [];
+        $l[] = ['id' => 'ir_clone_id_clone', 'visible' => true];
+        $l[] = ['id' => 'clone_abundance_clone', 'visible' => true];
+        $l[] = ['id' => 'sequence_count_clone', 'visible' => true];
         $l[] = ['id' => 'v_call_clone', 'visible' => true];
         $l[] = ['id' => 'd_call_clone', 'visible' => true];
         $l[] = ['id' => 'j_call_clone', 'visible' => true];
         $l[] = ['id' => 'junction_aa_clone', 'visible' => true];
+        $l[] = ['id' => 'clone_id_clone', 'visible' => true];
 
         foreach ($l as $i => $t) {
             FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);

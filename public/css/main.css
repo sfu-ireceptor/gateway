@@ -1194,16 +1194,17 @@ fieldset[disabled] .btn-sequences.focus {
 .browse_sequences {
 }
 
-.download_repertoires {
-	margin-right: 7px;
-}
-
 .repertoires_button_container {
 	padding-top: 10px;
-	overflow: hidden;
+	overflow: visible;
 }
 
-.repertoires_button_container a {
+.repertoires_button_container > a {
+	float: right;
+}
+
+.download_repertoires {
+	margin-right: 7px;
 	float: right;
 }
 

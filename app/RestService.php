@@ -412,24 +412,23 @@ class RestService extends Model
     {
         // build array of filters
         $filter_list = [];
-        foreach ($filters as $k => $t) {
-            $filter1 = new \stdClass();
-            $filter1->op = '=';
-            $filter1->content = new \stdClass();
-            $filter1->content->field = 'repertoire_id';
-            $filter1->content->value = $t['repertoire_id'];
 
-            $filter2 = new \stdClass();
-            $filter2->op = '=';
-            $filter2->content = new \stdClass();
-            $filter2->content->field = 'cell_id';
-            $filter2->content->value = $t['cell_id'];
+        foreach ($filters as $field_list) {
+            $sub_filter_list = [];
+
+            foreach ($field_list as $k => $v) {
+                $filter = new \stdClass();
+                $filter->op = '=';
+                $filter->content = new \stdClass();
+                $filter->content->field = $k;
+                $filter->content->value = $v;
+
+                $sub_filter_list[] = $filter;
+            }
 
             $filter = new \stdClass();
             $filter->op = 'and';
-            $filter->content = [];
-            $filter->content[] = $filter1;
-            $filter->content[] = $filter2;
+            $filter->content = $sub_filter_list;
 
             $filter_list[] = $filter;
         }
@@ -1309,7 +1308,7 @@ class RestService extends Model
 
                         $filters = [];
                         $filters['data_processing_id_cell'] = $data_processing_id;
-                        $filters['cell_id_cell'] = $cell_id;
+                        $filters['ir_cell_id_cell'] = $cell_id;
 
                         // prepare parameters for each service
                         $t = [];
@@ -1325,7 +1324,7 @@ class RestService extends Model
 
                     $response_list_cells = self::doRequests($request_params);
 
-                    // add expression data to cell data
+                    // add cell data to expression data
                     $cell_list_merged = [];
                     foreach ($response['data']->CellExpression as $t) {
                         $cell_id = $t->cell_id;
@@ -1335,7 +1334,7 @@ class RestService extends Model
                             $cell_list = $response_cell['data']->Cell;
 
                             if (isset($cell_list[0])) {
-                                $cell_id_cell = $cell_list[0]->cell_id;
+                                $cell_id_cell = $cell_list[0]->adc_annotation_cell_id;
 
                                 if ($cell_id == $cell_id_cell) {
                                     $cell_data = $response_cell['data']->Cell[0];
@@ -1354,6 +1353,7 @@ class RestService extends Model
                 }
 
                 if (isset($response['data']->Cell)) {
+
                     // add expression data
                     $request_params = [];
                     foreach ($response['data']->Cell as $t) {
@@ -1414,7 +1414,6 @@ class RestService extends Model
                                 }
                             }
                         }
-
                         $cell_list_merged[] = $t;
                     }
 
@@ -1456,16 +1455,29 @@ class RestService extends Model
 
                         foreach ($response_list_sequences as $response_sequence) {
                             $sequence = $response_sequence['data']->Rearrangement;
-                            Log::debug('sequence len = ' . count($sequence));
                             if (count($sequence) > 0) {
                                 $cell_id_sequence = $sequence[0]->cell_id;
 
                                 if ($cell_id == $cell_id_sequence) {
-                                    $t->cell_id_cell = $cell_id;
-                                    $t->v_call_1 = isset($sequence[0]->v_call) ? $sequence[0]->v_call : '';
-                                    $t->junction_aa_1 = isset($sequence[0]->junction_aa) ? $sequence[0]->junction_aa : '';
-                                    $t->v_call_2 = isset($sequence[1]->v_call) ? $sequence[1]->v_call : '';
-                                    $t->junction_aa_2 = isset($sequence[1]->junction_aa) ? $sequence[1]->junction_aa : '';
+                                    $v_call_1 = isset($sequence[0]->v_call) ? $sequence[0]->v_call : '';
+                                    $junction_aa_1 = isset($sequence[0]->junction_aa) ? $sequence[0]->junction_aa : '';
+                                    $v_call_2 = isset($sequence[1]->v_call) ? $sequence[1]->v_call : '';
+                                    $junction_aa_2 = isset($sequence[1]->junction_aa) ? $sequence[1]->junction_aa : '';
+
+                                    // array_filter() removes any empty values from the array
+                                    $chain1 = implode(', ', array_filter([$v_call_1, $junction_aa_1]));
+                                    $chain2 = implode(', ', array_filter([$v_call_2, $junction_aa_2]));
+
+                                    // chain 1 is always IGH/TRA/TRG locus
+                                    // chain 2  is always IGK/IGL/TRB/TRD locus
+                                    if (Str::startsWith($v_call_2, ['IGH', 'TRA', 'TRG']) || Str::startsWith($v_call_1, ['IGK', 'IGL', 'TRB', 'TRD'])) {
+                                        $tmp_chain = $chain1;
+                                        $chain1 = $chain2;
+                                        $chain2 = $tmp_chain;
+                                    }
+
+                                    $t->chain1 = $chain1;
+                                    $t->chain2 = $chain2;
 
                                     break;
                                 }
@@ -2319,6 +2331,14 @@ class RestService extends Model
                 foreach ($cell_list_by_rs as $response) {
                     if ($response['rs']->id == $rs->id) {
                         $cell_list = $response['cell_list'];
+
+                        // use "adc_annotation_cell_id" as cell id connector
+                        foreach ($cell_list as $i => $cell) {
+                            $cell_id = $cell['cell_id'];
+                            unset($cell_list[$i]['cell_id']);
+                            $cell_list[$i]['adc_annotation_cell_id'] = $cell_id;
+                        }
+
                         $rs_filters_json = self::generate_or_json_query($cell_list, $query_parameters);
                         break;
                     }

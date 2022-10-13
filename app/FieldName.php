@@ -150,6 +150,7 @@ class FieldName extends Model
         $l['DataProcessing'] = 'Data Processing';
         $l['SampleProcessing'] = 'Sample Processing';
         $l['RawSequenceData'] = 'Raw Sequence Data';
+        $l['SequencingData'] = 'Sequencing Data';
         $l['PCRTarget'] = 'PCR Target';
 
         $l['Genotype'] = 'Receptor Genotype';
@@ -170,6 +171,8 @@ class FieldName extends Model
         $l['ir_rearrangement'] = 'iReceptor Rearrangement';
         $l['IR_RearrangementDB'] = 'iReceptor Rearrangement (database)';
         $l['IR_RearrangementPair'] = 'iReceptor Rearrangement (pair)';
+        $l['IR_CloneDB'] = 'iReceptor Clone (database)';
+        $l['IR_CellDB'] = 'iReceptor Cell (database)';
 
         $l['other'] = 'Other';
 
