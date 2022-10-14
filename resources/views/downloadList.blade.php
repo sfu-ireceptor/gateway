@@ -146,7 +146,7 @@
 							<a href="mailto:{{ config('ireceptor.email_support') }}">let us know</a> so we can help.
 						</em>
 					@elseif($d->isDone())
-						<a href="{{ $d->file_url }}" class="btn btn-primary download_repertoires" type="button" title="Download">
+						<a href="{{ $d->file_url }}" class="btn btn-primary" type="button" title="Download">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 							<span class="text">
 								Download

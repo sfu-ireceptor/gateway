@@ -1208,6 +1208,10 @@ fieldset[disabled] .btn-sequences.focus {
 	float: right;
 }
 
+.glyphicon-download-alt {
+	margin-right: 2px;
+}
+
 a.missing_data {
 	margin-left: 3px;
 	position: relative;
