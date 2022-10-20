@@ -717,8 +717,8 @@ class JobController extends Controller
 
         // If we found one, clean up
         if ($job != null) {
-            // Clean up the running AGAVE job if not finished.
-            if (isset($job['agave_status']) and $job['agave_status'] != 'FINISHED') {
+            // Clean up the running AGAVE job if it exists and is not finished.
+            if (isset($job['agave_id']) and isset($job['agave_status']) and $job['agave_status'] != 'FINISHED') {
                 Log::debug('Deleting AGAVE job ' . $job['agave_id']);
                 $agave = new Agave;
                 $token = auth()->user()->password;
@@ -738,8 +738,8 @@ class JobController extends Controller
 
         Log::debug($job);
         if ($job != null) {
-            // Clean up the running AGAVE job if not finished.
-            if (isset($job['agave_status']) and $job['agave_status'] != 'FINISHED' and $job['agave_status'] != 'STOPPED') {
+            // Clean up the running AGAVE it exists and the job if not finished.
+            if (isset($job['agave_id']) and isset($job['agave_status']) and $job['agave_status'] != 'FINISHED' and $job['agave_status'] != 'STOPPED') {
                 Log::debug('Deleting AGAVE job ' . $job['agave_id']);
                 $agave = new Agave;
                 $token = auth()->user()->password;
