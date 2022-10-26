@@ -1811,6 +1811,17 @@ form.column_selector {
 	font-size: 16px;
 }
 
+.repository_list {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: 30px;
+	justify-contents: space-evenly;
+}
+
+.repository {
+	position: relative;
+	min-height: 100%;
+}
 .repository .panel-default > .panel-heading {
 	position: relative;
 	background-color: white;
@@ -1869,6 +1880,10 @@ form.column_selector {
 	padding-bottom: 7px;
 	margin-top: 4px;
 
+}
+
+.repository .panel-default {
+	height: 100%;
 }
 
 .repository .panel-default > .panel-footer {
