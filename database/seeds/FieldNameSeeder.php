@@ -171,7 +171,7 @@ class FieldNameSeeder extends CsvSeeder
             'ir_subclass' => 'Cell',
             'api_version' => $api_version,
         ];
-        
+
         foreach ($l as $t) {
             FieldName::updateOrCreate(['ir_id' => $t['ir_id'], 'api_version' => $api_version], $t);
         }
