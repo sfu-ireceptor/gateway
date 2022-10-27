@@ -85,6 +85,7 @@ class FieldNameSeeder extends CsvSeeder
     public function add_gateway_specific_fields($api_version)
     {
         $l = [];
+
         $l[] = [
             'ir_id' => 'rest_service_name',
             'ir_short' => 'Repository',
@@ -103,7 +104,7 @@ class FieldNameSeeder extends CsvSeeder
             'api_version' => $api_version,
         ];
 
-        // HACK: override ir_class from "ir_repertoire" to "repertoire", so this field is displayed by default
+        // HACK: override ir_class from "IR_Repertoire" to "Repertoire", so this field is displayed by default
         $l[] = [
             'ir_id' => 'ir_sequence_count',
             'ir_short' => 'Sequences',
@@ -162,6 +163,15 @@ class FieldNameSeeder extends CsvSeeder
             'api_version' => $api_version,
         ];
 
+        // HACK: override ir_class from from "IR_Cell" to "Cell", so this field is displayed by default
+        $l[] = [
+            'ir_id' => 'ir_cell_id_cell',
+            'ir_short' => 'Tool Cell ID',
+            'ir_class' => 'Cell',
+            'ir_subclass' => 'Cell',
+            'api_version' => $api_version,
+        ];
+        
         foreach ($l as $t) {
             FieldName::updateOrCreate(['ir_id' => $t['ir_id'], 'api_version' => $api_version], $t);
         }
