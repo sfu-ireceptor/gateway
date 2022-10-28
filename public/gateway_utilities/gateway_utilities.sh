@@ -299,7 +299,8 @@ function gateway_split_repertoire(){
 #     $6 - Singularity image to use
 
     echo "GW-INFO: ========================================"
-    echo "GW-INFO: Splitting AIRR Repertoires"
+    echo -n "GW-INFO: Splitting AIRR Repertoires at "
+    date
     # The Gateway provides information about the download in the file info.txt and
     # an AIRR Manifest JSON file.
     local INFO_FILE=$1
@@ -309,7 +310,6 @@ function gateway_split_repertoire(){
     # We want a working directory for the processing
     local WORKING_DIR=$4
     # The type of analysis to do
-    echo "GW-INFO: Analysis type = ${5}"
     local ANALYSIS_TYPE=""
     if [ -z "$5" ]; then
         ANALYSIS_TYPE="rearrangement_file"
@@ -376,12 +376,14 @@ function gateway_split_repertoire(){
         # Get the repository name (FQDN) of the repository
         repository_name=`echo "$repository_url" | awk -F/ '{print $3}'`
         echo "GW-INFO:"
-        echo "GW-INFO: Processing data from repository ${repository_name}"
+        echo -n "GW-INFO: Processing data from repository ${repository_name} at "
+        date
         echo "GW-INFO: Repertoire file = ${repertoire_file}"
         echo "GW-INFO: Data file = ${data_file}"
 
         # Get an array of unique repertoire_ids from the data file
-        echo "GW-INFO:     Extracting ${SPLIT_FIELD} from $data_file"
+        echo -n "GW-INFO:     Extracting ${SPLIT_FIELD} from $data_file at "
+        date
         if [ ${ANALYSIS_TYPE} = "rearrangement_file" ]
         then
             # preprocess.py dumps a field of interest from a TSV data file. We want
@@ -419,8 +421,10 @@ function gateway_split_repertoire(){
         repertoire_count=0
         # For each repertoire_id, extract the data in a directory for that repertoire
         for repertoire_id in "${repertoire_ids[@]}"; do
+            echo -n "GW-INFO: Starting processing ${repertoire_id} from file ${data_file} at "
+            date
+
             # Get a directory name and make the directory
-            echo "GW-INFO: File $data_file has repertoire_id = ${repertoire_id}"
             repertoire_dirname=${repertoire_id}
             mkdir -p ${repository_name}/${repertoire_dirname}
             if [ $? -ne 0 ]
@@ -449,15 +453,9 @@ function gateway_split_repertoire(){
                 # Generate a file name for the TSV data for the repertoire.
                 repertoire_datafile=${repertoire_dirname}".tsv"
     
-                # Filter the input file $data_file and extract all records that have the given
-                # repertoire_id in the SPLIT_FIELD.
-                # Command line parameters: inputfile, field_name, field_value, outfile
-                python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/filter.py $data_file ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
-                if [ $? -ne 0 ]
-                then
-                    echo "GW-ERROR: Could not filter Rearrangement data for ${repertoire_id} from ${data_file}"
-                    continue
-                fi
+                # For rearrangements, we split data by repertoire in one pass, this is done
+                # below. It is very inefficient to traverse very large rearrangement files
+                # once for each repertoire. Here we just build the manifest file.
         
                 # Create the repertoire manifest file
                 echo '{"Info":{},"DataSets":[' > $REPERTOIRE_MANIFEST
@@ -551,6 +549,10 @@ function gateway_split_repertoire(){
 
             # Increase our count so we loop through the repertoires correctly.
             repertoire_count=$((repertoire_count+1))
+
+            # Print out a done message
+            echo -n "GW-INFO: Done processing ${repertoire_id} from file ${data_file} at "
+            date
         done
 
         #
@@ -605,6 +607,54 @@ function gateway_split_repertoire(){
             date
 
         fi
+
+        # Split Rearrangement files. Both Cell and Rearrangement analyses have rearrangement files to split.
+        # if [ ${ANALYSIS_TYPE} = "rearrangement_file" ] || [ ${ANALYSIS_TYPE} = "cell_file" ]
+        # For now we split cell rearrangements a repertoire at a time above - these files are small
+        # and require more work to split in one pass as we do here. This is an optimization that we
+        # should do.
+        if [ ${ANALYSIS_TYPE} = "rearrangement_file" ] 
+        then
+            echo -n "GW-INFO: Splitting Rearrangement file ${data_file} by ${SPLIT_FIELD} - "
+            date
+            # Create a temporary directory to work in
+            TMP_DIR=${PWD}/tmp
+            mkdir ${TMP_DIR}
+
+            # Create a header line for each repertoire based rearrangement file.
+            for repertoire_id in "${repertoire_ids[@]}"; do
+                echo "GW-INFO: Creating ${TMP_DIR}/${repertoire_id}.tsv"
+                head -n 1 ${data_file} > ${TMP_DIR}/${repertoire_id}.tsv
+            done
+
+            # Get the column for the SPLIT_FIELD
+            repertoire_id_column=`head -n 1 ${data_file} | awk -F"\t" -v label=${SPLIT_FIELD} '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+            if [ $? -ne 0 ]
+            then
+                echo "GW-ERROR: Could not find ${SPLIT_FIELD} column in ${data_file}"
+                continue
+            fi
+
+            # Split the file into N files based on SPLIT_FIELD.
+            # AWK is pretty efficient at this
+            awk -F '\t' -v tmpdir=${TMP_DIR} -v column=${repertoire_id_column} '{if (NR>1) {print $0 >> tmpdir"/"$column".tsv"}}' ${data_file}
+            if [ $? -ne 0 ]
+            then
+                echo "GW-ERROR: Could not split ${data_file} on field ${SPLIT_FIELD}"
+                continue
+            fi
+
+            # Move the file from its temp location to its final location.
+            for repertoire_id in "${repertoire_ids[@]}"; do
+                echo "GW-INFO: Moving ${TMP_DIR}/${repertoire_id}.tsv to ${repository_name}/${repertoire_id}/"
+                mv ${TMP_DIR}/${repertoire_id}.tsv ${repository_name}/${repertoire_id}/
+            done
+
+            # Remove the temporary files/directories that remain.
+            rm -rf ${TMP_DIR}
+            echo -n "GW-INFO: Done splitting Rearrangement file ${data_file} - "
+            date
+        fi
         echo "GW-INFO:" 
         echo "GW-INFO:" 
         count=$((count+1))
@@ -612,7 +662,8 @@ function gateway_split_repertoire(){
 
     # Return to the directory we started from.
     popd > /dev/null
-    echo "GW-INFO: Done splitting AIRR Repertoires"
+    echo -n "GW-INFO: Done splitting AIRR Repertoires at "
+    date
     echo "GW-INFO: ========================================"
 
 }
