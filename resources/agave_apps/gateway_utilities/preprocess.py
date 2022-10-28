@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     # Create a reader for the TSV file, readding chunk_size records per step.
     try:
-        airr_df_reader = pandas.read_csv(options.filename, sep='\t', chunksize=chunk_size)
+        airr_df_reader = pandas.read_csv(options.filename, sep='\t', chunksize=chunk_size, low_memory=False)
 
         # Loop over the file until donw
         for airr_df in airr_df_reader:
