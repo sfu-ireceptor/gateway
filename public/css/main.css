@@ -1208,6 +1208,10 @@ fieldset[disabled] .btn-sequences.focus {
 	float: right;
 }
 
+.glyphicon-download-alt {
+	margin-right: 2px;
+}
+
 a.missing_data {
 	margin-left: 3px;
 	position: relative;
@@ -1805,6 +1809,24 @@ form.column_selector {
 	margin-bottom: 30px;
 	margin-top: -20px;
 	font-size: 16px;
+}
+
+.repository_list {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: 30px;
+	justify-contents: space-evenly;
+	margin-bottom: 20px;
+}
+
+.repository {
+	position: relative;
+	min-height: 100%;
+}
+
+.repository .panel-default {
+	height: 100%;
+	margin-bottom: 0;
 }
 
 .repository .panel-default > .panel-heading {
