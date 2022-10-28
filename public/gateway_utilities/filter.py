@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
     # Create file reader.
     try:
-        airr_df_reader = pandas.read_csv(options.filename, sep='\t', chunksize=chunk_size, dtype= {'repertoire_id': str, 'data_processing_id': str})
+        airr_df_reader = pandas.read_csv(options.filename, sep='\t', chunksize=chunk_size, dtype= {'repertoire_id': str, 'data_processing_id': str},low_memory=False)
     except Exception as e:
         print('ERROR: Unable to read TSV file %s'%(options.filename))
         print('ERROR: Reason =' + str(e))

@@ -72,6 +72,12 @@ date
 wget -nv ${GATEWAY_URL}/singularity/${singularity_image}
 echo -n "IR-INFO: Singularity file downloaded = "
 ls ${singularity_image}
+if [ $? -ne 0 ]
+then
+    echo ""
+    echo "IR-ERROR: Could not download singularity image ${singularity_image}"
+    exit 1
+fi
 echo "IR-INFO: Done ownloading singularity image from the Gateway"
 date
 
