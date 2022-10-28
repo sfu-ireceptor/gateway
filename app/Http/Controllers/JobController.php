@@ -372,7 +372,7 @@ class JobController extends Controller
         $data['error_summary'] = [];
         $err_path = $analysis_folder . '/' . $error_file;
         $out_path = $analysis_folder . '/' . $output_file;
-        $info_path = $analysis_folder . '/' . $info_file;
+        $info_path = $analysis_folder . '/' . 'info.txt';
 
         // Error strings we expect to see if an error occured in an App
         $ireceptor_error = 'IR-ERROR';
@@ -487,7 +487,7 @@ class JobController extends Controller
                 // Tapis command to get the file.
                 $agave = new Agave;
                 $token = auth()->user()->password;
-                $info_response = $agave->getJobOutputFile($job->agave_id, $token, $info_file);
+                $info_response = $agave->getJobOutputFile($job->agave_id, $token, 'info.txt');
                 $info_object = json_decode($info_response);
 
                 // Catch the case when the info file doesn't exist on the Tapis compute side.
