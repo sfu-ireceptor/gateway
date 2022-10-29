@@ -185,10 +185,12 @@ class Agave
             $this->raiseExceptionIfAgaveError($response);
         } catch (ClientException $e) {
             Log::debug('$$$$$$$ exception ' . json_encode($e));
+
             return;
         }
 
         Log::debug('$$$$$$$ response = ' . json_encode($response));
+
         return $response;
     }
 
