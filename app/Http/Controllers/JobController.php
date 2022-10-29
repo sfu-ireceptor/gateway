@@ -140,9 +140,6 @@ class JobController extends Controller
             $appHumanName = '';
             $jobDescription = 'Data federation + submission to AGAVE';
 
-            // Create an Agave object to work with.
-            $agave = new Agave;
-
             // Get the App config for the app in question.
             Log::info('Processing App ' . $appId);
             $app_info = $agave->getAppTemplate($appId);
