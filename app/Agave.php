@@ -164,6 +164,7 @@ class Agave
 
     public function renewToken($refresh_token)
     {
+        Log::debug('$$$$$$$ refresh_token = ' . json_encode($refresh_token));
         $api_key = config('services.agave.api_key');
         $api_secret = config('services.agave.api_token');
 
@@ -180,11 +181,14 @@ class Agave
         try {
             $response = $this->client->request('POST', '/token', ['auth' => $auth, 'headers' => $headers, 'form_params' => $params]);
             $response = json_decode($response->getBody());
+            Log::debug('$$$$$$$ refresh response = ' . json_encode($response));
             $this->raiseExceptionIfAgaveError($response);
         } catch (ClientException $e) {
+            Log::debug('$$$$$$$ exception ' . json_encode($e));
             return;
         }
 
+        Log::debug('$$$$$$$ response = ' . json_encode($response));
         return $response;
     }
 
