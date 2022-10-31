@@ -198,7 +198,7 @@ class LaunchAgaveJob implements ShouldQueue
         // Print an error message
         Log::error($e->getMessage());
         Log::error($e);
-        
+
         // Mark the job as failed.
         $job = Job::find($this->jobId);
         $job->updateStatus('FAILED');
