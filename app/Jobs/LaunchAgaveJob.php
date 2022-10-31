@@ -179,10 +179,32 @@ class LaunchAgaveJob implements ShouldQueue
         } catch (Exception $e) {
             Log::error($e->getMessage());
             Log::error($e);
+            $job = Job::find($this->jobId);
             $job->updateStatus('FAILED');
 
-            $localJob = LocalJob::find($localJobId);
+            $localJob = LocalJob::find($this->localJobId);
             $localJob->setFailed();
         }
+    }
+
+    /**
+     * The job failed to process.
+     *
+     * @param  Exception  $exception
+     * @return void
+     */
+    public function failed(Exception $exception)
+    {
+        // Print an error message
+        Log::error($e->getMessage());
+        Log::error($e);
+        
+        // Mark the job as failed.
+        $job = Job::find($this->jobId);
+        $job->updateStatus('FAILED');
+
+        // Mark the local job as failed.
+        $localJob = LocalJob::find($this->localJobId);
+        $localJob->setFailed();
     }
 }
