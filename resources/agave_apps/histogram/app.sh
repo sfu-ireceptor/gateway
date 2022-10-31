@@ -203,6 +203,11 @@ function run_analysis()
     # Generate the histogram
     do_histogram ${VARNAME} $output_directory $file_string $title_string ${array_of_files[@]}
 
+    # Remove the TSV files, we don't want to return them
+    for filename in "${array_of_files[@]}"; do
+        rm -f $output_directory/$filename
+    done
+
     # Generate a label file for the Gateway to use to present this info to the user
     label_file=${output_directory}/${repertoire_id}.txt
     echo "${title_string}" > ${label_file}
@@ -283,15 +288,9 @@ elif [ "${split_repertoire}" = "False" ]; then
         echo "IR-ERROR: Could not create HTML asset directory"
     fi
 
-    # Go into the working directory
-    #pushd ${GATEWAY_ANALYSIS_DIR} > /dev/null
-
+    # Run the Histogram analysis.
     run_analysis  ${GATEWAY_ANALYSIS_DIR}/${outdir} "AIRRDataCommons" ${outdir} "NULL" ${GATEWAY_ANALYSIS_DIR}/${outdir}/${MANIFEST_FILE}
 
-    # Remove the copied ZIP file
-    #rm -r ${ZIP_FILE}
-
-    #popd > /dev/null
 else
     echo "IR-ERROR: Unknown repertoire operation ${split_repertoire}" >&2
     exit 1
