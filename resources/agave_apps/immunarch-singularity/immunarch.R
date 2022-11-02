@@ -29,9 +29,9 @@ exp_count_vis <- vis(exp_count)
 ggsave(paste(output_dir, "count.png", sep="/"), plot = exp_count_vis, device = "png")
 
 # distribution of CDR3 sequence lengths
-exp_len <- repExplore(data$data, .method = "len")
-exp_len_vis <- vis(exp_len)
-ggsave(paste(output_dir, "len.png", sep="/"), plot = exp_len_vis, device = "png")
+try(exp_len <- repExplore(data$data, .method = "len"))
+try(exp_len_vis <- vis(exp_len))
+try(ggsave(paste(output_dir, "len.png", sep="/"), plot = exp_len_vis, device = "png"))
 
 # distribution of CDR3 sequence lengths, by status
 #exp_len_grp <- repExplore(data$data, .method = "len")
