@@ -1819,7 +1819,7 @@ class RestService extends Model
                 } else {
                     $t['url'] = $rs->url . 'rearrangement';
                 }
-                
+
                 $t['params'] = self::generate_json_query($rs_filters, $query_parameters, $rs->api_version);
 
                 $t['timeout'] = config('ireceptor.service_file_request_timeout');
