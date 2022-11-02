@@ -1,0 +1,193 @@
+{
+  "name": "irplus-histogram-template",
+  "version": "1.0",
+  "label": "Histogram",
+  "defaultQueue": "default",
+  "defaultNodeCount": 1,
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": "4GB",
+  "defaultRequestedTime": "1:00:00",
+  "shortDescription": "Simple histogram statistics (gene usage, junction length).",
+  "longDescription": "iReceptor+ simple histogram app performaing basic statistics on the chosen AIRR field.",
+  "executionType": "HPC",
+  "executionSystem": "FILLED IN BY GATEWAY",
+  "parallelism": "SERIAL",
+  "checkpointable": false,
+  "deploymentPath": "FILLED IN BY GATEWAY",
+  "deploymentSystem": "FILLED IN BY GATEWAY",
+  "templatePath": "app.sh",
+  "testPath": "test.sh",
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "modules": [
+    "purge"
+  ],
+  "inputs": [
+    {
+      "id": "download_file",
+      "details": {
+        "label": "",
+        "description": "File downloaded from the iReceptor Gateway",
+        "showAttribute": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/Json"
+        ],
+        "fileTypes": [
+          "text-0"
+        ]
+      },
+      "value": {
+        "default": "",
+        "visible": true,
+        "required": true
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "creator",
+      "value": {
+        "visible": false,
+        "required": true,
+        "type": "string",
+        "default": ""
+      },
+      "details": {
+        "label": "Creator",
+        "description": "Username that created this job."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
+    },
+    {
+      "id": "split_repertoire",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "default": "True"
+      },
+      "details": {
+        "label": "Split Repertoire (True/False)?",
+        "description": "Split data based on Repertoire ID?"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
+    },
+    {
+      "id": "variable",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "default": ""
+      },
+      "details": {
+        "label": "Variable",
+        "description": "Variable on which to perform the histogram."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
+    },
+    {
+      "id": "num_values",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "default": "-1"
+      },
+      "details": {
+        "label": "Number of values",
+        "description": "Number of values to return (sorted, return the largest N)."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
+    },
+    {
+      "id": "sort_values",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "default": "TRUE"
+      },
+      "details": {
+        "label": "Sort the values?",
+        "description": "Sort the values before plotting."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
+    },
+    {
+      "id": "ir_gateway_url",
+      "value": {
+        "visible": false,
+        "required": true,
+        "type": "string",
+        "default": ""
+      },
+      "details": {
+        "label": "Gateway URL (hidden)",
+        "description": "The URL for the Gateway. Used to get resources to run jobs (singularity images, gateway_utilities). This is set by the Gateway and is not changed by the user."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
+    },
+    {
+      "id": "ir_hints",
+      "value": {
+        "visible": false,
+        "required": true,
+        "type": "string",
+        "default": "{\"object\":\"Rearrangement\"}"
+      },
+      "details": {
+        "label": "iReceptor Gateway hints (hidden) ",
+        "description": "JSON string that is used to provide hints to the gateway on when to use an App."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xsd:string"
+        ]
+      }
+    }
+  ]
+}

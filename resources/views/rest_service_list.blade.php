@@ -25,7 +25,7 @@
 						     			{{ $rs_data['rs']->display_name }}
 						     		@endisset
 						     	</span>
-						     	<em>{{ human_number($rs_data['total_filtered_sequences']) }} sequences</em>
+						     	<em>{{ human_number($rs_data['total_filtered_sequences']) }} {{ str_plural($tab, $rs_data['total_filtered_sequences']) }}</em>
 							    <ul>
 						 			@foreach ($rs_data['study_tree'] as $lab)
 										<li class="lab_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-folder-open"}'>
@@ -38,7 +38,7 @@
 												@endif
 											</span>
 											@if(isset($lab['total_sequences']) && $lab['total_sequences'] > 0)
-												<em>{{ human_number($lab['total_sequences']) }} sequences</em>
+												<em>{{ human_number($lab['total_sequences']) }} {{ str_plural($tab, $lab['total_sequences']) }}</em>
 											@endif
 										    <ul>
 										    	@isset($lab['studies'])
@@ -56,7 +56,7 @@
 																	</span>
 																@endif
 																@if ($study['total_sequences'] > 0)
-																	<em>{{ human_number($study['total_sequences']) }} sequences</em>
+																	<em>{{ human_number($study['total_sequences']) }} {{ str_plural($tab, $study['total_sequences']) }}</em>
 																@endif
 															</span>
 														</li>
@@ -70,6 +70,8 @@
 						@endforeach
 					</ul>
 				</div>
+
+				<p class="repositories"><a href="/repositories">See all AIRR Data Commons repositories queried by the iReceptor Gateway</a></p>
 			</div>
 
 	      	<div class="modal-footer">

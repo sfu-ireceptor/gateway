@@ -13,6 +13,7 @@ class SequenceTest extends TestCase
         'id' => 1,
         'name' => 'Fake Rest Service',
         'display_name' => 'Fake Rest Service',
+        'api_version' => '1.0',
     ];
 
     protected static $query_params = [

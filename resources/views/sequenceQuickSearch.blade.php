@@ -3,10 +3,12 @@
 @section('title', 'Sequence Quick Search')
 
 @section('content')
-<div class="container-fluid sequence_container">
-
+<div class="banner_title sequences">
 	<h1>Sequence Quick Search</h1>
 	<p class="sh1">Filter by sequence and sequence annotation features (e.g. Junction)</p>
+</div>
+
+<div class="container-fluid sequence_container">
 
 	<div class="row loading_contents">
 		<div class="col-md-2 filters">
@@ -19,33 +21,38 @@
 					<input type="hidden" name="{{$hf['name']}}" value="{{$hf['value']}}">
 				@endforeach
 
-					
-				<div class="panel panel-default">
-					<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-						<div class="panel-body">
-							<div class="form-group">
-								{{ Form::label('junction_aa', __('short.junction_aa')) }}
-								@include('help', ['id' => 'junction_aa'])
-								{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided, minimum of 4 AA required). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
-							</div>
-							<p>
-								@if (isset($iedb_info) && $iedb_info)
-									@foreach ($iedb_data as $t)
-										<a href="{{ $t['url'] }}" target="_blank">{{ $t['id'] }}</a>
+				<div>
+					{{ Form::label('junction_aa', __('short.junction_aa')) }}
+					@include('help', ['id' => 'junction_aa'])
+					{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided, minimum of 4 AA required). It takes several minutes if millions of sequences are found.', 'data-placement' => 'bottom')) }}
+
+					@if (isset($iedb_info) && $iedb_info)
+						<div class="panel panel-primary iedb">
+							<div class="panel-body">
+								<p>
+									<code>{{ $filter_fields['junction_aa'] }}</code>
+									has known specificity to antigens from the following organisms:
+								</p>
+								<ul>
+									@foreach ($iedb_organism_list as $i => $o)
+										<li><span title="{{ $iedb_organism_list_extra[$i] }}">{{ $iedb_organism_list_short[$i] }}</span></li>
 									@endforeach
-								@endif
-							</p>
+								</ul>
+								<p>
+									<a href="https://www.iedb.org/result_v3.php" class="external" target="_blank">
+										Find more information with a <br />"Receptor Search" at IEDB.org
+									</a>
+								</p>
+							</div>
 						</div>
-					</div>
+					@endif
 				</div>
 
-				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+				<div class="panel-group sqs_sample_filters" id="accordion" role="tablist" aria-multiselectable="true">
 					<div class="panel panel-default">
 						<div class="panel-heading" role="tab" id="headingThree">
 							<h4 class="panel-title">
-								<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
 									Sample level filters
-								</a>
 							</h4>
 						</div>
 						<div id="collapseThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
@@ -54,13 +61,13 @@
 							    <div class="form-group">
 									{{ Form::label('organism', __('short.organism')) }}
 									@include('help', ['id' => 'organism'])
-									{{ Form::select('organism', $subject_organism_list, '', array('class' => 'form-control')) }}
+									{{ Form::select('organism_id[]', $subject_organism_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 								<div class="form-group">
 									{{ Form::label('cell_subset', __('short.cell_subset')) }}
 									@include('help', ['id' => 'cell_subset'])
-								    {{ Form::select('cell_subset[]', $cell_type_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+								    {{ Form::select('cell_subset_id[]', $cell_type_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 							</div>
@@ -111,7 +118,7 @@
 				@if ( ! empty($filter_fields))
 					<div class="active_filters">
 						<h3>Active filters</h3>
-
+						
 						@foreach($filter_fields as $filter_key => $filter_value)
 							<a title= "@lang('short.' . $filter_key): {{ $filter_value }}" href="/sequences-quick-search?query_id={{ $query_id }}&amp;remove_filter={{ $filter_key }}" class="label label-primary">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -158,7 +165,7 @@
 					<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Search results statistics</h3>
 					<div class="statistics">
 						<p>
-							<strong>
+							<strong class="summary">
 								<span title="{{ number_format($total_filtered_sequences) }}">
 									{{ number_format($total_filtered_sequences) }} sequences
 								</span>
@@ -176,18 +183,19 @@
 						</p>
 						
 						<!-- repos/labs/studies details popup -->
-						@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
+						@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies, 'tab' => 'sequence'])
 
-						<div id="charts" class="charts">
+						<div class="charts">
 							<div class="row">
-								<div class="col-md-2 chart" id="chart1"></div>
-								<div class="col-md-2 chart" id="chart2"></div>
-								<div class="col-md-2 chart" id="chart3"></div>
-								<div class="col-md-2 chart" id="chart4"></div>
-								<div class="col-md-2 chart" id="chart5"></div>
-								<div class="col-md-2 chart" id="chart6"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart1']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart2']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart3']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart4']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart5']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart6']) !!}"></div>
 							</div>
-						</div>										
+						</div>	
+													
 					</div>
 				@endif
 
@@ -199,7 +207,7 @@
 							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
 						</a>
 					@else
-						<a href="/sequences-download?query_id={{ $download_query_id }}&amp;n={{ $total_filtered_sequences }}&amp;page=sequences-quick-search" class="btn btn-primary pull-right download_sequences">
+						<a href="/sequences-download?query_id={{ $download_query_id }}&amp;n={{ $total_filtered_sequences }}&amp;page=sequences-quick-search&amp;page_query_id={{ $query_id }}" class="btn btn-sequences pull-right download_sequences">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences <strong>{{ $download_time_estimate ? '(will take up to ' . $download_time_estimate . ')' : ''}}</strong></span>
 						</a>
@@ -223,35 +231,7 @@
 					</h3>
 					
 					<!-- table column selector -->
-					<div class="collapse" id="column_selector">
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<h4 class="panel-title">
-									Customize displayed columns
-									<button class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
-										<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-						  				Close
-									</button>
-								</h4>
-							</div>
-					  		<div class="panel-body">
-								<form class="column_selector">
-									@foreach ($field_list_grouped as $field_group)
-										<h5>{{ $field_group['name'] }}</h5>
-										@foreach ($field_group['fields'] as $field)
-											<div class="checkbox">
-												<label>
-													<input name="table_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'col_' . $field['ir_id']}}" {{ in_array($field['ir_id'], $current_columns) ? 'checked="checked"' : '' }}/>
-													@include('help', ['id' => $field['ir_id']])
-													@lang('short.' . $field['ir_id'])
-												</label>
-											</div>		
-										@endforeach
-									@endforeach
-								</form>
-					  		</div>
-						</div>
-					</div>
+					@include('columnSelector')
 
 					<!-- sequence data -->
 					<table class="table table-striped table-condensed much_data table-bordered">
@@ -310,26 +290,4 @@
 @include('reloadingMessage')
 @include('loadingMessage')
 
-<script>
-	var graphFields = [
-	        "study_title",
-	        "subject_id",
-	        "sample_id",
-	        "disease_diagnosis", 
-	        "tissue",
-	        "pcr_target_locus"
-	    ];
-	var graphNames = [
-	        "@lang('short.study_title')", 
-	        "@lang('short.subject_id')",
-	        "@lang('short.sample_id')",
-	        "@lang('short.disease_diagnosis')",
-	        "@lang('short.tissue')", 
-	        "@lang('short.pcr_target_locus')"
-	    ];
-
-	var graphInternalLabels = true;
-	var graphCountField = "ir_filtered_sequence_count";
-	var graphData = {!! $sample_list_json !!};
-</script>
 @stop

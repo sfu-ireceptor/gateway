@@ -4,12 +4,15 @@
 @section('sample_query_id', $sample_query_id)
 
 @section('content')
-<div class="container-fluid sequence_container">
 
+<div class="banner_title sequences">
 	<h1>2. Sequence Search</h1>
 	<p class="sh1">Filter by sequence and sequence annotation feature</p>
+</div>
 
-	<div class="row">		
+<div class="container-fluid sequence_container">
+
+	<div class="row">
 		<div class="col-md-2 filters">
 
 			<h3 class="first">Filters</h3>
@@ -74,6 +77,27 @@
 									@include('help', ['id' => 'junction_aa'])
 									{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided, minimum of 4 AA required). Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 								</div>
+
+								@if (isset($iedb_info) && $iedb_info)
+									<div class="panel panel-primary iedb">
+										<div class="panel-body">
+											<p>
+												<code>{{ $filter_fields['junction_aa'] }}</code>
+												has known specificity to antigens from the following organisms:
+											</p>
+											<ul>
+												@foreach ($iedb_organism_list as $i => $o)
+													<li><span title="{{ $iedb_organism_list_extra[$i] }}">{{ $iedb_organism_list_short[$i] }}</span></li>
+												@endforeach
+											</ul>
+											<p>
+												<a href="https://www.iedb.org/result_v3.php" class="external" target="_blank">
+													Find more information with a <br />"Receptor Search" at IEDB.org
+												</a>
+											</p>
+										</div>
+									</div>
+								@endif
 
 								<div class="form-group">
 									{{ Form::label('junction_aa_length', __('short.ir_junction_aa_length')) }}
@@ -213,7 +237,7 @@
 					<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Search results statistics</h3>
 					<div class="statistics">
 						<p>
-							<strong>
+							<strong class="summary">
 								<span title="{{ number_format($total_filtered_sequences) }}">
 									{{ number_format($total_filtered_sequences) }} sequences
 								</span>
@@ -231,18 +255,19 @@
 						</p>
 						
 						<!-- repos/labs/studies details popup -->
-						@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
+						@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies, 'tab' => 'sequence'])
 
-						<div id="charts" class="charts">
+						<div class="charts">
 							<div class="row">
-								<div class="col-md-2 chart" id="chart1"></div>
-								<div class="col-md-2 chart" id="chart2"></div>
-								<div class="col-md-2 chart" id="chart3"></div>
-								<div class="col-md-2 chart" id="chart4"></div>
-								<div class="col-md-2 chart" id="chart5"></div>
-								<div class="col-md-2 chart" id="chart6"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart1']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart2']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart3']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart4']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart5']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart6']) !!}"></div>
 							</div>
-						</div>										
+						</div>
+									
 					</div>
 				@endif 
 				
@@ -253,7 +278,7 @@
 							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
 						</a>
 					@else
-						<a href="/sequences-download?query_id={{ $query_id }}&amp;n={{ $total_filtered_sequences }}&amp;page=sequences" class="btn btn-primary pull-right download_sequences">
+						<a href="/sequences-download?query_id={{ $query_id }}&amp;n={{ $total_filtered_sequences }}&amp;page=sequences" class="btn btn-sequences pull-right download_sequences">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences <strong>{{ $download_time_estimate ? '(will take up to ' . $download_time_estimate . ')' : ''}}</strong></span>
 						</a>
@@ -277,35 +302,8 @@
 						</h3>
 
 						<!-- table column selector -->
-						<div class="collapse" id="column_selector">
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title">
-										Customize displayed columns
-										<button class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
-											<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-											Close
-										</button>
-									</h4>
-								</div>
-								<div class="panel-body">
-									<form class="column_selector">
-										@foreach ($field_list_grouped as $field_group)
-											<h5>{{ $field_group['name'] }}</h5>
-											@foreach ($field_group['fields'] as $field)
-												<div class="checkbox">
-													<label>
-														<input name="table_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'col_' . $field['ir_id']}}" {{ in_array($field['ir_id'], $current_columns) ? 'checked="checked"' : '' }}/>
-														@include('help', ['id' => $field['ir_id']])
-														@lang('short.' . $field['ir_id'])
-													</label>
-												</div>
-											@endforeach
-										@endforeach
-									</form>
-								</div>
-							</div>
-						</div>
+						@include('columnSelector')
+
 
 						<!-- sequence data -->
 						<table class="table table-striped table-condensed much_data table-bordered">
@@ -362,116 +360,86 @@
 						<!-- apps -->
 						<h2>Analysis Apps</h2>
 
-						@if (isset($system) && $total_filtered_sequences <= config('ireceptor.sequences_download_limit'))
+						@if ($total_filtered_sequences <= config('ireceptor.sequences_download_limit'))
 
 							<div role="tabpanel" class="analysis_apps_tabpanel">
 								<!-- Tab links -->
 								<ul class="nav nav-tabs" role="tablist">
-									<li role="presentation" class="active"><a href="#app1" aria-controls="app1" role="tab" data-toggle="tab">Histogram</a></li>
-									<li role="presentation"><a href="#app3" aria-controls="app3" role="tab" data-toggle="tab">Stats</a></li>
-									<li role="presentation"><a href="#app5" aria-controls="app5" role="tab" data-toggle="tab">Shared Junction</a></li>
-{{-- 									<li role="presentation"><a href="#app6" aria-controls="app6" role="tab" data-toggle="tab">Genoa</a></li> --}}
-									<li role="presentation"><a href="#app4" aria-controls="app4" role="tab" data-toggle="tab">Third-party analysis</a></li>
+							            @php $count = 0 @endphp
+								    @foreach ($app_list as $app)
+						                        @if ( $count === 0)
+									    <li role="presentation" class="active"><a href="#{{$app['app_tag']}}" aria-controls="{{$app['app_tag']}}" role="tab" data-toggle="tab">{{$app['name']}}</a></li>
+                                                                        @else
+									    <li role="presentation"><a href="#{{$app['app_tag']}}" aria-controls="{{$app['app_tag']}}" role="tab" data-toggle="tab">{{$app['name']}}</a></li>
+                                                                        @endif
+							                @php $count = $count + 1 @endphp
+                                                                    @endforeach
 								</ul>
 
 								<!-- Tab panes -->
 								<div class="tab-content">
-
-									<div role="tabpanel" class="tab-pane active" id="app1">
+									@php $count = 0 @endphp
+								    @foreach ($app_list as $app)
+						                @if ( $count === 0)
+									      <div role="tabpanel" class="tab-pane active" id="{{$app['app_tag']}}">
+                                        @else
+									      <div role="tabpanel" class="tab-pane" id="{{$app['app_tag']}}">
+                                        @endif
 						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 1) }}
+										{{ Form::hidden('filters_json', $filters_json) }}
+										{{ Form::hidden('data_url', $url) }}
+										{{ Form::hidden('app_id', $app['app_id']) }}
+                                        <!-- Application parameters  -->
+                                        <div class="row"> <div class="col-md-10">
+										    <h3>{{$app['description']}} <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$app['info']}}</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span></h3>
+                                        </div> </div>
+								        @foreach ($app['parameter_list'] as $parameter)
+									  	    <div class="row"> <div class="col-md-3"> <div class="form-group">
+											    {{ Form::label($parameter['label'], $parameter['name']) }}
+                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$parameter['description']}}</p>" data-trigger="hover" tabindex="0">
+                                                <span class="glyphicon glyphicon-question-sign">
+                                                </span></span>
+						                        @if ( ! empty($parameter['choices']) )
+												    {{ Form::select($parameter['label'], $parameter['choices'], '', array('class' => 'form-control')) }}
+                                                @else
+									                {{ Form::text($parameter['label'], $parameter['default'], array('class' => 'form-control')) }}
+                                                @endif
+										    </div> </div> </div>
+							            @endforeach
+                                        <!-- Job control parameters  -->
+                                        <!-- For now users can't change these...
+                                        <div class="row"> <div class="col-md-10">
+                                            <h3>Job control parameters
+                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>Parameters to control job resources used</p>" data-trigger="hover" tabindex="0"> 
+                                                <span class="glyphicon glyphicon-question-sign">
+                                                </span></span>
+                                            </h3>
+                                        </div> </div>
+								        @foreach ($app['job_parameter_list'] as $job_parameter)
+									  	    <div class="row"> <div class="col-md-3"> <div class="form-group">
+												{{ Form::label($job_parameter['label'], $job_parameter['name']) }}
+                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$job_parameter['description']}}</p>" data-trigger="hover" tabindex="0"> 
+                                                <span class="glyphicon glyphicon-question-sign">
+                                                </span></span>
 
-										    <div class="row">
-										    	<div class="col-md-3">
-												    <div class="form-group">
-														{{ Form::label('var', 'Variable') }}
-														{{ Form::select('var', $var_list, '', array('class' => 'form-control')) }}
-													</div>
-												</div>
-											</div>
+						                        @if ( ! empty($job_parameter['choices']) )
+												    {{ Form::select($job_parameter['label'], $job_parameter['choices'], '', array('class' => 'form-control')) }}
+                                                @else
+									                {{ Form::text($job_parameter['label'], $job_parameter['default'], array('class' => 'form-control')) }}
+                                                @endif
+										    </div> </div> </div>
+							            @endforeach
+                                        -->
 
-											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
+										{{ Form::submit('Submit ' . $app['name'] . ' analysis job', array('class' => 'btn btn-primary')) }}
 										{{ Form::close() }}
-									</div>
-									
-									<div role="tabpanel" class="tab-pane" id="app2">
-						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 2) }}
-
-										    <div class="row">
-										    	<div class="col-md-3">
-												    <div class="form-group">
-														{{ Form::label('var', 'Variable') }}
-														{{ Form::select('var', $var_list, '', array('class' => 'form-control')) }}
-													</div>
-												</div>
-										    	<div class="col-md-3">
-												    <div class="form-group">
-														{{ Form::label('var', 'Color') }}
-														{{ Form::select('color', $amazingHistogramGeneratorColorList, '', array('class' => 'form-control')) }}
-													</div>
-												</div>
-											</div>
-
-											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}
-									</div>
-
-									<div role="tabpanel" class="tab-pane" id="app3">
-						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 3) }}
-
-											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}
-									</div>
-
-									<div role="tabpanel" class="tab-pane" id="app4">
-						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 999) }}
-
-											{{ Form::submit('Prepare data for third-party analysis', array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}									
-									</div>
-
-									<div role="tabpanel" class="tab-pane" id="app5">
-										{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 5) }}
-
-											<p>Heatmap of shared junctions.</p>
-											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}
-									</div>
-
-{{-- 									<div role="tabpanel" class="tab-pane" id="app6">
-						    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-											{{ Form::hidden('filters_json', $filters_json) }}
-											{{ Form::hidden('data_url', $url) }}
-											{{ Form::hidden('app_id', 6) }}
-
-											<p>Test analysis app.</p>
-											{{ Form::submit('Generate using ' . $system->username . '@' . $system->host, array('class' => 'btn btn-primary')) }}
-										{{ Form::close() }}
-									</div> --}}
-
-
-								</div>
-							</div>
-						@elseif($total_filtered_sequences > config('ireceptor.sequences_download_limit'))
-							<p>Sorry, analyses of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future.</p>
+									    </div> <!-- tabpanel -->
+									    @php $count = $count + 1 @endphp
+                                    @endforeach
+								</div> <!-- tabcontent -->
+							</div> <!-- analysis_apps_tabpanel -->
 						@else
-							<p>
-								<a href="systems">Add a system</a> to be able to use analysis apps.
-							</p>
+							<p>Sorry, analyses of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future.</p>
 						@endif
 					@endif
 				@endif
@@ -483,28 +451,5 @@
 
 @include('reloadingMessage')
 @include('loadingMessage')
-
-<script>
-	var graphFields = [
-	        "study_title",
-	        "subject_id",
-	        "sample_id",
-	        "disease_diagnosis", 
-	        "tissue",
-	        "pcr_target_locus"
-	    ];
-	var graphNames = [
-	        "@lang('short.study_title')",
-	        "@lang('short.subject_id')",
-	        "@lang('short.sample_id')",
-	        "@lang('short.disease_diagnosis')",
-	        "@lang('short.tissue')", 
-	        "@lang('short.pcr_target_locus')"
-	    ];
-
-	var graphInternalLabels = true;
-	var graphCountField = "ir_filtered_sequence_count";
-	var graphData = {!! $sample_list_json !!};
-</script>
 
 @stop

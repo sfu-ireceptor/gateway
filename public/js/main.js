@@ -39,14 +39,17 @@ $(document).ready(function() {
 	});
 
 	// jstree: rest services -> labs -> projects tree
-	$('#rest_service_list').on('ready.jstree', function (e, data) {
-			// hack to make links work
-			// (otherwise the links default behaviour is overrided by jstree)
-	   		$('.jstree-anchor').addClass('jstree-anchor-simple').removeClass('jstree-anchor');
-  	}).jstree();
+	$('#rest_service_list').jstree();
+
+	// jstree: hack to make links work
+	// (otherwise link default behaviour is overrided by jstree)
+	$('#rest_service_list').on('after_open.jstree', function (e, data) {
+		$('.jstree-anchor').removeClass('jstree-anchor').addClass('jstree-anchor-simple');
+  	});
 
 	// rest services modal
 	$('.toggle_modal_rest_service_list_folded').click(function () {
+
 		$('#rest_service_list .rs_node').each(function(){
 			$('#rest_service_list').jstree('close_node', $(this));
 		});
@@ -64,9 +67,8 @@ $(document).ready(function() {
 		return false;
 	});
 
-	
 	// save filters panels state when submitting form
-	$('form.sample_search, form.sequence_search').submit(function(){
+	$('form.sample_search, form.sequence_search, form.clone_search, form.cell_search').submit(function(){
 		var filters_form = $(this);
 
 		$('.panel-collapse', $(this)).each(function(i){
@@ -235,6 +237,7 @@ $(document).ready(function() {
 		modal.find('.modal-title').text('Repertoire: ' + repertoire_name);
 	});
 
+
 	/**********************************************************
 	* Sequences
 	**********************************************************/
@@ -300,38 +303,75 @@ $(document).ready(function() {
 		return false;
 	});
 
-	// update table column visibility using state of corresponding column selector checkboxe
+	// show/hide table column (using current state of corresponding column selector checkbox)
 	function update_column_visibility(column_checkbox) {
-		var columnId = column_checkbox.val();
+		var column_id = column_checkbox.val();
 
 		// show/hide corresponding column
         if(column_checkbox.is(":checked")) {
-        	$('table .' + columnId).removeClass('hidden');
+        	$('table .' + column_id).removeClass('hidden');
         }
         else {
-        	$('table .' + columnId).addClass('hidden');
+        	$('table .' + column_id).addClass('hidden');
         }
+
+        // update column group checkbox status
+        var column_group = column_checkbox.parents('.column_group');
+    	var nb_columns_in_group = 0;
+    	var nb_columns_checked_in_group = 0;
+
+    	$('input[name=table_columns]', column_group).each(function() {
+    		nb_columns_in_group++;
+    		if($(this).is(":checked")) {
+    			nb_columns_checked_in_group++;
+    		}
+        });
+
+    	var column_group_checkbox = $('input[name=table_columns_group]', column_group);
+
+    	if(nb_columns_checked_in_group == nb_columns_in_group) {
+    		column_group_checkbox.prop('checked', true);
+			column_group_checkbox.prop('indeterminate', false);
+    	}
+    	else {
+			column_group_checkbox.prop('checked', false);
+			if(nb_columns_checked_in_group > 0) {
+				column_group_checkbox.prop('indeterminate', true);
+			}
+			else {
+				column_group_checkbox.prop('indeterminate', false);
+			}
+    	}
 	}
 
-	// change column visiblity
-    $('.column_selector input').change(function() {
+	// update all table columns visiblity (using current column selector checkboxes state)
+	function show_hide_columns() {
+		$('.column_selector input[type=checkbox][name=table_columns]').each(function() {
+			update_column_visibility($(this));
+		});
+	}
+
+	// change column visiblity event
+    $('.column_selector input[name=table_columns]').change(function() {
     	update_column_visibility($(this));
 
         // save ids of currently displayed columns in hidden form field
         var columns = [];
-        $('.column_selector input:checked').each(function() {
-        	var columnId = $(this).val().replace(/^col_/, '');
-        	columns.push(columnId);
+        $('.column_selector input[name=table_columns]:checked').each(function() {
+        	var column_id = $(this).val().replace(/^col_/, '');
+        	columns.push(column_id);
         });
         $('input[name=cols]').val(columns.join(','));
     });
 
-	// update all table columns visiblity using column selector checkboxes
-	function show_hide_columns() {
-		$('.column_selector input[type=checkbox]').each(function() {
-			update_column_visibility($(this));
-		});
-	}
+    // change column group event
+    $('.column_selector input[name=table_columns_group]').change(function() {
+    	var new_state = $(this).is(":checked");
+    	var column_group = $(this).parents('.column_group');
+    	$('input[name=table_columns]', column_group).each(function() {
+    		$(this).prop('checked', new_state).change();
+        });
+    });
 
 	// on page load, update table columns visibity 
 	show_hide_columns();
@@ -340,10 +380,10 @@ $(document).ready(function() {
 	$('a.sort_column').click(function() {
         var old_url = this.href,
         	cols = $('input[name=cols]').val();
-            new_url      = old_url + '&cols=' + cols;
+            new_url = old_url + '&cols=' + cols;
         window.location = new_url;
         return false;
-   });
+   	});
 
     // reloading message
     function show_reloading_message() {
@@ -484,6 +524,11 @@ $(document).ready(function() {
 						$('.job_view_progress').html(data['progress']);
 						$('.job_steps').html(data['steps']);
 						$('.submission_date_relative').html(data['submission_date_relative']);
+						$('.run_time').html(data['run_time']);
+						$('.job_url').html(data['job_url']);
+						$('.summary').html(data['summary']);
+						$('.job_summary').html(data['job_summary']);
+						$('.job_control_button').html(data['job_control_button']);
 						document.title = data['agave_status'];
 
 						if (data['status'] >= 2) {
@@ -499,7 +544,7 @@ $(document).ready(function() {
 		}
 	});	
 
-	// jow view - display images
+	// job view - display images
 	$('.result_files li a').each(function(){
 		var href = $(this).attr('href');
 		if (href.endsWith('.jpg')) {

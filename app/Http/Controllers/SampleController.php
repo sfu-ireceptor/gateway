@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class SampleController extends Controller
 {
-    protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type', 'study_group_description', 'lab_name', 'subject_id', 'organism', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis', 'sample_id', 'pcr_target_locus', 'cell_subset', 'tissue', 'template_class', 'cell_phenotype', 'sequencing_platform'];
+    protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type_id', 'study_group_description', 'lab_name', 'subject_id', 'organism_id', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis_id', 'sample_id', 'pcr_target_locus', 'cell_subset_id', 'tissue_id', 'template_class', 'cell_phenotype', 'sequencing_platform'];
     protected $extra_fields = [];
 
     public function __construct()
@@ -33,15 +33,30 @@ class SampleController extends Controller
         return in_array($field_id, $this->extra_fields);
     }
 
-    public function postIndex(Request $request)
+    public function postIndex(Request $request, $type = '')
     {
-        $query_id = Query::saveParams($request->except(['_token']), 'samples');
+        $page_uri = 'samples';
+        if ($type != '') {
+            $page_uri = 'samples/' . $type;
+        }
 
-        return redirect('samples?query_id=' . $query_id)->withInput();
+        $query_id = Query::saveParams($request->except(['_token']), $page_uri);
+
+        return redirect($page_uri . '?query_id=' . $query_id)->withInput();
     }
 
-    public function index(Request $request)
+    public function index(Request $request, $type = '')
     {
+        $page_uri = 'samples';
+        if ($type != '') {
+            $page_uri = 'samples/' . $type;
+        }
+
+        $type_full = 'sequence';
+        if ($type != '') {
+            $type_full = $type;
+        }
+
         $username = auth()->user()->username;
 
         // if "remove one filter" request, generate new query_id and redirect to it
@@ -76,7 +91,7 @@ class SampleController extends Controller
 
             $new_query_id = Query::saveParams($new_filters, 'samples');
 
-            return redirect('samples?query_id=' . $new_query_id);
+            return redirect($page_uri . '?query_id=' . $new_query_id);
         }
 
         // if there's a "page" parameter, generate new query_id and redirect to it
@@ -85,7 +100,16 @@ class SampleController extends Controller
             $filters['page'] = $request->input('page');
             $new_query_id = Query::saveParams($filters, 'samples');
 
-            return redirect('samples?query_id=' . $new_query_id);
+            return redirect($page_uri . '?query_id=' . $new_query_id);
+        }
+
+        // if there's a "rest_service_name" parameter, generate new query_id and redirect to it
+        if ($request->has('rest_service_name')) {
+            $filters = Query::getParams($request->input('rest_service_name'));
+            $filters['rest_service_name'] = $request->input('rest_service_name');
+            $new_query_id = Query::saveParams($filters, 'samples');
+
+            return redirect($page_uri . '?query_id=' . $new_query_id);
         }
 
         // if there's a "sort_column" parameter, generate new query_id and redirect to it
@@ -101,7 +125,7 @@ class SampleController extends Controller
 
             $new_query_id = Query::saveParams($filters, 'samples');
 
-            return redirect('samples?query_id=' . $new_query_id);
+            return redirect($page_uri . '?query_id=' . $new_query_id);
         }
 
         /*************************************************
@@ -110,10 +134,10 @@ class SampleController extends Controller
         // get data
         $metadata = Sample::metadata($username);
 
-        // study type
-        $study_type_list = [];
-        foreach ($metadata['study_type'] as $v) {
-            $study_type_list[$v] = $v;
+        // study type ontology info
+        $study_type_ontology_list = [];
+        foreach ($metadata['study_type_id'] as $v) {
+            $study_type_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
         // gender
@@ -122,10 +146,10 @@ class SampleController extends Controller
             $subject_gender_list[$v] = $v;
         }
 
-        // organism
-        $subject_organism_list = [];
-        foreach ($metadata['organism'] as $v) {
-            $subject_organism_list[$v] = $v;
+        // organism ontology info
+        $subject_organism_ontology_list = [];
+        foreach ($metadata['organism_id'] as $v) {
+            $subject_organism_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
         // ethnicity
@@ -141,15 +165,15 @@ class SampleController extends Controller
         }
 
         // cell type
-        $cell_type_list = [];
-        foreach ($metadata['cell_subset'] as $v) {
-            $cell_type_list[$v] = $v;
+        $cell_type_ontology_list = [];
+        foreach ($metadata['cell_subset_id'] as $v) {
+            $cell_type_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
-        // sample source
-        $sample_source_list = [];
-        foreach ($metadata['tissue'] as $v) {
-            $sample_source_list[$v] = $v;
+        // tissue ontology info
+        $sample_tissue_ontology_list = [];
+        foreach ($metadata['tissue_id'] as $v) {
+            $sample_tissue_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
         // dna type
@@ -158,22 +182,25 @@ class SampleController extends Controller
             $dna_type_list[$v] = $v;
         }
 
-        // disease_diagnosis
-        $subject_disease_diagnosis_list = [];
-        foreach ($metadata['disease_diagnosis'] as $v) {
-            $subject_disease_diagnosis_list[$v] = $v;
+        // disease_diagnosis ontology info
+        $subject_disease_diagnosis_ontology_list = [];
+        foreach ($metadata['disease_diagnosis_id'] as $v) {
+            $subject_disease_diagnosis_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
 
         // data
         $data = [];
-        $data['study_type_list'] = $study_type_list;
+
+        $data['page_uri'] = $page_uri;
+
+        $data['study_type_ontology_list'] = $study_type_ontology_list;
         $data['subject_gender_list'] = $subject_gender_list;
         $data['subject_ethnicity_list'] = $subject_ethnicity_list;
-        $data['subject_organism_list'] = $subject_organism_list;
-        $data['subject_disease_diagnosis_list'] = $subject_disease_diagnosis_list;
+        $data['subject_organism_ontology_list'] = $subject_organism_ontology_list;
+        $data['subject_disease_diagnosis_ontology_list'] = $subject_disease_diagnosis_ontology_list;
         $data['pcr_target_locus_list'] = $pcr_target_locus_list;
-        $data['cell_type_list'] = $cell_type_list;
-        $data['sample_source_list'] = $sample_source_list;
+        $data['cell_type_ontology_list'] = $cell_type_ontology_list;
+        $data['sample_tissue_ontology_list'] = $sample_tissue_ontology_list;
         $data['dna_type_list'] = $dna_type_list;
 
         /******************************************************
@@ -196,6 +223,7 @@ class SampleController extends Controller
             $params = Query::getParams($query_id);
             $data['query_id'] = $query_id;
         }
+        //Log::debug('XXX Params: ' . json_encode($params));
 
         // fill form fields accordingly
         $request->session()->forget('_old_input');
@@ -233,7 +261,7 @@ class SampleController extends Controller
         /*************************************************
         * get filtered sample list and related statistics */
 
-        $sample_data = Sample::find($params, $username);
+        $sample_data = Sample::find($params, $username, true, $type);
 
         // log result
         $query_log_id = $request->get('query_log_id');
@@ -257,27 +285,28 @@ class SampleController extends Controller
         }
 
         $sample_list = $sample_data['items'];
+        $samples_with_sequences = Sample::sort_sample_list($sample_list, $sort_column, $sort_order);
 
-        // $sample_list2 = [];
-        // foreach ($sample_list as $sample) {
-        //     // PRJNA330606-268
-        //     if($sample->repertoire_id == '17' || $sample->repertoire_id == 'PRJNA330606-268' || $sample->repertoire_id == '5890931441127648790-242ac113-0001-012') {
-        //         $sample_list2[] = $sample;
-        //     }
-        // }
+        // Fields we want to graph. The UI/blade expects six fields
+        $charts_fields = ['study_type_id', 'organism', 'disease_diagnosis_id',
+            'tissue_id', 'pcr_target_locus', 'template_class', ];
+        // Mapping of fields to display as labels on the graph for those that need
+        // mappings. These are usually required for ontology fields where we want
+        // to aggregate on the ontology ID but display the ontology label.
+        $field_map = ['study_type_id' => 'study_type',
+            'disease_diagnosis_id' => 'disease_diagnosis',
+            'tissue_id' => 'tissue', ];
+        $data['charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map);
 
-        // $sample_list = $sample_list2;
-
-        // sort sample list
-        $sample_list = Sample::sort_sample_list($sample_list, $sort_column, $sort_order);
+        $data['sequence_charts_data'] = Sample::generateChartsData($samples_with_sequences, $charts_fields, $field_map, 'ir_' . $type_full . '_count');
 
         // keep only samples to display on the current page
-        $sample_list = array_slice($sample_list, ($page - 1) * $max_per_page, $max_per_page);
+        $samples_with_sequences = array_slice($samples_with_sequences, ($page - 1) * $max_per_page, $max_per_page);
 
         // add flag to first sample with stats for stats info popup
         if (auth()->user()->stats_popup_count <= 0) {
             Log::debug('stat popup notification will show for ' . auth()->user()->username);
-            foreach ($sample_list as $sample) {
+            foreach ($samples_with_sequences as $sample) {
                 if (isset($sample->stats) && $sample->stats) {
                     $sample->show_stats_notification = true;
                     break;
@@ -299,18 +328,23 @@ class SampleController extends Controller
         $sequences_query_id = Query::saveParams($sequence_filters, 'sequences');
 
         // prepare view data
-        $data['sample_list'] = $sample_list;
+        $data['samples_with_sequences'] = $samples_with_sequences;
         $data['nb_samples'] = $nb_samples;
         $data['nb_pages'] = $nb_pages;
         $data['page'] = $page;
         $data['page_first_element_index'] = ($page - 1) * $max_per_page + 1;
-        $data['page_last_element_index'] = $data['page_first_element_index'] + count($sample_list) - 1;
+        $data['page_last_element_index'] = $data['page_first_element_index'] + count($samples_with_sequences) - 1;
+
+        $tab = $type;
+        if ($type == '') {
+            $tab = 'sequence';
+        }
+        $data['tab'] = $tab;
 
         $data['sort_column'] = $sort_column;
         $data['sort_order'] = $sort_order;
         $data['sequences_query_id'] = $sequences_query_id;
         $data['rest_service_list'] = $sample_data['rs_list'];
-        $data['sample_list_json'] = json_encode($sample_data['items']);
 
         $data['total_filtered_repositories'] = $sample_data['total_filtered_repositories'];
         $data['total_filtered_labs'] = $sample_data['total_filtered_labs'];
@@ -318,7 +352,9 @@ class SampleController extends Controller
         $data['total_filtered_samples'] = $sample_data['total_filtered_samples'];
         $data['total_filtered_sequences'] = $sample_data['total_filtered_sequences'];
 
-        $data['filtered_repositories_names'] = implode(', ', $sample_data['filtered_repositories']);
+        $data['nb_samples_with_sequences'] = $sample_data['nb_samples_with_sequences'];
+        $data['nb_samples_with_clones'] = $sample_data['nb_samples_with_clones'];
+        $data['nb_samples_with_cells'] = $sample_data['nb_samples_with_cells'];
 
         // list of repositories that didn't respond
         $rs_list_no_response = $sample_data['rs_list_no_response'];
@@ -349,8 +385,34 @@ class SampleController extends Controller
         foreach ($params as $k => $v) {
             if ($v) {
                 if (is_array($v)) {
-                    $filter_fields[$k] = implode(', ', $v);
+                    // If the field is an ontology field, we want the filter fields to
+                    // have both label and ID.
+                    if (in_array($k, FieldName::getOntologyFields())) {
+                        // Get the base field (without the _id part). This is how the
+                        // metadata is tagged.
+                        $filter_info = '';
+                        // For each element in the filter parameters... This is essentially
+                        // the list of filters that are set.
+                        foreach ($v as $element) {
+                            // Get the cahced metadata for the field so we can build a label/id string
+                            $field_metadata = $metadata[$k];
+                            // Find the element in the metadata and build the filter label string.
+                            foreach ($field_metadata as $field_info) {
+                                if ($field_info['id'] == $element) {
+                                    if ($filter_info != '') {
+                                        $filter_info = $filter_info . ', ';
+                                    }
+                                    $filter_info = $filter_info . $field_info['label'] . ' (' . $field_info['id'] . ')';
+                                }
+                            }
+                            $filter_fields[$k] = $filter_info;
+                        }
+                    } else {
+                        // If it is a normal array filter, then combine the stings
+                        $filter_fields[$k] = implode(', ', $v);
+                    }
                 } else {
+                    // If it is a simple string filter, then use the value directly.
                     $filter_fields[$k] = $v;
                 }
             }
@@ -358,8 +420,10 @@ class SampleController extends Controller
 
         // remove gateway-specific params
         unset($filter_fields['cols']);
+        unset($filter_fields['tab']);
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
+        //Log::debug('XXX Filter fields: ' . json_encode($filter_fields));
 
         // for bookmarking
         $current_url = $request->fullUrl();

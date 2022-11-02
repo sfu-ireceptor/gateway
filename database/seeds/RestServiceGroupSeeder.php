@@ -19,6 +19,7 @@ class RestServiceGroupSeeder extends Seeder
         ];
 
         foreach ($l as $t) {
+            echo 'Adding group ' . $t['name'] . "\n";
             RestServiceGroup::firstOrCreate(['code' => $t['code']], $t);
         }
     }

@@ -38,6 +38,14 @@ class ProcessAgaveNotification implements ShouldQueue
         // save job status in DB
         $job = Job::where('agave_id', '=', $this->id)->first();
 
+        // If the AGAVE job doesn't exist, ignore the update, we have
+        // deleted the job already.
+        if ($job == null) {
+            $localJob->setFinished();
+
+            return;
+        }
+
         // ignore the status update if the job has already FAILED or is FINISHED
         if ($job->agave_status == 'FAILED' || $job->agave_status == 'FINISHED') {
             $localJob->setFinished();

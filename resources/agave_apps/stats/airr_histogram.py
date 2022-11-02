@@ -1,8 +1,8 @@
+# Imports
 import argparse
 import os, ssl
 import sys
 import time
-#import airr as airr
 import pandas as pd
 import numpy as np
 import matplotlib
@@ -67,9 +67,16 @@ def getArguments():
         description=""
     )
 
+    # Field name for which we generate the histogram
     parser.add_argument("field_name")
+    # Input file.
     parser.add_argument("input_file")
-    parser.add_argument("output_file")
+    # PNG and TSV output files
+    parser.add_argument("png_output_file")
+    parser.add_argument("tsv_output_file")
+    # Title of the graph
+    parser.add_argument("title")
+    # Verbosity flag
     parser.add_argument(
         "-v",
         "--verbose",
@@ -85,11 +92,15 @@ if __name__ == "__main__":
     # Perform the query analysis, gives us back the data
     data = performQueryAnalysis(options.input_file, options.field_name)
     # Graph the results if we got some...
-    title = options.field_name 
+    title = options.title 
     if not data is None:
-        plotData(data, title, options.output_file)
+        # Plot the data and save the file
+        plotData(data, title, options.png_output_file)
+        # Save the data itself.
+        data.to_csv(options.tsv_output_file, sep = '\t')
     else:
         sys.exit(2)
     # Return success
-    print("Done writing graph to " + options.output_file)
+    print("Done writing graph to " + options.png_output_file)
+    print("Done writing data to " + options.tsv_output_file)
     sys.exit(0)

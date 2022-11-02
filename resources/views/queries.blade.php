@@ -8,7 +8,7 @@
 
 	<ul class="nav nav-tabs">
 	  <li role="presentation" class="active"><a href="/admin/queries">Queries</a></li>
-	  <li role="presentation"><a href="/admin/downloads">Sequence Downloads</a></li>
+	  <li role="presentation"><a href="/admin/downloads">Downloads</a></li>
 	</ul>
 
 	<p></p>

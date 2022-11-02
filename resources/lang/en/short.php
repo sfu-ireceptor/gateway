@@ -4,7 +4,8 @@ use App\FieldName;
 
 $data = [];
 
-$l = FieldName::all(['ir_id', 'ir_short'])->toArray();
+$api_version = config('ireceptor.default_api_version');
+$l = FieldName::all(['ir_id', 'ir_short', 'api_version'])->where('api_version', $api_version)->toArray();
 foreach ($l as $t) {
     $str_short = trim($t['ir_short']);
 

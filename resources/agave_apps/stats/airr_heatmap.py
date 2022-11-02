@@ -1,8 +1,8 @@
+# Import used...
 import argparse
 import os, ssl
 import sys
 import time
-#import airr as airr
 import pandas as pd
 import numpy as np
 import matplotlib
@@ -17,10 +17,12 @@ def performQueryAnalysis(input_file, query_xkey, query_ykey, query_xvalues, quer
         print("ERROR: Could not open file ", input_file)
         return data 
 
-    # Get the rearrangement data into a Pandas data frame.
-    #airr_df = airr.load_rearrangement(input_file)
+    # Get the rearrangement data into a Pandas data frame. We force everything to be
+    # a string so we can do our index/slicing without worrying about type.
     chunk_size = 100000
-    airr_df_reader =  pd.read_csv(input_file, sep='\t', chunksize=chunk_size)
+    airr_df_reader =  pd.read_csv(input_file, sep='\t',
+            dtype={query_xkey:str,query_ykey:str},
+            chunksize=chunk_size)
 
     # Iterate over the block of data, gathering the stats for each X,Y
     # pair.
@@ -37,7 +39,6 @@ def performQueryAnalysis(input_file, query_xkey, query_ykey, query_xvalues, quer
                 xfilter_data = airr_df.loc[xfilter]
                 yfilter = xfilter_data[query_ykey].isin([yvalue])
                 xyfilter_data = xfilter_data.loc[yfilter]
-                #print(str(xyfilter_data[query_xkey]) + " " + str(xyfilter_data[query_ykey]))
                 
                 # Update the count for the sample we are considering
                 data[yindex, xindex] = data[yindex, xindex] + len(xyfilter_data)
@@ -46,6 +47,7 @@ def performQueryAnalysis(input_file, query_xkey, query_ykey, query_xvalues, quer
         count = count + len(airr_df)
         print("Done processing record " + str(count))
 
+    # Print out the data we got for the record.
     print('\t', end='')
     for yvalue in query_yvalues:
         print(yvalue + '\t', end='')
@@ -58,10 +60,6 @@ def performQueryAnalysis(input_file, query_xkey, query_ykey, query_xvalues, quer
         yindex = 0
         # For each of the Y query values
         for yvalue in query_yvalues:
-            #print('   ' + query_xkey + '/' + str(xvalue) +
-            #              ' , ' + query_ykey + '/' + str(yvalue) +
-            #              ' ( ' + str(xindex) + ',' + str(yindex) + ' ) ' +
-            #              ' = ' + str(data[yindex, xindex]))
             print(str(int(data[yindex, xindex])) + '\t', end='')
             yindex = yindex + 1
         print('')
@@ -69,7 +67,8 @@ def performQueryAnalysis(input_file, query_xkey, query_ykey, query_xvalues, quer
     return data
 
 def plotData(plot_data, xlabels, ylabels, title, filename):
-    # Plot code borrowed from here: https://matplotlib.org/gallery/images_contours_and_fields/image_annotated_heatmap.html
+    # Plot code borrowed from here: 
+    # https://matplotlib.org/gallery/images_contours_and_fields/image_annotated_heatmap.html
 
     matplotlib.use('Agg')
     fig, ax = plt.subplots()
@@ -79,8 +78,6 @@ def plotData(plot_data, xlabels, ylabels, title, filename):
     cbar.ax.set_xlabel("Number of Annotations", va="top", fontsize=6)
     plt.setp(cbar.ax.get_yticklabels(), fontsize=6)
     plt.setp(cbar.ax.get_xticklabels(), fontsize=6)
-    #cbar = ax.figure.colorbar(im, ax=ax)
-    #cbar.ax.set_ylabel("Number of Annotations", rotation=-90, va="bottom")
 
     # We want to show all ticks...
     ax.set_xticks(np.arange(len(xlabels)))
@@ -93,41 +90,38 @@ def plotData(plot_data, xlabels, ylabels, title, filename):
     ax.set_title(title)
 
     # Rotate the tick labels and set their alignment.
-    #plt.setp(ax.get_xticklabels(), rotation=90, ha="right",
-    #         fontsize=6, rotation_mode="anchor")
     plt.setp(ax.get_xticklabels(), rotation=90, ha="right",
             va="center", rotation_mode="anchor", fontsize=6)
     plt.setp(ax.get_yticklabels(), fontsize=6)
 
+    # Write the file.
     fig.savefig(filename, transparent=False, dpi=240, bbox_inches="tight")
 
 def getArguments():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description="Note: for proper data processing, project --samples metadata should\n" +
-        "generally be read first into the database before loading other data types."
+        description=""
     )
 
+    # API x and y fields to use
     parser.add_argument("api_xfield")
     parser.add_argument("api_yfield")
+    # Values to graph for the x and y axes
     parser.add_argument("graph_xvalues")
     parser.add_argument("graph_yvalues")
+    # The input file
     parser.add_argument("input_file")
-    parser.add_argument("output_file")
+    # PNG and TSV output file
+    parser.add_argument("png_output_file")
+    parser.add_argument("tsv_output_file")
+    # Title for the graph
+    parser.add_argument("title")
+    # Verbosity arguement
     parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
-        help="Run the program in verbose mode. This option will generate a lot of output, but is recommended from a data provenance perspective as it will inform you of how it mapped input data columns into repository columns.")
-
-    # Add configuration options
-    #config_group = parser.add_argument_group("Configuration file options", "")
-    #config_group.add_argument(
-    #    "--mapfile",
-    #    dest="mapfile",
-    #    default="ireceptor.cfg",
-    #    help="the iReceptor configuration file. Defaults to 'ireceptor.cfg' in the local directory where the command is run. This file contains the mappings between the AIRR Community field definitions, the annotation tool field definitions, and the fields and their names that are stored in the repository."
-    #)
+        help="Run the program in verbose mode. This option will generate a lot of output, but is useful to understand the processing being carried out.")
 
     options = parser.parse_args()
     return options
@@ -143,7 +137,16 @@ if __name__ == "__main__":
     data = performQueryAnalysis(options.input_file, options.api_xfield, options.api_yfield, xvalues, yvalues)
     # Graph the results
     title = options.api_xfield + " " + options.api_yfield + " Usage"
-    plotData(data, xvalues, yvalues, title, options.output_file)
+    title = options.title
+    if not data is None:
+        # Plot the data and save the file
+        plotData(data, xvalues, yvalues, title, options.png_output_file)
+        # Save the data itself
+        df = pd.DataFrame(data=data, index=yvalues, columns=xvalues)
+        df.to_csv(options.tsv_output_file, sep='\t')
+    else:
+        sys.exit(2)
+
 
     # Return success
     sys.exit(0)

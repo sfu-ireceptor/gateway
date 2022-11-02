@@ -1,0 +1,819 @@
+<?php
+
+namespace App;
+
+use Facades\App\RestService;
+use Facades\App\Sequence;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use ZipArchive;
+
+class SequenceCell
+{
+    public static function summary($filters, $username)
+    {
+        // get cells summary
+        $response_list_cells_summary = RestService::sequences_summary($filters, $username, true, 'cell');
+
+        // generate stats
+        $data = self::process_response($response_list_cells_summary);
+
+        // get a few cells from each service
+        $response_list = RestService::sequence_list($filters, $response_list_cells_summary, 10, 'cell');
+
+        // merge responses
+        $cell_list = [];
+        foreach ($response_list as $response) {
+            $rs = $response['rs'];
+
+            // if error, add to list of problematic repositories
+            // (if not already there)
+            if ($response['status'] == 'error') {
+                $is_no_response = false;
+
+                foreach ($data['rs_list_no_response'] as $rs_no_response) {
+                    if ($rs_no_response->id == $rs->id) {
+                        $is_no_response = true;
+                    }
+                }
+
+                if ($is_no_response) {
+                    continue;
+                } else {
+                    $data['rs_list_no_response'][] = $rs;
+                }
+            }
+
+            $obj = $response['data'];
+
+            $rs_cell_list = data_get($obj, 'Cell', []);
+
+            // convert any array properties to strings
+            $rs_cell_list = array_map('convert_arrays_to_strings', $rs_cell_list);
+
+            // convert fields
+            $rs_cell_list = FieldName::convertObjectList($rs_cell_list, 'ir_adc_api_response', 'ir_id', 'Cell', $rs->api_version);
+
+            $cell_list = array_merge($cell_list, $rs_cell_list);
+        }
+
+        // add to stats data
+        $data['items'] = $cell_list;
+
+        // split list of servers which didn't respond by "timeout" or "error"
+        $data['rs_list_no_response_timeout'] = [];
+        $data['rs_list_no_response_error'] = [];
+
+        foreach ($data['rs_list_no_response'] as $rs) {
+            if ($rs->error_type == 'timeout') {
+                $data['rs_list_no_response_timeout'][] = $rs;
+            } else {
+                $data['rs_list_no_response_error'][] = $rs;
+            }
+        }
+
+        return $data;
+    }
+
+    public static function expectedSequenceCellsByRestSevice($filters, $username)
+    {
+        $response_list = RestService::sequences_summary($filters, $username, false, 'cell');
+        $expected_nb_cells_by_rs = [];
+        foreach ($response_list as $response) {
+            $rest_service_id = $response['rs']->id;
+
+            $nb_cells = 0;
+            if (isset($response['data'])) {
+                $sample_list = $response['data'];
+                foreach ($sample_list as $sample) {
+                    if (isset($sample->ir_filtered_cell_count)) {
+                        $nb_cells += $sample->ir_filtered_cell_count;
+                    }
+                }
+            }
+
+            $expected_nb_cells_by_rs[$rest_service_id] = $nb_cells;
+        }
+
+        return $expected_nb_cells_by_rs;
+    }
+
+    public static function filteredSamplesByRestService($response_list)
+    {
+        $filtered_samples_by_rs = [];
+        foreach ($response_list as $response) {
+            $rest_service_id = $response['rs']->id;
+
+            $sample_id_list = [];
+            if (isset($response['data'])) {
+                $sample_list = $response['data'];
+                foreach ($sample_list as $sample) {
+                    if (isset($sample->ir_filtered_cell_count) && ($sample->ir_filtered_cell_count > 0)) {
+                        $sample_id_list[] = $sample->repertoire_id;
+                    }
+                }
+            }
+
+            $filtered_samples_by_rs[$rest_service_id] = $sample_id_list;
+        }
+
+        return $filtered_samples_by_rs;
+    }
+
+    public static function cellsTSVFolder($filters, $username, $url = '', $sample_filters = [])
+    {
+        // allow more time than usual for this request
+        set_time_limit(config('ireceptor.gateway_file_request_timeout'));
+
+        // do extra cell summary request
+        $response_list = RestService::sequences_summary($filters, $username, false, 'cell');
+
+        // do extra cell summary request to get expected number of cells
+        // for sanity check after download
+        $expected_nb_cells_by_rs = self::expectedSequenceCellsByRestSevice($filters, $username);
+
+        // get filtered list of repertoires ids
+        $filtered_samples_by_rs = self::filteredSamplesByRestService($response_list);
+
+        // if total expected nb cells is 0, immediately fail download
+        $total_expected_nb_cells = 0;
+        foreach ($expected_nb_cells_by_rs as $rs => $count) {
+            $total_expected_nb_cells += $count;
+        }
+        if ($total_expected_nb_cells <= 0) {
+            throw new \Exception('No cells to download');
+        }
+
+        // if total expected nb cells > download limit, immediately fail download
+        $cells_download_limit = config('ireceptor.cells_download_limit');
+        if ($total_expected_nb_cells > $cells_download_limit) {
+            throw new \Exception('Trying to download to many cells: ' . $total_expected_nb_cells . ' > ' . $cells_download_limit);
+        }
+
+        // create receiving folder
+        $storage_folder = storage_path() . '/app/public/';
+        $now = time();
+        $time_str = date('Y-m-d_Hi', $now);
+        $base_name = 'ir_' . $time_str . '_' . uniqid();
+        $folder_path = $storage_folder . $base_name;
+        File::makeDirectory($folder_path, 0777, true, true);
+
+        $query_type = 'cell';
+        if (isset($filters['property_expression'])) {
+            $query_type = 'expression';
+        }
+
+        $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
+
+        $response_list = [];
+        $expression_response_list = [];
+        $sequence_response_list = [];
+
+        if ($query_type == 'cell') {
+            $cell_id_list_by_data_processing = RestService::cell_id_list_by_data_processing($filters, $username, $expected_nb_cells_by_rs);
+            $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_data_processing);
+
+            $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs);
+            $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list);
+        } else {
+            $cell_list_by_rs = RestService::cell_list_from_expression_query($filters, $username, $expected_nb_cells_by_rs);
+
+            $cell_id_list_by_data_processing = self::generate_cell_id_list_by_data_processing_from_cell_list($cell_list_by_rs);
+            $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_data_processing);
+
+            $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_list_by_rs);
+            $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_list_by_rs);
+            $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_data_processing);
+        }
+
+        $file_stats = self::file_stats($response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs);
+
+        // if some files are incomplete, log it
+        foreach ($file_stats as $t) {
+            if ($t['nb_cells'] != $t['expected_nb_cells']) {
+                $delta = ($t['expected_nb_cells'] - $t['nb_cells']);
+                $str = 'expected ' . $t['expected_nb_cells'] . ' cells, got ' . $t['nb_cells'] . ' cells (difference=' . $delta . ' cells)';
+                Log::warning($t['rest_service_name'] . ': ' . $str);
+
+                $query_log_id = $t['query_log_id'];
+                $ql = QueryLog::find($query_log_id);
+                $ql->message .= $str;
+                $ql->status = 'error';
+                $ql->save();
+            }
+        }
+
+        $is_download_incomplete = false;
+
+        // did the download fail for some services?
+        $failed_rs = [];
+        foreach ($response_list as $response) {
+            if ($response['status'] == 'error') {
+                $failed_rs[] = $response['rs'];
+                $is_download_incomplete = true;
+            }
+        }
+
+        // did the sequence download fail for some services?
+        foreach ($sequence_response_list as $response) {
+            if ($response['status'] == 'error') {
+                $failed_rs[] = $response['rs'];
+                $is_download_incomplete = true;
+            }
+        }
+
+        // did the repertoire query fail for some services?
+        foreach ($metadata_response_list as $response) {
+            if ($response['status'] == 'error') {
+                $failed_rs[] = $response['rs'];
+                $is_download_incomplete = true;
+            }
+        }
+
+        // did the expression query fail for some services?
+        foreach ($expression_response_list as $response) {
+            if ($response['status'] == 'error') {
+                $failed_rs[] = $response['rs'];
+                $is_download_incomplete = true;
+            }
+        }
+
+        // are some files incomplete?
+        $nb_cells_total = 0;
+        $expected_nb_cells_total = 0;
+        foreach ($file_stats as $t) {
+            $nb_cells_total += $t['nb_cells'];
+            $expected_nb_cells_total += $t['expected_nb_cells'];
+        }
+        if ($nb_cells_total < $expected_nb_cells_total) {
+            $is_download_incomplete = true;
+        }
+
+        // if download is incomplete
+        $download_incomplete_info = '';
+        if ($is_download_incomplete) {
+            // update gateway query status
+            $gw_query_log_id = request()->get('query_log_id');
+            $error_message = 'Download is incomplete';
+            QueryLog::set_gateway_query_status($gw_query_log_id, 'service_error', $error_message);
+
+            // generate info message
+            $download_incomplete_info = '';
+            if (! empty($failed_rs)) {
+                // list failed repositories
+                $rs_name_list = [];
+                foreach ($failed_rs as $rs) {
+                    $rs_name_list[] = $rs->name;
+                }
+                $rs_name_list_str = implode(',', $rs_name_list);
+
+                if (count($failed_rs) == 1) {
+                    $download_incomplete_info .= 'An error occured when trying to download from the repository ' . $rs_name_list_str . ".\n\n";
+                } else {
+                    $download_incomplete_info .= 'An error occured when trying to download from the repositories ' . $rs_name_list_str . ".\n\n";
+                }
+
+                // list successful repositories
+                $success_rs = [];
+                foreach ($response_list as $response) {
+                    $rs = $response['rs'];
+                    $is_failed = false;
+                    foreach ($failed_rs as $rs_failed) {
+                        if ($rs->id == $rs_failed->id) {
+                            $is_failed = true;
+                            break;
+                        }
+                    }
+                    if (! $is_failed) {
+                        $success_rs[] = $rs;
+                    }
+                }
+
+                $rs_name_list = [];
+                foreach ($success_rs as $rs) {
+                    $rs_name_list[] = $rs->name;
+                }
+                $rs_name_list_str = implode(',', $rs_name_list);
+
+                if (count($success_rs) == 1) {
+                    $download_incomplete_info .= 'The download from the repository ' . $rs_name_list_str . " finished successfully.\n";
+                } else {
+                    $download_incomplete_info .= 'Downloads from the following repositories finished successfully: ' . $rs_name_list_str . ".\n";
+                }
+            } else {
+                $download_incomplete_info .= 'Some files appear to be incomplete. See the included info.txt file for more details.';
+            }
+        }
+
+        // generate info.txt
+        $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
+
+        // generate manifest.json
+        $manifest_file_path = Sequence::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
+
+        $t = [];
+        $t['base_path'] = $storage_folder;
+        $t['base_name'] = $base_name;
+        $t['folder_path'] = $folder_path;
+        $t['response_list'] = $response_list;
+        $t['metadata_response_list'] = $metadata_response_list;
+        $t['expression_response_list'] = $expression_response_list;
+        $t['sequence_response_list'] = $sequence_response_list;
+        $t['info_file_path'] = $info_file_path;
+        $t['manifest_file_path'] = $manifest_file_path;
+        $t['is_download_incomplete'] = $is_download_incomplete;
+        $t['download_incomplete_info'] = $download_incomplete_info;
+        $t['file_stats'] = $file_stats;
+
+        return $t;
+    }
+
+    public static function cellsTSV($filters, $username, $url = '', $sample_filters = [])
+    {
+        $t = self::cellsTSVFolder($filters, $username, $url, $sample_filters);
+
+        $base_path = $t['base_path'];
+        $base_name = $t['base_name'];
+        $folder_path = $t['folder_path'];
+        $response_list = $t['response_list'];
+        $metadata_response_list = $t['metadata_response_list'];
+        $expression_response_list = $t['expression_response_list'];
+        $sequence_response_list = $t['sequence_response_list'];
+        $info_file_path = $t['info_file_path'];
+        $manifest_file_path = $t['manifest_file_path'];
+        $is_download_incomplete = $t['is_download_incomplete'];
+        $download_incomplete_info = $t['download_incomplete_info'];
+        $file_stats = $t['file_stats'];
+
+        // zip files
+        $zip_path = self::zip_files($folder_path, $response_list, $expression_response_list, $metadata_response_list, $info_file_path, $sequence_response_list, $manifest_file_path);
+
+        // delete files
+        self::delete_files($folder_path);
+
+        $zip_public_path = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
+
+        $t = [];
+        $t['size'] = filesize($zip_path);
+        $t['base_path'] = $base_path;
+        $t['base_name'] = $base_name;
+        $t['zip_name'] = $base_name . '.zip';
+
+        $t['system_path'] = $zip_path;
+        $t['public_path'] = $zip_public_path;
+        $t['is_download_incomplete'] = $is_download_incomplete;
+        $t['download_incomplete_info'] = $download_incomplete_info;
+        $t['file_stats'] = $file_stats;
+
+        return $t;
+    }
+
+    public static function process_response($response_list)
+    {
+        // initialize return array
+        $data = [];
+        $data['rs_list'] = [];
+        $data['rs_list_no_response'] = [];
+        $data['summary'] = [];
+
+        // process returned data
+        foreach ($response_list as $response) {
+            $rs = $response['rs'];
+
+            if ($response['status'] == 'error') {
+                $rs->error_type = $response['error_type'];
+                $data['rs_list_no_response'][] = $rs;
+            }
+
+            $sample_list = $response['data'];
+            $sample_list = Sample::convert_sample_list($sample_list, $rs);
+
+            // create full list of samples (for graphs)
+            $data['summary'] = array_merge($data['summary'], $sample_list);
+
+            $rs_data = self::stats($sample_list);
+            $rs_data['rs'] = $rs;
+            $data['rs_list'][] = $rs_data;
+        }
+
+        // aggregate summary statistics
+        $data = self::aggregate_stats($data);
+
+        return $data;
+    }
+
+    public static function stats($sample_list)
+    {
+        $total_cells = 0;
+        $total_filtered_cells = 0;
+
+        $lab_list = [];
+        $lab_cell_count = [];
+
+        $study_list = [];
+        $study_cell_count = [];
+
+        foreach ($sample_list as $sample) {
+            // cell count for that sample
+            if (isset($sample->ir_cell_count)) {
+                $total_cells += $sample->ir_cell_count;
+            }
+
+            // filtered cell count for that sample
+            if (isset($sample->ir_filtered_cell_count)) {
+                $nb_filtered_cells = $sample->ir_filtered_cell_count;
+                $total_filtered_cells += $nb_filtered_cells;
+
+                // add lab
+                $lab_name = '';
+                if (isset($sample->lab_name)) {
+                    $lab_name = $sample->lab_name;
+                } elseif (isset($sample->collected_by)) {
+                    $lab_name = $sample->collected_by;
+                }
+
+                if ($lab_name != '') {
+                    if (! in_array($lab_name, $lab_list)) {
+                        $lab_list[] = $lab_name;
+                        $lab_cell_count[$lab_name] = 0;
+                    }
+                    $lab_cell_count[$lab_name] += $nb_filtered_cells;
+                }
+
+                // add study
+                $study_title = isset($sample->study_title) ? $sample->study_title : '';
+                if ($study_title != '') {
+                    if (! in_array($study_title, $study_list)) {
+                        $study_list[] = $study_title;
+                        $study_cell_count[$study_title] = 0;
+                    }
+                    $study_cell_count[$study_title] += $nb_filtered_cells;
+                }
+            }
+        }
+
+        $study_tree = [];
+        $lab_data = [];
+        $new_study_data = [];
+
+        foreach ($sample_list as $sample) {
+            // lab name
+            $lab = isset($sample->lab_name) ? $sample->lab_name : '';
+
+            // lab
+            if (! isset($study_tree[$lab])) {
+                $lab_data['name'] = $lab;
+                $lab_data['total_cells'] = isset($lab_cell_count[$lab]) ? $lab_cell_count[$lab] : 0;
+                $study_tree[$lab] = $lab_data;
+            }
+
+            // study title
+            if (! isset($sample->study_title)) {
+                $sample->study_title = '';
+            }
+            $new_study_data['study_title'] = $sample->study_title;
+
+            // total cells
+            $new_study_data['total_cells'] = isset($study_cell_count[$sample->study_title]) ? $study_cell_count[$sample->study_title] : 0;
+
+            // study url
+            if (isset($sample->study_url)) {
+                $new_study_data['study_url'] = $sample->study_url;
+            }
+
+            // add study to tree
+            $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
+        }
+
+        $rs_data = [];
+
+        $rs_data['total_samples'] = count($sample_list);
+        $rs_data['total_labs'] = count($lab_list);
+        $rs_data['total_studies'] = count($study_list);
+        $rs_data['total_cells'] = $total_cells;
+        $rs_data['total_filtered_cells'] = $total_filtered_cells;
+        $rs_data['study_tree'] = $study_tree;
+
+        return $rs_data;
+    }
+
+    public static function aggregate_stats($data)
+    {
+        $filtered_repositories = [];
+
+        $total_filtered_repositories = 0;
+        $total_filtered_labs = 0;
+        $total_filtered_studies = 0;
+        $total_filtered_samples = 0;
+        $total_filtered_cells = 0;
+
+        foreach ($data['rs_list'] as $rs_data) {
+            if ($rs_data['total_samples'] > 0) {
+                $filtered_repositories[] = $rs_data['rs'];
+                $total_filtered_repositories++;
+            }
+
+            $total_filtered_samples += $rs_data['total_samples'];
+            $total_filtered_labs += $rs_data['total_labs'];
+            $total_filtered_studies += $rs_data['total_studies'];
+            $total_filtered_cells += $rs_data['total_filtered_cells'];
+        }
+
+        // sort alphabetically repositories/labs/studies
+        $data['rs_list'] = Sample::sort_rest_service_list($data['rs_list']);
+
+        $data['total_filtered_samples'] = $total_filtered_samples;
+        $data['total_filtered_repositories'] = $total_filtered_repositories;
+        $data['total_filtered_labs'] = $total_filtered_labs;
+        $data['total_filtered_studies'] = $total_filtered_studies;
+        $data['total_filtered_cells'] = $total_filtered_cells;
+        $data['filtered_repositories'] = $filtered_repositories;
+
+        return $data;
+    }
+
+    public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
+    {
+        $s = '';
+
+        $s .= '<p><b>Metadata filters</b></p>' . "\n";
+        Log::debug($sample_filters);
+        if (count($sample_filters) == 0) {
+            $s .= 'None' . "\n";
+        }
+        foreach ($sample_filters as $k => $v) {
+            if (is_array($v)) {
+                $v = implode(' or ', $v);
+            }
+            // use human-friendly filter name
+            $s .= __('short.' . $k) . ': ' . $v . "</br>\n";
+        }
+        $s .= "</br>\n";
+
+        $s .= '<p><b>Cell filters</b></p>' . "\n";
+        unset($filters['ir_project_sample_id_list']);
+        unset($filters['cols']);
+        unset($filters['filters_order']);
+        unset($filters['sample_query_id']);
+        unset($filters['open_filter_panel_list']);
+        unset($filters['username']);
+        unset($filters['ir_username']);
+        unset($filters['ir_data_format']);
+        unset($filters['output']);
+        unset($filters['tsv']);
+        foreach (RestService::findEnabled() as $rs) {
+            $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+            unset($filters[$sample_id_list_key]);
+        }
+
+        foreach ($filters as $k => $v) {
+            if ($v === null) {
+                unset($filters[$k]);
+            }
+        }
+
+        Log::debug($filters);
+        if (count($filters) == 0) {
+            $s .= 'None' . "</br>\n";
+        }
+        foreach ($filters as $k => $v) {
+            if (is_array($v)) {
+                $v = implode(' or ', $v);
+            }
+            // use human-friendly filter name
+            $s .= __('short.' . $k) . ': ' . $v . "</br>\n";
+        }
+        $s .= "</br>\n";
+
+        $s .= '<p><b>Data/Repository Summary</b></p>' . "\n";
+
+        $nb_cells_total = 0;
+        $expected_nb_cells_total = 0;
+        foreach ($file_stats as $t) {
+            $nb_cells_total += $t['nb_cells'];
+            $expected_nb_cells_total += $t['expected_nb_cells'];
+        }
+
+        $is_download_incomplete = ($nb_cells_total < $expected_nb_cells_total);
+        if ($is_download_incomplete) {
+            $s .= 'GW-ERROR: some of the files appears to be incomplete:' . "</br>\n";
+            $s .= 'Total: ' . $nb_cells_total . ' cells, but ' . $expected_nb_cells_total . ' were expected.' . "</br>\n";
+        } else {
+            $s .= 'Total: ' . $nb_cells_total . ' cells' . "</br>\n";
+        }
+
+        foreach ($file_stats as $t) {
+            if ($is_download_incomplete && ($t['nb_cells'] < $t['expected_nb_cells'])) {
+                $s .= 'GW-ERROR: ' . $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_cells'] . ' cells (incomplete, expected ' . $t['expected_nb_cells'] . ' cells) (from ' . $t['rs_url'] . ')' . "</br>\n";
+            } else {
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_cells'] . ' cells (from ' . $t['rs_url'] . ')' . "</br>\n";
+            }
+        }
+
+        if (! empty($failed_rs)) {
+            $s .= 'GW-ERROR: some files are missing because an error occurred while downloading cells from these repositories:' . "</br>\n";
+            foreach ($failed_rs as $rs) {
+                $s .= 'GW-ERROR: ' . $rs->name . "</br>\n";
+            }
+        }
+        $s .= "</br>\n";
+
+        $s .= '<p><b>Source</b></p>' . "\n";
+        $s .= $url . "</br>\n";
+        $date_str_human = date('M j, Y', $now);
+        $time_str_human = date('H:i T', $now);
+        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "</br>\n";
+
+        $info_file_path = $folder_path . '/info.txt';
+        file_put_contents($info_file_path, $s);
+
+        return $info_file_path;
+    }
+
+    public static function generate_cell_id_list_by_data_processing_from_cell_list($cell_list_by_rs)
+    {
+        foreach ($cell_list_by_rs as $i => $response) {
+            $data_processing_id_list = [];
+
+            $cell_list = $response['cell_list'];
+            foreach ($cell_list as $cell) {
+                if (! isset($cell['data_processing_id']) || ! isset($cell['cell_id'])) {
+                    continue;
+                }
+
+                $data_processing_id = $cell['data_processing_id'];
+                if (! isset($data_processing_id_list[$data_processing_id])) {
+                    $data_processing_id_list[$data_processing_id] = [];
+                }
+
+                $cell_id = $cell['cell_id'];
+                $data_processing_id_list[$data_processing_id][] = $cell_id;
+            }
+
+            $cell_list_by_rs[$i]['data_processing_id_list'] = $data_processing_id_list;
+
+            // don't need this anymore
+            unset($cell_list_by_rs[$i]['cell_list']);
+        }
+
+        return $cell_list_by_rs;
+    }
+
+    public static function zip_files($folder_path, $response_list, $expression_response_list, $metadata_response_list, $info_file_path, $sequence_response_list, $manifest_file_path)
+    {
+        $zipPath = $folder_path . '.zip';
+        Log::info('Cell: Zip files to ' . $zipPath);
+        $zip = new ZipArchive();
+        $zip->open($zipPath, ZipArchive::CREATE);
+
+        // cell data
+        foreach ($response_list as $response) {
+            if (isset($response['data']['file_path'])) {
+                $file_path = $response['data']['file_path'];
+                Log::debug('Adding to ZIP: ' . $file_path);
+                $zip->addFile($file_path, basename($file_path));
+            }
+        }
+
+        // repertoire data
+        foreach ($metadata_response_list as $response) {
+            if (isset($response['data']['file_path'])) {
+                $file_path = $response['data']['file_path'];
+
+                // try to prettify json
+                $json_data = file_get_contents($file_path);
+                $json_data_pretty = json_encode(json_decode($json_data), JSON_PRETTY_PRINT);
+                if ($json_data_pretty != null) {
+                    $json_data = $json_data_pretty;
+                }
+
+                file_put_contents($file_path, $json_data);
+
+                Log::debug('Adding to ZIP: ' . $file_path);
+                $zip->addFile($file_path, basename($file_path));
+            }
+        }
+
+        // sequence data
+        foreach ($sequence_response_list as $response) {
+            if (isset($response['data']['file_path'])) {
+                $file_path = $response['data']['file_path'];
+                Log::debug('Adding to ZIP: ' . $file_path);
+                $zip->addFile($file_path, basename($file_path));
+            }
+        }
+
+        // expression data
+        foreach ($expression_response_list as $response) {
+            if (isset($response['data']['file_path'])) {
+                $file_path = $response['data']['file_path'];
+                Log::debug('Adding to ZIP: ' . $file_path);
+                $zip->addFile($file_path, basename($file_path));
+            }
+        }
+
+        // info.txt
+        $zip->addFile($info_file_path, basename($info_file_path));
+        Log::debug('Adding to ZIP: ' . $info_file_path);
+
+        // AIRR-manifest.json
+        $zip->addFile($manifest_file_path, basename($manifest_file_path));
+        Log::debug('Adding to ZIP: ' . $manifest_file_path);
+
+        $zip->close();
+
+        return $zipPath;
+    }
+
+    public static function delete_files($folder_path)
+    {
+        Log::debug('Deleting downloaded files...');
+        if (File::exists($folder_path)) {
+            Storage::deleteDirectory($folder_path);
+        }
+    }
+
+    public static function file_stats($response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs)
+    {
+        Log::debug('Get files stats');
+        $file_stats = [];
+        foreach ($response_list as $response) {
+            $rest_service_id = $response['rs']->id;
+
+            if (isset($response['data']['file_path'])) {
+                $t = [];
+                $file_path = $response['data']['file_path'];
+                $t['name'] = basename($file_path);
+                $t['rs_url'] = $response['rs']->url;
+                $t['size'] = human_filesize($file_path);
+
+                // cell file name
+                $t['cell_file_name'] = $t['name'];
+
+                // repertoire file name
+                foreach ($metadata_response_list as $r) {
+                    if ($rest_service_id == $r['rs']->id) {
+                        if (isset($r['data']['file_path'])) {
+                            $repertoire_file_path = $r['data']['file_path'];
+                            $t['metadata_file_name'] = basename($repertoire_file_path);
+                        }
+                    }
+                }
+
+                // expression file name
+                foreach ($expression_response_list as $r) {
+                    if ($rest_service_id == $r['rs']->id) {
+                        if (isset($r['data']['file_path'])) {
+                            $expression_file_path = $r['data']['file_path'];
+                            $t['expression_file_name'] = basename($expression_file_path);
+                        }
+                    }
+                }
+
+                // sequence file name
+                foreach ($sequence_response_list as $r) {
+                    if ($rest_service_id == $r['rs']->id) {
+                        if (isset($r['data']['file_path'])) {
+                            $sequence_file_path = $r['data']['file_path'];
+                            $t['sequence_file_name'] = basename($sequence_file_path);
+                        }
+                    }
+                }
+
+                // Get the associated sequence file
+                foreach ($sequence_response_list as $sequence_response) {
+                    // If the service IDs match, then the files match
+                    if ($rest_service_id == $sequence_response['rs']->id) {
+                        // If there is a file path, keep track of the metadata file
+                        if (isset($sequence_response['data']['file_path'])) {
+                            $sequence_file_path = $sequence_response['data']['file_path'];
+                            $t['rearrangement_name'] = basename($sequence_file_path);
+                        }
+                    }
+                }
+
+                $t['nb_cells'] = 0;
+                // TODO count number of cells??
+
+                $t['expected_nb_cells'] = 0;
+                if (isset($expected_nb_cells_by_rs[$rest_service_id])) {
+                    $t['expected_nb_cells'] = $expected_nb_cells_by_rs[$rest_service_id];
+
+                    // TODO tmp hack - bypass check because JSON
+                    $t['nb_cells'] = $t['expected_nb_cells'];
+                } else {
+                    Log::error('rest_service ' . $rest_service_id . ' is missing from $expected_nb_cells_by_rs array');
+                    Log::error($expected_nb_cells_by_rs);
+                }
+                $t['query_log_id'] = $response['query_log_id'];
+                $t['rest_service_name'] = $response['rs']->name;
+                $t['incomplete'] = ($t['nb_cells'] != $t['expected_nb_cells']);
+
+                $file_stats[] = $t;
+            }
+        }
+
+        return $file_stats;
+    }
+}

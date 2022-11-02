@@ -1,4 +1,4 @@
-Sorry, an error happened during the download of your sequences.
+Sorry, an error happened during your data download.
 
 Try again from the original page:
 {{ $page_url }}

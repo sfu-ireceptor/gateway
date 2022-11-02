@@ -33,25 +33,30 @@ Route::get('news', 'HomeController@news')->name('news');
 // fields definitions
 Route::get('/fields-definitions', 'HomeController@fieldsDefinitions')->name('fields-definitions');
 
+// public list of repositories
+Route::get('/repositories', 'HomeController@repositories')->name('repositories');
+
 // public stats
 Route::get('/samples/stats/{rest_service_id}/{repertoire_id}', 'SampleController@stats_sample_info')->name('samples-stats-info')->middleware('log_query');
 Route::get('/samples/stats/{rest_service_id}/{repertoire_id}/{stat}', 'SampleController@stats')->name('samples-stats');
 
-// CANARIE monitoring - dynamic pages
-Route::get('platform/info', 'CanarieController@platformInfo');
-Route::get('auth/service/info', 'CanarieController@authInfo');
-Route::get('computation/service/info', 'CanarieController@computationInfo');
+if (config('ireceptor.canarie')) {
+    // CANARIE monitoring - dynamic pages
+    Route::get('platform/info', 'CanarieController@platformInfo');
+    Route::get('auth/service/info', 'CanarieController@authInfo');
+    Route::get('computation/service/info', 'CanarieController@computationInfo');
 
-Route::get('platform/stats', 'CanarieController@platformStats');
-Route::get('auth/service/stats', 'CanarieController@authStats');
-Route::get('computation/service/stats', 'CanarieController@computationStats');
+    Route::get('platform/stats', 'CanarieController@platformStats');
+    Route::get('auth/service/stats', 'CanarieController@authStats');
+    Route::get('computation/service/stats', 'CanarieController@computationStats');
 
-// CANARIE monitoring - static pages
-Route::get('canarie', 'CanarieController@links');
+    // CANARIE monitoring - static pages
+    Route::get('canarie', 'CanarieController@links');
 
-Route::get('platform/{page}', 'CanarieController@linkPage');
-Route::get('auth/service/{page}', 'CanarieController@linkPage');
-Route::get('computation/service/{page}', 'CanarieController@linkPage');
+    Route::get('platform/{page}', 'CanarieController@linkPage');
+    Route::get('auth/service/{page}', 'CanarieController@linkPage');
+    Route::get('computation/service/{page}', 'CanarieController@linkPage');
+}
 
 // just for dev
 Route::get('test', 'TestController@getIndex')->name('test-page');
@@ -68,18 +73,28 @@ Route::get('email', 'TestController@email');
 
 Route::middleware('auth')->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
-    Route::post('/samples', 'SampleController@postIndex')->name('samples-post');
-    Route::get('/samples', 'SampleController@index')->name('samples')->middleware('log_query');
-    Route::get('/samples/field/{id}', 'SampleController@field')->name('samples-field');
-    Route::get('/samples/field-data/{id}', 'SampleController@field_data')->name('samples-field-data');
+
     Route::get('/samples/json', 'SampleController@json')->name('samples-json')->middleware('log_query');
     Route::get('/samples/tsv', 'SampleController@tsv')->name('samples-tsv')->middleware('log_query');
+    Route::post('/samples/{type?}', 'SampleController@postIndex')->name('samples-post');
+    Route::get('/samples/{type?}', 'SampleController@index')->name('samples')->middleware('log_query');
+    Route::get('/samples/field/{id}', 'SampleController@field')->name('samples-field');
+    Route::get('/samples/field-data/{id}', 'SampleController@field_data')->name('samples-field-data');
     Route::get('/samples/count-stats-popup-open', 'SampleController@countStatsPopupOpen')->name('samples-count-stats-popup-open');
+
     Route::post('/sequences', 'SequenceController@postIndex')->name('sequences-post');
     Route::get('/sequences', 'SequenceController@index')->name('sequences')->middleware('log_query');
     Route::get('/sequences-quick-search', 'SequenceController@quickSearch')->name('sequences-quick-search')->middleware('log_query');
     Route::post('/sequences-quick-search', 'SequenceController@postQuickSearch')->name('sequences-quick-search-post');
     Route::get('/sequences-download', 'SequenceController@download')->name('sequences-download');
+
+    Route::post('/clones', 'CloneController@postIndex')->name('clones-post');
+    Route::get('/clones', 'CloneController@index')->name('clones')->middleware('log_query');
+    Route::get('/clones-download', 'CloneController@download')->name('clones-download');
+
+    Route::post('/cells', 'CellController@postIndex')->name('cells-post');
+    Route::get('/cells', 'CellController@index')->name('cells')->middleware('log_query');
+    Route::get('/cells-download', 'CellController@download')->name('cells-download');
 
     Route::prefix('user')->group(function () {
         Route::get('account', 'UserController@getAccount');
@@ -122,6 +137,7 @@ Route::middleware('auth')->group(function () {
         Route::get('agave-history/{id}', 'JobController@getAgaveHistory');
         Route::get('status/{id}', 'JobController@getStatus');
         Route::get('delete/{id}', 'JobController@getDelete');
+        Route::get('cancel/{id}', 'JobController@getCancel');
     });
 
     Route::prefix('admin')->group(function () {
@@ -145,9 +161,12 @@ Route::middleware('auth')->group(function () {
         Route::get('delete-user/{username}', 'AdminController@getDeleteUser');
         Route::get('samples/update-cache', 'AdminController@getUpdateSampleCache');
         Route::get('samples/update-sequence_count/{rest_service_id}', 'AdminController@getUpdateSequenceCount');
-        Route::get('field-names', 'AdminController@getFieldNames');
+        Route::get('samples/update-clone_count/{rest_service_id}', 'AdminController@getUpdateCloneCount');
+        Route::get('samples/update-cell_count/{rest_service_id}', 'AdminController@getUpdateCellCount');
+        Route::get('field-names/{api_version?}', 'AdminController@getFieldNames');
         Route::get('queries', 'AdminController@queries');
         Route::get('downloads', 'AdminController@downloads');
+        Route::get('downloads/multiple-ipas', 'AdminController@downloadsMultipleIPAs');
         Route::get('queries2', 'AdminController@queries2');
         Route::get('queries/months/{n}', 'AdminController@queriesMonths');
         Route::get('queries2/months/{n}', 'AdminController@queriesMonths2');

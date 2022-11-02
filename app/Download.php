@@ -134,17 +134,32 @@ class Download extends Model
         return $diff_seconds < 0;
     }
 
-    public static function start_download($query_id, $username, $page_url, $nb_sequences)
+    public static function start_sequence_download($query_id, $username, $page_url, $nb_items)
+    {
+        self::start_download($query_id, $username, $page_url, $nb_items, 'sequence');
+    }
+
+    public static function start_clone_download($query_id, $username, $page_url, $nb_items)
+    {
+        self::start_download($query_id, $username, $page_url, $nb_items, 'clone');
+    }
+
+    public static function start_cell_download($query_id, $username, $page_url, $nb_items)
+    {
+        self::start_download($query_id, $username, $page_url, $nb_items, 'cell');
+    }
+
+    public static function start_download($query_id, $username, $page_url, $nb_items, $type = 'sequence')
     {
         $queue = 'default';
-        if ($nb_sequences > 2000000) {
+        if ($nb_items > 2000000) {
             $queue = 'long';
         }
 
         // create new local job
         $lj = new LocalJob($queue);
         $lj->user = $username;
-        $lj->description = 'Sequences download';
+        $lj->description = $type . ' download';
         $lj->save();
 
         // create new download
@@ -152,13 +167,13 @@ class Download extends Model
         $d->username = $username;
         $d->setQueued();
         $d->page_url = $page_url;
-        $d->nb_sequences = $nb_sequences;
+        $d->nb_sequences = $nb_items;
         $d->save();
 
         // queue local job
         $localJobId = $lj->id;
         try {
-            DownloadSequences::dispatch($username, $localJobId, $query_id, $page_url, $nb_sequences, $d)->onQueue($queue);
+            DownloadSequences::dispatch($username, $localJobId, $query_id, $page_url, $nb_items, $d, $type)->onQueue($queue);
         } catch (\Exception $e) {
             \Log::error('Download could not be queued:');
             Log::error($e);

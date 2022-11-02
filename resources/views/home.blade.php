@@ -9,6 +9,7 @@
 
 		<div class="col-md-8">
 			<div class="intro_home">
+
 				<p>
 					<strong>{{ human_number($total_sequences) }} sequences</strong> and
 					<strong>{{ $total_samples }} repertoires</strong> are currently available,<br>
@@ -19,22 +20,23 @@
 						{{ $total_labs }} research {{ str_plural('lab', $total_labs)}} and
 						{{ $total_projects }} {{ str_plural('study', $total_projects)}}.
 					</a>
-					<!-- repos/labs/studies popup -->
-					@include('rest_service_list')
+
+					@include('rest_service_list', ['tab' => 'sequence'])
 				</p>
 
-				<div id="charts">
+				<div class="charts">
 					<div class="row">
-						<div class="col-md-4 chart" id="chart1"></div>
-						<div class="col-md-4 chart" id="chart2"></div>
-						<div class="col-md-4 chart" id="chart3"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart1']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart2']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart3']) !!}"></div>
 					</div>
 					<div class="row">
-						<div class="col-md-4 chart" id="chart4"></div>
-						<div class="col-md-4 chart" id="chart5"></div>
-						<div class="col-md-4 chart" id="chart6"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart4']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart5']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart6']) !!}"></div>
 					</div>
 				</div>
+
 			</div>
 		</div>
 
@@ -80,7 +82,7 @@
 								<div class="form-group">
 									{{ Form::label('cell_subset', __('short.cell_subset')) }}
 									@include('help', ['id' => 'cell_subset'])
-								    {{ Form::select('cell_subset[]', $cell_type_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+								    {{ Form::select('cell_subset_id[]', $cell_type_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 							</div>							
 						</div>
@@ -90,7 +92,7 @@
 							    <div class="form-group">
 									{{ Form::label('organism', __('short.organism')) }}
 									@include('help', ['id' => 'organism'])
-									{{ Form::select('organism', $subject_organism_list, '', array('class' => 'form-control')) }}
+									{{ Form::select('organism_id[]', $subject_organism_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 							</div>
 							<div class="col-md-7">
@@ -110,31 +112,6 @@
 	</div>
 	
 </div>
-
-<script>
-	var graphFields = [
-	        "study_type", 
-	        "organism",
-	        "disease_diagnosis", 
-	        "tissue",
-	        "pcr_target_locus",
-	        "template_class"
-	    ];
-	
-	var graphNames = [
-	        "@lang('short.study_type')",
-	        "@lang('short.organism')", 
-	        "@lang('short.disease_diagnosis')",
-	        "@lang('short.tissue')", 
-	        "@lang('short.pcr_target_locus')",
-	        "@lang('short.template_class')"
-	    ];
-	
-	var graphInternalLabels = true;
-	var graphCountField = "ir_sequence_count";
-	var graphData = {!! $sample_list_json !!};
-</script>
-
 @stop
 
 @section('footer')

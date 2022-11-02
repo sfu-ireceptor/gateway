@@ -5,10 +5,17 @@
 		<tbody>
 			@foreach ($job_list as $job)
 			<tr>
+                                <td>
+                                    <a href="jobs/view/{{ $job->id }}">
+
+                                    {{ $job->app }} (Job {{ $job->id }})
+                                    </a>
+				    <br />
+                                    <em class="dateRelative">Run time: {{ $job->totalTime() }}
+                                </td>
 				<td>
-					<a href="jobs/view/{{ $job->id }}">
-						{{ $job->createdAt() }}
-					</a><br />
+					{{ $job->createdAt() }}
+					<br />
 					<em class="dateRelative">{{ $job->createdAtRelative() }}</em>
 				</td>
 

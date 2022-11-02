@@ -1,6 +1,6 @@
  @extends('template')
 
-@section('title', 'User Sequence Downloads')
+@section('title', 'User Downloads')
 
 @section('content')
 <div class="container-fluid">
@@ -8,7 +8,7 @@
 
 	<ul class="nav nav-tabs">
 	  <li role="presentation"><a href="/admin/queries">Queries</a></li>
-	  <li role="presentation" class="active"><a href="/admin/downloads">Sequence Downloads</a></li>
+	  <li role="presentation" class="active"><a href="/admin/downloads">Downloads</a></li>
 	</ul>
 
 	<p></p>
@@ -18,7 +18,7 @@
 			<th>User</th>
 			<th>Queued on</th>
 			<th>Page URL</th>
-			<th>Nb sequences</th>
+			<th>Nb</th>
 			<th>Duration (running)</th>
 			<th>Status</th>
 			<th>Size</th>
@@ -82,7 +82,7 @@
 						<em>Expired</em>
 
 					@elseif($d->isDone())
-							<a href="/{{ $d->file_url }}" class="btn btn-primary download_repertoires btn-xs" type="button" title="Download">
+							<a href="/{{ $d->file_url }}" class="btn btn-primary btn-xs" type="button" title="Download">
 								<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 								<span class="text">
 									Download

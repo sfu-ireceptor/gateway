@@ -13,12 +13,12 @@
 		<link rel="stylesheet" href="/css/bootstrap.min.css" />
 		<link href="/css/bootstrap-multiselect.css" rel="stylesheet" />
 		<link href="/css/jstree/default/style.min.css" rel="stylesheet" />
-		<link href="/css/main.css?v=64" rel="stylesheet" />
+		<link href="/css/main.css?v=84" rel="stylesheet" />
 
 		<!-- IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-		  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
-		  <script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+		  <script src="/js/html5shiv.min.js"></script>
+		  <script src="/js/respond.min.js"></script>
 		<![endif]-->
 	</head>
 
@@ -47,7 +47,7 @@
 								</ul>
 							</li>
 							<li role="presentation" class="active sequences">
-								<a href="/samples" class="active inactive">Sequence Quick Search</a>
+								<a href="/samples" class="active">Sequence Quick Search</a>
 							</li>
 				    	@elseif(Request::is('samples*'))
 							<li role="presentation" class="dropdown active search">
@@ -61,12 +61,50 @@
 								</ul>
 							</li>
 							<li role="presentation" class="active samples">
-								<a href="#" class="active inactive">
+								<a href="#" class="active">
 									1. Repertoire Metadata
 								</a>
 							</li>
 							<li role="presentation" class="sequences">
-								<a href="#" class="inactive">2. Sequences</a>
+								<a href="#" class="inactive">2. Sequences/Clones/Cells</a>
+							</li>
+						@elseif(Request::is('clones*'))
+							<li role="presentation" class="dropdown active search">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+									Search
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+								  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
+								  <li><a href="/samples">Repertoire Metadata Search</a></li>
+								</ul>
+							</li>
+							<li role="presentation" class="active samples">
+								<a href="/samples?query_id=@yield('sample_query_id', '')">
+									1. Repertoire Metadata
+								</a>
+							</li>
+							<li role="presentation" class="active clones">
+								<a href="#" class="active">2. Clones</a>
+							</li>
+						@elseif(Request::is('cells*'))
+							<li role="presentation" class="dropdown active search">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+									Search
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+								  <li><a href="/sequences-quick-search">Sequence Quick Search</a></li>
+								  <li><a href="/samples">Repertoire Metadata Search</a></li>
+								</ul>
+							</li>
+							<li role="presentation" class="active samples">
+								<a href="/samples?query_id=@yield('sample_query_id', '')">
+									1. Repertoire Metadata
+								</a>
+							</li>
+							<li role="presentation" class="active cells">
+								<a href="#" class="active">2. Cells</a>
 							</li>
 						@elseif(Request::is('sequences*'))
 							<li role="presentation" class="dropdown active search">
@@ -85,7 +123,7 @@
 								</a>
 							</li>
 							<li role="presentation" class="active sequences">
-								<a href="#" class="active inactive">2. Sequences</a>
+								<a href="#" class="active">2. Sequences</a>
 							</li>
 						@else
 							<li class="dropdown">
@@ -114,6 +152,7 @@
 							<li><a href="https://ireceptor.org/node/99" class="external" target="_blank"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Frequently Asked Questions</a></li>
 							<li><a href="http://ireceptor.org/platform/doc" class="external" target="_blank"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> iReceptor Gateway documentation</a></li>
 							<li role="separator" class="divider"></li>
+							<li><a href="/repositories"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Repositories</a></li>
 							<li><a href="/fields-definitions"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Data elements definitions</a></li>
 						</ul>
 					</li>
@@ -147,7 +186,6 @@
 								<li><a href="/downloads"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Downloads</a></li>
 								@if(config('services.agave.enabled'))
 									<li><a href="/jobs"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Jobs</a></li>
-									<li><a href="/systems"><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> Systems</a></li>
 								@endif
 								  <li role="separator" class="divider"></li>
 								<li><a href="/logout"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Log Out</a></li>
@@ -185,24 +223,24 @@
 		</footer>
 
 		<!-- javascript -->
-		<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+		<script src="/js/jquery-1.12.4.min.js"></script>
+		<script src="/js/bootstrap.min.js"></script>
 
-		<script src="/js/jstree.min.js"></script>
-		<script src="https://code.highcharts.com/9.1.2/highcharts.js"></script>
-		<script src="https://code.highcharts.com/9.1.2/highcharts-3d.js"></script>
-		<script src="https://code.highcharts.com/9.1.2/modules/data.js"></script>
-		<script src="https://code.highcharts.com/9.1.2/modules/exporting.js"></script>
-		<script src="https://code.highcharts.com/9.1.2/modules/drilldown.js"></script>
-		<script src="https://code.highcharts.com/9.1.2/modules/bullet.js"></script>
-		<script src="https://code.highcharts.com/9.1.2/modules/no-data-to-display.js"></script>  
+		<script src="/js/jstree.min.js?v=3.3.12"></script>
+		<script src="/js/highcharts/code/highcharts.js"></script>
+		<script src="/js/highcharts/code/highcharts-3d.js"></script>
+		<script src="/js/highcharts/code/modules/data.js"></script>
+		<script src="/js/highcharts/code/modules/exporting.js"></script>
+		<script src="/js/highcharts/code/modules/drilldown.js"></script>
+		<script src="/js/highcharts/code/modules/bullet.js"></script>
+		<script src="/js/highcharts/code/modules/no-data-to-display.js"></script>  
 		<script src="/js/bootstrap-multiselect.js"></script>
 		<script src="/js/pluralize.js"></script>
 
-		<script src="/js/airrvisualization.js?v=12"></script>
-		<script src="/js/main.js?v=75"></script>
+		<script src="/js/airrvisualization.js?v=14"></script>
+		<script src="/js/main.js?v=85"></script>
 		<script src="/js/admin.js?v=1"></script>
-		<script src="/js/visualization.js?v=19"></script>
+		<script src="/js/visualization.js?v=22"></script>
 	</body>
 
 </html>

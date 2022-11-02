@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\FieldName;
 use App\News;
+use App\RestService;
 use App\Sample;
 use Illuminate\Http\Request;
 
@@ -18,26 +19,35 @@ class HomeController extends Controller
 
         // get list of samples
         $sample_list = Sample::public_samples();
-        $data['sample_list_json'] = json_encode($sample_list);
+
+        // Fields we want to graph. The UI/blade expects six fields
+        $charts_fields = ['study_type_id', 'organism', 'disease_diagnosis_id',
+            'tissue_id', 'pcr_target_locus', 'template_class', ];
+        // Mapping of fields to display as labels on the graph for those that need
+        // mappings. These are usually required for ontology fields where we want
+        // to aggregate on the ontology ID but display the ontology label.
+        $field_map = ['study_type_id' => 'study_type',
+            'disease_diagnosis_id' => 'disease_diagnosis',
+            'tissue_id' => 'tissue', ];
+        $data['charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map);
 
         // generate statistics
         $sample_data = Sample::stats($sample_list);
         $data['rest_service_list'] = $sample_data['rs_list'];
 
         // cell type
-        $cell_type_list = [];
-        foreach ($metadata['cell_subset'] as $v) {
-            $cell_type_list[$v] = $v;
+        $cell_type_ontology_list = [];
+        foreach ($metadata['cell_subset_id'] as $v) {
+            $cell_type_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
-        $data['cell_type_list'] = $cell_type_list;
+        $data['cell_type_ontology_list'] = $cell_type_ontology_list;
 
-        // organism
-        $subject_organism_list = [];
-        $subject_organism_list[''] = 'Any';
-        foreach ($metadata['organism'] as $v) {
-            $subject_organism_list[$v] = $v;
+        // organism ontology info
+        $subject_organism_ontology_list = [];
+        foreach ($metadata['organism_id'] as $v) {
+            $subject_organism_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
         }
-        $data['subject_organism_list'] = $subject_organism_list;
+        $data['subject_organism_ontology_list'] = $subject_organism_ontology_list;
 
         // clear any lingering form data
         $request->session()->forget('_old_input');
@@ -73,5 +83,28 @@ class HomeController extends Controller
         $data['sequence_field_list_grouped'] = $sequence_field_list_grouped;
 
         return view('fieldsDefinitions', $data);
+    }
+
+    public function repositories()
+    {
+        $rs_list = RestService::findEnabledPublic();
+
+        // count studies for each repository
+        $sample_data = Sample::find([], 'titi');
+        foreach ($rs_list as $i => $rs) {
+            $rs_list[$i]->nb_studies = 0;
+            foreach ($sample_data['rs_list'] as $rs_data) {
+                if ($rs_data['rs_id'] == $rs->id) {
+                    $rs_list[$i]->nb_studies += $rs_data['total_studies'];
+                } elseif ($rs_data['rs_group_code'] != null && $rs_data['rs_group_code'] == $rs->rest_service_group_code) {
+                    $rs_list[$i]->nb_studies += $rs_data['total_studies'];
+                }
+            }
+        }
+
+        $data = [];
+        $data['rs_list'] = $rs_list;
+
+        return view('repositories', $data);
     }
 }

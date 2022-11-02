@@ -26,6 +26,62 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
+        $defaults = [];
+        $defaults['base_uri'] = 'http://covid19-1.ireceptor.org/airr/v1/';
+        $defaults['verify'] = false;    // accept self-signed SSL certificates
+        $client = new \GuzzleHttp\Client($defaults);
+
+        $options = [];
+        $options['headers'] = ['Content-Type' => 'application/json'];
+
+        $params = [];
+        $params['from'] = 0;
+        $params['size'] = 1;
+        $options['body'] = RestService::generate_json_query([], $params);
+
+        // $options['body'] = '{}';
+        // $options['body'] = RestService::generate_json_query([], $params);
+
+        // dd($options['body']);
+
+        $response = $client->post('repertoire', $options);
+        $body = $response->getBody();
+        $json = json_decode($body);
+        echo $json->Repertoire[0]->repertoire_id;
+        exit();
+        dd($json);
+
+        dd('ok');
+
+        $slice = Str::beforeLast('test_id', '_id');
+        dd($slice);
+
+        $str = 'test_id';
+        // $str2 = $str;
+        $str2 = preg_replace('/_id$/', '', $str);
+        dd($str2);
+
+        $l = FieldName::getOntologyFields();
+        dd($l);
+
+        $t = [];
+
+        $t1 = [];
+        $t1['repertoire_id'] = 'aaa';
+        $t1['data_processing_id'] = 'bb';
+
+        $t2 = [];
+        $t2['repertoire_id'] = 'ccc';
+        $t2['data_processing_id'] = 'ddd';
+
+        $t[] = $t1;
+        $t[] = $t2;
+
+        $r = RestService::generate_or_json_query($t);
+        // dd($r);
+        echo $r;
+        exit();
+
         $data = [];
         try {
             $defaults = [];

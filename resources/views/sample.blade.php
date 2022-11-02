@@ -4,21 +4,24 @@
 
 @section('content')
 
-<div class="container-fluid sample_container">
-
+<div class="banner_title samples">
 	<h1>1. Repertoire Metadata Search</h1>
 	<p class="sh1">Filter by study/subject/sample and choose repertoires to analyze relevant sequence data</p>
+</div>
+
+<div class="container-fluid samples_container">
 
 	<div class="row">
 		<div class="col-md-2 filters">
 
 			<h3 class="first">Filters</h3>
 
-			{{ Form::open(array('url' => 'samples', 'role' => 'form', 'method' => 'post', 'class' => 'sample_search show_reloading_message')) }}
+
+			{{ Form::open(array('url' => $page_uri, 'role' => 'form', 'method' => 'post', 'class' => 'sample_search show_reloading_message')) }}
 				<input type="hidden" name="project_id_list" />
-				<input type="hidden" name="cols" value="{{ $current_columns_str }}">
-				<input type="hidden" name="sort_column" value="{{ $sort_column }}">
-				<input type="hidden" name="sort_order" value="{{ $sort_order }}">
+				<input type="hidden" name="cols" value="{{ $current_columns_str }}" />
+				<input type="hidden" name="sort_column" value="{{ $sort_column }}" />
+				<input type="hidden" name="sort_order" value="{{ $sort_order }}" />
 
 			    <div class="form-group full_text_search">
 					{{ Form::label('full_text_search', __('short.full_text_search')) }}
@@ -53,7 +56,7 @@
 							    <div class="form-group">
 									{{ Form::label('study_type', __('short.study_type')) }}
 									@include('help', ['id' => 'study_type'])
-									{{ Form::select('study_type[]', $study_type_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+									{{ Form::select('study_type_id[]', $study_type_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 							    <div class="form-group">
@@ -93,7 +96,7 @@
 							    <div class="form-group">
 									{{ Form::label('organism', __('short.organism')) }}
 									@include('help', ['id' => 'organism'])
-									{{ Form::select('organism[]', $subject_organism_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+									{{ Form::select('organism_id[]', $subject_organism_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 								<div class="form-group">
@@ -127,7 +130,7 @@
 							    <div class="form-group">
 									{{ Form::label('disease_diagnosis', __('short.disease_diagnosis')) }}
 									@include('help', ['id' => 'disease_diagnosis'])
-									{{ Form::select('disease_diagnosis[]', $subject_disease_diagnosis_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+									{{ Form::select('disease_diagnosis_id[]', $subject_disease_diagnosis_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 								<p class="button_container">
@@ -162,13 +165,13 @@
 								<div class="form-group">
 									{{ Form::label('cell_subset', __('short.cell_subset')) }}
 									@include('help', ['id' => 'cell_subset'])
-								    {{ Form::select('cell_subset[]', $cell_type_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+								    {{ Form::select('cell_subset_id[]', $cell_type_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 							    <div class="form-group">
 									{{ Form::label('tissue', __('short.tissue')) }}
 									@include('help', ['id' => 'tissue'])
-								    {{ Form::select('tissue[]', $sample_source_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+								    {{ Form::select('tissue_id[]', $sample_tissue_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
 								</div>
 
 							    <div class="form-group">
@@ -287,7 +290,29 @@
 				@endif	
 			
 
-				@if (empty($sample_list))
+				<!-- Sequences/Clones/Cells tabs -->
+				<ul class="nav nav-tabs">
+					<li role="presentation" class="{{ $tab == 'sequence' ? 'active' : '' }}">
+						<a class="sequences" href="/samples?query_id={{ $sample_query_id }}">
+							Sequence Search Results
+							 <span class="badge badge-sequences">{{ $nb_samples_with_sequences }}</span>
+						</a>
+					</li>
+					<li role="presentation" class="{{ $tab == 'clone' ? 'active' : '' }}">
+						<a class="clones" href="/samples/clone?query_id={{ $sample_query_id }}">
+							Clone Search Results
+							<span class="badge badge-clones">{{ $nb_samples_with_clones }}</span>
+						</a>
+					</li>
+					<li role="presentation" class="{{ $tab == 'cell' ? 'active' : '' }}">
+						<a class="cells" href="/samples/cell?query_id={{ $sample_query_id }}">
+							Cell Search Results
+							<span class="badge badge-cells">{{ $nb_samples_with_cells }}</span>
+						</a>
+					</li>
+				</ul>
+
+				@if (empty($samples_with_sequences))
 					<div class="no_results">
 						<h2>No Results</h2>
 						@if ( ($rs_list_no_response_str != '') || ($rs_list_sequence_count_error_str != ''))
@@ -302,262 +327,736 @@
 						<p>For more information, go to our <a href="http://ireceptor.org/platform/doc/faq" class="external" target="_blank"> FAQ (Frequently Asked Questions)</a></p>			
 					</div>
 				@else
-					<!-- Statistics -->
-					<h3 class="{{ empty($filter_fields) ? 'first' : '' }}">Search results statistics</h3>
-					<div class="statistics">
-						<p>
-							<strong>
-								<span title="{{ number_format($total_filtered_sequences) }}">
-									{{ number_format($total_filtered_sequences) }} sequences
-								</span>
-								({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
-							</strong>
-							returned from
-		
-							<a href="#" class="toggle_modal_rest_service_list_folded">
-								{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},</a>
-							<a href="#" class="toggle_modal_rest_service_list_expanded">
-								{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}} and
-								{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}.
-							</a>
+					<!-- Tab panes -->
+					<div class="tab-content">
+						@if ($tab == 'sequence')
+							<div role="tabpanel" class="tab-pane active" id="repertoireSequenceSearchResults">
+								<!-- Statistics -->
+								<h3 class="{{ empty($filter_fields) ? 'first' : '' }} statistics-header">Statistics</h3>
+								<div class="statistics">
+									<p>
+										<strong>
+											<span title="{{ number_format($total_filtered_sequences) }}">
+												{{ number_format($total_filtered_sequences) }} sequences
+											</span>
+											({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
+										</strong>
+										returned from
+					
+										<a href="#" class="toggle_modal_rest_service_list_folded">
+											{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},</a>
+										<a href="#" class="toggle_modal_rest_service_list_expanded">
+											{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}} and
+											{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}.
+										</a>
 
-							@if ( ($rs_list_no_response_str != '') || ($rs_list_sequence_count_error_str != ''))
-								<a role="button" class="missing_data" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Incomplete data" data-content="{{ $rs_list_no_response_str }}{{ $rs_list_sequence_count_error_str }}" data-trigger="hover" tabindex="0">
-									<span class="glyphicon glyphicon-exclamation-sign"></span>								
-								</a>
-							@endif
-
-						</p>
-
-						<!-- repos/labs/studies details popup -->
-						@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
-
-						<div id="charts" class="charts">
-							<div class="row">
-								<div class="col-md-2 chart" id="chart1"></div>
-								<div class="col-md-2 chart" id="chart2"></div>
-								<div class="col-md-2 chart" id="chart3"></div>
-								<div class="col-md-2 chart" id="chart4"></div>
-								<div class="col-md-2 chart" id="chart5"></div>
-								<div class="col-md-2 chart" id="chart6"></div>
-							</div>
-						</div>								
-					</div>
-				@endif
-
-				@if (! empty($sample_list))
-				<!-- table column selector -->
-				<div class="collapse" id="column_selector">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h4 class="panel-title">
-								Customize displayed columns
-								<button class="btn btn-primary btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector">
-									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-						  			Close
-								</button>
-							</h4>
-						</div>
-				  		<div class="panel-body">
-							<form class="column_selector">
-								@foreach ($field_list_grouped as $field_group)
-									<h5>{{ $field_group['name'] }}</h5>
-									@foreach ($field_group['fields'] as $field)
-										<div class="checkbox">
-											<label>
-												<input name="table_columns" class="{{ $field['ir_id'] }}" data-id="{{ $field['ir_id'] }}" type="checkbox" value="{{'col_' . $field['ir_id']}}" {{ in_array($field['ir_id'], $current_columns) ? 'checked="checked"' : '' }}/>
-												 @include('help', ['id' => $field['ir_id']])
-												 @lang('short.' . $field['ir_id'])
-											</label>
-										</div>		
-									@endforeach
-								@endforeach
-							</form>
-				  		</div>
-					</div>
-				</div>
-
-
-					<div class="row">
-						<div class="col-md-6">
-							<h3>
-								Individual Repertoires
-
-								<small>
-									{{ $page_first_element_index }}-{{ $page_last_element_index }} of {{ $nb_samples }}
-								</small>
-
-								<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
-								  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-								  Customize displayed columns
-								</a>
-							</h3>
-						</div>
-						<div class="col-md-6 repertoires_button_container">
-							<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
-								Browse sequences from {{ $nb_samples }} repertoires →
-							</a>
-						
-							<a href="/samples/tsv?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as TSV">
-								<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-								<span class="text">TSV</span>
-							</a>
-
-							<a href="/samples/json?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as JSON">
-								<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-								<span class="text">JSON</span>
-							</a>							
-						</div>
-					</div>
-		
-				<!-- sample data -->
-				<table class="table table-striped sample_list table-condensed much_data table-bordered sortable">
-					<thead> 
-						<tr>
-							<th class="stats">Stats</th>
-							@foreach ($field_list as $field)
-								<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
-										@if ($field['ir_id'] == $sort_column)
-											@if ($sort_order == 'asc')
-												<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=desc">
-													@lang('short.' . $field['ir_id'])
-													@include('help', ['id' => $field['ir_id']])
-													<span class="glyphicon sort_icon sorted_asc"></span>
-												</a>
-											@else
-												<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
-													@lang('short.' . $field['ir_id'])
-													@include('help', ['id' => $field['ir_id']])
-													<span class="glyphicon sort_icon sorted_desc"></span>
-												</a>
-											@endif
-										@else
-											<a class="sort_column" role="button" href="/samples?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
-												@lang('short.' . $field['ir_id'])
-												@include('help', ['id' => $field['ir_id']])
-												<span class="glyphicon sort_icon"></span>
+										@if ( ($rs_list_no_response_str != '') || ($rs_list_sequence_count_error_str != ''))
+											<a role="button" class="missing_data" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Incomplete data" data-content="{{ $rs_list_no_response_str }}{{ $rs_list_sequence_count_error_str }}" data-trigger="hover" tabindex="0">
+												<span class="glyphicon glyphicon-exclamation-sign"></span>								
 											</a>
 										@endif
-								</th>
-							@endforeach
-						</tr>
-					</thead>
-					<tbody>
-						@foreach ($sample_list as $sample)
-						<tr>
-							<td class="stats">
-								@if(isset($sample->stats) && $sample->stats)
-									<a href="#modal_stats" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-name="{{ $sample->subject_id }} - {{ $sample->sample_id }} - {{ $sample->pcr_target_locus }}" data-toggle="modal" data-target="#statsModal">
-										<span class="label label-primary">
-											<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
-										</span>
-									</a>
-									@if(isset($sample->show_stats_notification))
-										<div class="stats_notification_container">
-											<div class="tooltip left in stats_notification" style="display: block;">
-												<div class="tooltip-arrow" style="top: 50%;"></div>
-												<div class="tooltip-inner">Repertoire statistics<br>are now available.</div>
-											</div>
+
+									</p>
+
+									<!-- repos/labs/studies details popup -->
+									@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
+
+									<div class="charts">
+										<div class="row">
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart1']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart2']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart3']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart4']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart5']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart6']) !!}"></div>
 										</div>
-									@endif
-								@endif						
-							</td>
-							@foreach ($field_list as $field)
-								<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
-									@isset($sample->{$field['ir_id']})
-										@if($field['ir_id'] == 'ir_sequence_count')
-											@if ($sample->ir_sequence_count > 0)
-												<a href="sequences?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
-													<span class="label label-primary">{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}</span>
-												</a>
-											@endif
-										@elseif($field['ir_id'] == 'study_id')
-											@isset($sample->ncbi_url)
-												<a href="{{ $sample->ncbi_url }}" title="{{ $sample->ncbi_url }}" target="_blank">
-													{{ str_limit($sample->study_id, $limit = 20, $end = '‥') }}
-												</a>
-											@else
-												<span title="{{ $sample->{$field['ir_id']} }}">
-													{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
-												</span>						
-											@endisset
-										@elseif($field['ir_id'] == 'repertoire_id')
-											{{ $sample->{$field['ir_id']} }}
-										@elseif($field['ir_id'] == 'study_title')
-											@isset($sample->study_url)
-												<a href="{{ $sample->study_url }}" title="{{ $sample->study_title }}" target="_blank">
-													{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
-												</a>
-											@else
-												<span title="{{ $sample->study_title }}">
-													{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
-												</span>							
-											@endisset
-										@elseif($field['ir_id'] == 'pub_ids')
-											@isset($sample->study_url)
-												<a href="{{ $sample->study_url }}" title="{{ $sample->study_url }}" target="_blank">
-													{{ str_limit(remove_url_prefix($sample->study_url), $limit = 25, $end = '‥') }}
-												</a>
-											@else
-												<span title="{{ $sample->{$field['ir_id']} }}">
-													{{ $sample->{$field['ir_id']} }}
-												</span>							
-											@endisset
-										@else
-											@if (is_bool($sample->{$field['ir_id']}))
-												{{ $sample->{$field['ir_id']} ? 'Yes' : 'No' }}
-											@else
-												@if (is_object($sample->{$field['ir_id']}))
-													<span title="{{ json_encode($sample->{$field['ir_id']}) }}">
-														{{ str_limit(json_encode($sample->{$field['ir_id']}), $limit = 20, $end = '‥') }}									
-													</span>			
-												@elseif (is_array($sample->{$field['ir_id']}))
-													<span title="{{ implode(', ', $sample->{$field['ir_id']}) }}">
-														{{ str_limit(implode(', ', $sample->{$field['ir_id']}), $limit = 25, $end = '‥') }}									
-													</span>			
-												@else
-													<span title="{{ $sample->{$field['ir_id']} }}">
-														{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
-													</span>
-												@endif
-											@endif
-									@endif
-									@endif
-								</td>
-							@endforeach
-						</tr>
-						@endforeach
-					</tbody>
-				</table>
+									</div>
 
-				<div class="row">
-					<div class="col-md-6">
-						@if ($nb_pages > 1)
-							<nav aria-label="Individual Repertoires">
-								<ul class="pagination">
-									@for ($i = 1; $i <= $nb_pages; $i++)
-										@if ($i == $page)
-											<li class="active">
-												<span>{{ $i }} <span class="sr-only">(current)</span></span>
-										    </li>										
-										@else
-										<li>
-											<a href="/samples?query_id={{$sample_query_id}}&amp;page={{ $i }}">
-												{{ $i }}
+								</div>
+
+								<!-- table column selector -->
+								@include('columnSelector')
+
+								<div class="row">
+									<div class="col-md-5">
+										<h3>
+											Individual Repertoires
+
+											<small>
+												{{ $page_first_element_index }}-{{ $page_last_element_index }} of {{ $nb_samples }}
+											</small>
+
+											<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
+											  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+											  Customize displayed columns
 											</a>
-										</li>
+										</h3>
+									</div>
+									<div class="col-md-7 repertoires_button_container">
+										<a role="button" class="btn btn-primary btn-sequences browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
+											Browse sequences from {{ $nb_samples }} repertoires →
+										</a>
+
+										<div class="btn-group download_repertoires">
+											<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+												<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+												<span class="text">Download repertoire metadata</span>
+												<span class="caret"></span>
+											</button>
+											<ul class="dropdown-menu">
+												<li><a href="/samples/tsv?query_id={{ $sample_query_id }}">TSV</a></li>
+												<li><a href="/samples/json?query_id={{ $sample_query_id }}">JSON</a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+								
+								<!-- sample data -->
+								<table class="table table-striped sample_list table-condensed much_data table-bordered sortable">
+									<thead> 
+										<tr>
+											<th class="stats">Stats</th>
+											@foreach ($field_list as $field)
+
+												{{-- skip clones column --}}
+												@if ($field['ir_id'] == 'ir_clone_count')
+													@continue
+												@endif
+
+												{{-- skip cells column --}}
+												@if ($field['ir_id'] == 'ir_cell_count')
+													@continue
+												@endif
+
+												<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
+														@if ($field['ir_id'] == $sort_column)
+															@if ($sort_order == 'asc')
+																<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=desc">
+																	@lang('short.' . $field['ir_id'])
+																	@include('help', ['id' => $field['ir_id']])
+																	<span class="glyphicon sort_icon sorted_asc"></span>
+																</a>
+															@else
+																<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
+																	@lang('short.' . $field['ir_id'])
+																	@include('help', ['id' => $field['ir_id']])
+																	<span class="glyphicon sort_icon sorted_desc"></span>
+																</a>
+															@endif
+														@else
+															<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
+																@lang('short.' . $field['ir_id'])
+																@include('help', ['id' => $field['ir_id']])
+																<span class="glyphicon sort_icon"></span>
+															</a>
+														@endif
+												</th>
+											@endforeach
+										</tr>
+									</thead>
+									<tbody>
+										@foreach ($samples_with_sequences as $sample)
+										<tr>
+											<td class="stats stats-sequences">
+												@if(isset($sample->stats) && $sample->stats)
+													<a href="#modal_stats" data-url="/samples/stats/{{ $sample->real_rest_service_id }}/{{ $sample->repertoire_id }}" data-repertoire-name="{{ $sample->subject_id ?? '' }} - {{ $sample->sample_id ?? '' }} - {{ $sample->pcr_target_locus ?? '' }}" data-toggle="modal" data-target="#statsModal">
+														<span class="label label-primary">
+															<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+														</span>
+													</a>
+													@if(isset($sample->show_stats_notification))
+														<div class="stats_notification_container">
+															<div class="tooltip left in stats_notification" style="display: block;">
+																<div class="tooltip-arrow" style="top: 50%;"></div>
+																<div class="tooltip-inner">Repertoire statistics<br>are now available.</div>
+															</div>
+														</div>
+													@endif
+												@endif						
+											</td>
+											@foreach ($field_list as $field)
+												{{-- skip clones column --}}
+												@if ($field['ir_id'] == 'ir_clone_count')
+													@continue
+												@endif
+
+												{{-- skip cells column --}}
+												@if ($field['ir_id'] == 'ir_cell_count')
+													@continue
+												@endif
+
+												<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
+													@isset($sample->{$field['ir_id']})
+														@if($field['ir_id'] == 'ir_sequence_count')
+															@if ($sample->ir_sequence_count > 0)
+																<a class="number" href="sequences?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
+																	{{number_format($sample->ir_sequence_count, 0 ,'.' ,',') }}
+																</a>
+															@endif
+														@elseif($field['ir_id'] == 'study_id')
+															@isset($sample->ncbi_url)
+																<a href="{{ $sample->ncbi_url }}" title="{{ $sample->ncbi_url }}" target="_blank">
+																	{{ str_limit($sample->study_id, $limit = 20, $end = '‥') }}
+																</a>
+															@else
+																<span title="{{ $sample->{$field['ir_id']} }}">
+																	{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+																</span>						
+															@endisset
+														@elseif($field['ir_id'] == 'repertoire_id')
+															{{ $sample->{$field['ir_id']} }}
+														@elseif($field['ir_id'] == 'study_title')
+															@isset($sample->study_url)
+																<a href="{{ $sample->study_url }}" title="{{ $sample->study_title }}" target="_blank">
+																	{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
+																</a>
+															@else
+																<span title="{{ $sample->study_title }}">
+																	{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
+																</span>							
+															@endisset
+														@elseif($field['ir_id'] == 'pub_ids')
+															@isset($sample->study_url)
+																<a href="{{ $sample->study_url }}" title="{{ $sample->study_url }}" target="_blank">
+																	{{ str_limit(remove_url_prefix($sample->study_url), $limit = 25, $end = '‥') }}
+																</a>
+															@else
+																<span title="{{ $sample->{$field['ir_id']} }}">
+																	{{ $sample->{$field['ir_id']} }}
+																</span>							
+															@endisset
+														@else
+															@if (is_bool($sample->{$field['ir_id']}))
+																{{ $sample->{$field['ir_id']} ? 'Yes' : 'No' }}
+															@else
+																@if (is_object($sample->{$field['ir_id']}))
+																	<span title="{{ json_encode($sample->{$field['ir_id']}) }}">
+																		{{ str_limit(json_encode($sample->{$field['ir_id']}), $limit = 20, $end = '‥') }}									
+																	</span>			
+																@elseif (is_array($sample->{$field['ir_id']}))
+																	<span title="{{ implode(', ', $sample->{$field['ir_id']}) }}">
+																		{{ str_limit(implode(', ', $sample->{$field['ir_id']}), $limit = 25, $end = '‥') }}									
+																	</span>			
+																@else
+																	<span title="{{ $sample->{$field['ir_id']} }}">
+																		{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+																	</span>
+																@endif
+															@endif
+													@endif
+													@endif
+												</td>
+											@endforeach
+										</tr>
+										@endforeach
+									</tbody>
+								</table>
+
+								<div class="row">
+									<div class="col-md-6">
+										@if ($nb_pages > 1)
+											<nav aria-label="Individual Repertoires">
+												<ul class="pagination">
+													@for ($i = 1; $i <= $nb_pages; $i++)
+														@if ($i == $page)
+															<li class="active">
+																<span>{{ $i }} <span class="sr-only">(current)</span></span>
+														    </li>										
+														@else
+														<li>
+															<a href="/samples?query_id={{$sample_query_id}}&amp;page={{ $i }}">
+																{{ $i }}
+															</a>
+														</li>
+														@endif
+													@endfor
+												</ul>
+											</nav>
 										@endif
-									@endfor
-								</ul>
-							</nav>
+									</div>
+
+									<div class="col-md-6 repertoires_button_container">
+										<a role="button" class="btn btn-primary btn-sequences browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
+											Browse sequences from {{ $nb_samples }} repertoires →
+										</a>
+									</div>
+								</div>
+
+							</div>
 						@endif
+
+						@if ($tab == 'clone')
+							<div role="tabpanel" class="tab-pane active" id="repertoireCloneSearchResults">
+								<!-- Statistics -->
+								<h3 class="{{ empty($filter_fields) ? 'first' : '' }} statistics-header">Statistics</h3>
+								<div class="statistics">
+									<p>
+										<strong>
+											<span title="{{ number_format($total_filtered_sequences) }}">
+												{{ number_format($total_filtered_sequences) }} clones
+											</span>
+											({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})										</strong>
+										returned from
+					
+										<a href="#" class="toggle_modal_rest_service_list_folded">
+											{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},</a>
+										<a href="#" class="toggle_modal_rest_service_list_expanded">
+											{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}} and
+											{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}.
+										</a>
+
+										@if ( ($rs_list_no_response_str != '') || ($rs_list_sequence_count_error_str != ''))
+											<a role="button" class="missing_data" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Incomplete data" data-content="{{ $rs_list_no_response_str }}{{ $rs_list_sequence_count_error_str }}" data-trigger="hover" tabindex="0">
+												<span class="glyphicon glyphicon-exclamation-sign"></span>								
+											</a>
+										@endif
+
+									</p>
+
+									<!-- repos/labs/studies details popup -->
+									@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
+
+									<div class="charts">
+										<div class="row">
+											<div class="col-md-2 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart1']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart2']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart3']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart4']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart5']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart6']) !!}"></div>
+										</div>
+									</div>
+									
+								</div>
+
+								<!-- table column selector -->
+								@include('columnSelector')
+
+								<div class="row">
+									<div class="col-md-6">
+										<h3>
+											Individual Repertoires
+
+											<small>
+												{{ $page_first_element_index }}-{{ $page_last_element_index }} of {{ $nb_samples }}
+											</small>
+
+											<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
+											  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+											  Customize displayed columns
+											</a>
+
+										</h3>
+									</div>
+									<div class="col-md-6 repertoires_button_container">
+										<a role="button" class="btn btn-primary btn-clones browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/clones?query_id={{ $sequences_query_id }}">
+											Browse clones from {{ $nb_samples }} repertoires →
+										</a>
+									
+										<a href="/samples/tsv?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as TSV">
+											<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+											<span class="text">TSV</span>
+										</a>
+
+										<a href="/samples/json?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as JSON">
+											<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+											<span class="text">JSON</span>
+										</a>							
+									</div>
+								</div>
+								
+								<!-- sample data -->
+								<table class="table table-striped sample_list table-condensed much_data table-bordered sortable">
+									<thead> 
+										<tr>
+											@foreach ($field_list as $field)
+												{{-- skip sequence column --}}
+												@if ($field['ir_id'] == 'ir_sequence_count')
+													@continue
+												@endif
+
+												{{-- skip cells column --}}
+												@if ($field['ir_id'] == 'ir_cell_count')
+													@continue
+												@endif
+												<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
+														@if ($field['ir_id'] == $sort_column)
+															@if ($sort_order == 'asc')
+																<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=desc">
+																	@lang('short.' . $field['ir_id'])
+																	@include('help', ['id' => $field['ir_id']])
+																	<span class="glyphicon sort_icon sorted_asc"></span>
+																</a>
+															@else
+																<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
+																	@lang('short.' . $field['ir_id'])
+																	@include('help', ['id' => $field['ir_id']])
+																	<span class="glyphicon sort_icon sorted_desc"></span>
+																</a>
+															@endif
+														@else
+															<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
+																@lang('short.' . $field['ir_id'])
+																@include('help', ['id' => $field['ir_id']])
+																<span class="glyphicon sort_icon"></span>
+															</a>
+														@endif
+												</th>
+											@endforeach
+										</tr>
+									</thead>
+									<tbody>
+										@foreach ($samples_with_sequences as $sample)
+										<tr>
+											@foreach ($field_list as $field)
+												
+												{{-- skip sequence column --}}
+												@if ($field['ir_id'] == 'ir_sequence_count')
+													@continue
+												@endif
+												
+												{{-- skip cells column --}}
+												@if ($field['ir_id'] == 'ir_cell_count')
+													@continue
+												@endif
+
+												<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
+													@isset($sample->{$field['ir_id']})
+														@if($field['ir_id'] == 'ir_clone_count')
+															@if ($sample->ir_clone_count > 0)
+																<a class="number" href="/clones?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
+																	{{number_format($sample->ir_clone_count, 0 ,'.' ,',') }}
+																</a>
+															@endif
+														@elseif($field['ir_id'] == 'study_id')
+															@isset($sample->ncbi_url)
+																<a href="{{ $sample->ncbi_url }}" title="{{ $sample->ncbi_url }}" target="_blank">
+																	{{ str_limit($sample->study_id, $limit = 20, $end = '‥') }}
+																</a>
+															@else
+																<span title="{{ $sample->{$field['ir_id']} }}">
+																	{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+																</span>						
+															@endisset
+														@elseif($field['ir_id'] == 'repertoire_id')
+															{{ $sample->{$field['ir_id']} }}
+														@elseif($field['ir_id'] == 'study_title')
+															@isset($sample->study_url)
+																<a href="{{ $sample->study_url }}" title="{{ $sample->study_title }}" target="_blank">
+																	{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
+																</a>
+															@else
+																<span title="{{ $sample->study_title }}">
+																	{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
+																</span>							
+															@endisset
+														@elseif($field['ir_id'] == 'pub_ids')
+															@isset($sample->study_url)
+																<a href="{{ $sample->study_url }}" title="{{ $sample->study_url }}" target="_blank">
+																	{{ str_limit(remove_url_prefix($sample->study_url), $limit = 25, $end = '‥') }}
+																</a>
+															@else
+																<span title="{{ $sample->{$field['ir_id']} }}">
+																	{{ $sample->{$field['ir_id']} }}
+																</span>							
+															@endisset
+														@else
+															@if (is_bool($sample->{$field['ir_id']}))
+																{{ $sample->{$field['ir_id']} ? 'Yes' : 'No' }}
+															@else
+																@if (is_object($sample->{$field['ir_id']}))
+																	<span title="{{ json_encode($sample->{$field['ir_id']}) }}">
+																		{{ str_limit(json_encode($sample->{$field['ir_id']}), $limit = 20, $end = '‥') }}									
+																	</span>			
+																@elseif (is_array($sample->{$field['ir_id']}))
+																	<span title="{{ implode(', ', $sample->{$field['ir_id']}) }}">
+																		{{ str_limit(implode(', ', $sample->{$field['ir_id']}), $limit = 25, $end = '‥') }}									
+																	</span>			
+																@else
+																	<span title="{{ $sample->{$field['ir_id']} }}">
+																		{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+																	</span>
+																@endif
+															@endif
+													@endif
+													@endif
+												</td>
+											@endforeach
+										</tr>
+										@endforeach
+									</tbody>
+								</table>
+
+								<div class="row">
+									<div class="col-md-6">
+										@if ($nb_pages > 1)
+											<nav aria-label="Individual Repertoires">
+												<ul class="pagination">
+													@for ($i = 1; $i <= $nb_pages; $i++)
+														@if ($i == $page)
+															<li class="active">
+																<span>{{ $i }} <span class="sr-only">(current)</span></span>
+														    </li>										
+														@else
+														<li>
+															<a href="/samples?query_id={{$sample_query_id}}&amp;page={{ $i }}">
+																{{ $i }}
+															</a>
+														</li>
+														@endif
+													@endfor
+												</ul>
+											</nav>
+										@endif
+									</div>
+
+									<div class="col-md-6 repertoires_button_container">
+										<a role="button" class="btn btn-primary btn-clones browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/clones?query_id={{ $sequences_query_id }}">
+											Browse clones from {{ $nb_samples }} repertoires →
+										</a>
+									</div>
+								</div>
+							</div>
+						@endif
+
+						@if ($tab == 'cell')
+							<div role="tabpanel" class="tab-pane active" id="repertoireCellSearchResults">
+								<!-- Statistics -->
+								<h3 class="{{ empty($filter_fields) ? 'first' : '' }} statistics-header">Statistics</h3>
+								<div class="statistics">
+									<p>
+										<strong>
+											<span title="{{ number_format($total_filtered_sequences) }}">
+												{{ number_format($total_filtered_sequences) }} cells
+											</span>
+											({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
+										</strong>
+										returned from
+					
+										<a href="#" class="toggle_modal_rest_service_list_folded">
+											{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},</a>
+										<a href="#" class="toggle_modal_rest_service_list_expanded">
+											{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}} and
+											{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}.
+										</a>
+
+										@if ( ($rs_list_no_response_str != '') || ($rs_list_sequence_count_error_str != ''))
+											<a role="button" class="missing_data" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Incomplete data" data-content="{{ $rs_list_no_response_str }}{{ $rs_list_sequence_count_error_str }}" data-trigger="hover" tabindex="0">
+												<span class="glyphicon glyphicon-exclamation-sign"></span>								
+											</a>
+										@endif
+
+									</p>
+
+									<!-- repos/labs/studies details popup -->
+									@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
+
+									<div class="charts">
+										<div class="row">
+											<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart1']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart2']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart3']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart4']) !!}"></div>
+											<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($sequence_charts_data['chart6']) !!}"></div>
+										</div>
+									</div>
+									
+								</div>
+
+								<!-- table column selector -->
+								@include('columnSelector')
+
+								<div class="row">
+									<div class="col-md-6">
+										<h3>
+											Individual Repertoires
+
+											<small>
+												{{ $page_first_element_index }}-{{ $page_last_element_index }} of {{ $nb_samples }}
+											</small>
+
+											<a class="btn btn-xs" data-toggle="collapse" href="#column_selector" aria-expanded="false" aria-controls="column_selector" title="Edit Columns">
+											  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+											  Customize displayed columns
+											</a>
+										</h3>
+									</div>
+									<div class="col-md-6 repertoires_button_container">
+										<a role="button" class="btn btn-primary btn-cells browse_cells browse-seq-data-button button_to_enable_on_load"  href="/cells?query_id={{ $sequences_query_id }}">
+											Browse cells from {{ $nb_samples }} repertoires →
+										</a>
+									
+										<a href="/samples/tsv?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as TSV">
+											<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+											<span class="text">TSV</span>
+										</a>
+
+										<a href="/samples/json?query_id={{ $sample_query_id }}" class="btn btn-default download_repertoires" type="button" title="Download repertoire metadata search results as JSON">
+											<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+											<span class="text">JSON</span>
+										</a>							
+									</div>
+								</div>
+								
+								<!-- sample data -->
+								<table class="table table-striped sample_list table-condensed much_data table-bordered sortable">
+									<thead> 
+										<tr>
+											@foreach ($field_list as $field)
+												
+												{{-- skip sequence column --}}
+												@if ($field['ir_id'] == 'ir_sequence_count')
+													@continue
+												@endif
+
+												{{-- skip clone column --}}
+												@if ($field['ir_id'] == 'ir_clone_count')
+													@continue
+												@endif
+												
+												<th class="sort text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
+														@if ($field['ir_id'] == $sort_column)
+															@if ($sort_order == 'asc')
+																<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=desc">
+																	@lang('short.' . $field['ir_id'])
+																	@include('help', ['id' => $field['ir_id']])
+																	<span class="glyphicon sort_icon sorted_asc"></span>
+																</a>
+															@else
+																<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
+																	@lang('short.' . $field['ir_id'])
+																	@include('help', ['id' => $field['ir_id']])
+																	<span class="glyphicon sort_icon sorted_desc"></span>
+																</a>
+															@endif
+														@else
+															<a class="sort_column" role="button" href="/samples{{ $tab == 'sequence' ? '' : '/' . $tab }}?query_id={{ $sample_query_id }}&amp;sort_column={{ $field['ir_id'] }}&amp;sort_order=asc">
+																@lang('short.' . $field['ir_id'])
+																@include('help', ['id' => $field['ir_id']])
+																<span class="glyphicon sort_icon"></span>
+															</a>
+														@endif
+												</th>
+											@endforeach
+										</tr>
+									</thead>
+									<tbody>
+										@foreach ($samples_with_sequences as $sample)
+										<tr>
+											@foreach ($field_list as $field)
+											
+												{{-- skip sequence column --}}
+												@if ($field['ir_id'] == 'ir_sequence_count')
+													@continue
+												@endif
+
+												{{-- skip clone column --}}
+												@if ($field['ir_id'] == 'ir_clone_count')
+													@continue
+												@endif
+
+												<td class="text-nowrap col_{{ $field['ir_id'] }} {{ in_array($field['ir_id'], $current_columns) ? '' : 'hidden' }}">
+													@isset($sample->{$field['ir_id']})
+														@if($field['ir_id'] == 'ir_cell_count')
+															@if ($sample->ir_cell_count > 0)
+																<a class="number" href="/cells?ir_project_sample_id_list_{{ $sample->real_rest_service_id }}[]={{ $sample->repertoire_id }}@if($sample_query_id != '')&amp;sample_query_id={{ $sample_query_id }}@endif">
+																	{{number_format($sample->ir_cell_count, 0 ,'.' ,',') }}
+																</a>
+															@endif
+														@elseif($field['ir_id'] == 'study_id')
+															@isset($sample->ncbi_url)
+																<a href="{{ $sample->ncbi_url }}" title="{{ $sample->ncbi_url }}" target="_blank">
+																	{{ str_limit($sample->study_id, $limit = 20, $end = '‥') }}
+																</a>
+															@else
+																<span title="{{ $sample->{$field['ir_id']} }}">
+																	{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+																</span>						
+															@endisset
+														@elseif($field['ir_id'] == 'repertoire_id')
+															{{ $sample->{$field['ir_id']} }}
+														@elseif($field['ir_id'] == 'study_title')
+															@isset($sample->study_url)
+																<a href="{{ $sample->study_url }}" title="{{ $sample->study_title }}" target="_blank">
+																	{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
+																</a>
+															@else
+																<span title="{{ $sample->study_title }}">
+																	{{ str_limit($sample->study_title, $limit = 20, $end = '‥') }}
+																</span>							
+															@endisset
+														@elseif($field['ir_id'] == 'pub_ids')
+															@isset($sample->study_url)
+																<a href="{{ $sample->study_url }}" title="{{ $sample->study_url }}" target="_blank">
+																	{{ str_limit(remove_url_prefix($sample->study_url), $limit = 25, $end = '‥') }}
+																</a>
+															@else
+																<span title="{{ $sample->{$field['ir_id']} }}">
+																	{{ $sample->{$field['ir_id']} }}
+																</span>							
+															@endisset
+														@else
+															@if (is_bool($sample->{$field['ir_id']}))
+																{{ $sample->{$field['ir_id']} ? 'Yes' : 'No' }}
+															@else
+																@if (is_object($sample->{$field['ir_id']}))
+																	<span title="{{ json_encode($sample->{$field['ir_id']}) }}">
+																		{{ str_limit(json_encode($sample->{$field['ir_id']}), $limit = 20, $end = '‥') }}									
+																	</span>			
+																@elseif (is_array($sample->{$field['ir_id']}))
+																	<span title="{{ implode(', ', $sample->{$field['ir_id']}) }}">
+																		{{ str_limit(implode(', ', $sample->{$field['ir_id']}), $limit = 25, $end = '‥') }}									
+																	</span>			
+																@else
+																	<span title="{{ $sample->{$field['ir_id']} }}">
+																		{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+																	</span>
+																@endif
+															@endif
+													@endif
+													@endif
+												</td>
+											@endforeach
+										</tr>
+										@endforeach
+									</tbody>
+								</table>
+
+								<div class="row">
+									<div class="col-md-6">
+										@if ($nb_pages > 1)
+											<nav aria-label="Individual Repertoires">
+												<ul class="pagination">
+													@for ($i = 1; $i <= $nb_pages; $i++)
+														@if ($i == $page)
+															<li class="active">
+																<span>{{ $i }} <span class="sr-only">(current)</span></span>
+														    </li>										
+														@else
+														<li>
+															<a href="/samples?query_id={{$sample_query_id}}&amp;page={{ $i }}">
+																{{ $i }}
+															</a>
+														</li>
+														@endif
+													@endfor
+												</ul>
+											</nav>
+										@endif
+									</div>
+
+									<div class="col-md-6 repertoires_button_container">
+										<a role="button" class="btn btn-primary btn-cells browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/cells?query_id={{ $sequences_query_id }}">
+											Browse cells from {{ $nb_samples }} repertoires →
+										</a>
+									</div>
+								</div>
+							</div>
+						@endif
+
 					</div>
-					<div class="col-md-6 repertoires_button_container">
-						<a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/sequences?query_id={{ $sequences_query_id }}">
-							Browse sequences from {{ $nb_samples }} repertoires →
-						</a>
-					</div>
-				</div>
+
+
 
 				<!-- Repertoire Statistics Modal -->
 				<div class="modal fade" id="statsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -605,26 +1104,4 @@
 @include('reloadingMessage')
 @include('loadingMessage')
 
-<script>
-	var graphFields = [
-	        "study_type",
-	        "organism",
-	        "disease_diagnosis",
-	        "tissue",
-	        "pcr_target_locus",
-	        "template_class"
-	    ];
-	var graphNames = [
-	        "@lang('short.study_type')",
-	        "@lang('short.organism')",
-	        "@lang('short.disease_diagnosis')",
-	        "@lang('short.tissue')",
-	        "@lang('short.pcr_target_locus')",
-	        "@lang('short.template_class')"
-	    ];
-
-	var graphInternalLabels = true;
-	var graphCountField = "ir_sequence_count";
-	var graphData = {!! $sample_list_json !!};
-</script>
 @stop

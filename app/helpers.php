@@ -69,7 +69,7 @@ if (! function_exists('human_date_time')) {
 //  $mapping = [['v1' => 'project_id', 'airr' => 'study_id', ...], ...]
 //  returns [study_id => 1, ...]
 if (! function_exists('convert_array_keys')) {
-    function convert_array_keys($data, $mapping, $from, $to)
+    function convert_array_keys($data, $mapping, $from, $to, $ir_class = '')
     {
         $t = [];
         foreach ((array) $data as $key => $value) {
@@ -78,6 +78,14 @@ if (! function_exists('convert_array_keys')) {
             foreach ($mapping as $m) {
                 if (isset($m[$from]) && $m[$from] == $key) {
                     if (isset($m[$to])) {
+
+                        // ignore if wrong $ir_class
+                        if ($ir_class != '') {
+                            if (isset($m['ir_class']) && $m['ir_class'] != $ir_class) {
+                                continue;
+                            }
+                        }
+
                         $t[$m[$to]] = $value;
                         $converted = true;
                         break;
@@ -97,11 +105,11 @@ if (! function_exists('convert_array_keys')) {
 
 // ditto for a list of arrays
 if (! function_exists('convert_arrays_keys')) {
-    function convert_arrays_keys($data, $mapping, $from, $to)
+    function convert_arrays_keys($data, $mapping, $from, $to, $ir_class = '')
     {
         $t = [];
         foreach ($data as $d) {
-            $t[] = convert_array_keys($d, $mapping, $from, $to);
+            $t[] = convert_array_keys($d, $mapping, $from, $to, $ir_class);
         }
 
         return $t;
@@ -224,7 +232,17 @@ if (! function_exists('convert_arrays_to_strings')) {
     {
         foreach ($o as $k => $v) {
             if (is_array($v)) {
-                $o->$k = json_encode($v);
+                $new_array = [];
+                foreach ($v as $array_item) {
+                    $array_item_as_string = '';
+                    if (is_array($array_item) || is_object($array_item)) {
+                        $array_item_as_string = json_encode($array_item);
+                    } else {
+                        $array_item_as_string = $array_item;
+                    }
+                    $new_array[] = $array_item;
+                }
+                $o->$k = implode(', ', $new_array);
             }
         }
 
@@ -392,5 +410,14 @@ if (! function_exists('data_set_object')) {
         }
 
         return $target;
+    }
+}
+
+// converts object to JSON string, encoding single and double quotes
+// so the JSON can be put in an HTML attribute
+if (! function_exists('object_to_json_for_html')) {
+    function object_to_json_for_html($o)
+    {
+        return htmlentities(json_encode($o), ENT_QUOTES, 'UTF-8');
     }
 }

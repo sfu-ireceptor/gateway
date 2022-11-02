@@ -24,7 +24,17 @@ class UserController extends Controller
         $data = $metadata;
 
         $sample_list = Sample::public_samples();
-        $data['sample_list_json'] = json_encode($sample_list);
+
+        // Fields we want to graph. The UI/blade expects six fields
+        $charts_fields = ['study_type_id', 'organism', 'disease_diagnosis_id',
+            'tissue_id', 'pcr_target_locus', 'template_class', ];
+        // Mapping of fields to display as labels on the graph for those that need
+        // mappings. These are usually required for ontology fields where we want
+        // to aggregate on the ontology ID but display the ontology label.
+        $field_map = ['study_type_id' => 'study_type',
+            'disease_diagnosis_id' => 'disease_diagnosis',
+            'tissue_id' => 'tissue', ];
+        $data['charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map);
 
         // generate statistics
         $sample_data = Sample::stats($sample_list);
@@ -48,36 +58,44 @@ class UserController extends Controller
         $username = $request->input('username');
         $password = $request->input('password');
 
-        // try to get Agave OAuth token
-        $agave = new Agave;
-        $t = $agave->getTokenForUser($username, $password);
+        // if authentication is enabled
+        if (config('ireceptor.auth')) {
+            // try to get Agave OAuth token
+            $agave = new Agave;
+            $t = $agave->getTokenForUser($username, $password);
 
-        // if fail -> display form with error
-        if ($t == null) {
-            return redirect()->back()->withErrors(['Invalid credentials']);
+            // if fail -> display form with error
+            if ($t == null) {
+                return redirect()->back()->withErrors(['Invalid credentials']);
+            }
+
+            // create user in local DB if necessary
+            $user = User::where('username', $username)->first();
+            if ($user == null) {
+                // get user info from Agave
+                $token = $agave->getAdminToken();
+                $u = $agave->getUser($username, $token);
+                $u = $u->result;
+
+                // create user
+                $user = new User();
+
+                $user->username = $username;
+                $user->first_name = $u->first_name;
+                $user->last_name = $u->last_name;
+                $user->email = $u->email;
+
+                $user->save();
+            }
+
+            // save Agave OAuth token in local DB
+            $user->updateToken($t);
+        } else {
+            $user = User::where('username', $username)->first();
+            if ($user == null) {
+                return redirect()->back()->withErrors(["User doesn't exist"]);
+            }
         }
-
-        // create user in local DB if necessary
-        $user = User::where('username', $username)->first();
-        if ($user == null) {
-            // get user info from Agave
-            $token = $agave->getAdminToken();
-            $u = $agave->getUser($username, $token);
-            $u = $u->result;
-
-            // create user
-            $user = new User();
-
-            $user->username = $username;
-            $user->first_name = $u->first_name;
-            $user->last_name = $u->last_name;
-            $user->email = $u->email;
-
-            $user->save();
-        }
-
-        // save Agave OAuth token in local DB
-        $user->updateToken($t);
 
         // log user in
         auth()->login($user);

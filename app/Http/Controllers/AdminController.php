@@ -6,6 +6,8 @@ use App\Agave;
 use App\CachedSample;
 use App\Download;
 use App\FieldName;
+use App\Jobs\CountCells;
+use App\Jobs\CountClones;
 use App\Jobs\CountSequences;
 use App\LocalJob;
 use App\News;
@@ -370,33 +372,94 @@ class AdminController extends Controller
         return redirect('admin/databases')->with('notification', $message);
     }
 
+    public function getUpdateCloneCount($rest_service_id)
+    {
+        $rs = RestService::find($rest_service_id);
+        $username = auth()->user()->username;
+
+        $lj = new LocalJob();
+        $lj->user = $username;
+        $lj->queue = 'admin';
+        $lj->description = 'Clone count for  ' . $rs->name;
+        $lj->save();
+
+        // queue as a job
+        $localJobId = $lj->id;
+        CountClones::dispatch($username, $rest_service_id, $localJobId)->onQueue('admin');
+
+        $message = 'Clone count job for  ' . $rs->name . ' has been <a href="/admin/queues">queued</a>';
+
+        return redirect('admin/databases')->with('notification', $message);
+    }
+
+    public function getUpdateCellCount($rest_service_id)
+    {
+        $rs = RestService::find($rest_service_id);
+        $username = auth()->user()->username;
+
+        $lj = new LocalJob();
+        $lj->user = $username;
+        $lj->queue = 'admin';
+        $lj->description = 'Cell count for  ' . $rs->name;
+        $lj->save();
+
+        // queue as a job
+        $localJobId = $lj->id;
+        CountCells::dispatch($username, $rest_service_id, $localJobId)->onQueue('admin');
+
+        $message = 'Cell count job for  ' . $rs->name . ' has been <a href="/admin/queues">queued</a>';
+
+        return redirect('admin/databases')->with('notification', $message);
+    }
+
     public function getUpdateChunkSize($id)
     {
         $rs = RestService::find($id);
-        $chunk_size = $rs->refreshChunkSize();
 
-        if ($chunk_size == null) {
-            $message = $rs->name . ' doesn\'t have a max_size';
-        } elseif (is_string($chunk_size)) {
-            $message = 'An error occurred when trying to retrieve max_size from ' . $rs->name . ': ' . $chunk_size;
-        } else {
-            $message = $rs->name . ' max_size was successfully updated to ' . $chunk_size;
-        }
+        $info = $rs->refreshInfo();
 
-        $stats = $rs->refreshStatsCapability();
-        if ($stats) {
-            $message .= '. Stats are available.';
+        if (isset($info['error'])) {
+            $message = 'An error occurred : ' . $info['error'];
         } else {
-            $message .= '. Stats are not available.';
+            $chunk_size = $info['chunk_size'] ?? null;
+            if ($chunk_size == null) {
+                $message = $rs->name . ' doesn\'t have a max_size. ';
+            } elseif (is_string($chunk_size)) {
+                $message = 'An error occurred when trying to retrieve max_size from ' . $rs->name . ': ' . $chunk_size . '. ';
+            } else {
+                $message = $rs->name . ' max_size was successfully updated to ' . $chunk_size . '. ';
+            }
+
+            $api_version = $info['api_version'] ?? '1.0';
+            if ($api_version == null) {
+                $message .= $rs->name . ' did not specify an API version. ';
+            } else {
+                $message .= 'API version is ' . $api_version . '. ';
+            }
+
+            $stats = $rs->refreshStatsCapability();
+            if ($stats) {
+                $message .= 'Stats are available. ';
+            } else {
+                $message .= 'Stats are not available. ';
+            }
         }
 
         return redirect('admin/databases')->with('notification', $message);
     }
 
-    public function getFieldNames()
+    public function getFieldNames($api_version = null)
     {
+        $api_version = $api_version ?? config('ireceptor.default_api_version');
+
+        $api_version_list = FieldName::getAPIVersions();
+
+        $field_name_list = FieldName::where('api_version', $api_version)->get()->toArray();
+
         $data = [];
-        $data['field_name_list'] = FieldName::all()->toArray();
+        $data['api_version'] = $api_version;
+        $data['api_version_list'] = $api_version_list;
+        $data['field_name_list'] = $field_name_list;
 
         return view('fieldNames', $data);
     }
@@ -459,6 +522,65 @@ class AdminController extends Controller
 
         $data = [];
         $data['download_list'] = $download_list;
+
+        return view('allDownloads', $data);
+    }
+
+    public function downloadsMultipleIPAs()
+    {
+        $download_list = Download::orderBy('id', 'desc')->get();
+
+        $download_list_filtered = [];
+        foreach ($download_list as $d) {
+            $node_queries = null;
+            // time_nanosleep(0, 10000000);
+
+            Log::debug('Parsing download ' . $d['id'] . ' from ' . $d['start_date'] . ', memory=' . human_filesize(memory_get_usage()));
+
+            $query_log_id = $d->query_log_id;
+            $q = QueryLog::find($query_log_id);
+
+            QueryLog::where('parent_id', '=', $query_log_id)->where('rest_service_name', 'like', 'IPA%')->where('result_size', '>', 0)->chunk(10, function ($node_queries) use ($d, &$download_list_filtered) {
+                $nb_ipa_queries = 0;
+                foreach ($node_queries as $nq) {
+                    // dd($nq);
+                    if (isset($nq['params']) && is_string($nq['params']) && str_contains($nq['params'], 'tsv')) {
+                        $nb_ipa_queries++;
+                        if ($nb_ipa_queries >= 2) {
+                            $download_list_filtered[] = $d;
+                            break;
+                        }
+                    }
+                }
+            });
+
+            // $node_queries = QueryLog::find_node_queries($query_log_id);
+
+            // dd($node_queries);
+
+            // $nb_ipa_queries = 0;
+            // foreach ($node_queries as $nq) {
+            //     if (isset($nq['params']) && is_string($nq['params']) && str_contains($nq['params'], 'tsv')) {
+            //         if (isset($nq['rest_service_name']) && str_contains($nq['rest_service_name'], 'IPA')) {
+            //             if (isset($nq['result_size']) && $nq['result_size'] > 0) {
+            //                 $nb_ipa_queries++;
+            //                 if ($nb_ipa_queries >= 2) {
+            //                     $download_list_filtered[] = $d;
+            //                     break;
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+
+            // unset($q);
+            // unset($node_queries);
+        }
+
+        // dd($download_list_filtered);
+
+        $data = [];
+        $data['download_list'] = $download_list_filtered;
 
         return view('allDownloads', $data);
     }

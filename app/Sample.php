@@ -3,6 +3,7 @@
 namespace App;
 
 use Carbon\Carbon;
+use Facades\App\CloneCount;
 use Facades\App\FieldName;
 use Facades\App\RestService;
 use Illuminate\Support\Facades\File;
@@ -98,6 +99,74 @@ class Sample
         }
     }
 
+    public static function cache_clone_counts($username, $rest_service_id = null)
+    {
+        $response_list = RestService::samples([], $username, false, [$rest_service_id]);
+        foreach ($response_list as $i => $response) {
+            $rest_service_id = $response['rs']->id;
+            $sample_list = $response['data'];
+
+            $t = [];
+            $t['rest_service_id'] = $rest_service_id;
+            $t['clone_counts'] = [];
+
+            $total_clone_count = 0;
+            foreach ($sample_list as $sample) {
+                $sample_id = $sample->repertoire_id;
+                $clone_count_array = RestService::clone_count([$rest_service_id =>[$sample_id]], [], false);
+                $clone_count = $clone_count_array[$rest_service_id]['samples'][$sample_id];
+                $t['clone_counts'][$sample_id] = $clone_count;
+                $total_clone_count += $clone_count;
+
+                // HACK: to avoid hitting throttling limits
+                sleep(1);
+            }
+
+            CloneCount::create($t);
+
+            // cache total counts
+            $rs = RestService::find($rest_service_id);
+            $rs->nb_samples = count($sample_list);
+            $rs->nb_clones = $total_clone_count;
+            $rs->last_cached = new Carbon('now');
+            $rs->save();
+        }
+    }
+
+    public static function cache_cell_counts($username, $rest_service_id = null)
+    {
+        $response_list = RestService::samples([], $username, false, [$rest_service_id]);
+        foreach ($response_list as $i => $response) {
+            $rest_service_id = $response['rs']->id;
+            $sample_list = $response['data'];
+
+            $t = [];
+            $t['rest_service_id'] = $rest_service_id;
+            $t['cell_counts'] = [];
+
+            $total_cell_count = 0;
+            foreach ($sample_list as $sample) {
+                $sample_id = $sample->repertoire_id;
+                $cell_count_array = RestService::cell_count([$rest_service_id =>[$sample_id]], [], false);
+                $cell_count = $cell_count_array[$rest_service_id]['samples'][$sample_id];
+                $t['cell_counts'][$sample_id] = $cell_count;
+                $total_cell_count += $cell_count;
+
+                // HACK: to avoid hitting throttling limits
+                sleep(1);
+            }
+
+            CellCount::create($t);
+
+            // cache total counts
+            $rs = RestService::find($rest_service_id);
+            $rs->nb_samples = count($sample_list);
+            $rs->nb_cells = $total_cell_count;
+            $rs->last_cached = new Carbon('now');
+            $rs->save();
+        }
+    }
+
     public static function find_sample_id_list($filters, $username)
     {
         // get samples
@@ -113,7 +182,7 @@ class Sample
         return $sample_id_list;
     }
 
-    public static function find($filters, $username, $count_sequences = true)
+    public static function find($filters, $username, $count_sequences = true, $type = '')
     {
         $service_filters = $filters;
 
@@ -145,6 +214,9 @@ class Sample
 
         // tweak responses
         $sample_list_all = [];
+        $nb_samples_with_sequences = 0;
+        $nb_samples_with_clones = 0;
+        $nb_samples_with_cells = 0;
         foreach ($response_list as $i => $response) {
             $rs = $response['rs'];
             $sample_list = $response['data'];
@@ -169,6 +241,7 @@ class Sample
                 }
 
                 $response_list[$i]['data'] = $sample_list_result;
+                $sample_list = $sample_list_result;
             }
 
             // filter by sequence count if needed
@@ -188,9 +261,38 @@ class Sample
                 }
 
                 $response_list[$i]['data'] = $sample_list_result;
+                $sample_list = $sample_list_result;
             }
 
-            $sample_list = $response_list[$i]['data'];
+            // break up repertoires based on type (if it has sequences, clones, cells)
+            $samples_with_sequences = [];
+            $samples_with_clones = [];
+            $samples_with_cells = [];
+
+            foreach ($sample_list as $sample) {
+                if (isset($sample->ir_cell_count) && $sample->ir_cell_count > 0) {
+                    $samples_with_cells[] = $sample;
+                } elseif (isset($sample->ir_clone_count) && $sample->ir_clone_count > 0) {
+                    $samples_with_clones[] = $sample;
+                } else {
+                    $samples_with_sequences[] = $sample;
+                }
+            }
+
+            $nb_samples_with_sequences += count($samples_with_sequences);
+            $nb_samples_with_clones += count($samples_with_clones);
+            $nb_samples_with_cells += count($samples_with_cells);
+
+            $sample_list_result = $samples_with_sequences;
+            if ($type == 'clone') {
+                $sample_list_result = $samples_with_clones;
+            } elseif ($type == 'cell') {
+                $sample_list_result = $samples_with_cells;
+            }
+
+            $response_list[$i]['data'] = $sample_list_result;
+            $sample_list = $sample_list_result;
+
             $sample_list = self::convert_sample_list($sample_list, $rs);
 
             $sample_list_all = array_merge($sample_list_all, $sample_list);
@@ -221,9 +323,19 @@ class Sample
         }
 
         // return the statistics about that list of samples
-        $data = self::stats($sample_list_all);
+        $count_field = 'ir_sequence_count';
+        if ($type == 'clone') {
+            $count_field = 'ir_clone_count';
+        } elseif ($type == 'cell') {
+            $count_field = 'ir_cell_count';
+        }
+
+        $data = self::stats($sample_list_all, $count_field);
         $data['rs_list_no_response'] = $rs_list_no_response;
         $data['rs_list_sequence_count_error'] = $rs_list_sequence_count_error;
+        $data['nb_samples_with_sequences'] = $nb_samples_with_sequences;
+        $data['nb_samples_with_clones'] = $nb_samples_with_clones;
+        $data['nb_samples_with_cells'] = $nb_samples_with_cells;
 
         return $data;
     }
@@ -231,7 +343,7 @@ class Sample
     // convert/complete sample list
     public static function convert_sample_list($sample_list, $rs)
     {
-        $sample_field_list = FieldName::getSampleFields();
+        $sample_field_list = FieldName::getSampleFields($rs->api_version);
 
         $new_sample_list = [];
         foreach ($sample_list as $sample) {
@@ -250,7 +362,7 @@ class Sample
             }
 
             // add extra fields (not defined in mapping file)
-            $fields = ['repertoire_id', 'real_rest_service_id', 'ir_sequence_count', 'ir_filtered_sequence_count', 'stats'];
+            $fields = ['repertoire_id', 'real_rest_service_id', 'ir_sequence_count', 'ir_clone_count', 'ir_cell_count', 'ir_filtered_sequence_count', 'ir_filtered_clone_count', 'ir_filtered_cell_count', 'stats'];
             foreach ($fields as $field_name) {
                 if (isset($sample->{$field_name})) {
                     $new_sample->{$field_name} = $sample->{$field_name};
@@ -260,6 +372,7 @@ class Sample
             // add rest service id/name
             $new_sample->rest_service_id = $rs->id;
             $new_sample->rest_service_name = $rs->display_name;
+            $new_sample->rest_service_group_code = $rs->rest_service_group_code ?? null;
 
             // add study URL
             $new_sample = self::generate_study_urls($new_sample);
@@ -270,15 +383,17 @@ class Sample
         return $new_sample_list;
     }
 
-    public static function stats($sample_list)
+    public static function stats($sample_list, $count_field = 'ir_sequence_count')
     {
         // group samples by service
         $samples_by_rs = [];
         foreach ($sample_list as $sample) {
             $rs_id = $sample->rest_service_id;
+            $rs_group_code = $sample->rest_service_group_code;
 
             if (! isset($samples_by_rs[$rs_id])) {
                 $samples_by_rs[$rs_id]['name'] = $sample->rest_service_name;
+                $samples_by_rs[$rs_id]['rs_group_code'] = $rs_group_code;
                 $samples_by_rs[$rs_id]['sample_list'] = [];
             }
 
@@ -305,8 +420,9 @@ class Sample
         $data['rs_list'] = [];
         $data['total'] = 0;
 
-        foreach ($samples_by_rs as $t) {
+        foreach ($samples_by_rs as $rs_id => $t) {
             $rs_name = $t['name'];
+            $rs_group_code = $t['rs_group_code'];
             $sample_list = $t['sample_list'];
 
             // calculate summary statistics
@@ -317,10 +433,9 @@ class Sample
             $total_sequences = 0;
 
             foreach ($sample_list as $sample) {
-                if (isset($sample->ir_sequence_count) && is_numeric($sample->ir_sequence_count)) {
-                    $sequence_count = $sample->ir_sequence_count;
-                } else {
-                    $sequence_count = 0;
+                $sequence_count = 0;
+                if (isset($sample->{$count_field}) && is_numeric($sample->{$count_field})) {
+                    $sequence_count = $sample->{$count_field};
                 }
 
                 if (isset($sample->lab_name)) {
@@ -352,7 +467,7 @@ class Sample
 
             $study_tree = [];
             foreach ($sample_list as $sample) {
-                // Handle the case where a sample doesn't have a lab_name.
+                // sample has no lab_name.
                 if (isset($sample->lab_name)) {
                     $lab = $sample->lab_name;
                 } else {
@@ -400,6 +515,8 @@ class Sample
             // rest service data
             $rs_data = [];
             $rs_data['rs_name'] = $rs_name;
+            $rs_data['rs_group_code'] = $rs_group_code;
+            $rs_data['rs_id'] = $rs_id;
             $rs_data['study_tree'] = $study_tree;
             $rs_data['total_samples'] = count($sample_list);
             $rs_data['total_labs'] = count($lab_list);
@@ -419,12 +536,10 @@ class Sample
         $total_filtered_studies = 0;
         $total_filtered_samples = 0;
         $total_filtered_sequences = 0;
-        $filtered_repositories = [];
 
         foreach ($data['rs_list'] as $rs_data) {
             if ($rs_data['total_samples'] > 0) {
                 $total_filtered_repositories++;
-                $filtered_repositories[] = $rs_data['rs_name'];
             }
 
             $total_filtered_samples += $rs_data['total_samples'];
@@ -441,7 +556,6 @@ class Sample
         $data['total_filtered_labs'] = $total_filtered_labs;
         $data['total_filtered_studies'] = $total_filtered_studies;
         $data['total_filtered_sequences'] = $total_filtered_sequences;
-        $data['filtered_repositories'] = $filtered_repositories;
 
         return $data;
     }
@@ -611,14 +725,14 @@ class Sample
     public static function sort_sample_list($sample_list, $sort_column, $sort_order)
     {
         $field_type = FieldName::getFieldType($sort_column);
-        if ($sort_column == 'ir_sequence_count') {
+        if ($sort_column == 'ir_sequence_count' || $sort_column == 'ir_clone_count' || $sort_column == 'ir_cell_count') {
             $field_type = 'integer';
         }
 
         usort($sample_list, function ($a, $b) use ($sort_column, $sort_order, $field_type) {
             $comparison_result = 0;
 
-            if ($sort_column == 'ir_sequence_count') {
+            if ($sort_column == 'ir_sequence_count' || $sort_column == 'ir_clone_count' || $sort_column == 'ir_cell_count') {
                 if (! isset($a->{$sort_column})) {
                     $a->{$sort_column} = 0;
                 }
@@ -654,5 +768,99 @@ class Sample
         });
 
         return $sample_list;
+    }
+
+    public static function generateChartData($sample_list, $stat_field, $label_field, $count_field = 'ir_sequence_count')
+    {
+        // Keep track of the counts for each field value
+        $valuesCounts = [];
+        // Keep track of the label to be used for each field value
+        $valuesLabels = [];
+        $valuesLabels['None'] = 'None';
+
+        // Iterate over each sample
+        foreach ($sample_list as $sample) {
+            $sample = json_decode(json_encode($sample), true);
+
+            // Get the number of sequences for that sample
+            $nb_sequences = 0;
+            if (isset($sample[$count_field])) {
+                $nb_sequences = $sample[$count_field];
+            }
+
+            if (isset($sample[$stat_field]) && $sample[$stat_field] != null) {
+                // If the field has a non-null value, get the value for the field for this sample
+                $value = $sample[$stat_field];
+                // If our array of counts has not seen this field value yet, initialize the
+                // count to 0. If we have seen this field value, then this array element
+                // already has a value
+                if (! isset($valuesCounts[$value])) {
+                    $valuesCounts[$value] = 0;
+                }
+                // Increment the total count for this value by the number of sequences.
+                $valuesCounts[$value] += $nb_sequences;
+
+                // Get a label mapping for this field value.
+                if (! isset($valuesLabels[$value])) {
+                    if (isset($sample[$label_field]) && $sample[$label_field] != null) {
+                        $valuesLabels[$value] = $sample[$label_field];
+                    }
+                }
+            } else {
+                // If the field doesn't exist in this sample, we still want to keep
+                // track of the number of sequence where there was no value for the field.
+                // We use the "None" tag for this.
+                if (! isset($valuesCounts['None'])) {
+                    $valuesCounts['None'] = 0;
+                }
+                $valuesCounts['None'] += $nb_sequences;
+                // Get a label mapping for this
+                if (! isset($valuesLabels['None'])) {
+                    $valuesLabels['None'] = 'None';
+                }
+            }
+        }
+
+        // convert counts to a list of count objects
+        $l = [];
+        foreach ($valuesCounts as $val => $count) {
+            $o = new \stdClass();
+            if (array_key_exists($val, $valuesLabels)) {
+                $o->name = $valuesLabels[$val];
+            } else {
+                $o->name = $val;
+            }
+            $o->count = $count;
+            $l[] = $o;
+        }
+
+        return $l;
+    }
+
+    public static function generateChartsData($sample_list, $field_list, $field_map, $count_field = 'ir_sequence_count')
+    {
+        // Create an empty array, and keep track of which chart we are doing
+        $chartsData = [];
+
+        for ($chartCount = 0; $chartCount < count($field_list); $chartCount++) {
+            // Get the field and the label
+            $stat_field = $field_list[$chartCount];
+            if (array_key_exists($stat_field, $field_map)) {
+                $label_field = $field_map[$stat_field];
+            } else {
+                $label_field = $stat_field;
+            }
+            // The tag for the chart from a UI perspective is chartN
+            $chartTag = 'chart' . strval($chartCount + 1);
+            $chartsData[$chartTag] = [];
+            // Title is short, human readable title, all upper case
+            $title = strtoupper(__('short.' . $label_field));
+            $chartsData[$chartTag]['title'] = $title;
+            // Get the data for this field.
+            $chartsData[$chartTag]['data'] = Sample::generateChartData($sample_list, $stat_field, $label_field, $count_field);
+            Log::debug($chartTag . ' ' . $stat_field . ' ' . $title);
+        }
+
+        return $chartsData;
     }
 }

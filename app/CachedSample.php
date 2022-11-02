@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Str;
 use Jenssegers\Mongodb\Eloquent\Model;
 
 class CachedSample extends Model
@@ -39,13 +40,20 @@ class CachedSample extends Model
     {
         $t = [];
 
-        // distinct values for simple sample fields
-        $fields = ['study_type', 'template_class', 'ethnicity', 'tissue', 'sex', 'pcr_target_locus', 'cell_subset', 'organism', 'disease_diagnosis'];
+        // Distinct values for simple sample fields
+        $fields = ['template_class', 'ethnicity', 'sex', 'pcr_target_locus'];
         foreach ($fields as $field) {
             $t[$field] = self::distinctValues($field);
         }
 
+        // Distinct values for ontology fields
+        $ontology_fields = FieldName::getOntologyFields();
+        foreach ($ontology_fields as $field) {
+            $t[$field] = self::distinctOntologyValuesGrouped($field);
+        }
+
         // distinct values for combined sample fields (ex: project_id/project_name)
+        $t['study_type_ontology_list'] = self::distinctValuesGrouped(['study_type_id', 'study_type']);
         $t['lab_list'] = self::distinctValuesGrouped(['ir_lab_id', 'lab_name']);
         $t['project_list'] = self::distinctValuesGrouped(['ir_project_id', 'study_title']);
 
@@ -98,6 +106,40 @@ class CachedSample extends Model
         // remove useless '_id' key
         foreach ($l as $k => $v) {
             unset($v['_id']);
+            $l[$k] = $v;
+        }
+
+        return $l;
+    }
+
+    public static function distinctOntologyValuesGrouped($field)
+    {
+        // We are passed in the base field. Ontology fields have
+        // the label in the base field and the ID in the base field
+        // with an _id on the end.
+        $id_field = $field;
+        $label_field = Str::beforeLast($field, '_id');
+
+        // Build a query, group by the ontology id_field, no nulls
+        $l = self::groupBy([$id_field]);
+        $l = $l->whereNotNull($id_field);
+        $l = $l->select([$id_field, $label_field]);
+
+        // do query
+        $l = $l->get();
+        $l = $l->toArray();
+
+        // We want to restructure the ontology metadata fields
+        foreach ($l as $k => $v) {
+            // Add the field, ID, and label to the metadata
+            $v['field'] = $label_field;
+            $v['id'] = $v[$id_field];
+            $v['label'] = $v[$label_field];
+            // remove useless '_id' key and the original fields
+            unset($v['_id']);
+            unset($v[$id_field]);
+            unset($v[$label_field]);
+            // Store the new info in the array.
             $l[$k] = $v;
         }
 

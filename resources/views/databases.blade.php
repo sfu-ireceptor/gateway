@@ -3,7 +3,7 @@
 @section('title', 'Repositories')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
 	<h1>Repositories <small>Choose those available to <strong>all</strong> users of <strong>this</strong> gateway</small></h1>
 
 	@if (isset($notification))
@@ -24,8 +24,11 @@
 						<th>URL</th>
 						<th>Repertoires</th>
 						<th>Sequences</th>
+						<th>Clones</th>
+						<th>Cells</th>
 						<th>Stats</th>
 						<th>max_size</th>
+						<th>API Version</th>
 						<th>Last Refresh</th>
 					</tr>
 				</thead>
@@ -58,15 +61,29 @@
 										<li>
 											<a href="/admin/samples/update-sequence_count/{{ $rs->id }}">
 												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
-												Refresh cached sequence counts
+												Refresh cached <strong>sequence</strong> counts
 											</a>
 										</li>
 										<li>
-											<a href="/admin/update-chunk-size/{{ $rs->id }}">
+											<a href="/admin/samples/update-clone_count/{{ $rs->id }}">
 												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
-												Refresh max_size, stats
+												Refresh cached <strong>clone</strong> counts
 											</a>
 										</li>
+										<li>
+											<a href="/admin/samples/update-cell_count/{{ $rs->id }}">
+												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+												Refresh cached <strong>cell</strong> counts
+											</a>
+										</li>
+										<li role="separator" class="divider"></li>
+										<li>
+											<a href="/admin/update-chunk-size/{{ $rs->id }}">
+												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+												Refresh <code>/info</code> data
+											</a>
+										</li>
+										<li role="separator" class="divider"></li>
 										<li>
 											<a href="/admin/database-stats/{{ $rs->id }}" class="text-nowrap external" target="_blank">
 												<span class="glyphicon glyphicon-check" aria-hidden="true"></span>
@@ -85,11 +102,22 @@
 								</span>
 							</td>
 							<td>
+								<span title="{{ number_format($rs->nb_clones) }}">
+									{{ human_number($rs->nb_clones) }}
+								</span>
+							</td>
+							<td>
+								<span title="{{ number_format($rs->nb_cells) }}">
+									{{ human_number($rs->nb_cells) }}
+								</span>
+							</td>
+							<td>
 								@if($rs->stats)
 									<a href="/admin/database-stats/{{ $rs->id }}" class="text-nowrap external" target="_blank" title="Test Stats">Yes</a>
 								@endif
 							</td>
 							<td>{{ $rs->chunk_size }}</td>
+							<td>{{ $rs->api_version }}</td>
 							<td class="text-nowrap">
 								@if ($rs->last_cached)
 									<span class="minor">{{ human_date_time($rs->last_cached, 'D') }}</span>
