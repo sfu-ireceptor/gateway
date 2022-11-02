@@ -36,7 +36,7 @@ class System extends Model
         return $system;
     }
 
-    public static function createDefaultSystemsForUser($username, $token)
+    public static function createDefaultSystemsForUser($gw_username, $gw_userid, $token)
     {
         $agave = new Agave;
 
@@ -47,15 +47,15 @@ class System extends Model
         $defaultExecutionSystemPublicKey = config('services.agave.default_execution_system.auth.public_key');
         $defaultExecutionSystemPrivateKey = config('services.agave.default_execution_system.auth.private_key');
 
-        //$systemExecutionName = config('services.agave.system_execution.name_prefix') . $username . '-' . $defaultExecutionSystemUsername . '-' . $defaultExecutionSystemHost;
-        $systemExecutionName = config('services.agave.system_execution.name_prefix') . str_replace('_', '-', $username) . '-' . $defaultExecutionSystemHost;
+        //$systemExecutionName = config('services.agave.system_execution.name_prefix') . $gw_username . '-' . $defaultExecutionSystemUsername . '-' . $defaultExecutionSystemHost;
+        $systemExecutionName = config('services.agave.system_execution.name_prefix') . str_replace('_', '-', $gw_username) . '-' . $defaultExecutionSystemHost;
 
         $config = $agave->getExcutionSystemConfig($systemExecutionName, $defaultExecutionSystemHost, $defaultExecutionSystemPort, $defaultExecutionSystemUsername, $defaultExecutionSystemPrivateKey, $defaultExecutionSystemPublicKey);
         $response = $agave->createSystem($token, $config);
         Log::info('execution system created: ' . $systemExecutionName);
 
         // add execution system to database
-        $systemExecution = self::firstOrNew(['user_id' => auth()->user()->id, 'host' => $defaultExecutionSystemHost, 'username' => $defaultExecutionSystemUsername]);
+        $systemExecution = self::firstOrNew(['user_id' => $gw_userid, 'host' => $defaultExecutionSystemHost, 'username' => $defaultExecutionSystemUsername]);
         $systemExecution->name = $systemExecutionName;
         $systemExecution->public_key = $defaultExecutionSystemPublicKey;
         $systemExecution->private_key = $defaultExecutionSystemPrivateKey;
@@ -66,7 +66,7 @@ class System extends Model
         self::select($systemExecution->id);
 
         // create deployment system (where the app originally is)
-        $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . str_replace('_', '-', $username) . '-' . $defaultExecutionSystemUsername;
+        $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . str_replace('_', '-', $gw_username) . '-' . $defaultExecutionSystemUsername;
         $systemDeploymentHost = config('services.agave.system_deploy.host');
         $systemDeploymentPort = config('services.agave.system_deploy.port');
         $systemDeploymentUsername = config('services.agave.system_deploy.auth.username');
@@ -79,7 +79,7 @@ class System extends Model
         Log::info('deployment system created: ' . $systemDeploymentName);
 
         // create staging system (on this machine, where the data files will copied from)
-        $systemStagingName = config('services.agave.system_staging.name_prefix') . str_replace('_', '-', $username);
+        $systemStagingName = config('services.agave.system_staging.name_prefix') . str_replace('_', '-', $gw_username);
         $systemStagingHost = config('services.agave.system_staging.host');
         $systemStagingPort = config('services.agave.system_staging.port');
         $systemStagingUsername = config('services.agave.system_staging.auth.username');
