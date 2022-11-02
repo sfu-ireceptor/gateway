@@ -189,11 +189,11 @@ class FieldNameSeeder extends CsvSeeder
         $l[] = ['id' => 'disease_diagnosis', 'visible' => true];
         $l[] = ['id' => 'subject_id', 'visible' => true];
         $l[] = ['id' => 'sample_id', 'visible' => true];
-        
+
         $l[] = ['id' => 'ir_sequence_count', 'visible' => true];
         $l[] = ['id' => 'ir_clone_count', 'visible' => true];
         $l[] = ['id' => 'ir_cell_count', 'visible' => true];
-        
+
         $l[] = ['id' => 'tissue', 'visible' => true];
         $l[] = ['id' => 'pcr_target_locus', 'visible' => true];
         $l[] = ['id' => 'cell_subset', 'visible' => true];
