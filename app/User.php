@@ -25,10 +25,10 @@ class User extends Authenticatable
 
     protected $dates = ['token_expiration_date'];
 
-     /**
-     * Update the token state for the user
+    /**
+     * Update the token state for the user.
      *
-     * @param  Object $agave_token_info
+     * @param  object  $agave_token_info
      * @return void
      *
      * The Agave token info is of the form:
@@ -41,7 +41,6 @@ class User extends Authenticatable
      *
      * We want to save some of this state for the user.
      */
-
     public function updateToken($agave_token_info)
     {
         // token
@@ -60,9 +59,9 @@ class User extends Authenticatable
         // Save the state
         $this->save();
 
-        Log::debug('User::updateToken - access_token = ' . $this->password); 
-        Log::debug('User::updateToken - refresh_token = ' . $this->refresh_token); 
-        Log::debug('User::updateToken - expiration_date = ' . $this->token_expiration_date); 
+        Log::debug('User::updateToken - access_token = ' . $this->password);
+        Log::debug('User::updateToken - refresh_token = ' . $this->refresh_token);
+        Log::debug('User::updateToken - expiration_date = ' . $this->token_expiration_date);
     }
 
     public function isAdmin()
