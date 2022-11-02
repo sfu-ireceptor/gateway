@@ -192,6 +192,7 @@ class Agave
             $this->raiseExceptionIfAgaveError($response_obj);
         } catch (ClientException $e) {
             Log::debug('$$$$$$$ Agave::renewToken - exception ' . json_encode($e));
+
             return;
         }
 

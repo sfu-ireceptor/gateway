@@ -9,8 +9,8 @@ use App\Query;
 use App\Sequence;
 use App\SequenceCell;
 use App\SequenceClone;
-use App\User;
 use App\System;
+use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -105,7 +105,7 @@ class LaunchAgaveJob implements ShouldQueue
 
             // Generate the ZIP file for the data that meets the query criteria.
             // Return object contains attributes that describe the ZIP archive that was
-            // created. 
+            // created.
             if ($jobType == 'sequence') {
                 $zip_info = Sequence::sequencesTSV($filters, $gw_username, $job->url, $sample_filter_fields);
             } elseif ($jobType == 'clone') {
@@ -154,16 +154,16 @@ class LaunchAgaveJob implements ShouldQueue
             // Create systems for this user if they don't exist.
             System::createDefaultSystemsForUser($gw_username, $gw_userid, $token);
 
-            // Get the current system for the current user. 
+            // Get the current system for the current user.
             $executionSystem = System::getCurrentSystem($gw_userid);
             // Get the username on the execution system
             $username = $executionSystem->username;
             // Get the Agave name for the execution system
             $appExecutionSystem = $executionSystem->name;
-            
+
             // Call back URL to use for agave notifications
             $notificationUrl = config('services.agave.gw_notification_url');
-            
+
             // Agave name of the system where the data is staged. Essentially the
             // Agave system name for the Gateway for this user. This is where the
             // data is stored.
@@ -208,7 +208,7 @@ class LaunchAgaveJob implements ShouldQueue
                 }
             }
 
-            // Process the job parameters 
+            // Process the job parameters
             $job_params = [];
             // Get the possible list of parameters that can be set. The Agave class
             // manages which job parameters can be set.
@@ -254,7 +254,7 @@ class LaunchAgaveJob implements ShouldQueue
         // Print an error message
         Log::error($exception->getMessage());
         Log::error($exception);
-        
+
         // Mark the job as failed.
         $job = Job::find($this->jobId);
         $job->updateStatus('STOPPED');
