@@ -201,6 +201,12 @@ class RestServiceSeeder extends Seeder
                 'country' => 'Canada',
                 'logo' => 'ireceptor.png',
             ],
+            [
+                'url' => 'https://t1d-1.ireceptor.org/airr/v1/',
+                'name' => 'T1D',
+                'country' => 'Canada',
+                'logo' => 'ireceptor.png',
+            ],
         ];
 
         // if grouping is disabled, remove group code
