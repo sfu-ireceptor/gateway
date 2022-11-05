@@ -36,10 +36,10 @@ def plotData(plot_data, title, filename):
     print(plot_data)
 
     # Play with the font so it is a reasonable size
-    font_size = 14
-    font_reduction = int(plot_size/4)
-    font_size = font_size - font_reduction
-    if font_size < 6: font_size = 6
+    font_size = 10
+    dpi = 80
+    rows_per_inch = dpi/(2*font_size)
+    plot_height_inches = plot_size / rows_per_inch
 
     # Create the graph...
     fig, ax = plt.subplots()
@@ -57,6 +57,8 @@ def plotData(plot_data, title, filename):
     if plot_size > 30:
         ax.set_yticklabels(labels, minor=True)
 
+    # Set the size of the figure.
+    fig.set_figheight(int(plot_height_inches))
     # Write the file.
     fig.savefig(filename, transparent=False, dpi=240, bbox_inches="tight")
     return
