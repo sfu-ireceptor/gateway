@@ -359,9 +359,9 @@ class JobController extends Controller
             // If the Tapis job failed get the error message.
             if ($job->agave_status == 'FAILED') {
                 // Get the Tapis error status
-                $agave_json = $this->getAgaveJobJSON($job->id);
+                $agave_json = $this->getAgaveJobJSON($job->id, $agave);
                 if ($agave_json != null) {
-                    $agave_status = json_decode($this->getAgaveJobJSON($job->id));
+                    $agave_status = json_decode($agave_json);
                     $s .= '<br/><p><b>TAPIS errors</b></p>\n';
                     $s .= strval($agave_status->result->lastStatusMessage) . '<br/>\n';
                 }
@@ -377,7 +377,6 @@ class JobController extends Controller
             $stderr_response = '';
             if (File::exists($folder) && ! File::exists($err_path)) {
                 // Tapis command to get the file.
-                $agave = new Agave;
                 $token = auth()->user()->password;
                 $stderr_response = $agave->getJobOutputFile($job->agave_id, $token, $error_file);
                 // Check for the analysis directory, create if it doesn't exist.
@@ -402,7 +401,6 @@ class JobController extends Controller
             $stdout_response = '';
             if (File::exists($folder) && ! File::exists($out_path)) {
                 // Tapis command to get the file.
-                $agave = new Agave;
                 $token = auth()->user()->password;
                 $stdout_response = $agave->getJobOutputFile($job->agave_id, $token, $output_file);
                 // Check for the analysis directory, create if it doesn't exist.
@@ -427,7 +425,6 @@ class JobController extends Controller
             $info_response = '';
             if (File::exists($folder) && ! File::exists($info_path)) {
                 // Tapis command to get the file.
-                $agave = new Agave;
                 $token = auth()->user()->password;
                 $info_response = $agave->getJobOutputFile($job->agave_id, $token, 'info.txt');
                 $info_object = json_decode($info_response);
@@ -616,28 +613,24 @@ class JobController extends Controller
         return view('job/view', $data);
     }
 
-    public function getAgaveHistory($id)
+    public function getAgaveHistory($id, $agave)
     {
         $job = Job::where('id', '=', $id)->first();
         if ($job != null && $job->agave_id != '') {
             $job_agave_id = $job->agave_id;
             $token = auth()->user()->password;
-
-            $agave = new Agave;
             $response = $agave->getJobHistory($job_agave_id, $token);
             echo '<pre>' . $response . '</pre>';
         }
     }
 
-    public function getAgaveJobJSON($id)
+    public function getAgaveJobJSON($id, $agave)
     {
         $job = Job::where('id', '=', $id)->first();
         $response = null;
         if ($job != null && $job->agave_id != '') {
             $job_agave_id = $job->agave_id;
             $token = auth()->user()->password;
-
-            $agave = new Agave;
             $response = $agave->getJob($job_agave_id, $token);
         }
 
