@@ -59,8 +59,16 @@ def plotData(plot_data, title, filename):
 
     # Set the size of the figure.
     fig.set_figheight(int(plot_height_inches))
+
+    # Calculate a reasonable output DPI - images can be
+    # very large if there are a lot of gene calls. Max
+    # resolution is 65536 (2^16)
+    output_dpi = 240
+    while int(plot_height_inches) * output_dpi > 65536:
+        output_dpi = output_dpi/2
+        
     # Write the file.
-    fig.savefig(filename, transparent=False, dpi=240, bbox_inches="tight")
+    fig.savefig(filename, transparent=False, dpi=output_dpi, bbox_inches="tight")
     return
 
 def getArguments():
