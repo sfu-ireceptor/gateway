@@ -263,12 +263,12 @@
 					<div class="active_filters">
 						<h3>Active filters</h3>
 						@foreach($filter_fields as $filter_key => $filter_value)
-							<a title= "@lang('short.' . $filter_key): {{$filter_value}}" href="/samples?query_id={{$sample_query_id}}&amp;remove_filter={{ $filter_key }}" class="label label-primary">
+							<a title= "@lang('short.' . $filter_key): {{$filter_value}}" href="/{{ $page_uri}}?query_id={{$sample_query_id}}&amp;remove_filter={{ $filter_key }}" class="label label-primary">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 								@lang('short.' . $filter_key)
 							</a>
 						@endforeach
-						<a href="/samples?query_id={{ $query_id }}&amp;remove_filter=all" class="remove_filters">
+						<a href="/{{ $page_uri }}?query_id={{ $query_id }}&amp;remove_filter=all" class="remove_filters">
 							Remove all filters
 						</a>
 
@@ -322,7 +322,7 @@
 							</div>
 						@endif
 						@if ( ! empty($filter_fields))
-							<p>Remove a filter or <a href="/samples">remove all filters</a> to return results.</p>
+							<p>Remove a filter or <a href="/{{ $page_uri }}">remove all filters</a> to return results.</p>
 						@endif
 						<p>For more information, go to our <a href="http://ireceptor.org/platform/doc/faq" class="external" target="_blank"> FAQ (Frequently Asked Questions)</a></p>			
 					</div>
@@ -564,7 +564,7 @@
 														    </li>										
 														@else
 														<li>
-															<a href="/samples?query_id={{$sample_query_id}}&amp;page={{ $i }}">
+															<a href="/{{ $page_uri }}?query_id={{$sample_query_id}}&amp;page={{ $i }}">
 																{{ $i }}
 															</a>
 														</li>
@@ -799,7 +799,7 @@
 														    </li>										
 														@else
 														<li>
-															<a href="/samples?query_id={{$sample_query_id}}&amp;page={{ $i }}">
+															<a href="/{{ $page_uri }}?query_id={{$sample_query_id}}&amp;page={{ $i }}">
 																{{ $i }}
 															</a>
 														</li>
@@ -1034,7 +1034,7 @@
 														    </li>										
 														@else
 														<li>
-															<a href="/samples?query_id={{$sample_query_id}}&amp;page={{ $i }}">
+															<a href="/{{ $page_uri }}?query_id={{$sample_query_id}}&amp;page={{ $i }}">
 																{{ $i }}
 															</a>
 														</li>
