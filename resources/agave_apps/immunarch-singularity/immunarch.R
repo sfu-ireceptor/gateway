@@ -22,16 +22,16 @@ data <- repLoad(input_dir)
 # repExplore(.data, .method = c("volume", "count", "len", "clones"), .col = c("nt", "aa"), .coding = TRUE)
 
 # number of unique clonotypes (rearrangements??)
-result = tryCatch(
-{
-    exp_vol <- repExplore(data$data, .method = "volume")
-    exp_vol_vis <- vis(exp_vol)
-    ggsave(paste(output_dir, "vol.png", sep="/"), plot = exp_vol_vis, device = "png")
-}, error = function(err)
-{
-    print(paste("IR-ERROR:  ",err, "\n"))
-    ir_error_count <<- ir_error_count + 1
-})
+#result = tryCatch(
+#{
+#    exp_vol <- repExplore(data$data, .method = "volume")
+#    exp_vol_vis <- vis(exp_vol)
+#    ggsave(paste(output_dir, "vol.png", sep="/"), plot = exp_vol_vis, device = "png")
+#}, error = function(err)
+#{
+#    print(paste("IR-ERROR:  ",err, "\n"))
+#    ir_error_count <<- ir_error_count + 1
+#})
 
 # distribution of clonotype abundances, i.e., how frequent receptors with different abundances are
 result = tryCatch(
@@ -44,9 +44,6 @@ result = tryCatch(
     cat(paste("IR-ERROR:  ",err, "\n"))
     ir_error_count <<- ir_error_count + 1
 })
-
-cat(paste("result = ", result, "\n"))
-cat(paste("error = ", ir_error_count, "\n"))
 
 # Distribution of CDR3 sequence lengths
 result = tryCatch(
@@ -61,9 +58,6 @@ result = tryCatch(
     ir_error_count <<- ir_error_count + 1
 })
 
-cat(paste("result = ", result, "\n"))
-cat(paste("error = ", ir_error_count, "\n"))
-  
 # Top 10 clones
 result = tryCatch(
 {
@@ -79,33 +73,33 @@ result = tryCatch(
 })
 
 # number of clones (i.e., cells) per input repertoire
-result = tryCatch(
-{
-    print('clones.png')
-    exp_clon <- repExplore(data$data, .method = "clones")
-    exp_clon_vis <- vis(exp_clon)
-    ggsave(paste(output_dir, "clones.png", sep="/"), plot = exp_clon_vis, device = "png")
-}, error = function(err)
-{
-    cat(paste("IR-ERROR:  ",err, "\n"))
-    ir_error_count <<- ir_error_count + 1
-})
+#result = tryCatch(
+#{
+#    print('clones.png')
+#    exp_clon <- repExplore(data$data, .method = "clones")
+#    exp_clon_vis <- vis(exp_clon)
+#    ggsave(paste(output_dir, "clones.png", sep="/"), plot = exp_clon_vis, device = "png")
+#}, error = function(err)
+#{
+#    cat(paste("IR-ERROR:  ",err, "\n"))
+#    ir_error_count <<- ir_error_count + 1
+#})
 
 ### Clonality analyis. repClonality function encompasses several methods to measure clonal proportions in a given repertoire.
 # repClonality(.data,.method = c("clonal.prop", "homeo", "top", "rare"), .perc = 10, .clone.types = c(Rare = 1e-05, Small = 1e-04, Medium = 0.001, Large = 0.01, Hyperexpanded = 1), .head = c(10, 100, 1000, 3000, 10000, 30000, 1e+05), .bound = c(1, 3, 10, 30, 100))
 
 # clonal proportions or in other words percentage of clonotypes required to occupy specified by .perc percent of the total immune repertoire.
-result = tryCatch(
-{
-    print("clonal_prop.png")
-    clon_prop <- repClonality(data$data, .method = "clonal.prop")
-    clon_prop_vis <- vis(clon_prop)
-    ggsave(paste(output_dir, "clonal_prop.png", sep="/"), plot = clon_prop_vis, device = "png")
-}, error = function(err)
-{
-    cat(paste("IR-ERROR:  ",err, "\n"))
-    ir_error_count <<- ir_error_count + 1
-})
+#result = tryCatch(
+#{
+#    print("clonal_prop.png")
+#    clon_prop <- repClonality(data$data, .method = "clonal.prop")
+#    clon_prop_vis <- vis(clon_prop)
+#    ggsave(paste(output_dir, "clonal_prop.png", sep="/"), plot = clon_prop_vis, device = "png")
+#}, error = function(err)
+#{
+#    cat(paste("IR-ERROR:  ",err, "\n"))
+#    ir_error_count <<- ir_error_count + 1
+#})
 
 # estimate relative abundance for the groups of top clonotypes in repertoire, e.g., ten most abundant clonotypes. Use ".head" to define index intervals, such as 10, 100 and so on.
 #print("clonal_top.png")
@@ -143,82 +137,82 @@ result = tryCatch(
 # repDiversity(.data, .method = "chao1", .col = "aa", .max.q = 6, .min.q = 1, .q = 5, .step = NA, .quantile = c(0.025, 0.975), .extrapolation = NA, .perc = 50, .norm = TRUE, .verbose = TRUE, do.norm = NA, .laplace = 0)
 
 # chao1
-result = tryCatch(
-{
-    print("div_chao.png")
-    div_chao <- repDiversity(data$data, .method = "chao1")
-    div_chao_vis <- vis(div_chao)
-    ggsave(paste(output_dir, "div_chao.png", sep="/"), plot = div_chao_vis, device = "png")
-}, error = function(err)
-{
-    cat(paste("IR-ERROR:  ",err, "\n"))
-    ir_error_count <<- ir_error_count + 1
-})
+#result = tryCatch(
+#{
+#    print("div_chao.png")
+#    div_chao <- repDiversity(data$data, .method = "chao1")
+#    div_chao_vis <- vis(div_chao)
+#    ggsave(paste(output_dir, "div_chao.png", sep="/"), plot = div_chao_vis, device = "png")
+#}, error = function(err)
+#{
+#    cat(paste("IR-ERROR:  ",err, "\n"))
+#    ir_error_count <<- ir_error_count + 1
+#})
 
 # hill
-result = tryCatch(
-{
-    print("div_hill.png")
-    div_hill <- repDiversity(data$data, .method = "hill")
-    div_hill_vis <- vis(div_hill)
-    ggsave(paste(output_dir, "div_hill.png", sep="/"), plot = div_hill_vis, device = "png")
-}, error = function(err)
-{
-    cat(paste("IR-ERROR:  ",err, "\n"))
-    ir_error_count <<- ir_error_count + 1
-})
+#result = tryCatch(
+#{
+#    print("div_hill.png")
+#    div_hill <- repDiversity(data$data, .method = "hill")
+#    div_hill_vis <- vis(div_hill)
+#    ggsave(paste(output_dir, "div_hill.png", sep="/"), plot = div_hill_vis, device = "png")
+#}, error = function(err)
+#{
+#    cat(paste("IR-ERROR:  ",err, "\n"))
+#    ir_error_count <<- ir_error_count + 1
+#})
 
 # true diversity
-result = tryCatch(
-{
-    print("div_true-div.png")
-    div_trdiv <- repDiversity(data$data, .method = "div")
-    div_trdiv_vis <- vis(div_trdiv)
-    ggsave(paste(output_dir, "div_true-div.png", sep="/"), plot = div_trdiv_vis, device = "png")
-}, error = function(err)
-{
-    cat(paste("IR-ERROR:  ",err, "\n"))
-    ir_error_count <<- ir_error_count + 1
-})
+#result = tryCatch(
+#{
+#    print("div_true-div.png")
+#    div_trdiv <- repDiversity(data$data, .method = "div")
+#    div_trdiv_vis <- vis(div_trdiv)
+#    ggsave(paste(output_dir, "div_true-div.png", sep="/"), plot = div_trdiv_vis, device = "png")
+#}, error = function(err)
+#{
+#    cat(paste("IR-ERROR:  ",err, "\n"))
+#    ir_error_count <<- ir_error_count + 1
+#})
 
 # gini-simpson
-result = tryCatch(
-{
-    print("div_gini-simpson.png")
-    div_ginsimp <- repDiversity(data$data, .method = "gini.simp")
-    div_ginsimp_vis <- vis(div_ginsimp)
-    ggsave(paste(output_dir, "div_gini-simpson.png", sep="/"), plot = div_ginsimp_vis, device = "png")
-}, error = function(err)
-{
-    cat(paste("IR-ERROR:  ",err, "\n"))
-    ir_error_count <<- ir_error_count + 1
-})
+#result = tryCatch(
+#{
+#    print("div_gini-simpson.png")
+#    div_ginsimp <- repDiversity(data$data, .method = "gini.simp")
+#    div_ginsimp_vis <- vis(div_ginsimp)
+#    ggsave(paste(output_dir, "div_gini-simpson.png", sep="/"), plot = div_ginsimp_vis, device = "png")
+#}, error = function(err)
+#{
+#    cat(paste("IR-ERROR:  ",err, "\n"))
+#    ir_error_count <<- ir_error_count + 1
+#})
 
 # inverse simpson
-result = tryCatch(
-{
-    print("div_inverse-simpson.png")
-    div_invsimp <- repDiversity(data$data, .method = "inv.simp")
-    div_invsimp_vis <- vis(div_invsimp)
-    ggsave(paste(output_dir, "div_inverse-simpson.png", sep="/"), plot = div_invsimp_vis, device = "png")
-}, error = function(err)
-{
-    cat(paste("IR-ERROR:  ",err, "\n"))
-    ir_error_count <<- ir_error_count + 1
-})
+#result = tryCatch(
+#{
+#    print("div_inverse-simpson.png")
+#    div_invsimp <- repDiversity(data$data, .method = "inv.simp")
+#    div_invsimp_vis <- vis(div_invsimp)
+#    ggsave(paste(output_dir, "div_inverse-simpson.png", sep="/"), plot = div_invsimp_vis, device = "png")
+#}, error = function(err)
+#{
+#    cat(paste("IR-ERROR:  ",err, "\n"))
+#    ir_error_count <<- ir_error_count + 1
+#})
 
 # d50
-result = tryCatch(
-{
-    print("div_d50.png")
-    div_d50 <- repDiversity(data$data, .method = "d50")
-    div_d50_vis <- vis(div_d50)
-    ggsave(paste(output_dir, "div_d50.png", sep="/"), plot = div_d50_vis, device = "png")
-}, error = function(err)
-{
-    cat(paste("IR-ERROR:  ",err, "\n"))
-    ir_error_count <<- ir_error_count + 1
-})
+#result = tryCatch(
+#{
+#    print("div_d50.png")
+#    div_d50 <- repDiversity(data$data, .method = "d50")
+#    div_d50_vis <- vis(div_d50)
+#    ggsave(paste(output_dir, "div_d50.png", sep="/"), plot = div_d50_vis, device = "png")
+#}, error = function(err)
+#{
+#    cat(paste("IR-ERROR:  ",err, "\n"))
+#    ir_error_count <<- ir_error_count + 1
+#})
 
 ### gene usage. 
 # geneUsage(.data, .gene = c("hs.trbv", "HomoSapiens.TRBJ", "macmul.IGHV"), .quant = c(NA, "count"), .ambig = c("inc", "exc", "maj"), .type = c("segment", "allele", "family"), .norm = FALSE)
@@ -252,27 +246,27 @@ result = tryCatch(
 ### overlap analysis
 
 # jaccard index. Measures the similarity between finite sample sets, and is defined as the size of the intersection divided by the size of the union of the sample sets.
-result = tryCatch(
-{
-    print("overlap-jaccard.png")
-    ov_jacc <- repOverlap(data$data, .method = "jaccard", .verbose = FALSE)
-    ov_jacc_vis <- vis(ov_jacc)
-    ggsave(paste(output_dir, "overlap-jaccard.png", sep="/"), plot = ov_jacc_vis, device = "png")
-}, error = function(err)
-{
-    cat(paste("IR-ERROR:  ",err, "\n"))
-    ir_error_count <<- ir_error_count + 1
-})
+#result = tryCatch(
+#{
+#    print("overlap-jaccard.png")
+#    ov_jacc <- repOverlap(data$data, .method = "jaccard", .verbose = FALSE)
+#    ov_jacc_vis <- vis(ov_jacc)
+#    ggsave(paste(output_dir, "overlap-jaccard.png", sep="/"), plot = ov_jacc_vis, device = "png")
+#}, error = function(err)
+#{
+#    cat(paste("IR-ERROR:  ",err, "\n"))
+#    ir_error_count <<- ir_error_count + 1
+#})
 
 # overlap coefficient. A normalised measure of overlap similarity. It is defined as the size of the intersection divided by the smaller of the size of the two sets.
-result = tryCatch(
-{
-    print("overlap.png")
-    ov <- repOverlap(data$data, .method = "overlap", .verbose = FALSE)
-    ov_vis <- vis(ov)
-    ggsave(paste(output_dir, "overlap.png", sep="/"), plot = ov_vis, device = "png")
-}, error = function(err)
-{
-    cat(paste("IR-ERROR:  ",err, "\n"))
-    ir_error_count <<- ir_error_count + 1
-})
+#result = tryCatch(
+#{
+#    print("overlap.png")
+#    ov <- repOverlap(data$data, .method = "overlap", .verbose = FALSE)
+#    ov_vis <- vis(ov)
+#    ggsave(paste(output_dir, "overlap.png", sep="/"), plot = ov_vis, device = "png")
+#}, error = function(err)
+#{
+#    cat(paste("IR-ERROR:  ",err, "\n"))
+#    ir_error_count <<- ir_error_count + 1
+#})
