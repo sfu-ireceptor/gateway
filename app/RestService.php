@@ -56,6 +56,7 @@ class RestService extends Model
             $json = json_decode($body);
 
             $chunk_size = $json->max_size ?? null;
+            $chunk_size = null; // disable this functionality for now (async download for VDJServer)
             $api_version = $json->api->version ?? '1.0';
 
             $contact_url = $json->contact->url ?? null;
