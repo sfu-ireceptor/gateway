@@ -103,26 +103,12 @@ class JobController extends Controller
 
     public function postLaunchApp(Request $request)
     {
+        // Get the data for this request.
         $request_data = $request->all();
-        // Get the username.
-        $gw_username = auth()->user()->username;
+        Log::debug('JobController::PostLaunchApp - request_data = ' . json_encode($request_data));
 
-        // refresh AGAVE token for the user
-        $agave = new Agave;
-        $user = User::where('username', $gw_username)->first();
-        if ($user == null) {
-            throw new \Exception('User ' . $gw_username . ' could not be found in local database.');
-        }
-        $rt = $user->refresh_token;
-        $r = $agave->renewToken($rt);
-        $user->updateToken($r);
-        $user->save();
-        $token = $user->password;
-
-        // create systems
-        System::createDefaultSystemsForUser($gw_username, $token);
-
-        Log::info('Processing Job: app_id = ' . $request_data['app_id']);
+        // Get the App ID for this request.
+        Log::info('JobController::PostLaunchApp - app_id = ' . $request_data['app_id']);
         $appId = $request_data['app_id'];
 
         // 3rd-party analysis
@@ -131,61 +117,15 @@ class JobController extends Controller
             $appHumanName = 'Third-party analysis';
             $jobDescription = 'Data federation';
         } else {
-            // create Agave app
-            $executionSystem = System::getCurrentSystem(auth()->user()->id);
-            $username = $executionSystem->username;
-            $appExecutionSystem = $executionSystem->name;
-            $appDeploymentSystem = $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . str_replace('_', '-', $gw_username) . '-' . $username;
-            $inputs = [];
-            $appHumanName = '';
             $jobDescription = 'Data federation + submission to AGAVE';
-
-            // Get the App config for the app in question.
-            Log::info('Processing App ' . $appId);
+            // Get the App template for this appId
+            $agave = new Agave;
             $app_info = $agave->getAppTemplate($appId);
+            // The 'config' attribute has the App configuration and in the
+            // configuration, we want to use the application label as the
+            // human readable description for this App.
             $app_config = $app_info['config'];
-
-            // Set up the App Tapis name, the human name, and the deployment path.
-            $appName = $appId . '-' . $executionSystem->name;
-            $appDeploymentPath = $appId;
             $appHumanName = $app_config['label'];
-
-            // Process the parameters for the job.
-            $params = [];
-            foreach ($app_config['parameters'] as $parameter_info) {
-                Log::debug('   Processing parameter ' . $parameter_info['id']);
-                // If it visible, we want to pass on the input to the job.
-                if ($parameter_info['value']['visible']) {
-                    $params[$parameter_info['id']] = $request_data[$parameter_info['id']];
-                    Log::debug('   Parameter value = ' . $request_data[$parameter_info['id']]);
-                }
-            }
-
-            // Process the job parameters for the job.
-            $job_params = [];
-            // Get the possible list of parameters that can be set. The Agave class
-            // manages which job parameters can be set.
-            $job_parameter_list = $agave->getJobParameters();
-            foreach ($job_parameter_list as $job_parameter_info) {
-                // If the parameter is provided, keep track of it so we can give it to the job.
-                Log::debug('   Processing job parameter ' . $job_parameter_info['label']);
-                if (isset($request_data[$job_parameter_info['label']])) {
-                    $job_params[$job_parameter_info['label']] = $request_data[$job_parameter_info['label']];
-                    Log::debug('   Parameter value = ' . $request_data[$job_parameter_info['label']]);
-                }
-            }
-
-            // Based on the above, create the Tapis App.
-            $config = $agave->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
-            $response = $agave->createApp($token, $config);
-            $agaveAppId = $response->result->id;
-            Log::info('app created: ' . $appId);
-
-            // config parameters for the job
-            $executionSystem = System::getCurrentSystem(auth()->user()->id);
-            $tenant_url = config('services.agave.tenant_url');
-            $systemStaging = config('services.agave.system_staging.name_prefix') . str_replace('_', '-', $gw_username);
-            $notificationUrl = config('services.agave.gw_notification_url');
         }
 
         // create job in DB
@@ -213,16 +153,18 @@ class JobController extends Controller
 
         $lj = new LocalJob;
         $lj->description = 'Job ' . $jobId . ' (' . $jobDescription . ')';
-        // $lg->user = auth()->user()->username;
-        // $lg->job_id = $jobId;
         $lj->save();
         $localJobId = $lj->id;
 
+        // Get Gateway user info, as the Jobs don't have user state knowledge as they are
+        // independent processes.
+        $gw_username = auth()->user()->username;
+        $gw_userid = auth()->user()->id;
         // queue job
         if ($appId == '999') {
             PrepareDataForThirdPartyAnalysis::dispatch($jobId, $request_data, $gw_username, $localJobId);
         } else {
-            LaunchAgaveJob::dispatch($jobId, $request_data, $tenant_url, $token, $username, $systemStaging, $notificationUrl, $agaveAppId, $gw_username, $params, $inputs, $job_params, $localJobId, $query_type);
+            LaunchAgaveJob::dispatch($jobId, $request_data, $localJobId, $gw_username, $gw_userid);
         }
 
         return redirect('jobs/view/' . $jobId);
@@ -417,9 +359,12 @@ class JobController extends Controller
             // If the Tapis job failed get the error message.
             if ($job->agave_status == 'FAILED') {
                 // Get the Tapis error status
-                $agave_status = json_decode($this->getAgaveJobJSON($job->id));
-                $s .= '<br/><p><b>TAPIS errors</b></p>\n';
-                $s .= strval($agave_status->result->lastStatusMessage) . '<br/>\n';
+                $agave_json = $this->getAgaveJobJSON($job->id);
+                if ($agave_json != null) {
+                    $agave_status = json_decode($this->getAgaveJobJSON($job->id));
+                    $s .= '<br/><p><b>TAPIS errors</b></p>\n';
+                    $s .= strval($agave_status->result->lastStatusMessage) . '<br/>\n';
+                }
             }
 
             // Get the relevant iReceptor Gateway error messages. These come from the
@@ -687,7 +632,7 @@ class JobController extends Controller
     public function getAgaveJobJSON($id)
     {
         $job = Job::where('id', '=', $id)->first();
-        $response = '{}';
+        $response = null;
         if ($job != null && $job->agave_id != '') {
             $job_agave_id = $job->agave_id;
             $token = auth()->user()->password;

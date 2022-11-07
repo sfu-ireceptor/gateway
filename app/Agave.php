@@ -164,7 +164,7 @@ class Agave
 
     public function renewToken($refresh_token)
     {
-        Log::debug('$$$$$$$ refresh_token = ' . json_encode($refresh_token));
+        Log::debug('$$$$$$$ Agave::renewToken - refresh_token = ' . json_encode($refresh_token));
         $api_key = config('services.agave.api_key');
         $api_secret = config('services.agave.api_token');
 
@@ -179,19 +179,26 @@ class Agave
         $params['scope'] = 'PRODUCTION';
 
         try {
+            // Normal respsonse from Tapis is:
+            //  {"scope":"default","token_type":"bearer",
+            //  "expires_in":14400,
+            //  "refresh_token":"4e6e8a38f0a33f2cff7fe0318fe314db",
+            //  "access_token":"8485748fbaa9a36efe941d8f3c36c2a1"}
             $response = $this->client->request('POST', '/token', ['auth' => $auth, 'headers' => $headers, 'form_params' => $params]);
-            $response = json_decode($response->getBody());
-            Log::debug('$$$$$$$ refresh response = ' . json_encode($response));
-            $this->raiseExceptionIfAgaveError($response);
+            // Convert the response JSON to a PHP object
+            $response_obj = json_decode($response->getBody());
+            Log::debug('$$$$$$$ Agave::renewToken - refresh response = ' . json_encode($response_obj));
+            // Check for Agave errors and raise an exception if we see one.
+            $this->raiseExceptionIfAgaveError($response_obj);
         } catch (ClientException $e) {
-            Log::debug('$$$$$$$ exception ' . json_encode($e));
+            Log::debug('$$$$$$$ Agave::renewToken - exception ' . json_encode($e));
 
             return;
         }
 
-        Log::debug('$$$$$$$ response = ' . json_encode($response));
+        Log::debug('$$$$$$$ Agave:renewToken - response = ' . json_encode($response_obj));
 
-        return $response;
+        return $response_obj;
     }
 
     public function updateAppTemplates()
@@ -684,7 +691,7 @@ class Agave
     {
         $headers = [];
         $headers['Authorization'] = 'Bearer ' . $token;
-        Log::debug('Bearer:' . $token);
+        Log::debug('Agave::HTTPRequest - Bearer:' . $token);
 
         $data = [];
         if ($body == null) {

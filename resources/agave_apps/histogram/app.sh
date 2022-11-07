@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "iReceptor Historgram App"
+echo "IR-INFO: iReceptor Historgram App"
 
 ##############################################
 # init environment
@@ -11,18 +11,18 @@ fi
 
 # Get the script directory where all the code is.
 SCRIPT_DIR=`pwd`
-echo "Running job from ${SCRIPT_DIR}"
+echo "IR-INFO: Running job from ${SCRIPT_DIR}"
 
 # Load the environment/modules needed.
 module load scipy-stack
 
 # Start
-printf "\n\n"
-printf "START at $(date)\n\n"
-printf "PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n\n"
-printf "MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n\n"
-printf "SLURM JOB ID = ${SLURM_JOB_ID}\n\n"
-printf "\n\n"
+printf "IR-INFO: \nIR-INFO: \n"
+printf "IR-INFO: START at $(date)\n"
+printf "IR-INFO: PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n"
+printf "IR-INFO: MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n"
+printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
+printf "IR-INFO: \nIR-INFO: \n"
 
 #
 # Tapis App Parameters: Will be subsituted by Tapis. If they don't exist
@@ -36,14 +36,14 @@ GATEWAY_URL="${ir_gateway_url}"
 ##############################################
 # Get the iRecpetor Gateway utilities from the Gateway
 ##############################################
-echo "Downloading iReceptor Gateway Utilities from the Gateway ${GATEWAY_URL}"
+echo "IR-INFO: Downloading iReceptor Gateway Utilities from the Gateway ${GATEWAY_URL}"
 date
 GATEWAY_UTIL_DIR="gateway_utilities"
 mkdir -p ${GATEWAY_UTIL_DIR}
 pushd ${GATEWAY_UTIL_DIR} > /dev/null
 wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" ${GATEWAY_URL}/gateway_utilities/
 popd > /dev/null
-echo "Done downloading iReceptor Gateway Utilities"
+echo "IR-INFO: Done downloading iReceptor Gateway Utilities"
 date
 
 # Load the iReceptor Gateway utilities functions.
@@ -51,7 +51,7 @@ date
 # This directory is defined in the gateway_utilities.sh. The Gateway
 # relies on this being set. If it isn't set, abort as something has
 # gone wrong with loading the Gateway utilties.
-echo "Gateway analysis directory = ${GATEWAY_ANALYSIS_DIR}"
+echo "IR-INFO: Gateway analysis directory = ${GATEWAY_ANALYSIS_DIR}"
 if [ -z "${GATEWAY_ANALYSIS_DIR}" ]; then
         echo "IR-ERROR: GATEWAY_ANALYSIS_DIR not defined, gateway_utilities not loaded correctly." >&2
     exit 1
@@ -107,14 +107,14 @@ function do_histogram()
     TMP_FILE=${output_dir}/tmp.tsv
 
     # preprocess input files -> tmp.csv
-    echo ""
-    echo "Histogram started at: `date`"
-    echo -n "Working from directory: "
+    echo "IR-INFO: "
+    echo "IR-INFO: Histogram started at: `date`"
+    echo -n "IR-INFO: Working from directory: "
     pwd
-    echo "Extracting ${variable_name} from files started at: `date`"
+    echo "IR-INFO: Extracting ${variable_name} from files started at: `date`"
     echo ${variable_name} > $TMP_FILE
     for filename in "${array_of_files[@]}"; do
-        echo "    Extracting ${variable_name} from $filename"
+        echo "IR-INFO:     Extracting ${variable_name} from $filename"
         python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/preprocess.py ${output_dir}/$filename ${variable_name} >> $TMP_FILE
     done
 
@@ -124,10 +124,10 @@ function do_histogram()
     TSV_OFILE=${output_dir}/${OFILE_BASE}-histogram.tsv
 
     # Debugging output
-    echo "Input file = $TMP_FILE"
-    echo "Variable = ${variable_name}"
-    echo "Graph output file = $PNG_OFILE"
-    echo "Data output file = $TSV_OFILE"
+    echo "IR-INFO: Input file = $TMP_FILE"
+    echo "IR-INFO: Variable = ${variable_name}"
+    echo "IR-INFO: Graph output file = $PNG_OFILE"
+    echo "IR-INFO: Data output file = $TSV_OFILE"
 
     # Run the python histogram command
     python3 ${SCRIPT_DIR}/airr_histogram.py ${variable_name} $TMP_FILE $PNG_OFILE $TSV_OFILE ${SORT_VALUES} ${NUM_VALUES} "${title},${variable_name}"
@@ -159,13 +159,13 @@ function run_analysis()
     local repertoire_id=$3
     local repertoire_file=$4
     local manifest_file=$5
-    echo "Running a Repertoire Analysis with manifest ${manifest_file}"
-    echo "    Working directory = ${output_directory}"
-    echo "    Repository name = ${repository_name}"
-    echo "    Repertoire id = ${repertoire_id}"
-    echo "    Repertoire file = ${repertoire_file}"
-    echo "    Manifest file = ${manifest_file}"
-    echo -n "    Current diretory = "
+    echo "IR-INFO: Running a Repertoire Analysis with manifest ${manifest_file}"
+    echo "IR-INFO:     Working directory = ${output_directory}"
+    echo "IR-INFO:     Repository name = ${repository_name}"
+    echo "IR-INFO:     Repertoire id = ${repertoire_id}"
+    echo "IR-INFO:     Repertoire file = ${repertoire_file}"
+    echo "IR-INFO:     Manifest file = ${manifest_file}"
+    echo -n "IR-INFO:     Current diretory = "
     pwd
 
     # Get a list of rearrangement files to process from the manifest.
@@ -175,7 +175,7 @@ function run_analysis()
         echo "IR-ERROR: Could not process manifest file ${manifest_file}"
         return
     fi
-    echo "    Using files ${array_of_files[@]}"
+    echo "IR-INFO:     Using files ${array_of_files[@]}"
 
     # Check to see if we are processing a specific repertoire_id
     if [ "${repertoire_id}" != "Total" ]; then
@@ -254,7 +254,7 @@ INFO_FILE="info.txt"
 MANIFEST_FILE="AIRR-manifest.json"
 
 if [ "${split_repertoire}" = "True" ]; then
-    echo -e "\nIR-INFO: Splitting data by Repertoire\n"
+    echo -e "IR-INFO: \nIR-INFO: Splitting data by Repertoire\n"
     # Split the download into single repertoire files, with a directory per
     # repository and within that a directory per repertoire. This expects the
     # user to define a function called run_analysis() that will be
@@ -266,7 +266,7 @@ if [ "${split_repertoire}" = "True" ]; then
 
 
 elif [ "${split_repertoire}" = "False" ]; then
-    echo -e "\nIR-INFO: Running app on entire data set\n"
+    echo -e "IR-INFO: \nIR-INFO: Running app on entire data set\n"
     # Output directory is called "Total"
     # Run the analysis with a token repository name of "ADC" since the
     # analysis is being run on data from the entire ADC.
@@ -312,15 +312,15 @@ cp *.out ${GATEWAY_ANALYSIS_DIR}
 zip -r ${GATEWAY_ANALYSIS_DIR}.zip ${GATEWAY_ANALYSIS_DIR}
 
 # We don't want the iReceptor Utilities to be part of the results.
-echo "Removing Gateway utilities"
+echo "IR-INFO: Removing Gateway utilities"
 rm -rf ${GATEWAY_UTIL_DIR}
 
 # We don't want the analysis files to remain - they are in the ZIP file
-echo "Removing analysis output"
+echo "IR-INFO: Removing analysis output"
 rm -rf ${GATEWAY_ANALYSIS_DIR}
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
-echo "Removing original ZIP file $ZIP_FILE"
+echo "IR-INFO: Removing original ZIP file $ZIP_FILE"
 rm -f $ZIP_FILE
 
 # Debugging output, print data/time when shell command is finished.

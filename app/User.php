@@ -5,6 +5,7 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable
 {
@@ -24,22 +25,43 @@ class User extends Authenticatable
 
     protected $dates = ['token_expiration_date'];
 
-    public function updateToken($t)
+    /**
+     * Update the token state for the user.
+     *
+     * @param  object  $agave_token_info
+     * @return void
+     *
+     * The Agave token info is of the form:
+     * {
+     *  "scope":"default","token_type":"bearer",
+     *  "expires_in":14400,
+     *  "refresh_token":"6256416cf0bfbd4163ff7e758ba22d93",
+     *  "access_token":"873f7d1d9333a935ca4e3f487da7e34"
+     * }
+     *
+     * We want to save some of this state for the user.
+     */
+    public function updateToken($agave_token_info)
     {
         // token
-        $token = $t->access_token;
+        $token = $agave_token_info->access_token;
         $this->password = $token;
 
         // refresh token
-        $refreshToken = $t->refresh_token;
+        $refreshToken = $agave_token_info->refresh_token;
         $this->refresh_token = $refreshToken;
 
         // token expiration date
         $tokenExpirationDate = new Carbon();
-        $tokenExpirationDate->addSeconds($t->expires_in);
+        $tokenExpirationDate->addSeconds($agave_token_info->expires_in);
         $this->token_expiration_date = $tokenExpirationDate;
 
+        // Save the state
         $this->save();
+
+        Log::debug('User::updateToken - access_token = ' . $this->password);
+        Log::debug('User::updateToken - refresh_token = ' . $this->refresh_token);
+        Log::debug('User::updateToken - expiration_date = ' . $this->token_expiration_date);
     }
 
     public function isAdmin()
