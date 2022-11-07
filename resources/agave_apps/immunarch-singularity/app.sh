@@ -114,9 +114,13 @@ INFO_FILE="info.txt"
 MANIFEST_FILE="AIRR-manifest.json"
 
 # Start
-printf "IR-INFO: START at $(date)\n\n"
-printf "IR-INFO: PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n\n"
-printf "IR-INFO: MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n\n"
+printf "IR-INFO:\n"
+printf "IR-INFO: START at $(date)\n"
+printf "IR-INFO: PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n"
+printf "IR-INFO: MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n"
+printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
+printf "IR-INFO: \n"
+
 
 # This function is called by the iReceptor Gateway utilities function gateway_split_repertoire
 # The gateway utility function splits all data into repertoires and then calls this function
