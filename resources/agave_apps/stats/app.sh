@@ -137,6 +137,13 @@ function do_heatmap()
 
     # Generate the heatmap
     python3 ${SCRIPT_DIR}/airr_heatmap.py ${variable1} ${variable2} $xvals $yvals $TMP_FILE $PNG_OFILE $TSV_OFILE "${title}(${variable1},${variable2})"
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: Could not generate heatmap for ${variable1},${variable2}"
+        # Remove the temporary file.
+        rm -f $TMP_FILE
+        return 
+    fi
 
     # change permissions
     chmod 644 "$PNG_OFILE"
@@ -195,6 +202,14 @@ function do_histogram()
 
     # Run the python histogram command
     python3 ${SCRIPT_DIR}/airr_histogram.py ${variable_name} $TMP_FILE $PNG_OFILE $TSV_OFILE "${title},${variable_name}"
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: Could not generate histogram for ${variable_name}"
+        # Remove the temporary file.
+        rm -f $TMP_FILE
+        return 
+    fi
+
 
     # change permissions
     chmod 644 $PNG_OFILE
