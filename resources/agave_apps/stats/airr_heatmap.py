@@ -69,19 +69,24 @@ def performQueryAnalysis(input_file, query_xkey, query_ykey, query_xvalues, quer
 def plotData(plot_data, xlabels, ylabels, title, filename):
     # Plot code borrowed from here: 
     # https://matplotlib.org/gallery/images_contours_and_fields/image_annotated_heatmap.html
-
     matplotlib.use('Agg')
     fig, ax = plt.subplots()
     im = ax.imshow(plot_data)
+    # Establish figure fontsize
+    fontsize = 10
+
     # Create colorbar
-    cbar = ax.figure.colorbar(im, orientation="horizontal", pad=0.2, aspect=40, ax=ax)
-    cbar.ax.set_xlabel("Number of Annotations", va="top", fontsize=6)
-    plt.setp(cbar.ax.get_yticklabels(), fontsize=6)
-    plt.setp(cbar.ax.get_xticklabels(), fontsize=6)
+    #cbar = ax.figure.colorbar(im, orientation="horizontal", pad=0.2, aspect=40, ax=ax)
+    cbar = ax.figure.colorbar(im, location="right")
+    cbar.ax.set_xlabel("Number of Annotations", va="top", fontsize=fontsize)
+    plt.setp(cbar.ax.get_yticklabels(), fontsize=fontsize)
+    plt.setp(cbar.ax.get_xticklabels(), fontsize=fontsize)
 
     # We want to show all ticks...
-    ax.set_xticks(np.arange(len(xlabels)))
-    ax.set_yticks(np.arange(len(ylabels)))
+    xrows = len(xlabels)
+    yrows = len(ylabels)
+    ax.set_xticks(np.arange(xrows))
+    ax.set_yticks(np.arange(yrows))
     ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
     ax.tick_params(which="minor", bottom=False, left=False)
     # ... and label them with the respective list entries
@@ -91,8 +96,21 @@ def plotData(plot_data, xlabels, ylabels, title, filename):
 
     # Rotate the tick labels and set their alignment.
     plt.setp(ax.get_xticklabels(), rotation=90, ha="right",
-            va="center", rotation_mode="anchor", fontsize=6)
-    plt.setp(ax.get_yticklabels(), fontsize=6)
+            va="center", rotation_mode="anchor", fontsize=fontsize)
+    plt.setp(ax.get_yticklabels(), fontsize=fontsize)
+
+    # Determine size of figure
+    dpi = matplotlib.rcParams["figure.dpi"]
+    print('dpi = ' + str(dpi))
+    rows_per_inch = dpi/(2*fontsize)
+    x_plot_height_inches = xrows / rows_per_inch
+    y_plot_height_inches = yrows / rows_per_inch
+    print('x_plot_height_inches = ' + str(x_plot_height_inches))
+    print('y_plot_height_inches = ' + str(y_plot_height_inches))
+    #fig.set_figwidth(int(x_plot_height_inches)+1)
+    #fig.set_figheight(int(y_plot_height_inches)+1)
+    im.figure.set_figwidth(int(x_plot_height_inches)+1)
+    im.figure.set_figheight(int(y_plot_height_inches)+1)
 
     # Write the file.
     fig.savefig(filename, transparent=False, dpi=240, bbox_inches="tight")
