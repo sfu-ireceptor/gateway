@@ -1832,8 +1832,8 @@ class RestService extends Model
                     if (! isset($group_list_count[$group])) {
                         $group_list_count[$group] = 0;
                     }
-                    $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
                 }
+                $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
 
                 $request_params[] = $t;
             }
