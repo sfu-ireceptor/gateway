@@ -7,8 +7,8 @@
   "defaultProcessorsPerNode": 1,
   "defaultMemoryPerNode": "4GB",
   "defaultRequestedTime": "1:00:00",
-  "shortDescription": "Simple histogram statistics (gene usage, junction length).",
-  "longDescription": "iReceptor+ simple histogram app performaing basic statistics on the chosen AIRR field.",
+  "shortDescription": "AIRR Rearrangement field statistics",
+  "longDescription": "<p>iReceptor Analysis App that performs count statistics (histogram) on any valid AIRR Rearrangement field. For each unique value of the chosen field (e.g. <em>IGHV3-53*01</em> for <em>v_call</em> or <em>CALGDYKLSF</em> for <em>junction_aa</em>) in the data set, a count of the number of occurrences for that value is provided. Although this will work for any AIRR field, typically usefull analyses would be on fields such as <em>v_call, d_call, j_call, junction_aa_length, junction_aa</em>.</p><p>Notes:<ul><li>Most fields will have many (thousands) of unique values (e.g. <em>junction_aa</em>) so limiting the \"Number of values\" parameter is highly recommended. Combining this with \"Sort the values\" = TRUE will provide the top N values for a field.</li></ul>",
   "executionType": "HPC",
   "executionSystem": "FILLED IN BY GATEWAY",
   "parallelism": "SERIAL",
@@ -79,7 +79,7 @@
       },
       "details": {
         "label": "Split Repertoire (True/False)?",
-        "description": "Split data based on Repertoire ID?"
+        "description": "Split overall data based on Repertoire ID?"
       },
       "semantics": {
         "minCardinality": 1,
@@ -98,8 +98,8 @@
         "default": ""
       },
       "details": {
-        "label": "Variable",
-        "description": "Variable on which to perform the histogram."
+        "label": "AIRR Field",
+        "description": "AIRR Field name on which to perform the analysis."
       },
       "semantics": {
         "minCardinality": 1,
