@@ -144,9 +144,13 @@ class LaunchAgaveJob implements ShouldQueue
             if ($user == null) {
                 throw new \Exception('User ' . $gw_username . ' could not be found in local database.');
             }
-            Log::debug('LaunchAgaveJob::handle - refreshing token = ' . $user->password . ', refresh_token = ' . $user->refresh_token);
-            Log::debug('LaunchAgaveJob::handle - jobId = ' . $this->jobId . ', localJobId = ' . $this->localJobId);
+            Log::debug('###### LaunchAgaveJob::handle - jobId = ' . $this->jobId . ', localJobId = ' . $this->localJobId);
+            Log::debug('###### LaunchAgaveJob::handle - refreshing token = ' . $user->password . ', refresh_token = ' . $user->refresh_token);
             $token_info = $agave->renewToken($user->refresh_token);
+            if ($token_info == null) {
+                Log::error('###### LaunchAgaveJob::handle - unable to refresh token for ' . $gw_username);
+                throw new \Exception('Unable to refresh token for ' . $gw_username);
+            }
             $user->updateToken($token_info);
             $user->save();
             $token = $user->password;
@@ -232,7 +236,7 @@ class LaunchAgaveJob implements ShouldQueue
             // Now that we are done and the Agave job is running, this LocalJob is done.
             $localJob->setFinished();
         } catch (Exception $e) {
-            Log::error($e->getMessage());
+            Log::error('LaunchAgaveJob::handle - ' . $e->getMessage());
             Log::error($e);
             $job = Job::find($this->jobId);
             $job->updateStatus('STOPPED');
@@ -252,7 +256,7 @@ class LaunchAgaveJob implements ShouldQueue
     public function failed($exception)
     {
         // Print an error message
-        Log::error($exception->getMessage());
+        Log::error('LaunchAgaveJob::failed - ' . $exception->getMessage());
         Log::error($exception);
 
         // Mark the job as failed.
