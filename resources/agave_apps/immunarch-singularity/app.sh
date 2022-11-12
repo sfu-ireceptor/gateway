@@ -175,6 +175,10 @@ function run_analysis()
         title_string="Total"
     fi
     
+    # Create an Immunarch data directory. Immunarch likes to run on all
+    # files in the directory, so we don't want any extraneous files in
+    # the directory where Immunarch is running.
+    mkdir ${PWD}/${output_directory}/data
     for filename in "${array_of_files[@]}"; do
         echo "IR-INFO: Running ImmunArch on $filename"
 	    echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
@@ -185,7 +189,6 @@ function run_analysis()
         # Immunarch is very permissive, it tries to process everything in the directory.
         # We want it only to process the data files, so we create a temporary directory
         # for this so immunarch doesn't try and do other weird things like analyze images
-        mkdir ${PWD}/${output_directory}/data
         mv ${PWD}/${output_directory}/${filename} ${PWD}/${output_directory}/data/${filename}
 
 	    # Run ImmunArch
@@ -197,7 +200,7 @@ function run_analysis()
         fi
 
 	    # Remove the repertoire TSV file, we don't want to keep it around as part of the analysis results.
-	    #rm -f ${PWD}/${output_directory}/data/${filename}
+	    rm -f ${PWD}/${output_directory}/data/${filename}
 
         # Remove the generated manifest file.
 	    rm -f ${manifest_file}
@@ -252,6 +255,8 @@ function run_analysis()
         printf '</html>' >> ${html_file}
 
     done
+    # Remove the Immunarch required data directory
+    rmdir ${PWD}/${output_directory}/data
     printf "IR-INFO: Done Repertoire Analysis on ${array_of_files[@]} at $(date)\n\n"
 }
 
