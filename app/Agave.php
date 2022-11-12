@@ -24,13 +24,13 @@ class Agave
         $this->updateAppTemplates();
 
         // Maximum run time for a job in hours.
-        #$this->maxRunTime = 4;
+        //$this->maxRunTime = 4;
         $this->maxRunTime = config('services.agave.system_execution.max_run_time');
         // Maximum number of processors per job. For now all serial jobs.
-        #$this->processorsPerNode = 1;
+        //$this->processorsPerNode = 1;
         $this->processorsPerNode = config('services.agave.system_execution.processors_per_node');
         // Amount of memory per processor (in GB)
-        #$this->memoryPerProcessor = 8;
+        //$this->memoryPerProcessor = 8;
         $this->memoryPerProcessor = config('services.agave.system_execution.memory_per_processor');
 
         // Set up the default job contorl parameters used by AGAVE
@@ -156,6 +156,7 @@ class Agave
         }
 
         Log::debug('Agave::getToken: returning respsonse = ' . json_encode($response));
+
         return $response;
     }
 
