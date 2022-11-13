@@ -340,12 +340,12 @@
                                         {{ Form::hidden('data_url', $url) }}
                                         {{ Form::hidden('app_id', $app['app_id']) }}
 
-                                        <div class="row">
-                                        <div class="col-md-10">
-                                            <h3>{{$app['description']}} <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$app['info']}}</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span></h3>
-                                        </div>
-                                        </div>
-
+                                        <div class="row"> <div class="col-md-10">
+                                             <h3>{{ $app['description'] }}</h3>
+                                        </div></div>
+                                        <div class="row"> <div class="col-md-6">
+                                            <p>{!! $app['info'] !!}</p>
+                                        </div> </div>
                                         @foreach ($app['parameter_list'] as $parameter)
                                             <div class="row">
                                             <div class="col-md-3">
