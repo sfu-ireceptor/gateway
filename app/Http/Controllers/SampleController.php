@@ -289,7 +289,7 @@ class SampleController extends Controller
 
         // Fields we want to graph. The UI/blade expects six fields
         $charts_fields = ['study_type_id', 'organism', 'disease_diagnosis_id',
-            'tissue_id', 'pcr_target_locus', 'template_class', ];
+            'tissue_id', 'pcr_target_locus', 'template_class', 'cell_subset'];
         // Mapping of fields to display as labels on the graph for those that need
         // mappings. These are usually required for ontology fields where we want
         // to aggregate on the ontology ID but display the ontology label.

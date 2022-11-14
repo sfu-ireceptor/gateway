@@ -218,6 +218,7 @@
 								<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($charts_data['chart3']) !!}"></div>
 								<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($charts_data['chart4']) !!}"></div>
 								<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($charts_data['chart5']) !!}"></div>
+								<div class="col-md-2 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($charts_data['chart6']) !!}"></div>
 							</div>
 						</div>
 									
