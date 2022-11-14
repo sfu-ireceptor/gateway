@@ -1834,7 +1834,7 @@ class RestService extends Model
                     }
                 }
 
-                if ( ! $rs->async) {
+                if (! $rs->async) {
                     $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
                 }
 
