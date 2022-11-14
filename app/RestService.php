@@ -1833,7 +1833,10 @@ class RestService extends Model
                         $group_list_count[$group] = 0;
                     }
                 }
-                $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
+
+                if ( ! $rs->async) {
+                    $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
+                }
 
                 $request_params[] = $t;
             }
@@ -1843,7 +1846,7 @@ class RestService extends Model
 
         // do standard requests
         if (count($request_params) > 0) {
-            Log::info('Do TSV requests... (not-chunked)');
+            Log::info('Do TSV requests... (not chunked)');
             $final_response_list = self::doRequests($request_params);
         }
 
@@ -1955,6 +1958,7 @@ class RestService extends Model
         }
 
         $final_response_list2 = [];
+
         // if any async download, poll until ready then download
         foreach ($final_response_list as $response) {
             $rs = $response['rs'];
