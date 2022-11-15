@@ -1962,16 +1962,17 @@ class RestService extends Model
         // if any async download, poll until ready then download
         foreach ($final_response_list as $response) {
             $rs = $response['rs'];
+            Log::debug('Processing download response from ' . $rs->name);
             if ($rs->async) {
                 if (isset($response['data']->query_id)) {
                     $query_id = $response['data']->query_id;
-                    Log::debug('query_id=' . $query_id);
+                    Log::debug('Async query_id=' . $query_id);
                 } else {
-                    Log::error('No query id found:');
+                    Log::error('No async query id found:');
                     Log::error($response['data']);
 
                     $status = 'ERROR';
-                    $error_message = 'No query id found';
+                    $error_message = 'No async query id found';
 
                     throw new \Exception('Query to async download entry point failed.');
                 }
@@ -1989,7 +1990,7 @@ class RestService extends Model
                 $query_log_id = QueryLog::start_rest_service_query($rs->id, $rs->name, $polling_url, '', '');
 
                 while ($status != 'FINISHED' && $status != 'ERROR') {
-                    Log::debug('status for query id ' . $query_id . ' -> ' . $status);
+                    Log::debug('status for async query id ' . $query_id . ' -> ' . $status);
 
                     try {
                         $response_polling = $client->get($query_id);
