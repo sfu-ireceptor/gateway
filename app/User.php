@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Log;
+use App\Agave;
 
 class User extends Authenticatable
 {
@@ -26,6 +27,54 @@ class User extends Authenticatable
     protected $dates = ['token_expiration_date'];
 
     /**
+     * Get the token for the user.
+     *
+     * @param void
+     * @return string
+     *
+     */
+    public function getToken()
+    {
+        // Check to see if we are close to token expiry
+        // Expiry threshold is 30 minutes
+        $expiry_threshold_min = 30;
+        $now = Carbon::now();
+        $expiry_threshold = Carbon::now()->subMinute($expiry_threshold_min);
+        Log::debug('User::getToken: now = ' . $now);
+        Log::debug('User::getToken: expiry threshold = ' . $expiry_threshold);
+        Log::debug('User::getToken: token expiration = ' . $this->token_expiration_date);
+        // If we are not close to expiry (within an hour), just return the
+        // current token.
+        if ($this->token_expiration_date->gt($expiry_threshold)) {
+            Log::debug('User::getToken: No refresh required');
+            return $this->password;
+        }
+
+        // If we are within an hour, then request a new token and stores
+        // it in the local password field.
+        Log::debug('User::getToken: Requesting a new token');
+        $agave = new Agave;
+        $agave_token_info = $agave->renewToken($this->refresh_token);
+        $this->updateToken($agave_token_info);
+
+        // Return the new password
+        return $this->password;
+    }
+
+    /**
+     * Get the refresh token for the user.
+     *
+     * @param void
+     * @return string
+     *
+     */
+    public function getRefreshToken()
+    {
+        // The token is saved in the password field.
+        return $this->refresh_token;
+    }
+
+    /**
      * Update the token state for the user.
      *
      * @param  object  $agave_token_info
@@ -43,6 +92,7 @@ class User extends Authenticatable
      */
     public function updateToken($agave_token_info)
     {
+
         // token
         $token = $agave_token_info->access_token;
         $this->password = $token;
@@ -62,6 +112,8 @@ class User extends Authenticatable
         Log::debug('User::updateToken(' . $this->username . ') - access_token = ' . $this->password);
         Log::debug('User::updateToken(' . $this->username . ') - refresh_token = ' . $this->refresh_token);
         Log::debug('User::updateToken(' . $this->username . ') - expiration_date = ' . $this->token_expiration_date);
+        // Return the token, stored as the user password.
+        return $this->password;
     }
 
     public function isAdmin()
