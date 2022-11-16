@@ -286,10 +286,10 @@ class JobController extends Controller
 
         // Create an Agave object to work with. This is constant across all jobs.
         $agave = new Agave;
-        
+
         // Refresh the Agave token for use.
         Log::debug('JobController::getView: renewing token for ' . auth()->user()->username);
-        $user = User::where('username',auth()->user()->username)->first();
+        $user = User::where('username', auth()->user()->username)->first();
         $token = $user->getToken();
 
         // Build the job summary HTML. This is rendered by the blade.
@@ -328,7 +328,7 @@ class JobController extends Controller
         if ($job->agave_status == 'FAILED') {
             // If the job fails, then we need to handle error messages
             $job_errors = true;
-        } else if ($job->agave_status == 'INTERNAL_ERROR') {
+        } elseif ($job->agave_status == 'INTERNAL_ERROR') {
             $job_errors = true;
         } else {
             // If the job error file exists and has an error message then we need to handle errors
@@ -375,11 +375,10 @@ class JobController extends Controller
                     $s .= strval($agave_status->result->lastStatusMessage) . '<br/>\n';
                 }
             }
-            if ($job->agave_status == 'INTERNAL_ERROR'){
+            if ($job->agave_status == 'INTERNAL_ERROR') {
                 $s .= '<br/><p><b>Internal Error</b></p>\n';
                 $s .= 'Unfortunately, your job encountered an unexpected internal error. This may be due to an authentication issue, please log out and log back in and resubmit the job. If the error recurs, please send an email to support@ireceptor.org with the Job ID number and we will investigate.<br/>\n';
             }
-
 
             // Get the relevant iReceptor Gateway error messages. These come from the
             // normal job ourput and error files, but are tagged with either "IR-ERROR" or
@@ -630,7 +629,7 @@ class JobController extends Controller
         $job = Job::where('id', '=', $id)->first();
         if ($job != null && $job->agave_id != '') {
             $job_agave_id = $job->agave_id;
-            $user = User::where('username',auth()->user()->username)->first();
+            $user = User::where('username', auth()->user()->username)->first();
             $token = $user->getToken();
             $response = $agave->getJobHistory($job_agave_id, $token);
             echo '<pre>' . $response . '</pre>';
@@ -643,10 +642,12 @@ class JobController extends Controller
         $response = null;
         if ($job != null && $job->agave_id != '') {
             $job_agave_id = $job->agave_id;
-            $user = User::where('username',auth()->user()->username)->first();
+            $user = User::where('username', auth()->user()->username)->first();
             $token = $user->getToken();
             $response = $agave->getJob($job_agave_id, $token);
-            if ($agave->isAgaveError($response)) $response = null;
+            if ($agave->isAgaveError($response)) {
+                $response = null;
+            }
         }
 
         return $response;
@@ -664,7 +665,7 @@ class JobController extends Controller
         // Get user and job info
         $userId = auth()->user()->id;
         $username = auth()->user()->username;
-        $user = User::where('username',$username)->first();
+        $user = User::where('username', $username)->first();
         $job = Job::get($id, $userId);
 
         // If we found one, clean up
@@ -672,7 +673,7 @@ class JobController extends Controller
             // Clean up the running AGAVE job if it exists and is not finished.
             if (isset($job['agave_id']) and isset($job['agave_status']) and $job['agave_status'] != 'FINISHED' and $job['agave_status'] != 'INTERNAL_ERROR') {
                 Log::debug('Deleting AGAVE job ' . $job['agave_id']);
-                $user = User::where('username',auth()->user()->username)->first();
+                $user = User::where('username', auth()->user()->username)->first();
                 $token = $user->getToken();
                 // Kill the job and update the status.
                 $agave = new Agave;
@@ -689,7 +690,7 @@ class JobController extends Controller
         // Get user and job info
         $userId = auth()->user()->id;
         $username = auth()->user()->username;
-        $user = User::where('username',$username)->first();
+        $user = User::where('username', $username)->first();
         $job = Job::get($id, $userId);
 
         Log::debug($job);
@@ -697,7 +698,7 @@ class JobController extends Controller
             // Clean up the running AGAVE it exists and the job if not finished.
             if (isset($job['agave_id']) and isset($job['agave_status']) and $job['agave_status'] != 'FINISHED' and $job['agave_status'] != 'STOPPED' and $job['agave_status'] != 'INTERNAL_ERROR') {
                 Log::debug('Deleting AGAVE job ' . $job['agave_id']);
-                $user = User::where('username',auth()->user()->username)->first();
+                $user = User::where('username', auth()->user()->username)->first();
                 $token = $user->getToken();
                 // Kill the job and update the status.
                 $agave = new Agave;

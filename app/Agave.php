@@ -740,7 +740,7 @@ class Agave
         }
     }
 
-    function isAgaveError($response)
+    public function isAgaveError($response)
     {
         if ($response == null) {
             return true;

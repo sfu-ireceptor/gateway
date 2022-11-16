@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Log;
-use App\Agave;
 
 class User extends Authenticatable
 {
@@ -31,7 +30,6 @@ class User extends Authenticatable
      *
      * @param void
      * @return string
-     *
      */
     public function getToken()
     {
@@ -47,6 +45,7 @@ class User extends Authenticatable
         // current token.
         if ($this->token_expiration_date->gt($expiry_threshold)) {
             Log::debug('User::getToken: No refresh required');
+
             return $this->password;
         }
 
@@ -66,7 +65,6 @@ class User extends Authenticatable
      *
      * @param void
      * @return string
-     *
      */
     public function getRefreshToken()
     {
