@@ -138,22 +138,16 @@ class LaunchAgaveJob implements ShouldQueue
             $job->input_folder = $archive_folder;
             $job->save();
 
-            // refresh AGAVE token since we are about to do some Agave work.
+            // Get an Agave object to work with.
             $agave = new Agave;
+
+            // Get the user token
             $user = User::where('username', $gw_username)->first();
             if ($user == null) {
                 throw new \Exception('User ' . $gw_username . ' could not be found in local database.');
             }
             Log::debug('###### LaunchAgaveJob::handle - jobId = ' . $this->jobId . ', localJobId = ' . $this->localJobId);
-            Log::debug('###### LaunchAgaveJob::handle - refreshing token = ' . $user->password . ', refresh_token = ' . $user->refresh_token);
-            $token_info = $agave->renewToken($user->refresh_token);
-            if ($token_info == null) {
-                Log::error('###### LaunchAgaveJob::handle - unable to refresh token for ' . $gw_username);
-                throw new \Exception('Unable to refresh token for ' . $gw_username);
-            }
-            $user->updateToken($token_info);
-            $user->save();
-            $token = $user->password;
+            $token = $user->getToken();
 
             // Create systems for this user if they don't exist.
             System::createDefaultSystemsForUser($gw_username, $gw_userid, $token);
@@ -189,10 +183,10 @@ class LaunchAgaveJob implements ShouldQueue
 
             // Based on the above, create the Tapis App.
             $appConfig = $agave->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
-            Log::debug('app token: ' . $token);
+            Log::debug('LaunchAgaveJob::handle - app token: ' . $token);
             $response = $agave->createApp($token, $appConfig);
             $agaveAppId = $response->result->id;
-            Log::debug('app created: ' . $appId);
+            Log::debug('LaunchAgaveJob::handle - app created: ' . $appId);
 
             // The Gateway sets the download_file input as it controls the data
             // that is processed by the application.
@@ -239,7 +233,7 @@ class LaunchAgaveJob implements ShouldQueue
             Log::error('LaunchAgaveJob::handle - ' . $e->getMessage());
             Log::error($e);
             $job = Job::find($this->jobId);
-            $job->updateStatus('STOPPED');
+            $job->updateStatus('INTERNAL_ERROR');
 
             $localJob = LocalJob::find($this->localJobId);
             $localJob->setFailed();
@@ -261,7 +255,7 @@ class LaunchAgaveJob implements ShouldQueue
 
         // Mark the job as failed.
         $job = Job::find($this->jobId);
-        $job->updateStatus('STOPPED');
+        $job->updateStatus('INTERNAL_ERROR');
 
         // Mark the local job as failed.
         $localJob = LocalJob::find($this->localJobId);
