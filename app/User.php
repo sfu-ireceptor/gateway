@@ -59,9 +59,9 @@ class User extends Authenticatable
         // Save the state
         $this->save();
 
-        Log::debug('User::updateToken - access_token = ' . $this->password);
-        Log::debug('User::updateToken - refresh_token = ' . $this->refresh_token);
-        Log::debug('User::updateToken - expiration_date = ' . $this->token_expiration_date);
+        Log::debug('User::updateToken(' . $this->username . ') - access_token = ' . $this->password);
+        Log::debug('User::updateToken(' . $this->username . ') - refresh_token = ' . $this->refresh_token);
+        Log::debug('User::updateToken(' . $this->username . ') - expiration_date = ' . $this->token_expiration_date);
     }
 
     public function isAdmin()

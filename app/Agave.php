@@ -24,11 +24,14 @@ class Agave
         $this->updateAppTemplates();
 
         // Maximum run time for a job in hours.
-        $this->maxRunTime = 96;
+        //$this->maxRunTime = 4;
+        $this->maxRunTime = config('services.agave.system_execution.max_run_time');
         // Maximum number of processors per job. For now all serial jobs.
-        $this->processorsPerNode = 1;
+        //$this->processorsPerNode = 1;
+        $this->processorsPerNode = config('services.agave.system_execution.processors_per_node');
         // Amount of memory per processor (in GB)
-        $this->memoryPerProcessor = 8;
+        //$this->memoryPerProcessor = 8;
+        $this->memoryPerProcessor = config('services.agave.system_execution.memory_per_processor');
 
         // Set up the default job contorl parameters used by AGAVE
         $this->jobParameters = [];
@@ -112,8 +115,9 @@ class Agave
         $apiSecret = config('services.agave.api_token');
 
         // try to get token
-        Log::debug('Trying to get token for user: ' . $username);
+        Log::debug('Agave::getTokenForUser - Trying to get token for user: ' . $username);
         $t = $this->getToken($url, $username, $password, $apiKey, $apiSecret);
+        Log::debug('Agave::getTokenForUser - Token info for user ' . $username . ' = ' . json_encode($t));
 
         // return NULL or array with token and refresh token
         return $t;
@@ -121,6 +125,7 @@ class Agave
 
     public function getToken($url, $username, $password, $api_key, $api_secret)
     {
+        Log::debug('Agave::getToken for ' . $username);
         $headers = [];
         $headers['Content-Type'] = 'application/x-www-form-urlencoded';
 
@@ -133,16 +138,24 @@ class Agave
         $params['scope'] = 'PRODUCTION';
 
         try {
+            // Normal respsonse from Tapis is:
+            //  {"scope":"default","token_type":"bearer",
+            //  "expires_in":14400,
+            //  "refresh_token":"4e6e8a38f0a33f2cff7fe0318fe314db",
+            //  "access_token":"8485748fbaa9a36efe941d8f3c36c2a1"}
             $response = $this->client->request('POST', '/token', ['auth' => $auth, 'headers' => $headers, 'form_params' => $params, 'timeout' => 10]);
 
             $response = json_decode($response->getBody());
+            Log::debug('Agave::getToken: respsonse = ' . json_encode($response));
             $this->raiseExceptionIfAgaveError($response);
         } catch (ClientException $e) {
-            Log::debug('A ClientException occurred while getting a token from Agave:');
-            Log::debug($e);
+            Log::debug('Agave::getToken - A ClientException occurred while getting a token from Agave:');
+            Log::debug('Agave::getToken - ' . $e);
 
             return;
         }
+
+        Log::debug('Agave::getToken: returning respsonse = ' . json_encode($response));
 
         return $response;
     }
@@ -164,7 +177,7 @@ class Agave
 
     public function renewToken($refresh_token)
     {
-        Log::debug('$$$$$$$ Agave::renewToken - refresh_token = ' . json_encode($refresh_token));
+        Log::debug('Agave::renewToken - refresh_token = ' . json_encode($refresh_token));
         $api_key = config('services.agave.api_key');
         $api_secret = config('services.agave.api_token');
 
@@ -185,18 +198,19 @@ class Agave
             //  "refresh_token":"4e6e8a38f0a33f2cff7fe0318fe314db",
             //  "access_token":"8485748fbaa9a36efe941d8f3c36c2a1"}
             $response = $this->client->request('POST', '/token', ['auth' => $auth, 'headers' => $headers, 'form_params' => $params]);
-            // Convert the response JSON to a PHP object
+            // Convert the body of the Guzzle response JSON to a PHP object
             $response_obj = json_decode($response->getBody());
-            Log::debug('$$$$$$$ Agave::renewToken - refresh response = ' . json_encode($response_obj));
+            Log::debug('Agave::renewToken - refresh response = ' . json_encode($response_obj));
             // Check for Agave errors and raise an exception if we see one.
             $this->raiseExceptionIfAgaveError($response_obj);
         } catch (ClientException $e) {
-            Log::debug('$$$$$$$ Agave::renewToken - exception ' . json_encode($e));
+            Log::debug('Agave::renewToken - A ClientException occurred while getting a token from Agave:');
+            Log::debug('Agave::renewToken - exception = ' . json_encode($e));
 
             return;
         }
 
-        Log::debug('$$$$$$$ Agave:renewToken - response = ' . json_encode($response_obj));
+        Log::debug('Agave:renewToken - returning refresh response = ' . json_encode($response_obj));
 
         return $response_obj;
     }
