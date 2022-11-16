@@ -705,7 +705,7 @@ class Agave
     {
         $headers = [];
         $headers['Authorization'] = 'Bearer ' . $token;
-        Log::debug('Agave::HTTPRequest - Bearer:' . $token);
+        Log::debug('Agave::doHTTPRequest - Bearer:' . $token);
 
         $data = [];
         if ($body == null) {
@@ -720,7 +720,8 @@ class Agave
             $response = $this->client->request($method, $url, $data);
         } catch (ClientException $exception) {
             $response = $exception->getResponse()->getBody()->getContents();
-            Log::error($response);
+            Log::error('Agave::doHTTPRequest:: ClientException - query = ' . $url);
+            Log::error('Agave::doHTTPRequest:: ClientException - response = ' . $response);
             $this->raiseExceptionIfAgaveError($response);
 
             return $response;
@@ -739,6 +740,22 @@ class Agave
         }
     }
 
+    function isAgaveError($response)
+    {
+        if ($response == null) {
+            return true;
+        }
+        if (property_exists($response, 'error')) {
+            return true;
+        }
+        if (property_exists($response, 'fault')) {
+            return true;
+        }
+        if (property_exists($response, 'status') && $response->status == 'error') {
+            return true;
+        }
+    }
+
     private function raiseExceptionIfAgaveError($response)
     {
         if ($response == null) {
@@ -749,6 +766,9 @@ class Agave
         }
         if (property_exists($response, 'status') && $response->status == 'error') {
             throw new \Exception('AGAVE error: ' . $response->message);
+        }
+        if (property_exists($response, 'fault')) {
+            throw new \Exception('AGAVE error: ' . $response->fault->message);
         }
     }
 }
