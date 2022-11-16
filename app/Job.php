@@ -212,10 +212,10 @@ STR;
             case 'STAGED':
                 $progress = 45;
                 break;
-            case 'SUBMITTING':
+            case 'STAGING_JOB':
                 $progress = 50;
                 break;
-            case 'STAGING JOB':
+            case 'SUBMITTING':
                 $progress = 55;
                 break;
             case 'QUEUED':
@@ -246,6 +246,10 @@ STR;
                 $status = 3;
                 break;
             case 'STOPPED':
+                $progress = 100;
+                $status = 3;
+                break;
+            case 'INTERNAL_ERROR':
                 $progress = 100;
                 $status = 3;
                 break;

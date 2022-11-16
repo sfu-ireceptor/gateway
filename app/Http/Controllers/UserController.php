@@ -62,10 +62,10 @@ class UserController extends Controller
         if (config('ireceptor.auth')) {
             // try to get Agave OAuth token
             $agave = new Agave;
-            $t = $agave->getTokenForUser($username, $password);
+            $agave_token_info = $agave->getTokenForUser($username, $password);
 
             // if fail -> display form with error
-            if ($t == null) {
+            if ($agave_token_info == null) {
                 return redirect()->back()->withErrors(['Invalid credentials']);
             }
 
@@ -89,7 +89,9 @@ class UserController extends Controller
             }
 
             // save Agave OAuth token in local DB
-            $user->updateToken($t);
+            Log::debug('****** UserController::PostLogin - updating token for ' . $username);
+            Log::debug('****** UserController::PostLogin - access_token = ' . $agave_token_info->access_token . ', refresh_token = ' . $agave_token_info->refresh_token);
+            $user->updateToken($agave_token_info);
         } else {
             $user = User::where('username', $username)->first();
             if ($user == null) {
