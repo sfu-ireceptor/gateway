@@ -249,6 +249,10 @@ STR;
                 $progress = 100;
                 $status = 3;
                 break;
+            case 'INTERNAL_ERROR':
+                $progress = 100;
+                $status = 3;
+                break;
         }
 
         $this->agave_status = $str;
