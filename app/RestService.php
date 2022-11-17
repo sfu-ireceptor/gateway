@@ -32,6 +32,14 @@ class RestService extends Model
         }
     }
 
+    public function baseURL()
+    {
+        $url = $this->url;
+        $base_url = preg_replace('/airr\/v1\/$/', '', $url);
+
+        return $base_url;
+    }
+
     public function refreshInfo()
     {
         $info = [];
@@ -48,6 +56,7 @@ class RestService extends Model
             $json = json_decode($body);
 
             $chunk_size = $json->max_size ?? null;
+            $chunk_size = null; // disable this functionality for now (async download for VDJServer)
             $api_version = $json->api->version ?? '1.0';
 
             $contact_url = $json->contact->url ?? null;
@@ -1424,10 +1433,12 @@ class RestService extends Model
                 if (isset($response['data']->Cell)) {
                     $request_params = [];
                     foreach ($response['data']->Cell as $t) {
-                        $cell_id = $t->adc_annotation_cell_id ?? $t->cell_id;
+                        $repertoire_id = $t->repertoire_id;
                         $data_processing_id = $t->data_processing_id;
+                        $cell_id = $t->adc_annotation_cell_id ?? $t->cell_id;
 
                         $filters = [];
+                        $filters['repertoire_id'] = $data_processing_id;
                         $filters['data_processing_id_cell'] = $data_processing_id;
                         $filters['cell_id_cell'] = $cell_id;
 
@@ -1804,7 +1815,14 @@ class RestService extends Model
             } else {
                 $t = [];
                 $t['rs'] = $rs;
-                $t['url'] = $rs->url . 'rearrangement';
+
+                // change URL for repositories acceptiong async queries
+                if ($rs->async) {
+                    $t['url'] = $rs->baseURL() . 'airr/async/v1/rearrangement';
+                } else {
+                    $t['url'] = $rs->url . 'rearrangement';
+                }
+
                 $t['params'] = self::generate_json_query($rs_filters, $query_parameters, $rs->api_version);
 
                 $t['timeout'] = config('ireceptor.service_file_request_timeout');
@@ -1816,21 +1834,25 @@ class RestService extends Model
                     if (! isset($group_list_count[$group])) {
                         $group_list_count[$group] = 0;
                     }
-                    $group_list_count[$group] += 1;
-                    $file_suffix = '_part' . $group_list_count[$group];
                 }
-                $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
+
+                if (! $rs->async) {
+                    $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
+                }
+
                 $request_params[] = $t;
             }
         }
 
         $final_response_list = [];
-        // do requests, write tsv data to files
+
+        // do standard requests
         if (count($request_params) > 0) {
-            Log::info('Do TSV requests... (not-chunked)');
+            Log::info('Do TSV requests... (not chunked)');
             $final_response_list = self::doRequests($request_params);
         }
 
+        // do chunked requests
         if (count($request_params_chunking) > 0) {
             Log::info('Do TSV requests... (chunked)');
             $request_params_chunked = array_chunk($request_params_chunking, 4);
@@ -1937,7 +1959,98 @@ class RestService extends Model
             $final_response_list[] = $response;
         }
 
-        return $final_response_list;
+        $final_response_list2 = [];
+
+        // if any async download, poll until ready then download
+        foreach ($final_response_list as $response) {
+            $rs = $response['rs'];
+            Log::debug('Processing download response from ' . $rs->name);
+            if ($rs->async) {
+                if (isset($response['data']->query_id)) {
+                    $query_id = $response['data']->query_id;
+                    Log::debug('Async query_id=' . $query_id);
+                } else {
+                    Log::error('No async query id found:');
+                    Log::error($response['data']);
+
+                    $status = 'ERROR';
+                    $error_message = 'No async query id found';
+
+                    throw new \Exception('Query to async download entry point failed.');
+                }
+
+                $defaults = [];
+                $defaults['base_uri'] = $rs->baseURL() . 'airr/async/v1/status/';
+                $defaults['verify'] = false;    // accept self-signed SSL certificates
+
+                $status = 'SUBMITTED';
+                $download_url = '';
+
+                $client = new \GuzzleHttp\Client($defaults);
+
+                $polling_url = $defaults['base_uri'] . $query_id;
+                $query_log_id = QueryLog::start_rest_service_query($rs->id, $rs->name, $polling_url, '', '');
+
+                while ($status != 'FINISHED' && $status != 'ERROR') {
+                    Log::debug('status for async query id ' . $query_id . ' -> ' . $status);
+
+                    try {
+                        $response_polling = $client->get($query_id);
+                        $body = $response_polling->getBody();
+                        $json = json_decode($body);
+
+                        if (isset($json->status)) {
+                            $status = $json->status;
+                        }
+
+                        if ($status == 'FINISHED') {
+                            $download_url = $json->download_url;
+                            break;
+                        }
+
+                        if ($status == 'ERROR') {
+                            Log::error($json);
+                            break;
+                        }
+
+                        sleep(10);
+                    } catch (\Exception $e) {
+                        $error_message = $e->getMessage();
+                        Log::error($error_message);
+                    }
+                }
+
+                QueryLog::end_rest_service_query($query_log_id);
+
+                if ($status == 'FINISHED') {
+                    Log::debug('download_url=' . $download_url);
+
+                    // download file
+                    $file_path = $folder_path . '/' . str_slug($rs->display_name) . '.tsv';
+                    Log::info('Guzzle: saving to ' . $file_path);
+
+                    $query_log_id = QueryLog::start_rest_service_query($rs->id, $rs->name, $download_url, '', $file_path);
+
+                    $defaults = [];
+                    $defaults['verify'] = false;    // accept self-signed SSL certificates
+                    $client = new \GuzzleHttp\Client($defaults);
+
+                    $options['sink'] = fopen($file_path, 'a');
+                    $response_download = $client->get($download_url, $options);
+
+                    QueryLog::end_rest_service_query($query_log_id, filesize($file_path));
+
+                    unset($response['data']);
+                    $response['data'] = [];
+                    $response['data']['file_path'] = $file_path;
+                    $final_response_list2[] = $response;
+                }
+            } else {
+                $final_response_list2[] = $response;
+            }
+        }
+
+        return $final_response_list2;
     }
 
     public static function clones_data($filters, $folder_path, $username = '', $expected_nb_clones_by_rs, $clone_list_by_rs = [])
