@@ -1433,10 +1433,12 @@ class RestService extends Model
                 if (isset($response['data']->Cell)) {
                     $request_params = [];
                     foreach ($response['data']->Cell as $t) {
-                        $cell_id = $t->adc_annotation_cell_id ?? $t->cell_id;
+                        $repertoire_id = $t->repertoire_id;
                         $data_processing_id = $t->data_processing_id;
+                        $cell_id = $t->adc_annotation_cell_id ?? $t->cell_id;
 
                         $filters = [];
+                        $filters['repertoire_id'] = $data_processing_id;
                         $filters['data_processing_id_cell'] = $data_processing_id;
                         $filters['cell_id_cell'] = $cell_id;
 
