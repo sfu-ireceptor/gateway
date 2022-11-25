@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\FieldName;
 use Flynsarmy\CsvSeeder\CsvSeeder;
 use Illuminate\Support\Facades\DB;
@@ -9,14 +11,13 @@ class FieldNameSeeder extends CsvSeeder
     public function __construct()
     {
         $this->table = 'field_name';
-        $this->folder_path = base_path() . '/database/seeds/data/field_names';
+        $this->folder_path = base_path() . '/database/seeders/data/field_names';
         $this->offset_rows = 1;
         $this->csv_delimiter = "\t";
     }
 
     public function run()
     {
-        DB::transaction(function () {
             // delete existing data
             DB::table($this->table)->truncate();
 
@@ -79,7 +80,6 @@ class FieldNameSeeder extends CsvSeeder
                 $this->define_default_clone_fields();
                 $this->define_default_cell_fields();
             }
-        });
     }
 
     public function add_gateway_specific_fields($api_version)
