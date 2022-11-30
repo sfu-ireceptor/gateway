@@ -2143,7 +2143,7 @@ class RestService extends Model
             if (isset($response['data']->CellExpression)) {
                 $l = [];
                 foreach ($response['data']->CellExpression as $e) {
-                    if(isset($e->cell_id)) {
+                    if (isset($e->cell_id)) {
                         $l[] = $e->cell_id;
                     }
                 }
@@ -2158,6 +2158,7 @@ class RestService extends Model
 
         return $final_response_list;
     }
+
     public static function cell_id_list($filters, $username = '', $expected_nb_cells_by_rs)
     {
         // reduce list of services to query
@@ -2213,7 +2214,7 @@ class RestService extends Model
 
             $cell_id_list = [];
             foreach ($cell_list as $cell) {
-                if(isset($cell->cell_id)) {
+                if (isset($cell->cell_id)) {
                     $cell_id = $cell->cell_id;
                     $cell_id_list[] = $cell_id;
                 }
@@ -2342,7 +2343,7 @@ class RestService extends Model
                 foreach ($cell_id_list_by_rs as $response) {
                     if ($response['rs']->id == $rs->id) {
                         $cell_id_list = $response['cell_id_list'];
-                        $rs_filters_json = self::generate_json_query(['cell_id' => $cell_id_list], $query_parameters);  
+                        $rs_filters_json = self::generate_json_query(['cell_id' => $cell_id_list], $query_parameters);
                         break;
                     }
                 }
@@ -2408,7 +2409,7 @@ class RestService extends Model
                 foreach ($cell_id_list_by_rs as $response) {
                     if ($response['rs']->id == $rs->id) {
                         $cell_id_list = $response['cell_id_list'];
-                        $rs_filters_json = self::generate_json_query(['cell_id' => $cell_id_list], $query_parameters);  
+                        $rs_filters_json = self::generate_json_query(['cell_id' => $cell_id_list], $query_parameters);
                         break;
                     }
                 }
