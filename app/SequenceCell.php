@@ -191,7 +191,6 @@ class SequenceCell
         // sequence data
         $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_rs);
 
-
         $file_stats = self::file_stats($response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs);
 
         // if some files are incomplete, log it
