@@ -171,21 +171,26 @@ class SequenceCell
         $sequence_response_list = [];
 
         if ($query_type == 'cell') {
-            $cell_id_list_by_data_processing = RestService::cell_id_list_by_data_processing($filters, $username, $expected_nb_cells_by_rs);
-            $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_data_processing);
+            $cell_id_list_by_rs = RestService::cell_id_list($filters, $username, $expected_nb_cells_by_rs);
 
+            // cell data
             $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs);
+
+            // expression data
             $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list);
         } else {
-            $cell_list_by_rs = RestService::cell_list_from_expression_query($filters, $username, $expected_nb_cells_by_rs);
+            $cell_id_list_by_rs = RestService::cell_id_list_from_expression_query($filters, $username, $expected_nb_cells_by_rs);
 
-            $cell_id_list_by_data_processing = self::generate_cell_id_list_by_data_processing_from_cell_list($cell_list_by_rs);
-            $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_data_processing);
+            // cell data (filtered by expression)
+            $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_rs);
 
-            $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_list_by_rs);
-            $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_list_by_rs);
-            $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_data_processing);
+            // expression data (filtered by filtered cell data)
+            $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_id_list_by_rs);
         }
+
+        // sequence data
+        $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_rs);
+
 
         $file_stats = self::file_stats($response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs);
 
