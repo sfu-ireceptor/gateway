@@ -13,6 +13,7 @@
         "flynsarmy/csv-seeder": "^1.0",
         "jenssegers/mongodb": "^3.6",
         "laravel/helpers": "^1.3",
+        "pda/pheanstalk": "^4.0",
         "laravelcollective/html": "6.*"
     },
     "require-dev": {
