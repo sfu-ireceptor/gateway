@@ -582,7 +582,7 @@ class SequenceController extends Controller
             }
         } catch (\Exception $e) {
             $error_message = $e->getMessage();
-            Log::error($error_message);
+            Log::error('IEDB request failed: ' . $error_message);
             $data['iedb_info'] = false;
 
             // return $error_message; ??
