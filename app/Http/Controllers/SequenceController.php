@@ -560,9 +560,11 @@ class SequenceController extends Controller
 
                 $organism_list = [];
                 foreach ($t as $o) {
-                    foreach ($o->parent_source_antigen_source_org_names as $organism) {
-                        if (! in_array($organism, $organism_list)) {
-                            $organism_list[] = $organism;
+                    if (is_array($o->parent_source_antigen_source_org_names)) {
+                        foreach ($o->parent_source_antigen_source_org_names as $organism) {
+                            if (! in_array($organism, $organism_list)) {
+                                $organism_list[] = $organism;
+                            }
                         }
                     }
                 }
