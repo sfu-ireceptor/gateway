@@ -560,9 +560,11 @@ class SequenceController extends Controller
 
                 $organism_list = [];
                 foreach ($t as $o) {
-                    foreach ($o->parent_source_antigen_source_org_names as $organism) {
-                        if (! in_array($organism, $organism_list)) {
-                            $organism_list[] = $organism;
+                    if (is_array($o->parent_source_antigen_source_org_names)) {
+                        foreach ($o->parent_source_antigen_source_org_names as $organism) {
+                            if (! in_array($organism, $organism_list)) {
+                                $organism_list[] = $organism;
+                            }
                         }
                     }
                 }
@@ -580,7 +582,7 @@ class SequenceController extends Controller
             }
         } catch (\Exception $e) {
             $error_message = $e->getMessage();
-            Log::error($error_message);
+            Log::error('IEDB request failed: ' . $error_message);
             $data['iedb_info'] = false;
 
             // return $error_message; ??
