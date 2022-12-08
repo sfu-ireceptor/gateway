@@ -1777,6 +1777,8 @@ class RestService extends Model
                     if (! isset($group_list_count[$group])) {
                         $group_list_count[$group] = 0;
                     }
+                    $group_list_count[$group] += 1;
+                    $file_suffix = '_part' . $group_list_count[$group];
                 }
 
                 if (! $rs->async) {
