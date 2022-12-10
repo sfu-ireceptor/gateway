@@ -1879,7 +1879,7 @@ class RestService extends Model
                     }
                 }
                 $output_files_str = implode(' ', $output_files);
-                $file_path_merged = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '.tsv';
+                $file_path_merged = $folder_path . '/' . str_slug($rs->display_name) . '.tsv';
 
                 Log::info('Merging chunked files...');
                 $cmd = base_path() . '/util/scripts/airr-tsv-merge.py -i ' . $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '_*.tsv' . ' -o ' . $file_path_merged . ' 2>&1';
@@ -2376,8 +2376,7 @@ class RestService extends Model
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
             // add number suffix for rest services belonging to a group
-            $file_suffix = '';
-            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '-cell.json';
+            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . '-cell.json';
             $request_params[] = $t;
         }
 
@@ -2434,8 +2433,7 @@ class RestService extends Model
             $t['params'] = $rs_filters_json;
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
-            $file_suffix = '';
-            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '-gex.json';
+            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . '-gex.json';
             $request_params[] = $t;
         }
 
