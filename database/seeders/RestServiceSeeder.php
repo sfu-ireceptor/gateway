@@ -77,7 +77,7 @@ class RestServiceSeeder extends Seeder
                 'logo' => 'ireceptor.png',
             ],
             [
-                'url' => 'http://ipa5-staging.ireceptor.org/airr/v1/',
+                'url' => 'https://ipa5-staging.ireceptor.org/airr/v1/',
                 'name' => 'IPA 5 Staging',
                 'rest_service_group_code' => 'ipa',
                 'country' => 'Canada',
