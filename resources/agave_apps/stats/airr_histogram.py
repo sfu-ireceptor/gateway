@@ -31,7 +31,7 @@ def performQueryAnalysis(input_file, field_name):
 
 def plotData(plot_data, title, filename):
 
-    # Get the sixe of the data we are plotting
+    # Get the size of the data we are plotting
     plot_size = len(plot_data)
     print(plot_data)
 
@@ -40,6 +40,8 @@ def plotData(plot_data, title, filename):
     dpi = 80
     rows_per_inch = dpi/(2*font_size)
     plot_height_inches = plot_size / rows_per_inch
+    if plot_height_inches < 1.0:
+        plot_height_inches = 1.0
 
     # Create the graph...
     fig, ax = plt.subplots()
