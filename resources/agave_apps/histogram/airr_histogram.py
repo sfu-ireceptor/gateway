@@ -43,6 +43,9 @@ def plotData(plot_data, title, filename):
     dpi = 80
     rows_per_inch = dpi/(2*font_size)
     plot_height_inches = plot_size / rows_per_inch
+    if plot_height_inches < 1.0:
+        plot_height_inches = 1.0
+
 
     # Create the graph...
     fig, ax = plt.subplots()
