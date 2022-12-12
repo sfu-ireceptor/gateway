@@ -382,6 +382,9 @@ elif [ "${split_repertoire}" = "False" ]; then
     # Run the stats analysis.
     run_analysis ${GATEWAY_ANALYSIS_DIR}/${outdir} "AIRRDataCommons" ${outdir} "NULL" ${GATEWAY_ANALYSIS_DIR}/${outdir}/${AIRR_MANIFEST_FILE}
 
+    # Copy the INFO_FILE to the analysis DIR as the Gateway expects it to be there.
+    cp ${GATEWAY_ANALYSIS_DIR}/${outdir}/${INFO_FILE} ${GATEWAY_ANALYSIS_DIR}/
+
 else
     echo "IR-ERROR: Unknown repertoire operation ${split_repertoire}" >&2
     exit 1
