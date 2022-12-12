@@ -467,57 +467,6 @@ class RestService extends Model
         return $filter_object_json;
     }
 
-    public static function generate_cell_id_by_data_processing_id_json_query($data_processing_id_list, $query_parameters = [])
-    {
-        // build array of filters
-        $filter_list = [];
-        foreach ($data_processing_id_list as $data_processing_id => $cell_id_list) {
-            $filter1 = new \stdClass();
-            $filter1->op = '=';
-            $filter1->content = new \stdClass();
-            $filter1->content->field = 'data_processing_id';
-            $filter1->content->value = $data_processing_id;
-
-            $filter2 = new \stdClass();
-            $filter2->op = 'in';
-            $filter2->content = new \stdClass();
-            $filter2->content->field = 'cell_id';
-            $filter2->content->value = $cell_id_list;
-
-            $filter = new \stdClass();
-            $filter->op = 'and';
-            $filter->content = [];
-            $filter->content[] = $filter1;
-            $filter->content[] = $filter2;
-
-            $filter_list[] = $filter;
-        }
-
-        // build final filter object
-        $filter_object = new \stdClass();
-        if (count($filter_list) == 0) {
-        } elseif (count($filter_list) == 1) {
-            $filter_object->filters = $filter_list[0];
-        } else {
-            $filter_object->filters = new \stdClass();
-            $filter_object->filters->op = 'or';
-            $filter_object->filters->content = [];
-            foreach ($filter_list as $filter) {
-                $filter_object->filters->content[] = $filter;
-            }
-        }
-
-        // add extra parameters
-        foreach ($query_parameters as $key => $value) {
-            $filter_object->{$key} = $value;
-        }
-
-        // convert filter object to JSON
-        $filter_object_json = json_encode($filter_object);
-
-        return $filter_object_json;
-    }
-
     public static function clean_filters($filters)
     {
         // remove empty filters
@@ -1343,7 +1292,7 @@ class RestService extends Model
                             $cell_list = $response_cell['data']->Cell;
 
                             if (isset($cell_list[0])) {
-                                $cell_id_cell = $cell_list[0]->adc_annotation_cell_id;
+                                $cell_id_cell = $cell_list[0]->cell_id;
 
                                 if ($cell_id == $cell_id_cell) {
                                     $cell_data = $response_cell['data']->Cell[0];
@@ -1366,11 +1315,10 @@ class RestService extends Model
                     // add expression data
                     $request_params = [];
                     foreach ($response['data']->Cell as $t) {
-                        $cell_id = $t->adc_annotation_cell_id ?? $t->cell_id;
+                        $cell_id = $t->cell_id;
                         $data_processing_id = $t->data_processing_id;
 
                         $filters = [];
-                        $filters['data_processing_id_cell'] = $data_processing_id;
                         $filters['cell_id_cell'] = $cell_id;
 
                         // prepare parameters for each service
@@ -1392,7 +1340,7 @@ class RestService extends Model
                     // add expression data to cell data
                     $cell_list_merged = [];
                     foreach ($response['data']->Cell as $t) {
-                        $cell_id = $t->adc_annotation_cell_id ?? $t->cell_id;
+                        $cell_id = $t->cell_id;
                         $data_processing_id = $t->data_processing_id;
 
                         foreach ($response_list_expressions as $response_expression) {
@@ -1433,13 +1381,9 @@ class RestService extends Model
                 if (isset($response['data']->Cell)) {
                     $request_params = [];
                     foreach ($response['data']->Cell as $t) {
-                        $repertoire_id = $t->repertoire_id;
-                        $data_processing_id = $t->data_processing_id;
-                        $cell_id = $t->adc_annotation_cell_id ?? $t->cell_id;
+                        $cell_id = $t->cell_id;
 
                         $filters = [];
-                        $filters['repertoire_id'] = $data_processing_id;
-                        $filters['data_processing_id_cell'] = $data_processing_id;
                         $filters['cell_id_cell'] = $cell_id;
 
                         // prepare parameters for each service
@@ -1461,8 +1405,7 @@ class RestService extends Model
                     // add sequence data to cell data
                     $cell_list_merged = [];
                     foreach ($response['data']->Cell as $t) {
-                        $cell_id = $t->adc_annotation_cell_id ?? $t->cell_id;
-                        $data_processing_id = $t->data_processing_id;
+                        $cell_id = $t->cell_id;
 
                         foreach ($response_list_sequences as $response_sequence) {
                             $sequence = $response_sequence['data']->Rearrangement;
@@ -2145,7 +2088,7 @@ class RestService extends Model
         return $final_response_list;
     }
 
-    public static function cell_list_from_expression_query($filters, $username = '', $expected_nb_cells_by_rs)
+    public static function cell_id_list_from_expression_query($filters, $username = '', $expected_nb_cells_by_rs)
     {
         // build list of services to query
         $rs_list = [];
@@ -2155,22 +2098,9 @@ class RestService extends Model
             }
         }
 
-        // count services in each service group
-        $group_list = [];
-        foreach ($rs_list as $rs) {
-            $group = $rs->rest_service_group_code;
-            if ($group) {
-                if (! isset($group_list[$group])) {
-                    $group_list[$group] = 0;
-                }
-                $group_list[$group] += 1;
-            }
-        }
-
         // prepare request parameters for each service
         $request_params = [];
 
-        $group_list_count = [];
         foreach ($rs_list as $rs) {
             $rs_filters = $filters;
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
@@ -2213,14 +2143,15 @@ class RestService extends Model
             if (isset($response['data']->CellExpression)) {
                 $l = [];
                 foreach ($response['data']->CellExpression as $e) {
-                    $t = [];
-                    $t['repertoire_id'] = $e->repertoire_id;
-                    $t['cell_id'] = $e->cell_id;
-                    $t['data_processing_id'] = $e->data_processing_id;
-                    $l[] = $t;
+                    if (isset($e->cell_id)) {
+                        $l[] = $e->cell_id;
+                    }
                 }
-                $response['cell_list'] = $l;
+                $response['cell_id_list'] = $l;
+
+                // not needed anymore
                 unset($response['data']);
+
                 $final_response_list[] = $response;
             }
         }
@@ -2228,11 +2159,9 @@ class RestService extends Model
         return $final_response_list;
     }
 
-    public static function cell_id_list_by_data_processing($filters, $username = '', $expected_nb_cells_by_rs)
+    public static function cell_id_list($filters, $username = '', $expected_nb_cells_by_rs)
     {
-        $now = time();
-
-        // build list of services to query
+        // reduce list of services to query
         $rs_list = [];
         foreach (self::findEnabled() as $rs) {
             if (isset($expected_nb_cells_by_rs[$rs->id]) && ($expected_nb_cells_by_rs[$rs->id] > 0)) {
@@ -2240,22 +2169,9 @@ class RestService extends Model
             }
         }
 
-        // count services in each service group
-        $group_list = [];
-        foreach ($rs_list as $rs) {
-            $group = $rs->rest_service_group_code;
-            if ($group) {
-                if (! isset($group_list[$group])) {
-                    $group_list[$group] = 0;
-                }
-                $group_list[$group] += 1;
-            }
-        }
-
         // prepare request parameters for each service
         $request_params = [];
 
-        $group_list_count = [];
         foreach ($rs_list as $rs) {
             $rs_filters = $filters;
 
@@ -2283,53 +2199,37 @@ class RestService extends Model
             $t['params'] = $rs_filters_json;
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
-            // // add number suffix for rest services belonging to a group
-            // $file_suffix = '';
-            // $group = $rs->rest_service_group_code;
-            // if ($group && $group_list[$group] > 1) {
-            //     if (! isset($group_list_count[$group])) {
-            //         $group_list_count[$group] = 0;
-            //     }
-            //     $group_list_count[$group] += 1;
-            //     $file_suffix = '_part' . $group_list_count[$group];
-            // }
-            // $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '-cell.json';
             $request_params[] = $t;
         }
 
         $final_response_list = [];
+
         if (count($request_params) > 0) {
-            Log::info('Do cell_id_list_by_repertoire_id() requests...');
+            Log::info('Do cell_id_list() requests...');
             $final_response_list = self::doRequests($request_params);
         }
 
         foreach ($final_response_list as $i => $response) {
             $cell_list = $response['data']->Cell;
-            $data_processing_id_list = [];
+
+            $cell_id_list = [];
             foreach ($cell_list as $cell) {
-                if (! isset($cell->data_processing_id) || ! isset($cell->adc_annotation_cell_id)) {
-                    continue;
+                if (isset($cell->cell_id)) {
+                    $cell_id = $cell->cell_id;
+                    $cell_id_list[] = $cell_id;
                 }
-
-                $data_processing_id = $cell->data_processing_id;
-                if (! isset($data_processing_id_list[$data_processing_id])) {
-                    $data_processing_id_list[$data_processing_id] = [];
-                }
-
-                $cell_id = $cell->adc_annotation_cell_id;
-                $data_processing_id_list[$data_processing_id][] = $cell_id;
             }
 
-            $final_response_list[$i]['data_processing_id_list'] = $data_processing_id_list;
+            $final_response_list[$i]['cell_id_list'] = $cell_id_list;
 
-            // don't need this anymore
+            // not needed anymore
             unset($final_response_list[$i]['data']);
         }
 
         return $final_response_list;
     }
 
-    public static function sequences_data_from_cell_ids($filters, $folder_path, $username = '', $expected_nb_cells_by_rs, $cell_id_list_by_data_processing)
+    public static function sequences_data_from_cell_ids($filters, $folder_path, $username = '', $expected_nb_cells_by_rs, $cell_id_list_by_rs)
     {
         $now = time();
 
@@ -2363,14 +2263,13 @@ class RestService extends Model
         foreach ($rs_list as $rs) {
             $rs_filters = [];
 
-            foreach ($cell_id_list_by_data_processing as $response) {
+            foreach ($cell_id_list_by_rs as $response) {
                 if ($response['rs']->id != $rs->id) {
                     continue;
                 }
 
-                $data_processing_id_list = $response['data_processing_id_list'];
-
-                $rs_filters_json = self::generate_cell_id_by_data_processing_id_json_query($data_processing_id_list, $query_parameters);
+                $cell_id_list = $response['cell_id_list'];
+                $rs_filters_json = self::generate_json_query(['cell_id' => $cell_id_list], $query_parameters);
                 break;
             }
 
@@ -2406,7 +2305,7 @@ class RestService extends Model
         return $final_response_list;
     }
 
-    public static function cells_data($filters, $folder_path, $username = '', $expected_nb_cells_by_rs, $cell_list_by_rs = [])
+    public static function cells_data($filters, $folder_path, $username = '', $expected_nb_cells_by_rs, $cell_id_list_by_rs = [])
     {
         $now = time();
 
@@ -2438,21 +2337,13 @@ class RestService extends Model
             $rs_filters = $filters;
 
             // if we retrieve cells by cell_id
-            if (count($cell_list_by_rs) > 0) {
+            if (count($cell_id_list_by_rs) > 0) {
                 $query_parameters = [];
 
-                foreach ($cell_list_by_rs as $response) {
+                foreach ($cell_id_list_by_rs as $response) {
                     if ($response['rs']->id == $rs->id) {
-                        $cell_list = $response['cell_list'];
-
-                        // use "adc_annotation_cell_id" as cell id connector
-                        foreach ($cell_list as $i => $cell) {
-                            $cell_id = $cell['cell_id'];
-                            unset($cell_list[$i]['cell_id']);
-                            $cell_list[$i]['adc_annotation_cell_id'] = $cell_id;
-                        }
-
-                        $rs_filters_json = self::generate_or_json_query($cell_list, $query_parameters);
+                        $cell_id_list = $response['cell_id_list'];
+                        $rs_filters_json = self::generate_json_query(['cell_id' => $cell_id_list], $query_parameters);
                         break;
                     }
                 }
@@ -2484,14 +2375,6 @@ class RestService extends Model
 
             // add number suffix for rest services belonging to a group
             $file_suffix = '';
-            $group = $rs->rest_service_group_code;
-            if ($group && $group_list[$group] > 1) {
-                if (! isset($group_list_count[$group])) {
-                    $group_list_count[$group] = 0;
-                }
-                $group_list_count[$group] += 1;
-                $file_suffix = '_part' . $group_list_count[$group];
-            }
             $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '-cell.json';
             $request_params[] = $t;
         }
@@ -2506,43 +2389,27 @@ class RestService extends Model
         return $final_response_list;
     }
 
-    public static function expression_data($filters, $folder_path, $username = '', $cell_response_list, $cell_list_by_rs = [])
+    public static function expression_data($filters, $folder_path, $username = '', $cell_response_list, $cell_id_list_by_rs = [])
     {
-        $now = time();
-
         // build list of services to query
         $rs_list = [];
         foreach ($cell_response_list as $response) {
             $rs_list[] = $response['rs'];
         }
 
-        // count services in each service group
-        $group_list = [];
-        foreach ($rs_list as $rs) {
-            $group = $rs->rest_service_group_code;
-            if ($group) {
-                if (! isset($group_list[$group])) {
-                    $group_list[$group] = 0;
-                }
-                $group_list[$group] += 1;
-            }
-        }
-
         // prepare request parameters for each service
         $request_params = [];
 
-        $group_list_count = [];
         foreach ($rs_list as $rs) {
             $rs_filters = [];
 
             // if we retrieve cells by cell_id
-            if (count($cell_list_by_rs) > 0) {
+            if (count($cell_id_list_by_rs) > 0) {
                 $query_parameters = [];
-
-                foreach ($cell_list_by_rs as $response) {
+                foreach ($cell_id_list_by_rs as $response) {
                     if ($response['rs']->id == $rs->id) {
-                        $cell_list = $response['cell_list'];
-                        $rs_filters_json = self::generate_or_json_query($cell_list, $query_parameters);
+                        $cell_id_list = $response['cell_id_list'];
+                        $rs_filters_json = self::generate_json_query(['cell_id' => $cell_id_list], $query_parameters);
                         break;
                     }
                 }
@@ -2565,16 +2432,7 @@ class RestService extends Model
             $t['params'] = $rs_filters_json;
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
-            // add number suffix for rest services belonging to a group
             $file_suffix = '';
-            $group = $rs->rest_service_group_code;
-            if ($group && $group_list[$group] > 1) {
-                if (! isset($group_list_count[$group])) {
-                    $group_list_count[$group] = 0;
-                }
-                $group_list_count[$group] += 1;
-                $file_suffix = '_part' . $group_list_count[$group];
-            }
             $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '-gex.json';
             $request_params[] = $t;
         }

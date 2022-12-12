@@ -858,7 +858,7 @@ class Sample
             $chartsData[$chartTag]['title'] = $title;
             // Get the data for this field.
             $chartsData[$chartTag]['data'] = Sample::generateChartData($sample_list, $stat_field, $label_field, $count_field);
-            Log::debug($chartTag . ' ' . $stat_field . ' ' . $title);
+            // Log::debug($chartTag . ' ' . $stat_field . ' ' . $title);
         }
 
         return $chartsData;
