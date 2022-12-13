@@ -797,15 +797,23 @@ class SequenceCell
                     }
                 }
 
-                $t['nb_cells'] = 0;
-                // TODO count number of cells??
+                // Count number of times the AIRR cell_id field occurs in the file.
+                // This is the number of cells returned by the query.
+                $n = 0;
+                $f = fopen($file_path, 'r');
+                while (! feof($f)) {
+                    $line = fgets($f);
+                    if (! empty($line)) {
+                        $n += substr_count($line, '"cell_id"');
+                    }
+                }
+                fclose($f);
+                $t['nb_cells'] = $n;
+
 
                 $t['expected_nb_cells'] = 0;
                 if (isset($expected_nb_cells_by_rs[$rest_service_id])) {
                     $t['expected_nb_cells'] = $expected_nb_cells_by_rs[$rest_service_id];
-
-                    // TODO tmp hack - bypass check because JSON
-                    $t['nb_cells'] = $t['expected_nb_cells'];
                 } else {
                     Log::error('rest_service ' . $rest_service_id . ' is missing from $expected_nb_cells_by_rs array');
                     Log::error($expected_nb_cells_by_rs);
