@@ -677,7 +677,7 @@ class SequenceClone
                     }
                 }
                 fclose($f);
-                $t['nb_clones'] = $n; 
+                $t['nb_clones'] = $n;
                 $t['expected_nb_clones'] = 0;
                 if (isset($expected_nb_clones_by_rs[$rest_service_id])) {
                     $t['expected_nb_clones'] = $expected_nb_clones_by_rs[$rest_service_id];
