@@ -810,7 +810,6 @@ class SequenceCell
                 fclose($f);
                 $t['nb_cells'] = $n;
 
-
                 $t['expected_nb_cells'] = 0;
                 if (isset($expected_nb_cells_by_rs[$rest_service_id])) {
                     $t['expected_nb_cells'] = $expected_nb_cells_by_rs[$rest_service_id];
