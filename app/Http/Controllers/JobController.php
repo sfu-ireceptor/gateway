@@ -152,6 +152,7 @@ class JobController extends Controller
         Log::debug('JobController::LaunchApp - Job type = ' . $query_type);
 
         $lj = new LocalJob;
+        $lj->user = auth()->user()->username;
         $lj->description = 'Job ' . $jobId . ' (' . $jobDescription . ')';
         $lj->save();
         $localJobId = $lj->id;
