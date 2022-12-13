@@ -18,6 +18,7 @@ class UtilController extends Controller
         Log::info('AGAVE job status update: job ' . $id . ' has status ' . $status);
 
         $lj = new LocalJob('agave');
+        $lj->user = '[Agave]';
         $lj->description = 'Job ' . $id . ': ' . $status;
         $lj->save();
 
