@@ -667,17 +667,17 @@ class SequenceClone
                     }
                 }
 
-                // count number of lines
+                // count number of times the AIRR clone_id field occurs in the file.
                 $n = 0;
                 $f = fopen($file_path, 'r');
                 while (! feof($f)) {
                     $line = fgets($f);
-                    if (! empty(trim($line))) {
-                        $n++;
+                    if (! empty($line)) {
+                        $n += substr_count($line, '"clone_id"');
                     }
                 }
                 fclose($f);
-                $t['nb_clones'] = $n - 1; // don't count first line (columns headers)
+                $t['nb_clones'] = $n;
                 $t['expected_nb_clones'] = 0;
                 if (isset($expected_nb_clones_by_rs[$rest_service_id])) {
                     $t['expected_nb_clones'] = $expected_nb_clones_by_rs[$rest_service_id];
