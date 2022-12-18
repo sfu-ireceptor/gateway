@@ -348,54 +348,48 @@ class Sample
         $field_value = '';
         // If we have a path that is . separated, process it.
         $split_loc = strpos($path, '.');
-        if ($split_loc)
-        {
+        if ($split_loc) {
             // Split the path into an array
             $field_array = explode('.', $path);
             $current_field = $field_array[0];
-            $target_field = $field_array[count($field_array)-1];
+            $target_field = $field_array[count($field_array) - 1];
             //Log::debug('xxxx current field = ' . $current_field);
             //Log::debug('xxxx target field = ' . $target_field);
 
             // If the property we are processing currently exists, process it.
-            if (property_exists($object, $current_field))
-            {
+            if (property_exists($object, $current_field)) {
                 // Get the new path and the new object.
-                $new_path = substr($path, $split_loc+1);
+                $new_path = substr($path, $split_loc + 1);
                 $new_object = data_get($object, $current_field);
                 // If the object is an array, loop over the array elements.
                 if (is_array($new_object)) {
-                    foreach($new_object as $array_element) {
+                    foreach ($new_object as $array_element) {
                         // Flatten out the sub objects elements.
                         $new_value = Sample::airr_flatten($array_element, $new_path);
                         // Build the new array of return values. If we currently have an empty
                         // field, just use the new value, if we have data already, then add the
-                        // new data to the old, separated by a comma. 
+                        // new data to the old, separated by a comma.
                         if (strlen($field_value) == 0) {
-                           $field_value = $new_value;
-                        }
-                        else if (strlen($new_value) > 1) {
+                            $field_value = $new_value;
+                        } elseif (strlen($new_value) > 1) {
                             $field_value = $field_value . ', ' . $new_value;
                         }
                     }
-                } else
-                {
+                } else {
                     // Flatten out the new object
                     $new_value = Sample::airr_flatten($new_object, $new_path);
                     // Build the new array of return values. If we currently have an empty
                     // field, just use the new value, if we have data already, then add the
-                    // new data to the old, separated by a comma. 
+                    // new data to the old, separated by a comma.
                     if (strlen($field_value) == 0) {
                         $field_value = $new_value;
-                    }
-                    else if (strlen($new_value) > 1) {
+                    } elseif (strlen($new_value) > 1) {
                         $field_value = $field_value . ', ' . $new_value;
                     }
                     //Log::debug('xxxx field_value = ' . $field_value);
                 }
             }
-        }
-        else {
+        } else {
             // If we are here, we are at the end of the path, so just get the data element.
             $current_field = $path;
             $field_value = trim(data_get($object, $current_field));
@@ -425,10 +419,9 @@ class Sample
                     // by having a hyphen '-' splitting the subobjects in the ir_id field of the
                     // AIRR Mapping file. This is required for fields like 'genotype' which need
                     // to be processed as JSON objects.
-                    if (str_contains($sample_field['ir_id'],'-')) {
+                    if (str_contains($sample_field['ir_id'], '-')) {
                         $new_sample->{$field_name} = Sample::airr_flatten($sample, $sample_field['ir_adc_api_query']);
-                    }
-                    else {
+                    } else {
                         $field_value = data_get($sample, $sample_field['ir_adc_api_response']);
                         $new_sample->{$field_name} = $field_value;
                     }
