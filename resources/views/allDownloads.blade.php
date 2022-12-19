@@ -9,6 +9,7 @@
 	<ul class="nav nav-tabs">
 	  <li role="presentation"><a href="/admin/queries">Queries</a></li>
 	  <li role="presentation" class="active"><a href="/admin/downloads">Downloads</a></li>
+	  <li role="presentation"><a href="/admin/jobs">Jobs</a></li>
 	</ul>
 
 	<p></p>
@@ -37,7 +38,7 @@
 					@if($d->query_log_id)
 						<a href="/admin/queries/{{ $d->query_log_id }}" title="{{ $d->page_url }}">
 							{{ str_limit(url_path($d->page_url), $limit = 70, $end = '‥') }}
-						</a>					
+						</a>
 					@else
 						{{ str_replace('&', ', ', urldecode($d->page_url)) }}
 					@endif

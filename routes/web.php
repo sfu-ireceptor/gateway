@@ -166,6 +166,7 @@ Route::middleware('auth')->group(function () {
         Route::get('field-names/{api_version?}', 'AdminController@getFieldNames');
         Route::get('queries', 'AdminController@queries');
         Route::get('downloads', 'AdminController@downloads');
+        Route::get('jobs', 'AdminController@jobs');
         Route::get('downloads/multiple-ipas', 'AdminController@downloadsMultipleIPAs');
         Route::get('queries2', 'AdminController@queries2');
         Route::get('queries/months/{n}', 'AdminController@queriesMonths');
