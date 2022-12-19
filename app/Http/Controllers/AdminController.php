@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Agave;
 use App\CachedSample;
 use App\Download;
-use App\Job;
 use App\FieldName;
+use App\Job;
 use App\Jobs\CountCells;
 use App\Jobs\CountClones;
 use App\Jobs\CountSequences;
@@ -531,8 +531,7 @@ class AdminController extends Controller
     {
         $job_list = Job::orderBy('updated_at', 'desc')->get();
         $new_list = [];
-        foreach($job_list as $job)
-        {
+        foreach ($job_list as $job) {
             $new_job = $job;
             $new_job['username'] = User::where('id', $job->user_id)->first()->username;
             $new_list[] = $new_job;
