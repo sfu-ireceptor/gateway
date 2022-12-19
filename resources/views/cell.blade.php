@@ -287,15 +287,27 @@
 														{{ json_encode($s->{$field['ir_id']}) }}												
 													</span>
 												@elseif (is_array($s->{$field['ir_id']}))
-													<span title="{{ implode(', ', $s->{$field['ir_id']}) }}">
-														{{ str_limit(implode(', ', $s->{$field['ir_id']}), $limit = 40, $end = '‥') }}									
-													</span>			
+											        @if( $field['ir_id'] == 'expression_label_list' )
+								                        @foreach ($s->{$field['ir_id']} as $property)
+                                                            @if (str_contains($property->id,'ENSG'))
+                                                                <a href="http://www.ensembl.org/Search/Results?q={{$property->label}}" title="{{ $property->label }}" target="_blank">
+                                                                    {{ $property->label }}
+                                                                </a> {{ ', ' }}
+                                                            @else
+                                                                {{ $property->label }},
+                                                            @endif
+								                        @endforeach
+                                                    @else
+													    <span title="{{ implode(', ', $s->{$field['ir_id']}) }}">
+														    {{ str_limit(implode(', ', $s->{$field['ir_id']}), $limit = 40, $end = '‥') }}
+													    </span>
+                                                    @endif
 												@else
 													<span title="{{ $s->{$field['ir_id']} }}">
 														@if (is_bool($s->{$field['ir_id']}))
 															{{ $s->{$field['ir_id']} ? 'Yes' : 'No' }}
 														@else
-															{{ $s->{$field['ir_id']} }}
+														    {{ $s->{$field['ir_id']} }}
 														@endif
 													</span>
 												@endif												
