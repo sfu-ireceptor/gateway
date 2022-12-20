@@ -49,8 +49,9 @@ class SequenceCell
 
             $rs_cell_list = data_get($obj, 'Cell', []);
 
-            // convert any array properties to strings
-            $rs_cell_list = array_map('convert_arrays_to_strings', $rs_cell_list);
+            // We don't need to convert array properties to strings
+            // as we handle arrays of objects in the code.
+            //$rs_cell_list = array_map('convert_arrays_to_strings', $rs_cell_list);
 
             // convert fields
             $rs_cell_list = FieldName::convertObjectList($rs_cell_list, 'ir_adc_api_response', 'ir_id', 'Cell', $rs->api_version);
