@@ -543,6 +543,7 @@ class AdminController extends Controller
         // Set up the data and pass it to the view.
         $data = [];
         $data['job_list'] = $new_list;
+
         return view('allJobs', $data);
     }
 
