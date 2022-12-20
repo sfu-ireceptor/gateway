@@ -292,9 +292,11 @@
                                                             @if (str_contains($property->id,'ENSG'))
                                                                 <a href="http://www.ensembl.org/Search/Results?q={{$property->label}}" title="{{ $property->label }}" target="_blank">
                                                                     {{ $property->label }}
-                                                                </a> {{ ', ' }}
+                                                                </a>
+                                                                {{ $loop->last ? '' : ', ' }}
                                                             @else
-                                                                {{ $property->label }},
+                                                                {{ $property->label }}
+                                                                {{ $loop->last ? '' : ', ' }}
                                                             @endif
 								                        @endforeach
                                                     @else
