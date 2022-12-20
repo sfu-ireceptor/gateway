@@ -529,7 +529,10 @@ class AdminController extends Controller
 
     public function jobs()
     {
+        // Get the list of jobs
         $job_list = Job::orderBy('updated_at', 'desc')->get();
+        // The job info doesn't have username, just user ID. Add the
+        // username to the info provided to the blade for the UI.
         $new_list = [];
         foreach ($job_list as $job) {
             $new_job = $job;
@@ -537,11 +540,9 @@ class AdminController extends Controller
             $new_list[] = $new_job;
         }
 
-        Log::debug('Jobs: ' . json_encode($new_list));
-
+        // Set up the data and pass it to the view.
         $data = [];
         $data['job_list'] = $new_list;
-
         return view('allJobs', $data);
     }
 
