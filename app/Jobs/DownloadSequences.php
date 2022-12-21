@@ -20,6 +20,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class DownloadSequences implements ShouldQueue
 {
@@ -164,7 +165,7 @@ class DownloadSequences implements ShouldQueue
         QueryLog::end_job($query_log_id);
     }
 
-    public function failed(\Exception $e)
+    public function failed(Throwable $e)
     {
         Log::error($e->getMessage());
         Log::error($e);
