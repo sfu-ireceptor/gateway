@@ -11,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 // NOTE: after modifying this job, execute:
 // php artisan queue:restart
@@ -44,7 +45,7 @@ class CountSequences implements ShouldQueue
         $localJob->setFinished();
     }
 
-    public function failed(\Exception $e)
+    public function failed(Throwable $e)
     {
         Log::error($e->getMessage());
         Log::error($e);

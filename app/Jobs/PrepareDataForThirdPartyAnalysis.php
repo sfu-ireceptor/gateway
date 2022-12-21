@@ -12,6 +12,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class PrepareDataForThirdPartyAnalysis implements ShouldQueue
 {

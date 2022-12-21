@@ -18,6 +18,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class LaunchAgaveJob implements ShouldQueue
 {
@@ -247,7 +248,7 @@ class LaunchAgaveJob implements ShouldQueue
      * @param  Exception  $exception
      * @return void
      */
-    public function failed($exception)
+    public function failed(Throwable $e)
     {
         // Print an error message
         Log::error('LaunchAgaveJob::failed - ' . $exception->getMessage());

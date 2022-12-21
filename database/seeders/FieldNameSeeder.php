@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\FieldName;
 use Flynsarmy\CsvSeeder\CsvSeeder;
 use Illuminate\Support\Facades\DB;
@@ -9,77 +11,75 @@ class FieldNameSeeder extends CsvSeeder
     public function __construct()
     {
         $this->table = 'field_name';
-        $this->folder_path = base_path() . '/database/seeds/data/field_names';
+        $this->folder_path = base_path() . '/database/seeders/data/field_names';
         $this->offset_rows = 1;
         $this->csv_delimiter = "\t";
     }
 
     public function run()
     {
-        DB::transaction(function () {
-            // delete existing data
-            DB::table($this->table)->truncate();
+        // delete existing data
+        DB::table($this->table)->truncate();
 
-            $file_list = dir_to_array($this->folder_path);
+        $file_list = dir_to_array($this->folder_path);
 
-            foreach ($file_list as $filename) {
-                $api_version = pathinfo($filename)['filename'];
+        foreach ($file_list as $filename) {
+            $api_version = pathinfo($filename)['filename'];
 
-                if ($api_version == '1.0') {
-                    $this->mapping = [
-                        0 => 'ir_id',
-                        1 => 'ir_full',
-                        2 => 'ir_short',
-                        14 => 'airr',
-                        15 => 'airr_full',
-                        18  => 'ir_class',
-                        19 => 'ir_subclass',
-                        20 => 'ir_adc_api_query',
-                        21 => 'ir_adc_api_response',
-                        23 => 'airr_type',
-                        24 => 'airr_description',
-                        29 => 'airr_example',
-                        41 => 'ir_api_input_type',
-                    ];
-                } elseif ($api_version == '1.2') {
-                    $this->mapping = [
-                        0 => 'ir_id',
-                        1 => 'ir_full',
-                        2 => 'ir_short',
-                        15 => 'airr',
-                        16 => 'airr_full',
-                        19  => 'ir_class',
-                        20 => 'ir_subclass',
-                        21 => 'ir_adc_api_query',
-                        22 => 'ir_adc_api_response',
-                        24 => 'airr_type',
-                        25 => 'airr_description',
-                        30 => 'airr_example',
-                        42 => 'ir_api_input_type',
-                    ];
-                }
-
-                $this->filename = $filename;
-                echo 'Adding mapping file ' . $filename . "\n";
-
-                parent::run();
-
-                // delete any empty rows
-                DB::table($this->table)->whereNull('ir_id')->delete();
-
-                // add API version
-                FieldName::whereNull('api_version')->update(['api_version' => $api_version]);
-
-                // add extra fields (gateway specific)
-                $this->add_gateway_specific_fields($api_version);
-
-                // define default fields and their order
-                $this->define_default_sample_fields();
-                $this->define_default_sequence_fields();
-                $this->define_default_clone_fields();
-                $this->define_default_cell_fields();
+            if ($api_version == '1.0') {
+                $this->mapping = [
+                    0 => 'ir_id',
+                    1 => 'ir_full',
+                    2 => 'ir_short',
+                    14 => 'airr',
+                    15 => 'airr_full',
+                    18  => 'ir_class',
+                    19 => 'ir_subclass',
+                    20 => 'ir_adc_api_query',
+                    21 => 'ir_adc_api_response',
+                    23 => 'airr_type',
+                    24 => 'airr_description',
+                    29 => 'airr_example',
+                    41 => 'ir_api_input_type',
+                ];
+            } elseif ($api_version == '1.2') {
+                $this->mapping = [
+                    0 => 'ir_id',
+                    1 => 'ir_full',
+                    2 => 'ir_short',
+                    15 => 'airr',
+                    16 => 'airr_full',
+                    19  => 'ir_class',
+                    20 => 'ir_subclass',
+                    21 => 'ir_adc_api_query',
+                    22 => 'ir_adc_api_response',
+                    24 => 'airr_type',
+                    25 => 'airr_description',
+                    30 => 'airr_example',
+                    42 => 'ir_api_input_type',
+                ];
             }
-        });
+
+            $this->filename = $filename;
+            echo 'Adding mapping file ' . $filename . "\n";
+
+            parent::run();
+
+            // delete any empty rows
+            DB::table($this->table)->whereNull('ir_id')->delete();
+
+            // add API version
+            FieldName::whereNull('api_version')->update(['api_version' => $api_version]);
+
+            // add extra fields (gateway specific)
+            $this->add_gateway_specific_fields($api_version);
+
+            // define default fields and their order
+            $this->define_default_sample_fields();
+            $this->define_default_sequence_fields();
+            $this->define_default_clone_fields();
+            $this->define_default_cell_fields();
+        }
     }
 
     public function add_gateway_specific_fields($api_version)

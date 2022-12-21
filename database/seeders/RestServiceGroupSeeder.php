@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\RestServiceGroup;
 use Illuminate\Database\Seeder;
 
