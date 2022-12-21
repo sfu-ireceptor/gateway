@@ -625,8 +625,10 @@ class JobController extends Controller
         return view('job/view', $data);
     }
 
-    public function getAgaveHistory($id, $agave)
+    public function getAgaveHistory($id)
     {
+        $agave = new Agave;
+
         $job = Job::where('id', '=', $id)->first();
         if ($job != null && $job->agave_id != '') {
             $job_agave_id = $job->agave_id;

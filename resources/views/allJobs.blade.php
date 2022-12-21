@@ -53,13 +53,15 @@
                     @elseif ($j->status == 3)
                         <span class="label label-danger">{{ $j->agave_status }}</span>
                     @else 
-                        <span class="label label-info">{{ $j->agave_status }}</span>
+                        <span class="label label-primary">{{ $j->agave_status }}</span>
                     @endif
 
                 </td>
 				<td><a href="/jobs/view/{{ $j->id }}">{{ $j->id }}</a></td>
 				<td>{{ $j->input_folder }}</td>
-				<td>{{ $j->agave_id }}</td>
+				<td>
+					<a href="/jobs/agave-history/{{ $j->id }}">{{ $j->agave_id }}</a>
+				</td>
 			</tr>
 			@endforeach
 		</tbody>
