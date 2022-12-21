@@ -6,6 +6,7 @@ use App\Agave;
 use App\CachedSample;
 use App\Download;
 use App\FieldName;
+use App\Job;
 use App\Jobs\CountCells;
 use App\Jobs\CountClones;
 use App\Jobs\CountSequences;
@@ -524,6 +525,26 @@ class AdminController extends Controller
         $data['download_list'] = $download_list;
 
         return view('allDownloads', $data);
+    }
+
+    public function jobs()
+    {
+        // Get the list of jobs
+        $job_list = Job::orderBy('updated_at', 'desc')->get();
+        // The job info doesn't have username, just user ID. Add the
+        // username to the info provided to the blade for the UI.
+        $new_list = [];
+        foreach ($job_list as $job) {
+            $new_job = $job;
+            $new_job['username'] = User::where('id', $job->user_id)->first()->username;
+            $new_list[] = $new_job;
+        }
+
+        // Set up the data and pass it to the view.
+        $data = [];
+        $data['job_list'] = $new_list;
+
+        return view('allJobs', $data);
     }
 
     public function downloadsMultipleIPAs()
