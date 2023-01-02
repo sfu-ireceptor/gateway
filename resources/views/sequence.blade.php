@@ -358,7 +358,11 @@
 					@endif
 					@if(config('services.agave.enabled'))
 						<!-- apps -->
-						<h2>Analysis Apps</h2>
+						<h2>Analysis Apps
+                        <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-title="Analysis Job Help" data-content="<p>Analysis Jobs are long running jobs (possibly many hours) that are run asynchronously. They can be monitored and controlled through the user Jobs page. Jobs federate the data you have chosen (above), move that data to a computational resource, and then run the chosen App on that data. The combination of the federation of large amounts of data from many repositories and running the chosen analyis is time consuming, and as such long run times of many hours can be expected for large data sets. Please be patient.</p>" data-trigger="hover" tabindex="0">
+                        <a href="http://www.ireceptor.org/node/204" class="external" target="_blank"><span class="glyphicon glyphicon-question-sign"></a>
+                        </span></span>
+                        </h2>
 
 						@if ($total_filtered_sequences <= config('ireceptor.sequences_download_limit'))
 
