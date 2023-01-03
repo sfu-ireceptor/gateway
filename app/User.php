@@ -37,11 +37,11 @@ class User extends Authenticatable
         // Expiry threshold is 30 minutes
         $expiry_threshold_min = 30;
         $now = Carbon::now();
-        $expiry_threshold = Carbon::now()->subMinute($expiry_threshold_min);
+        $expiry_threshold = Carbon::now()->addMinutes($expiry_threshold_min);
         Log::debug('User::getToken: now = ' . $now);
         Log::debug('User::getToken: expiry threshold = ' . $expiry_threshold);
         Log::debug('User::getToken: token expiration = ' . $this->token_expiration_date);
-        // If we are not close to expiry (within an hour), just return the
+        // If we are not close to expiry (within threshold), just return the
         // current token.
         if ($this->token_expiration_date->gt($expiry_threshold)) {
             Log::debug('User::getToken: No refresh required');
