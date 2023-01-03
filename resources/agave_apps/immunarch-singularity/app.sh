@@ -163,18 +163,16 @@ function run_analysis()
     if [ "${repertoire_id}" != "Total" ]; then
         # Set the R program if we are doing a repertoire by repertoire analysis.
         r_program='immunarch.R'
-        file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
-        file_string=${repository_name}_${file_string// /}
         title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
-        # TODO: Fix this, it should not be required.
-        title_string=${title_string// /}
     else
         # Set the R program if we are doing a comparative analysis.
         r_program='immunarch_group.R'
-        file_string="Total"
         title_string="Total"
     fi
     
+    # TODO: Fix this, it should not be required.
+    title_string=`echo ${title_string} | sed "s/[ ]//g"`
+
     # Create an Immunarch data directory. Immunarch likes to run on all
     # files in the directory, so we don't want any extraneous files in
     # the directory where Immunarch is running.

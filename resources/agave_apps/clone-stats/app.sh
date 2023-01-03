@@ -253,20 +253,21 @@ function run_analysis()
             echo "IR-ERROR: Could not generate repertoire summary from ${repertoire_file}"
             return 
         fi
-	    file_string=${repository_name}_${file_string// /}
         title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
         if [ $? -ne 0 ]
         then
             echo "IR-ERROR: Could not generate repertoire summary from ${repertoire_file}"
             return
         fi
-
-        # TODO: Fix this, it should not be required.
-        title_string=${title_string// /}
     else 
 	    file_string="${repertoire_id}"
 	    title_string="${repertoire_id}"
 	fi
+
+    # Clean up special characters in file and title strings.
+    file_string=`echo ${repository_name}_${file_string} | sed "s/[!@#$%^&*() :/-]/_/g"`
+    # TODO: Fix this, it should not be required.
+    title_string=`echo ${title_string} | sed "s/[ ]//g"`
 
 	# Generate the histogram and heatmap stats
 	do_histogram v_call $output_directory $file_string $title_string ${array_of_files[@]}

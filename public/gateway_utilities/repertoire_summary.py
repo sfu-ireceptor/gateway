@@ -34,15 +34,37 @@ def repertoireSummary(json_filename, repertoire_id, verbose, separator=", "):
     # Find the repertoire of interest and print out relevant fields.
     for repertoire in json_data[repertoire_key]:
         if repertoire['repertoire_id'] == repertoire_id:
-            study_json = repertoire['study']
-            subject_json = repertoire['subject']
-            sample_json = repertoire['sample']
+            # Assign default values
+            study_id = 'None'
+            subject_id = 'None'
+            sample_id = 'None'
+            tissue = 'None'
+            pcr_target_locus = 'None'
+
+            # Get the study ID if it exists
+            if 'study' in repertoire and 'study_id' in repertoire['study']:
+                study_id = repertoire['study']['study_id']
+
+            # Get the subject ID if it exists
+            if 'subject' in repertoire and 'subject_id' in repertoire['subject']:
+                subject_id = repertoire['subject']['subject_id']
+
+            # Get the sample info if it exists.
+            if 'sample' in repertoire:
+                sample_list = repertoire['sample']
+                if isinstance(sample_list, list):
+                    sample_obj = sample_list[0]
+                    if 'sample_id' in sample_obj:
+                        sample_id = sample_obj['sample_id']
+                    if 'tissue' in sample_obj and 'label' in sample_obj['tissue']:
+                        tissue = sample_obj['tissue']['label']
+                    if 'pcr_target' in sample_obj:
+                        if isinstance(sample_obj['pcr_target'], list) and 'pcr_target_locus' in sample_obj['pcr_target'][0]:
+                            pcr_target_locus = sample_obj['pcr_target'][0]['pcr_target_locus']
+
             print("%s%s%s%s%s%s%s%s%s"%(
-              study_json['study_id'], separator,
-              subject_json['subject_id'], separator,
-              sample_json[0]['sample_id'], separator,
-              sample_json[0]['tissue']['label'], separator,
-              sample_json[0]['pcr_target'][0]['pcr_target_locus']
+              study_id, separator, subject_id, separator,
+              sample_id, separator, tissue, separator, pcr_target_locus
               ))
     return True
         
