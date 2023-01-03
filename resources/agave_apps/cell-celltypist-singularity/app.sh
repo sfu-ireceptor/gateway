@@ -176,14 +176,16 @@ function run_analysis()
     # Check to see if we are processing a specific repertoire_id
     if [ "${repertoire_id}" != "NULL" ]; then
         file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
-        file_string=${repository_name}_${file_string// /}
         title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
-        # TODO: Fix this, it should not be required.
-        title_string=${title_string// /}
     else
         file_string="total"
         title_string="Total"
     fi
+
+    # Clean up special characters in file and title strings.
+    file_string=`echo ${repository_name}_${file_string} | sed "s/[!@#$%^&*() :/-]/_/g"`
+    # TODO: Fix this, it should not be required.
+    title_string=`echo ${title_string} | sed "s/[ ]//g"`
 
     # Run the CellTypist pipeline within the singularity image on each rearrangement file provided.
     echo "IR-INFO: Running CellTypist on $gex_file"
