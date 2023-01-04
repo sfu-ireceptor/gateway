@@ -173,8 +173,19 @@ class JobController extends Controller
 
     public function getView($id)
     {
+        // Get the job for the user.
         $job = Job::findJobForUser($id, auth()->user()->id);
         //$job = Job::where('id', '=', $id)->first();
+
+        // If there isn't one, check to see if we are the admin user. If so, then
+        // we can access the job info.
+        if ($job == null) {
+            $user = User::where('username', auth()->user()->username)->first();
+            if ($user->isAdmin()) {
+                $job = Job::where('id', '=', $id)->first();
+            }
+        }
+        // If the job is still null, then we are not authorized.
         if ($job == null) {
             abort(401, 'Not authorized.');
         }
@@ -632,7 +643,8 @@ class JobController extends Controller
         $job = Job::where('id', '=', $id)->first();
         if ($job != null && $job->agave_id != '') {
             $job_agave_id = $job->agave_id;
-            $user = User::where('username', auth()->user()->username)->first();
+            $user = User::where('id', $job->user_id)->first();
+            //$user = User::where('username', auth()->user()->username)->first();
             $token = $user->getToken();
             $response = $agave->getJobHistory($job_agave_id, $token);
             echo '<pre>' . $response . '</pre>';
