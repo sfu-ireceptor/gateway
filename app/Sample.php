@@ -340,24 +340,91 @@ class Sample
         return $data;
     }
 
+    // Recursive function to flatten out all of the leaf nodes in a JSON object based on the
+    // path provided. Helps us to create a list of leaf node strings from a complex object so
+    // we can display those strings as a list of strings.
+    public static function airr_flatten($object, $path)
+    {
+        $field_value = '';
+        // If we have a path that is . separated, process it.
+        $split_loc = strpos($path, '.');
+        if ($split_loc) {
+            // Split the path into an array
+            $field_array = explode('.', $path);
+            $current_field = $field_array[0];
+            $target_field = $field_array[count($field_array) - 1];
+            //Log::debug('xxxx current field = ' . $current_field);
+            //Log::debug('xxxx target field = ' . $target_field);
+
+            // If the property we are processing currently exists, process it.
+            if (property_exists($object, $current_field)) {
+                // Get the new path and the new object.
+                $new_path = substr($path, $split_loc + 1);
+                $new_object = data_get($object, $current_field);
+                // If the object is an array, loop over the array elements.
+                if (is_array($new_object)) {
+                    foreach ($new_object as $array_element) {
+                        // Flatten out the sub objects elements.
+                        $new_value = Sample::airr_flatten($array_element, $new_path);
+                        // Build the new array of return values. If we currently have an empty
+                        // field, just use the new value, if we have data already, then add the
+                        // new data to the old, separated by a comma.
+                        if (strlen($field_value) == 0) {
+                            $field_value = $new_value;
+                        } elseif (strlen($new_value) > 1) {
+                            $field_value = $field_value . ', ' . $new_value;
+                        }
+                    }
+                } else {
+                    // Flatten out the new object
+                    $new_value = Sample::airr_flatten($new_object, $new_path);
+                    // Build the new array of return values. If we currently have an empty
+                    // field, just use the new value, if we have data already, then add the
+                    // new data to the old, separated by a comma.
+                    if (strlen($field_value) == 0) {
+                        $field_value = $new_value;
+                    } elseif (strlen($new_value) > 1) {
+                        $field_value = $field_value . ', ' . $new_value;
+                    }
+                    //Log::debug('xxxx field_value = ' . $field_value);
+                }
+            }
+        } else {
+            // If we are here, we are at the end of the path, so just get the data element.
+            $current_field = $path;
+            $field_value = trim(data_get($object, $current_field));
+            //Log::debug('!!!! current field = ' . $current_field);
+            //Log::debug('!!!! current value = ' . $field_value);
+        }
+        // Return the value.
+        return $field_value;
+    }
+
     // convert/complete sample list
     public static function convert_sample_list($sample_list, $rs)
     {
         $sample_field_list = FieldName::getSampleFields($rs->api_version);
 
         $new_sample_list = [];
+        // Iterate over the samples
         foreach ($sample_list as $sample) {
             $new_sample = new \stdClass();
 
+            // For each sample, iterate over the fields.
             foreach ($sample_field_list as $sample_field) {
-                // Log::debug($sample_field);
                 if (isset($sample_field['ir_adc_api_response'])) {
                     $field_name = $sample_field['ir_id'];
-                    $field_value = data_get($sample, $sample_field['ir_adc_api_response']);
-                    // if(is_object($field_value)) {
-                    //     dd($field_value);
-                    // }
-                    $new_sample->{$field_name} = $field_value;
+                    // Set the value of the field in our new sample object. We flatten
+                    // out the field values if the field is an "Object" field. This is denoted
+                    // by having a hyphen '-' splitting the subobjects in the ir_id field of the
+                    // AIRR Mapping file. This is required for fields like 'genotype' which need
+                    // to be processed as JSON objects.
+                    if (str_contains($sample_field['ir_id'], '-')) {
+                        $new_sample->{$field_name} = Sample::airr_flatten($sample, $sample_field['ir_adc_api_query']);
+                    } else {
+                        $field_value = data_get($sample, $sample_field['ir_adc_api_response']);
+                        $new_sample->{$field_name} = $field_value;
+                    }
                 }
             }
 
