@@ -363,7 +363,7 @@
 
 			                                        @foreach ($app['parameter_list'] as $parameter)
 			                                            <div class="row">
-			                                            <div class="col-md-3">
+			                                            <div class="col-md-6">
 			                                            <div class="form-group">
 			                                                {{ Form::label($parameter['label'], $parameter['name']) }}
 			                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$parameter['description']}}</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span>
@@ -401,7 +401,7 @@
 			                                        @endforeach
 			                                        -->
 
-			                                        {{ Form::submit('Submit ' . $app['name'] . ' Analysis Job', array('class' => 'btn btn-primary')) }}
+			                                        {{ Form::submit('Submit ' . $app['name'] . ' Analysis Job', array('class' => 'btn btn-primary btn-cells')) }}
 			                                        {{ Form::close() }}
 
 		                                        </div>
@@ -416,7 +416,7 @@
 		                            <p>No Analysis Apps for Cells available</p>
 		                        @endif
 
-		                        </div>
+		                    </div>
 
                         	<div class="col-md-1">
                         	</div>

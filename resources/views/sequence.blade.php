@@ -433,7 +433,7 @@
 										            @endforeach
 			                                        -->
 
-													{{ Form::submit('Submit ' . $app['name'] . ' Analysis Job', array('class' => 'btn btn-primary')) }}
+													{{ Form::submit('Submit ' . $app['name'] . ' Analysis Job', array('class' => 'btn btn-primary btn-sequences')) }}
 													{{ Form::close() }}
 											    </div> <!-- tabpanel -->
 											    @php $count = $count + 1 @endphp
