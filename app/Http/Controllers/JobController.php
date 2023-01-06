@@ -175,7 +175,6 @@ class JobController extends Controller
     {
         // Get the job for the user.
         $job = Job::findJobForUser($id, auth()->user()->id);
-        //$job = Job::where('id', '=', $id)->first();
 
         // If there isn't one, check to see if we are the admin user. If so, then
         // we can access the job info.
@@ -644,7 +643,6 @@ class JobController extends Controller
         if ($job != null && $job->agave_id != '') {
             $job_agave_id = $job->agave_id;
             $user = User::where('id', $job->user_id)->first();
-            //$user = User::where('username', auth()->user()->username)->first();
             $token = $user->getToken();
             $response = $agave->getJobHistory($job_agave_id, $token);
             echo '<pre>' . $response . '</pre>';
