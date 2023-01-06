@@ -330,7 +330,7 @@
                         <div class="row">
                         	<div class="col-md-6">
 
-								<p>Note: an analysis job <strong>can take multiple hours.</strong></p>
+								<p>Note: an analysis job <strong>can take multiple hours</strong>, depending on the size of the data and the complexity of the analysis.</p>
 
 		                        @if (count($app_list) > 0 && $total_filtered_cells <= config('ireceptor.cells_download_limit'))
 
