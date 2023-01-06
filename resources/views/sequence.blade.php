@@ -358,15 +358,20 @@
 					@endif
 					@if(config('services.agave.enabled'))
 						<!-- apps -->
-						<h2>Analysis Apps</h2>
-
+						<h3>
+							<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
+							Launch an Analysis Job
+						</h3>
+                        
                         <div class="row">
                         	<div class="col-md-6">
-								@if ($total_filtered_sequences <= config('ireceptor.sequences_download_limit'))
 
+						<p>Note: an analysis job <strong>can take multiple hours.</strong></p>
+
+								@if ($total_filtered_sequences <= config('ireceptor.sequences_download_limit'))
 									<div role="tabpanel" class="analysis_apps_tabpanel">
 										<!-- Tab links -->
-										<ul class="nav nav-tabs" role="tablist">
+										<ul class="nav nav-tabs analysis-tabs" role="tablist">
 									            @php $count = 0 @endphp
 										    @foreach ($app_list as $app)
 								                        @if ( $count === 0)
@@ -382,61 +387,55 @@
 										<div class="tab-content">
 											@php $count = 0 @endphp
 										    @foreach ($app_list as $app)
-								                @if ( $count === 0)
-											      <div role="tabpanel" class="tab-pane active" id="{{$app['app_tag']}}">
-		                                        @else
-											      <div role="tabpanel" class="tab-pane" id="{{$app['app_tag']}}">
-		                                        @endif
-								    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
-												{{ Form::hidden('filters_json', $filters_json) }}
-												{{ Form::hidden('data_url', $url) }}
-												{{ Form::hidden('app_id', $app['app_id']) }}
-		                                        <!-- Application parameters  -->
-		                                        <h3>{{ $app['description'] }}</h3>
-		                                       
-		                                         
-												<p>{!! $app['info'] !!}</p>
+								                <div role="tabpanel" class="tab-pane {{ $count === 0 ? 'active' : ''}}" id="{{ $app['app_tag'] }}">
+									    			{{ Form::open(array('url' => 'jobs/launch-app', 'role' => 'form', 'target' => '_blank')) }}
+													{{ Form::hidden('filters_json', $filters_json) }}
+													{{ Form::hidden('data_url', $url) }}
+													{{ Form::hidden('app_id', $app['app_id']) }}
+			                                        <!-- Application parameters  -->
+			                                        <h4>{{ $app['description'] }}</h4>
+													<p>{!! $app['info'] !!}</p>
 
-										        @foreach ($app['parameter_list'] as $parameter)
-											  	    <div class="row"> <div class="col-md-6"> <div class="form-group">
-													    {{ Form::label($parameter['label'], $parameter['name']) }}
-		                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$parameter['description']}}</p>" data-trigger="hover" tabindex="0">
-		                                                <span class="glyphicon glyphicon-question-sign">
-		                                                </span></span>
-								                        @if ( ! empty($parameter['choices']) )
-														    {{ Form::select($parameter['label'], $parameter['choices'], '', array('class' => 'form-control')) }}
-		                                                @else
-											                {{ Form::text($parameter['label'], $parameter['default'], array('class' => 'form-control')) }}
-		                                                @endif
-												    </div> </div> </div>
-									            @endforeach
-		                                        <!-- Job control parameters  -->
-		                                        <!-- For now users can't change these...
-		                                        <div class="row"> <div class="col-md-10">
-		                                            <h3>Job control parameters
-		                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>Parameters to control job resources used</p>" data-trigger="hover" tabindex="0"> 
-		                                                <span class="glyphicon glyphicon-question-sign">
-		                                                </span></span>
-		                                            </h3>
-		                                        </div> </div>
-										        @foreach ($app['job_parameter_list'] as $job_parameter)
-											  	    <div class="row"> <div class="col-md-3"> <div class="form-group">
-														{{ Form::label($job_parameter['label'], $job_parameter['name']) }}
-		                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$job_parameter['description']}}</p>" data-trigger="hover" tabindex="0"> 
-		                                                <span class="glyphicon glyphicon-question-sign">
-		                                                </span></span>
+											        @foreach ($app['parameter_list'] as $parameter)
+												  	    <div class="row"> <div class="col-md-6"> <div class="form-group">
+														    {{ Form::label($parameter['label'], $parameter['name']) }}
+			                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$parameter['description']}}</p>" data-trigger="hover" tabindex="0">
+			                                                <span class="glyphicon glyphicon-question-sign">
+			                                                </span></span>
+									                        @if ( ! empty($parameter['choices']) )
+															    {{ Form::select($parameter['label'], $parameter['choices'], '', array('class' => 'form-control')) }}
+			                                                @else
+												                {{ Form::text($parameter['label'], $parameter['default'], array('class' => 'form-control')) }}
+			                                                @endif
+													    </div> </div> </div>
+										            @endforeach
+			                                        <!-- Job control parameters  -->
+			                                        <!-- For now users can't change these...
+			                                        <div class="row"> <div class="col-md-10">
+			                                            <h3>Job control parameters
+			                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>Parameters to control job resources used</p>" data-trigger="hover" tabindex="0"> 
+			                                                <span class="glyphicon glyphicon-question-sign">
+			                                                </span></span>
+			                                            </h3>
+			                                        </div> </div>
+											        @foreach ($app['job_parameter_list'] as $job_parameter)
+												  	    <div class="row"> <div class="col-md-3"> <div class="form-group">
+															{{ Form::label($job_parameter['label'], $job_parameter['name']) }}
+			                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$job_parameter['description']}}</p>" data-trigger="hover" tabindex="0"> 
+			                                                <span class="glyphicon glyphicon-question-sign">
+			                                                </span></span>
 
-								                        @if ( ! empty($job_parameter['choices']) )
-														    {{ Form::select($job_parameter['label'], $job_parameter['choices'], '', array('class' => 'form-control')) }}
-		                                                @else
-											                {{ Form::text($job_parameter['label'], $job_parameter['default'], array('class' => 'form-control')) }}
-		                                                @endif
-												    </div> </div> </div>
-									            @endforeach
-		                                        -->
+									                        @if ( ! empty($job_parameter['choices']) )
+															    {{ Form::select($job_parameter['label'], $job_parameter['choices'], '', array('class' => 'form-control')) }}
+			                                                @else
+												                {{ Form::text($job_parameter['label'], $job_parameter['default'], array('class' => 'form-control')) }}
+			                                                @endif
+													    </div> </div> </div>
+										            @endforeach
+			                                        -->
 
-												{{ Form::submit('Submit ' . $app['name'] . ' analysis job', array('class' => 'btn btn-primary')) }}
-												{{ Form::close() }}
+													{{ Form::submit('Submit ' . $app['name'] . ' Analysis Job', array('class' => 'btn btn-primary')) }}
+													{{ Form::close() }}
 											    </div> <!-- tabpanel -->
 											    @php $count = $count + 1 @endphp
 		                                    @endforeach
@@ -445,19 +444,17 @@
 								@else
 									<p>Sorry, analyses of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future.</p>
 								@endif
-							@endif
+	                        </div>
 
-                        	</div>
                         	<div class="col-md-1">
                         	</div>
 
-                        	<div class="col-md-5">
-								<div class="panel panel-primary">
-									<div class="panel-heading">About Analysis Apps</div>
+                        	<div class="col-md-4">
+								<div class="panel panel-primary analysis-info">
+									<div class="panel-heading">About Analysis Jobs</div>
 									  <div class="panel-body">
 								        <p>
-				                        	Analysis apps can take <strong>multiple hours</strong> on large datasets (more than 1 million of sequences):
-				                        	data is retrieved from the repositories, copied to a computational resource, and processed by the analysis app.
+				                        	Data is retrieved from the repositories, copied to a computational resource, and processed by the corresponding analysis app.
 				                        	This workflow can be monitored from <a href="/jobs">your jobs page</a>.
 				                        </p>
 				                        <p>
@@ -467,8 +464,7 @@
 								</div>
                         	</div>
                         </div>
-
-
+					@endif
 				@endif
 			<div>
 		</div>

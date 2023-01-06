@@ -1248,6 +1248,10 @@ table.sample_list {
 
 /* @group sequences page */
 
+.analysis_apps_tabpanel {
+	margin-top: 3px;
+}
+
 .analysis_apps_tabpanel .tab-content {
 	min-height: 200px;
 }
@@ -1268,6 +1272,10 @@ a.download_sequences {
 
 .analysis_apps_tabpanel .nav-tabs {
 	margin-bottom: 15px;
+}
+
+.analysis-info {
+	margin-top: 61px;
 }
 
 
@@ -1364,6 +1372,10 @@ a.download_sequences {
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
 	border-color: #b2b2b2;
 	border-bottom-color: transparent;
+}
+
+.analysis-tabs > li > a {
+	padding: 5px 10px;
 }
 
 /* @end */
