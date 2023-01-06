@@ -450,7 +450,7 @@
                         	</div>
 
                         	<div class="col-md-4">
-								<div class="panel panel-primary analysis-info">
+								<div class="panel panel-default analysis-info">
 									<div class="panel-heading">About Analysis Jobs</div>
 									  <div class="panel-body">
 								        <p>
