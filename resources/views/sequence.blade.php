@@ -357,7 +357,6 @@
 						</table>
 					@endif
 					@if(config('services.agave.enabled'))
-						<!-- apps -->
 						<h3>
 							<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
 							Launch an Analysis Job
@@ -366,7 +365,7 @@
                         <div class="row">
                         	<div class="col-md-6">
 
-						<p>Note: an analysis job <strong>can take multiple hours.</strong></p>
+								<p>Note: an analysis job <strong>can take multiple hours.</strong></p>
 
 								@if ($total_filtered_sequences <= config('ireceptor.sequences_download_limit'))
 									<div role="tabpanel" class="analysis_apps_tabpanel">
