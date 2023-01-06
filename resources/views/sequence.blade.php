@@ -452,16 +452,16 @@
                         	</div>
 
                         	<div class="col-md-5">
-								<div class="panel panel-info">
-									<div class="panel-heading">About analysis apps</div>
+								<div class="panel panel-primary">
+									<div class="panel-heading">About Analysis Apps</div>
 									  <div class="panel-body">
 								        <p>
-				                        	Analysis apps can take <strong>multiple hours</strong> on large datasets:
+				                        	Analysis apps can take <strong>multiple hours</strong> on large datasets (more than 1 million of sequences):
 				                        	data is retrieved from the repositories, copied to a computational resource, and processed by the analysis app.
 				                        	This workflow can be monitored from <a href="/jobs">your jobs page</a>.
 				                        </p>
 				                        <p>
-				                        	More details and some screenshots: <a href="https://ireceptor.org/node/204" class="external" target="_blank">Data Analysis and Jobs</a>.				                        	
+				                        	More details and some screenshots: <a href="https://ireceptor.org/node/204" class="external" target="_blank">Data Analysis and Jobs</a>				                        	
 										</p>
 									  </div>
 								</div>
