@@ -143,6 +143,11 @@ class CachedSample extends Model
             $l[$k] = $v;
         }
 
+        // sort by label
+        usort($l, function ($a, $b) {
+            return strcasecmp($a['label'], $b['label']);
+        });
+
         return $l;
     }
 }
