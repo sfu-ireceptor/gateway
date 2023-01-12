@@ -183,7 +183,7 @@ class Sample
     }
 
     /**
-     * Find samples matching the filters
+     * Find samples matching the filters.
      *
      * @param $raw - if true, don't convert fields
      */
@@ -298,8 +298,8 @@ class Sample
             $response_list[$i]['data'] = $sample_list_result;
             $sample_list = $sample_list_result;
 
-            if(! $raw) {
-                $sample_list = self::convert_sample_list($sample_list, $rs);                
+            if (! $raw) {
+                $sample_list = self::convert_sample_list($sample_list, $rs);
             }
 
             $sample_list_all = array_merge($sample_list_all, $sample_list);
@@ -337,13 +337,12 @@ class Sample
             $count_field = 'ir_cell_count';
         }
 
-        if($raw) {
+        if ($raw) {
             $data['items'] = $sample_list_all;
-        }
-        else {
+        } else {
             $data = self::stats($sample_list_all, $count_field);
         }
-        
+
         $data['rs_list_no_response'] = $rs_list_no_response;
         $data['rs_list_sequence_count_error'] = $rs_list_sequence_count_error;
         $data['nb_samples_with_sequences'] = $nb_samples_with_sequences;
