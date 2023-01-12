@@ -241,7 +241,7 @@ if __name__ == "__main__":
 
     # Read in the repertoire field file
     if options.field_file is None:
-        repertoire_field_df = pd.DataFrame([]) 
+        repertoire_field_df = pd.DataFrame(['repertoire_id'],columns=['Fields']) 
     else:
         try:
             repertoire_field_df = pd.read_csv(options.field_file, sep='\t',
