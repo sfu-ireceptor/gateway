@@ -287,24 +287,13 @@ function run_analysis()
 
     local output_file=${output_directory}/${repertoire_id}_output.json
     local repertoire_query_file=${output_directory}/repertoire_query.json
-    python3 ${SCRIPT_DIR}/adc-search.py -v ${url_file} ${repertoire_query_file} ${motif_file} --output_file=${output_file}
+    local field_file=${SCRIPT_DIR}/repertoire_fields.tsv
+    python3 ${SCRIPT_DIR}/adc-search.py ${url_file} ${repertoire_query_file} ${motif_file} --field_file=${field_file} --output_file=${output_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not complete search for Junction AA Motif"
         return 
     fi
-
-	# Generate the histogram and heatmap stats
-	#do_histogram v_call $output_directory $file_string $title_string ${array_of_files[@]}
-    #do_histogram d_call $output_directory $file_string $title_string ${array_of_files[@]}
-    #do_histogram j_call $output_directory $file_string $title_string ${array_of_files[@]}
-    #do_histogram junction_aa_length $output_directory $file_string $title_string ${array_of_files[@]}
-    #do_heatmap v_call j_call $output_directory $file_string $title_string ${array_of_files[@]}
-    #do_heatmap v_call junction_aa_length $output_directory $file_string $title_string ${array_of_files[@]}
-    # Remove the TSV files, we don't want to return them
-    #for filename in "${array_of_files[@]}"; do
-	#	rm -f $output_directory/$filename
-	#done
 
 	# Generate a label file for the Gateway to use to present this info to the user
 	label_file=${output_directory}/${repertoire_id}.txt
