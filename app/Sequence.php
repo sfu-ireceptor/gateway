@@ -350,7 +350,7 @@ class Sequence
         $file_stats = $t['file_stats'];
 
         // zip files
-        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path,$repertoire_query_file_path, $rearrangement_query_file_path);
+        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path, $repertoire_query_file_path, $rearrangement_query_file_path);
 
         // delete files - TODO not working, to fix
         // self::delete_files($folder_path);
@@ -535,14 +535,13 @@ class Sequence
         return $data;
     }
 
-
     public static function generate_repertoire_query_file($folder_path, $sample_filters)
     {
         // Save the info into the repertoire_query.json file.
         $repertoire_query_file_path = $folder_path . '/repertoire_query.json';
-        Log::debug('generate_repertoire_query_file: writing ' . $repertoire_query_file_path); 
+        Log::debug('generate_repertoire_query_file: writing ' . $repertoire_query_file_path);
         $json_query = RestService::generate_json_query($sample_filters);
-        Log::debug('generate_repertoire_query_file: contents: ' . $json_query); 
+        Log::debug('generate_repertoire_query_file: contents: ' . $json_query);
         file_put_contents($repertoire_query_file_path, $json_query);
 
         return $repertoire_query_file_path;
@@ -552,11 +551,11 @@ class Sequence
     {
         // Save the info into the repertoire_query.json file.
         $rearrangement_query_file_path = $folder_path . '/rearrangement_query.json';
-        Log::debug('generate_rearrangement_query_file: writing ' . $rearrangement_query_file_path); 
+        Log::debug('generate_rearrangement_query_file: writing ' . $rearrangement_query_file_path);
 
         // build list of sequence filters only (remove sample id filters)
         $sequence_filters = $filters;
-        #unset($sequence_filters['project_id_list']);
+        //unset($sequence_filters['project_id_list']);
         foreach ($sequence_filters as $key => $value) {
             if (starts_with($key, 'ir_project_sample_id_list_')) {
                 unset($sequence_filters[$key]);
@@ -564,7 +563,7 @@ class Sequence
         }
 
         $json_query = RestService::generate_json_query($sequence_filters);
-        Log::debug('generate_rearrangement_query_file: contents: ' . $json_query); 
+        Log::debug('generate_rearrangement_query_file: contents: ' . $json_query);
         file_put_contents($rearrangement_query_file_path, $json_query);
 
         return $rearrangement_query_file_path;
