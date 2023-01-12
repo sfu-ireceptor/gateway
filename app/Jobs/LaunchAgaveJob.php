@@ -248,7 +248,7 @@ class LaunchAgaveJob implements ShouldQueue
      * @param  Exception  $exception
      * @return void
      */
-    public function failed(Throwable $e)
+    public function failed(Throwable $exception)
     {
         // Print an error message
         Log::error('LaunchAgaveJob::failed - ' . $exception->getMessage());

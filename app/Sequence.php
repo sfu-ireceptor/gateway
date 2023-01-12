@@ -158,6 +158,8 @@ class Sequence
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
+        Log::debug('---sequencesTSVFolder: filters = ' . json_encode($filters));
+        Log::debug('---sequencesTSVFolder: sample filters = ' . json_encode($sample_filters));
 
         // do extra sequence summary request
         $response_list = RestService::sequences_summary($filters, $username, false, 'sequence');
@@ -308,6 +310,11 @@ class Sequence
         // generate manifest.json
         $manifest_file_path = self::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
 
+        // Generate the sample query file that got us to the sequence page.
+        $repertoire_query_file_path = self::generate_repertoire_query_file($folder_path, $sample_filters);
+        // Generate the rearrangement query file that got us to the sequence page.
+        $rearrangement_query_file_path = self::generate_rearrangement_query_file($folder_path, $filters);
+
         $t = [];
         $t['base_path'] = $storage_folder;
         $t['base_name'] = $base_name;
@@ -316,6 +323,8 @@ class Sequence
         $t['metadata_response_list'] = $metadata_response_list;
         $t['info_file_path'] = $info_file_path;
         $t['manifest_file_path'] = $manifest_file_path;
+        $t['repertoire_query_file_path'] = $repertoire_query_file_path;
+        $t['rearrangement_query_file_path'] = $rearrangement_query_file_path;
         $t['is_download_incomplete'] = $is_download_incomplete;
         $t['download_incomplete_info'] = $download_incomplete_info;
         $t['file_stats'] = $file_stats;
@@ -334,12 +343,14 @@ class Sequence
         $metadata_response_list = $t['metadata_response_list'];
         $info_file_path = $t['info_file_path'];
         $manifest_file_path = $t['manifest_file_path'];
+        $repertoire_query_file_path = $t['repertoire_query_file_path'];
+        $rearrangement_query_file_path = $t['rearrangement_query_file_path'];
         $is_download_incomplete = $t['is_download_incomplete'];
         $download_incomplete_info = $t['download_incomplete_info'];
         $file_stats = $t['file_stats'];
 
         // zip files
-        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path);
+        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path,$repertoire_query_file_path, $rearrangement_query_file_path);
 
         // delete files - TODO not working, to fix
         // self::delete_files($folder_path);
@@ -524,6 +535,41 @@ class Sequence
         return $data;
     }
 
+
+    public static function generate_repertoire_query_file($folder_path, $sample_filters)
+    {
+        // Save the info into the repertoire_query.json file.
+        $repertoire_query_file_path = $folder_path . '/repertoire_query.json';
+        Log::debug('generate_repertoire_query_file: writing ' . $repertoire_query_file_path); 
+        $json_query = RestService::generate_json_query($sample_filters);
+        Log::debug('generate_repertoire_query_file: contents: ' . $json_query); 
+        file_put_contents($repertoire_query_file_path, $json_query);
+
+        return $repertoire_query_file_path;
+    }
+
+    public static function generate_rearrangement_query_file($folder_path, $filters)
+    {
+        // Save the info into the repertoire_query.json file.
+        $rearrangement_query_file_path = $folder_path . '/rearrangement_query.json';
+        Log::debug('generate_rearrangement_query_file: writing ' . $rearrangement_query_file_path); 
+
+        // build list of sequence filters only (remove sample id filters)
+        $sequence_filters = $filters;
+        #unset($sequence_filters['project_id_list']);
+        foreach ($sequence_filters as $key => $value) {
+            if (starts_with($key, 'ir_project_sample_id_list_')) {
+                unset($sequence_filters[$key]);
+            }
+        }
+
+        $json_query = RestService::generate_json_query($sequence_filters);
+        Log::debug('generate_rearrangement_query_file: contents: ' . $json_query); 
+        file_put_contents($rearrangement_query_file_path, $json_query);
+
+        return $rearrangement_query_file_path;
+    }
+
     public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
         $s = '';
@@ -667,7 +713,7 @@ class Sequence
         return $manifest_file_path;
     }
 
-    public static function zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path)
+    public static function zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path, $repertoire_query_file_path, $rearrangement_query_file_path)
     {
         $zipPath = $folder_path . '.zip';
         Log::info('Zip files to ' . $zipPath);
@@ -709,6 +755,14 @@ class Sequence
         // AIRR-manifest.json
         $zip->addFile($manifest_file_path, basename($manifest_file_path));
         Log::debug('Adding to ZIP: ' . $manifest_file_path);
+
+        // Repertoire query file
+        $zip->addFile($repertoire_query_file_path, basename($repertoire_query_file_path));
+        Log::debug('Adding to ZIP: ' . $repertoire_query_file_path);
+
+        // Rearrangement query file
+        $zip->addFile($rearrangement_query_file_path, basename($rearrangement_query_file_path));
+        Log::debug('Adding to ZIP: ' . $rearrangement_query_file_path);
 
         $zip->close();
 

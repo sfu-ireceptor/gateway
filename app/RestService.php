@@ -2478,12 +2478,12 @@ class RestService extends Model
                 if ($file_path != '') {
                     $dirPath = dirname($file_path);
                     if (! is_dir($dirPath)) {
-                        Log::info('Creating directory ' . $dirPath);
+                        Log::info('doRequests: Creating directory ' . $dirPath);
                         mkdir($dirPath, 0755, true);
                     }
 
                     $options['sink'] = fopen($file_path, 'a');
-                    Log::info('Guzzle: saving to ' . $file_path);
+                    Log::info('doRequests: saving to ' . $file_path);
                 }
 
                 $t = [];
