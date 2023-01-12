@@ -672,7 +672,7 @@ class Sample
     public static function samplesJSON($filters, $username)
     {
         // get samples
-        $sample_data = self::find($filters, $username, true, '');
+        $sample_data = self::find($filters, $username, true, '', true);
         $sample_list = $sample_data['items'];
 
         // build JSON structure
