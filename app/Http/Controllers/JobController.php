@@ -56,19 +56,42 @@ class JobController extends Controller
         // Build the job_summary block HTML
         $data['job_summary'] = [];
         $s = '<p><b>App Parameters</b></p>';
+        // Get the JSON from the Job, we need info from it.
         $agave_json = $this->getAgaveJobJSON($job->id, $agave);
+        
+        // If we have a JSON string for the Job, process the App parameters.
         $param_count = 0;
         if ($agave_json != null) {
+            // Get the App template for this App. The job stores the App Label so
+            // we use the label to look it up. This returns a JSON object in the form
+            // of an AGave App template.
+            $app_template = $agave->getAppTemplateByLabel($job->app);
+            // Get the parameters from this app template. We need to map parameter tags
+            // to human readable names if possible.
+            $template_parameters = [];
+            if ($app_template != null) {
+                $config = $app_template['config'];
+                $template_parameters = $config['parameters'];
+            }
+        
             // Get the Agave job status and from it get the parameters.
             $agave_status = json_decode($agave_json);
             $app_parameters = $agave_status->result->parameters;
-            // For each parameter, display it.
+            // For each parameter, add some text to the display string.
             foreach ($app_parameters as $param => $value) {
                 // Basic parameters are key values with strings. Special
                 // parameters that are hidden the values are arrays. We don't
                 // want to show these.
                 if (! is_array($value)) {
-                    $s .= $param . ': ' . $value . '<br/>\n';
+                    // Parameter is the ID by default, then overwrite the value
+                    // by the parameter label if it exists.
+                    $param_string = $param;
+                    foreach ($template_parameters as $template_param) {
+                        if ($template_param['id'] == $param) {
+                            $param_string = $template_param['details']['label'];
+                        }
+                    }
+                    $s .= $param_string . ': ' . $value . '<br/>\n';
                     $param_count++;
                 }
             }
@@ -328,19 +351,42 @@ class JobController extends Controller
 
         // Build the job summary HTML. This is rendered by the blade.
         $s = '<p><b>App Parameters</b></p>';
+        // Get the JSON from the Job, we need info from it.
         $agave_json = $this->getAgaveJobJSON($job->id, $agave);
+        
+        // If we have a JSON string for the Job, process the App parameters.
         $param_count = 0;
         if ($agave_json != null) {
+            // Get the App template for this App. The job stores the App Label so
+            // we use the label to look it up. This returns a JSON object in the form
+            // of an AGave App template.
+            $app_template = $agave->getAppTemplateByLabel($job->app);
+            // Get the parameters from this app template. We need to map parameter tags
+            // to human readable names if possible.
+            $template_parameters = [];
+            if ($app_template != null) {
+                $config = $app_template['config'];
+                $template_parameters = $config['parameters'];
+            }
+        
             // Get the Agave job status and from it get the parameters.
             $agave_status = json_decode($agave_json);
             $app_parameters = $agave_status->result->parameters;
-            // For each parameter, display it.
+            // For each parameter, add some text to the display string.
             foreach ($app_parameters as $param => $value) {
                 // Basic parameters are key values with strings. Special
                 // parameters that are hidden the values are arrays. We don't
                 // want to show these.
                 if (! is_array($value)) {
-                    $s .= $param . ': ' . $value . '<br/>\n';
+                    // Parameter is the ID by default, then overwrite the value
+                    // by the parameter label if it exists.
+                    $param_string = $param;
+                    foreach ($template_parameters as $template_param) {
+                        if ($template_param['id'] == $param) {
+                            $param_string = $template_param['details']['label'];
+                        }
+                    }
+                    $s .= $param_string . ': ' . $value . '<br/>\n';
                     $param_count++;
                 }
             }
