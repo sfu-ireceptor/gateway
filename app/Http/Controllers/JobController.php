@@ -55,10 +55,33 @@ class JobController extends Controller
         $agave = new Agave;
         // Build the job_summary block HTML
         $data['job_summary'] = [];
-        $s = '<p><b>Job Parameters</b></p>';
-        $s .= 'Number of cores = ' . strval($agave->processorsPerNode()) . '<br/>\n';
-        $s .= 'Maximum memory per core = ' . strval($agave->memoryPerProcessor()) . ' GB<br/>\n';
-        $s .= 'Maximum run time = ' . strval($agave->maxRunTime()) . ' hours<br/>\n';
+        $s = '<p><b>App Parameters</b></p>';
+        $agave_json = $this->getAgaveJobJSON($job->id, $agave);
+        $param_count = 0;
+        if ($agave_json != null) {
+            // Get the Agave job status and from it get the parameters.
+            $agave_status = json_decode($agave_json);
+            $app_parameters = $agave_status->result->parameters;
+            // For each parameter, display it.
+            foreach($app_parameters as $param => $value) {
+                // Basic parameters are key values with strings. Special
+                // parameters that are hidden the values are arrays. We don't
+                // want to show these.
+                if (!is_array($value)) {
+                    $s .= $param . ': ' . $value . '<br/>\n';
+                    $param_count++;
+                }
+            }
+        }
+        if ($param_count == 0) {
+            $s .= 'None<br/>\n';
+        }
+        $s .= '<br/>\n';
+
+        $s .= '<p><b>Job Parameters</b></p>';
+        $s .= 'Number of cores: ' . strval($agave->processorsPerNode()) . '<br/>\n';
+        $s .= 'Maximum memory per core: ' . strval($agave->memoryPerProcessor()) . ' GB<br/>\n';
+        $s .= 'Maximum run time: ' . strval($agave->maxRunTime()) . ' hours<br/>\n';
         $data['job_summary'] = explode('\n', $s);
 
         // Build the job control button HTML. This is rendered by the blade,
@@ -304,10 +327,33 @@ class JobController extends Controller
         $token = $user->getToken();
 
         // Build the job summary HTML. This is rendered by the blade.
-        $s = '<p><b>Job Parameters</b></p>';
-        $s .= 'Number of cores = ' . strval($agave->processorsPerNode()) . '<br/>\n';
-        $s .= 'Maximum memory per core = ' . strval($agave->memoryPerProcessor()) . ' GB<br/>\n';
-        $s .= 'Maximum run time = ' . strval($agave->maxRunTime()) . ' hours<br/>\n';
+        $s = '<p><b>App Parameters</b></p>';
+        $agave_json = $this->getAgaveJobJSON($job->id, $agave);
+        $param_count = 0;
+        if ($agave_json != null) {
+            // Get the Agave job status and from it get the parameters.
+            $agave_status = json_decode($agave_json);
+            $app_parameters = $agave_status->result->parameters;
+            // For each parameter, display it.
+            foreach($app_parameters as $param => $value) {
+                // Basic parameters are key values with strings. Special
+                // parameters that are hidden the values are arrays. We don't
+                // want to show these.
+                if (!is_array($value)) {
+                    $s .= $param . ': ' . $value . '<br/>\n';
+                    $param_count++;
+                }
+            }
+        }
+        if ($param_count == 0) {
+            $s .= 'None<br/>\n';
+        }
+        $s .= '<br/>\n';
+
+        $s .= '<p><b>Job Parameters</b></p>';
+        $s .= 'Number of cores: ' . strval($agave->processorsPerNode()) . '<br/>\n';
+        $s .= 'Maximum memory per core: ' . strval($agave->memoryPerProcessor()) . ' GB<br/>\n';
+        $s .= 'Maximum run time: ' . strval($agave->maxRunTime()) . ' hours<br/>\n';
         $data['job_summary'] = explode('\n', $s);
 
         // Build the job control button HTML. This is rendered by the blade,
