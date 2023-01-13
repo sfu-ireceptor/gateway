@@ -63,11 +63,11 @@ class JobController extends Controller
             $agave_status = json_decode($agave_json);
             $app_parameters = $agave_status->result->parameters;
             // For each parameter, display it.
-            foreach($app_parameters as $param => $value) {
+            foreach ($app_parameters as $param => $value) {
                 // Basic parameters are key values with strings. Special
                 // parameters that are hidden the values are arrays. We don't
                 // want to show these.
-                if (!is_array($value)) {
+                if (! is_array($value)) {
                     $s .= $param . ': ' . $value . '<br/>\n';
                     $param_count++;
                 }
@@ -335,11 +335,11 @@ class JobController extends Controller
             $agave_status = json_decode($agave_json);
             $app_parameters = $agave_status->result->parameters;
             // For each parameter, display it.
-            foreach($app_parameters as $param => $value) {
+            foreach ($app_parameters as $param => $value) {
                 // Basic parameters are key values with strings. Special
                 // parameters that are hidden the values are arrays. We don't
                 // want to show these.
-                if (!is_array($value)) {
+                if (! is_array($value)) {
                     $s .= $param . ': ' . $value . '<br/>\n';
                     $param_count++;
                 }
