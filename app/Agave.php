@@ -310,6 +310,7 @@ class Agave
             return $this->appTemplates[$app_tag];
         } else {
             Log::debug('getAppTemplate: could not find app ' . $app_tag);
+
             return null;
         }
     }
@@ -329,6 +330,7 @@ class Agave
         }
         // Couldn't find it if we get here.
         Log::debug('getAppTemplateByLabel: could not find ' . $app_label);
+
         return null;
     }
 
