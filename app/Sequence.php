@@ -158,8 +158,8 @@ class Sequence
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
-        Log::debug('---sequencesTSVFolder: filters = ' . json_encode($filters));
-        Log::debug('---sequencesTSVFolder: sample filters = ' . json_encode($sample_filters));
+        Log::debug('Sequence::sequencesTSVFolder: filters = ' . json_encode($filters));
+        Log::debug('Sequence::sequencesTSVFolder: sample filters = ' . json_encode($sample_filters));
 
         // do extra sequence summary request
         $response_list = RestService::sequences_summary($filters, $username, false, 'sequence');
@@ -192,7 +192,7 @@ class Sequence
         $base_name = 'ir_' . $time_str . '_' . uniqid();
         $folder_path = $storage_folder . $base_name;
 
-        Log::debug('Creating directory: ' . $folder_path);
+        Log::debug('Sequence::sequencesTSVFolder - Creating directory: ' . $folder_path);
         $old = umask(0);
         mkdir($folder_path, 0770);
         umask($old);
