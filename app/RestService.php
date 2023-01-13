@@ -1954,7 +1954,7 @@ class RestService extends Model
                         }
 
                         if ($status == 'ERROR') {
-                            Log::error($json);
+                            Log::error($body);
                             break;
                         }
 
