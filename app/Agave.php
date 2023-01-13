@@ -301,12 +301,35 @@ class Agave
         return $object_templates;
     }
 
-    public function getAppTemplate($app_name)
+    public function getAppTemplate($app_tag)
     {
-        Log::debug('getAppTemplate: looking for ' . $app_name);
+        Log::debug('getAppTemplate: looking for ' . $app_tag);
 
         // Return the app template for the given app tap/name.
-        return $this->appTemplates[$app_name];
+        if (array_key_exists($app_tag, $this->appTemplates)) {
+            return $this->appTemplates[$app_tag];
+        } else {
+            Log::debug('getAppTemplate: could not find app ' . $app_tag);
+            return null;
+        }
+    }
+
+    public function getAppTemplateByLabel($app_label)
+    {
+        Log::debug('getAppTemplateByLabel: looking for ' . $app_label);
+
+        // Return the app template for the given app label.
+        foreach ($this->appTemplates as $app_tag => $app_info) {
+            // Get this template's label and if it is the same we found it.
+            $config = $app_info['config'];
+            $label = $config['label'];
+            if ($label == $app_label) {
+                return $app_info;
+            }
+        }
+        // Couldn't find it if we get here.
+        Log::debug('getAppTemplateByLabel: could not find ' . $app_label);
+        return null;
     }
 
     public function getJobParameters()
