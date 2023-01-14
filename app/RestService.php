@@ -1991,7 +1991,7 @@ class RestService extends Model
                     $final_response_list2[] = $response;
                 }
             } else {
-                $final_response_list2[] = $response;
+                throw new \Exception('An error occurred during the async download');
             }
         }
 
