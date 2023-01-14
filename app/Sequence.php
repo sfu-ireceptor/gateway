@@ -310,8 +310,20 @@ class Sequence
         // generate manifest.json
         $manifest_file_path = self::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
 
-        // Generate the sample query file that got us to the sequence page.
-        $repertoire_query_file_path = self::generate_repertoire_query_file($folder_path, $sample_filters);
+        // Generate the repertoire query file that got us to the sequence page.
+        $query_sep = 'query_id=';
+        // Get the query_id, it should be everything after the query_sep string.
+        $seq_query_id = substr($url, strpos($url, $query_sep) + strlen($query_sep));
+        // Get the query parameters for both the sequence and sample queries. The
+        // sequence query parameters contains the query id of the sample query used
+        // to get to the seqeunces page.
+        $seq_query_params = Query::getParams($seq_query_id);
+        if (array_key_exists('sample_query_id', $seq_query_params)) {
+            $sam_query_id = $seq_query_params['sample_query_id'];
+            $sam_query_params = Query::getParams($sam_query_id);
+        }
+        // Generate the repertoire query file based on repertoire query parameters.
+        $repertoire_query_file_path = self::generate_repertoire_query_file($folder_path, $sam_query_params);
         // Generate the rearrangement query file that got us to the sequence page.
         $rearrangement_query_file_path = self::generate_rearrangement_query_file($folder_path, $filters);
 
