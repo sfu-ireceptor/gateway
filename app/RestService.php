@@ -1955,7 +1955,7 @@ class RestService extends Model
 
                         if ($status == 'ERROR') {
                             Log::error($body);
-                            break;
+                            throw new \Exception('Query to async download status entry point failed: ' . $body);
                         }
 
                         sleep(10);
@@ -2562,4 +2562,3 @@ class RestService extends Model
         return $response_list;
     }
 }
-                                                                              
