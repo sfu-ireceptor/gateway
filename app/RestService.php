@@ -1989,8 +1989,7 @@ class RestService extends Model
                     $response['data'] = [];
                     $response['data']['file_path'] = $file_path;
                     $final_response_list2[] = $response;
-                }
-                else {
+                } else {
                     throw new \Exception('An error occurred during the async download');
                 }
             } else {
