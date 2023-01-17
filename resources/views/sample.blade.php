@@ -265,7 +265,7 @@
 						@foreach($filter_fields as $filter_key => $filter_value)
 							<a title= "@lang('short.' . $filter_key): {{$filter_value}}" href="/{{ $page_uri}}?query_id={{$sample_query_id}}&amp;remove_filter={{ $filter_key }}" class="label label-primary">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-								@lang('short.' . $filter_key)
+								@lang('short.' . $filter_key): <span class="value">{{ $filter_value }}</span>
 							</a>
 						@endforeach
 						<a href="/{{ $page_uri }}?query_id={{ $query_id }}&amp;remove_filter=all" class="remove_filters">

@@ -149,12 +149,21 @@ fieldset {
 }
 
 .active_filters h3 {
+	color: hsl(150deg 0% 40%);
+	font-size: 11px;
+	text-transform: uppercase;
+
 	margin-top: 0px;
 	margin-bottom: 0px;
 }
+
 .active_filters a.label, .active_filters span.label {
 	margin-right: 3px;
 	text-decoration: none;
+}
+
+.active_filters a.label span.value {
+	color: hsl(150deg 0% 80%);
 }
 
 .active_filters .bookmark {
