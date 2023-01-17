@@ -162,10 +162,11 @@ class JobController extends Controller
         $gw_username = auth()->user()->username;
         $gw_userid = auth()->user()->id;
         // queue job
+        $queue = 'short-analysis-jobs';
         if ($appId == '999') {
-            PrepareDataForThirdPartyAnalysis::dispatch($jobId, $request_data, $gw_username, $localJobId);
+            PrepareDataForThirdPartyAnalysis::dispatch($jobId, $request_data, $gw_username, $localJobId)->onQueue($queue);
         } else {
-            LaunchAgaveJob::dispatch($jobId, $request_data, $localJobId, $gw_username, $gw_userid);
+            LaunchAgaveJob::dispatch($jobId, $request_data, $localJobId, $gw_username, $gw_userid)->onQueue($queue);
         }
 
         return redirect('jobs/view/' . $jobId);
