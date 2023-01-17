@@ -16,17 +16,23 @@
 
 	<!-- Tab panes -->
 	<div class="tab-content">
-		<div role="tabpanel" class="tab-pane active" id="default">
-			@include('queueTable', array('jobList' => $jobs['default'] ))			
-		</div>
-		<div role="tabpanel" class="tab-pane" id="long">
-			@include('queueTable', array('jobList' => $jobs['long'] ))
-		</div>
-		<div role="tabpanel" class="tab-pane" id="agave">
-			@include('queueTable', array('jobList' => $jobs['agave'] ))
-		</div>
-		<div role="tabpanel" class="tab-pane" id="admin">
+		<div role="tabpanel" class="tab-pane active" id="admin">
 			@include('queueTable', array('jobList' => $jobs['admin'] ))
+		</div>
+		<div role="tabpanel" class="tab-pane" id="short-downloads">
+			@include('queueTable', array('jobList' => $jobs['short-downloads'] ))
+		</div>
+		<div role="tabpanel" class="tab-pane" id="long-downloads">
+			@include('queueTable', array('jobList' => $jobs['long-downloads'] ))
+		</div>
+		<div role="tabpanel" class="tab-pane" id="short-analysis-jobs">
+			@include('queueTable', array('jobList' => $jobs['short-analysis-jobs'] ))
+		</div>
+		<div role="tabpanel" class="tab-pane active" id="long-analysis-jobs">
+			@include('queueTable', array('jobList' => $jobs['long-analysis-jobs'] ))
+		</div>
+		<div role="tabpanel" class="tab-pane active" id="agave-notifications">
+			@include('queueTable', array('jobList' => $jobs['agave-notifications'] ))
 		</div>
 	</div>
 
