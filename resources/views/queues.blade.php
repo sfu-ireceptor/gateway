@@ -8,10 +8,12 @@
 
 	<!-- Nav tabs -->
 	<ul class="nav nav-tabs queues_tabs" role="tablist">
-		<li role="presentation" class="active"><a href="#default" aria-controls="home" role="tab" data-toggle="tab">Jobs</a></li>
-		<li role="presentation"><a href="#long" aria-controls="profile" role="tab" data-toggle="tab">Long Jobs</a></li>
-		<li role="presentation"><a href="#agave" aria-controls="messages" role="tab" data-toggle="tab">Agave notifications</a></li>
-		<li role="presentation"><a href="#admin" aria-controls="settings" role="tab" data-toggle="tab">Admin Jobs</a></li>
+		<li role="presentation" class="active"><a href="#admin" aria-controls="settings" role="tab" data-toggle="tab">Admin</a></li>
+		<li role="presentation"><a href="#short-downloads" aria-controls="home" role="tab" data-toggle="tab">Short Downloads</a></li>
+		<li role="presentation"><a href="#long-downloads" aria-controls="profile" role="tab" data-toggle="tab">Long Downloads</a></li>
+		<li role="presentation"><a href="#short-analysis-jobs" aria-controls="messages" role="tab" data-toggle="tab">Short Analyses</a></li>
+		<li role="presentation"><a href="#long-analysis-jobs" aria-controls="settings" role="tab" data-toggle="tab">Long Analyses</a></li>
+		<li role="presentation"><a href="#agave-notifications" aria-controls="settings" role="tab" data-toggle="tab">Agave Notifications</a></li>
 	</ul>
 
 	<!-- Tab panes -->
