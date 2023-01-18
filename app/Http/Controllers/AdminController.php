@@ -360,7 +360,6 @@ class AdminController extends Controller
         $rs = RestService::find($rest_service_id);
         $username = auth()->user()->username;
 
-        $lj = new LocalJob();
         $lj->user = $username;
         $lj->queue = 'admin';
         $lj->description = 'Sequence count for  ' . $rs->name;

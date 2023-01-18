@@ -151,7 +151,10 @@ class JobController extends Controller
         }
         Log::debug('JobController::LaunchApp - Job type = ' . $query_type);
 
-        $lj = new LocalJob;
+        // queue job
+        $queue = 'short-analysis-jobs';
+
+        $lj = new LocalJob($queue);
         $lj->user = auth()->user()->username;
         $lj->description = 'Job ' . $jobId . ' (' . $jobDescription . ')';
         $lj->save();
@@ -161,8 +164,6 @@ class JobController extends Controller
         // independent processes.
         $gw_username = auth()->user()->username;
         $gw_userid = auth()->user()->id;
-        // queue job
-        $queue = 'short-analysis-jobs';
         if ($appId == '999') {
             PrepareDataForThirdPartyAnalysis::dispatch($jobId, $request_data, $gw_username, $localJobId)->onQueue($queue);
         } else {
