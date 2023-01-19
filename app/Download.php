@@ -152,13 +152,18 @@ class Download extends Model
     public static function start_download($query_id, $username, $page_url, $nb_items, $type = 'sequence')
     {
         // Determine the queue to use.
+        $cell_large_download_limit = config('ireceptor.cell_large_download_limit');
+        $clone_large_download_limit = config('ireceptor.clone_large_download_limit');
+        $sequence_large_download_limit = config('ireceptor.sequence_large_download_limit');
+
         $queue = 'short-downloads';
-        if (($type == 'sequence' || $type == 'clone') && $nb_items > 2000000) {
+        if ($type == 'sequence' && $nb_items > $sequence_large_download_limit) {
             $queue = 'long-downloads';
-        } else if ($type == 'cell' && $nb_items > 20000) {
+        } else if ($type == 'clone' && $nb_items > $clone_large_download_limit) {
+            $queue = 'long-downloads';
+        } else if ($type == 'cell' && $nb_items > $cell_large_download_limit ) {
             $queue = 'long-downloads';
         }
-
 
         // create new local job
         $lj = new LocalJob($queue);
