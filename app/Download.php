@@ -155,10 +155,9 @@ class Download extends Model
         $queue = 'short-downloads';
         if (($type == 'sequence' || $type == 'clone') && $nb_items > 2000000) {
             $queue = 'long-downloads';
-        } else if ($type == 'cell' && $nb_items > 20000) {
+        } elseif ($type == 'cell' && $nb_items > 20000) {
             $queue = 'long-downloads';
         }
-
 
         // create new local job
         $lj = new LocalJob($queue);
