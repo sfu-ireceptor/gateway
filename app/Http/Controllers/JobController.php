@@ -153,17 +153,21 @@ class JobController extends Controller
 
         // Determine the queue to use
         $n_objects = $request->input('n_objects');
+        $cell_large_download_limit = config('ireceptor.cell_large_download_limit');
+        $clone_large_download_limit = config('ireceptor.clone_large_download_limit');
+        $sequence_large_download_limit = config('ireceptor.sequence_large_download_limit');
         Log::debug('JobController::LaunchApp - Number of objects = ' . $n_objects);
         $queue = 'short-analysis-jobs';
-        if (($query_type == 'sequence' || $query_type == 'clone') && $n_objects > 2000000) {
+        if ($query_type == 'sequence' && $n_objects > $sequence_large_download_limit) {
             $queue = 'long-analysis-jobs';
-        } else if ($query_type == 'cell' && $n_objects > 20000) {
+        } else if ($query_type == 'clone' && $n_objects > $clone_large_download_limit) {
+            $queue = 'long-analysis-jobs';
+        } else if ($query_type == 'cell' && $n_objects > $cell_large_download_limit) {
             $queue = 'long-analysis-jobs';
         }
         Log::debug('JobController::LaunchApp - Job queue = ' . $queue);
 
         // queue job
-
         $lj = new LocalJob($queue);
         $lj->user = auth()->user()->username;
         $lj->description = 'Job ' . $jobId . ' (' . $jobDescription . ')';
