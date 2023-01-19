@@ -197,7 +197,24 @@ class JobController extends Controller
         }
         Log::debug('JobController::LaunchApp - Job type = ' . $query_type);
 
-        $lj = new LocalJob;
+        // Determine the queue to use
+        $n_objects = $request->input('n_objects');
+        $cell_large_download_limit = config('ireceptor.cell_large_download_limit');
+        $clone_large_download_limit = config('ireceptor.clone_large_download_limit');
+        $sequence_large_download_limit = config('ireceptor.sequence_large_download_limit');
+        Log::debug('JobController::LaunchApp - Number of objects = ' . $n_objects);
+        $queue = 'short-analysis-jobs';
+        if ($query_type == 'sequence' && $n_objects > $sequence_large_download_limit) {
+            $queue = 'long-analysis-jobs';
+        } elseif ($query_type == 'clone' && $n_objects > $clone_large_download_limit) {
+            $queue = 'long-analysis-jobs';
+        } elseif ($query_type == 'cell' && $n_objects > $cell_large_download_limit) {
+            $queue = 'long-analysis-jobs';
+        }
+        Log::debug('JobController::LaunchApp - Job queue = ' . $queue);
+
+        // queue job
+        $lj = new LocalJob($queue);
         $lj->user = auth()->user()->username;
         $lj->description = 'Job ' . $jobId . ' (' . $jobDescription . ')';
         $lj->save();
@@ -207,11 +224,10 @@ class JobController extends Controller
         // independent processes.
         $gw_username = auth()->user()->username;
         $gw_userid = auth()->user()->id;
-        // queue job
         if ($appId == '999') {
-            PrepareDataForThirdPartyAnalysis::dispatch($jobId, $request_data, $gw_username, $localJobId);
+            PrepareDataForThirdPartyAnalysis::dispatch($jobId, $request_data, $gw_username, $localJobId)->onQueue($queue);
         } else {
-            LaunchAgaveJob::dispatch($jobId, $request_data, $localJobId, $gw_username, $gw_userid);
+            LaunchAgaveJob::dispatch($jobId, $request_data, $localJobId, $gw_username, $gw_userid)->onQueue($queue);
         }
 
         return redirect('jobs/view/' . $jobId);

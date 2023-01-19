@@ -182,7 +182,12 @@ class Sample
         return $sample_id_list;
     }
 
-    public static function find($filters, $username, $count_sequences = true, $type = '')
+    /**
+     * Find samples matching the filters.
+     *
+     * @param $raw - if true, don't convert fields
+     */
+    public static function find($filters, $username, $count_sequences = true, $type = '', $raw = false)
     {
         $service_filters = $filters;
 
@@ -293,7 +298,9 @@ class Sample
             $response_list[$i]['data'] = $sample_list_result;
             $sample_list = $sample_list_result;
 
-            $sample_list = self::convert_sample_list($sample_list, $rs);
+            if (! $raw) {
+                $sample_list = self::convert_sample_list($sample_list, $rs);
+            }
 
             $sample_list_all = array_merge($sample_list_all, $sample_list);
         }
@@ -330,7 +337,12 @@ class Sample
             $count_field = 'ir_cell_count';
         }
 
-        $data = self::stats($sample_list_all, $count_field);
+        if ($raw) {
+            $data['items'] = $sample_list_all;
+        } else {
+            $data = self::stats($sample_list_all, $count_field);
+        }
+
         $data['rs_list_no_response'] = $rs_list_no_response;
         $data['rs_list_sequence_count_error'] = $rs_list_sequence_count_error;
         $data['nb_samples_with_sequences'] = $nb_samples_with_sequences;
@@ -659,7 +671,7 @@ class Sample
     public static function samplesJSON($filters, $username)
     {
         // get samples
-        $sample_data = self::find($filters, $username);
+        $sample_data = self::find($filters, $username, true, '', true);
         $sample_list = $sample_data['items'];
 
         // build JSON structure
@@ -676,23 +688,7 @@ class Sample
         $sample_field_list = FieldName::getSampleFields();
         $obj->Repertoire = [];
         foreach ($sample_list as $sample) {
-            $airr_sample = new \stdClass();
-            foreach ($sample as $field_name => $field_value) {
-                $is_airr_field = false;
-                foreach ($sample_field_list as $sample_field) {
-                    if ($sample_field['ir_id'] == $field_name && isset($sample_field['ir_adc_api_response'])) {
-                        $airr_name = $sample_field['ir_adc_api_response'];
-                        data_set_object($airr_sample, $airr_name, $field_value);
-                        $is_airr_field = true;
-                        break;
-                    }
-                }
-                if (! $is_airr_field) {
-                    $airr_sample->{'ir_' . $field_name} = $field_value;
-                }
-            }
-
-            $obj->Repertoire[] = $airr_sample;
+            $obj->Repertoire[] = $sample;
         }
 
         // generate JSON string from JSON structure

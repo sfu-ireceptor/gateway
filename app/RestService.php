@@ -1467,7 +1467,7 @@ class RestService extends Model
         // create Guzzle client
         $defaults = [];
         $defaults['verify'] = false;    // accept self-signed SSL certificates
-        $defaults['headers'] = ['Content-Type' => 'application/x-www-form-urlencoded'];
+        $defaults['headers'] = ['Content-Type' => 'application/json'];
         $client = new \GuzzleHttp\Client($defaults);
 
         $repertoire_object = new \stdClass();
@@ -1954,8 +1954,8 @@ class RestService extends Model
                         }
 
                         if ($status == 'ERROR') {
-                            Log::error($json);
-                            break;
+                            Log::error($body);
+                            throw new \Exception('Query to async download status entry point failed: ' . $body);
                         }
 
                         sleep(10);
@@ -1989,6 +1989,8 @@ class RestService extends Model
                     $response['data'] = [];
                     $response['data']['file_path'] = $file_path;
                     $final_response_list2[] = $response;
+                } else {
+                    throw new \Exception('An error occurred during the async download');
                 }
             } else {
                 $final_response_list2[] = $response;

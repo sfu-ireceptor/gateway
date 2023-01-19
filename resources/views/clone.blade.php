@@ -371,6 +371,7 @@
 		                                        {{ Form::hidden('filters_json', $filters_json) }}
 		                                        {{ Form::hidden('data_url', $url) }}
 		                                        {{ Form::hidden('app_id', $app['app_id']) }}
+                                                {{ Form::hidden('n_objects', $total_filtered_clones) }}
 
 	                                            <h4>{{ $app['description'] }}</h4>
 	                                            <p>{!! $app['info'] !!}</p>

@@ -17,7 +17,7 @@ class UtilController extends Controller
     {
         Log::info('AGAVE job status update: job ' . $id . ' has status ' . $status);
 
-        $lj = new LocalJob('agave');
+        $lj = new LocalJob('agave-notifications');
         $lj->user = '[Agave]';
         $lj->description = 'Job ' . $id . ': ' . $status;
         $lj->save();
@@ -32,7 +32,7 @@ class UtilController extends Controller
         $localJobId = $lj->id;
 
         // queue as a job (to make sure notifications are processed in order)
-        ProcessAgaveNotification::dispatch($id, $status, $localJobId)->onQueue('agave');
+        ProcessAgaveNotification::dispatch($id, $status, $localJobId)->onQueue('agave-notifications');
     }
 
     // called by GitHub hook
