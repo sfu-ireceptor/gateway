@@ -151,10 +151,14 @@ class Download extends Model
 
     public static function start_download($query_id, $username, $page_url, $nb_items, $type = 'sequence')
     {
+        // Determine the queue to use.
         $queue = 'short-downloads';
-        if ($nb_items > 2000000) {
+        if (($type == 'sequence' || $type == 'clone') && $nb_items > 2000000) {
+            $queue = 'long-downloads';
+        } else if ($type == 'cell' && $nb_items > 20000) {
             $queue = 'long-downloads';
         }
+
 
         // create new local job
         $lj = new LocalJob($queue);
