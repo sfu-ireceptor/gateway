@@ -157,7 +157,7 @@ class JobController extends Controller
         $queue = 'short-analysis-jobs';
         if (($query_type == 'sequence' || $query_type == 'clone') && $n_objects > 2000000) {
             $queue = 'long-analysis-jobs';
-        } else if ($query_type == 'cell' && $n_objects > 20000) {
+        } elseif ($query_type == 'cell' && $n_objects > 20000) {
             $queue = 'long-analysis-jobs';
         }
         Log::debug('JobController::LaunchApp - Job queue = ' . $queue);
