@@ -108,6 +108,42 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Sequence large download limit
+    |--------------------------------------------------------------------------
+    |
+    | Maximum number of sequences that are considered a small download
+    | Ex: 2000000
+    |
+    */
+
+    'sequence_large_download_limit' => env('IRECEPTOR_SEQUENCE_LARGE_DOWNLOAD_LIMIT', 2000000),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Clone large download limit
+    |--------------------------------------------------------------------------
+    |
+    | Maximum number of clones that are considered a small download
+    | Ex: 2000000
+    |
+    */
+
+    'clone_large_download_limit' => env('IRECEPTOR_CLONE_LARGE_DOWNLOAD_LIMIT', 2000000),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cell large download limit
+    |--------------------------------------------------------------------------
+    |
+    | Maximum number of cells that are considered a small download
+    | Ex: 20000
+    |
+    */
+
+    'cell_large_download_limit' => env('IRECEPTOR_CELL_LARGE_DOWNLOAD_LIMIT', 20000),
+
+    /*
+    |--------------------------------------------------------------------------
     | Sequence downloads page refresh interval
     |--------------------------------------------------------------------------
     |
