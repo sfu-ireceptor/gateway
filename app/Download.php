@@ -159,9 +159,9 @@ class Download extends Model
         $queue = 'short-downloads';
         if ($type == 'sequence' && $nb_items > $sequence_large_download_limit) {
             $queue = 'long-downloads';
-        } else if ($type == 'clone' && $nb_items > $clone_large_download_limit) {
+        } elseif ($type == 'clone' && $nb_items > $clone_large_download_limit) {
             $queue = 'long-downloads';
-        } else if ($type == 'cell' && $nb_items > $cell_large_download_limit ) {
+        } elseif ($type == 'cell' && $nb_items > $cell_large_download_limit) {
             $queue = 'long-downloads';
         }
 
