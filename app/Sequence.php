@@ -605,23 +605,26 @@ class Sequence
         // Use the Query class to generate a consistent set of summary info
         // from the query parameters. This returns a single string, containing
         // a set of lines for each parameter (with \n), which is what we want.
-        $s .= '<p><b>Metadata filters</b></p>' . "\n";
-        // Replace each newline with a HTML <br/> followed by the newline as
+        $s .= '<p><strong>Metadata filters</strong></p>' . "\n";
+        $s .= "<p>\n";
+        // Replace each newline with a HTML <br> followed by the newline as
         // we want HTML here.
-        $sam_summary = str_replace("\n", "<br/>\n", $sam_summary);
+        $sam_summary = str_replace("\n", "<br>\n", $sam_summary);
         $s .= $sam_summary;
-        $s .= "<br/>\n";
+        $s .= "</p>\n";
 
-        $s .= '<p><b>Sequence filters</b></p>' . "\n";
+        $s .= '<p><strong>Sequence filters</strong></p>' . "\n";
+        $s .= "<p>\n";
         $seq_summary = Query::sequenceParamsSummary($seq_query_params);
-        // Replace each newline with a HTML <br/> followed by the newline as
+        // Replace each newline with a HTML <br> followed by the newline as
         // we want HTML here.
-        $seq_summary = str_replace("\n", "<br/>\n", $seq_summary);
+        $seq_summary = str_replace("\n", "<br>\n", $seq_summary);
         $s .= $seq_summary;
-        $s .= "<br/>\n";
+        $s .= "</p>\n";
 
         // Generate a summary of the repositories used.
-        $s .= '<p><b>Data/Repository Summary</b></p>' . "\n";
+        $s .= '<p><strong>Data/Repository Summary</strong></p>' . "\n";
+        $s .= "<p>\n";
 
         $nb_sequences_total = 0;
         $expected_nb_sequences_total = 0;
@@ -632,34 +635,35 @@ class Sequence
 
         $is_download_incomplete = ($nb_sequences_total < $expected_nb_sequences_total);
         if ($is_download_incomplete) {
-            $s .= 'GW-ERROR: some of the downloaded files appear to be incomplete:' . "<br/>\n";
-            $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "<br/>\n";
+            $s .= 'GW-ERROR: some of the downloaded files appear to be incomplete:' . "<br>\n";
+            $s .= 'Total: ' . $nb_sequences_total . ' sequences, but ' . $expected_nb_sequences_total . ' were expected.' . "<br>\n";
         } else {
-            $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "<br/>\n";
+            $s .= 'Total: ' . $nb_sequences_total . ' sequences' . "<br>\n";
         }
 
         foreach ($file_stats as $t) {
             if ($is_download_incomplete && ($t['nb_sequences'] < $t['expected_nb_sequences'])) {
-                $s .= 'GW-ERROR: ' . $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences) (from ' . $t['rs_url'] . ')' . "<br/>\n";
+                $s .= 'GW-ERROR: ' . $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (incomplete, expected ' . $t['expected_nb_sequences'] . ' sequences) (from ' . $t['rs_url'] . ')' . "<br>\n";
             } else {
-                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (from ' . $t['rs_url'] . ')' . "<br/>\n";
+                $s .= $t['name'] . ' (' . $t['size'] . '): ' . $t['nb_sequences'] . ' sequences (from ' . $t['rs_url'] . ')' . "<br>\n";
             }
         }
 
         if (! empty($failed_rs)) {
-            $s .= 'GW-ERROR: some files are missing because an error occurred while downloading sequences from these repositories:' . "<br/>\n";
+            $s .= 'GW-ERROR: some files are missing because an error occurred while downloading sequences from these repositories:' . "<br>\n";
             foreach ($failed_rs as $rs) {
-                $s .= 'GW-ERROR: ' . $rs->name . "<br/>\n";
+                $s .= 'GW-ERROR: ' . $rs->name . "<br>\n";
             }
         }
-        $s .= "<br/>\n";
+        $s .= "</p>\n";
 
         // Generate a summary of where the query came from.
-        $s .= '<p><b>Source</b></p>' . "\n";
-        $s .= $url . "<br/>\n";
+        $s .= '<p><strong>Source</strong></p>' . "\n";
+        $s .= "<p>\n";
         $date_str_human = date('M j, Y', $now);
         $time_str_human = date('H:i T', $now);
-        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "<br/>\n";
+        $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "<br>\n";
+        $s .= "</p>\n";
 
         // Save the info into the info.txt file.
         $info_file_path = $folder_path . '/info.txt';
