@@ -347,7 +347,7 @@ class JobController extends Controller
             // Replace each newline with a HTML <br> followed by the newline as
             // we want HTML here.
             $sample_summary = str_replace("\n", "<br>\n", $sample_summary);
-            $s .= $sample_summary ;
+            $s .= $sample_summary;
             $s .= "</p>\n";
 
             $s .= "<p><strong>Sequence filters</strong></p>\n";
@@ -355,7 +355,7 @@ class JobController extends Controller
             // Replace each newline with a HTML <br> followed by the newline as
             // we want HTML here.
             $sequence_summary = str_replace("\n", "<br>\n", $sequence_summary);
-            $s .= $sequence_summary; 
+            $s .= $sequence_summary;
             $s .= "</p>\n";
 
             // Split the data into lines as an array of strings based on the newline character.
