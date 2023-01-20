@@ -55,7 +55,8 @@ class JobController extends Controller
         $agave = new Agave;
         // Build the job_summary block HTML
         $data['job_summary'] = [];
-        $s = '<p><b>App Parameters</b></p>';
+        $s = '<p><strong>App Parameters</strong></p>';
+        $s .= '<p>';
         // Get the JSON from the Job, we need info from it.
         $agave_json = $this->getAgaveJobJSON($job->id, $agave);
 
@@ -91,20 +92,22 @@ class JobController extends Controller
                             $param_string = $template_param['details']['label'];
                         }
                     }
-                    $s .= $param_string . ': ' . $value . '<br/>\n';
+                    $s .= $param_string . ': ' . $value . '<br>\n';
                     $param_count++;
                 }
             }
         }
         if ($param_count == 0) {
-            $s .= 'None<br/>\n';
+            $s .= 'None<br>\n';
         }
-        $s .= '<br/>\n';
+        $s .= '<p>';
 
-        $s .= '<p><b>Job Parameters</b></p>';
-        $s .= 'Number of cores: ' . strval($agave->processorsPerNode()) . '<br/>\n';
-        $s .= 'Maximum memory per core: ' . strval($agave->memoryPerProcessor()) . ' GB<br/>\n';
-        $s .= 'Maximum run time: ' . strval($agave->maxRunTime()) . ' hours<br/>\n';
+        $s .= '<p><strong>Job Parameters</strong></p>';
+        $s .= '<p>';
+        $s .= 'Number of cores: ' . strval($agave->processorsPerNode()) . '<br>\n';
+        $s .= 'Maximum memory per core: ' . strval($agave->memoryPerProcessor()) . ' GB<br>\n';
+        $s .= 'Maximum run time: ' . strval($agave->maxRunTime()) . ' hours<br>\n';
+        $s .= '<p>';
         $data['job_summary'] = explode('\n', $s);
 
         // Build the job control button HTML. This is rendered by the blade,
@@ -339,16 +342,21 @@ class JobController extends Controller
             Log::debug('JobController::getView: sample query summary = ' . $sample_summary);
 
             // Split the summaries by line into an array, which is what the view expects.
-            $s = "<p><b>Metadata filters</b></p>\n";
-            // Replace each newline with a HTML <br/> followed by the newline as
+            $s = "<p><strong>Metadata filters</strong></p>\n";
+            $s .= "<p>\n";
+            // Replace each newline with a HTML <br> followed by the newline as
             // we want HTML here.
-            $sample_summary = str_replace("\n", "<br/>\n", $sample_summary);
-            $s .= $sample_summary . "<br/>\n";
-            $s .= "<p><b>Sequence filters</b></p>\n";
-            // Replace each newline with a HTML <br/> followed by the newline as
+            $sample_summary = str_replace("\n", "<br>\n", $sample_summary);
+            $s .= $sample_summary ;
+            $s .= "</p>\n";
+
+            $s .= "<p><strong>Sequence filters</strong></p>\n";
+            $s .= "<p>\n";
+            // Replace each newline with a HTML <br> followed by the newline as
             // we want HTML here.
-            $sequence_summary = str_replace("\n", "<br/>\n", $sequence_summary);
-            $s .= $sequence_summary . "\n";
+            $sequence_summary = str_replace("\n", "<br>\n", $sequence_summary);
+            $s .= $sequence_summary; 
+            $s .= "</p>\n";
 
             // Split the data into lines as an array of strings based on the newline character.
             $data['summary'] = explode("\n", $s);
@@ -366,7 +374,8 @@ class JobController extends Controller
         $token = $user->getToken();
 
         // Build the job summary HTML. This is rendered by the blade.
-        $s = '<p><b>App Parameters</b></p>';
+        $s = '<p><strong>App Parameters</strong></p>';
+        $s .= '<p>';
         // Get the JSON from the Job, we need info from it.
         $agave_json = $this->getAgaveJobJSON($job->id, $agave);
 
@@ -402,20 +411,22 @@ class JobController extends Controller
                             $param_string = $template_param['details']['label'];
                         }
                     }
-                    $s .= $param_string . ': ' . $value . '<br/>\n';
+                    $s .= $param_string . ': ' . $value . '<br>\n';
                     $param_count++;
                 }
             }
         }
         if ($param_count == 0) {
-            $s .= 'None<br/>\n';
+            $s .= 'None<br>\n';
         }
-        $s .= '<br/>\n';
+        $s .= '<p>';
 
-        $s .= '<p><b>Job Parameters</b></p>';
-        $s .= 'Number of cores: ' . strval($agave->processorsPerNode()) . '<br/>\n';
-        $s .= 'Maximum memory per core: ' . strval($agave->memoryPerProcessor()) . ' GB<br/>\n';
-        $s .= 'Maximum run time: ' . strval($agave->maxRunTime()) . ' hours<br/>\n';
+        $s .= '<p><strong>Job Parameters</strong></p>';
+        $s .= '<p>';
+        $s .= 'Number of cores: ' . strval($agave->processorsPerNode()) . '<br>\n';
+        $s .= 'Maximum memory per core: ' . strval($agave->memoryPerProcessor()) . ' GB<br>\n';
+        $s .= 'Maximum run time: ' . strval($agave->maxRunTime()) . ' hours<br>\n';
+        $s .= '<p>';
         $data['job_summary'] = explode('\n', $s);
 
         // Build the job control button HTML. This is rendered by the blade,
@@ -483,20 +494,20 @@ class JobController extends Controller
         }
 
         if ($job_errors) {
-            $s = '<em>WARNING: This job completed but errors on some stages of the processing were detected. As a result, some repertoires may not have been processed and/or some results may not be fully complete. Please refer to the Error and Output log files for more information.</em><br/>\n';
+            $s = '<em>WARNING: This job completed but errors on some stages of the processing were detected. As a result, some repertoires may not have been processed and/or some results may not be fully complete. Please refer to the Error and Output log files for more information.</em><br>\n';
             // If the Tapis job failed get the error message.
             if ($job->agave_status == 'FAILED') {
                 // Get the Tapis error status
                 $agave_json = $this->getAgaveJobJSON($job->id, $agave);
                 if ($agave_json != null) {
                     $agave_status = json_decode($agave_json);
-                    $s .= '<br/><p><b>TAPIS errors</b></p>\n';
-                    $s .= strval($agave_status->result->lastStatusMessage) . '<br/>\n';
+                    $s .= '<br><p><strong>TAPIS errors</strong></p>\n';
+                    $s .= strval($agave_status->result->lastStatusMessage) . '<br>\n';
                 }
             }
             if ($job->agave_status == 'INTERNAL_ERROR') {
-                $s .= '<br/><p><b>Internal Error</b></p>\n';
-                $s .= 'Unfortunately, your job encountered an unexpected internal error. This may be due to an authentication issue, please log out and log back in and resubmit the job. If the error recurs, please send an email to support@ireceptor.org with the Job ID number and we will investigate.<br/>\n';
+                $s .= '<br><p><strong>Internal Error</strong></p>\n';
+                $s .= 'Unfortunately, your job encountered an unexpected internal error. This may be due to an authentication issue, please log out and log back in and resubmit the job. If the error recurs, please send an email to support@ireceptor.org with the Job ID number and we will investigate.<br>\n';
             }
 
             // Get the relevant iReceptor Gateway error messages. These come from the
@@ -580,36 +591,36 @@ class JobController extends Controller
             }
 
             // Extract the error messages from the App for the Gateway.
-            $s .= '<br/><p><b>iReceptor Gateway download errors (Download info file)</b></p>\n';
+            $s .= '<br><p><strong>iReceptor Gateway download errors (Download info file)</strong></p>\n';
             $string_list = explode(PHP_EOL, $info_response);
             foreach ($string_list as $line) {
                 if (substr($line, 0, strlen($gateway_error)) == $gateway_error ||
                     substr($line, 0, strlen($ireceptor_error)) == $ireceptor_error) {
-                    $s .= $line . '<br/>\n';
+                    $s .= $line . '<br>\n';
                 }
             }
             // Extract the error messages from the App for the Gateway.
-            $s .= '<br/><p><b>iReceptor Gateway errors (Analysis Error Log)</b></p>\n';
+            $s .= '<br><p><strong>iReceptor Gateway errors (Analysis Error Log)</strong></p>\n';
             $string_list = explode(PHP_EOL, $stderr_response);
             foreach ($string_list as $line) {
                 if (substr($line, 0, strlen($gateway_error)) == $gateway_error ||
                     substr($line, 0, strlen($ireceptor_error)) == $ireceptor_error) {
-                    $s .= $line . '<br/>\n';
+                    $s .= $line . '<br>\n';
                 }
             }
             // Extract the error messages from the App stdout for the Gateway.
-            $s .= '<br/><p><b>iReceptor Gateway errors (Analysis Output Log)</b></p>\n';
+            $s .= '<br><p><strong>iReceptor Gateway errors (Analysis Output Log)</strong></p>\n';
             $string_list = explode(PHP_EOL, $stdout_response);
             foreach ($string_list as $line) {
                 if (substr($line, 0, strlen($gateway_error)) == $gateway_error ||
                     substr($line, 0, strlen($ireceptor_error)) == $ireceptor_error) {
-                    $s .= $line . '<br/>\n';
+                    $s .= $line . '<br>\n';
                 }
             }
 
             // Extract the info messages from the App for the Gateway.
             /*
-            $s .= '<br/><p><b>iReceptor Gateway output messages</b></p>\n';
+            $s .= '<br><p><strong>iReceptor Gateway output messages</strong></p>\n';
             $string_list = explode(PHP_EOL, $stdout_response);
             $ireceptor_info = 'IR-INFO';
             $gateway_info = 'GW-INFO';
@@ -618,7 +629,7 @@ class JobController extends Controller
                     substr($line, 0, strlen($gateway_error)) == $gateway_error ||
                     substr($line, 0, strlen($ireceptor_info)) == $ireceptor_info ||
                     substr($line, 0, strlen($gateway_info)) == $gateway_info) {
-                    $s .= $line . '<br/>\n';
+                    $s .= $line . '<br>\n';
                 }
             }
             */
@@ -724,15 +735,15 @@ class JobController extends Controller
                     // the Gateway cleanup removes all the files but the directory structure
                     // still exists for some reason. So we check the count of
                     // actual files to determine if the analysis has been removed or not.
-                    $msg = "<b>NOTE</b>: The data from this analysis has been removed as the archive timeout has expired, please re-run this analysis to reproduce the data.<br/><br/>\n";
-                    $msg .= "<em>Remember that these analyses can be resource intensive so please remember to download your analysis results once the analysis is finished if you want to maintain a copy! Re-running analysis jobs is a waste of computational resources and will negatively impact all users of the iReceptor Platform.</em><br/>\n";
+                    $msg = "<strong>NOTE</strong>: The data from this analysis has been removed as the archive timeout has expired, please re-run this analysis to reproduce the data.<br><br>\n";
+                    $msg .= "<em>Remember that these analyses can be resource intensive so please remember to download your analysis results once the analysis is finished if you want to maintain a copy! Re-running analysis jobs is a waste of computational resources and will negatively impact all users of the iReceptor Platform.</em><br>\n";
                     $data['filesHTML'] = $msg;
                 }
             } else {
                 // In the case where the job is FINISHED and there are no output files, tell the user
                 // that the data is no longer available.
-                $msg = "<b>NOTE</b>: The data from this analysis has been removed as the archive timeout has expired, please re-run this analysis to reproduce the data.<br/><br/>\n";
-                $msg .= "<em>Remember that these analyses can be resource intensive so please remember to download your analysis results once the analysis is finished if you want to maintain a copy! Re-running analysis jobs is a waste of computational resources and will negatively impact all users of the iReceptor Platform.</em><br/>\n";
+                $msg = "<strong>NOTE</strong>: The data from this analysis has been removed as the archive timeout has expired, please re-run this analysis to reproduce the data.<br><br>\n";
+                $msg .= "<em>Remember that these analyses can be resource intensive so please remember to download your analysis results once the analysis is finished if you want to maintain a copy! Re-running analysis jobs is a waste of computational resources and will negatively impact all users of the iReceptor Platform.</em><br>\n";
                 $data['filesHTML'] = $msg;
             }
         }
