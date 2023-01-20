@@ -60,8 +60,8 @@ class LaunchAgaveJob implements ShouldQueue
 
             // generate csv file
             $job->updateStatus('FEDERATING DATA');
-            Log::debug('########## $this->request_data = ' . json_encode($this->request_data));
-            Log::debug('$request_data[filters_json]' . $this->request_data['filters_json']);
+            Log::debug('LaunchAgaveJob::handle - $this->request_data = ' . json_encode($this->request_data));
+            Log::debug('LaunchAgaveJob::handle - $request_data[filters_json]' . $this->request_data['filters_json']);
             $filters = json_decode($this->request_data['filters_json'], true);
 
             // Get the sample filters
@@ -248,7 +248,7 @@ class LaunchAgaveJob implements ShouldQueue
      * @param  Exception  $exception
      * @return void
      */
-    public function failed(Throwable $e)
+    public function failed(Throwable $exception)
     {
         // Print an error message
         Log::error('LaunchAgaveJob::failed - ' . $exception->getMessage());

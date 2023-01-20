@@ -2,7 +2,9 @@
 
 namespace App;
 
+use Facades\App\FieldName;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Query extends Model
 {
@@ -45,6 +47,9 @@ class Query extends Model
         // If there are parameters, then process them
         $s = '';
         $parameter_count = 0;
+        $ontology_fields = FieldName::getOntologyFields();
+        Log::debug('sampleParamsSummary: params = ' . json_encode($params));
+        Log::debug('sampleParamsSummary: ontology fields = ' . implode($ontology_fields));
         foreach ($params as $k => $v) {
             // If the value is null, it isn't a filter.
             if ($v == null) {
@@ -55,7 +60,14 @@ class Query extends Model
                 $v = implode(' or ', $v);
             }
             // use human-friendly filter name
-            $s .= __('short.' . $k) . ': ' . $v . "\n";
+            Log::debug('sampleParamsSummary: key = ' . $k);
+            if (in_array($k, $ontology_fields)) {
+                // TODO: IR-2878 - We need an ontology lookup here, where we can look up
+                // the value for the ID and get back the correct label.
+                $s .= __('short.' . $k) . ': ' . $v . "\n";
+            } else {
+                $s .= __('short.' . $k) . ': ' . $v . "\n";
+            }
             $parameter_count++;
         }
         // If nothing left, then say None
