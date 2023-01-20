@@ -49,7 +49,7 @@ return [
         'test_user_username' => env('TEST_USER_USERNAME'),
         'test_user_password' => env('TEST_USER_PASSWORD'),
         'app_directories' => [
-            'stats', 'histogram', 'clone-stats', 'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity', 
+            'stats', 'histogram', 'clone-stats', 'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity',
         ],
         'system_execution' => [
             'name_prefix'  => env('AGAVE_SYSTEM_EXECUTION_NAME_PREFIX', 'exec-'),
