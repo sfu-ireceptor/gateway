@@ -95,7 +95,7 @@
         "visible": true,
         "required": true,
         "type": "string",
-        "default": ""
+        "default": "junction_aa"
       },
       "details": {
         "label": "AIRR Field",
@@ -115,7 +115,7 @@
         "visible": true,
         "required": true,
         "type": "string",
-        "default": "-1"
+        "default": "100"
       },
       "details": {
         "label": "Number of values",
