@@ -316,8 +316,10 @@ class Sequence
         $seq_query_id = substr($url, strpos($url, $query_sep) + strlen($query_sep));
         // Get the query parameters for both the sequence and sample queries. The
         // sequence query parameters contains the query id of the sample query used
-        // to get to the seqeunces page.
+        // to get to the seqeunces page. The parameters are arrays of keys of the form
+        // ["field":"value",...]
         $seq_query_params = Query::getParams($seq_query_id);
+        $sam_query_params = [];
         if (array_key_exists('sample_query_id', $seq_query_params)) {
             $sam_query_id = $seq_query_params['sample_query_id'];
             $sam_query_params = Query::getParams($sam_query_id);
