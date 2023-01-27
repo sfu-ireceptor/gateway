@@ -759,11 +759,37 @@ class JobController extends Controller
         $agave = new Agave;
 
         $job = Job::where('id', '=', $id)->first();
+        $response = null;
         if ($job != null && $job->agave_id != '') {
             $job_agave_id = $job->agave_id;
-            $user = User::where('id', $job->user_id)->first();
-            $token = $user->getToken();
-            $response = $agave->getJobHistory($job_agave_id, $token);
+            // Get the user, the user's token, and job info
+            $job_user = User::where('id', $job->user_id)->first();
+            $token = $job_user->getToken();
+            if ($token != null)
+            {
+                $response = $agave->getJobHistory($job_agave_id, $token);
+            }
+            // If the token was not valid or if there was an error, try
+            // as an admin user to get the same info.
+            // getJob returns a JSON string, isAgaveError expects an object.
+            if ($token == null || $agave->isAgaveError(json_decode($response))) {
+                Log::debug('JobContorller::getAgaveJobJSON - got an error');
+                $this_user = User::where('username', auth()->user()->username)->first();
+                if ($this_user->isAdmin()) {
+                    $token = $agave->getAdminToken();
+                    if ($token != null) {
+                        $response = $agave->getJob($job_agave_id, $token);
+                    }
+                    // If we can get the info, return it
+                    if ($token == null || $agave->isAgaveError(json_decode($response))) {
+                        $response = null;
+                    }
+                }
+            }
+        }
+        if ($response == null) {
+            echo '<pre>Job History unavailable</pre>';
+        } else {
             echo '<pre>' . $response . '</pre>';
         }
     }
@@ -774,13 +800,28 @@ class JobController extends Controller
         $response = null;
         if ($job != null && $job->agave_id != '') {
             $job_agave_id = $job->agave_id;
+            // Get the user, the user's token, and job info
             $user = User::where('username', auth()->user()->username)->first();
             $token = $user->getToken();
-            $response = $agave->getJob($job_agave_id, $token);
+            if ($token != null) {
+                $response = $agave->getJob($job_agave_id, $token);
+            }
+            // If the token was not valid or if there was an error, try
+            // as an admin user to get the same info.
             // getJob returns a JSON string, isAgaveError expects an object.
-            if ($agave->isAgaveError(json_decode($response))) {
+            if ($token == null || $agave->isAgaveError(json_decode($response))) {
                 Log::debug('JobContorller::getAgaveJobJSON - got an error');
-                $response = null;
+                if ($user->isAdmin()) {
+                    $token = $agave->getAdminToken();
+                    // If we can get the info, return it
+                    if ($token != null) {
+                        $response = $agave->getJob($job_agave_id, $token);
+                    }
+                    // If we can't get the token or there is an error, then return null.
+                    if ($token == null || $agave->isAgaveError(json_decode($response))) {
+                        $response = null;
+                    }
+                }
             }
         }
 
