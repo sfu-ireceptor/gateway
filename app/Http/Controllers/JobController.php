@@ -765,8 +765,7 @@ class JobController extends Controller
             // Get the user, the user's token, and job info
             $job_user = User::where('id', $job->user_id)->first();
             $token = $job_user->getToken();
-            if ($token != null)
-            {
+            if ($token != null) {
                 $response = $agave->getJobHistory($job_agave_id, $token);
             }
             // If the token was not valid or if there was an error, try
