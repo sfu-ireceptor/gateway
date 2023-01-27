@@ -777,7 +777,9 @@ class JobController extends Controller
             $user = User::where('username', auth()->user()->username)->first();
             $token = $user->getToken();
             $response = $agave->getJob($job_agave_id, $token);
-            if ($agave->isAgaveError($response)) {
+            // getJob returns a JSON string, isAgaveError expects an object.
+            if ($agave->isAgaveError(json_decode($response))) {
+                Log::debug('JobContorller::getAgaveJobJSON - got an error');
                 $response = null;
             }
         }
