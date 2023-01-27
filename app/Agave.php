@@ -207,7 +207,7 @@ class Agave
             Log::debug('Agave::renewToken - A ClientException occurred while getting a token from Agave:');
             Log::debug('Agave::renewToken - exception = ' . json_encode($e));
 
-            return;
+            return null;
         }
 
         Log::debug('Agave:renewToken - returning refresh response = ' . json_encode($response_obj));
@@ -767,8 +767,6 @@ class Agave
 
     public function isAgaveError($response)
     {
-        Log::debug('Agave::isAgaveError - type = ' . gettype($response));
-        Log::debug('Agave::isAgaveError - checking ' . json_encode($response));
         if ($response == null) {
             return true;
         }
@@ -779,7 +777,6 @@ class Agave
             return true;
         }
         if (property_exists($response, 'status') && $response->status == 'error') {
-            Log::debug('Agave::isAgaveError - status = error');
             return true;
         }
         return false;
