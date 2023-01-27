@@ -780,8 +780,10 @@ class Agave
         }
         if (property_exists($response, 'status') && $response->status == 'error') {
             Log::debug('Agave::isAgaveError - status = error');
+
             return true;
         }
+
         return false;
     }
 
