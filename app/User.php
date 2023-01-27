@@ -38,6 +38,7 @@ class User extends Authenticatable
         $expiry_threshold_min = 30;
         $now = Carbon::now();
         $expiry_threshold = Carbon::now()->addMinutes($expiry_threshold_min);
+        Log::debug('User::getToken: user = ' . $this->username);
         Log::debug('User::getToken: now = ' . $now);
         Log::debug('User::getToken: expiry threshold = ' . $expiry_threshold);
         Log::debug('User::getToken: token expiration = ' . $this->token_expiration_date);
@@ -54,10 +55,16 @@ class User extends Authenticatable
         Log::debug('User::getToken: Requesting a new token');
         $agave = new Agave;
         $agave_token_info = $agave->renewToken($this->refresh_token);
-        $this->updateToken($agave_token_info);
+        if ($agave_token_info != null) {
+            // update the token
+            $this->updateToken($agave_token_info);
 
-        // Return the new password
-        return $this->password;
+            // Return the new password
+            return $this->password;
+        } else {
+            return null;
+        }
+
     }
 
     /**
