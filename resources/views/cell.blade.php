@@ -127,10 +127,10 @@
 						<h3>Active filters</h3>
 
 						@if ( ! empty($sample_filter_fields))
-							Repertoire Metadata filters:
+							<h4>Repertoire Metadata filters:</h4>
 							@foreach($sample_filter_fields as $filter_key => $filter_value)
 								<span title= "@lang('short.' . $filter_key): {{$filter_value}}", class="label label-default">
-									@lang('short.' . $filter_key)
+									@lang('short.' . $filter_key): <span class="value">{{ $filter_value }}</span>
 								</span>
 							@endforeach
 							@isset($sample_query_id)
@@ -142,11 +142,11 @@
 						@endif
 
 						@if ( ! empty($filter_fields))
-							Cell filters:
+							<h4>Cell filters:</h4>
 							@foreach($filter_fields as $filter_key => $filter_value)
 								<a title= "@lang('short.' . $filter_key): {{ $filter_value }}" href="/cells?query_id={{ $query_id }}&amp;remove_filter={{ $filter_key }}" class="label label-primary">
 									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-									@lang('short.' . $filter_key)
+									@lang('short.' . $filter_key): <span class="value">{{ $filter_value }}</span>
 								</a>
 							@endforeach
 

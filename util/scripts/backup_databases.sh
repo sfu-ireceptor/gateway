@@ -11,8 +11,14 @@ source ${CONFIG_FILE}
 TIME=`date +%Y-%m-%d_%H-%M-%S`
 
 # create dump folder if it doesn't exist
-DUMP_FOLDER=${SCRIPT_FOLDER}'/../../storage/db_backups'
+DUMP_FOLDER='/data/db_backups'
 mkdir -p ${DUMP_FOLDER}
+
+if [ ! -d ${DUMP_FOLDER} ] 
+then
+    echo "Error: folder ${DUMP_FOLDER} does not exist." 
+    exit 3
+fi
 
 # MongoDB backup
 date
