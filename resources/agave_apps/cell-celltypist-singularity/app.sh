@@ -56,20 +56,6 @@ export JOB_ERROR=1
 
 echo "IR-INFO: Using Gateway ${GATEWAY_URL}"
 
-# Get the singularity image from the Gateway
-echo -n "IR-INFO: Downloading singularity image ${singularity_image} from the Gateway - "
-date
-wget -nv ${GATEWAY_URL}/singularity/${singularity_image}
-echo -n "IR-INFO: Singularity file downloaded = "
-ls ${singularity_image}
-if [ $? -ne 0 ]
-then
-    echo ""
-    echo "IR-ERROR: Could not download singularity image ${singularity_image}"
-    exit 1
-fi
-echo -n "IR-INFO: Done ownloading singularity image from the Gateway - "
-date
 
 # Get the iRecpetor Gateway utilities from the Gateway
 echo -n "IR-INFO: Downloading iReceptor Gateway Utilities from the Gateway - "
@@ -100,10 +86,16 @@ if [ -z "${GATEWAY_ANALYSIS_DIR}" ]; then
 fi
 echo "IR-INFO: Done loading iReceptor Gateway Utilities"
 
-
 # Load any modules that are required by the App. 
 module load singularity
 module load scipy-stack
+
+# Get the singularity image from the Gateway
+echo -n "IR-INFO: Downloading singularity image ${singularity_image} from the Gateway - "
+date
+gateway_get_singularity ${singularity_image} ${SCRIPT_DIR}
+echo -n "IR-INFO: Done ownloading singularity image from the Gateway - "
+date
 
 # The Gateway provides information about the download in the file info.txt
 INFO_FILE="info.txt"
