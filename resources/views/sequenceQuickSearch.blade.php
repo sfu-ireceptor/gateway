@@ -24,7 +24,7 @@
 				<div>
 					{{ Form::label('junction_aa', __('short.junction_aa')) }}
 					@include('help', ['id' => 'junction_aa'])
-					{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided, minimum of 4 AA required). It takes several minutes if millions of sequences are found.', 'data-placement' => 'bottom')) }}
+					{{ Form::text('junction_aa', '', array('class' => 'form-control', 'minlength' => '4', 'data-toggle' => 'tooltip', 'title' => 'Substring search (matches entire substring provided, minimum of 4 AA required). If searching for a full Junction/CDR3 it is recommended you use the CDR3 without the conserved AAs to ensure all instance are found (e.g. ASSIRSSYEQY and not CASSIRSSYEQYF). Search can take several minutes if millions of sequences are found.', 'data-placement' => 'bottom')) }}
 
 					@if (isset($iedb_info) && $iedb_info)
 						<div class="panel panel-primary iedb">
