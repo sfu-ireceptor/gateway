@@ -5,6 +5,40 @@ echo "GW-INFO: iReceptor Gateway Utilities"
 # Define the directory to use for Gateway analysis output.
 export GATEWAY_ANALYSIS_DIR="gateway_analysis"
 
+function gateway_get_singularity() {
+# Parameters
+#   $1 - Name of singularity image to get from the Gateway
+#   $2 - Directory in which to save the image
+
+    # The singularity image file (sif file) to download
+    local GW_SINGULARITY_FILE=$1
+
+    # The directory to download the singularity image into
+    local GW_WORKING_DIR=$2
+
+    # Go to the destination directory
+    echo "GW-INFO: Getting singularity image ${GW_SINGULARITY_FILE} from ${GATEWAY_URL} started at: `date`" 
+    pushd ${GW_WORKING_DIR} > /dev/null
+    if [ $? -ne 0 ]
+    then
+        echo "GW-ERROR: Could not changed directory to ${GW_WORKING_DIR}"
+        return $?
+    fi
+
+    # Get the file from the Gateway
+    wget -nv ${GATEWAY_URL}/storage/singularity/${GW_SINGULARITY_FILE}
+    if [ $? -ne 0 ]
+    then
+        echo "GW-ERROR: Could not copy ${GW_SINGULARITY_FILE} from ${GATEWAY_URL}"
+        return
+    fi
+
+    echo "GW-INFO: Saved singularity image ${GW_SINGULARITY_FILE} in ${GW_WORKING_DIR}, completed at: `date`" 
+
+    # Go back to where we started
+    popd > /dev/null
+}
+
 function gateway_unzip() {
 # Parameters
 #   $1 - iReceptor ZIP file
