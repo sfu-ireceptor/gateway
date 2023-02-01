@@ -13,6 +13,7 @@ use App\System;
 use Facades\App\Query;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class SequenceController extends Controller
 {
@@ -301,8 +302,19 @@ class SequenceController extends Controller
 
         // if there is a junction_aa filter, ask IEDB for info about it
         if (isset($filters['junction_aa'])) {
-            $iedb_data = $this->getIEDBInfo($filters['junction_aa']);
+            $junction_aa = $filters['junction_aa'];
+
+            $iedb_data = $this->getIEDBInfo($junction_aa);
             $data = array_merge($data, $iedb_data);
+
+            if (Str::startsWith($junction_aa, 'C')) {
+                if (Str::endsWith($junction_aa, ['F', 'W'])) {
+                    $data['conserved_aa_warning'] = true;
+
+                    $junction_aa_without_conserved_aa = Str::substr($junction_aa, 1, strlen($junction_aa) - 2);
+                    $data['junction_aa_without_conserved_aa'] = $junction_aa_without_conserved_aa;
+                }
+            }
         }
 
         // display view
@@ -517,10 +529,20 @@ class SequenceController extends Controller
         // download time estimate
         $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_sequences']);
 
-        // if there is a junction_aa filter, ask IEDB for info about it
         if (isset($sequence_filters['junction_aa'])) {
-            $iedb_data = $this->getIEDBInfo($sequence_filters['junction_aa']);
+            $junction_aa = $filters['junction_aa'];
+
+            $iedb_data = $this->getIEDBInfo($junction_aa);
             $data = array_merge($data, $iedb_data);
+
+            if (Str::startsWith($junction_aa, 'C')) {
+                if (Str::endsWith($junction_aa, ['F', 'W'])) {
+                    $data['conserved_aa_warning'] = true;
+
+                    $junction_aa_without_conserved_aa = Str::substr($junction_aa, 1, strlen($junction_aa) - 2);
+                    $data['junction_aa_without_conserved_aa'] = $junction_aa_without_conserved_aa;
+                }
+            }
         }
 
         // display view

@@ -1036,9 +1036,6 @@ class RestService extends Model
             }
         }
 
-        Log::debug('Sequence filters (only):');
-        Log::debug($sequence_filters);
-
         // build list of samples ids to query for each repository
         $sample_id_list_by_rs = [];
         foreach ($response_list_requested as $response) {
@@ -1050,9 +1047,6 @@ class RestService extends Model
             $sample_id_list_by_rs[$response['rs']->id] = $sample_id_list_requested;
         }
 
-        Log::debug('Sample ids for each repository:');
-        Log::debug($sample_id_list_by_rs);
-
         // count sequences for each requested sample
         if ($type == 'sequence') {
             $counts_by_rs = self::sequence_count($sample_id_list_by_rs, $sequence_filters);
@@ -1061,8 +1055,6 @@ class RestService extends Model
         } else {
             $counts_by_rs = self::cell_count($sample_id_list_by_rs, $sequence_filters);
         }
-        Log::debug('Sequence/clone/cell count for each requested sample (by repository):');
-        Log::debug($counts_by_rs);
 
         // add sequences count to samples
         $response_list_filtered = [];

@@ -1354,6 +1354,22 @@ a.download_sequences {
 	margin-bottom: 5px;
 }
 
+.conserved_aa_warning {
+	margin-top: 0px;
+	margin-bottom: 12px;
+	padding: 3px 5px 6px 8px;
+	font-size: 12px;
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+	margin-left: 8px;
+	margin-right: 60px;
+}
+
+.conserved_aa_warning code {
+	background-color: #d9edf7;
+	color: rgb(49, 112, 143);
+}
+
 /* @end */
 
 /* @group jobs page */
