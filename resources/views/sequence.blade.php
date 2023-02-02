@@ -81,8 +81,7 @@
 								@if (isset($conserved_aa_warning))
 									<p class="bg-warning conserved_aa_warning">
 										<span class="glyphicon glyphicon-info-sign"></span>
-										For more results, use the substring <code>{{ $junction_aa_without_conserved_aa }}</code>
-										(without the conserved AAs).
+										To find all results across ADC/IEDB, remove conserved AAs: <code>{{ $junction_aa_without_conserved_aa }}</code>
 									</p>
 								@endif
 
