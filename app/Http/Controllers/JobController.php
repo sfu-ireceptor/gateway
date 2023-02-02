@@ -58,10 +58,10 @@ class JobController extends Controller
         $s = '<p><strong>App Parameters</strong></p>';
         $s .= '<p>';
         // Get the JSON from the Job, we need info from it.
+        $param_count = 0;
         $agave_json = $this->getAgaveJobJSON($job->id, $agave);
 
         // If we have a JSON string for the Job, process the App parameters.
-        $param_count = 0;
         if ($agave_json != null) {
             // Get the App template for this App. The job stores the App Label so
             // we use the label to look it up. This returns a JSON object in the form
@@ -377,10 +377,10 @@ class JobController extends Controller
         $s = '<p><strong>App Parameters</strong></p>';
         $s .= '<p>';
         // Get the JSON from the Job, we need info from it.
+        $param_count = 0;
         $agave_json = $this->getAgaveJobJSON($job->id, $agave);
 
         // If we have a JSON string for the Job, process the App parameters.
-        $param_count = 0;
         if ($agave_json != null) {
             // Get the App template for this App. The job stores the App Label so
             // we use the label to look it up. This returns a JSON object in the form
@@ -772,7 +772,7 @@ class JobController extends Controller
             // as an admin user to get the same info.
             // getJob returns a JSON string, isAgaveError expects an object.
             if ($token == null || $agave->isAgaveError(json_decode($response))) {
-                Log::debug('JobContorller::getAgaveJobJSON - got an error');
+                Log::debug('JobContorller::getAgaveHistory - got an error');
                 $this_user = User::where('username', auth()->user()->username)->first();
                 if ($this_user->isAdmin()) {
                     $token = $agave->getAdminToken();
@@ -800,8 +800,8 @@ class JobController extends Controller
         if ($job != null && $job->agave_id != '') {
             $job_agave_id = $job->agave_id;
             // Get the user, the user's token, and job info
-            $user = User::where('username', auth()->user()->username)->first();
-            $token = $user->getToken();
+            $job_user = User::where('id', $job->user_id)->first();
+            $token = $job_user->getToken();
             if ($token != null) {
                 $response = $agave->getJob($job_agave_id, $token);
             }
@@ -810,7 +810,8 @@ class JobController extends Controller
             // getJob returns a JSON string, isAgaveError expects an object.
             if ($token == null || $agave->isAgaveError(json_decode($response))) {
                 Log::debug('JobContorller::getAgaveJobJSON - got an error');
-                if ($user->isAdmin()) {
+                $this_user = User::where('username', auth()->user()->username)->first();
+                if ($this_user->isAdmin()) {
                     $token = $agave->getAdminToken();
                     // If we can get the info, return it
                     if ($token != null) {
