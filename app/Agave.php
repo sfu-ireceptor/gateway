@@ -317,8 +317,6 @@ class Agave
 
     public function getAppTemplateByLabel($app_label)
     {
-        Log::debug('getAppTemplateByLabel: looking for ' . $app_label);
-
         // Return the app template for the given app label.
         foreach ($this->appTemplates as $app_tag => $app_info) {
             // Get this template's label and if it is the same we found it.
