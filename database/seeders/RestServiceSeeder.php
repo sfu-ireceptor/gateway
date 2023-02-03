@@ -152,10 +152,6 @@ class RestServiceSeeder extends Seeder
                 'logo' => '',
             ],
             [
-                'url' => 'https://stats-staging.ireceptor.org/airr/v1/',
-                'name' => 'Stats Demo',
-            ],
-            [
                 'url' => 'https://scireptor.dkfz.de/airr/v1/',
                 'name' => 'sciReptor',
                 'country' => 'Germany',
@@ -175,11 +171,6 @@ class RestServiceSeeder extends Seeder
                 'url' => 'http://secure.ireceptor.org/middleware/airr/v1/',
                 'name' => 'Secure IPA1',
                 'country' => 'Canada',
-                'logo' => 'ireceptor.png',            ],
-            [
-                'url' => 'http://turnkey-test2.ireceptor.org/airr/v2/',
-                'name' => 'ADC Turnkey 2 V2',
-                'country' => 'Canada',
                 'logo' => 'ireceptor.png',
             ],
             [
@@ -187,12 +178,6 @@ class RestServiceSeeder extends Seeder
                 'name' => 'NICD - South Africa',
                 'country' => 'South Africa',
                 'logo' => 'nicd.jpg',
-            ],
-            [
-                'url' => 'http://single-cell.ireceptor.org/airr/v1/',
-                'name' => 'Single Cell Repo',
-                'country' => 'Canada',
-                'logo' => 'ireceptor.png',
             ],
             [
                 'url' => 'https://agschwab.uni-muenster.de/airr/v1/',
