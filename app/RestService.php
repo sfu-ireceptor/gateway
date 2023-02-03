@@ -980,9 +980,6 @@ class RestService extends Model
     {
         Log::debug('RestService::sequences_summary()');
 
-        Log::debug('Filters:');
-        Log::debug($filters);
-
         // build list of repository ids to query
         $rest_service_id_list = [];
         foreach (self::findEnabled() as $rs) {

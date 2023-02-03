@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Jenssegers\Mongodb\Eloquent\Model;
 
 class QueryLog extends Model
@@ -227,7 +228,7 @@ class QueryLog extends Model
         $ql = self::create($t);
 
         Log::debug('Start node query ' . $ql->id . ' to ' . $path . ' with POST params:');
-        Log::debug($params);
+        Log::debug(Str::limit(json_encode($params), 250));
 
         return $ql->id;
     }
