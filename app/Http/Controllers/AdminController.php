@@ -360,6 +360,8 @@ class AdminController extends Controller
         $rs = RestService::find($rest_service_id);
         $username = auth()->user()->username;
 
+        $queue = 'admin';
+        $lj = new LocalJob($queue);
         $lj->user = $username;
         $lj->queue = 'admin';
         $lj->description = 'Sequence count for  ' . $rs->name;
@@ -379,7 +381,8 @@ class AdminController extends Controller
         $rs = RestService::find($rest_service_id);
         $username = auth()->user()->username;
 
-        $lj = new LocalJob();
+        $queue = 'admin';
+        $lj = new LocalJob($queue);
         $lj->user = $username;
         $lj->queue = 'admin';
         $lj->description = 'Clone count for  ' . $rs->name;
@@ -399,7 +402,8 @@ class AdminController extends Controller
         $rs = RestService::find($rest_service_id);
         $username = auth()->user()->username;
 
-        $lj = new LocalJob();
+        $queue = 'admin';
+        $lj = new LocalJob($queue);
         $lj->user = $username;
         $lj->queue = 'admin';
         $lj->description = 'Cell count for  ' . $rs->name;
