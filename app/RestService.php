@@ -1502,13 +1502,13 @@ class RestService extends Model
         $filter_object->statistics = $statistics_list;
 
         $filter_object_json = json_encode($filter_object);
-        Log::debug('Stats JSON request: ' . json_encode($filter_object, JSON_PRETTY_PRINT));
+        // Log::debug('Stats JSON request: ' . json_encode($filter_object, JSON_PRETTY_PRINT));
 
         $response = $client->request('POST', $url, [
             'body' => $filter_object_json,
         ]);
 
-        Log::debug('Stats JSON response: ' . $response->getBody());
+        // Log::debug('Stats JSON response: ' . $response->getBody());
 
         return $response->getBody();
     }
