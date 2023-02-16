@@ -9,6 +9,7 @@ use App\LocalJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
+use Carbon\Carbon;
 
 class UtilController extends Controller
 {
@@ -44,6 +45,8 @@ class UtilController extends Controller
             $already_running_deployment = Deployment::where('running', 1)->first();
         }
 
+        $start_time = Carbon::now();
+
         $deployment = new Deployment;
         $deployment->save();
 
@@ -77,5 +80,9 @@ class UtilController extends Controller
 
         $deployment->running = false;
         $deployment->save();
+
+        $end_time = Carbon::now();
+        $duration = $end_time->diffForHumans($start_time);
+        Log::info('Deployment duration: ' . $duration);
     }
 }
