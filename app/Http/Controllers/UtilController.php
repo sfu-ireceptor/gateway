@@ -59,6 +59,7 @@ class UtilController extends Controller
             $root_path = base_path();
             $process = new Process(['./util/scripts/deploy.sh']);
             $process->setWorkingDirectory($root_path);
+            $process->setTimeout(180);
 
             $process->run(function ($type, $buffer) {
                 echo $buffer;
