@@ -27,7 +27,6 @@ class TestController extends Controller
     public function getIndex(Request $request)
     {
         echo Str::limit(json_encode('fds'), 20);
-
         exit();
 
         $defaults = [];
