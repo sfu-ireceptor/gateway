@@ -34,7 +34,7 @@ MYSQL_DUMP_FILE=${TIME}_mysql.dump
 MYSQL_DATABASE="$DB_DATABASE"
 MYSQL_USER="$DB_USERNAME"
 MYSQL_PASSWORD="$DB_PASSWORD"
-sudo mysqldump -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE} > ${DUMP_FOLDER}/${MYSQL_DUMP_FILE}
+sudo mysqldump -u ${MYSQL_USER} -p${MYSQL_PASSWORD} --no-tablespaces ${MYSQL_DATABASE} > ${DUMP_FOLDER}/${MYSQL_DUMP_FILE}
 echo "Done"
 
 # delete old backups
