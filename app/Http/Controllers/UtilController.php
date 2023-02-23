@@ -17,7 +17,6 @@ class UtilController extends Controller
     public function updateAgaveStatus($id, $status)
     {
         Log::info('AGAVE job status update: job ' . $id . ' has status ' . $status);
-
         $lj = new LocalJob('agave-notifications');
 
         $lj->user = '[Agave]';
