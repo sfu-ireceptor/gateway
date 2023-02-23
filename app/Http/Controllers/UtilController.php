@@ -21,7 +21,7 @@ class UtilController extends Controller
         $lj = new LocalJob('agave-notifications');
         $lj->user = '[Agave]';
         $lj->description = 'Job ' . $id . ': ' . $status;
-        
+
         $lj->save();
 
         // ignore this status because it happens at the same time as FINISHED
