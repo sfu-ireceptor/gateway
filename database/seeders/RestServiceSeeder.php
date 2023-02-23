@@ -201,6 +201,10 @@ class RestServiceSeeder extends Seeder
                 'country' => 'Canada',
                 'logo' => 'ireceptor.png',
             ],
+            [
+                'url' => 'https://repository-staging.ireceptor.org/airr/v1/',
+                'name' => 'Staging Repository',
+            ],
         ];
 
         // if grouping is disabled, remove group code
