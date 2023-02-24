@@ -27,9 +27,7 @@ class TestController extends Controller
     public function getIndex(Request $request)
     {
         echo Str::limit(json_encode('fds'), 20);
-
         exit();
-
         $defaults = [];
         $defaults['base_uri'] = 'http://covid19-1.ireceptor.org/airr/v1/';
         $defaults['verify'] = false;    // accept self-signed SSL certificates

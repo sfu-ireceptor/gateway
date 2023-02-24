@@ -6,6 +6,7 @@ use App\Deployment;
 use App\Job;
 use App\Jobs\ProcessAgaveNotification;
 use App\LocalJob;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
@@ -16,10 +17,12 @@ class UtilController extends Controller
     public function updateAgaveStatus($id, $status)
     {
         Log::info('AGAVE job status update: job ' . $id . ' has status ' . $status);
-
         $lj = new LocalJob('agave-notifications');
+
         $lj->user = '[Agave]';
+
         $lj->description = 'Job ' . $id . ': ' . $status;
+
         $lj->save();
 
         // ignore this status because it happens at the same time as FINISHED
@@ -44,6 +47,8 @@ class UtilController extends Controller
             $already_running_deployment = Deployment::where('running', 1)->first();
         }
 
+        $start_time = Carbon::now();
+
         $deployment = new Deployment;
         $deployment->save();
 
@@ -59,6 +64,7 @@ class UtilController extends Controller
             $root_path = base_path();
             $process = new Process(['./util/scripts/deploy.sh']);
             $process->setWorkingDirectory($root_path);
+            $process->setTimeout(180);
 
             $process->run(function ($type, $buffer) {
                 echo $buffer;
@@ -77,5 +83,9 @@ class UtilController extends Controller
 
         $deployment->running = false;
         $deployment->save();
+
+        $end_time = Carbon::now();
+        $duration = $end_time->diffForHumans($start_time);
+        Log::info('Deployment duration: ' . $duration);
     }
 }
