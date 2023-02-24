@@ -350,14 +350,14 @@ function gateway_split_repertoire(){
     else
         ANALYSIS_TYPE=$5
     fi
-    local GATEWAY_SINGULARITY=gateway-singularity.sif
-    if [ -z "$6" ]; then
-        GATEWAY_SINGULARITY=gateway-singularity.sif
-    else
-        GATEWAY_SINGULARITY=$6
-    fi
     echo "GW-INFO: Analysis type = ${ANALYSIS_TYPE}"
-    echo "GW-INFO: Gateway singularity image = ${GATEWAY_SINGULARITY}"
+    #local GATEWAY_SINGULARITY=gateway-singularity.sif
+    #if [ -z "$6" ]; then
+    #    GATEWAY_SINGULARITY=gateway-singularity.sif
+    #else
+    #    GATEWAY_SINGULARITY=$6
+    #fi
+    #echo "GW-INFO: Gateway singularity image = ${GATEWAY_SINGULARITY}"
 
     # Unzip the iReceptor Gateway ZIP file into the working directory
     gateway_unzip ${ZIP_FILE} ${WORKING_DIR}
