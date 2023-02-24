@@ -140,7 +140,7 @@ function run_analysis()
     echo "IR-INFO: Running a Cell Repertoire Analysis with manifest ${manifest_file}"
 
     # Get a list of rearrangement files to process from the manifest.
-    local cell_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "cell_file"` )
+    local cell_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "cell_file"` )
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not process manifest file ${manifest_file}"
@@ -154,7 +154,7 @@ function run_analysis()
     local cell_file_count=${#cell_files[@]}
     local cell_file=${cell_files[0]}
     echo "IR-INFO:     Using cell file ${cell_file}"
-    local gex_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "expression_file"` )
+    local gex_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "expression_file"` )
     if [ ${#gex_files[@]} != 1 ]
     then
         echo "IR_ERROR: CellTypist cell analysis only works with a single expression file."
@@ -162,7 +162,7 @@ function run_analysis()
     fi
     local gex_file=${gex_files[0]}
     echo "IR-INFO:     Using gex file ${gex_file}"
-    local rearrangement_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
+    local rearrangement_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
     if [ ${#rearrangement_files[@]} != 1 ]
     then
         echo "IR_ERROR: CellTypist cell analysis only works with a single rearrangement file."
@@ -173,8 +173,8 @@ function run_analysis()
 
     # Check to see if we are processing a specific repertoire_id
     if [ "${repertoire_id}" != "NULL" ]; then
-        file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
-        title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
+        file_string=`python3 ${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
+        title_string="$(python3 ${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
     else
         file_string="total"
         title_string="Total"
@@ -195,12 +195,15 @@ function run_analysis()
     echo -n "IR-INFO: log1p normalizing ${gex_file} - "
     date
     mv ${output_directory}/${gex_file} ${output_directory}/${gex_file}.tmp.h5ad
-    singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
-        -B ${output_directory}:/data -B ${SCRIPT_DIR}:/localsrc \
-        ${SCRIPT_DIR}/${singularity_image} python \
-        /localsrc/h5ad-log1pnormalize.py\
-        /data/${gex_file}.tmp.h5ad \
-        /data/${gex_file} 
+    #singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
+    #    -B ${output_directory}:/data -B ${SCRIPT_DIR}:/localsrc \
+    #    ${SCRIPT_DIR}/${singularity_image} python \
+    #    /localsrc/h5ad-log1pnormalize.py\
+    #    /data/${gex_file}.tmp.h5ad \
+    #    /data/${gex_file} 
+    python3 ${GATEWAY_UTIL_DIR}/h5ad-log1pnormalize.py\
+        ${output_directory}/${gex_file}.tmp.h5ad \
+        ${output_directory}/${gex_file} 
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not log1p normalize the data"
@@ -211,12 +214,17 @@ function run_analysis()
     # graphs and output.
     echo -n "IR-INFO: Running CellTpist on ${gex_file} - "
     date
-    singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
-        -B ${output_directory}:/data -B ${SCRIPT_DIR}:/localsrc \
-        ${SCRIPT_DIR}/${singularity_image} \
-        python /localsrc/gateway-celltypist.py \
-        /data/${gex_file} \
-        /data \
+    #singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
+    #    -B ${output_directory}:/data -B ${SCRIPT_DIR}:/localsrc \
+    #    ${SCRIPT_DIR}/${singularity_image} \
+    #    python /localsrc/gateway-celltypist.py \
+    #    /data/${gex_file} \
+    #    /data \
+    #    ${repertoire_id}-annotated.h5ad \
+    #    ${title_string}
+    python3 ${GATEWAY_UTIL_DIR}/gateway-celltypist.py \
+        ${output_directory}/${gex_file} \
+        ${output_directory} \
         ${repertoire_id}-annotated.h5ad \
         ${title_string}
     if [ $? -ne 0 ]
@@ -281,10 +289,10 @@ function run_analysis()
     echo "IR-INFO: Done generating label file ${label_file}"
 
     # Remove the intermediate files generated for CellTypist
-    rm -f ${output_directory}/${CONTIG_PREFIX}.csv ${output_directory}/${CONTIG_PREFIX}_*
+    #rm -f ${output_directory}/${CONTIG_PREFIX}.csv ${output_directory}/${CONTIG_PREFIX}_*
 
     # We don't want to keep around the generated data files or the manifest file.
-    rm -f ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/${rearrangement_file} ${output_directory}/${manifest_file}
+    #rm -f ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/${rearrangement_file} ${output_directory}/${manifest_file}
 
     # done
     printf "IR-INFO: Done running Repertoire Analysis on ${cell_file} at $(date)\n"
@@ -327,17 +335,17 @@ echo "IR-INFO: Done ZIPing analysis results - $(date)"
 
 # We don't want the analysis files to remain - they are in the ZIP file
 echo "IR-INFO: Removing analysis output"
-rm -rf ${GATEWAY_ANALYSIS_DIR}
+#rm -rf ${GATEWAY_ANALYSIS_DIR}
 
 # We don't want to copy around the singularity image everywhere.
-rm -f ${singularity_image}
+#rm -f ${singularity_image}
 
 # We don't want the iReceptor Utilities to be part of the results.
-rm -rf ${GATEWAY_UTIL_DIR}
+#rm -rf ${GATEWAY_UTIL_DIR}
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
 echo "IR-INFO: Removing original ZIP file $ZIP_FILE"
-rm -f $ZIP_FILE
+#rm -f $ZIP_FILE
 
 # End
 printf "IR-INFO: DONE at $(date)\n\n"

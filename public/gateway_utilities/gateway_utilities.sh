@@ -598,7 +598,6 @@ function gateway_split_repertoire(){
         if [ ${ANALYSIS_TYPE} = "cell_file" ]
         then
             echo "GW-INFO: Splitting Expression file ${expression_file} by ${SPLIT_FIELD}"
-            echo "GW-INFO: Using ${GATEWAY_SINGULARITY} to split the file."
 
             # Split the GEX input file into N files one per repertoire, converting the
             # data from JSON to h5ad for downstream processing. Output goes in the
@@ -615,7 +614,7 @@ function gateway_split_repertoire(){
             #    'CellExpression' \
             #    ${SPLIT_FIELD}
 	    
-            python3 ${GATEWAY_UTIL_DIR}/gateway-airr-to-h5ad.py \
+            python3 ${GATEWAY_UTIL_DIR}/gateway-airr-to-h5ad.py -v \
                 ${expression_file} \
                 . \
                 'CellExpression' \
