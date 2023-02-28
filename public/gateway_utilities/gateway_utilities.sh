@@ -75,7 +75,7 @@ function gateway_unzip() {
     if [ $? -ne 0 ]
     then
         echo "GW-ERROR: Could not unzip ${ZIP_FILE} to ${WORKING_DIR}"
-        return
+        exit 1
     fi
 
     echo "GW-INFO: Extracting files finished at: `date`" 
