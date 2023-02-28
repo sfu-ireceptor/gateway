@@ -330,7 +330,6 @@ function gateway_split_repertoire(){
 #     $3 - iReceptor ZIP file
 #     $4 - Working directory
 #     $5 - Type of analysis from the manifest (rearrangement_file, clone_file, cell_file)
-#     $6 - Singularity image to use
 
     echo "GW-INFO: ========================================"
     echo -n "GW-INFO: Splitting AIRR Repertoires at "
@@ -351,13 +350,6 @@ function gateway_split_repertoire(){
         ANALYSIS_TYPE=$5
     fi
     echo "GW-INFO: Analysis type = ${ANALYSIS_TYPE}"
-    #local GATEWAY_SINGULARITY=gateway-singularity.sif
-    #if [ -z "$6" ]; then
-    #    GATEWAY_SINGULARITY=gateway-singularity.sif
-    #else
-    #    GATEWAY_SINGULARITY=$6
-    #fi
-    #echo "GW-INFO: Gateway singularity image = ${GATEWAY_SINGULARITY}"
 
     # Unzip the iReceptor Gateway ZIP file into the working directory
     gateway_unzip ${ZIP_FILE} ${WORKING_DIR}
@@ -603,22 +595,8 @@ function gateway_split_repertoire(){
             # data from JSON to h5ad for downstream processing. Output goes in the
             # current directory. Output files are named $repertoire_id.h5ad. 
             #
-            # The code is run in a singularity container so that we can ensure
-            # that all the requirements are present. 
-            #singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
-            #    -B ${PWD}:/data -B ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}:/localsrc \
-            #    ${GATEWAY_SINGULARITY} \
-            #    python3 /localsrc/gateway-airr-to-h5ad.py \
-            #    /data/${expression_file} \
-            #    /data \
-            #    'CellExpression' \
-            #    ${SPLIT_FIELD}
-	    
             python3 ${GATEWAY_UTIL_DIR}/gateway-airr-to-h5ad.py -v \
-                ${expression_file} \
-                . \
-                'CellExpression' \
-                ${SPLIT_FIELD}
+                ${expression_file} . 'CellExpression' ${SPLIT_FIELD}
             if [ $? -ne 0 ]
             then
                 echo "GW-ERROR: Cell split failed on file ${expression_file}"
