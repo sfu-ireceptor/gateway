@@ -201,7 +201,8 @@ function run_analysis()
     #    /localsrc/h5ad-log1pnormalize.py\
     #    /data/${gex_file}.tmp.h5ad \
     #    /data/${gex_file} 
-    python3 ${GATEWAY_UTIL_DIR}/h5ad-log1pnormalize.py\
+    ###python3 ${GATEWAY_UTIL_DIR}/h5ad-log1pnormalize.py\
+    python3 /opt/ireceptor/h5ad-log1pnormalize.py\
         ${output_directory}/${gex_file}.tmp.h5ad \
         ${output_directory}/${gex_file} 
     if [ $? -ne 0 ]
@@ -222,7 +223,8 @@ function run_analysis()
     #    /data \
     #    ${repertoire_id}-annotated.h5ad \
     #    ${title_string}
-    python3 ${GATEWAY_UTIL_DIR}/gateway-celltypist.py \
+    ### python3 ${GATEWAY_UTIL_DIR}/gateway-celltypist.py \
+    python3 /opt/ireceptor/gateway-celltypist.py \
         ${output_directory}/${gex_file} \
         ${output_directory} \
         ${repertoire_id}-annotated.h5ad \
