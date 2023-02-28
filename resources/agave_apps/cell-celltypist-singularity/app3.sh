@@ -31,12 +31,6 @@ AGAVE_JOB_MEMORY_PER_NODE=${AGAVE_JOB_MEMORY_PER_NODE}
 # this to gather iReceptor Gateway specific resources if needed.
 GATEWAY_URL="${ir_gateway_url}"
 
-# We pass a singularity image to get from the Gateway. This image is provided
-# on the Gateway because we only want to run singularity images that are approved
-# by the gateway.
-singularity_image="${singularity_image}"
-echo "IR-INFO: Singularity image = ${singularity_image}"
-
 #
 # Tapis App Inputs
 #
@@ -55,26 +49,13 @@ export JOB_ERROR=1
 ########################################################################
 # Done Tapis setup/processing.
 ########################################################################
-
 echo "IR-INFO: Using Gateway ${GATEWAY_URL}"
 
-
-# Get the iRecpetor Gateway utilities from the Gateway
-echo -n "IR-INFO: Downloading iReceptor Gateway Utilities from the Gateway - "
-date
+# Report where we get the Gateway utilities from
 GATEWAY_UTIL_DIR=${gateway_util_dir}
-#mkdir -p ${GATEWAY_UTIL_DIR}
-#pushd ${GATEWAY_UTIL_DIR} > /dev/null
-#wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" ${GATEWAY_URL}/gateway_utilities/
-#popd > /dev/null
-#echo -n "IR-INFO: Done downloading iReceptor Gateway Utilities - "
-#date
-echo "IR-INFO: Using Gateway Utilities from ${GATEWAY_UTIL_DIR}"
-#ln -s ${GATEWAY_UTIL_DIR}
-
+echo "IR-INFO: Using iReceptor Gateway Utilities from ${GATEWAY_UTIL_DIR}"
 
 # Load the iReceptor Gateway bash utility functions.
-#source ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/gateway_utilities.sh
 source ${GATEWAY_UTIL_DIR}/gateway_utilities.sh
 if [ $? -ne 0 ]
 then
@@ -91,17 +72,6 @@ if [ -z "${GATEWAY_ANALYSIS_DIR}" ]; then
         exit 1
 fi
 echo "IR-INFO: Done loading iReceptor Gateway Utilities"
-
-# Load any modules that are required by the App. 
-#module load singularity
-#module load scipy-stack
-
-# Get the singularity image from the Gateway
-#echo -n "IR-INFO: Downloading singularity image ${singularity_image} from the Gateway - "
-#date
-#gateway_get_singularity ${singularity_image} ${SCRIPT_DIR}
-#echo -n "IR-INFO: Done ownloading singularity image from the Gateway - "
-#date
 
 # The Gateway provides information about the download in the file info.txt
 INFO_FILE="info.txt"
@@ -185,7 +155,7 @@ function run_analysis()
     # TODO: Fix this, it should not be required.
     title_string=`echo ${title_string} | sed "s/[ ]//g"`
 
-    # Run the CellTypist pipeline within the singularity image on each rearrangement file provided.
+    # Run the CellTypist pipeline on each rearrangement file provided.
     echo "IR-INFO: Running CellTypist on $gex_file"
     echo "IR-INFO: Mapping ${PWD} to /data"
     echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
@@ -195,13 +165,6 @@ function run_analysis()
     echo -n "IR-INFO: log1p normalizing ${gex_file} - "
     date
     mv ${output_directory}/${gex_file} ${output_directory}/${gex_file}.tmp.h5ad
-    #singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
-    #    -B ${output_directory}:/data -B ${SCRIPT_DIR}:/localsrc \
-    #    ${SCRIPT_DIR}/${singularity_image} python \
-    #    /localsrc/h5ad-log1pnormalize.py\
-    #    /data/${gex_file}.tmp.h5ad \
-    #    /data/${gex_file} 
-    ###python3 ${GATEWAY_UTIL_DIR}/h5ad-log1pnormalize.py\
     python3 /opt/ireceptor/h5ad-log1pnormalize.py\
         ${output_directory}/${gex_file}.tmp.h5ad \
         ${output_directory}/${gex_file} 
@@ -215,15 +178,6 @@ function run_analysis()
     # graphs and output.
     echo -n "IR-INFO: Running CellTpist on ${gex_file} - "
     date
-    #singularity exec --cleanenv --env PYTHONNOUSERSITE=1 \
-    #    -B ${output_directory}:/data -B ${SCRIPT_DIR}:/localsrc \
-    #    ${SCRIPT_DIR}/${singularity_image} \
-    #    python /localsrc/gateway-celltypist.py \
-    #    /data/${gex_file} \
-    #    /data \
-    #    ${repertoire_id}-annotated.h5ad \
-    #    ${title_string}
-    ### python3 ${GATEWAY_UTIL_DIR}/gateway-celltypist.py \
     python3 /opt/ireceptor/gateway-celltypist.py \
         ${output_directory}/${gex_file} \
         ${output_directory} \
@@ -315,7 +269,7 @@ function run_analysis()
 #    - Run the analysis on each repertoire, calling run_analysis for each
 #    - Cleanup the intermediate files created by the split process.
 # run_analysis() is defined above.
-gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file" ${SCRIPT_DIR}/${singularity_image}
+gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file" 
 gateway_run_analysis ${INFO_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR} "cell_file"
 gateway_cleanup ${ZIP_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
@@ -338,9 +292,6 @@ echo "IR-INFO: Done ZIPing analysis results - $(date)"
 # We don't want the analysis files to remain - they are in the ZIP file
 echo "IR-INFO: Removing analysis output"
 #rm -rf ${GATEWAY_ANALYSIS_DIR}
-
-# We don't want to copy around the singularity image everywhere.
-#rm -f ${singularity_image}
 
 # We don't want the iReceptor Utilities to be part of the results.
 #rm -rf ${GATEWAY_UTIL_DIR}
