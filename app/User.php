@@ -24,6 +24,11 @@ class User extends Authenticatable
 
     protected $dates = ['token_expiration_date'];
 
+    public function isAdmin()
+    {
+        return $this->admin;
+    }
+
     public static function exists($username)
     {
         $user = self::where('username', $username)->first();
@@ -68,8 +73,4 @@ class User extends Authenticatable
         return $user;
     }
 
-    public function isAdmin()
-    {
-        return $this->admin;
-    }
 }
