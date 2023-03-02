@@ -2,10 +2,8 @@
 
 namespace App;
 
-use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
@@ -29,6 +27,7 @@ class User extends Authenticatable
     public static function exists($username)
     {
         $user = self::where('username', $username)->first();
+
         return $user != null;
     }
 
@@ -62,9 +61,10 @@ class User extends Authenticatable
         $user->email = $email;
 
         $user->username = $user->generateUsername();
-        $user->password= Hash::make($password);
+        $user->password = Hash::make($password);
 
         $user->save();
+
         return $user;
     }
 
