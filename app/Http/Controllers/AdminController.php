@@ -260,27 +260,22 @@ class AdminController extends Controller
         $firstName = $request->get('first_name');
         $lastName = $request->get('last_name');
         $email = $request->get('email');
+        $password = str_random(24);
 
-        // create Agave account
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $username = $agave->generateUsername($firstName, $lastName, $token);
-        $u = $agave->createUser($token, $username, $firstName, $lastName, $email);
+        $u = User::add($firstName, $lastName, $email, $password);
 
         $t = [];
         $t['login_link'] = config('app.url') . '/login';
-        $t['first_name'] = $u['first_name'];
-        $t['username'] = $u['username'];
-        $t['password'] = $u['password'];
+        $t['first_name'] = $u->first_name;
+        $t['username'] = $u->username;
+        $t['password'] = $password;
 
         // email credentials
         Mail::send(['text' => 'emails.auth.accountCreated'], $t, function ($message) use ($u) {
-            $message->to($u['email'])->subject('iReceptor account');
+            $message->to($u->email)->subject('iReceptor account');
         });
 
-        Log::info('An account has been created for user ' . $t['username'] . '. Pwd: ' . $t['password']);
-
-        return redirect('admin/users')->with('notification', 'The user ' . $t['username'] . ' has been created. An email with credentials was sent. Remember to add the user to the iReceptor services.');
+        return redirect('admin/users')->with('notification', 'User ' . $u->username . ' has been created. An email with credentials was sent.');
     }
 
     public function getEditUser($username)

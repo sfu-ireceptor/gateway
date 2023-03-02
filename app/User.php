@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -25,99 +26,46 @@ class User extends Authenticatable
 
     protected $dates = ['token_expiration_date'];
 
-    /**
-     * Get the token for the user.
-     *
-     * @param void
-     * @return string
-     */
-    public function getToken()
+    public static function exists($username)
     {
-        // Check to see if we are close to token expiry
-        // Expiry threshold is 30 minutes
-        $expiry_threshold_min = 30;
-        $now = Carbon::now();
-        $expiry_threshold = Carbon::now()->addMinutes($expiry_threshold_min);
-        Log::debug('User::getToken: user = ' . $this->username);
-        Log::debug('User::getToken: now = ' . $now);
-        Log::debug('User::getToken: expiry threshold = ' . $expiry_threshold);
-        Log::debug('User::getToken: token expiration = ' . $this->token_expiration_date);
-        // If we are not close to expiry (within threshold), just return the
-        // current token.
-        if ($this->token_expiration_date->gt($expiry_threshold)) {
-            Log::debug('User::getToken: No refresh required');
-
-            return $this->password;
-        }
-
-        // If we are within an hour, then request a new token and stores
-        // it in the local password field.
-        Log::debug('User::getToken: Requesting a new token');
-        $agave = new Agave;
-        $agave_token_info = $agave->renewToken($this->refresh_token);
-        if ($agave_token_info != null) {
-            // update the token
-            $this->updateToken($agave_token_info);
-
-            // Return the new password
-            return $this->password;
-        } else {
-            return null;
-        }
+        $user = self::where('username', $username)->first();
+        return $user != null;
     }
 
-    /**
-     * Get the refresh token for the user.
-     *
-     * @param void
-     * @return string
-     */
-    public function getRefreshToken()
+    public function generateUsername()
     {
-        // The token is saved in the password field.
-        return $this->refresh_token;
+        $first_name_stripped = str_replace(' ', '', $this->first_name);
+        $last_name_stripped = str_replace(' ', '', $this->last_name);
+        $username = strtolower($first_name_stripped) . '_' . strtolower($last_name_stripped);
+        $username = iconv('UTF-8', 'ASCII//TRANSLIT', $username); // remove diacritics
+
+        // if username already exists, append number
+        if (self::exists($username)) {
+            $i = 2;
+            $alternate_username = $username . $i;
+            while (self::exists($alternate_username)) {
+                $i++;
+                $alternate_username = $username . $i;
+            }
+            $username = $alternate_username;
+        }
+
+        return $username;
     }
 
-    /**
-     * Update the token state for the user.
-     *
-     * @param  object  $agave_token_info
-     * @return void
-     *
-     * The Agave token info is of the form:
-     * {
-     *  "scope":"default","token_type":"bearer",
-     *  "expires_in":14400,
-     *  "refresh_token":"6256416cf0bfbd4163ff7e758ba22d93",
-     *  "access_token":"873f7d1d9333a935ca4e3f487da7e34"
-     * }
-     *
-     * We want to save some of this state for the user.
-     */
-    public function updateToken($agave_token_info)
+    public static function add($first_name, $last_name, $email, $password)
     {
+        $user = new User();
 
-        // token
-        $token = $agave_token_info->access_token;
-        $this->password = $token;
+        $user->first_name = $first_name;
+        $user->last_name = $last_name;
+        $user->email = $email;
 
-        // refresh token
-        $refreshToken = $agave_token_info->refresh_token;
-        $this->refresh_token = $refreshToken;
+        $user->username = $user->generateUsername();
+        $user->password= Hash::make($password);
 
-        // token expiration date
-        $tokenExpirationDate = new Carbon();
-        $tokenExpirationDate->addSeconds($agave_token_info->expires_in);
-        $this->token_expiration_date = $tokenExpirationDate;
-
-        // Save the state
-        $this->save();
-
-        Log::debug('User::updateToken(' . $this->username . ') - access_token = ' . $this->password);
-        Log::debug('User::updateToken(' . $this->username . ') - refresh_token = ' . $this->refresh_token);
-        Log::debug('User::updateToken(' . $this->username . ') - expiration_date = ' . $this->token_expiration_date);
-        // Return the token, stored as the user password.
-        return $this->password;
+        $user->save();
+        return $user;
     }
 
     public function isAdmin()
