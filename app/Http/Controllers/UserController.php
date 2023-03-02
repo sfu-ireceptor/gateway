@@ -8,13 +8,12 @@ use App\Sample;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -59,11 +58,12 @@ class UserController extends Controller
     {
         $credentials = $request->only('username', 'password');
 
-        if ( ! Auth::attempt($credentials)) {
-            return redirect()->back()->withErrors(["Invalid credentials"]);
+        if (! Auth::attempt($credentials)) {
+            return redirect()->back()->withErrors(['Invalid credentials']);
         }
 
         $request->session()->regenerate();
+
         return redirect()->intended('home');
     }
 
