@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -55,53 +57,13 @@ class UserController extends Controller
 
     public function postLogin(Request $request)
     {
-        $username = $request->input('username');
-        $password = $request->input('password');
+        $credentials = $request->only('username', 'password');
 
-        // if authentication is enabled
-        if (config('ireceptor.auth')) {
-            // try to get Agave OAuth token
-            $agave = new Agave;
-            $agave_token_info = $agave->getTokenForUser($username, $password);
-
-            // if fail -> display form with error
-            if ($agave_token_info == null) {
-                return redirect()->back()->withErrors(['Invalid credentials']);
-            }
-
-            // create user in local DB if necessary
-            $user = User::where('username', $username)->first();
-            if ($user == null) {
-                // get user info from Agave
-                $token = $agave->getAdminToken();
-                $u = $agave->getUser($username, $token);
-                $u = $u->result;
-
-                // create user
-                $user = new User();
-
-                $user->username = $username;
-                $user->first_name = $u->first_name;
-                $user->last_name = $u->last_name;
-                $user->email = $u->email;
-
-                $user->save();
-            }
-
-            // save Agave OAuth token in local DB
-            Log::debug('****** UserController::PostLogin - updating token for ' . $username);
-            Log::debug('****** UserController::PostLogin - access_token = ' . $agave_token_info->access_token . ', refresh_token = ' . $agave_token_info->refresh_token);
-            $user->updateToken($agave_token_info);
-        } else {
-            $user = User::where('username', $username)->first();
-            if ($user == null) {
-                return redirect()->back()->withErrors(["User doesn't exist"]);
-            }
+        if ( ! Auth::attempt($credentials)) {
+            return redirect()->back()->withErrors(["Invalid credentials"]);
         }
 
-        // log user in
-        auth()->login($user);
-
+        $request->session()->regenerate();
         return redirect()->intended('home');
     }
 
