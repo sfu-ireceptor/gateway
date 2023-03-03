@@ -169,7 +169,6 @@ class UserController extends Controller
     public function getForgotPassword()
     {
         return view('user/forgotPassword');
-        // return view('auth/passwords/reset');
     }
 
     public function postForgotPassword(Request $request)
@@ -191,19 +190,18 @@ class UserController extends Controller
         }
 
         $email = $request->input('email');
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $user = $agave->getUserWithEmail($email, $token);
+
+        $user = User::where('email', $email)->first();
         if ($user == null) {
             $request->flash();
 
-            return redirect()->back()->withErrors(['email' => 'Sorry, we could not find an iReceptor user with this email address.']);
+            return redirect()->back()->withErrors(['email' => 'Sorry, there\'s no user with this email address. Make sure to enter the email you registered with.']);
         }
 
         // generate token
         $hashKey = config('app.key');
         $token = hash_hmac('sha256', Str::random(40), $hashKey);
-        Log::debug('Token: ' . $token);
+        Log::debug('Forgotten password token: ' . $token);
 
         // add token to DB
         $table = 'password_resets';
@@ -245,30 +243,10 @@ class UserController extends Controller
             return response()->view('error', $data, 401);
         }
 
-        // find user
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        // echo $entry->email;die();
-        $agave_user = $agave->getUserWithEmail($entry->email, $token);
+        $user = User::where('email', $entry->email)->first();
 
-        // update user passord in Agave
         $new_password = str_random(24);
-        $t = $agave->updateUser($token, $agave_user->username, $agave_user->first_name, $agave_user->last_name, $agave_user->email, $new_password);
-
-        Log::debug('New password: ' . $new_password);
-
-        // create user in local DB if necessary
-        $user = User::where('username', $agave_user->username)->first();
-        if ($user == null) {
-            $user = new User();
-        }
-
-        // update user info in local DB
-        $user->username = $agave_user->username;
-        $user->first_name = $agave_user->first_name;
-        $user->last_name = $agave_user->last_name;
-        $user->email = $agave_user->email;
-
+        $user->password = Hash::make($user->password);
         $user->save();
 
         // log user in

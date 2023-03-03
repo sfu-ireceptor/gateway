@@ -18,7 +18,7 @@
 	<div class="row">
 
 		<div class="col-md-4">
-			<p>No worries, we'll email you a link to reset it (to make sure it's you).</p>
+			<p>We'll email you a link to reset it.</p>
 			{{ Form::open(array('url' => 'user/forgot-password', 'role' => 'form')) }}
 			    <div class="form-group {{ $errors->first('current_password') ? 'has-error' : ''}}">
 					{{ Form::label('email', 'Email') }} <span class="error">{{ $errors->first('email') }}</span>
