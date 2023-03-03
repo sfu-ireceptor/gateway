@@ -148,7 +148,7 @@ class UserController extends Controller
     public function getChangePersonalInfo()
     {
         $user = Auth::user();
-        
+
         $data = [];
         $data['first_name'] = $user->first_name;
         $data['last_name'] = $user->last_name;
@@ -182,7 +182,7 @@ class UserController extends Controller
         $user->first_name = $request->input('first_name');
         $user->last_name = $request->input('last_name');
         $user->email = $request->input('email');
-        $user->save();        
+        $user->save();
 
         return redirect('/user/account')->with('notification', 'Personal information was successfully chaged.');
     }
