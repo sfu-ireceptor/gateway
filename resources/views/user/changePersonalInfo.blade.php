@@ -1,11 +1,11 @@
 @extends('template')
 
-@section('title', 'Edit ' . $username)
+@section('title', 'Change Personal Info')
 
 @section('content')
 <div class="container">
 	
-	<h1>Change personal info</h1>
+	<h1>Change Personal Info</h1>
 
 	@if (isset($notification))
 	<div class="alert alert-warning alert-dismissible" role="alert">
@@ -19,7 +19,6 @@
 
 		<div class="col-md-4">
 			{{ Form::open(array('url' => '/user/change-personal-info', 'role' => 'form')) }}
-				<input type="hidden" name="username" value="{{ $username }}">
 
 			    <div class="form-group {{ $errors->first('first_name') ? 'has-error' : ''}}">
 					{{ Form::label('first_name', 'First Name') }} <span class="error">{{ $errors->first('first_name') }}</span>

@@ -136,12 +136,7 @@ class UserController extends Controller
 
     public function getAccount()
     {
-        $username = auth()->user()->username;
-
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $l = $agave->getUser($username, $token);
-        $user = $l->result;
+        $user = Auth::user();
 
         $data = [];
         $data['user'] = $user;
@@ -152,18 +147,12 @@ class UserController extends Controller
 
     public function getChangePersonalInfo()
     {
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-
-        $username = auth()->user()->username;
-        $l = $agave->getUser($username, $token);
-        $l = $l->result;
-
+        $user = Auth::user();
+        
         $data = [];
-        $data['username'] = $l->username;
-        $data['first_name'] = $l->first_name;
-        $data['last_name'] = $l->last_name;
-        $data['email'] = $l->email;
+        $data['first_name'] = $user->first_name;
+        $data['last_name'] = $user->last_name;
+        $data['email'] = $user->email;
         $data['notification'] = session('notification');
 
         return view('user/changePersonalInfo', $data);
@@ -173,7 +162,6 @@ class UserController extends Controller
     {
         // validate form
         $rules = [
-            'username' => 'required',
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required|email|unique:user,username',
@@ -190,14 +178,11 @@ class UserController extends Controller
             return redirect('/user/change-personal-info')->withErrors($validator);
         }
 
-        $username = auth()->user()->username;
-        $firstName = $request->input('first_name');
-        $lastName = $request->input('last_name');
-        $email = $request->input('email');
-
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $t = $agave->updateUser($token, $username, $firstName, $lastName, $email);
+        $user = Auth::user();
+        $user->first_name = $request->input('first_name');
+        $user->last_name = $request->input('last_name');
+        $user->email = $request->input('email');
+        $user->save();        
 
         return redirect('/user/account')->with('notification', 'Personal information was successfully chaged.');
     }
