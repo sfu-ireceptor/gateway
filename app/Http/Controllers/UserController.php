@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -84,17 +85,6 @@ class UserController extends Controller
 
     public function postChangePassword(Request $request)
     {
-        // custom form validation rule to check user's current password
-        Validator::extend('current_password', function ($field, $value, $parameters) {
-            $username = auth()->user()->username;
-            $password = $value;
-
-            $agave = new Agave;
-            $t = $agave->getTokenForUser($username, $password);
-
-            return $t != null;
-        });
-
         // validate form
         $rules = [
             'current_password' => 'required|current_password',
@@ -105,8 +95,8 @@ class UserController extends Controller
         $messages = [
             'required' => 'Required.',
             'min' => 'Must have at least :min characters.',
-            'same' => 'Didn\'t match',
-            'current_password' => 'Invalid',
+            'same' => 'Didn\'t match.',
+            'current_password' => 'Invalid.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -116,20 +106,9 @@ class UserController extends Controller
             return redirect('user/change-password')->withErrors($validator);
         }
 
-        $username = auth()->user()->username;
-
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $l = $agave->getUser($username, $token);
-        $user = $l->result;
-
-        $first_name = $user->first_name;
-        $last_name = $user->last_name;
-        $email = $user->email;
-
-        $password = $request->input('password');
-
-        $t = $agave->updateUser($token, $username, $first_name, $last_name, $email, $password);
+        $user = Auth::user();
+        $user->password = Hash::make($request->input('password'));
+        $user->save();
 
         return redirect('user/account')->with('notification', 'Your password was successfully changed.');
     }
