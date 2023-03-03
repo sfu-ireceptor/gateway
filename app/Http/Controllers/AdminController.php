@@ -173,37 +173,9 @@ class AdminController extends Controller
         return redirect('admin/users')->with('notification', 'News was successfully deleted.');
     }
 
-    public function getUsers($sort = 'create_time')
+    public function getUsers($sort = 'created_at')
     {
-        // retrieve users from Agave
-        $agave = new Agave;
-        $token = auth()->user()->password;
-        $l = $agave->getUsers($token);
-
-        // fetch complementary user information from our local database
-        $db_users = [];
-        foreach (User::all() as $user) {
-            $db_users[$user->username] = $user;
-        }
-
-        // add complementary user information to user list
-        foreach ($l as $u) {
-            $u->updated_at = '';
-            $u->admin = false;
-            $u->stats_popup_count = 0;
-
-            if (isset($db_users[$u->username])) {
-                $db_user = $db_users[$u->username];
-                $u->updated_at = $db_user->updated_at;
-                $u->admin = $db_user->admin;
-                $u->stats_popup_count = $db_user->stats_popup_count;
-            }
-        }
-
-        // sort by creation date desc
-        usort($l, function ($a, $b) use ($sort) {
-            return strcmp($b->{$sort}, $a->{$sort});
-        });
+        $l = User::orderByDesc('created_at')->get();
 
         $data = [];
         $data['notification'] = session()->get('notification');
@@ -212,17 +184,9 @@ class AdminController extends Controller
         return view('user/list', $data);
     }
 
-    public function getUsers2($sort = 'create_time')
+    public function getUsers2($sort = 'created_at')
     {
-        // retrieve users from Agave
-        $agave = new Agave;
-        $token = auth()->user()->password;
-        $l = $agave->getUsers($token);
-
-        // sort by creation date desc
-        usort($l, function ($a, $b) use ($sort) {
-            return strcmp($b->{$sort}, $a->{$sort});
-        });
+        $l = User::orderByDesc('created_at')->get();
 
         $data = [];
         $data['l'] = $l;

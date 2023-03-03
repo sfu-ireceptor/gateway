@@ -22,8 +22,6 @@
 		</a>
 	</p>
 
-
-
 	<div class="row">
 		<div class="col-md-4">
 
@@ -38,8 +36,8 @@
 				<tbody>
 					@foreach ($l as $t)
 						<tr>
-							<td class="text-muted text-nowrap" title="{{ Carbon\Carbon::createFromFormat('YmdGisZ', $t->create_time)->format('M j, Y') }}">
-								{{ Carbon\Carbon::createFromFormat('YmdGisZ', $t->create_time)->format('M d, Y') }}
+							<td class="text-muted text-nowrap" title="{{ human_date_time($t->created_at, 'M j, Y') }}">
+								{{ human_date_time($t->created_at, 'M j, Y') }}
 							</td>			
 							<td class="text-nowrap">
 								{{ $t->first_name }}
