@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Agave;
 use App\News;
 use App\Sample;
 use App\User;
