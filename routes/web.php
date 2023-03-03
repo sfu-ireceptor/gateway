@@ -156,7 +156,7 @@ Route::middleware('auth')->group(function () {
         Route::get('users2/{sort?}', 'AdminController@getUsers2');
         Route::get('add-user', 'AdminController@getAddUser');
         Route::post('add-user', 'AdminController@postAddUser');
-        Route::get('edit-user/{username}', 'AdminController@getEditUser');
+        Route::get('edit-user/{id}', 'AdminController@getEditUser');
         Route::post('edit-user', 'AdminController@postEditUser');
         Route::get('delete-user/{username}', 'AdminController@getDeleteUser');
         Route::get('samples/update-cache', 'AdminController@getUpdateSampleCache');

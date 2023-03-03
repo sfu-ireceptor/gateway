@@ -41,7 +41,7 @@
 								{{ human_date_time($t->created_at, 'M Y') }}
 							</td>			
 							<td class="text-nowrap">
-								<a href="/admin/edit-user/{{ $t->username }}">{{ $t->first_name }} {{ $t->last_name }}</a>
+								<a href="/admin/edit-user/{{ $t->id }}">{{ $t->first_name }} {{ $t->last_name }}</a>
 								/
 								{{ $t->username }}
 								@if ($t->admin)

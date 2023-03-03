@@ -242,19 +242,15 @@ class AdminController extends Controller
         return redirect('admin/users')->with('notification', 'User ' . $u->username . ' has been created. An email with credentials was sent.');
     }
 
-    public function getEditUser($username)
+    public function getEditUser($id)
     {
-        $agave = new Agave;
-        $token = auth()->user()->password;
-
-        $l = $agave->getUser($username, $token);
-        $l = $l->result;
+        $user = User::find($id);
 
         $data = [];
-        $data['username'] = $l->username;
-        $data['first_name'] = $l->first_name;
-        $data['last_name'] = $l->last_name;
-        $data['email'] = $l->email;
+        $data['id'] = $id;
+        $data['first_name'] = $user->first_name;
+        $data['last_name'] = $user->last_name;
+        $data['email'] = $user->email;
 
         return view('user/edit', $data);
     }
@@ -263,7 +259,7 @@ class AdminController extends Controller
     {
         // validate form
         $rules = [
-            'username' => 'required',
+            'id' => 'required',
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required|email|unique:user,username',
@@ -276,22 +272,18 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails()) {
             $request->flash();
-            $username = $request->get('username');
+            $id = $request->get('id');
 
-            return redirect('admin/edit-user/' . $username)->withErrors($validator);
+            return redirect('admin/edit-user/' . $id)->withErrors($validator);
         }
 
-        $username = $request->get('username');
-        $firstName = $request->get('first_name');
-        $lastName = $request->get('last_name');
-        $email = $request->get('email');
+        $user = User::find($request->get('id'));
+        $user->first_name = $request->get('first_name');
+        $user->last_name = $request->get('last_name');
+        $user->email = $request->get('email');
+        $user->save();
 
-        // create Agave account
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $t = $agave->updateUser($token, $username, $firstName, $lastName, $email);
-
-        return redirect('admin/users')->with('notification', 'Modifications for user ' . $username . ' were successfully saved.');
+        return redirect('admin/users')->with('notification', 'Modifications for ' . $user->first_name . ' ' . $user->lastName . ' were successfully saved.');
     }
 
     public function getDeleteUser($username)
