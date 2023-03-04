@@ -3,7 +3,6 @@
 # 
 
 # Get the script directory where all the code is.
-SCRIPT_DIR=`pwd`
 SCRIPT_DIR=${_tapisExecSystemExecDir}
 echo "IR-INFO: Running job from ${SCRIPT_DIR}"
 ls /
@@ -42,9 +41,6 @@ if [ -z "${download_file}" ]; then
 else
         ZIP_FILE=${download_file}
 fi
-
-# If you want to tell Tapis that the job failed
-export JOB_ERROR=1
 
 ########################################################################
 # Done Tapis setup/processing.
