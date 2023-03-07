@@ -205,6 +205,11 @@ class RestServiceSeeder extends Seeder
                 'url' => 'https://repository-staging.ireceptor.org/airr/v1/',
                 'name' => 'Staging Repository',
             ],
+            [
+                'url' => 'https://mitmynid.sytes.net:59443/airr/v1/',
+                'name' => 'Mitmynid',
+                'country' => 'Portugal',
+            ],
         ];
 
         // if grouping is disabled, remove group code
