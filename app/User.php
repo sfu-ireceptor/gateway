@@ -74,18 +74,18 @@ class User extends Authenticatable
         return $user;
     }
 
-
-    public static function parseTapisUsersLDIF($filepath) {
+    public static function parseTapisUsersLDIF($filepath)
+    {
         // it's slow because of the password hashing
         ini_set('max_execution_time', 180);
 
         $l = parse_ldif_file($filepath);
         foreach ($l as $t) {
-            if(isset($t['uid'])) {
+            if (isset($t['uid'])) {
                 $username = $t['uid'];
                 $user = self::where('username', $username)->first();
 
-                if($user == null) {
+                if ($user == null) {
                     Log::warn('User ' . $username . ' did not exist in local database.');
 
                     $user = new User();
@@ -96,22 +96,22 @@ class User extends Authenticatable
                     $user->password = '';
                 }
 
-                if(isset($t['mail'])) {
-                    $user->email  = $t['mail'];
+                if (isset($t['mail'])) {
+                    $user->email = $t['mail'];
                 }
 
-                if(isset($t['givenname'])) {
+                if (isset($t['givenname'])) {
                     $user->first_name = $t['givenname'];
                 }
 
-                if(isset($t['sn'])) {
+                if (isset($t['sn'])) {
                     $user->last_name = $t['sn'];
                 }
 
-                if(isset($t['userpassword'])) {
-                    $user->password= Hash::make(base64_decode($t['userpassword']));
+                if (isset($t['userpassword'])) {
+                    $user->password = Hash::make(base64_decode($t['userpassword']));
                 }
-            
+
                 $user->save();
             }
         }
