@@ -9,6 +9,7 @@ use App\Job;
 use App\RestService;
 use App\RestServiceGroup;
 use App\Sample;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -26,6 +27,39 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
+
+        // dd(getcwd());
+        User::parseTapisUsersLDIF('../test3/tenantirec_20230224.ldif');
+
+        die();
+        // $u = new User('jj', 'kk', 'fdsfs@gmail.com');
+        echo "ok";
+        User::add('jj', 'kk', 'fdsfs@gmail.com');
+        // echo User::exists('titi2');
+
+
+        // echo Hash::make('jlkjkljl');
+        die();
+        $user = new \App\User();
+        $user->password = Hash::make('pwd');
+        $user->email = 'the-email@example.com';
+        $user->username = 'scott_summers';
+        $user->first_name = 'Scott';
+        $user->last_name = 'Summers';
+        $user->save();
+        die();
+
+        // echo "toto";
+        $h = Hash::make('jjjj');
+        if (Hash::check('jjjj', $h)) {
+            echo "ok";
+        }
+        else {
+            echo "not ok!";
+        }
+
+
+        die();
         echo Str::limit(json_encode('fds'), 20);
         exit();
         $defaults = [];
