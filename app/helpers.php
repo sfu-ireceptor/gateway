@@ -425,12 +425,13 @@ if (! function_exists('object_to_json_for_html')) {
 // parse LDIF file into an array
 // from chat.openai.com, tweaked
 if (! function_exists('parse_ldif_file')) {
-    function parse_ldif_file($filepath) {
+    function parse_ldif_file($filepath)
+    {
         $file = fopen($filepath, 'r');
 
-        $entries = array();
+        $entries = [];
 
-        $entry = array();
+        $entry = [];
 
         while ($line = fgets($file)) {
             $line = trim($line);
@@ -448,23 +449,23 @@ if (! function_exists('parse_ldif_file')) {
             // Check if this is the start of a new entry
             if (strpos($line, 'dn:') === 0) {
                 // If this is the start of a new entry, add the previous entry to the entries array
-                if (!empty($entry)) {
+                if (! empty($entry)) {
                     $entries[] = $entry;
                 }
 
                 // Reset the entry array for the new entry
-                $entry = array();
+                $entry = [];
             }
 
             // Parse the current line and add it to the current entry array
-            list($key, $value) = explode(':', $line, 2);
+            [$key, $value] = explode(':', $line, 2);
             $key = strtolower($key);
             $value = trim($value);
             $entry[$key] = $value;
         }
 
         // Add the final entry to the entries array
-        if (!empty($entry)) {
+        if (! empty($entry)) {
             $entries[] = $entry;
         }
 
@@ -475,4 +476,3 @@ if (! function_exists('parse_ldif_file')) {
         return $entries;
     }
 }
-
