@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable
 {
@@ -71,5 +72,48 @@ class User extends Authenticatable
         $user->save();
 
         return $user;
+    }
+
+
+    public static function parseTapisUsersLDIF($filepath) {
+        // it's slow because of the password hashing
+        ini_set('max_execution_time', 180);
+
+        $l = parse_ldif_file($filepath);
+        foreach ($l as $t) {
+            if(isset($t['uid'])) {
+                $username = $t['uid'];
+                $user = self::where('username', $username)->first();
+
+                if($user == null) {
+                    Log::warn('User ' . $username . ' did not exist in local database.');
+
+                    $user = new User();
+                    $user->username = $username;
+                    $user->email = '';
+                    $user->first_name = '';
+                    $user->last_name = '';
+                    $user->password = '';
+                }
+
+                if(isset($t['mail'])) {
+                    $user->email  = $t['mail'];
+                }
+
+                if(isset($t['givenname'])) {
+                    $user->first_name = $t['givenname'];
+                }
+
+                if(isset($t['sn'])) {
+                    $user->last_name = $t['sn'];
+                }
+
+                if(isset($t['userpassword'])) {
+                    $user->password= Hash::make(base64_decode($t['userpassword']));
+                }
+            
+                $user->save();
+            }
+        }
     }
 }
