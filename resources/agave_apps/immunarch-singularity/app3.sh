@@ -123,7 +123,7 @@ function run_analysis()
     pwd
 
     # Get a list of rearrangement files to process from the manifest.
-    local array_of_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
+    local array_of_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not process manifest file ${manifest_file}"
@@ -131,12 +131,11 @@ function run_analysis()
     fi
     echo "IR-INFO:     Using files ${array_of_files[@]}"
 
-
     # Check to see if we are processing a specific repertoire_id
     if [ "${repertoire_id}" != "Total" ]; then
         # Set the R program if we are doing a repertoire by repertoire analysis.
         r_program='immunarch.R'
-        title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
+        title_string="$(python3 ${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
     else
         # Set the R program if we are doing a comparative analysis.
         r_program='immunarch_group.R'
@@ -152,10 +151,10 @@ function run_analysis()
     mkdir ${PWD}/${output_directory}/data
     for filename in "${array_of_files[@]}"; do
         echo "IR-INFO: Running ImmunArch on $filename"
-	    echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
-	    echo "IR-INFO: Mapping ${PWD} to /data"
+        echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
+	echo "IR-INFO: Mapping ${PWD} to /data"
         echo "IR-INFO: Input data = /data/${output_directory}/data"
-	    echo "IR-INFO: Storing output in /data/${output_directory}"
+	echo "IR-INFO: Storing output in /data/${output_directory}"
 
         # Immunarch is very permissive, it tries to process everything in the directory.
         # We want it only to process the data files, so we create a temporary directory
@@ -163,8 +162,7 @@ function run_analysis()
         mv ${PWD}/${output_directory}/${filename} ${PWD}/${output_directory}/data/${filename}
 
 	# Run ImmunArch
-        #singularity exec -e -B ${PWD}:/data -B ${SCRIPT_DIR}:/localsrc ${SCRIPT_DIR}/${singularity_image} Rscript /localsrc/${r_program} /data/${output_directory}/data /data/${output_directory}
-        Rscript ${SCRIPT_DIR}/${r_program} ${PWD}/${output_directory}/data ${PWD}/${output_directory}
+        Rscript /opt/ireceptor/${r_program} ${PWD}/${output_directory}/data ${PWD}/${output_directory}
         if [ $? -ne 0 ]
         then
             echo "IR-ERROR: Immunarch failed on file ${output_directory}"
