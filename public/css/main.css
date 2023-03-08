@@ -1160,6 +1160,17 @@ fieldset[disabled] .btn-sequences.focus {
 	margin-bottom: 0;
 }
 
+.announcement {
+	text-align: center;
+	font-size: 16px;
+	margin-top: -15px;
+}
+
+.announcement a {
+	margin-left: 10px;
+	font-size: 16px;
+}
+
 .quick_search_link {
 	margin-top: 55px;
 }
