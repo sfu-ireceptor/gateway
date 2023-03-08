@@ -1164,6 +1164,10 @@ fieldset[disabled] .btn-sequences.focus {
 	text-align: center;
 	font-size: 16px;
 	margin-top: -15px;
+	background-color: #f4e0ce;
+	border-color: #f4a45a;
+	color: black;
+	padding-top: 20px;
 }
 
 .announcement a {

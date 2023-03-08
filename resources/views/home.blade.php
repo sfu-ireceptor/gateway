@@ -6,7 +6,7 @@
 <div class="container home_container">
 
 <div class="alert alert-info announcement" role="alert">
-	Help us to make the gateaway more useful and relevant to you.
+	Help us make the iReceptor Gateway more useful and relevant to you.
 	<a  class="btn btn-success external"  target="_blank" role="button" href="https://www.surveymonkey.ca/r/TVCQJXB">Take the iReceptor Survey</a>
 </div>
 
