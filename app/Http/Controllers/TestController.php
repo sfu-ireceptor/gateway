@@ -31,15 +31,14 @@ class TestController extends Controller
         // dd(getcwd());
         User::parseTapisUsersLDIF('../test3/tenantirec_20230224.ldif');
 
-        die();
+        exit();
         // $u = new User('jj', 'kk', 'fdsfs@gmail.com');
-        echo "ok";
+        echo 'ok';
         User::add('jj', 'kk', 'fdsfs@gmail.com');
         // echo User::exists('titi2');
 
-
         // echo Hash::make('jlkjkljl');
-        die();
+        exit();
         $user = new \App\User();
         $user->password = Hash::make('pwd');
         $user->email = 'the-email@example.com';
@@ -47,19 +46,17 @@ class TestController extends Controller
         $user->first_name = 'Scott';
         $user->last_name = 'Summers';
         $user->save();
-        die();
+        exit();
 
         // echo "toto";
         $h = Hash::make('jjjj');
         if (Hash::check('jjjj', $h)) {
-            echo "ok";
-        }
-        else {
-            echo "not ok!";
+            echo 'ok';
+        } else {
+            echo 'not ok!';
         }
 
-
-        die();
+        exit();
         echo Str::limit(json_encode('fds'), 20);
         exit();
         $defaults = [];
