@@ -2,11 +2,11 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -117,7 +117,6 @@ class User extends Authenticatable
             }
         }
     }
-
 
     /**
      * Get the token for the user.
