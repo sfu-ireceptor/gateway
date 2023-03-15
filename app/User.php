@@ -188,7 +188,6 @@ class User extends Authenticatable
      */
     public function updateToken($agave_token_info)
     {
-
         // token
         $token = $agave_token_info->access_token;
         $this->token = $token;
