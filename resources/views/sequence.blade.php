@@ -278,6 +278,11 @@
 					</div>
 				@endif 
 				
+				<a href="#analysis" class="btn btn-warning pull-right download_sequences">
+					<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
+					<span class="text">Run analysis</span>
+				</a>
+
 				@if ($total_filtered_sequences > 0)
 					@if ($total_filtered_sequences > config('ireceptor.sequences_download_limit'))
 						<a href="/sequences-download" class="btn btn-primary pull-right download_sequences" disabled="disabled" role="button" data-container="body" data-toggle="tooltip" data-placement="top" title="Downloads of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future." data-trigger="hover" tabindex="0">
@@ -364,16 +369,13 @@
 						</table>
 					@endif
 					@if(config('services.agave.enabled'))
-						<h3>
+						<h3 id="analysis">
 							<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
 							Launch an Analysis Job
 						</h3>
                         
                         <div class="row">
                         	<div class="col-md-6">
-
-
-								<p>Note: an analysis job <strong>can take multiple hours</strong>, depending on the size of the data and the complexity of the analysis.</p>
 
 								@if ($total_filtered_sequences <= config('ireceptor.sequences_download_limit'))
 									<div role="tabpanel" class="analysis_apps_tabpanel">
@@ -468,6 +470,9 @@
 				                        <p>
 				                        	More details and some screenshots: <a href="https://ireceptor.org/node/204" class="external" target="_blank">Data Analysis and Jobs</a>				                        	
 										</p>
+
+										<p>Note: an analysis job <strong>can take multiple hours</strong>, depending on the size of the data and the complexity of the analysis.</p>
+
 									  </div>
 								</div>
                         	</div>
