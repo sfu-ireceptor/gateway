@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\User;
 
 class PagesOkTest extends TestCase
 {

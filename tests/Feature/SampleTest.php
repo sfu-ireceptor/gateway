@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\User;
 use Facades\App\RestService;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
-use App\User;
 
 class SampleTest extends TestCase
 {
