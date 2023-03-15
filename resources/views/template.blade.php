@@ -34,7 +34,7 @@
 				      	</a>
 					</li>
 
-			    	@if(Auth::check())
+					@auth
 				    	@if(Request::is('sequences-quick-search*'))
 				    		<li role="presentation" class="dropdown active search">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -141,7 +141,7 @@
 								Home
 							</a>
 						  </li>
-					  @endif
+					@endauth
 			      </ul>
 
 			      <ul class="nav navbar-nav navbar-right">

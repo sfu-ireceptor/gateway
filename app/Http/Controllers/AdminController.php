@@ -173,37 +173,9 @@ class AdminController extends Controller
         return redirect('admin/users')->with('notification', 'News was successfully deleted.');
     }
 
-    public function getUsers($sort = 'create_time')
+    public function getUsers($sort = 'created_at')
     {
-        // retrieve users from Agave
-        $agave = new Agave;
-        $token = auth()->user()->password;
-        $l = $agave->getUsers($token);
-
-        // fetch complementary user information from our local database
-        $db_users = [];
-        foreach (User::all() as $user) {
-            $db_users[$user->username] = $user;
-        }
-
-        // add complementary user information to user list
-        foreach ($l as $u) {
-            $u->updated_at = '';
-            $u->admin = false;
-            $u->stats_popup_count = 0;
-
-            if (isset($db_users[$u->username])) {
-                $db_user = $db_users[$u->username];
-                $u->updated_at = $db_user->updated_at;
-                $u->admin = $db_user->admin;
-                $u->stats_popup_count = $db_user->stats_popup_count;
-            }
-        }
-
-        // sort by creation date desc
-        usort($l, function ($a, $b) use ($sort) {
-            return strcmp($b->{$sort}, $a->{$sort});
-        });
+        $l = User::orderByDesc('created_at')->get();
 
         $data = [];
         $data['notification'] = session()->get('notification');
@@ -212,17 +184,9 @@ class AdminController extends Controller
         return view('user/list', $data);
     }
 
-    public function getUsers2($sort = 'create_time')
+    public function getUsers2($sort = 'created_at')
     {
-        // retrieve users from Agave
-        $agave = new Agave;
-        $token = auth()->user()->password;
-        $l = $agave->getUsers($token);
-
-        // sort by creation date desc
-        usort($l, function ($a, $b) use ($sort) {
-            return strcmp($b->{$sort}, $a->{$sort});
-        });
+        $l = User::orderByDesc('created_at')->get();
 
         $data = [];
         $data['l'] = $l;
@@ -260,42 +224,33 @@ class AdminController extends Controller
         $firstName = $request->get('first_name');
         $lastName = $request->get('last_name');
         $email = $request->get('email');
+        $password = str_random(24);
 
-        // create Agave account
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $username = $agave->generateUsername($firstName, $lastName, $token);
-        $u = $agave->createUser($token, $username, $firstName, $lastName, $email);
+        $u = User::add($firstName, $lastName, $email, $password);
 
         $t = [];
         $t['login_link'] = config('app.url') . '/login';
-        $t['first_name'] = $u['first_name'];
-        $t['username'] = $u['username'];
-        $t['password'] = $u['password'];
+        $t['first_name'] = $u->first_name;
+        $t['username'] = $u->username;
+        $t['password'] = $password;
 
         // email credentials
         Mail::send(['text' => 'emails.auth.accountCreated'], $t, function ($message) use ($u) {
-            $message->to($u['email'])->subject('iReceptor account');
+            $message->to($u->email)->subject('iReceptor account');
         });
 
-        Log::info('An account has been created for user ' . $t['username'] . '. Pwd: ' . $t['password']);
-
-        return redirect('admin/users')->with('notification', 'The user ' . $t['username'] . ' has been created. An email with credentials was sent. Remember to add the user to the iReceptor services.');
+        return redirect('admin/users')->with('notification', 'User ' . $u->username . ' has been created. An email with credentials was sent.');
     }
 
-    public function getEditUser($username)
+    public function getEditUser($id)
     {
-        $agave = new Agave;
-        $token = auth()->user()->password;
-
-        $l = $agave->getUser($username, $token);
-        $l = $l->result;
+        $user = User::find($id);
 
         $data = [];
-        $data['username'] = $l->username;
-        $data['first_name'] = $l->first_name;
-        $data['last_name'] = $l->last_name;
-        $data['email'] = $l->email;
+        $data['id'] = $id;
+        $data['first_name'] = $user->first_name;
+        $data['last_name'] = $user->last_name;
+        $data['email'] = $user->email;
 
         return view('user/edit', $data);
     }
@@ -304,7 +259,7 @@ class AdminController extends Controller
     {
         // validate form
         $rules = [
-            'username' => 'required',
+            'id' => 'required',
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required|email|unique:user,username',
@@ -317,22 +272,18 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails()) {
             $request->flash();
-            $username = $request->get('username');
+            $id = $request->get('id');
 
-            return redirect('admin/edit-user/' . $username)->withErrors($validator);
+            return redirect('admin/edit-user/' . $id)->withErrors($validator);
         }
 
-        $username = $request->get('username');
-        $firstName = $request->get('first_name');
-        $lastName = $request->get('last_name');
-        $email = $request->get('email');
+        $user = User::find($request->get('id'));
+        $user->first_name = $request->get('first_name');
+        $user->last_name = $request->get('last_name');
+        $user->email = $request->get('email');
+        $user->save();
 
-        // create Agave account
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $t = $agave->updateUser($token, $username, $firstName, $lastName, $email);
-
-        return redirect('admin/users')->with('notification', 'Modifications for user ' . $username . ' were successfully saved.');
+        return redirect('admin/users')->with('notification', 'Modifications for ' . $user->first_name . ' ' . $user->lastName . ' were successfully saved.');
     }
 
     public function getDeleteUser($username)

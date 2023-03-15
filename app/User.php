@@ -5,6 +5,7 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable
@@ -15,7 +16,7 @@ class User extends Authenticatable
 
     // attributes that are mass assignable.
     protected $fillable = [
-        'name', 'email', 'password', 'username', 'admin', 'galaxy_url', 'galaxy_tool_id', 'stats_popup_count',
+        'name', 'email', 'password', 'username', 'admin', 'galaxy_url', 'galaxy_tool_id', 'stats_popup_count', 'token',
     ];
 
     // attributes that should be hidden for arrays.
@@ -24,6 +25,98 @@ class User extends Authenticatable
     ];
 
     protected $dates = ['token_expiration_date'];
+
+    public function isAdmin()
+    {
+        return $this->admin;
+    }
+
+    public static function exists($username)
+    {
+        $user = self::where('username', $username)->first();
+
+        return $user != null;
+    }
+
+    public function generateUsername()
+    {
+        $first_name_stripped = str_replace(' ', '', $this->first_name);
+        $last_name_stripped = str_replace(' ', '', $this->last_name);
+        $username = strtolower($first_name_stripped) . '_' . strtolower($last_name_stripped);
+        $username = iconv('UTF-8', 'ASCII//TRANSLIT', $username); // remove diacritics
+
+        // if username already exists, append number
+        if (self::exists($username)) {
+            $i = 2;
+            $alternate_username = $username . $i;
+            while (self::exists($alternate_username)) {
+                $i++;
+                $alternate_username = $username . $i;
+            }
+            $username = $alternate_username;
+        }
+
+        return $username;
+    }
+
+    public static function add($first_name, $last_name, $email, $password)
+    {
+        $user = new User();
+
+        $user->first_name = $first_name;
+        $user->last_name = $last_name;
+        $user->email = $email;
+
+        $user->username = $user->generateUsername();
+        $user->password = Hash::make($password);
+
+        $user->save();
+
+        return $user;
+    }
+
+    public static function parseTapisUsersLDIF($filepath)
+    {
+        // it's slow because of the password hashing
+        ini_set('max_execution_time', 180);
+
+        $l = parse_ldif_file($filepath);
+        foreach ($l as $t) {
+            if (isset($t['uid'])) {
+                $username = $t['uid'];
+                $user = self::where('username', $username)->first();
+
+                if ($user == null) {
+                    Log::warning('User ' . $username . ' did not exist in local database, so creation time might be wrong.');
+
+                    $user = new User();
+                    $user->username = $username;
+                    $user->email = '';
+                    $user->first_name = '';
+                    $user->last_name = '';
+                    $user->password = '';
+                }
+
+                if (isset($t['mail'])) {
+                    $user->email = $t['mail'];
+                }
+
+                if (isset($t['givenname'])) {
+                    $user->first_name = $t['givenname'];
+                }
+
+                if (isset($t['sn'])) {
+                    $user->last_name = $t['sn'];
+                }
+
+                if (isset($t['userpassword'])) {
+                    $user->password = Hash::make(base64_decode($t['userpassword']));
+                }
+
+                $user->save();
+            }
+        }
+    }
 
     /**
      * Get the token for the user.
@@ -47,11 +140,11 @@ class User extends Authenticatable
         if ($this->token_expiration_date->gt($expiry_threshold)) {
             Log::debug('User::getToken: No refresh required');
 
-            return $this->password;
+            return $this->token;
         }
 
         // If we are within an hour, then request a new token and stores
-        // it in the local password field.
+        // it in the local token field.
         Log::debug('User::getToken: Requesting a new token');
         $agave = new Agave;
         $agave_token_info = $agave->renewToken($this->refresh_token);
@@ -59,8 +152,8 @@ class User extends Authenticatable
             // update the token
             $this->updateToken($agave_token_info);
 
-            // Return the new password
-            return $this->password;
+            // Return the new token
+            return $this->token;
         } else {
             return null;
         }
@@ -74,7 +167,6 @@ class User extends Authenticatable
      */
     public function getRefreshToken()
     {
-        // The token is saved in the password field.
         return $this->refresh_token;
     }
 
@@ -99,7 +191,7 @@ class User extends Authenticatable
 
         // token
         $token = $agave_token_info->access_token;
-        $this->password = $token;
+        $this->token = $token;
 
         // refresh token
         $refreshToken = $agave_token_info->refresh_token;
@@ -113,15 +205,10 @@ class User extends Authenticatable
         // Save the state
         $this->save();
 
-        Log::debug('User::updateToken(' . $this->username . ') - access_token = ' . $this->password);
+        Log::debug('User::updateToken(' . $this->username . ') - access_token = ' . $this->token);
         Log::debug('User::updateToken(' . $this->username . ') - refresh_token = ' . $this->refresh_token);
         Log::debug('User::updateToken(' . $this->username . ') - expiration_date = ' . $this->token_expiration_date);
-        // Return the token, stored as the user password.
-        return $this->password;
-    }
-
-    public function isAdmin()
-    {
-        return $this->admin;
+        // Return the user token
+        return $this->token;
     }
 }

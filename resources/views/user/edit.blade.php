@@ -1,11 +1,11 @@
 @extends('template')
 
-@section('title', 'Edit ' . $username)
+@section('title', 'Edit ' . $first_name . ' ' . $last_name)
 
 @section('content')
 <div class="container">
 	
-	<h1>Edit {{ $username }}</h1>
+	<h1>Edit {{  $first_name . ' ' . $last_name }}</h1>
 
 	@if (isset($notification))
 	<div class="alert alert-warning alert-dismissible" role="alert">
@@ -19,7 +19,7 @@
 
 		<div class="col-md-4">
 			{{ Form::open(array('url' => 'admin/edit-user', 'role' => 'form')) }}
-				<input type="hidden" name="username" value="{{ $username }}">
+				<input type="hidden" name="id" value="{{ $id }}">
 
 			    <div class="form-group {{ $errors->first('first_name') ? 'has-error' : ''}}">
 					{{ Form::label('first_name', 'First Name') }} <span class="error">{{ $errors->first('first_name') }}</span>

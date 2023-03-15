@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container">
-	<h1>Users <small>via Agave</small></h1>
+	<h1>Users</h1>
 
 	@if (isset($notification))
 	<div class="alert alert-warning alert-dismissible" role="alert">
@@ -22,8 +22,6 @@
 		</a>
 	</p>
 
-
-
 	<div class="row">
 		<div class="col-md-4">
 
@@ -39,14 +37,16 @@
 				<tbody>
 					@foreach ($l as $t)
 						<tr>
-							<td class="text-muted text-nowrap" title="{{ Carbon\Carbon::createFromFormat('YmdGisZ', $t->create_time)->format('M j, Y') }}">
-								{{ Carbon\Carbon::createFromFormat('YmdGisZ', $t->create_time)->format('M Y') }}
+							<td class="text-muted text-nowrap" title="{{ human_date_time($t->created_at, 'M j, Y') }}">
+								{{ human_date_time($t->created_at, 'M Y') }}
 							</td>			
 							<td class="text-nowrap">
-								<a href="/admin/edit-user/{{ $t->username }}">{{ $t->first_name }} {{ $t->last_name }}</a>
+								<a href="/admin/edit-user/{{ $t->id }}">{{ $t->first_name }} {{ $t->last_name }}</a>
 								/
 								{{ $t->username }}
-								{{ $t->admin ? '(admin)' : '' }}
+								@if ($t->admin)
+									<strong>(ADMIN)</strong>
+								@endif
 							</td>
 							<td class="text-nowrap">
 								<a href="mailto:{{ $t->email }}">{{ $t->email }}</a>
@@ -57,7 +57,7 @@
 								</a>-->
 							</td>
 							<td class="text-muted text-nowrap">
-								{{ $t->updated_at ? Carbon\Carbon::parse($t->updated_at)->format('M d, Y') : '' }}
+								{{ human_date_time($t->updated_at, 'M d, Y') }}
 							</td>
 							<td class="text-nowrap">
 								{{ $t->stats_popup_count > 0 ? $t->stats_popup_count : '' }}
