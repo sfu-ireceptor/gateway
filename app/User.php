@@ -87,7 +87,7 @@ class User extends Authenticatable
                 $user = self::where('username', $username)->first();
 
                 if ($user == null) {
-                    Log::warning('User ' . $username . ' did not exist in local database.');
+                    Log::warning('User ' . $username . ' did not exist in local database, so creation time might be wrong.');
 
                     $user = new User();
                     $user->username = $username;
