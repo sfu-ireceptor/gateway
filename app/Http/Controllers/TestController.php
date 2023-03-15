@@ -27,7 +27,7 @@ class TestController extends Controller
     public function getIndex(Request $request)
     {
         echo Str::limit(json_encode('fds'), 20);
-        exit();
+        exit;
         $defaults = [];
         $defaults['base_uri'] = 'http://covid19-1.ireceptor.org/airr/v1/';
         $defaults['verify'] = false;    // accept self-signed SSL certificates
@@ -50,7 +50,7 @@ class TestController extends Controller
         $body = $response->getBody();
         $json = json_decode($body);
         echo $json->Repertoire[0]->repertoire_id;
-        exit();
+        exit;
         dd($json);
 
         dd('ok');
@@ -82,7 +82,7 @@ class TestController extends Controller
         $r = RestService::generate_or_json_query($t);
         // dd($r);
         echo $r;
-        exit();
+        exit;
 
         $data = [];
         try {
@@ -124,7 +124,7 @@ class TestController extends Controller
 
             return $error_message;
         }
-        exit();
+        exit;
 
         $agave = new Agave;
         $token = $agave->getAdminToken();
@@ -134,7 +134,7 @@ class TestController extends Controller
         $t = $agave->updateUser($token, $agave_user->username, $agave_user->first_name, $agave_user->last_name, $agave_user->email, $new_password);
 
         echo $new_password;
-        exit();
+        exit;
 
         $rs = RestService::find(69);
         $rs_url = $rs->url;
@@ -146,7 +146,7 @@ class TestController extends Controller
 
         $d = Download::find(5);
         echo $d->queuePosition();
-        exit();
+        exit;
         dd($d);
 
         echo base_path() . '/util/scripts/airr-tsv-merge.py -i ';
@@ -161,7 +161,7 @@ class TestController extends Controller
         echo $return;
         print_r($out);
         // echo "aaa";
-        exit();
+        exit;
 
         $s = 'DOI: 10.1111/imr.12666';
         if (! (stripos($s, 'DOI') === false)) {
@@ -169,7 +169,7 @@ class TestController extends Controller
         }
 
         echo $s;
-        exit();
+        exit;
 
         dd(strcmp('a', 'b'));
 
@@ -180,11 +180,11 @@ class TestController extends Controller
         $username = auth()->user()->username;
         Sample::cache_sequence_counts($username);
 
-        exit();
+        exit;
         $s = 'V Gene and Allele (paired)';
         $s = snake_case($s);
         echo $s;
-        exit();
+        exit;
 
         // header("Content-type: text/csv");
         // header("Content-Disposition: attachment; filename=file.csv");
@@ -194,7 +194,7 @@ class TestController extends Controller
         //$f = fopen($file_path, 'w');
         $file = fopen('php://output', 'w');
         fputcsv($file, $columns, "\t");
-        exit();
+        exit;
 
         $data_to_pass = ['a' => 'test'];
 
@@ -204,23 +204,23 @@ class TestController extends Controller
         ]);
 
         echo 'aa';
-        exit();
+        exit;
 
         $f = FieldName::getFieldType('sequencing_platform');
         dd($f);
 
         echo $request->route()->uri;
-        exit();
+        exit;
 
         dd(RestService::sequence_count([], 37, '7'));
-        exit();
+        exit;
 
         echo App::environment();
-        exit();
+        exit;
         // throw new \Exception('Yet another error: why??');
 
         echo starts_with('This is my name', 'Thisf');
-        exit();
+        exit;
 
         $str = 'pmid: 25100740"';
         if (! (stripos($str, 'PMID') === false)) {
@@ -235,7 +235,7 @@ class TestController extends Controller
         //     echo 'doest not exist';
         // }
 
-        exit();
+        exit;
 
         // return response($this->printBody())
         //     ->header('Content-Type', 'text/tsv')
@@ -243,7 +243,7 @@ class TestController extends Controller
 
         // return response(Sequence::airr_data($params))->header('Content-Type', 'text/tsv')->header('Content-Disposition', 'attachment;filename="data.tsv"');
 
-        exit();
+        exit;
 
         // echo "fdsafads";
 
@@ -303,11 +303,11 @@ class TestController extends Controller
             dump($request->input());
         });
 
-        exit();
+        exit;
 
         echo RestServiceGroup::nameForCode('ipa');
 
-        exit();
+        exit;
 
         $o = new \stdClass();
         $o->titi = 'aa';
@@ -325,16 +325,16 @@ class TestController extends Controller
         // }
         dd($o);
 
-        exit();
+        exit;
 
         echo human_filesize('/var/www/ireceptor_gateway/storage/app/public/ir_2018-04-03_2239_5ac402badc061/scott-lab.tsv');
 
-        exit();
+        exit;
 
         foreach (RestService::all() as $rs) {
             echo str_slug($rs->name) . ' - ';
         }
-        exit();
+        exit;
 
         // create receiving folder
         $storage_folder = storage_path() . '/app/public/';
@@ -352,7 +352,7 @@ class TestController extends Controller
         $file = $folder_path . '/info.txt';
         // file_put_contents($file, "test");
 
-        exit();
+        exit;
 
         // // Initialize the Client
         // $client = new \GuzzleHttp\Client(['base_uri' => 'http://gw.local/test2']);
@@ -485,7 +485,7 @@ class TestController extends Controller
 //     }, function ($exception) {
 //         return $exception->getMessage();
 //     }
-// );
+        // );
 
 //         $promise2 = $client->getAsync('http://loripsum.net/api')->then(
 //     function ($response) {
@@ -493,7 +493,7 @@ class TestController extends Controller
 //     }, function ($exception) {
 //         return $exception->getMessage();
 //     }
-// );
+        // );
 
 //         $response1 = $promise1->wait();
 //         $response2 = $promise2->wait();
@@ -585,16 +585,16 @@ class TestController extends Controller
 //         // die();
 
 //         $message = <<<'EOD'
-// {
-//   "ref": "refs/heads/master",
-//   "before": "bf13e1982e384a723f59dcc59087f65648d6badd",
-//   "after": "50c4ad0b5cf9b5048466a6886033742f7dd476ef",
-//   "created": false,
-//   "deleted": false,
-//   "forced": false,
-//   "base_ref": null,
-//   "compare": "https://github.com/sfu-ireceptor/gateway/compare/bf13e1982e38...50c4ad0b5cf9",
-//   "commits": [
+        // {
+        //   "ref": "refs/heads/master",
+        //   "before": "bf13e1982e384a723f59dcc59087f65648d6badd",
+        //   "after": "50c4ad0b5cf9b5048466a6886033742f7dd476ef",
+        //   "created": false,
+        //   "deleted": false,
+        //   "forced": false,
+        //   "base_ref": null,
+        //   "compare": "https://github.com/sfu-ireceptor/gateway/compare/bf13e1982e38...50c4ad0b5cf9",
+        //   "commits": [
 //     {
 //       "id": "50c4ad0b5cf9b5048466a6886033742f7dd476ef",
 //       "tree_id": "a30cf79781662cd2d0e67872912f1047b1d1a3d6",
@@ -622,8 +622,8 @@ class TestController extends Controller
 //         "app/Http/Controllers/UtilController.php"
 //       ]
 //     }
-//   ],
-//   "head_commit": {
+        //   ],
+        //   "head_commit": {
 //     "id": "50c4ad0b5cf9b5048466a6886033742f7dd476ef",
 //     "tree_id": "a30cf79781662cd2d0e67872912f1047b1d1a3d6",
 //     "distinct": true,
@@ -649,8 +649,8 @@ class TestController extends Controller
 //     "modified": [
 //       "app/Http/Controllers/UtilController.php"
 //     ]
-//   },
-//   "repository": {
+        //   },
+        //   "repository": {
 //     "id": 95588395,
 //     "name": "gateway",
 //     "full_name": "sfu-ireceptor/gateway",
@@ -743,12 +743,12 @@ class TestController extends Controller
 //     "stargazers": 1,
 //     "master_branch": "master",
 //     "organization": "sfu-ireceptor"
-//   },
-//   "pusher": {
+        //   },
+        //   "pusher": {
 //     "name": "jeromejaglale",
 //     "email": "jerome.jaglale@gmail.com"
-//   },
-//   "organization": {
+        //   },
+        //   "organization": {
 //     "login": "sfu-ireceptor",
 //     "id": 29737820,
 //     "url": "https://api.github.com/orgs/sfu-ireceptor",
@@ -760,8 +760,8 @@ class TestController extends Controller
 //     "public_members_url": "https://api.github.com/orgs/sfu-ireceptor/public_members{/member}",
 //     "avatar_url": "https://avatars3.githubusercontent.com/u/29737820?v=4",
 //     "description": null
-//   },
-//   "sender": {
+        //   },
+        //   "sender": {
 //     "login": "jeromejaglale",
 //     "id": 3597814,
 //     "avatar_url": "https://avatars2.githubusercontent.com/u/3597814?v=4",
@@ -779,9 +779,9 @@ class TestController extends Controller
 //     "received_events_url": "https://api.github.com/users/jeromejaglale/received_events",
 //     "type": "User",
 //     "site_admin": false
-//   }
-// }
-// EOD;
+        //   }
+        // }
+        // EOD;
 
 //         $secret = 'CkG7nqY8Rs5haGk7hH6mFLz37CSnuesr';
 //         echo hash_hmac('SHA256', $message, $secret) . "\n";
@@ -792,7 +792,7 @@ class TestController extends Controller
 
 //         // // executes after the command finishes
 //         // if (!$process->isSuccessful()) {
-// //     throw new ProcessFailedException($process);
+        // //     throw new ProcessFailedException($process);
 //         // }
 
 //         // echo $process->getOutput();
@@ -801,7 +801,7 @@ class TestController extends Controller
 
 //         // $process = new Process($deploy_script_path);
 //         // $process->run(function ($type, $buffer) {
-// //     echo $buffer;
+        // //     echo $buffer;
 //         // });
 
 //         $root_path = base_path();
@@ -863,24 +863,24 @@ class TestController extends Controller
 //         //     // ddd($e->getResponse()->getBody()->getContents());
 //         // }
 
-// // //         $to      = 'jlj7@sfu.ca';
-// // //      $subject = 'the subject';
-// // // $message = 'hello';
-// // // $headers = 'From: webmaster@example.com' . "\r\n" .
-// // //     'Reply-To: webmaster@example.com' . "\r\n" .
-// // //     'X-Mailer: PHP/' . phpversion();
+        // // //         $to      = 'jlj7@sfu.ca';
+        // // //      $subject = 'the subject';
+        // // // $message = 'hello';
+        // // // $headers = 'From: webmaster@example.com' . "\r\n" .
+        // // //     'Reply-To: webmaster@example.com' . "\r\n" .
+        // // //     'X-Mailer: PHP/' . phpversion();
 
-// // // mail($to, $subject, $message, $headers);
+        // // // mail($to, $subject, $message, $headers);
 
-// //         //         Mail::send(['text' => 'emails.auth.accountCreated'], $t, function ($message) use ($t) {
-// //         //     $message->to($t['email'])->subject('iReceptor account');
-// //         // });
+        // //         //         Mail::send(['text' => 'emails.auth.accountCreated'], $t, function ($message) use ($t) {
+        // //         //     $message->to($t['email'])->subject('iReceptor account');
+        // //         // });
 
-// //         Mail::send(array('text' => 'emails.test'), [], function($message)
-// //         {
-// //             $message->to('')->subject('just a test');
-// //             echo "ok";
-// //         });
+        // //         Mail::send(array('text' => 'emails.test'), [], function($message)
+        // //         {
+        // //             $message->to('')->subject('just a test');
+        // //             echo "ok";
+        // //         });
 
 //         // $job = new Job;
 //         // $job->updateStatus('PENDING');

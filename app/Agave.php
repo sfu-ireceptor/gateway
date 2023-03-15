@@ -54,9 +54,9 @@ class Agave
         $this->jobParameters[$job_parameter['label']] = $job_parameter;
 
         // Memory per node parameter
-    // This doesn't seem to be working. Tapis does not seem to pass this on to
-    // the scheduler, so changing this has no effect. We go with 4GB/CPU through
-    // the default system config with a custom directive.
+        // This doesn't seem to be working. Tapis does not seem to pass this on to
+        // the scheduler, so changing this has no effect. We go with 4GB/CPU through
+        // the default system config with a custom directive.
         //$job_parameter = [];
         //$job_parameter['label'] = 'memoryPerNode';
         //$job_parameter['type'] = 'string';
@@ -65,9 +65,9 @@ class Agave
         //$job_parameter['default'] = '4GB';
         //$this->jobParameters[$job_parameter['label']] = $job_parameter;
 
-    // Number of nodes to use parameter
-    // We don't want to have jobs cross nodes, so we limit to one only
-    // Leaving this here in case we want to change that...
+        // Number of nodes to use parameter
+        // We don't want to have jobs cross nodes, so we limit to one only
+        // Leaving this here in case we want to change that...
         //$job_parameter = [];
         //$job_parameter['label'] = 'nodeCount';
         //$job_parameter['type'] = 'integer';
