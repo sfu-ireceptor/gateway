@@ -10,6 +10,7 @@ use Tests\TestCase;
 
 class SequenceTest extends TestCase
 {
+
     protected static $rs = [
         'id' => 1,
         'name' => 'Fake Rest Service',
