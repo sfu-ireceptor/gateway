@@ -165,6 +165,60 @@ class UserController extends Controller
         return redirect('/user/account')->with('notification', 'Personal information was successfully chaged.');
     }
 
+    public function getRegister()
+    {
+        return view('user/register');
+    }
+
+    public function postRegister(Request $request)
+    {
+        // validate form
+        $rules = [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|email|unique:user,username',
+        ];
+
+        $messages = [
+            'required' => 'This field is required.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
+            $request->flash();
+
+            return redirect('/register')->withErrors($validator);
+        }
+
+        $first_name = $request->get('first_name');
+        $last_name = $request->get('last_name');
+        $email = $request->get('email');
+        $password = str_random(24);
+
+        $u = User::add($first_name, $last_name, $email, $password);
+        
+        $t = [];
+        $t['login_link'] = config('app.url') . '/login';
+        $t['first_name'] = $u->first_name;
+        $t['username'] = $u->username;
+        $t['password'] = $password;
+
+        // email credentials
+        Mail::send(['text' => 'emails.auth.accountCreated'], $t, function ($message) use ($u) {
+            $message->to($u->email)->subject('iReceptor account');
+        });
+
+        Auth::login($u);
+
+        return redirect('/welcome');
+    }
+
+    public function getWelcome()
+    {
+        return view('user/welcome');
+    }
+
+
     public function getForgotPassword()
     {
         return view('user/forgotPassword');
