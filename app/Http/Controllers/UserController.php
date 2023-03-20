@@ -196,7 +196,7 @@ class UserController extends Controller
         $password = str_random(24);
 
         $u = User::add($first_name, $last_name, $email, $password);
-        
+
         $t = [];
         $t['login_link'] = config('app.url') . '/login';
         $t['first_name'] = $u->first_name;
@@ -217,7 +217,6 @@ class UserController extends Controller
     {
         return view('user/welcome');
     }
-
 
     public function getForgotPassword()
     {
