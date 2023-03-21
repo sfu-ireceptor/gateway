@@ -1300,7 +1300,6 @@ class RestService extends Model
                 }
 
                 if (isset($response['data']->Cell)) {
-
                     // add expression data
                     $request_params = [];
                     foreach ($response['data']->Cell as $t) {
@@ -1794,7 +1793,6 @@ class RestService extends Model
             $failed = false;
             $failed_response = null;
             foreach ($request_params_chunked as $requests) {
-
                 // try each group of queries up to 3 times
                 for ($i = 1; $i <= 3; $i++) {
                     if ($i > 1) {
