@@ -33,6 +33,7 @@
 						<th class="text-nowrap">First Name</th>
 						<th class="text-nowrap">Last Name</th>
 						<th class="text-nowrap">Email</th>
+						<th class="text-nowrap">Last Login</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -49,6 +50,9 @@
 							</td>
 							<td class="text-nowrap">
 								<a href="mailto:{{ $t->email }}">{{ $t->email }}</a>
+							</td>
+							<td class="text-muted text-nowrap">
+								{{ $t->updated_at ? Carbon\Carbon::parse($t->updated_at)->format('M d, Y') : '' }}
 							</td>
 						</tr>
 					@endforeach
