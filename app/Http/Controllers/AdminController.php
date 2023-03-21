@@ -240,7 +240,7 @@ class AdminController extends Controller
         }
 
         // sort by creation date desc
-        usort($l, function ($a, $b) use ($sort) {
+        usort($l, function ($a, $b) {
             return strcmp($b->updated_at, $a->updated_at);
         });
 
