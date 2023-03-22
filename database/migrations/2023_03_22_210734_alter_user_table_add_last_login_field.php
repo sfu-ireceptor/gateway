@@ -19,8 +19,8 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::table('last_login', function ($table) {
-            $table->dropColumn('token');
+        Schema::table('user', function ($table) {
+            $table->dropColumn('last_login');
         });
     }
 };

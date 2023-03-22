@@ -27,6 +27,42 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
+        // retrieve users from Agave
+        $agave = new Agave;
+        $t = $agave->getTokenForUser('titi', '');
+        $token = $t->access_token;
+        // dd($token);
+        $l = $agave->getUsers($token);
+        // dd($l);
+
+        foreach ($l as $agave_user) {
+            $username = $agave_user->username;
+            $u = User::where('username', $username)->first();
+            if($u == null) {
+                Log::info('Agave user ' . $username . ' does not exist in local database');
+
+                $u = new User();
+                $u->username = $username;
+                $u->email = $agave_user->email;
+                $u->first_name = $agave_user->first_name;
+                $u->last_name = $agave_user->last_name;
+                $u->password = '';
+
+                $u->save();
+
+        $create_time = $agave_user->create_time;
+        $datetime = \DateTime::createFromFormat('YmdHis\Z', $create_time);
+         $created_at = $datetime->format('Y-m-d H:i:s');
+         $u->created_at = $created_at;
+
+                $u->save();
+                Log::info('Created.');
+
+            }
+        }
+
+
+        die();
         // dd(getcwd());
         User::parseTapisUsersLDIF('../test3/tenantirec_20230224.ldif');
 
