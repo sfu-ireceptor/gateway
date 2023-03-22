@@ -2,11 +2,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Auth\Events\Login;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Auth\Events\Login;
 
 class UpdateLastLogin
 {
