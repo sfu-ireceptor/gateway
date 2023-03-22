@@ -27,6 +27,12 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
+        // run SECOND
+        // User::parseTapisUsersLDIF('../test3/tenantirec_20230224.ldif');
+        // echo "done";
+        // die();
+
+        // run FIRST
         // retrieve users from Agave
         $agave = new Agave;
         $t = $agave->getTokenForUser('titi', '');
@@ -49,6 +55,7 @@ class TestController extends Controller
                 $u->password = '';
 
                 $u->save();
+            }
 
         $create_time = $agave_user->create_time;
         $datetime = \DateTime::createFromFormat('YmdHis\Z', $create_time);
@@ -58,13 +65,12 @@ class TestController extends Controller
                 $u->save();
                 Log::info('Created.');
 
-            }
+            
         }
-
+        echo "done";
 
         die();
         // dd(getcwd());
-        User::parseTapisUsersLDIF('../test3/tenantirec_20230224.ldif');
 
         exit;
         // $u = new User('jj', 'kk', 'fdsfs@gmail.com');
