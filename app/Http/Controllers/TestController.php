@@ -44,7 +44,7 @@ class TestController extends Controller
         foreach ($l as $agave_user) {
             $username = $agave_user->username;
             $u = User::where('username', $username)->first();
-            if($u == null) {
+            if ($u == null) {
                 Log::info('Agave user ' . $username . ' does not exist in local database');
 
                 $u = new User();
@@ -57,19 +57,17 @@ class TestController extends Controller
                 $u->save();
             }
 
-        $create_time = $agave_user->create_time;
-        $datetime = \DateTime::createFromFormat('YmdHis\Z', $create_time);
-         $created_at = $datetime->format('Y-m-d H:i:s');
-         $u->created_at = $created_at;
+            $create_time = $agave_user->create_time;
+            $datetime = \DateTime::createFromFormat('YmdHis\Z', $create_time);
+            $created_at = $datetime->format('Y-m-d H:i:s');
+            $u->created_at = $created_at;
 
-                $u->save();
-                Log::info('Created.');
-
-            
+            $u->save();
+            Log::info('Created.');
         }
-        echo "done";
+        echo 'done';
 
-        die();
+        exit;
         // dd(getcwd());
 
         exit;
