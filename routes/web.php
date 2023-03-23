@@ -40,24 +40,6 @@ Route::get('/repositories', 'HomeController@repositories')->name('repositories')
 Route::get('/samples/stats/{rest_service_id}/{repertoire_id}', 'SampleController@stats_sample_info')->name('samples-stats-info')->middleware('log_query');
 Route::get('/samples/stats/{rest_service_id}/{repertoire_id}/{stat}', 'SampleController@stats')->name('samples-stats');
 
-if (config('ireceptor.canarie')) {
-    // CANARIE monitoring - dynamic pages
-    Route::get('platform/info', 'CanarieController@platformInfo');
-    Route::get('auth/service/info', 'CanarieController@authInfo');
-    Route::get('computation/service/info', 'CanarieController@computationInfo');
-
-    Route::get('platform/stats', 'CanarieController@platformStats');
-    Route::get('auth/service/stats', 'CanarieController@authStats');
-    Route::get('computation/service/stats', 'CanarieController@computationStats');
-
-    // CANARIE monitoring - static pages
-    Route::get('canarie', 'CanarieController@links');
-
-    Route::get('platform/{page}', 'CanarieController@linkPage');
-    Route::get('auth/service/{page}', 'CanarieController@linkPage');
-    Route::get('computation/service/{page}', 'CanarieController@linkPage');
-}
-
 // just for dev
 Route::get('test', 'TestController@getIndex')->name('test-page');
 Route::any('test2', 'TestController@index2');
@@ -156,7 +138,7 @@ Route::middleware('auth')->group(function () {
         Route::get('users2/{sort?}', 'AdminController@getUsers2');
         Route::get('add-user', 'AdminController@getAddUser');
         Route::post('add-user', 'AdminController@postAddUser');
-        Route::get('edit-user/{username}', 'AdminController@getEditUser');
+        Route::get('edit-user/{id}', 'AdminController@getEditUser');
         Route::post('edit-user', 'AdminController@postEditUser');
         Route::get('delete-user/{username}', 'AdminController@getDeleteUser');
         Route::get('samples/update-cache', 'AdminController@getUpdateSampleCache');

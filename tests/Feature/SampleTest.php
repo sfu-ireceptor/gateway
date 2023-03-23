@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\User;
 use Facades\App\RestService;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
@@ -228,7 +229,7 @@ class SampleTest extends TestCase
         RestService::shouldReceive('samples')->andReturn($response_list);
 
         // generate fake user
-        $u = factory(\App\User::class)->make();
+        $u = User::factory()->make();
 
         $this->actingAs($u)->get('/samples')->assertOk();
     }
@@ -237,7 +238,7 @@ class SampleTest extends TestCase
     public function incomplete_sample()
     {
         // generate fake user
-        $u = factory(\App\User::class)->make();
+        $u = User::factory()->make();
 
         // get list of sample fields in random order
         $keys = array_keys($this->sample);

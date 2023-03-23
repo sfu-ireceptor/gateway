@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\User;
 use Facades\App\Query;
 use Facades\App\RestService;
 use Illuminate\Support\Facades\Log;
@@ -236,7 +237,7 @@ class SequenceTest extends TestCase
         RestService::shouldReceive('sequence_list')->once()->andReturn($sequence_list_response);
 
         // generate fake user
-        $u = factory(\App\User::class)->make();
+        $u = User::factory()->make();
 
         // test sequence page is working
         $this->actingAs($u)->get('/sequences?query_id=0')->assertOk();
@@ -246,7 +247,7 @@ class SequenceTest extends TestCase
     public function incomplete_sequence_data()
     {
         // generate fake user
-        $u = factory(\App\User::class)->make();
+        $u = User::factory()->make();
 
         $repertoire_data = self::$repertoire_data;
 
