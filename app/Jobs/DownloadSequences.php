@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Agave;
 use App\Download;
 use App\LocalJob;
 use App\Query;
@@ -125,25 +124,27 @@ class DownloadSequences implements ShouldQueue
         $this->download->save();
 
         // send notification email
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $user = $agave->getUserWithUsername($this->username, $token);
-        $email = $user->email;
+        $user = User::where('username', $this->username)->first();
+        if ($user != null && $user->email != '') {
+            $email = $user->email;
 
-        $date_str = $this->download->createdAtShort();
+            $date_str = $this->download->createdAtShort();
 
-        $t = [];
-        $t['page_url'] = config('app.url') . $this->download->page_url;
-        $t['file_url'] = config('app.url') . '/' . $this->download->file_url;
-        $t['download_page_url'] = config('app.url') . '/downloads';
-        $t['download_days_available'] = self::DAYS_AVAILABLE;
-        $t['date_str'] = $date_str;
+            $t = [];
+            $t['page_url'] = config('app.url') . $this->download->page_url;
+            $t['file_url'] = config('app.url') . '/' . $this->download->file_url;
+            $t['download_page_url'] = config('app.url') . '/downloads';
+            $t['download_days_available'] = self::DAYS_AVAILABLE;
+            $t['date_str'] = $date_str;
 
-        Mail::send(['text' => 'emails.download_successful'], $t, function ($message) use ($email, $date_str) {
-            Log::debug('test1');
-            Log::debug($email);
-            $message->to($email)->subject('[iReceptor] Your download from ' . $date_str . ' is ready');
-        });
+            Mail::send(['text' => 'emails.download_successful'], $t, function ($message) use ($email, $date_str) {
+                Log::debug('test1');
+                Log::debug($email);
+                $message->to($email)->subject('[iReceptor] Your download from ' . $date_str . ' is ready');
+            });
+        } else {
+            Log::error('Error email not send. Could not find email for user ' . $this->username);
+        }
 
         if ($this->download->incomplete) {
             // email notification to iReceptor support
@@ -178,19 +179,21 @@ class DownloadSequences implements ShouldQueue
         $this->download->save();
 
         // email notification to user
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $user = $agave->getUserWithUsername($this->username, $token);
-        $email = $user->email;
+        $user = User::where('username', $this->username)->first();
+        if ($user != null && $user->email != '') {
+            $email = $user->email;
 
-        $t = [];
-        $t['page_url'] = config('app.url') . $this->download->page_url;
-        $t['download_page_url'] = config('app.url') . '/downloads';
-        $t['support_email'] = config('ireceptor.email_support');
-
-        Mail::send(['text' => 'emails.download_failed'], $t, function ($message) use ($email) {
-            $message->to($email)->subject('[iReceptor] Download error');
-        });
+            $t = [];
+            $t['page_url'] = config('app.url') . $this->download->page_url;
+            $t['download_page_url'] = config('app.url') . '/downloads';
+            $t['support_email'] = config('ireceptor.email_support');
+    
+            Mail::send(['text' => 'emails.download_failed'], $t, function ($message) use ($email) {
+                $message->to($email)->subject('[iReceptor] Download error');
+            });
+        } else {
+            Log::error('Error email not send. Could not find email for user ' . $this->username);
+        }
 
         $error_message = $e->getMessage();
         $query_log_id = QueryLog::get_query_log_id();
@@ -208,7 +211,6 @@ class DownloadSequences implements ShouldQueue
                 $message->to(config('ireceptor.email_support'))->subject('Gateway Download Error for ' . $username);
             });
         }
-
         QueryLog::end_job($query_log_id, 'error', $error_message);
     }
 }
