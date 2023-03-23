@@ -27,8 +27,7 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
-
-        die();
+        exit;
         // $u = new User('jj', 'kk', 'fdsfs@gmail.com');
         echo 'ok';
         User::add('jj', 'kk', 'fdsfs@gmail.com');
@@ -984,7 +983,8 @@ class TestController extends Controller
         echo 'hi there 40';
     }
 
-    public function createMissingAgaveUser() {
+    public function createMissingAgaveUser()
+    {
         $admin_username = config('services.agave.admin_username');
         $admin_password = config('services.agave.admin_password');
 
@@ -1021,8 +1021,9 @@ class TestController extends Controller
         echo 'done';
     }
 
-    public function parseLDIF() {
+    public function parseLDIF()
+    {
         User::parseTapisUsersLDIF('../test3/tenantirec_20230224.ldif');
-        echo "done";        
+        echo 'done';
     }
 }
