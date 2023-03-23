@@ -56,7 +56,7 @@ if (! function_exists('dir_to_html')) {
 if (! function_exists('human_date_time')) {
     function human_date_time($d, $format = 'D M j H:i')
     {
-        if($d == null) {
+        if ($d == null) {
             return null;
         }
 
