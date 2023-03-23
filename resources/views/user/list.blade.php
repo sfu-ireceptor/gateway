@@ -57,7 +57,7 @@
 								</a>-->
 							</td>
 							<td class="text-muted text-nowrap">
-								{{ human_date_time($t->updated_at, 'M d, Y') }}
+								{{ human_date_time($t->last_login, 'M d, Y') }}
 							</td>
 							<td class="text-nowrap">
 								{{ $t->stats_popup_count > 0 ? $t->stats_popup_count : '' }}
