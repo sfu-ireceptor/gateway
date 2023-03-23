@@ -8,8 +8,6 @@ use Tests\TestCase;
 
 class PagesOkTest extends TestCase
 {
-    use RefreshDatabase;
-
     /*
     |--------------------------------------------------------------------------
     | Public
