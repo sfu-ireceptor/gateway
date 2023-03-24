@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Deployment;
 use App\Job;
-use App\Jobs\ProcessAgaveNotification;
+use App\Jobs\ProcessJobNotification;
 use App\LocalJob;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -13,10 +13,10 @@ use Symfony\Component\Process\Process;
 
 class UtilController extends Controller
 {
-    // called by AGAVE
-    public function updateAgaveStatus($id, $status)
+    // URL Controller function for receiving updates from Tapis
+    public function updateJobStatus($id, $status)
     {
-        Log::info('AGAVE job status update: job ' . $id . ' has status ' . $status);
+        Log::info('Tapis job status update: job ' . $id . ' has status ' . $status);
         $lj = new LocalJob('agave-notifications');
 
         $lj->user = '[Agave]';
@@ -35,7 +35,7 @@ class UtilController extends Controller
         $localJobId = $lj->id;
 
         // queue as a job (to make sure notifications are processed in order)
-        ProcessAgaveNotification::dispatch($id, $status, $localJobId)->onQueue('agave-notifications');
+        ProcessJobNotification::dispatch($id, $status, $localJobId)->onQueue('agave-notifications');
     }
 
     // called by GitHub hook

@@ -63,6 +63,7 @@ class Job extends Model
         return $j;
     }
 
+/*
     public static function createToken()
     {
         $tenant_url = Config::get('services.agave.tenant_url');
@@ -102,7 +103,8 @@ class Job extends Model
 
         return $response->access_token;
     }
-
+*/
+/*
     public static function generateJobJSON($app_id, $gw_storage_staging, $inputFolder, $gw_storage_archiving)
     {
         $notification_url = Config::get('services.agave.gw_notification_url');
@@ -140,7 +142,8 @@ STR;
 
         return $str;
     }
-
+*/
+/* This function is no longer used/required.
     public static function submitJob($token, $job_json)
     {
         $c = curl_init();
@@ -178,6 +181,7 @@ STR;
 
         return $response->result->id;
     }
+*/
 
     public function updateStatus($str)
     {
@@ -194,10 +198,10 @@ STR;
             case 'FEDERATING DATA':
                 $progress = 5;
                 break;
-            case 'SENDING JOB TO AGAVE':
+            case 'SENDING JOB FOR ANALYSIS':
                 $progress = 10;
                 break;
-            case 'JOB ACCEPTED BY AGAVE. PENDING.':
+            case 'JOB ACCEPTED FOR ANALYSIS. PENDING.':
                 $progress = 20;
                 break;
             case 'PENDING.':
@@ -255,7 +259,7 @@ STR;
                 break;
         }
 
-        $this->agave_status = $str;
+        $this->job_status = $str;
         $this->status = $status;
         $this->progress = $progress;
 
@@ -270,6 +274,18 @@ STR;
         $job = static::where(['user_id' => $user_id, 'id' => $id])->first();
 
         return $job;
+    }
+
+    public function getJobID()
+    {
+        // Return the ID of the internal processing ID (not $this->id)
+        return $this->agave_id;
+    }
+
+    public function getJobStatus()
+    {
+        // Return the internal status of the job
+        return $this->agave_status;
     }
 
     public function totalTime()

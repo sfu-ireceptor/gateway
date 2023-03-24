@@ -95,4 +95,69 @@ return [
 
         'gw_notification_url' => env('AGAVE_GW_NOTIFICATION_URL', 'https://ireceptorgw.irmacs.sfu.ca'),
     ],
+    'tapis' => [
+        'enabled'  => env('TAPIS_ENABLED', false),
+
+        'tenant_url'  => env('TAPIS_TENANT_URL', 'https://ireceptor.tapis.io'),
+        'tapis_url'  => env('TAPIS_URL', 'https://tacc.tapis.io'),
+
+        'api_key' => env('TAPIS_API_KEY'),
+        'api_token' => env('TAPIS_API_TOKEN'),
+
+        'admin_username' => env('TAPIS_ADMIN_USERNAME', 'irec_admin'),
+        'admin_password' => env('TAPIS_ADMIN_PASSWORD'),
+
+        'analysis_username' => env('TAPIS_ANALYSIS_USERNAME', 'irec_analysis'),
+        'analysis_password' => env('TAPIS_ANALYSIS_PASSWORD'),
+
+        'test_user_username' => env('TEST_USER_USERNAME'),
+        'test_user_password' => env('TEST_USER_PASSWORD'),
+        'app_directories' => [
+            'stats', 'histogram', 'clone-stats', 'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity',
+        ],
+        'system_execution' => [
+            'name_prefix'  => env('TAPIS_SYSTEM_EXECUTION_NAME_PREFIX', 'exec-'),
+            'max_run_time' => intval(96),
+            'processors_per_node' => intval(1),
+            'memory_per_processor' => intval(8),
+        ],
+
+        'system_staging' => [
+            'name_prefix'  => env('TAPIS_SYSTEM_STAGING_NAME_PREFIX', 'staging-'),
+            'host'  => env('TAPIS_SYSTEM_STAGING_HOST', 'ireceptorgw.irmacs.sfu.ca'),
+            'port'  => intval(env('TAPIS_SYSTEM_STAGING_PORT', 22)),
+            'auth'  => [
+                'username'      => env('TAPIS_SYSTEM_STAGING_AUTH_USERNAME', 'ubuntu'),
+                'public_key'    => @file_get_contents(env('TAPIS_SYSTEM_STAGING_AUTH_PUBLIC_KEY', base_path('storage/config/tapis-system-staging_public-key.txt'))),
+                'private_key'   => @file_get_contents(env('TAPIS_SYSTEM_STAGING_AUTH_PRIVATE_KEY', base_path('storage/config/tapis-system-staging_private-key.txt'))),
+            ],
+            'rootdir'  => env('TAPIS_SYSTEM_STAGING_ROOTDIR', '/tmp'),
+        ],
+
+        'system_deploy' => [
+            'name_prefix'  => env('TAPIS_SYSTEM_DEPLOY_NAME_PREFIX', 'deploy-'),
+            'host'  => env('TAPIS_SYSTEM_DEPLOY_HOST', 'ireceptorgw.irmacs.sfu.ca'),
+            'port'  => intval(env('TAPIS_SYSTEM_DEPLOY_PORT', 22)),
+            'auth'  => [
+                'username'      => env('TAPIS_SYSTEM_DEPLOY_AUTH_USERNAME', 'ubuntu'),
+                'public_key'    => @file_get_contents(env('TAPIS_SYSTEM_DEPLOY_AUTH_PUBLIC_KEY', base_path('storage/config/tapis-system-deploy_public-key.txt'))),
+                'private_key'   => @file_get_contents(env('TAPIS_SYSTEM_DEPLOY_AUTH_PRIVATE_KEY', base_path('storage/config/tapis-system-deploy_private-key.txt'))),
+            ],
+            'rootdir'  => env('TAPIS_SYSTEM_DEPLOY_ROOTDIR'),
+        ],
+
+        'default_execution_system' => [
+            'host'  => env('TAPIS_DEFAULT_EXECUTION_SYSTEM_HOST', 'cedar.computecanada.ca'),
+            'port'  => intval(env('TAPIS_DEFAULT_EXECUTION_SYSTEM_PORT', 22)),
+            'auth'  => [
+                'username'      => env('TAPIS_DEFAULT_EXECUTION_SYSTEM_AUTH_USERNAME', 'ireceptorgw'),
+                'sshkeys'    => @file_get_contents(env('TAPIS_DEFAULT_EXECUTION_SYSTEM_AUTH_SSHKEYS', base_path('storage/config/tapis-default-execution-system_cred.json'))),
+                'public_key'    => @file_get_contents(env('TAPIS_DEFAULT_EXECUTION_SYSTEM_AUTH_PUBLIC_KEY', base_path('storage/config/tapis-default-execution-system_public-key.txt'))),
+                'private_key'   => @file_get_contents(env('TAPIS_DEFAULT_EXECUTION_SYSTEM_AUTH_PRIVATE_KEY', base_path('storage/config/tapis-default-execution-system_private-key.txt'))),
+            ],
+            'rootdir'  => env('TAPIS_DEFAULT_EXECUTION_SYSTEM_ROOTDIR', '/tmp'),
+        ],
+
+        'gw_notification_url' => env('TAPIS_GW_NOTIFICATION_URL', 'https://ireceptorgw.irmacs.sfu.ca'),
+    ],
 ];

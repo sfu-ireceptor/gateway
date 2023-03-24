@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Agave;
+use App\Tapis;
 use App\Bookmark;
 use App\Download;
 use App\FieldName;
@@ -229,13 +229,13 @@ class CellController extends Controller
         $data['filter_fields'] = $filter_fields;
 
         // Get information about all of the Apps for the AIRR "Cell" object
-        $agave = new Agave;
-        $appTemplates = $agave->getAppTemplates('Cell');
+        $tapis = new Tapis;
+        $appTemplates = $tapis->getAppTemplates('Cell');
         $app_list = [];
 
         // Store the normal job contorl parameters for the UI. The same parameters are used
         // by all Apps.
-        $job_parameter_list = $agave->getJobParameters();
+        $job_parameter_list = $tapis->getJobParameters();
 
         // For each app, set up the info required by the UI for the App parameters.
         foreach ($appTemplates as $app_tag => $app_info) {

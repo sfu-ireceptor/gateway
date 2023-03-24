@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Agave;
+use App\Tapis;
 use App\CachedSample;
 use App\Download;
 use App\FieldName;
@@ -288,10 +288,10 @@ class AdminController extends Controller
 
     public function getDeleteUser($username)
     {
-        // create Agave account
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $agave->deleteUser($token, $username);
+        // create Tapis account
+        $tapis = new Tapis;
+        $token = $tapis->getAdminToken();
+        $tapis->deleteUser($token, $username);
 
         return redirect('admin/users')->with('notification', 'User ' . $username . ' was successfully deleted.');
     }

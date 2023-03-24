@@ -39,6 +39,13 @@ class User extends Authenticatable
         return $user != null;
     }
 
+    public static function getUser($username)
+    {
+        $user = self::where('username', $username)->first();
+
+        return $user;
+    }
+
     public function generateUsername()
     {
         $first_name_stripped = str_replace(' ', '', $this->first_name);
@@ -138,7 +145,7 @@ class User extends Authenticatable
         Log::debug('User::getToken: token expiration = ' . $this->token_expiration_date);
         // If we are not close to expiry (within threshold), just return the
         // current token.
-        if ($this->token_expiration_date->gt($expiry_threshold)) {
+        if ($this->token_expiration_date != null && $this->token_expiration_date->gt($expiry_threshold)) {
             Log::debug('User::getToken: No refresh required');
 
             return $this->token;
@@ -147,11 +154,12 @@ class User extends Authenticatable
         // If we are within an hour, then request a new token and stores
         // it in the local token field.
         Log::debug('User::getToken: Requesting a new token');
-        $agave = new Agave;
-        $agave_token_info = $agave->renewToken($this->refresh_token);
-        if ($agave_token_info != null) {
+        $tapis = new Tapis;
+        $tapis_token_info = $tapis->renewToken($this->refresh_token);
+        if ($tapis_token_info != null) {
+            Log::debug('User::getToken: tapis token info = ' . json_encode($tapis_token_info));
             // update the token
-            $this->updateToken($agave_token_info);
+            $this->updateToken($tapis_token_info);
 
             // Return the new token
             return $this->token;
@@ -174,10 +182,10 @@ class User extends Authenticatable
     /**
      * Update the token state for the user.
      *
-     * @param  object  $agave_token_info
+     * @param  object  $tapis_token_info
      * @return void
      *
-     * The Agave token info is of the form:
+     * The Tapis token info is of the form:
      * {
      *  "scope":"default","token_type":"bearer",
      *  "expires_in":14400,
@@ -187,19 +195,19 @@ class User extends Authenticatable
      *
      * We want to save some of this state for the user.
      */
-    public function updateToken($agave_token_info)
+    public function updateToken($tapis_token_info)
     {
         // token
-        $token = $agave_token_info->access_token;
+        $token = $tapis_token_info->access_token;
         $this->token = $token;
 
         // refresh token
-        $refreshToken = $agave_token_info->refresh_token;
+        $refreshToken = $tapis_token_info->refresh_token;
         $this->refresh_token = $refreshToken;
 
         // token expiration date
         $tokenExpirationDate = new Carbon();
-        $tokenExpirationDate->addSeconds($agave_token_info->expires_in);
+        $tokenExpirationDate->addSeconds($tapis_token_info->expires_in);
         $this->token_expiration_date = $tokenExpirationDate;
 
         // Save the state

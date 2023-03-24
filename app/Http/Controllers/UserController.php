@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Agave;
+use App\Tapis;
 use App\News;
 use App\Sample;
 use App\User;
@@ -65,19 +65,21 @@ class UserController extends Controller
 
         $request->session()->regenerate();
 
-        // TEMPORARY, to remove when switching to Tapis V3
-        // generate new Agave token using iReceptor Admin credential and store it as the user's token
-        $agave = new Agave;
-        $admin_username = config('services.agave.admin_username');
-        $admin_password = config('services.agave.admin_password');
-        $agave_token_info = $agave->getTokenForUser($admin_username, $admin_password);
+        // TEMPORARY, potential to remove when switching to Tapis V3
+        // generate new Tapis token using iReceptor Analysis credential and store it as the user's token
+        
+        $tapis = new Tapis;
+        $analysis_username = config('services.tapis.analysis_username');
+        $analysis_password = config('services.tapis.analysis_password');
+        $tapis_token_info = $tapis->getTokenForUser($analysis_username, $analysis_password);
 
-        if ($agave_token_info == null) {
-            Log::error('Failed to get token for ' . $admin_username);
+        if ($tapis_token_info == null) {
+            Log::error('Failed to get token for ' . $analysis_username);
         } else {
             $user = Auth::user();
-            $user->updateToken($agave_token_info);
+            $user->updateToken($tapis_token_info);
         }
+        
 
         return redirect()->intended('home');
     }
