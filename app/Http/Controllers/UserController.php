@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Tapis;
 use App\News;
 use App\Sample;
+use App\Tapis;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -67,7 +67,7 @@ class UserController extends Controller
 
         // TEMPORARY, potential to remove when switching to Tapis V3
         // generate new Tapis token using iReceptor Analysis credential and store it as the user's token
-        
+
         $tapis = new Tapis;
         $analysis_username = config('services.tapis.analysis_username');
         $analysis_password = config('services.tapis.analysis_password');
@@ -79,7 +79,6 @@ class UserController extends Controller
             $user = Auth::user();
             $user->updateToken($tapis_token_info);
         }
-        
 
         return redirect()->intended('home');
     }

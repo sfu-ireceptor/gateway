@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Tapis;
 use App\Download;
 use App\FieldName;
 use App\Job;
 use App\RestService;
 use App\RestServiceGroup;
 use App\Sample;
+use App\Tapis;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -37,8 +37,7 @@ class TestController extends Controller
 
         // Test Tapis
         $tapis = new Tapis;
-        die;
-
+        exit;
 
         // run FIRST
         // retrieve users from Agave
