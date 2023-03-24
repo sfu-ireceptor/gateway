@@ -45,7 +45,8 @@ Route::get('test', 'TestController@getIndex')->name('test-page');
 Route::any('test2', 'TestController@index2');
 Route::any('phpinfo', 'TestController@phpinfo');
 Route::any('wait/{seconds}', 'TestController@wait');
-Route::get('email', 'TestController@email');
+Route::get('u1', 'TestController@createMissingAgaveUser');
+Route::get('u2', 'TestController@parseLDIF');
 
 /*
 |--------------------------------------------------------------------------

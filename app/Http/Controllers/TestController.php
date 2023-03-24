@@ -27,49 +27,6 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
-        // run SECOND
-        // User::parseTapisUsersLDIF('../test3/tenantirec_20230224.ldif');
-        // echo "done";
-        // die();
-
-        // run FIRST
-        // retrieve users from Agave
-        $agave = new Agave;
-        $t = $agave->getTokenForUser('titi', '');
-        $token = $t->access_token;
-        // dd($token);
-        $l = $agave->getUsers($token);
-        // dd($l);
-
-        foreach ($l as $agave_user) {
-            $username = $agave_user->username;
-            $u = User::where('username', $username)->first();
-            if ($u == null) {
-                Log::info('Agave user ' . $username . ' does not exist in local database');
-
-                $u = new User();
-                $u->username = $username;
-                $u->email = $agave_user->email;
-                $u->first_name = $agave_user->first_name;
-                $u->last_name = $agave_user->last_name;
-                $u->password = '';
-
-                $u->save();
-            }
-
-            $create_time = $agave_user->create_time;
-            $datetime = \DateTime::createFromFormat('YmdHis\Z', $create_time);
-            $created_at = $datetime->format('Y-m-d H:i:s');
-            $u->created_at = $created_at;
-
-            $u->save();
-            Log::info('Created.');
-        }
-        echo 'done';
-
-        exit;
-        // dd(getcwd());
-
         exit;
         // $u = new User('jj', 'kk', 'fdsfs@gmail.com');
         echo 'ok';
@@ -1024,5 +981,49 @@ class TestController extends Controller
         // die('Incorrect username');
 
         echo 'hi there 40';
+    }
+
+    public function createMissingAgaveUser()
+    {
+        $admin_username = config('services.agave.admin_username');
+        $admin_password = config('services.agave.admin_password');
+
+        $agave = new Agave;
+        $t = $agave->getTokenForUser($admin_username, $admin_password);
+        $token = $t->access_token;
+
+        $l = $agave->getUsers($token);
+
+        foreach ($l as $agave_user) {
+            $username = $agave_user->username;
+            $u = User::where('username', $username)->first();
+            if ($u == null) {
+                Log::info('Agave user ' . $username . ' does not exist in local database');
+
+                $u = new User();
+                $u->username = $username;
+                $u->email = $agave_user->email;
+                $u->first_name = $agave_user->first_name;
+                $u->last_name = $agave_user->last_name;
+                $u->password = '';
+
+                $u->save();
+            }
+
+            $create_time = $agave_user->create_time;
+            $datetime = \DateTime::createFromFormat('YmdHis\Z', $create_time);
+            $created_at = $datetime->format('Y-m-d H:i:s');
+            $u->created_at = $created_at;
+
+            $u->save();
+            Log::info('Created.');
+        }
+        echo 'done';
+    }
+
+    public function parseLDIF()
+    {
+        User::parseTapisUsersLDIF('../test3/tenantirec_20230224.ldif');
+        echo 'done';
     }
 }
