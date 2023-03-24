@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Tapis;
 use App\Bookmark;
 use App\Download;
 use App\FieldName;
@@ -11,6 +10,7 @@ use App\Sample;
 use App\Sequence;
 use App\SequenceClone;
 use App\System;
+use App\Tapis;
 use Facades\App\Query;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;

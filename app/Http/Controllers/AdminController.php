@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Tapis;
 use App\CachedSample;
 use App\Download;
 use App\FieldName;
@@ -15,6 +14,7 @@ use App\News;
 use App\QueryLog;
 use App\RestService;
 use App\Sample;
+use App\Tapis;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;

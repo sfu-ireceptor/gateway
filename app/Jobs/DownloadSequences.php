@@ -187,7 +187,7 @@ class DownloadSequences implements ShouldQueue
             $t['page_url'] = config('app.url') . $this->download->page_url;
             $t['download_page_url'] = config('app.url') . '/downloads';
             $t['support_email'] = config('ireceptor.email_support');
-    
+
             Mail::send(['text' => 'emails.download_failed'], $t, function ($message) use ($email) {
                 $message->to($email)->subject('[iReceptor] Download error');
             });
