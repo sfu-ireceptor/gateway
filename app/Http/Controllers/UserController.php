@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Agave;
 use App\News;
 use App\Sample;
 use App\User;
@@ -14,7 +15,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use App\Agave;
 
 class UserController extends Controller
 {
@@ -74,8 +74,7 @@ class UserController extends Controller
 
         if ($agave_token_info == null) {
             Log::error('Failed to get token for ' . $admin_username);
-        }
-        else {
+        } else {
             $user = Auth::user();
             $user->updateToken($agave_token_info);
         }
