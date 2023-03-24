@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Agave;
+use App\Tapis;
 use App\Download;
 use App\FieldName;
 use App\Job;
@@ -31,6 +31,14 @@ class TestController extends Controller
         // User::parseTapisUsersLDIF('../test3/tenantirec_20230224.ldif');
         // echo "done";
         // die();
+
+        // Generate password
+        // echo Hash::make('foobar');die();
+
+        // Test Tapis
+        $tapis = new Tapis;
+        die;
+
 
         // run FIRST
         // retrieve users from Agave
