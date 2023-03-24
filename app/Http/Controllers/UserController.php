@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Agave;
 
 class UserController extends Controller
 {
@@ -63,6 +64,21 @@ class UserController extends Controller
         }
 
         $request->session()->regenerate();
+
+        // TEMPORARY, to remove when switching to Tapis V3
+        // generate new Agave token using iReceptor Admin credential and store it as the user's token
+        $agave = new Agave;
+        $admin_username = config('services.agave.admin_username');
+        $admin_password = config('services.agave.admin_password');
+        $agave_token_info = $agave->getTokenForUser($admin_username, $admin_password);
+
+        if ($agave_token_info == null) {
+            Log::error('Failed to get token for ' . $admin_username);
+        }
+        else {
+            $user = Auth::user();
+            $user->updateToken($agave_token_info);
+        }
 
         return redirect()->intended('home');
     }
