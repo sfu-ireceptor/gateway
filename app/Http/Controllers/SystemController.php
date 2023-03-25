@@ -48,7 +48,7 @@ class SystemController extends Controller
         $systemExecutionPrivateKey = $sshKeys['private'];
         $systemExecutionPort = 22;
 
-        $config = $tapis->getExcutionSystemConfig($systemExecutionName, $systemExecutionHost, $systemExecutionPort, $systemExecutionUsername, $systemExecutionPrivateKey, $systemExecutionPublicKey);
+        $config = $tapis->getExecutionSystemConfig($systemExecutionName, $systemExecutionHost, $systemExecutionPort, $systemExecutionUsername, $systemExecutionPrivateKey, $systemExecutionPublicKey);
         $response = $tapis->createSystem($token, $config);
         Log::info('execution system created: ' . $systemExecutionName);
 
