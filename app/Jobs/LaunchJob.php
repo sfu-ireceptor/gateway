@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Tapis;
 use App\Job;
 use App\LocalJob;
 use App\Query;
@@ -10,15 +9,16 @@ use App\Sequence;
 use App\SequenceCell;
 use App\SequenceClone;
 use App\System;
+use App\Tapis;
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 use Throwable;
 
 class LaunchJob implements ShouldQueue
