@@ -99,7 +99,8 @@ return [
         'enabled'  => env('TAPIS_ENABLED', false),
 
         'tenant_url'  => env('TAPIS_TENANT_URL', 'https://ireceptor.tapis.io'),
-        'tapis_url'  => env('TAPIS_URL', 'https://tacc.tapis.io'),
+        'tapis_url'  => env('TAPIS_TENANT_URL', 'https://ireceptor.tapis.io'),
+        //'tapis_url'  => env('TAPIS_URL', 'https://tacc.tapis.io'),
 
         'api_key' => env('TAPIS_API_KEY'),
         'api_token' => env('TAPIS_API_TOKEN'),
