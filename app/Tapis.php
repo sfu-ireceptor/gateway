@@ -2,10 +2,10 @@
 
 namespace App;
 
-use stdClass;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\Log;
 use phpseclib\Crypt\RSA;
+use stdClass;
 
 class Tapis
 {
@@ -109,11 +109,11 @@ class Tapis
 
     public function isUp()
     {
-    /*
-        $url = config('services.tapis.tenant_url');
-        $apiKey = config('services.tapis.api_key');
-        $apiSecret = config('services.tapis.api_token');
-    */
+        /*
+            $url = config('services.tapis.tenant_url');
+            $apiKey = config('services.tapis.api_key');
+            $apiSecret = config('services.tapis.api_token');
+        */
         // user created specifically to test if TAPIS is up
         //$username = config('services.tapis.test_user_username');
         //$password = config('services.tapis.test_user_password');
@@ -141,9 +141,11 @@ class Tapis
         // try to get token
         if (isset($t->result) && isset($t->result->access_token)) {
             Log::debug('Tapis::getTokenForUser - Token info for user ' . $username . ' = ' . json_encode($t->result->access_token));
+
             return $t->result->access_token;
         } else {
             Log::debug('Tapis::getTokenForUser - Could not get token for ' . $username);
+
             return null;
         }
     }
@@ -197,15 +199,15 @@ class Tapis
         return $t->access_token;
     }
 
-    public static function getAnalysisToken() 
+    public static function getAnalysisToken()
     {
         return self::$analysisTokenData->access_token;
     }
 
-
     public function renewToken($refresh_token)
     {
         Log::debug('Tapis::renewToken - Analysis token data = ' . json_encode(self::$analysisTokenData));
+
         return self::$analysisTokenData;
         /*
         Log::debug('Tapis::renewToken - refresh_token = ' . json_encode($refresh_token));
@@ -395,6 +397,7 @@ class Tapis
 
         return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token, $config);
     }
+
 /*
     public function createUser($token, $username, $first_name, $last_name, $email)
     {
@@ -481,6 +484,7 @@ class Tapis
         //$url = '/jobs/v2/' . $job_id;
         $url = '/v3/jobs/' . $job_id;
         $token = self::$analysisTokenData->access_token;
+
         return $this->doGETRequest($this->tapis_client, $url, $token, true);
     }
 
@@ -508,23 +512,23 @@ class Tapis
     public function getExecutionSystemConfig($name, $host, $port, $username, $privateKey, $publicKey)
     {
         $t = [
-        'id' => $name,
-        'description' => $name,
-        'host' => $host,
-        'systemType' => 'LINUX',
-        'defaultAuthnMethod' => 'PKI_KEYS',
-        'effectiveUserId' => $username,
-        'rootDir' => '/',
-        'canExec' => true,
-        'canRunBatch' => true,
-        'mpiCmd' => 'string',
-        'jobRuntimes' => [ [ 'runtimeType' => 'SINGULARITY' ] ],
-        'jobWorkingDir' => 'HOST_EVAL($SCRATCH)',
-        'jobMaxJobs' => 12000,
-        'jobMaxJobsPerUser' => -1,
-        'batchScheduler' => 'SLURM',
-        'batchDefaultLogicalQueue' => 'default',
-        'batchLogicalQueues' => [
+            'id' => $name,
+            'description' => $name,
+            'host' => $host,
+            'systemType' => 'LINUX',
+            'defaultAuthnMethod' => 'PKI_KEYS',
+            'effectiveUserId' => $username,
+            'rootDir' => '/',
+            'canExec' => true,
+            'canRunBatch' => true,
+            'mpiCmd' => 'string',
+            'jobRuntimes' => [['runtimeType' => 'SINGULARITY']],
+            'jobWorkingDir' => 'HOST_EVAL($SCRATCH)',
+            'jobMaxJobs' => 12000,
+            'jobMaxJobsPerUser' => -1,
+            'batchScheduler' => 'SLURM',
+            'batchDefaultLogicalQueue' => 'default',
+            'batchLogicalQueues' => [
                 [
                     'name' => 'default',
                     'hpcQueueName' => 'default',
@@ -534,11 +538,11 @@ class Tapis
                     'minCoresPerNode' => 1,
                     'maxCoresPerNode' => $this->processorsPerNode,
                     'minMemoryMB' => 1,
-                    'maxMemoryMB' => $this->memoryPerProcessor*1024,
+                    'maxMemoryMB' => $this->memoryPerProcessor * 1024,
                     'minMinutes' => 1,
-                    'maxMinutes' => $this->maxRunTime*60,
-                ]
-            ]
+                    'maxMinutes' => $this->maxRunTime * 60,
+                ],
+            ],
         ];
 
         return $t;
@@ -603,7 +607,7 @@ class Tapis
             'defaultAuthnMethod' => 'PKI_KEYS',
             'effectiveUserId' => $username,
             'canExec' => false,
-            'rootDir' => $rootDir
+            'rootDir' => $rootDir,
         ];
         /*
         $t = [
@@ -702,7 +706,7 @@ class Tapis
     public function getUsers($token)
     {
         //$url = '/profiles/v2/?pretty=true';
-        $url = '/v3/oauth2/profiles'; 
+        $url = '/v3/oauth2/profiles';
         $token = self::$analysisTokenData->access_token;
         $response = $this->doGETRequest($url, $token);
 
@@ -810,6 +814,7 @@ class Tapis
     {
         // convert config object to json
         $json = json_encode($config, JSON_PRETTY_PRINT);
+
         return $this->doPOSTRequest($client, $url, $token, [], $json);
     }
 

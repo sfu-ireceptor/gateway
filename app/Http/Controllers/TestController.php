@@ -38,13 +38,13 @@ class TestController extends Controller
         // Test Tapis
         $tapis = new Tapis;
         $systems = $tapis->listSystems(null);
-        echo "<p>";
+        echo '<p>';
         echo json_encode($systems);
 
         $apps = $tapis->listApps(null);
-        echo "<p>";
+        echo '<p>';
         echo json_encode($apps);
-        
+
         $defaultExecutionSystemHost = config('services.tapis.default_execution_system.host');
         $defaultExecutionSystemPort = config('services.tapis.default_execution_system.port');
         $defaultExecutionSystemUsername = config('services.tapis.default_execution_system.auth.username');
@@ -53,7 +53,7 @@ class TestController extends Controller
         $gw_username = 'bcorrie';
         $systemExecutionName = config('services.tapis.system_execution.name_prefix') . str_replace('_', '-', $gw_username) . 'test-' . $defaultExecutionSystemHost;
         $config = $tapis->getExecutionSystemConfig($systemExecutionName, $defaultExecutionSystemHost, $defaultExecutionSystemPort, $defaultExecutionSystemUsername, $defaultExecutionSystemPrivateKey, $defaultExecutionSystemPublicKey);
-        echo "<p>";
+        echo '<p>';
         echo json_encode($config);
 
         // create deployment system (where the app originally is)
@@ -66,13 +66,11 @@ class TestController extends Controller
         $systemDeploymentRootDir = config('services.tapis.system_deploy.rootdir');
 
         $config = $tapis->getStorageSystemConfig($systemDeploymentName, $systemDeploymentHost, $systemDeploymentPort, $systemDeploymentUsername, $systemDeploymentPrivateKey, $systemDeploymentPublicKey, $systemDeploymentRootDir);
-        echo "<p>";
+        echo '<p>';
         echo json_encode($config);
         $response = $tapis->createSystem(null, $config);
-        echo "<p>";
+        echo '<p>';
         echo json_encode($response);
-
-
 
         exit;
 
