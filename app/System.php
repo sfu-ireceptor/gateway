@@ -50,7 +50,7 @@ class System extends Model
         //$systemExecutionName = config('services.tapis.system_execution.name_prefix') . $gw_username . '-' . $defaultExecutionSystemUsername . '-' . $defaultExecutionSystemHost;
         $systemExecutionName = config('services.tapis.system_execution.name_prefix') . str_replace('_', '-', $gw_username) . '-' . $defaultExecutionSystemHost;
 
-        $config = $tapis->getExcutionSystemConfig($systemExecutionName, $defaultExecutionSystemHost, $defaultExecutionSystemPort, $defaultExecutionSystemUsername, $defaultExecutionSystemPrivateKey, $defaultExecutionSystemPublicKey);
+        $config = $tapis->getExecutionSystemConfig($systemExecutionName, $defaultExecutionSystemHost, $defaultExecutionSystemPort, $defaultExecutionSystemUsername, $defaultExecutionSystemPrivateKey, $defaultExecutionSystemPublicKey);
         $response = $tapis->createSystem($token, $config);
         Log::info('execution system created: ' . $systemExecutionName);
 
