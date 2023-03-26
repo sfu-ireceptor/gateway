@@ -44,7 +44,7 @@ class TestController extends Controller
         //$apps = $tapis->listApps(null);
         //echo "<p>";
         //echo json_encode($apps);
-        
+
         $defaultExecutionSystemHost = config('services.tapis.default_execution_system.host');
         $defaultExecutionSystemPort = config('services.tapis.default_execution_system.port');
         $defaultExecutionSystemUsername = config('services.tapis.default_execution_system.auth.username');
@@ -52,12 +52,12 @@ class TestController extends Controller
 
         $systemExecutionName = config('services.tapis.system_execution.name_prefix') . '-' . $defaultExecutionSystemHost . '-' . str_replace('_', '-', $gw_username);
         $config = $tapis->getExecutionSystemConfig($systemExecutionName, $defaultExecutionSystemHost, $defaultExecutionSystemPort, $defaultExecutionSystemUsername);
-        echo "<p>";
+        echo '<p>';
         echo json_encode($config);
         // Create the system with the above config
         $response = $tapis->createSystem(null, $config);
-        echo "<p>";
-        echo "####";
+        echo '<p>';
+        echo '####';
         echo json_encode($response);
 
         // create deployment system (where the app originally is)
@@ -79,7 +79,7 @@ class TestController extends Controller
         echo "<p>";
         echo json_encode($response);
 
-        
+
         $defaultExecutionSystemSSHKeys= config('services.tapis.default_execution_system.auth.sshkeys');
         echo "<p>";
         echo $defaultExecutionSystemSSHKeys;
@@ -87,7 +87,6 @@ class TestController extends Controller
         echo "<p>";
         echo json_encode($response);
         */
-        
 
         exit;
 
