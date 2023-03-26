@@ -72,7 +72,7 @@ class TestController extends Controller
         echo "<p>";
         echo json_encode($config);
         $response = $tapis->createSystem(null, $config);
-        echo "<p>";
+        echo '<p>';
         echo json_encode($response);
 
         $response = $tapis->updateSystem(null, $systemDeploymentName, $config);
