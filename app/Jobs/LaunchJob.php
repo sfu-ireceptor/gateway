@@ -170,7 +170,7 @@ class LaunchJob implements ShouldQueue
             // data is stored.
             $systemStaging = config('services.tapis.system_staging.name_prefix') . str_replace('_', '-', $gw_username);
             // Tapis name for the deployment system. This is where the Apps are stored.
-            $appDeploymentSystem = config('services.tapis.system_deploy.name_prefix') . str_replace('_', '-', $gw_username) . '-' . $username;
+            $appDeploymentSystem = config('services.tapis.system_deploy.name_prefix') . str_replace('_', '-', $gw_username) . '-tapis3-' . $username;
 
             // Get the App config for the app in question. The AppID is in the request.
             $appId = $this->request_data['app_id'];

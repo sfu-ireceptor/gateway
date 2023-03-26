@@ -378,6 +378,22 @@ class Tapis
         return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token, $config);
     }
 
+    public function updateSystem($token, $system, $config)
+    {
+        //$url = '/systems/v2/?pretty=true';
+        $url = '/v3/systems/' . $system;
+        $token = self::$analysisTokenData->access_token;
+
+        return $this->doPUTRequestWithJSON($this->tapis_client, $url, $token, [], $config);
+    }
+
+    public function updateSystemCredentials($token, $system, $user, $config)
+    {
+        $url = '/v3/systems/credential/' . $system . '/user/' . $user;
+        $token = self::$analysisTokenData->access_token;
+
+        return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token, $config);
+    }
     public function createApp($token, $config)
     {
         //$url = '/apps/v2/?pretty=true';
@@ -505,12 +521,13 @@ class Tapis
         return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token, $config);
     }
 
-    public function getExecutionSystemConfig($name, $host, $port, $username, $privateKey, $publicKey)
+    public function getExecutionSystemConfig($name, $host, $port, $username)
     {
         $t = [
         'id' => $name,
         'description' => $name,
         'host' => $host,
+        'port' => $port,
         'systemType' => 'LINUX',
         'defaultAuthnMethod' => 'PKI_KEYS',
         'effectiveUserId' => $username,
@@ -593,7 +610,7 @@ class Tapis
         return $t;
     }
 */
-    public function getStorageSystemConfig($name, $host, $port, $username, $privateKey, $publicKey, $rootDir)
+    public function getStorageSystemConfig($name, $host, $port, $username, $rootDir)
     {
         $t = [
             'id' => $name,
@@ -801,6 +818,13 @@ class Tapis
         return $this->doHTTPRequest($client, 'PUT', $url, $token, $variables);
     }
 
+    public function doPUTRequestWithJSON($client, $url, $token, $variables = [], $config)
+    {
+        // convert config object to json
+        $json = json_encode($config, JSON_PRETTY_PRINT);
+        return $this->doHTTPRequest($client, 'PUT', $url, $token, $variables, $json);
+    }
+
     public function doDELETERequest($client, $url, $token)
     {
         return $this->doHTTPRequest($client, 'DELETE', $url, $token);
@@ -860,6 +884,22 @@ class Tapis
             $response = $exception->getResponse()->getBody()->getContents();
             Log::error('Tapis::doHTTPRequest:: ClientException - query = ' . $url);
             Log::error('Tapis::doHTTPRequest:: ClientException - response = ' . $response);
+            $this->raiseExceptionIfTapisError($response);
+
+            return $response;
+        }
+        catch (RequestException $exception) {
+            $response = $exception->getResponse()->getBody()->getContents();
+            Log::error('Tapis::doHTTPRequest:: RequestException - query = ' . $url);
+            Log::error('Tapis::doHTTPRequest:: RequestException - response = ' . $response);
+            $this->raiseExceptionIfTapisError($response);
+
+            return $response;
+        }
+        catch (ServerException $exception) {
+            $response = $exception->getResponse()->getBody()->getContents();
+            Log::error('Tapis::doHTTPRequest:: ServerException - query = ' . $url);
+            Log::error('Tapis::doHTTPRequest:: ServerException - response = ' . $response);
             $this->raiseExceptionIfTapisError($response);
 
             return $response;

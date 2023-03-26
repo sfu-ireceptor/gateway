@@ -41,14 +41,12 @@ class SystemController extends Controller
         // create execution system
         $sshKeys = $tapis->generateSSHKeys();
 
-        $systemExecutionName = config('services.tapis.system_execution.name_prefix') . $username . '-' . $systemHostStr;
+        $systemExecutionName = config('services.tapis.system_execution.name_prefix') . '-' . $systemHostStr . '-' . $username;
         $systemExecutionHost = $systemHost;
         $systemExecutionUsername = $username;
-        $systemExecutionPublicKey = $sshKeys['public'];
-        $systemExecutionPrivateKey = $sshKeys['private'];
         $systemExecutionPort = 22;
 
-        $config = $tapis->getExecutionSystemConfig($systemExecutionName, $systemExecutionHost, $systemExecutionPort, $systemExecutionUsername, $systemExecutionPrivateKey, $systemExecutionPublicKey);
+        $config = $tapis->getExecutionSystemConfig($systemExecutionName, $systemExecutionHost, $systemExecutionPort, $systemExecutionUsername);
         $response = $tapis->createSystem($token, $config);
         Log::info('execution system created: ' . $systemExecutionName);
 
@@ -68,11 +66,9 @@ class SystemController extends Controller
         $systemDeploymentHost = config('services.tapis.system_deploy.host');
         $systemDeploymentPort = config('services.tapis.system_deploy.port');
         $systemDeploymentUsername = config('services.tapis.system_deploy.auth.username');
-        $systemDeploymentPrivateKey = config('services.tapis.system_deploy.auth.private_key');
-        $systemDeploymentPublicKey = config('services.tapis.system_deploy.auth.public_key');
         $systemDeploymentRootDir = config('services.tapis.system_deploy.rootdir');
 
-        $config = $tapis->getStorageSystemConfig($systemDeploymentName, $systemDeploymentHost, $systemDeploymentPort, $systemDeploymentUsername, $systemDeploymentPrivateKey, $systemDeploymentPublicKey, $systemDeploymentRootDir);
+        $config = $tapis->getStorageSystemConfig($systemDeploymentName, $systemDeploymentHost, $systemDeploymentPort, $systemDeploymentUsername, $systemDeploymentRootDir);
         $response = $tapis->createSystem($token, $config);
         Log::info('deployment system created: ' . $systemDeploymentName);
 
@@ -81,11 +77,9 @@ class SystemController extends Controller
         $systemStagingHost = config('services.tapis.system_staging.host');
         $systemStagingPort = config('services.tapis.system_staging.port');
         $systemStagingUsername = config('services.tapis.system_staging.auth.username');
-        $systemStagingPrivateKey = config('services.tapis.system_staging.auth.private_key');
-        $systemStagingPublicKey = config('services.tapis.system_staging.auth.public_key');
         $systemStagingRootDir = config('services.tapis.system_staging.rootdir');
 
-        $config = $tapis->getStorageSystemConfig($systemStagingName, $systemStagingHost, $systemStagingPort, $systemStagingUsername, $systemStagingPrivateKey, $systemStagingPublicKey, $systemStagingRootDir);
+        $config = $tapis->getStorageSystemConfig($systemStagingName, $systemStagingHost, $systemStagingPort, $systemStagingUsername, $systemStagingRootDir);
         $response = $tapis->createSystem($token, $config);
         Log::info('staging system created: ' . $systemStagingName);
 

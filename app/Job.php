@@ -259,7 +259,7 @@ STR;
                 break;
         }
 
-        $this->job_status = $str;
+        $this->agave_status = $str;
         $this->status = $status;
         $this->progress = $progress;
 

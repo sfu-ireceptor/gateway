@@ -117,15 +117,15 @@ return [
             'stats', 'histogram', 'clone-stats', 'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity',
         ],
         'system_execution' => [
-            'name_prefix'  => env('TAPIS_SYSTEM_EXECUTION_NAME_PREFIX', 'exec-'),
+            'name_prefix'  => env('TAPIS_SYSTEM_EXECUTION_NAME_PREFIX', 'exec'),
             'max_run_time' => intval(96),
             'processors_per_node' => intval(1),
             'memory_per_processor' => intval(8),
         ],
 
         'system_staging' => [
-            'name_prefix'  => env('TAPIS_SYSTEM_STAGING_NAME_PREFIX', 'staging-'),
-            'host'  => env('TAPIS_SYSTEM_STAGING_HOST', 'ireceptorgw.irmacs.sfu.ca'),
+            'name_prefix'  => env('TAPIS_SYSTEM_STAGING_NAME_PREFIX', 'staging'),
+            'host'  => env('TAPIS_SYSTEM_STAGING_HOST', 'gateway.ireceptor.org'),
             'port'  => intval(env('TAPIS_SYSTEM_STAGING_PORT', 22)),
             'auth'  => [
                 'username'      => env('TAPIS_SYSTEM_STAGING_AUTH_USERNAME', 'ubuntu'),
@@ -136,8 +136,8 @@ return [
         ],
 
         'system_deploy' => [
-            'name_prefix'  => env('TAPIS_SYSTEM_DEPLOY_NAME_PREFIX', 'deploy-'),
-            'host'  => env('TAPIS_SYSTEM_DEPLOY_HOST', 'ireceptorgw.irmacs.sfu.ca'),
+            'name_prefix'  => env('TAPIS_SYSTEM_DEPLOY_NAME_PREFIX', 'deploy'),
+            'host'  => env('TAPIS_SYSTEM_DEPLOY_HOST', 'gateway.ireceptor.org'),
             'port'  => intval(env('TAPIS_SYSTEM_DEPLOY_PORT', 22)),
             'auth'  => [
                 'username'      => env('TAPIS_SYSTEM_DEPLOY_AUTH_USERNAME', 'ubuntu'),
