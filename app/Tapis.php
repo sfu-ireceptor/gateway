@@ -145,6 +145,7 @@ class Tapis
             Log::debug('Tapis::getTokenForUser - Token info for user ' . $username . ' = ' . json_encode($t->result->access_token));
             $token_info = $t->result->access_token;
             $token_info->refresh_token = null;
+
             return $token_info;
         } else {
             Log::debug('Tapis::getTokenForUser - Could not get token for ' . $username);
@@ -313,7 +314,6 @@ class Tapis
                     //$app_config['parameters'][$gateway_count] = $gateway_param;
                 }
             }
-
 
             // Store the object in a dictionary keyed with 'config'. We do this because
             // we anticipate needing more information about the App that will be
@@ -493,7 +493,6 @@ class Tapis
 
         return $this->doGETRequest($this->tapis_client, $url, $token);
     }
-
 
     public function listSystems($token)
     {
@@ -704,13 +703,13 @@ class Tapis
         $t = [
             'name' => $name,
             'appId' => $app_id,
-            'appVersion' => "0.1",
+            'appVersion' => '0.1',
             'archiveSystemId' => $storage_archiving,
             'archiveSystemDir' => $folder,
             'parameterSet' => [
-                'appArgs' => [ $params ]
+                'appArgs' => [$params],
             ],
-            'fileInputs' => [ $inputs ]
+            'fileInputs' => [$inputs],
         ];
         /*
         $t = [

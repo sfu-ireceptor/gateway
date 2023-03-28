@@ -210,7 +210,7 @@ class LaunchJob implements ShouldQueue
             foreach ($appConfig['jobAttributes']['parameterSet']['appArgs'] as $parameter_info) {
                 Log::debug('   Processing parameter ' . $parameter_info['name']);
                 // If it visible, we want to pass on the input to the job.
-                if ($parameter_info['inputMode'] != "FIXED") {
+                if ($parameter_info['inputMode'] != 'FIXED') {
                     $params[$parameter_info['name']] = $this->request_data[$parameter_info['name']];
                     Log::debug('   Parameter value = ' . $this->request_data[$parameter_info['name']]);
                 }
