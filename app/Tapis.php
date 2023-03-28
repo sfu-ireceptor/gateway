@@ -403,6 +403,7 @@ class Tapis
 
         return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token, $config);
     }
+
     public function createApp($token, $config)
     {
         //$url = '/apps/v2/?pretty=true';
@@ -554,24 +555,24 @@ class Tapis
     public function getExecutionSystemConfig($name, $host, $port, $username)
     {
         $t = [
-        'id' => $name,
-        'description' => $name,
-        'host' => $host,
-        'port' => $port,
-        'systemType' => 'LINUX',
-        'defaultAuthnMethod' => 'PKI_KEYS',
-        'effectiveUserId' => $username,
-        'rootDir' => '/',
-        'canExec' => true,
-        'canRunBatch' => true,
-        'mpiCmd' => 'string',
-        'jobRuntimes' => [ [ 'runtimeType' => 'SINGULARITY' ] ],
-        'jobWorkingDir' => 'HOST_EVAL($SCRATCH)',
-        'jobMaxJobs' => 12000,
-        'jobMaxJobsPerUser' => -1,
-        'batchScheduler' => 'SLURM',
-        'batchDefaultLogicalQueue' => 'default',
-        'batchLogicalQueues' => [
+            'id' => $name,
+            'description' => $name,
+            'host' => $host,
+            'port' => $port,
+            'systemType' => 'LINUX',
+            'defaultAuthnMethod' => 'PKI_KEYS',
+            'effectiveUserId' => $username,
+            'rootDir' => '/',
+            'canExec' => true,
+            'canRunBatch' => true,
+            'mpiCmd' => 'string',
+            'jobRuntimes' => [['runtimeType' => 'SINGULARITY']],
+            'jobWorkingDir' => 'HOST_EVAL($SCRATCH)',
+            'jobMaxJobs' => 12000,
+            'jobMaxJobsPerUser' => -1,
+            'batchScheduler' => 'SLURM',
+            'batchDefaultLogicalQueue' => 'default',
+            'batchLogicalQueues' => [
                 [
                     'name' => 'default',
                     'hpcQueueName' => 'default',
@@ -865,6 +866,7 @@ class Tapis
     {
         // convert config object to json
         $json = json_encode($config, JSON_PRETTY_PRINT);
+
         return $this->doHTTPRequest($client, 'PUT', $url, $token, $variables, $json);
     }
 
@@ -932,16 +934,14 @@ class Tapis
             $this->raiseExceptionIfTapisError($response);
 
             return $response;
-        }
-        catch (RequestException $exception) {
+        } catch (RequestException $exception) {
             $response = $exception->getResponse()->getBody()->getContents();
             Log::error('Tapis::doHTTPRequest:: RequestException - query = ' . $url);
             Log::error('Tapis::doHTTPRequest:: RequestException - response = ' . $response);
             $this->raiseExceptionIfTapisError($response);
 
             return $response;
-        }
-        catch (ServerException $exception) {
+        } catch (ServerException $exception) {
             $response = $exception->getResponse()->getBody()->getContents();
             Log::error('Tapis::doHTTPRequest:: ServerException - query = ' . $url);
             Log::error('Tapis::doHTTPRequest:: ServerException - response = ' . $response);
