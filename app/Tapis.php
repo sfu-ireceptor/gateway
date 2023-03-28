@@ -42,42 +42,44 @@ class Tapis
         }
 
         // Maximum run time for a job in hours.
-        $this->maxRunTime = config('services.tapis.system_execution.max_run_time');
+        $this->maxMinutes = config('services.tapis.system_execution.max_minutes');
         // Maximum number of processors per job. For now all serial jobs.
-        $this->processorsPerNode = config('services.tapis.system_execution.processors_per_node');
-        // Amount of memory per processor (in GB)
-        $this->memoryPerProcessor = config('services.tapis.system_execution.memory_per_processor');
+        $this->coresPerNode = config('services.tapis.system_execution.cores_per_node');
+        // Amount of memory per node (in MB)
+        $this->memoryMBPerNode = config('services.tapis.system_execution.memory_per_node');
+        // Amount of memory per processor (in MB)
+        $this->memoryMBPerCore = config('services.tapis.system_execution.memory_per_core');
 
         // Set up the default job contorl parameters used by TAPIS
         $this->jobParameters = [];
         // Run time parameter
         $job_parameter = [];
-        $job_parameter['label'] = 'maxRunTime';
-        $job_parameter['type'] = 'string';
-        $job_parameter['name'] = 'Maximum run time (hh:mm:ss)';
-        $job_parameter['description'] = 'Maximum run time for the job in hh:mm:ss. If the job takes longer than this to complete, the job will be terminated. A run time of longer than ' . strval($this->maxRunTime) . ' hours is not allowed.';
-        $job_parameter['default'] = strval($this->maxRunTime) . ':00:00';
+        $job_parameter['label'] = 'maxMinutes';
+        $job_parameter['type'] = 'integer';
+        $job_parameter['name'] = 'Maximum number of minutes';
+        $job_parameter['description'] = 'Maximum run time for the job in minutes. If the job takes longer than this to complete, the job will be terminated. A run time of longer than ' . strval($this->maxMinutes) . ' minutes is not allowed.';
+        $job_parameter['default'] = strval($this->maxMinutes);
         $this->jobParameters[$job_parameter['label']] = $job_parameter;
 
         // Processors per node parameter
         $job_parameter = [];
-        $job_parameter['label'] = 'processorsPerNode';
+        $job_parameter['label'] = 'coresPerNode';
         $job_parameter['type'] = 'integer';
-        $job_parameter['name'] = 'Number of CPUs (max ' . strval($this->processorsPerNode) . ')';
+        $job_parameter['name'] = 'Number of CPUs (max ' . strval($this->coresPerNode) . ')';
         $job_parameter['description'] = 'Number of CPUs used by the job, with a maximum of ' . strval($this->processorsPerNode) . ' per job. Note not all jobs will scale well so adding more CPUs may not reduce execution time.';
-        $job_parameter['default'] = $this->processorsPerNode;
+        $job_parameter['default'] = $this->coresPerNode;
         $this->jobParameters[$job_parameter['label']] = $job_parameter;
 
         // Memory per node parameter
         // This doesn't seem to be working. Tapis does not seem to pass this on to
-        // the scheduler, so changing this has no effect. We go with 4GB/CPU through
+        // the scheduler, so changing this has no effect. We go with 8GB/CPU through
         // the default system config with a custom directive.
         //$job_parameter = [];
-        //$job_parameter['label'] = 'memoryPerNode';
+        //$job_parameter['label'] = 'memoryMB';
         //$job_parameter['type'] = 'string';
-        //#$job_parameter['name'] = 'Memory per node';
+        //#$job_parameter['name'] = 'Memory (MB) per node';
         //$job_parameter['description'] = 'Amount of memory allocated per node used by the job';
-        //$job_parameter['default'] = '4GB';
+        //$job_parameter['default'] = 8196;
         //$this->jobParameters[$job_parameter['label']] = $job_parameter;
 
         // Number of nodes to use parameter
@@ -141,8 +143,9 @@ class Tapis
         // try to get token
         if (isset($t->result) && isset($t->result->access_token)) {
             Log::debug('Tapis::getTokenForUser - Token info for user ' . $username . ' = ' . json_encode($t->result->access_token));
-
-            return $t->result->access_token;
+            $token_info = $t->result->access_token;
+            $token_info->refresh_token = null;
+            return $token_info;
         } else {
             Log::debug('Tapis::getTokenForUser - Could not get token for ' . $username);
 
@@ -261,7 +264,7 @@ class Tapis
             // expected that each App that works on the iReceptor Gateway has an
             // app.json file that is the Tapis definition of the App. We use this
             // to determine how to submit the App to Tapis and to build the UI.
-            $file_path = resource_path('tapis_apps/' . $app_dir . '/app.json');
+            $file_path = resource_path('tapis_apps/' . $app_dir . '/app3.json');
             //Log::debug('updateAppTemplates: Trying to open App file ' . $file_path);
             // Open the file and convert the JSON to an object.
             try {
@@ -270,6 +273,7 @@ class Tapis
                 Log::debug('updateAppTemplates: Could not open App file ' . $file_path);
                 Log::debug('updateAppTemplates: Error: ' . $e->getMessage());
             }
+            Log::debug('updateAppTemplates: App JSON = ' . $app_json);
             $app_config = json_decode($app_json, true);
             // We want to store information about the app that is useful in helping us
             // determine when to use it. This information is encoded in a JSON string in
@@ -277,36 +281,39 @@ class Tapis
             $param_count = 0;
             $gateway_count = -1;
             $app_info = [];
-            if (array_key_exists('parameters', $app_config)) {
-                $parameters = $app_config['parameters'];
+            if (array_key_exists('jobAttributes', $app_config) &&
+                array_key_exists('parameterSet', $app_config['jobAttributes']) &&
+                array_key_exists('envVariables', $app_config['jobAttributes']['parameterSet'])) {
+                $envVariables = $app_config['jobAttributes']['parameterSet']['envVariables'];
                 // Loop over the parameters and check for special ir_ parameters
-                foreach ($parameters as $parameter) {
+                foreach ($envVariables as $variable) {
                     // ir_hints provides hints to the Gateway as to the capabilities
                     // of the App.
-                    if (array_key_exists('id', $parameter) && $parameter['id'] == 'ir_hints') {
+                    if (array_key_exists('key', $variable) && $variable['key'] == 'ir_hints') {
                         // If we found a JSON hint decode it
-                        $hint_obj = json_decode($parameter['value']['default']);
+                        $hint_obj = json_decode($variable['value']);
                         //Log::debug('updateAppTemplates: hint_obj = ' . json_encode($hint_obj));
                         // Get the object attribute - this tells us which AIRR object type this
                         // App can be applied to (e.g. Rearrangement, Clone, Cell).
                         $app_info['object'] = $hint_obj->object;
-                    } elseif (array_key_exists('id', $parameter) && $parameter['id'] == 'ir_gateway_url') {
+                    } elseif (array_key_exists('key', $variable) && $variable['key'] == 'ir_gateway_url') {
                         // The Tapis App uses ir_gateway_url to provide the URL of the source
                         // gateway that is submitting the job. This used to get assets specific
                         // to the given gateway.
-                        $gateway_param = $parameter;
-                        $gateway_param['value']['default'] = config('app.url');
+                        $gateway_param = $variable;
+                        $gateway_param['value'] = config('app.url');
                         $gateway_count = $param_count;
                     }
                     $param_count = $param_count + 1;
                 }
+                // Overwrite the gateway URL parameter configuration if we got one.
+                if ($gateway_count >= 0) {
+                    Log::debug('updateAppTemplates: replacing ' . json_encode($app_config['jobAttributes']['parameterSet']['envVariables'][$gateway_count]));
+                    $app_config['jobAttributes']['parameterSet']['envVariables'][$gateway_count] = $gateway_param;
+                    //$app_config['parameters'][$gateway_count] = $gateway_param;
+                }
             }
 
-            // Overwrite the gateway URL parameter configuration if we got one.
-            if ($gateway_count >= 0) {
-                //Log::debug('updateAppTemplates: replacing ' . json_encode($app_config['parameters'][$gateway_count]));
-                $app_config['parameters'][$gateway_count] = $gateway_param;
-            }
 
             // Store the object in a dictionary keyed with 'config'. We do this because
             // we anticipate needing more information about the App that will be
@@ -405,6 +412,16 @@ class Tapis
         return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token, $config);
     }
 
+    public function updateApp($token, $app, $config)
+    {
+        //$url = '/systems/v2/?pretty=true';
+        $version = '0.1';
+        $token = self::$analysisTokenData->access_token;
+        $url = '/v3/apps/' . $app . '/' . $version;
+
+        return $this->doPUTRequestWithJSON($this->tapis_client, $url, $token, [], $config);
+    }
+
     public function createJob($token, $config)
     {
         //$url = '/jobs/v2/?pretty=true';
@@ -467,6 +484,15 @@ class Tapis
 
         return $this->doGETRequest($this->tapis_client, $url, $token);
     }
+
+    public function getApp($app_id, $token)
+    {
+        $url = '/v3/apps/' . $app_id;
+        $token = self::$analysisTokenData->access_token;
+
+        return $this->doGETRequest($this->tapis_client, $url, $token);
+    }
+
 
     public function listSystems($token)
     {
@@ -553,11 +579,11 @@ class Tapis
                     'minNodeCount' => 1,
                     'maxNodeCount' => 1,
                     'minCoresPerNode' => 1,
-                    'maxCoresPerNode' => $this->processorsPerNode,
+                    'maxCoresPerNode' => $this->coresPerNode,
                     'minMemoryMB' => 1,
-                    'maxMemoryMB' => $this->memoryPerProcessor * 1024,
+                    'maxMemoryMB' => $this->memoryMBPerCore,
                     'minMinutes' => 1,
-                    'maxMinutes' => $this->maxRunTime * 60,
+                    'maxMinutes' => $this->maxMinutes,
                 ],
             ],
         ];
@@ -662,10 +688,10 @@ class Tapis
 
         // We overwrite the systems and deployment paths so we know what
         // apps are being used from where.
-        $app_config['name'] = $name;
-        $app_config['executionSystem'] = $executionSystem;
-        $app_config['deploymentSystem'] = $deploymentSystem;
-        $app_config['deploymentPath'] = $deploymentPath;
+        $app_config['id'] = $name;
+        $app_config['jobAttributes']['execSystemId'] = $executionSystem;
+        //$app_config['deploymentSystem'] = $deploymentSystem;
+        //$app_config['deploymentPath'] = $deploymentPath;
         Log::debug('Tapis::getAppConfig: App config:');
         Log::debug($app_config);
 
@@ -674,6 +700,18 @@ class Tapis
 
     public function getJobConfig($name, $app_id, $storage_archiving, $notification_url, $folder, $params, $inputs, $job_params)
     {
+        $t = [
+            'name' => $name,
+            'appId' => $app_id,
+            'appVersion' => "0.1",
+            'archiveSystemId' => $storage_archiving,
+            'archiveSystemDir' => $folder,
+            'parameterSet' => [
+                'appArgs' => [ $params ]
+            ],
+            'fileInputs' => [ $inputs ]
+        ];
+        /*
         $t = [
             'name' => $name,
             'appId' => $app_id,
@@ -690,6 +728,7 @@ class Tapis
                 ],
             ],
         ];
+        */
 
         // Set up the job parameters. We loop over the possible job parameters and
         // check to see if any of them are set in the job_params provided by the caller.
@@ -884,6 +923,7 @@ class Tapis
 
         try {
             Log::debug('Tapis::doHTTPRequest - data = ' . json_encode($data));
+            Log::debug('Tapis::doHTTPRequest - url = ' . $url);
             $response = $client->request($method, $url, $data);
         } catch (ClientException $exception) {
             $response = $exception->getResponse()->getBody()->getContents();

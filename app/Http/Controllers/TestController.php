@@ -41,10 +41,15 @@ class TestController extends Controller
         //echo "<p>";
         //echo json_encode($systems);
 
-        //$apps = $tapis->listApps(null);
-        //echo "<p>";
-        //echo json_encode($apps);
+        $apps = $tapis->listApps(null);
+        echo "<p>";
+        echo json_encode($apps);
         
+        $app = 'histogram-staging-analysis-dev-exec-cedar.computecanada.ca-bcorrie';
+        $appResponse = $tapis->getApp($app, null);
+        echo "<p>";
+        echo json_encode($appResponse);
+        exit;
         $defaultExecutionSystemHost = config('services.tapis.default_execution_system.host');
         $defaultExecutionSystemPort = config('services.tapis.default_execution_system.port');
         $defaultExecutionSystemUsername = config('services.tapis.default_execution_system.auth.username');

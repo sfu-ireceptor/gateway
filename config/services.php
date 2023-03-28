@@ -118,9 +118,10 @@ return [
         ],
         'system_execution' => [
             'name_prefix'  => env('TAPIS_SYSTEM_EXECUTION_NAME_PREFIX', 'exec'),
-            'max_run_time' => intval(96),
-            'processors_per_node' => intval(1),
-            'memory_per_processor' => intval(8),
+            'max_minutes' => intval(2880),
+            'cores_per_node' => intval(1),
+            'memory_per_node' => intval(8196),
+            'memory_per_core' => intval(8196),
         ],
 
         'system_staging' => [

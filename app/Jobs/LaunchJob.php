@@ -144,8 +144,8 @@ class LaunchJob implements ShouldQueue
             $tapis = new Tapis;
 
             // Get the user token
-            //$user = User::where('username', $gw_username)->first();
-            $user = Auth::user();
+            $user = User::where('username', $gw_username)->first();
+            //$user = Auth::user();
             if ($user == null) {
                 throw new \Exception('User ' . $gw_username . ' could not be found in local database.');
             }
@@ -182,14 +182,21 @@ class LaunchJob implements ShouldQueue
             // The path for the app is the same as the appID
             $appName = $appId . '-' . $executionSystem->name;
             $appDeploymentPath = $appId;
-            $appHumanName = $appTemplateConfig['label'];
+            $appHumanName = $appTemplateConfig['description'];
 
             // Based on the above, create the Tapis App.
             $appConfig = $tapis->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
             Log::debug('LaunchJob::handle - app token: ' . $token);
-            $response = $tapis->createApp($token, $appConfig);
-            $tapisAppId = $response->result->id;
-            Log::debug('LaunchJob::handle - app created: ' . $appId);
+            $appResponse = $tapis->getApp($appName, $token);
+            Log::debug('LaunchJob::handle - App info = ' . json_encode($appResponse));
+            if ($appResponse->status == 'success') {
+                $tapisAppId = $appResponse->result->uuid;
+                $response = $tapis->updateApp($token, $appName, $appConfig);
+            } else {
+                $response = $tapis->createApp($token, $appConfig);
+                $tapisAppId = $response->result->uuid;
+                Log::debug('LaunchJob::handle - app created: ' . $appId);
+            }
 
             // The Gateway sets the download_file input as it controls the data
             // that is processed by the application.
@@ -200,12 +207,12 @@ class LaunchJob implements ShouldQueue
 
             // Process the App parameters
             $params = [];
-            foreach ($appConfig['parameters'] as $parameter_info) {
-                Log::debug('   Processing parameter ' . $parameter_info['id']);
+            foreach ($appConfig['jobAttributes']['parameterSet']['appArgs'] as $parameter_info) {
+                Log::debug('   Processing parameter ' . $parameter_info['name']);
                 // If it visible, we want to pass on the input to the job.
-                if ($parameter_info['value']['visible']) {
-                    $params[$parameter_info['id']] = $this->request_data[$parameter_info['id']];
-                    Log::debug('   Parameter value = ' . $this->request_data[$parameter_info['id']]);
+                if ($parameter_info['inputMode'] != "FIXED") {
+                    $params[$parameter_info['name']] = $this->request_data[$parameter_info['name']];
+                    Log::debug('   Parameter value = ' . $this->request_data[$parameter_info['name']]);
                 }
             }
 

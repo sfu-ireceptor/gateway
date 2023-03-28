@@ -174,7 +174,7 @@ class JobController extends Controller
             // configuration, we want to use the application label as the
             // human readable description for this App.
             $app_config = $app_info['config'];
-            $appHumanName = $app_config['label'];
+            $appHumanName = $app_config['description'];
         }
 
         // create job in DB
@@ -520,7 +520,8 @@ class JobController extends Controller
             $stderr_response = '';
             if (File::exists($folder) && ! File::exists($err_path)) {
                 // Tapis command to get the file.
-                $stderr_response = $tapis->getJobOutputFile($job->getJobID(), $token, $error_file);
+                //$stderr_response = $tapis->getJobOutputFile($job->getJobID(), $token, $error_file);
+                $stderr_response = 'THIS NEEDS TO BE FIXED';
                 // Check for the analysis directory, create if it doesn't exist.
                 if (! File::exists($analysis_folder)) {
                     mkdir($analysis_folder);
@@ -543,7 +544,8 @@ class JobController extends Controller
             $stdout_response = '';
             if (File::exists($folder) && ! File::exists($out_path)) {
                 // Tapis command to get the file.
-                $stdout_response = $tapis->getJobOutputFile($job->getJobID(), $token, $output_file);
+                //$stdout_response = $tapis->getJobOutputFile($job->getJobID(), $token, $output_file);
+                $stdout_response = 'THIS NEEDS TO BE FIXED';
                 // Check for the analysis directory, create if it doesn't exist.
                 if (! File::exists($analysis_folder)) {
                     mkdir($analysis_folder);
@@ -566,8 +568,10 @@ class JobController extends Controller
             $info_response = '';
             if (File::exists($folder) && ! File::exists($info_path)) {
                 // Tapis command to get the file.
-                $info_response = $tapis->getJobOutputFile($job->getJobID(), $token, 'info.txt');
+                //$info_response = $tapis->getJobOutputFile($job->getJobID(), $token, 'info.txt');
+                $info_response = 'THIS NEEDS TO BE FIXED';
                 $info_object = json_decode($info_response);
+                
 
                 // Catch the case when the info file doesn't exist on the Tapis compute side.
                 if ($info_object == null) {
