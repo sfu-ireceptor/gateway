@@ -571,7 +571,6 @@ class JobController extends Controller
                 //$info_response = $tapis->getJobOutputFile($job->getJobID(), $token, 'info.txt');
                 $info_response = 'THIS NEEDS TO BE FIXED';
                 $info_object = json_decode($info_response);
-                
 
                 // Catch the case when the info file doesn't exist on the Tapis compute side.
                 if ($info_object == null) {
