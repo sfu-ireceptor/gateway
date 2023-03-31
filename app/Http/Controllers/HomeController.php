@@ -107,4 +107,9 @@ class HomeController extends Controller
 
         return view('repositories', $data);
     }
+
+    public function survey()
+    {
+        return view('survey');
+    }
 }

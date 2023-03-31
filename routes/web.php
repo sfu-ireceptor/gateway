@@ -156,6 +156,10 @@ Route::middleware('auth')->group(function () {
         Route::get('queries2/months/{n}', 'AdminController@queriesMonths2');
         Route::get('queries/{id}', 'AdminController@query');
     });
+
+    // other
+    Route::get('/ireceptor-survey', 'HomeController@survey')->name('survey');
+
 });
 
 /*
