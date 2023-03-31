@@ -53,7 +53,7 @@ return [
         ],
         'system_execution' => [
             'name_prefix'  => env('AGAVE_SYSTEM_EXECUTION_NAME_PREFIX', 'exec-'),
-            'max_run_time' => intval(96),
+            'max_run_time' => intval(36),
             'processors_per_node' => intval(1),
             'memory_per_processor' => intval(8),
         ],
