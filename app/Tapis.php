@@ -58,7 +58,7 @@ class Tapis
         $job_parameter['type'] = 'integer';
         $job_parameter['name'] = 'Maximum number of minutes';
         $job_parameter['description'] = 'Maximum run time for the job in minutes. If the job takes longer than this to complete, the job will be terminated. A run time of longer than ' . strval($this->maxMinutes) . ' minutes is not allowed.';
-        $job_parameter['default'] = strval($this->maxMinutes);
+        $job_parameter['default'] = $this->maxMinutes;
         $this->jobParameters[$job_parameter['label']] = $job_parameter;
 
         // Processors per node parameter
@@ -646,6 +646,7 @@ class Tapis
             'id' => $name,
             'description' => $name,
             'host' => $host,
+            'port' => $port,
             'systemType' => 'LINUX',
             'defaultAuthnMethod' => 'PKI_KEYS',
             'effectiveUserId' => $username,
@@ -707,7 +708,7 @@ class Tapis
             'archiveSystemId' => $storage_archiving,
             'archiveSystemDir' => $folder,
             'parameterSet' => [
-                'appArgs' => [$params],
+                'appArgs' => $params,
             ],
             'fileInputs' => [$inputs],
         ];
@@ -993,6 +994,9 @@ class Tapis
         }
         if (property_exists($response, 'fault')) {
             throw new \Exception('TAPIS error: ' . $response->fault->message);
+        }
+        if (property_exists($response, 'status') && $response->status != 'success') {
+            throw new \Exception('TAPIS error: ' . $response->message);
         }
     }
 }
