@@ -200,10 +200,14 @@ class LaunchJob implements ShouldQueue
 
             // The Gateway sets the download_file input as it controls the data
             // that is processed by the application.
-            $inputs['download_file'] = 'tapis://' . $systemStaging . '/' . $zip_info['zip_name'];
-            foreach ($inputs as $key => $value) {
-                Log::debug('Job input ' . $key . ' = ' . $value);
-            }
+            $inputs = [ 
+                'name' => 'gateway_download_zip', 
+                'sourceUrl' => 'tapis://' . $systemStaging . '/' . $zip_info['zip_name']
+                ];
+            //$inputs['download_file'] = 'tapis://' . $systemStaging . '/' . $zip_info['zip_name'];
+            //foreach ($inputs as $i) {
+            //    Log::debug('Job input ' . $i['name'] . ' = ' . $i['sourceUrl']);
+            //}
 
             // Process the App parameters
             $params = [];
@@ -211,7 +215,12 @@ class LaunchJob implements ShouldQueue
                 Log::debug('   Processing parameter ' . $parameter_info['name']);
                 // If it visible, we want to pass on the input to the job.
                 if ($parameter_info['inputMode'] != 'FIXED') {
-                    $params[$parameter_info['name']] = $this->request_data[$parameter_info['name']];
+                    $param = new \stdClass();
+                    $param->name = $parameter_info['name'];
+                    $param->arg = $this->request_data[$parameter_info['name']];
+                    //$param['arg'] = $this->request_data[$parameter_info['name']];
+                    $params[] = $param;
+                    //$params[$parameter_info['name']] = $this->request_data[$parameter_info['name']];
                     Log::debug('   Parameter value = ' . $this->request_data[$parameter_info['name']]);
                 }
             }
@@ -232,9 +241,10 @@ class LaunchJob implements ShouldQueue
 
             // submit Tapis job
             $job->updateStatus('SENDING JOB FOR ANALYSIS');
-            $job_config = $tapis->getJobConfig('irec-job-' . $this->jobId, $tapisAppId, $systemStaging, $notificationUrl, $archive_folder, $params, $inputs, $job_params);
+            $job_config = $tapis->getJobConfig('irec-job-' . $this->jobId, $appName, $systemStaging, $notificationUrl, $archive_folder, $params, $inputs, $job_params);
             $response = $tapis->createJob($token, $job_config);
-            $job->agave_id = $response->result->id;
+            Log::debug('LaunchJob::handle submit response = ' . json_encode($response));
+            $job->agave_id = $response->result->uuid;
             $job->updateStatus('JOB ACCEPTED FOR ANALYSIS. PENDING.');
 
             // Now that we are done and the Tapis job is running, this LocalJob is done.
