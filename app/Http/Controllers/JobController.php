@@ -63,6 +63,10 @@ class JobController extends Controller
 
         // If we have a JSON string for the Job, process the App parameters.
         if ($job_json != null) {
+            /*
+             * TODO: I believe this code is no longer required. We get everthing
+             * from the job.
+             *
             // Get the App template for this App. The job stores the App Label so
             // we use the label to look it up. This returns a JSON object in the form
             // of an AGave App template.
@@ -72,27 +76,22 @@ class JobController extends Controller
             $template_parameters = [];
             if ($app_template != null) {
                 $config = $app_template['config'];
-                $template_parameters = $config['parameters'];
+                $template_parameters = $config['jobAttributes']['parameterSet']['appArgs'];
             }
+             */
 
             // Get the Tapis job status and from it get the parameters.
             $job_status = json_decode($job_json);
-            $app_parameters = $job_status->result->parameters;
+            $app_parameters = json_decode($job_status->result->parameterSet)->appArgs;
             // For each parameter, add some text to the display string.
-            foreach ($app_parameters as $param => $value) {
-                // Basic parameters are key values with strings. Special
-                // parameters that are hidden the values are arrays. We don't
-                // want to show these.
-                if (! is_array($value)) {
-                    // Parameter is the ID by default, then overwrite the value
-                    // by the parameter label if it exists.
-                    $param_string = $param;
-                    foreach ($template_parameters as $template_param) {
-                        if ($template_param['id'] == $param) {
-                            $param_string = $template_param['details']['label'];
-                        }
-                    }
-                    $s .= $param_string . ': ' . $value . '<br>\n';
+            foreach ($app_parameters as $param ) {
+                // Basic parameters have notes - special hidden parameters do not. So if
+                // we don't have a notes['label'] field then we don't do anything.
+                if (property_exists(json_decode($param->notes), 'label')) {
+                    // Generate the parameters label and value.
+                    $param_string = json_decode($param->notes)->label;
+                    $param_value = $param->arg; 
+                    $s .= $param_string . ': ' . $param_value . '<br>\n';
                     $param_count++;
                 }
             }
@@ -382,6 +381,10 @@ class JobController extends Controller
 
         // If we have a JSON string for the Job, process the App parameters.
         if ($job_json != null) {
+            /*
+             * TODO: I believe this code is no longer required. We get everthing
+             * from the job.
+             *
             // Get the App template for this App. The job stores the App Label so
             // we use the label to look it up. This returns a JSON object in the form
             // of an AGave App template.
@@ -391,27 +394,22 @@ class JobController extends Controller
             $template_parameters = [];
             if ($app_template != null) {
                 $config = $app_template['config'];
-                $template_parameters = $config['parameters'];
+                $template_parameters = $config['jobAttributes']['parameterSet']['appArgs'];
             }
+             */
 
             // Get the Tapis job status and from it get the parameters.
             $job_status = json_decode($job_json);
-            $app_parameters = $job_status->result->parameters;
+            $app_parameters = json_decode($job_status->result->parameterSet)->appArgs;
             // For each parameter, add some text to the display string.
-            foreach ($app_parameters as $param => $value) {
-                // Basic parameters are key values with strings. Special
-                // parameters that are hidden the values are arrays. We don't
-                // want to show these.
-                if (! is_array($value)) {
-                    // Parameter is the ID by default, then overwrite the value
-                    // by the parameter label if it exists.
-                    $param_string = $param;
-                    foreach ($template_parameters as $template_param) {
-                        if ($template_param['id'] == $param) {
-                            $param_string = $template_param['details']['label'];
-                        }
-                    }
-                    $s .= $param_string . ': ' . $value . '<br>\n';
+            foreach ($app_parameters as $param) {
+                // Basic parameters have notes - special hidden parameters do not. So if
+                // we don't have a notes['label'] field then we don't do anything.
+                if (property_exists(json_decode($param->notes), 'label')) {
+                    // Generate the parameter label and its value 
+                    $param_string = json_decode($param->notes)->label;
+                    $param_value = $param->arg;
+                    $s .= $param_string . ': ' . $param_value . '<br>\n';
                     $param_count++;
                 }
             }
