@@ -359,10 +359,11 @@ class Tapis
     public function getAppTemplateByLabel($app_label)
     {
         // Return the app template for the given app label.
+        Log::debug('getAppTemplateByLabel: looking for ' . $app_label);
         foreach ($this->appTemplates as $app_tag => $app_info) {
             // Get this template's label and if it is the same we found it.
             $config = $app_info['config'];
-            $label = $config['label'];
+            $label = $config['description'];
             if ($label == $app_label) {
                 return $app_info;
             }
@@ -548,7 +549,7 @@ class Tapis
         // Send the kill action to the Tapis job.
         //$config = ['action' => 'kill'];
 
-        return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token, $config);
+        return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token);
     }
 
     public function getExecutionSystemConfig($name, $host, $port, $username)
