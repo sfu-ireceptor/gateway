@@ -200,10 +200,10 @@ class LaunchJob implements ShouldQueue
 
             // The Gateway sets the download_file input as it controls the data
             // that is processed by the application.
-            $inputs = [ 
-                'name' => 'gateway_download_zip', 
-                'sourceUrl' => 'tapis://' . $systemStaging . '/' . $zip_info['zip_name']
-                ];
+            $inputs = [
+                'name' => 'gateway_download_zip',
+                'sourceUrl' => 'tapis://' . $systemStaging . '/' . $zip_info['zip_name'],
+            ];
             //$inputs['download_file'] = 'tapis://' . $systemStaging . '/' . $zip_info['zip_name'];
             //foreach ($inputs as $i) {
             //    Log::debug('Job input ' . $i['name'] . ' = ' . $i['sourceUrl']);
