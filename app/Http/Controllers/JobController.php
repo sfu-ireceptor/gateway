@@ -498,9 +498,10 @@ class JobController extends Controller
                 // Get the Tapis error status
                 $job_json = $this->getJobJSON($job->id, $tapis);
                 if ($job_json != null) {
+                    Log::debug('JobController::getView: job result = ' . $job_json);
                     $job_status = json_decode($job_json);
                     $s .= '<br><p><strong>TAPIS errors</strong></p>\n';
-                    $s .= strval($job_status->result->lastStatusMessage) . '<br>\n';
+                    $s .= strval($job_status->result->lastMessage) . '<br>\n';
                 }
             }
             if ($job->getJobStatus() == 'INTERNAL_ERROR') {
