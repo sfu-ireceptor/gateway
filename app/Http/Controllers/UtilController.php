@@ -14,28 +14,40 @@ use Symfony\Component\Process\Process;
 class UtilController extends Controller
 {
     // URL Controller function for receiving updates from Tapis
-    public function updateJobStatus($id, $status)
+    //public function updateJobStatus($id, $status)
+    public function updateJobStatus(Request $request)
     {
-        Log::info('Tapis job status update: job ' . $id . ' has status ' . $status);
-        $lj = new LocalJob('agave-notifications');
+        Log::info('Tapis job status update: job ' . json_encode($request));
+        $content = json_decode($request->getContent());
+        Log::info('Tapis job status update: content = ' . json_encode($content));
+        $event = $content->event;
+        $id = $content->event->subject;
+        $data = json_decode($content->event->data);
+        if (property_exists($data, 'newJobStatus')) {
+            $status = $data->newJobStatus;
+            Log::info('Tapis job status update: job ' . $id . ' has status ' . $status);
+            $lj = new LocalJob('agave-notifications');
 
-        $lj->user = '[Agave]';
+            $lj->user = '[Agave]';
 
-        $lj->description = 'Job ' . $id . ': ' . $status;
+            $lj->description = 'Job ' . $id . ': ' . $status;
 
-        $lj->save();
+            $lj->save();
 
-        // ignore this status because it happens at the same time as FINISHED
-        if ($status == 'ARCHIVING_FINISHED') {
-            $lj->setFinished();
+            // ignore this status because it happens at the same time as FINISHED
+            if ($status == 'ARCHIVING_FINISHED') {
+                $lj->setFinished();
 
-            return;
+                return;
+            }
+
+            $localJobId = $lj->id;
+
+            // queue as a job (to make sure notifications are processed in order)
+            ProcessJobNotification::dispatch($id, $status, $localJobId)->onQueue('agave-notifications');
+        } else {
+           Log::info('updateJobStatus: Got notification, ignoring: ' . $data->message);
         }
-
-        $localJobId = $lj->id;
-
-        // queue as a job (to make sure notifications are processed in order)
-        ProcessJobNotification::dispatch($id, $status, $localJobId)->onQueue('agave-notifications');
     }
 
     // called by GitHub hook
