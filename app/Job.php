@@ -301,6 +301,7 @@ STR;
         // If we have a job without a JobStep handle the case elegantly.
         if ($firstJobStep != null) {
             $from = $firstJobStep->created_at;
+
             return $to->diffForHumans($from, true);
         } else {
             return 'Unknown';

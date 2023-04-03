@@ -46,7 +46,7 @@ class UtilController extends Controller
             // queue as a job (to make sure notifications are processed in order)
             ProcessJobNotification::dispatch($id, $status, $localJobId)->onQueue('agave-notifications');
         } else {
-           Log::info('updateJobStatus: Got notification, ignoring: ' . $data->message);
+            Log::info('updateJobStatus: Got notification, ignoring: ' . $data->message);
         }
     }
 

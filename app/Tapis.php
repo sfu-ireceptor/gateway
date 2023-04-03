@@ -712,14 +712,14 @@ class Tapis
             'subscriptions' => [
                 [
                     'description' => 'Job status call back notification',
-                    'enabled' => True,
+                    'enabled' => true,
                     'eventCategoryFilter' => 'JOB_NEW_STATUS',
                     'deliveryTargets' => [[
                         'deliveryMethod' => 'WEBHOOK',
                         'deliveryAddress' => $notification_url . '/job/update-status',
-                    ]]
-                ]
-            ]
+                    ]],
+                ],
+            ],
         ];
         /*
         $t = [
