@@ -41,6 +41,7 @@ class TestController extends Controller
         //echo "<p>";
         //echo json_encode($systems);
 
+        /*
         $apps = $tapis->listApps(null);
         echo '<p>';
         echo json_encode($apps);
@@ -49,8 +50,9 @@ class TestController extends Controller
         $appResponse = $tapis->getApp($app, null);
         echo '<p>';
         echo json_encode($appResponse);
-        exit;
+         */
 
+        /*
         $defaultExecutionSystemHost = config('services.tapis.default_execution_system.host');
         $defaultExecutionSystemPort = config('services.tapis.default_execution_system.port');
         $defaultExecutionSystemUsername = config('services.tapis.default_execution_system.auth.username');
@@ -65,26 +67,36 @@ class TestController extends Controller
         echo '<p>';
         echo '####';
         echo json_encode($response);
+         */
 
         // create deployment system (where the app originally is)
+        $gw_username = 'bcorrie';
+        $systemName = config('services.tapis.system_staging.name_prefix') . str_replace('_', '-', $gw_username);
+        $systemHost = config('services.tapis.system_staging.host');
+        $systemPort = config('services.tapis.system_staging.port');
+        $systemUsername = config('services.tapis.system_staging.auth.username');
+        $systemRootDir = config('services.tapis.system_staging.rootdir');
         /*
-        $systemDeploymentName = config('services.tapis.system_deploy.name_prefix') . str_replace('_', '-', $gw_username) . 'test-' . $defaultExecutionSystemUsername;
-        $systemDeploymentHost = config('services.tapis.system_deploy.host');
-        $systemDeploymentPort = config('services.tapis.system_deploy.port');
-        $systemDeploymentUsername = config('services.tapis.system_deploy.auth.username');
-        $systemDeploymentRootDir = config('services.tapis.system_deploy.rootdir');
-
-        $config = $tapis->getStorageSystemConfig($systemDeploymentName, $systemDeploymentHost, $systemDeploymentPort, $systemDeploymentUsername, $systemDeploymentRootDir);
+        $systemName = config('services.tapis.system_deploy.name_prefix') . str_replace('_', '-', $gw_username);
+        $systemHost = config('services.tapis.system_deploy.host');
+        $systemPort = config('services.tapis.system_deploy.port');
+        $systemUsername = config('services.tapis.system_deploy.auth.username');
+        $systemRootDir = config('services.tapis.system_deploy.rootdir');
+         */
+        echo $systemName;
+        $config = $tapis->getStorageSystemConfig($systemName, $systemHost, $systemPort, $systemUsername, $systemRootDir);
         echo "<p>";
         echo json_encode($config);
         $response = $tapis->createSystem(null, $config);
         echo '<p>';
         echo json_encode($response);
 
-        $response = $tapis->updateSystem(null, $systemDeploymentName, $config);
+        $response = $tapis->updateSystem(null, $systemName, $config);
         echo "<p>";
         echo json_encode($response);
+        exit;
 
+        /*
 
         $defaultExecutionSystemSSHKeys= config('services.tapis.default_execution_system.auth.sshkeys');
         echo "<p>";
