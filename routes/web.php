@@ -47,6 +47,7 @@ Route::any('phpinfo', 'TestController@phpinfo');
 Route::any('wait/{seconds}', 'TestController@wait');
 Route::get('u1', 'TestController@createMissingAgaveUser');
 Route::get('u2', 'TestController@parseLDIF');
+Route::get('u3', 'TestController@updateLastUsersPwd');
 
 /*
 |--------------------------------------------------------------------------

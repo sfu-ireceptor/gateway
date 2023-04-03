@@ -1026,4 +1026,28 @@ class TestController extends Controller
         User::parseTapisUsersLDIF('../test3/tenantirec_20230224.ldif');
         echo 'done';
     }
+
+    public function updateLastUsersPwd()
+    {
+        $file_path = '../test3/u3.txt';
+        $file = fopen($file_path, 'r');
+
+        while ($line = fgets($file)) {
+            $line = trim($line);
+
+            // Skip any blank lines
+            if (empty($line)) {
+                continue;
+            }
+
+            [$username, $pwd] = explode(',', $line);
+            $pwd_hashed = Hash::make($pwd);
+
+            Log::debug("update user set password='" . $pwd_hashed . "' where username='" . $username . "';");
+
+            // Log::debug($username);
+        }
+
+        Log::debug('ok');
+    }
 }
