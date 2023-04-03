@@ -274,7 +274,7 @@ class Tapis
                 Log::debug('updateAppTemplates: Could not open App file ' . $file_path);
                 Log::debug('updateAppTemplates: Error: ' . $e->getMessage());
             }
-            Log::debug('updateAppTemplates: App JSON = ' . $app_json);
+            //Log::debug('updateAppTemplates: App JSON = ' . $app_json);
             $app_config = json_decode($app_json, true);
             // We want to store information about the app that is useful in helping us
             // determine when to use it. This information is encoded in a JSON string in
@@ -309,9 +309,8 @@ class Tapis
                 }
                 // Overwrite the gateway URL parameter configuration if we got one.
                 if ($gateway_count >= 0) {
-                    Log::debug('updateAppTemplates: replacing ' . json_encode($app_config['jobAttributes']['parameterSet']['envVariables'][$gateway_count]));
+                    //Log::debug('updateAppTemplates: replacing ' . json_encode($app_config['jobAttributes']['parameterSet']['envVariables'][$gateway_count]));
                     $app_config['jobAttributes']['parameterSet']['envVariables'][$gateway_count] = $gateway_param;
-                    //$app_config['parameters'][$gateway_count] = $gateway_param;
                 }
             }
 
@@ -542,14 +541,12 @@ class Tapis
 
     public function killJob($job_id, $token)
     {
-        //$url = '/jobs/v2/' . $job_id;
+        // Set up the URL for to kill/cancel a Tapis job.
         $url = '/v3/jobs/' . $job_id . '/cancel';
+        // Get the analysis token
         $token = self::$analysisTokenData->access_token;
-
-        // Send the kill action to the Tapis job.
-        //$config = ['action' => 'kill'];
-
-        return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token);
+        // Post the request and return the result.
+        return $this->doPOSTRequest($this->tapis_client, $url, $token);
     }
 
     public function getExecutionSystemConfig($name, $host, $port, $username)
@@ -712,6 +709,17 @@ class Tapis
                 'appArgs' => $params,
             ],
             'fileInputs' => [$inputs],
+            'subscriptions' => [
+                [
+                    'description' => 'Job status call back notification',
+                    'enabled' => True,
+                    'eventCategoryFilter' => 'JOB_NEW_STATUS',
+                    'deliveryTargets' => [[
+                        'deliveryMethod' => 'WEBHOOK',
+                        'deliveryAddress' => $notification_url . '/job/update-status',
+                    ]]
+                ]
+            ]
         ];
         /*
         $t = [
@@ -863,10 +871,10 @@ class Tapis
         return $this->doHTTPRequest($client, 'PUT', $url, $token, $variables);
     }
 
-    public function doPUTRequestWithJSON($client, $url, $token, $variables = [], $config)
+    public function doPUTRequestWithJSON($client, $url, $token, $variables = [], $body)
     {
-        // convert config object to json
-        $json = json_encode($config, JSON_PRETTY_PRINT);
+        // convert body object to json
+        $json = json_encode($body, JSON_PRETTY_PRINT);
 
         return $this->doHTTPRequest($client, 'PUT', $url, $token, $variables, $json);
     }
