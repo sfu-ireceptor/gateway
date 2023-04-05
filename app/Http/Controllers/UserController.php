@@ -80,7 +80,7 @@ class UserController extends Controller
         }
 
         $user = Auth::user();
-        if( ! $user->did_survey) {
+        if (! $user->did_survey) {
             return redirect('/ireceptor-survey');
         }
 

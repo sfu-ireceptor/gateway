@@ -160,7 +160,6 @@ Route::middleware('auth')->group(function () {
     // other
     Route::get('/ireceptor-survey', 'HomeController@survey')->name('survey');
     Route::get('/ireceptor-survey-go', 'HomeController@surveyGo')->name('survey-go');
-
 });
 
 /*
