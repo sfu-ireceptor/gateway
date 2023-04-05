@@ -26,7 +26,7 @@
 
 		<div class="alert announcement" role="alert">
 			<p>
-				<a  class="btn btn-success external"  target="_blank" role="button" href="https://www.surveymonkey.ca/r/TVCQJXB">Take the iReceptor Survey</a><br>
+				<a  class="btn btn-success external"  target="_blank" role="button" href="/ireceptor-survey-go">Take the iReceptor Survey</a><br>
 				<a href="">Skip and go to home page</a>
 			</p>
 		</div>

@@ -79,6 +79,11 @@ class UserController extends Controller
             $user->updateToken($agave_token_info);
         }
 
+        $user = Auth::user();
+        if( ! $user->did_survey) {
+            return redirect('/ireceptor-survey');
+        }
+
         return redirect()->intended('home');
     }
 
