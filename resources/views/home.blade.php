@@ -5,12 +5,6 @@
 @section('content')
 <div class="container home_container">
 
-<div class="alert alert-info announcement" role="alert">
-	<strong>Help us shape the future of the iReceptor Gateway</strong>
-	<a  class="btn btn-success external"  target="_blank" role="button" href="https://www.surveymonkey.ca/r/TVCQJXB">Take the iReceptor Survey</a>
-</div>
-
-
 	<div class="row">
 
 		<div class="col-md-8">
