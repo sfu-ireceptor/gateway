@@ -35,7 +35,8 @@ class Tapis
         if ($tokendata != null && isset($tokendata->access_token)) {
             $tokendata->refresh_token = null;
             self::$analysisTokenData = $tokendata;
-            Log::debug('Tapis::constuct - Analysis token data = ' . json_encode(self::$analysisTokenData));
+            Log::debug('Tapis::constuct - setting token');
+            //Log::debug('Tapis::constuct - Analysis token data = ' . json_encode(self::$analysisTokenData));
         } else {
             Log::debug('Tapis::constuct - Could not generate and Analysis Token for ' . self::$analysisUser);
             self::$analysisTokenData = null;
@@ -142,7 +143,7 @@ class Tapis
         $t = $this->doPOSTRequestWithJSON($this->tenant_client, '/v3/oauth2/tokens', null, $payload);
         // try to get token
         if (isset($t->result) && isset($t->result->access_token)) {
-            Log::debug('Tapis::getTokenForUser - Token info for user ' . $username . ' = ' . json_encode($t->result->access_token));
+            //Log::debug('Tapis::getTokenForUser - Token info for user ' . $username . ' = ' . json_encode($t->result->access_token));
             $token_info = $t->result->access_token;
             $token_info->refresh_token = null;
 
@@ -258,6 +259,7 @@ class Tapis
         // Get the list of app directories. Note that this is the set of names/tags
         // used for the Apps
         $app_directories = config('services.tapis.app_directories');
+        Log::debug('Tapis::updateAppTemplates: using directory ' . json_encode($app_directories));
         // Build a list of Tapis App templates.
         $this->appTemplates = [];
         foreach ($app_directories as $app_dir) {
@@ -271,33 +273,44 @@ class Tapis
             try {
                 $app_json = file_get_contents($file_path);
             } catch (Exception $e) {
-                Log::debug('updateAppTemplates: Could not open App file ' . $file_path);
-                Log::debug('updateAppTemplates: Error: ' . $e->getMessage());
+                Log::debug('Tapis::updateAppTemplates: Could not open App file ' . $file_path);
+                Log::debug('Tapis::updateAppTemplates: Error: ' . $e->getMessage());
             }
-            //Log::debug('updateAppTemplates: App JSON = ' . $app_json);
+            //Log::debug('Tapis::updateAppTemplates: App JSON = ' . $app_json);
             $app_config = json_decode($app_json, true);
+            //$app_config = json_decode($app_json);
+            //Log::debug('Tapis::updateAppTemplates: App JSON = ' . json_encode($app_config));
             // We want to store information about the app that is useful in helping us
-            // determine when to use it. This information is encoded in a JSON string in
-            // the App in the hidden App parameter ir_hint.
+            // determine when to use it. This information is encoded in the Apps notes
+            // field as an ir_hint object.
             $param_count = 0;
             $gateway_count = -1;
             $app_info = [];
+            //if (array_key_exists('notes', $app_config) && property_exists($app_config['notes'], 'ir_hints')) {
+            if (array_key_exists('notes', $app_config)) {
+            //if (property_exists($app_config, 'notes')) {
+                $notes = $app_config['notes'];
+                //Log::debug('Tapis::updateAppTemplates: notes = ' . json_encode($notes));
+                if (array_key_exists('ir_hints', $notes)) {
+                    $hints = $notes['ir_hints'];
+                    //Log::debug('Tapis::updateAppTemplates: hints = ' . json_encode($hints));
+                    foreach ($hints as $hint) {
+                        //Log::debug('Tapis::updateAppTemplates: hint = ' . json_encode($hint));
+                        if (array_key_exists('object', $hint)) {
+                            // Get the object attribute - this tells us which AIRR object type this
+                            // App can be applied to (e.g. Rearrangement, Clone, Cell).
+                            $app_info['object'] = $hint['object'];
+                        }
+                    }
+                }
+            }
             if (array_key_exists('jobAttributes', $app_config) &&
                 array_key_exists('parameterSet', $app_config['jobAttributes']) &&
                 array_key_exists('envVariables', $app_config['jobAttributes']['parameterSet'])) {
                 $envVariables = $app_config['jobAttributes']['parameterSet']['envVariables'];
                 // Loop over the parameters and check for special ir_ parameters
                 foreach ($envVariables as $variable) {
-                    // ir_hints provides hints to the Gateway as to the capabilities
-                    // of the App.
-                    if (array_key_exists('key', $variable) && $variable['key'] == 'ir_hints') {
-                        // If we found a JSON hint decode it
-                        $hint_obj = json_decode($variable['value']);
-                        //Log::debug('updateAppTemplates: hint_obj = ' . json_encode($hint_obj));
-                        // Get the object attribute - this tells us which AIRR object type this
-                        // App can be applied to (e.g. Rearrangement, Clone, Cell).
-                        $app_info['object'] = $hint_obj->object;
-                    } elseif (array_key_exists('key', $variable) && $variable['key'] == 'ir_gateway_url') {
+                    if (array_key_exists('key', $variable) && $variable['key'] == 'ir_gateway_url') {
                         // The Tapis App uses ir_gateway_url to provide the URL of the source
                         // gateway that is submitting the job. This used to get assets specific
                         // to the given gateway.
@@ -919,7 +932,7 @@ class Tapis
         if ($token != null) {
             //$headers['Authorization'] = 'Bearer ' . $token;
             $headers['X-Tapis-Token'] = $token;
-            Log::debug('Tapis::doHTTPRequest - Auth headers:' . $headers['X-Tapis-Token']);
+            //Log::debug('Tapis::doHTTPRequest - Auth headers:' . $headers['X-Tapis-Token']);
         }
 
         $data = [];
@@ -933,7 +946,7 @@ class Tapis
         }
 
         try {
-            Log::debug('Tapis::doHTTPRequest - data = ' . json_encode($data));
+            //Log::debug('Tapis::doHTTPRequest - data = ' . json_encode($data));
             Log::debug('Tapis::doHTTPRequest - url = ' . $url);
             $response = $client->request($method, $url, $data);
         } catch (ClientException $exception) {
