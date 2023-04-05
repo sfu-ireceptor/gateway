@@ -51,7 +51,7 @@ class TestController extends Controller
         $appConfig = $tapis->getAppConfig($appId, $appName, $appExecutionSystem, null, null);
         echo '<p>';
         echo json_encode($appConfig);
-        
+
         $response = $tapis->updateApp(null, $appName, $appConfig);
         echo '<p>';
         echo json_encode($response);

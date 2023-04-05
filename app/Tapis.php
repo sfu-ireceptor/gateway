@@ -36,7 +36,7 @@ class Tapis
             $tokendata->refresh_token = null;
             self::$analysisTokenData = $tokendata;
             Log::debug('Tapis::constuct - setting token');
-            //Log::debug('Tapis::constuct - Analysis token data = ' . json_encode(self::$analysisTokenData));
+        //Log::debug('Tapis::constuct - Analysis token data = ' . json_encode(self::$analysisTokenData));
         } else {
             Log::debug('Tapis::constuct - Could not generate and Analysis Token for ' . self::$analysisUser);
             self::$analysisTokenData = null;
@@ -288,7 +288,7 @@ class Tapis
             $app_info = [];
             //if (array_key_exists('notes', $app_config) && property_exists($app_config['notes'], 'ir_hints')) {
             if (array_key_exists('notes', $app_config)) {
-            //if (property_exists($app_config, 'notes')) {
+                //if (property_exists($app_config, 'notes')) {
                 $notes = $app_config['notes'];
                 //Log::debug('Tapis::updateAppTemplates: notes = ' . json_encode($notes));
                 if (array_key_exists('ir_hints', $notes)) {
