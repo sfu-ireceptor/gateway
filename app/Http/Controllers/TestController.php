@@ -41,16 +41,25 @@ class TestController extends Controller
         //echo "<p>";
         //echo json_encode($systems);
 
-        /*
         $apps = $tapis->listApps(null);
         echo '<p>';
         echo json_encode($apps);
 
-        $app = 'histogram-staging-analysis-dev-exec-cedar.computecanada.ca-bcorrie';
-        $appResponse = $tapis->getApp($app, null);
+        $appId = 'histogram';
+        $appExecutionSystem = 'staging-analysis-dev-exec-cedar.computecanada.ca-bcorrie';
+        $appName = 'histogram-staging-analysis-dev-exec-cedar.computecanada.ca-bcorrie';
+        $appConfig = $tapis->getAppConfig($appId, $appName, $appExecutionSystem, null, null);
+        echo '<p>';
+        echo json_encode($appConfig);
+        
+        $response = $tapis->updateApp(null, $appName, $appConfig);
+        echo '<p>';
+        echo json_encode($response);
+
+        $appResponse = $tapis->getApp($appName, null);
         echo '<p>';
         echo json_encode($appResponse);
-         */
+        exit;
 
         /*
         $defaultExecutionSystemHost = config('services.tapis.default_execution_system.host');
@@ -70,12 +79,14 @@ class TestController extends Controller
          */
 
         // create deployment system (where the app originally is)
+        /*
         $gw_username = 'bcorrie';
         $systemName = config('services.tapis.system_staging.name_prefix') . str_replace('_', '-', $gw_username);
         $systemHost = config('services.tapis.system_staging.host');
         $systemPort = config('services.tapis.system_staging.port');
         $systemUsername = config('services.tapis.system_staging.auth.username');
         $systemRootDir = config('services.tapis.system_staging.rootdir');
+         */
         /*
         $systemName = config('services.tapis.system_deploy.name_prefix') . str_replace('_', '-', $gw_username);
         $systemHost = config('services.tapis.system_deploy.host');
@@ -83,6 +94,7 @@ class TestController extends Controller
         $systemUsername = config('services.tapis.system_deploy.auth.username');
         $systemRootDir = config('services.tapis.system_deploy.rootdir');
          */
+        /*
         echo $systemName;
         $config = $tapis->getStorageSystemConfig($systemName, $systemHost, $systemPort, $systemUsername, $systemRootDir);
         echo "<p>";
@@ -95,6 +107,7 @@ class TestController extends Controller
         echo "<p>";
         echo json_encode($response);
         exit;
+         */
 
         /*
 
