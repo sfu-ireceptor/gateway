@@ -97,14 +97,14 @@ class TestController extends Controller
         /*
         echo $systemName;
         $config = $tapis->getStorageSystemConfig($systemName, $systemHost, $systemPort, $systemUsername, $systemRootDir);
-        echo "<p>";
+        echo '<p>';
         echo json_encode($config);
         $response = $tapis->createSystem(null, $config);
         echo '<p>';
         echo json_encode($response);
 
         $response = $tapis->updateSystem(null, $systemName, $config);
-        echo "<p>";
+        echo '<p>';
         echo json_encode($response);
         exit;
          */
