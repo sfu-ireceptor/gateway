@@ -337,6 +337,7 @@ cp output/*.out ${GATEWAY_ANALYSIS_DIR}
 
 # ZIP up the analysis results for easy download
 zip -r ${GATEWAY_ANALYSIS_DIR}.zip ${GATEWAY_ANALYSIS_DIR}
+mv ${GATEWAY_ANALYSIS_DIR}.zip output/
 
 # We don't want the iReceptor Utilities to be part of the results.
 echo "IR-INFO: Removing Gateway utilities"

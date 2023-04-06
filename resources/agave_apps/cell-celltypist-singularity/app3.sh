@@ -283,6 +283,7 @@ cp *.out ${GATEWAY_ANALYSIS_DIR}
 # Zip up the analysis results for easy download
 echo "IR-INFO: ZIPing analysis results - $(date)"
 zip -r ${GATEWAY_ANALYSIS_DIR}.zip ${GATEWAY_ANALYSIS_DIR}
+mv ${GATEWAY_ANALYSIS_DIR}.zip output/
 echo "IR-INFO: Done ZIPing analysis results - $(date)"
 
 # We don't want the analysis files to remain - they are in the ZIP file
