@@ -4,12 +4,7 @@
 
 @section('content')
 <div class="container">
-
-<div class="row">
-	<div class="col-md-3">
-	</div>
-	<div class="col-md-6 survey_message">
-
+	<div class="survey_message">
 		<p>Dear valued iReceptor users,</p>
 
 		<p>We want your help shaping the future of iReceptor. As you know, our platform is dedicated to facilitating the discovery, sharing, and analysis of Adaptive Immune Receptor Repertoire sequencing (AIRR-seq) data in the AIRR Data Commons. By bringing together antibody/B-cell and T-cell receptor repertoires from multiple studies, labs, and institutions, we are facilitating the advancement of the development of vaccines, therapeutic antibodies against autoimmune diseases, and cancer immunotherapies.</p>
@@ -29,12 +24,7 @@
 				<a href="/home">Skip for now, go the Gateway</a>
 			</p>
 		</div>
-
 	</div>
-	<div class="col-md-3">
-	</div>
-</div>
-	
 </div>
 @stop
 
