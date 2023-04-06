@@ -1957,7 +1957,11 @@ form.column_selector {
 	font-size: 18px;
 	line-height: 1.5;
 	background-color: #F5F5F5;
-	padding: 18px 30px 15px;
+	padding: 10px 30px 15px;
+	width: 585px;
+	margin-right: auto;
+	margin-left: auto;
+	margin-top: 20px;
 }
 
 .announcement {
@@ -1972,6 +1976,14 @@ form.column_selector {
 
 .announcement a {
 	font-size: 16px;
+}
+
+.announcement a.btn {
+	font-size: 18px;
+	padding: 10px 30px;
+	margin-right: 2px;
+	margin-bottom: 10px;
+	background-color: #2ecc71;
 }
 
 .announcement a.btn {
