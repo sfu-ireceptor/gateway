@@ -25,10 +25,8 @@ AGAVE_JOB_MEMORY_PER_NODE=${AGAVE_JOB_MEMORY_PER_NODE}
 #
 # Tapis ENV variables expected
 #
-ZIP_FILE=${download_file}
-# Tapis parameter ir_gateway_url contains the URL of the source gateway. Use
-# this to gather iReceptor Gateway specific resources if needed.
-GATEWAY_URL="${ir_gateway_url}"
+# Get the ZIP_FILE
+ZIP_FILE=${IR_DOWNLOAD_FILE}
 
 #
 # Tapis App Parameters: Will be subsituted by Tapis on the command line to the singularity
@@ -42,14 +40,14 @@ SORT_VALUES=$4
 ##############################################
 # Set up Gateway Utilities
 ##############################################
-echo "IR-INFO: Using Gateway ${GATEWAY_URL}"
+echo "IR-INFO: Using Gateway ${IR_GATEWAY_URL}"
 
 # Report where we get the Gateway utilities from
-GATEWAY_UTIL_DIR=${gateway_util_dir}
-echo "IR-INFO: Using iReceptor Gateway Utilities from ${GATEWAY_UTIL_DIR}"
+GATEWAY_UTIL_DIR=${IR_GATEWAY_UTIL_DIR}
+echo "IR-INFO: Using iReceptor Gateway Utilities from ${IR_GATEWAY_UTIL_DIR}"
 
 # Load the iReceptor Gateway utilities functions.
-source ${GATEWAY_UTIL_DIR}/gateway_utilities.sh
+source ${IR_GATEWAY_UTIL_DIR}/gateway_utilities.sh
 if [ $? -ne 0 ]
 then
     echo "IR-ERROR: Could not load GATEWAY UTILIIES"
@@ -71,14 +69,12 @@ echo "IR-INFO: Done loading iReceptor Gateway Utilities"
 # use command line arguments.
 #########################################################################
 
-#else
-#fi
-
 # Start
 printf "IR-INFO: \nIR-INFO: \n"
 printf "IR-INFO: START at $(date)\n"
-printf "IR-INFO: PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n"
-printf "IR-INFO: MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n"
+printf "IR-INFO: PROCS = ${_tapisCoresPerNode}\n"
+printf "IR-INFO: MEM = ${_tapisMemoryMB}\n"
+printf "IR-INFO: MAX RUNTIME = ${_tapisMaxMinutes}\n"
 printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
 printf "IR-INFO: ZIP FILE = ${ZIP_FILE}\n"
 printf "IR-INFO: SPLIT_REPERTOIRE = ${SPLIT_REPERTOIRE}\n"
@@ -133,7 +129,7 @@ function do_histogram()
     echo ${variable_name} > $TMP_FILE
     for filename in "${array_of_files[@]}"; do
         echo "IR-INFO:     Extracting ${variable_name} from $filename"
-        python3 ${GATEWAY_UTIL_DIR}/preprocess.py ${output_dir}/$filename ${variable_name} >> $TMP_FILE
+        python3 ${IR_GATEWAY_UTIL_DIR}/preprocess.py ${output_dir}/$filename ${variable_name} >> $TMP_FILE
     done
 
     # Generate the image file name.
@@ -187,7 +183,7 @@ function run_analysis()
     pwd
 
     # Get a list of rearrangement files to process from the manifest.
-    local array_of_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
+    local array_of_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not process manifest file ${manifest_file}"
@@ -197,14 +193,14 @@ function run_analysis()
 
     # Check to see if we are processing a specific repertoire_id
     if [ "${repertoire_id}" != "Total" ]; then
-        file_string=`python3 ${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
+        file_string=`python3 ${IR_GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
         if [ $? -ne 0 ]
         then
             echo "IR-ERROR: Could not generate repertoire summary from ${repertoire_file}"
             return
         fi
 
-        title_string="$(python3 ${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
+        title_string="$(python3 ${IR_GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
         if [ $? -ne 0 ]
         then
             echo "IR-ERROR: Could not generate repertoire summary from ${repertoire_file}"
@@ -305,7 +301,7 @@ elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
     # Copy the HTML resources for the Apps
     echo "IR-INFO: Copying HTML assets"
     mkdir -p ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
-    cp -r ${GATEWAY_UTIL_DIR}/assets/* ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
+    cp -r ${IR_GATEWAY_UTIL_DIR}/assets/* ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not create HTML asset directory"
@@ -341,7 +337,7 @@ mv ${GATEWAY_ANALYSIS_DIR}.zip output/
 
 # We don't want the iReceptor Utilities to be part of the results.
 echo "IR-INFO: Removing Gateway utilities"
-#rm -rf ${GATEWAY_UTIL_DIR}
+#rm -rf ${IR_GATEWAY_UTIL_DIR}
 
 # We don't want the analysis files to remain - they are in the ZIP file
 echo "IR-INFO: Removing analysis output"
