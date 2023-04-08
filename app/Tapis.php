@@ -255,7 +255,7 @@ class Tapis
     {
         // Get the list of app directories. Note that this is the set of names/tags
         // used for the Apps
-        $app_base_dir =  config('services.tapis.app_base_dir');
+        $app_base_dir = config('services.tapis.app_base_dir');
         $app_directories = config('services.tapis.app_directories');
         Log::debug('Tapis::updateAppTemplates: using directory ' . json_encode($app_directories));
         // Build a list of Tapis App templates.
@@ -737,7 +737,7 @@ class Tapis
             ],
         ];
 
-        # Set up the environment variables iReceptor Apps can use.
+        // Set up the environment variables iReceptor Apps can use.
         $gateway_url = config('app.url');
         $gateway_base_dir = config('services.tapis.system_execution.gateway_base_dir');
 
@@ -745,14 +745,14 @@ class Tapis
         $singularity_mount = config('services.tapis.system_execution.singularity_mount');
         $gateway_util_dir = config('services.tapis.system_execution.gateway_util_dir');
         $gateway_app_dir = config('services.tapis.system_execution.gateway_app_dir');
-        $t['parameterSet']['envVariables'][] = ['key'=>'PYTHONNOUSERSITE','value'=>'1'];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_DOWNLOAD_FILE','value'=>$download_file];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_SINGULARITY','value'=>$singularity_dir];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_URL','value'=>$gateway_url];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_UTIL_DIR','value'=>$gateway_util_dir];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_APP_DIR','value'=>$gateway_app_dir];
+        $t['parameterSet']['envVariables'][] = ['key'=>'PYTHONNOUSERSITE', 'value'=>'1'];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_DOWNLOAD_FILE', 'value'=>$download_file];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_SINGULARITY', 'value'=>$singularity_dir];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_URL', 'value'=>$gateway_url];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_UTIL_DIR', 'value'=>$gateway_util_dir];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_APP_DIR', 'value'=>$gateway_app_dir];
 
-        # Set up the container arguments. We want to mount external mount points.
+        // Set up the container arguments. We want to mount external mount points.
         $t['parameterSet']['containerArgs'][] = ['name'=>'project_mount', 'arg'=>'-B /project:/project'];
         $t['parameterSet']['containerArgs'][] = ['name'=>'scratch_mount', 'arg'=>'-B /scratch:/scratch'];
         $t['parameterSet']['containerArgs'][] = ['name'=>'gateway_app_mount', 'arg'=>'-B ' . $gateway_base_dir . ':' . $singularity_mount];
