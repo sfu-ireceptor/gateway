@@ -72,16 +72,13 @@ class Tapis
         $this->jobParameters[$job_parameter['label']] = $job_parameter;
 
         // Memory per node parameter
-        // This doesn't seem to be working. Tapis does not seem to pass this on to
-        // the scheduler, so changing this has no effect. We go with 8GB/CPU through
-        // the default system config with a custom directive.
-        //$job_parameter = [];
-        //$job_parameter['label'] = 'memoryMB';
-        //$job_parameter['type'] = 'string';
-        //#$job_parameter['name'] = 'Memory (MB) per node';
-        //$job_parameter['description'] = 'Amount of memory allocated per node used by the job';
-        //$job_parameter['default'] = 8196;
-        //$this->jobParameters[$job_parameter['label']] = $job_parameter;
+        $job_parameter = [];
+        $job_parameter['label'] = 'memoryMB';
+        $job_parameter['type'] = 'string';
+        $job_parameter['name'] = 'Memory (MB) per node';
+        $job_parameter['description'] = 'Amount of memory allocated per node used by the job';
+        $job_parameter['default'] = $this->memoryMBPerNode;
+        $this->jobParameters[$job_parameter['label']] = $job_parameter;
 
         // Number of nodes to use parameter
         // We don't want to have jobs cross nodes, so we limit to one only
@@ -258,16 +255,17 @@ class Tapis
     {
         // Get the list of app directories. Note that this is the set of names/tags
         // used for the Apps
+        $app_base_dir =  config('services.tapis.app_base_dir');
         $app_directories = config('services.tapis.app_directories');
         Log::debug('Tapis::updateAppTemplates: using directory ' . json_encode($app_directories));
         // Build a list of Tapis App templates.
         $this->appTemplates = [];
         foreach ($app_directories as $app_dir) {
-            // Tapis Apps are stored in the resources/tapis_apps directory. It is
+            // Tapis Apps are stored in the resources/$app_base_dir directory. It is
             // expected that each App that works on the iReceptor Gateway has an
             // app.json file that is the Tapis definition of the App. We use this
             // to determine how to submit the App to Tapis and to build the UI.
-            $file_path = resource_path('tapis_apps/' . $app_dir . '/app3.json');
+            $file_path = resource_path($app_base_dir . '/' . $app_dir . '/app3.json');
             //Log::debug('updateAppTemplates: Trying to open App file ' . $file_path);
             // Open the file and convert the JSON to an object.
             try {
@@ -564,6 +562,7 @@ class Tapis
 
     public function getExecutionSystemConfig($name, $host, $port, $username)
     {
+        $job_working_dir = config('services.tapis.system_execution.job_working_dir');
         $t = [
             'id' => $name,
             'description' => $name,
@@ -577,7 +576,7 @@ class Tapis
             'canRunBatch' => true,
             'mpiCmd' => 'string',
             'jobRuntimes' => [['runtimeType' => 'SINGULARITY']],
-            'jobWorkingDir' => 'HOST_EVAL($SCRATCH)',
+            'jobWorkingDir' => $job_working_dir,
             'jobMaxJobs' => 12000,
             'jobMaxJobsPerUser' => -1,
             'batchScheduler' => 'SLURM',
@@ -702,6 +701,9 @@ class Tapis
         // apps are being used from where.
         $app_config['id'] = $name;
         $app_config['jobAttributes']['execSystemId'] = $executionSystem;
+        $singularity_dir = config('services.tapis.system_execution.singularity_dir');
+        $singularity_image = $app_config['containerImage'];
+        $app_config['containerImage'] = $singularity_dir . '/' . $singularity_image;
         //$app_config['deploymentSystem'] = $deploymentSystem;
         //$app_config['deploymentPath'] = $deploymentPath;
         Log::debug('Tapis::getAppConfig: App config:');
@@ -710,7 +712,7 @@ class Tapis
         return $app_config;
     }
 
-    public function getJobConfig($name, $app_id, $storage_archiving, $notification_url, $folder, $params, $inputs, $job_params)
+    public function getJobConfig($name, $app_id, $download_file, $storage_archiving, $notification_url, $folder, $params, $inputs, $job_params)
     {
         $t = [
             'name' => $name,
@@ -734,6 +736,27 @@ class Tapis
                 ],
             ],
         ];
+
+        # Set up the environment variables iReceptor Apps can use.
+        $gateway_url = config('app.url');
+        $gateway_base_dir = config('services.tapis.system_execution.gateway_base_dir');
+
+        $singularity_dir = $gateway_base_dir . '/' . config('services.tapis.system_execution.singularity_dir');
+        $singularity_mount = config('services.tapis.system_execution.singularity_mount');
+        $gateway_util_dir = config('services.tapis.system_execution.gateway_util_dir');
+        $gateway_app_dir = config('services.tapis.system_execution.gateway_app_dir');
+        $t['parameterSet']['envVariables'][] = ['key'=>'PYTHONNOUSERSITE','value'=>'1'];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_DOWNLOAD_FILE','value'=>$download_file];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_SINGULARITY','value'=>$singularity_dir];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_URL','value'=>$gateway_url];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_UTIL_DIR','value'=>$gateway_util_dir];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_APP_DIR','value'=>$gateway_app_dir];
+
+        # Set up the container arguments. We want to mount external mount points.
+        $t['parameterSet']['containerArgs'][] = ['name'=>'project_mount', 'arg'=>'-B /project:/project'];
+        $t['parameterSet']['containerArgs'][] = ['name'=>'scratch_mount', 'arg'=>'-B /scratch:/scratch'];
+        $t['parameterSet']['containerArgs'][] = ['name'=>'gateway_app_mount', 'arg'=>'-B ' . $gateway_base_dir . ':' . $singularity_mount];
+
         /*
         $t = [
             'name' => $name,
