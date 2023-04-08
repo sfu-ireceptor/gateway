@@ -4,18 +4,14 @@
     "description":"AIRR Field Histogram",
     "runtime":"SINGULARITY",
     "runtimeOptions": ["SINGULARITY_RUN"],
-    "containerImage":"/scratch/ireceptorgw/singularity/histogram/ir_histogram-4.0.0.sif",
+    "containerImage":"ir_histogram-4.0.0.sif",
     "jobType":"BATCH",
     "jobAttributes": {
       "description": "<p>iReceptor Analysis App that performs count statistics (histogram) on any valid AIRR Rearrangement field. For each unique value of the chosen field (e.g. <em>IGHV3-53*01</em> for <em>v_call</em> or <em>CALGDYKLSF</em> for <em>junction_aa</em>) in the data set, a count of the number of occurrences for that value is provided. Although this will work for any AIRR field, typically useful analyses would be on fields such as <em>v_call, d_call, j_call, junction_aa_length, junction_aa</em>.</p><p>Notes:<ul><li>Most fields will have many (thousands) of unique values (e.g. <em>junction_aa</em>) so limiting the \"Number of values\" parameter is highly recommended. Combining this with \"Sort the values\" = TRUE will provide the top N values for a field.</li></ul>",
       "execSystemId": "cedar.computecanada.ca-compute-irec_analysis",
       "parameterSet": {
-        "containerArgs": [
-            {"name":"project_mount", "inputMode": "FIXED", "arg":"-B /project:/project"},
-            {"name":"scratch_mount", "inputMode": "FIXED", "arg":"-B /scratch:/scratch"}
-        ],
         "appArgs": [
-            {"name":"program", "arg":"bash /scratch/ireceptorgw/src/gateway/resources/agave_apps/histogram/app3.sh", "inputMode":"FIXED"},
+            {"name":"program", "arg":"bash /gateway_app/histogram/app3.sh", "inputMode":"FIXED"},
             {"name":"split_repertoire",
              "description": "Split overall data based on Repertoire ID?",
              "notes":{"label":"Split Repertoire (True/False)?"},
@@ -32,13 +28,6 @@
              "description": "Sort the values before plotting.",
              "notes":{"label":"Sort the values (True/False)?"},
              "arg":"True", "inputMode":"REQUIRED"}
-        ],
-        "envVariables": [
-            {"key": "PYTHONNOUSERSITE","value":"1"},
-            {"key": "ir_singularity","value":"/scratch/ireceptorgw/singularity/histogram/ir_historgram-4.0.0.sif"},
-            {"key":"ir_gateway_url","value":"https://gateway-analysis-dev/"},
-            {"key":"gateway_util_dir","value":"/scratch/ireceptorgw/src/gateway/public/gateway_utilities"},
-            {"key":"download_file","value":"gateway_download.zip"}
         ]
       }
     },
