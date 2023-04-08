@@ -753,15 +753,15 @@ class Tapis
         $container_gateway_base_dir = config('services.tapis.system_execution.container_gateway_base_dir');
         $gateway_util_dir = config('services.tapis.system_execution.container_util_dir');
         $gateway_app_dir = config('services.tapis.system_execution.container_app_dir');
-        $t['parameterSet']['envVariables'][] = ['key'=>'PYTHONNOUSERSITE','value'=>'1'];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_DOWNLOAD_FILE','value'=>$download_file];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_SINGULARITY','value'=>$exec_singularity_dir];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_URL','value'=>$gateway_url];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_BASE_DIR','value'=>$container_gateway_base_dir];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_UTIL_DIR','value'=>$gateway_util_dir];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_APP_DIR','value'=>$gateway_app_dir];
+        $t['parameterSet']['envVariables'][] = ['key'=>'PYTHONNOUSERSITE', 'value'=>'1'];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_DOWNLOAD_FILE', 'value'=>$download_file];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_SINGULARITY', 'value'=>$exec_singularity_dir];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_URL', 'value'=>$gateway_url];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_BASE_DIR', 'value'=>$container_gateway_base_dir];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_UTIL_DIR', 'value'=>$gateway_util_dir];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_APP_DIR', 'value'=>$gateway_app_dir];
 
-        # Set up the container arguments. We want to mount external mount points.
+        // Set up the container arguments. We want to mount external mount points.
         $t['parameterSet']['containerArgs'][] = ['name'=>'project_mount', 'arg'=>'-B /project:/project'];
         $t['parameterSet']['containerArgs'][] = ['name'=>'scratch_mount', 'arg'=>'-B /scratch:/scratch'];
         $t['parameterSet']['containerArgs'][] = ['name'=>'gateway_app_mount', 'arg'=>'-B ' . $exec_gateway_base_dir . ':' . $container_gateway_base_dir];
