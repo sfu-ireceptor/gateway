@@ -228,7 +228,7 @@ class LaunchJob implements ShouldQueue
 
             $env_variables = [
                 ['key'=>'PYTHONNOUSERSITE', 'value' => '1'],
-                ['key'=>'download_file','value'=>$zip_info['zip_name']]
+                ['key'=>'download_file', 'value'=>$zip_info['zip_name']],
             ];
 
             // Process the job parameters
@@ -247,7 +247,7 @@ class LaunchJob implements ShouldQueue
 
             // submit Tapis job
             $job->updateStatus('SENDING JOB FOR ANALYSIS');
-            $job_config = $tapis->getJobConfig('irec-job-' . $this->jobId, $appName, $zip_info['zip_name'], $systemStaging, $notificationUrl, $archive_folder, $params, $inputs, $job_params, );
+            $job_config = $tapis->getJobConfig('irec-job-' . $this->jobId, $appName, $zip_info['zip_name'], $systemStaging, $notificationUrl, $archive_folder, $params, $inputs, $job_params);
             $response = $tapis->createJob($token, $job_config);
             Log::debug('LaunchJob::handle submit response = ' . json_encode($response));
             $job->agave_id = $response->result->uuid;

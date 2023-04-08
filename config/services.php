@@ -135,7 +135,7 @@ return [
             'container_gateway_base_dir' => '/gateway_base',
             # Inside container location of gateway utilities relative to container mount point 
             'container_util_dir' => 'gateway_utilities',
-            # Inside container location of gateway apps relative to container mount point
+            // Inside container location of gateway apps relative to container mount point
             'container_app_dir' => 'tapis_apps',
         ],
 

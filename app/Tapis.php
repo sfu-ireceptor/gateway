@@ -255,7 +255,7 @@ class Tapis
     {
         // Get the list of app directories. Note that this is the set of names/tags
         // used for the Apps
-        $app_base_dir =  config('services.tapis.app_base_dir');
+        $app_base_dir = config('services.tapis.app_base_dir');
         $app_directories = config('services.tapis.app_directories');
         Log::debug('Tapis::updateAppTemplates: using directory ' . json_encode($app_directories));
         // Build a list of Tapis App templates.
@@ -745,7 +745,7 @@ class Tapis
             ],
         ];
 
-        # Set up the environment variables iReceptor Apps can use.
+        // Set up the environment variables iReceptor Apps can use.
         $gateway_url = config('app.url');
         $exec_gateway_base_dir = config('services.tapis.system_execution.exec_gateway_base_dir');
         $exec_singularity_dir = $exec_gateway_base_dir . '/' . config('services.tapis.system_execution.exec_singularity_dir');
