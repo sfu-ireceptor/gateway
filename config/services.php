@@ -123,18 +123,18 @@ return [
             'cores_per_node' => intval(1),
             'memory_per_node' => intval(8000),
             'memory_per_core' => intval(8000),
-            # Base directory for all job output. Uses the Tapis HOST_EVAL function
-            # to access a host environment variable.
+            // Base directory for all job output. Uses the Tapis HOST_EVAL function
+            // to access a host environment variable.
             'job_working_dir' => 'HOST_EVAL($HOME)/projects/rpp-breden/ireceptorgw/tapis-jobs',
-            # Directory on the execution system where the gateway analysis stuff is located
+            // Directory on the execution system where the gateway analysis stuff is located
             'gateway_base_dir' => '/home/ireceptorgw/gateway_base',
-            # Directory where the singularity images are stored - relative to gateway_base
+            // Directory where the singularity images are stored - relative to gateway_base
             'singularity_dir' => 'singularity',
-            # Mount point in the singularity container for gateway_base
+            // Mount point in the singularity container for gateway_base
             'container_mount' => 'gateway_base',
-            # Inside container location of gateway utilities relative to container mount point 
+            // Inside container location of gateway utilities relative to container mount point
             'container_util_dir' => 'gateway_utilities',
-            # Inside container location of gateway apps relative to container mount point
+            // Inside container location of gateway apps relative to container mount point
             'container_app_dir' => 'tapis_apps',
         ],
 
