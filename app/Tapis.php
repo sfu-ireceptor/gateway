@@ -514,6 +514,14 @@ class Tapis
         return $this->doGETRequest($this->tapis_client, $url, $token);
     }
 
+    public function getSystem($system_id, $token)
+    {
+        $url = '/v3/systems/' . $system_id;
+        $token = self::$analysisTokenData->access_token;
+
+        return $this->doGETRequest($this->tapis_client, $url, $token);
+    }
+
     public function getJobHistory($job_id, $token)
     {
         //$url = '/jobs/v2/' . $job_id . '/history?pretty=true';
@@ -562,7 +570,7 @@ class Tapis
 
     public function getExecutionSystemConfig($name, $host, $port, $username)
     {
-        $job_working_dir = config('services.tapis.system_execution.job_working_dir');
+        $job_working_dir = config('services.tapis.system_execution.exec_job_working_dir');
         $t = [
             'id' => $name,
             'description' => $name,
@@ -701,9 +709,9 @@ class Tapis
         // apps are being used from where.
         $app_config['id'] = $name;
         $app_config['jobAttributes']['execSystemId'] = $executionSystem;
-        $singularity_dir = config('services.tapis.system_execution.singularity_dir');
+        $exec_singularity_dir = config('services.tapis.system_execution.exec_singularity_dir');
         $singularity_image = $app_config['containerImage'];
-        $app_config['containerImage'] = $singularity_dir . '/' . $singularity_image;
+        $app_config['containerImage'] = $exec_singularity_dir . '/' . $singularity_image;
         //$app_config['deploymentSystem'] = $deploymentSystem;
         //$app_config['deploymentPath'] = $deploymentPath;
         Log::debug('Tapis::getAppConfig: App config:');
@@ -739,23 +747,24 @@ class Tapis
 
         # Set up the environment variables iReceptor Apps can use.
         $gateway_url = config('app.url');
-        $gateway_base_dir = config('services.tapis.system_execution.gateway_base_dir');
+        $exec_gateway_base_dir = config('services.tapis.system_execution.exec_gateway_base_dir');
+        $exec_singularity_dir = $exec_gateway_base_dir . '/' . config('services.tapis.system_execution.exec_singularity_dir');
 
-        $singularity_dir = $gateway_base_dir . '/' . config('services.tapis.system_execution.singularity_dir');
-        $singularity_mount = config('services.tapis.system_execution.singularity_mount');
-        $gateway_util_dir = config('services.tapis.system_execution.gateway_util_dir');
-        $gateway_app_dir = config('services.tapis.system_execution.gateway_app_dir');
+        $container_gateway_base_dir = config('services.tapis.system_execution.container_gateway_base_dir');
+        $gateway_util_dir = config('services.tapis.system_execution.container_util_dir');
+        $gateway_app_dir = config('services.tapis.system_execution.container_app_dir');
         $t['parameterSet']['envVariables'][] = ['key'=>'PYTHONNOUSERSITE','value'=>'1'];
         $t['parameterSet']['envVariables'][] = ['key'=>'IR_DOWNLOAD_FILE','value'=>$download_file];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_SINGULARITY','value'=>$singularity_dir];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_SINGULARITY','value'=>$exec_singularity_dir];
         $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_URL','value'=>$gateway_url];
+        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_BASE_DIR','value'=>$container_gateway_base_dir];
         $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_UTIL_DIR','value'=>$gateway_util_dir];
         $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_APP_DIR','value'=>$gateway_app_dir];
 
         # Set up the container arguments. We want to mount external mount points.
         $t['parameterSet']['containerArgs'][] = ['name'=>'project_mount', 'arg'=>'-B /project:/project'];
         $t['parameterSet']['containerArgs'][] = ['name'=>'scratch_mount', 'arg'=>'-B /scratch:/scratch'];
-        $t['parameterSet']['containerArgs'][] = ['name'=>'gateway_app_mount', 'arg'=>'-B ' . $gateway_base_dir . ':' . $singularity_mount];
+        $t['parameterSet']['containerArgs'][] = ['name'=>'gateway_app_mount', 'arg'=>'-B ' . $exec_gateway_base_dir . ':' . $container_gateway_base_dir];
 
         /*
         $t = [
