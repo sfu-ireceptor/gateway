@@ -709,9 +709,10 @@ class Tapis
         // apps are being used from where.
         $app_config['id'] = $name;
         $app_config['jobAttributes']['execSystemId'] = $executionSystem;
+        $exec_gateway_base_dir = config('services.tapis.system_execution.exec_gateway_base_dir');
         $exec_singularity_dir = config('services.tapis.system_execution.exec_singularity_dir');
         $singularity_image = $app_config['containerImage'];
-        $app_config['containerImage'] = $exec_singularity_dir . '/' . $singularity_image;
+        $app_config['containerImage'] = $exec_gateway_base_dir . '/' . $exec_singularity_dir . '/' . $singularity_image;
         //$app_config['deploymentSystem'] = $deploymentSystem;
         //$app_config['deploymentPath'] = $deploymentPath;
         Log::debug('Tapis::getAppConfig: App config:');
