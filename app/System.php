@@ -54,11 +54,11 @@ class System extends Model
         $config = $tapis->getExecutionSystemConfig($systemExecutionName, $defaultExecutionSystemHost, $defaultExecutionSystemPort, $defaultExecutionSystemUsername);
         $sysResponse = $tapis->getSystem($systemExecutionName, $token);
         if ($sysResponse->status == 'success') {
-                $response = $tapis->updateSystem($token, $systemExecutionName, $config);
-                Log::info('System::createDefaulySystemForUser - system updated: ' . $systemExecutionName);
+            $response = $tapis->updateSystem($token, $systemExecutionName, $config);
+            Log::info('System::createDefaulySystemForUser - system updated: ' . $systemExecutionName);
         } else {
-                $response = $tapis->createSystem($token, $config);
-                Log::info('System::createDefaulySystemForUser - system created: ' . $systemExecutionName);
+            $response = $tapis->createSystem($token, $config);
+            Log::info('System::createDefaulySystemForUser - system created: ' . $systemExecutionName);
         }
         //$response = $tapis->createSystem($token, $config);
         //Log::info('execution system created: ' . $systemExecutionName);
