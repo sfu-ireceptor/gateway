@@ -7,6 +7,7 @@ use App\News;
 use App\RestService;
 use App\Sample;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -106,5 +107,19 @@ class HomeController extends Controller
         $data['rs_list'] = $rs_list;
 
         return view('repositories', $data);
+    }
+
+    public function survey()
+    {
+        return view('survey');
+    }
+
+    public function surveyGo()
+    {
+        $user = Auth::user();
+        $user->did_survey = true;
+        $user->save();
+
+        return redirect('https://www.surveymonkey.ca/r/TVCQJXB');
     }
 }

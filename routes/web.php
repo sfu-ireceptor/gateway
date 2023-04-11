@@ -48,7 +48,9 @@ Route::get('test', 'TestController@getIndex')->name('test-page');
 Route::any('test2', 'TestController@index2');
 Route::any('phpinfo', 'TestController@phpinfo');
 Route::any('wait/{seconds}', 'TestController@wait');
-Route::get('email', 'TestController@email');
+Route::get('u1', 'TestController@createMissingAgaveUser');
+Route::get('u2', 'TestController@parseLDIF');
+Route::get('u3', 'TestController@updateLastUsersPwd');
 
 /*
 |--------------------------------------------------------------------------
@@ -160,6 +162,10 @@ Route::middleware('auth')->group(function () {
         Route::get('queries2/months/{n}', 'AdminController@queriesMonths2');
         Route::get('queries/{id}', 'AdminController@query');
     });
+
+    // other
+    Route::get('/ireceptor-survey', 'HomeController@survey')->name('survey');
+    Route::get('/ireceptor-survey-go', 'HomeController@surveyGo')->name('survey-go');
 });
 
 /*

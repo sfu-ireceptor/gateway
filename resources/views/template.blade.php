@@ -13,7 +13,7 @@
 		<link rel="stylesheet" href="/css/bootstrap.min.css" />
 		<link href="/css/bootstrap-multiselect.css" rel="stylesheet" />
 		<link href="/css/jstree/default/style.min.css" rel="stylesheet" />
-		<link href="/css/main.css?v=92" rel="stylesheet" />
+		<link href="/css/main.css?v=96" rel="stylesheet" />
 
 		<!-- IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -23,7 +23,7 @@
 	</head>
 
 	<body class="{{ Auth::check() ? 'logged-in' : 'not-logged-in'}}">
-		@if (! isset($is_login_page))
+		@if (! isset($is_login_page) && ! Request::routeIs('survey'))
 			<nav class="navbar navbar-default" role="navigation">
 			  <div class="container-fluid">
 			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -201,26 +201,28 @@
 
 		@yield('content')
 
-		<footer>
-		<div class="container-fluid footer_container">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-12">
-						@section('footer')
-							<div class="mini_footer">
-								<p class="text-right">
-									<a href="http://ireceptor.org/" class="external" target="_blank">iReceptor public website</a> |
-									<a href="/news">News</a> |
-									<a href="/fields-definitions">Data elements definitions</a> |								
-									<a href="http://ireceptor.org/platform/doc" class="external" target="_blank">Documentation</a>								
-								</p>
-							</div>
-				        @show
+		@if (! Request::routeIs('survey'))
+			<footer>
+			<div class="container-fluid footer_container">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							@section('footer')
+								<div class="mini_footer">
+									<p class="text-right">
+										<a href="http://ireceptor.org/" class="external" target="_blank">iReceptor public website</a> |
+										<a href="/news">News</a> |
+										<a href="/fields-definitions">Data elements definitions</a> |								
+										<a href="http://ireceptor.org/platform/doc" class="external" target="_blank">Documentation</a>								
+									</p>
+								</div>
+					        @show
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		</footer>
+			</footer>
+		@endif
 
 		<!-- javascript -->
 		<script src="/js/jquery-1.12.4.min.js"></script>
