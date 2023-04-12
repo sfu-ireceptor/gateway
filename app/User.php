@@ -60,13 +60,15 @@ class User extends Authenticatable
         return $username;
     }
 
-    public static function add($first_name, $last_name, $email, $password)
+    public static function add($first_name, $last_name, $email, $password, $country, $institution)
     {
         $user = new User();
 
         $user->first_name = $first_name;
         $user->last_name = $last_name;
         $user->email = $email;
+        $user->country = $country;
+        $user->institution = $institution;
 
         $user->username = $user->generateUsername();
         $user->password = Hash::make($password);

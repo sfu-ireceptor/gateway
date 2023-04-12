@@ -151,6 +151,8 @@ class UserController extends Controller
         $data['first_name'] = $user->first_name;
         $data['last_name'] = $user->last_name;
         $data['email'] = $user->email;
+        $data['country'] = $user->country;
+        $data['institution'] = $user->institution;
         $data['notification'] = session('notification');
 
         return view('user/changePersonalInfo', $data);
@@ -180,6 +182,8 @@ class UserController extends Controller
         $user->first_name = $request->input('first_name');
         $user->last_name = $request->input('last_name');
         $user->email = $request->input('email');
+        $user->country = $request->input('country');
+        $user->institution = $request->input('institution');
         $user->save();
 
         return redirect('/user/account')->with('notification', 'Personal information was successfully chaged.');
@@ -213,9 +217,11 @@ class UserController extends Controller
         $first_name = $request->get('first_name');
         $last_name = $request->get('last_name');
         $email = $request->get('email');
+        $country = $request->get('country');
+        $institution = $request->get('institution');
         $password = str_random(24);
 
-        $u = User::add($first_name, $last_name, $email, $password);
+        $u = User::add($first_name, $last_name, $email, $password, $country, $institution);
 
         $t = [];
         $t['login_link'] = config('app.url') . '/login';
