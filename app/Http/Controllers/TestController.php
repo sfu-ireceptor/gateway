@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Adrianorosa\GeoLocation\GeoLocation;
 use App\Agave;
 use App\Download;
 use App\FieldName;
@@ -22,7 +23,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
-use Adrianorosa\GeoLocation\GeoLocation;
 
 class TestController extends Controller
 {
