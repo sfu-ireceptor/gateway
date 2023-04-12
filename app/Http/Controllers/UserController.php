@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Adrianorosa\GeoLocation\GeoLocation;
+
 
 class UserController extends Controller
 {
@@ -189,9 +191,16 @@ class UserController extends Controller
         return redirect('/user/account')->with('notification', 'Personal information was successfully chaged.');
     }
 
-    public function getRegister()
+    public function getRegister(Request $request)
     {
-        return view('user/register');
+        $ip = $request->getClientIp();
+        $ip_info = GeoLocation::lookup($ip);
+        $country = $ip_info->getCountry();
+
+        $data = [];
+        $data['country'] = $country;
+
+        return view('user/register', $data);
     }
 
     public function postRegister(Request $request)

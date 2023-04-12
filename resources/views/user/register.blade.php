@@ -37,7 +37,7 @@
 
 			    <div class="form-group {{ $errors->first('country') ? 'has-error' : ''}}">
 					{{ Form::label('country', 'Country') }} <span class="error">{{ $errors->first('country') }}</span>
-					{{ Form::text('country', '', array('class' => 'form-control')) }}
+					{{ Form::text('country', $country, array('class' => 'form-control')) }}
 				</div>
 
 			    <div class="form-group {{ $errors->first('institution') ? 'has-error' : ''}}">

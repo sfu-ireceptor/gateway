@@ -22,11 +22,17 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use Adrianorosa\GeoLocation\GeoLocation;
 
 class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
+        dd($request->getClientIp());
+
+        $details = GeoLocation::lookup('142.250.217.67');
+        echo $details->getCountry();
+
         exit;
         // $u = new User('jj', 'kk', 'fdsfs@gmail.com');
         echo 'ok';
