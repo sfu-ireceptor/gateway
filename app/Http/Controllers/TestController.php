@@ -27,8 +27,7 @@ use Symfony\Component\Process\Process;
 class TestController extends Controller
 {
     public function getIndex(Request $request)
- 
-   {
+    {
         dd(Str::length(''));
         dd($request->getClientIp());
 
