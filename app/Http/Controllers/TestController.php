@@ -27,7 +27,9 @@ use Adrianorosa\GeoLocation\GeoLocation;
 class TestController extends Controller
 {
     public function getIndex(Request $request)
-    {
+ 
+   {
+        dd(Str::length(''));
         dd($request->getClientIp());
 
         $details = GeoLocation::lookup('142.250.217.67');

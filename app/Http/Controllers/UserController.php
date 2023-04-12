@@ -209,7 +209,7 @@ class UserController extends Controller
         $rules = [
             'first_name' => 'required',
             'last_name' => 'required',
-            'email' => 'required|email|unique:user,username',
+            'email2' => 'required|email|unique:user,username',
         ];
 
         $messages = [
@@ -225,9 +225,17 @@ class UserController extends Controller
 
         $first_name = $request->get('first_name');
         $last_name = $request->get('last_name');
-        $email = $request->get('email');
+        $email = $request->get('email2');
         $country = $request->get('country');
         $institution = $request->get('institution');
+
+        // check it's not a bot
+        $honey_pot_email = $request->get('email');
+        if(Str::length($honey_pot_email) != 0) {
+            Log::info('Bot account creation prevented: ' . $first_name . ' ' . $last_name . ' - ' . $email . ' - ' . $country . ' - ' . $institution);
+            abort(403, 'Sorry, registration is not allowed to bots.');
+        } 
+
         $password = str_random(24);
 
         $u = User::add($first_name, $last_name, $email, $password, $country, $institution);

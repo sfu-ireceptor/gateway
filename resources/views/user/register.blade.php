@@ -18,8 +18,12 @@
 	<div class="row">
 
 		<div class="col-md-4">
-			<!-- <p>We'll email you a link to reset it.</p> -->
 			{{ Form::open(array('url' => 'register', 'role' => 'form')) }}
+				<div class="honey-pot">
+					<label for="email">Do no fill this field, it's used to prevent spam</label>
+					<input name="email" type="text" value="" id="email">
+				</div>
+
 			    <div class="form-group {{ $errors->first('first_name') ? 'has-error' : ''}}">
 					{{ Form::label('first_name', 'First Name') }} <span class="error">{{ $errors->first('first_name') }}</span>
 					{{ Form::text('first_name', '', array('class' => 'form-control', 'placeholder' => '')) }}
@@ -31,8 +35,8 @@
 				</div>
 
 			    <div class="form-group {{ $errors->first('email') ? 'has-error' : ''}}">
-					{{ Form::label('email', 'Email') }} <span class="error">{{ $errors->first('email') }}</span>
-					{{ Form::text('email', '', array('class' => 'form-control')) }}
+					{{ Form::label('email2', 'Email') }} <span class="error">{{ $errors->first('email2') }}</span>
+					{{ Form::text('email2', '', array('class' => 'form-control')) }}
 				</div>
 
 			    <div class="form-group {{ $errors->first('country') ? 'has-error' : ''}}">

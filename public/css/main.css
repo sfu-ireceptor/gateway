@@ -1139,6 +1139,10 @@ fieldset[disabled] .btn-sequences.focus {
 	border: 1px solid #f4a45a;
 }
 
+.honey-pot {
+	display: none;	
+}
+
 /* @end */
 
 /* @group home page */
