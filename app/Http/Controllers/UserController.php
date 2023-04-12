@@ -230,10 +230,10 @@ class UserController extends Controller
 
         // check it's not a bot
         $honey_pot_email = $request->get('email');
-        if(Str::length($honey_pot_email) != 0) {
+        if (Str::length($honey_pot_email) != 0) {
             Log::info('Bot account creation prevented: ' . $first_name . ' ' . $last_name . ' - ' . $email . ' - ' . $country . ' - ' . $institution);
             abort(403, 'Sorry, registration is not allowed to bots.');
-        } 
+        }
 
         $password = str_random(24);
 
