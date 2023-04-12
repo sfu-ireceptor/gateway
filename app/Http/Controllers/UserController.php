@@ -318,7 +318,7 @@ class UserController extends Controller
         $user = User::where('email', $entry->email)->first();
 
         $new_password = str_random(24);
-        $user->password = Hash::make($user->password);
+        $user->password = Hash::make($new_password);
         $user->save();
 
         // log user in
