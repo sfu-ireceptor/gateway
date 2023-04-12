@@ -62,7 +62,7 @@
 					<pre>Study data was queried and downloaded from the AIRR Data Commons [Christley et al.]
 					using the iReceptor Gateway [Corrie et al.] on January 1, 2021.</pre>
 
-					<p>If you use data from a paper from within the AIRR Data Commons, please also cite that paper. </p>
+					<p>If you use data from a paper from within the AIRR Data Commons, please also cite that paper.</p>
 			      </div>
 			    </div>
 			  </div>
@@ -76,7 +76,8 @@
 			    </div>
 			    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
 			      <div class="panel-body">
-					<p><a href="mailto:support@ireceptor.org.">Let us know</a> if you have questions, problems, or feedback.</p>      </div>
+					<p><a href="mailto:support@ireceptor.org">Let us know</a> if you have questions, problems, or feedback.</p>
+				  </div>
 			    </div>
 			  </div>
 			</div>

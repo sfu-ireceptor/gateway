@@ -230,7 +230,7 @@ class UserController extends Controller
 
         Auth::login($u);
 
-        return redirect('/welcome');
+        return redirect('/user/welcome');
     }
 
     public function getWelcome()
