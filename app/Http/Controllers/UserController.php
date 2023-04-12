@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Adrianorosa\GeoLocation\GeoLocation;
 use App\Agave;
 use App\News;
 use App\Sample;
@@ -15,8 +16,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Adrianorosa\GeoLocation\GeoLocation;
-
 
 class UserController extends Controller
 {
