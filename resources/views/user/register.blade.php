@@ -24,31 +24,40 @@
 					<input name="email" type="text" value="" id="email">
 				</div>
 
-			    <div class="form-group {{ $errors->first('first_name') ? 'has-error' : ''}}">
-					{{ Form::label('first_name', 'First Name') }} <span class="error">{{ $errors->first('first_name') }}</span>
-					{{ Form::text('first_name', '', array('class' => 'form-control', 'placeholder' => '')) }}
+				<div class="panel panel-default">
+					<div class="panel-body">
+					    <div class="form-group {{ $errors->first('first_name') ? 'has-error' : ''}}">
+							{{ Form::label('first_name', 'First Name') }} <span class="error">{{ $errors->first('first_name') }}</span>
+							{{ Form::text('first_name', '', array('class' => 'form-control', 'placeholder' => '')) }}
+						</div>
+
+					    <div class="form-group {{ $errors->first('last_name') ? 'has-error' : ''}}">
+							{{ Form::label('last_name', 'Last Name') }} <span class="error">{{ $errors->first('last_name') }}</span>
+							{{ Form::text('last_name', '', array('class' => 'form-control')) }}
+						</div>
+
+					    <div class="form-group {{ $errors->first('email') ? 'has-error' : ''}}">
+							{{ Form::label('email2', 'Email') }} <span class="error">{{ $errors->first('email2') }}</span>
+							{{ Form::text('email2', '', array('class' => 'form-control')) }}
+						</div>
+					</div>
 				</div>
 
-			    <div class="form-group {{ $errors->first('last_name') ? 'has-error' : ''}}">
-					{{ Form::label('last_name', 'Last Name') }} <span class="error">{{ $errors->first('last_name') }}</span>
-					{{ Form::text('last_name', '', array('class' => 'form-control')) }}
-				</div>
+				<div class="panel panel-default">
+					<div class="panel-body">
+					  	<p>Required by our funders.</p>
 
-			    <div class="form-group {{ $errors->first('email') ? 'has-error' : ''}}">
-					{{ Form::label('email2', 'Email') }} <span class="error">{{ $errors->first('email2') }}</span>
-					{{ Form::text('email2', '', array('class' => 'form-control')) }}
-				</div>
+					    <div class="form-group {{ $errors->first('country') ? 'has-error' : ''}}">
+							{{ Form::label('country', 'Country') }} <span class="error">{{ $errors->first('country') }}</span>
+							{{ Form::text('country', $country, array('class' => 'form-control')) }}
+						</div>
 
-			    <div class="form-group {{ $errors->first('country') ? 'has-error' : ''}}">
-					{{ Form::label('country', 'Country') }} <span class="error">{{ $errors->first('country') }}</span>
-					{{ Form::text('country', $country, array('class' => 'form-control')) }}
+					    <div class="form-group {{ $errors->first('institution') ? 'has-error' : ''}}">
+							{{ Form::label('institution', 'Institution') }} <span class="error">{{ $errors->first('institution') }}</span>
+							{{ Form::text('institution', '', array('class' => 'form-control')) }}
+						</div>
+					</div>
 				</div>
-
-			    <div class="form-group {{ $errors->first('institution') ? 'has-error' : ''}}">
-					{{ Form::label('institution', 'Institution') }} <span class="error">{{ $errors->first('institution') }}</span>
-					{{ Form::text('institution', '', array('class' => 'form-control')) }}
-				</div>
-
 
 				{{ Form::submit('Register', array('class' => 'btn btn-primary')) }}
 
