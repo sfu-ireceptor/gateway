@@ -11,7 +11,6 @@
       "execSystemId": "cedar.computecanada.ca-compute-irec_analysis",
       "parameterSet": {
         "appArgs": [
-            {"name":"program", "arg":"bash /gateway_base/histogram/app3.sh", "inputMode":"FIXED"},
             {"name":"split_repertoire",
              "description": "Split overall data based on Repertoire ID?",
              "notes":{"label":"Split Repertoire (True/False)?"},
