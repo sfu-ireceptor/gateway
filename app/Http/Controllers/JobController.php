@@ -87,7 +87,8 @@ class JobController extends Controller
             foreach ($app_parameters as $param) {
                 // Basic parameters have notes - special hidden parameters do not. So if
                 // we don't have a notes['label'] field then we don't do anything.
-                if (property_exists(json_decode($param->notes), 'label')) {
+                if (property_exists($param, 'notes') && json_decode($param->notes) != null &&
+                    property_exists(json_decode($param->notes), 'label')) {
                     // Generate the parameters label and value.
                     $param_string = json_decode($param->notes)->label;
                     $param_value = $param->arg;
@@ -405,7 +406,8 @@ class JobController extends Controller
             foreach ($app_parameters as $param) {
                 // Basic parameters have notes - special hidden parameters do not. So if
                 // we don't have a notes['label'] field then we don't do anything.
-                if (property_exists(json_decode($param->notes), 'label')) {
+                if (property_exists($param, 'notes') && json_decode($param->notes) != null &&
+                    property_exists(json_decode($param->notes), 'label')) {
                     // Generate the parameter label and its value
                     $param_string = json_decode($param->notes)->label;
                     $param_value = $param->arg;
