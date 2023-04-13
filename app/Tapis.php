@@ -776,6 +776,10 @@ class Tapis
             ],
         ];
 
+        // Set up the SLURM scheduler commands
+        $t['parameterSet']['schedulerOptions'][] = ['name'=>'name', 'arg'=>'--job-name ' . $name];
+        $t['parameterSet']['schedulerOptions'][] = ['name'=>'output_file', 'arg'=>'--output ' . $name . '.out'];
+        $t['parameterSet']['schedulerOptions'][] = ['name'=>'error_file', 'arg'=>'--error ' . $name . '.err'];
         // Set up the environment variables iReceptor Apps can use.
         $t['parameterSet']['envVariables'][] = ['key'=>'PYTHONNOUSERSITE', 'value'=>'1'];
         $t['parameterSet']['envVariables'][] = ['key'=>'IR_DOWNLOAD_FILE', 'value'=>$download_file];

@@ -443,8 +443,8 @@ class JobController extends Controller
         $data['job_control_button'] = explode('\n', $s);
 
         // Generate some Error summary information if the job failed
-        $output_file = 'irec-job-' . $job['id'] . '-' . $job->getJobID() . '.out';
-        $error_file = 'irec-job-' . $job['id'] . '-' . $job->getJobID() . '.err';
+        $output_file = 'ireceptor-' . $job['id'] . '.out';
+        $error_file = 'ireceptor-' . $job['id'] . '.err';
         $data['error_summary'] = [];
         $err_path = $analysis_folder . '/' . $error_file;
         $out_path = $analysis_folder . '/' . $output_file;
