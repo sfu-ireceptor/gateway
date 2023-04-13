@@ -713,7 +713,7 @@ class Tapis
         $exec_singularity_dir = config('services.tapis.system_execution.exec_singularity_dir');
         $singularity_image = $app_config['containerImage'];
         $app_config['containerImage'] = $exec_gateway_base_dir . '/' . $exec_singularity_dir . '/' . $singularity_image;
-        
+
         // Get the container path info.
         $container_gateway_mount_dir = config('services.tapis.system_execution.container_gateway_mount_dir');
         $container_app_dir = $container_gateway_mount_dir . '/' . config('services.tapis.system_execution.container_app_dir');
@@ -721,7 +721,7 @@ class Tapis
 
         // Create a bash shell arguement for the Job. The Gateway controls where
         // jobs are run from and what shell script is run for the App. If the App
-        // conforms to the Gateway App spec, then this all will work! 
+        // conforms to the Gateway App spec, then this all will work!
         $param['name'] = 'program';
         $param['arg'] = 'bash ' . $container_app_dir . '/' . $id . '/' . $container_app_script;
         $param['inputMode'] = 'FIXED';
