@@ -119,28 +119,37 @@ return [
         ],
         'system_execution' => [
             'name_prefix'  => env('TAPIS_SYSTEM_EXECUTION_NAME_PREFIX', 'exec'),
-            'max_minutes' => intval(2880),
+            'max_minutes' => intval(1439),
             'cores_per_node' => intval(1),
-            'memory_per_node' => intval(8000),
-            'memory_per_core' => intval(8000),
+            'memory_per_node' => intval(7900),
+            'memory_per_core' => intval(7900),
             // Base directory for all job output. Uses the Tapis HOST_EVAL function
             // to access a host environment variable.
             //'exec_job_working_dir' => 'HOST_EVAL($HOME)/projects/rpp-breden/ireceptorgw/tapis-jobs',
             //'exec_job_working_dir' => 'HOST_EVAL($SCRATCH)',
+            // WORKING - 'exec_job_working_dir' => '/scratch/ireceptorgw',
+            // NOT WORKING - 'exec_job_working_dir' => '/project/6008066/ireceptorgw/tapis_jobs',
             'exec_job_working_dir' => '/scratch/ireceptorgw',
             //'exec_job_working_dir' => '/project/6008066/ireceptorgw/tapis_jobs',
             // Directory on the execution system where the gateway analysis stuff is located
-            //'exec_gateway_base_dir' => '/project/6008066',
-            'exec_gateway_base_dir' => '/scratch/ireceptorgw',
+            // WORKING - 'exec_gateway_mount_dir' => '/scratch/ireceptorgw',
+            // NOT WORKING - 'exec_gateway_mount_dir' => '/project/6008066/ireceptorgw',
+            'exec_gateway_mount_dir' => '/scratch/ireceptorgw',
+            //'exec_gateway_mount_dir' => '/project/6008066/ireceptorgw',
             // Directory where the singularity images are stored - relative to exec_gateway_base
-            'exec_singularity_dir' => '/gateway_base/singularity',
+            'exec_singularity_dir' => 'gateway_base/singularity',
             // Mount point in the singularity container for gateway_base
-            //'container_gateway_base_dir' => '/project/6008066',
-            'container_gateway_base_dir' => '/scratch/ireceptorgw',
+            // WORKING - 'container_gateway_mount_dir' => '/scratch/ireceptorgw',
+            // NOT WORKING 'container_gateway_mount_dir' => '/project/6008066/ireceptorgw',
+            'container_gateway_mount_dir' => '/scratch/ireceptorgw',
+            //'container_gateway_mount_dir' => '/project/6008066/ireceptorgw',
             // Inside container location of gateway utilities relative to container mount point
-            'container_util_dir' => '/gateway_base/gateway_utilities',
+            'container_util_dir' => 'gateway_base/gateway_utilities',
             // Inside container location of gateway apps relative to container mount point
-            'container_app_dir' => '/gateway_base/tapis_apps',
+            'container_app_dir' => 'gateway_base/tapis_apps',
+            // App script that is run for every App. Apps need to implement this, and the
+            // Gateway runs it in the container with the other App Args.
+            'container_app_script' => 'app3.sh',
         ],
 
         'system_staging' => [
