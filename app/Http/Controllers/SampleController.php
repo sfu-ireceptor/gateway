@@ -9,8 +9,8 @@ use App\QueryLog;
 use App\RestService;
 use App\Sample;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class SampleController extends Controller
 {
@@ -130,11 +130,11 @@ class SampleController extends Controller
         }
 
         // if no filters and there's cached data, immediately return cached data
-        if ( ! $request->has('query_id')) {
+        if (! $request->has('query_id')) {
             $cached_data = Cache::get('samples-no-filters-data');
-            if($cached_data != null) {
-                 return view('sample', $cached_data);
-            }        
+            if ($cached_data != null) {
+                return view('sample', $cached_data);
+            }
         }
 
         /*************************************************
@@ -505,7 +505,7 @@ class SampleController extends Controller
         $current_columns_str = implode(',', $current_columns);
         $data['current_columns_str'] = $current_columns_str;
 
-        if ( ! $request->has('query_id')) {
+        if (! $request->has('query_id')) {
             Cache::put('samples-no-filters-data', $data);
         }
 
