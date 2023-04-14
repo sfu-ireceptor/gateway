@@ -8,11 +8,17 @@ use App\RestService;
 use App\Sample;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
+        $cached_data = Cache::get('home-data');
+        if($cached_data != null) {
+            return view('home', $cached_data);
+        }
+
         // get count of available data (sequences, samples)
         $username = auth()->user()->username;
         $metadata = Sample::metadata($username);
@@ -53,6 +59,7 @@ class HomeController extends Controller
         // clear any lingering form data
         $request->session()->forget('_old_input');
 
+        Cache::put('home-data', $data);
         return view('home', $data);
     }
 
