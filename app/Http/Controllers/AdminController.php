@@ -17,6 +17,7 @@ use App\RestService;
 use App\Sample;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -306,6 +307,9 @@ class AdminController extends Controller
         $n = CachedSample::cache();
 
         $message = "$n samples have been retrieved and cached.";
+
+        // delete cached sata
+        Cache::flush();
 
         return redirect('admin/databases')->with('notification', $message);
     }

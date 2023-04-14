@@ -10,6 +10,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -21,34 +22,41 @@ class UserController extends Controller
 {
     public function getLogin(Request $request)
     {
-        // get count of available data (sequences, samples)
-        $username = 'titi';
-        $metadata = Sample::metadata($username);
-        $data = $metadata;
+        $cached_data = Cache::get('login-data');
+        if ($cached_data != null) {
+            $data = $cached_data;
+        } else {
+            // get count of available data (sequences, samples)
+            $username = 'titi';
+            $metadata = Sample::metadata($username);
+            $data = $metadata;
 
-        $sample_list = Sample::public_samples();
+            $sample_list = Sample::public_samples();
 
-        // Fields we want to graph. The UI/blade expects six fields
-        $charts_fields = ['study_type_id', 'organism', 'disease_diagnosis_id',
-            'tissue_id', 'pcr_target_locus', 'template_class', ];
-        // Mapping of fields to display as labels on the graph for those that need
-        // mappings. These are usually required for ontology fields where we want
-        // to aggregate on the ontology ID but display the ontology label.
-        $field_map = ['study_type_id' => 'study_type',
-            'disease_diagnosis_id' => 'disease_diagnosis',
-            'tissue_id' => 'tissue', ];
-        $data['charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map);
+            // Fields we want to graph. The UI/blade expects six fields
+            $charts_fields = ['study_type_id', 'organism', 'disease_diagnosis_id',
+                'tissue_id', 'pcr_target_locus', 'template_class', ];
+            // Mapping of fields to display as labels on the graph for those that need
+            // mappings. These are usually required for ontology fields where we want
+            // to aggregate on the ontology ID but display the ontology label.
+            $field_map = ['study_type_id' => 'study_type',
+                'disease_diagnosis_id' => 'disease_diagnosis',
+                'tissue_id' => 'tissue', ];
+            $data['charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map);
 
-        // generate statistics
-        $sample_data = Sample::stats($sample_list);
-        $data['rest_service_list'] = $sample_data['rs_list'];
+            // generate statistics
+            $sample_data = Sample::stats($sample_list);
+            $data['rest_service_list'] = $sample_data['rs_list'];
 
-        $metadata = Sample::metadata();
-        $data['total_repositories'] = $metadata['total_repositories'];
-        $data['total_labs'] = $metadata['total_labs'];
-        $data['total_studies'] = $metadata['total_projects'];
-        $data['total_samples'] = $metadata['total_samples'];
-        $data['total_sequences'] = $metadata['total_sequences'];
+            $metadata = Sample::metadata();
+            $data['total_repositories'] = $metadata['total_repositories'];
+            $data['total_labs'] = $metadata['total_labs'];
+            $data['total_studies'] = $metadata['total_projects'];
+            $data['total_samples'] = $metadata['total_samples'];
+            $data['total_sequences'] = $metadata['total_sequences'];
+
+            Cache::put('login-data', $data);
+        }
 
         $data['news'] = News::orderBy('created_at', 'desc')->first();
         $data['is_login_page'] = true;
