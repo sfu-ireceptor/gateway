@@ -15,7 +15,7 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         $cached_data = Cache::get('home-data');
-        if($cached_data != null) {
+        if ($cached_data != null) {
             return view('home', $cached_data);
         }
 
@@ -60,6 +60,7 @@ class HomeController extends Controller
         $request->session()->forget('_old_input');
 
         Cache::put('home-data', $data);
+
         return view('home', $data);
     }
 
