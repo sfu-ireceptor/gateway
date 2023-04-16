@@ -189,6 +189,9 @@ class LaunchJob implements ShouldQueue
             Log::debug('LaunchJob::handle - app token: ' . $token);
             $appResponse = $tapis->getApp($appName, $token);
             Log::debug('LaunchJob::handle - App info = ' . json_encode($appResponse));
+            if (is_string($appResponse)) {
+                $appResponse = json_decode($appResponse);
+            }
             if ($appResponse->status == 'success') {
                 $tapisAppId = $appResponse->result->uuid;
                 $response = $tapis->updateApp($token, $appName, $appConfig);
