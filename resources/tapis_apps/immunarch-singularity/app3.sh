@@ -31,9 +31,9 @@ AGAVE_JOB_MEMORY_PER_NODE=${AGAVE_JOB_MEMORY_PER_NODE}
 # use command line arguments so we can test from the command line.
 #
 
-# Tapis parameter ir_gateway_url contains the URL of the source gateway. Use
+# Environment variable IR_GATEWAY_URL contains the URL of the source gateway. Use
 # this to gather iReceptor Gateway specific resources if needed.
-GATEWAY_URL="${ir_gateway_url}"
+GATEWAY_URL="${IR_GATEWAY_URL}"
 
 #
 # Tapis App Inputs
@@ -41,18 +41,12 @@ GATEWAY_URL="${ir_gateway_url}"
 
 # Download file is a ZIP archive that is provided by the Gateway and contains
 # the results of the users query. This is the data that is being analyzed.
-if [ -z "${download_file}" ]; then
-        ZIP_FILE=$1
-else
-        ZIP_FILE=${download_file}
-fi
+ZIP_FILE=${IR_DOWNLOAD_FILE}
 
 # Many of our TAPIS Apps have a split_reperotire variable, so to keep thinks
 # consistent we define it here if it isn't provided by the App.
-# Immunarch by default splits repertoires.
-if [ -z "${split_repertoire}" ]; then
-        split_repertoire="True"
-fi
+# Immunarch as we use it here only works on single repertoires.
+SPLIT_REPERTOIRE="True"
 
 ########################################################################
 # Done Tapis setup/processing.
@@ -230,7 +224,7 @@ function run_analysis()
     printf "IR-INFO: Done Repertoire Analysis on ${array_of_files[@]} at $(date)\n\n"
 }
 
-if [ "${split_repertoire}" = "True" ]; then
+if [ "${SPLIT_REPERTOIRE}" = "True" ]; then
     echo -e "IR-INFO:\nIR-INFO: Splitting data by Repertoire"
     echo "IR-INFO:"
     # Split the data by repertoire. This creates a directory tree in $GATEWAY_ANALYSIS_DIR
@@ -250,7 +244,7 @@ if [ "${split_repertoire}" = "True" ]; then
     gateway_run_analysis ${INFO_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
     gateway_cleanup ${ZIP_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
-elif [ "${split_repertoire}" = "False" ]; then
+elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
     echo -e "IR-INFO:\nIR-INFO: Running app on entire data set"
     echo "IR-INFO:"
 
@@ -270,12 +264,9 @@ elif [ "${split_repertoire}" = "False" ]; then
     run_analysis ${GATEWAY_ANALYSIS_DIR}/${outdir} "AIRRDataCommons" ${outdir} "NULL" ${GATEWAY_ANALYSIS_DIR}/${outdir}/${MANIFEST_FILE}
 
 else
-    echo "IR-ERROR: Unknown repertoire operation ${split_repertoire}" >&2
+    echo "IR-ERROR: Unknown repertoire operation ${SPLIT_REPERTOIRE}" >&2
     exit 1
 fi
-
-
-#gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 # Make sure we are back where we started, although the gateway functions should
 # not change the working directory that we are in.
