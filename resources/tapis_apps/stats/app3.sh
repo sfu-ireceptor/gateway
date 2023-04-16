@@ -16,15 +16,15 @@ ls /
 #
 split_repertoire=$1
 
-# Tapis parameter ir_gateway_url contains the URL of the source gateway. Use
+# Environment variable IR_GATEWAY_URL contains the URL of the source gateway. Use
 # this to gather iReceptor Gateway specific resources if needed.
 #
-# Tapis ENV variables expected
+# Download file to be used is stored in IR_DOWNLOAD_FILE 
 #
-ZIP_FILE=${download_file}
-# Tapis parameter ir_gateway_url contains the URL of the source gateway. Use
+ZIP_FILE=${IR_DOWNLOAD_FILE}
+# Tapis parameter IR_GATEWAY_URL contains the URL of the source gateway. Use
 # this to gather iReceptor Gateway specific resources if needed.
-GATEWAY_URL="${ir_gateway_url}"
+GATEWAY_URL="${IR_GATEWAY_URL}"
 
 ##############################################
 # Set up Gateway Utilities
@@ -32,7 +32,7 @@ GATEWAY_URL="${ir_gateway_url}"
 echo "IR-INFO: Using Gateway ${GATEWAY_URL}"
 
 # Report where we get the Gateway utilities from
-GATEWAY_UTIL_DIR=${gateway_util_dir}
+GATEWAY_UTIL_DIR=${IR_GATEWAY_UTIL_DIR}
 echo "IR-INFO: Using iReceptor Gateway Utilities from ${GATEWAY_UTIL_DIR}"
 
 # Load the iReceptor Gateway utilities functions.
