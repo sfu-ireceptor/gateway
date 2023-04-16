@@ -262,13 +262,13 @@ class CellController extends Controller
                     $parameter['default'] = $parameter_info['arg'];
                     $parameter_list[$parameter_info['name']] = $parameter;
 
-                    //Log::debug('   Processing parameter ' . $parameter_info['id']);
-                    //$parameter['label'] = $parameter_info['id'];
-                    //$parameter['name'] = $parameter_info['details']['label'];
-                    //$parameter['description'] = $parameter_info['details']['description'];
-                    //$parameter['type'] = $parameter_info['value']['type'];
-                    //$parameter['default'] = $parameter_info['value']['default'];
-                    //$parameter_list[$parameter_info['id']] = $parameter;
+                //Log::debug('   Processing parameter ' . $parameter_info['id']);
+                //$parameter['label'] = $parameter_info['id'];
+                //$parameter['name'] = $parameter_info['details']['label'];
+                //$parameter['description'] = $parameter_info['details']['description'];
+                //$parameter['type'] = $parameter_info['value']['type'];
+                //$parameter['default'] = $parameter_info['value']['default'];
+                //$parameter_list[$parameter_info['id']] = $parameter;
                 } else {
                     Log::debug('   Not displaying invisible parameter ' . $parameter_info['id']);
                 }
