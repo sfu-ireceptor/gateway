@@ -266,8 +266,9 @@ class SequenceController extends Controller
                 // "label" as the human readable name of the parameter.
                 if ($parameter_info['inputMode'] != 'FIXED') {
                     $parameter = [];
-                    Log::debug('   Processing parameter ' . $parameter_info['name']);
-                    $parameter['label'] = $parameter_info['name'];
+                    Log::debug('   Processing parameter - ' . $parameter_info['name']);
+                    Log::debug('   Processing parameter - ' . $parameter_info['notes']['label']);
+                    $parameter['label'] = $parameter_info['notes']['label'];
                     $parameter['name'] = $parameter_info['name'];
                     $parameter['description'] = $parameter_info['description'];
                     $parameter['type'] = 'string';
