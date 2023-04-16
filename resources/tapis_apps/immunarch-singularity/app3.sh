@@ -55,7 +55,7 @@ SPLIT_REPERTOIRE="True"
 echo "IR-INFO: Using Gateway ${GATEWAY_URL}"
 
 # Report where we get the Gateway utilities from
-GATEWAY_UTIL_DIR=${gateway_util_dir}
+GATEWAY_UTIL_DIR=${IR_GATEWAY_UTIL_DIR}
 echo "IR-INFO: Using iReceptor Gateway Utilities from ${GATEWAY_UTIL_DIR}"
 
 # Load the iReceptor Gateway bash utility functions.
