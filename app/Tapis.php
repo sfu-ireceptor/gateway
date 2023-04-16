@@ -1015,6 +1015,7 @@ class Tapis
             Log::error('Tapis::doHTTPRequest:: ClientException - response = ' . $response);
             $this->raiseExceptionIfTapisError($response);
             Log::error('Tapis::doHTTPRequest:: ClientException - returning response = ' . $response);
+
             return $response;
         } catch (RequestException $exception) {
             $response = $exception->getResponse()->getBody()->getContents();
