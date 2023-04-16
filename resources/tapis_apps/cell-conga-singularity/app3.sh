@@ -29,7 +29,7 @@ AGAVE_JOB_MEMORY_PER_NODE=${AGAVE_JOB_MEMORY_PER_NODE}
 
 # Tapis parameter ir_gateway_url contains the URL of the source gateway. Use
 # this to gather iReceptor Gateway specific resources if needed.
-GATEWAY_URL="${ir_gateway_url}"
+GATEWAY_URL="${IR_GATEWAY_URL}"
 
 #
 # Tapis App Inputs
@@ -37,11 +37,7 @@ GATEWAY_URL="${ir_gateway_url}"
 
 # Download file is a ZIP archive that is provided by the Gateway and contains
 # the results of the users query. This is the data that is being analyzed.
-if [ -z "${download_file}" ]; then
-        ZIP_FILE=$1
-else
-        ZIP_FILE=${download_file}
-fi
+ZIP_FILE=${IR_DOWNLOAD_FILE}
 
 ########################################################################
 # Done Tapis setup/processing.
@@ -49,7 +45,7 @@ fi
 echo "IR-INFO: Using Gateway ${GATEWAY_URL}"
 
 # Report where we get the Gateway utilities from
-GATEWAY_UTIL_DIR=${gateway_util_dir}
+GATEWAY_UTIL_DIR=${IR_GATEWAY_UTIL_DIR}
 echo "IR-INFO: Using iReceptor Gateway Utilities from ${GATEWAY_UTIL_DIR}"
 
 # Load the iReceptor Gateway bash utility functions.

@@ -4,25 +4,13 @@
     "description":"immunarch AIRR Repertoire summaries",
     "runtime":"SINGULARITY",
     "runtimeOptions": ["SINGULARITY_RUN"],
-    "containerImage":"/scratch/ireceptorgw/singularity/immunarch/ir_immunarch-0.6.9.sif",
+    "containerImage":"ir_immunarch-0.6.9.sif",
     "jobType":"BATCH",
     "jobAttributes": {
       "description": "<p><a href=\"https://immunarch.com/index.html\" target=\"_blank\">immunarch</a> is an R package designed to analyse T-cell receptor (TCR) and B-cell receptor (BCR) repertoires. This iReceptor Analysis App uses immunarch to perform repertoire analyses (not reperotire comparisons) such as gene usage and clonality. The analysis will split the data by Repertoire and anlayse each repertoire individually.</p><p>Notes:<ul><li>immunarch utilizes the AIRR duplicate_count field to represent its concept of a clone. It does not perform clonal grouping/collapsing. If a repertoire does not have duplicate_count the clonality statistics will not be helpful.</li><li>Analysis Apps are limited in the amount of memory that they can use and immunarch uses a significant amount of memory for large repertoires. Analyses of large repertoires of over 3M rearrangements may fail.</ul></p>",
       "execSystemId": "cedar.computecanada.ca-compute-irec_analysis",
       "parameterSet": {
-        "containerArgs": [
-            {"name":"project_mount", "inputMode": "FIXED", "arg":"-B /project:/project"},
-            {"name":"scratch_mount", "inputMode": "FIXED", "arg":"-B /scratch:/scratch"}
-        ],
-        "appArgs": [
-            {"name": "program", "arg" : "bash /scratch/ireceptorgw/src/gateway/resources/agave_apps/immunarch-singularity/app3.sh","inputMode":"FIXED"}
-        ],
-        "envVariables": [
-            {"key": "PYTHONNOUSERSITE","value":"1"},
-            {"key": "ir_singularity","value":"/scratch/ireceptorgw/singularity/immunarch/ir_immunarch-0.6.9.sif"},
-            {"key":"ir_gateway_url","value":"https://gateway-analysis-dev/"},
-            {"key":"download_file","value":"gateway_download.zip"}
-        ]
+                  "appArgs": []
       }
     },
     "notes":
