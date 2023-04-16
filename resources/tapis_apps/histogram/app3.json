@@ -1,7 +1,7 @@
 {
     "id":"singularity-histogram-irec_analysis",
     "version":"0.1",
-    "description":"AIRR Field Histogram",
+    "description":"Histogram",
     "runtime":"SINGULARITY",
     "runtimeOptions": ["SINGULARITY_RUN"],
     "containerImage":"ir_histogram-4.0.0.sif",

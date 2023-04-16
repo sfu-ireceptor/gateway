@@ -1,7 +1,7 @@
 {
     "id":"singularity-statistics-irec_analysis",
     "version":"0.1",
-    "description": "Rearrangement Statistics",
+    "description": "Statistics",
     "runtime":"SINGULARITY",
     "runtimeOptions": ["SINGULARITY_RUN"],
     "containerImage":"ir_statistics-4.0.0.sif",

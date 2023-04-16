@@ -1,7 +1,7 @@
 {
     "id":"singularity-immunarch-irec_analysis",
     "version":"0.1",
-    "description":"immunarch AIRR Repertoire summaries",
+    "description":"immunarch",
     "runtime":"SINGULARITY",
     "runtimeOptions": ["SINGULARITY_RUN"],
     "containerImage":"ir_immunarch-0.6.9.sif",

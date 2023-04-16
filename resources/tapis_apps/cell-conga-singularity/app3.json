@@ -1,7 +1,7 @@
 {
     "id":"singularity-conga-irec_analysis",
     "version":"0.1",
-    "description":"My sample conga application",
+    "description":"Conga",
     "runtime":"SINGULARITY",
     "runtimeOptions": ["SINGULARITY_RUN"],
     "containerImage":"ir_conga-ireceptor.sif",

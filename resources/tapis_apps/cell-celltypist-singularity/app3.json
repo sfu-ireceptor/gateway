@@ -1,7 +1,7 @@
 {
     "id":"singularity-celltypist-irec_analysis",
     "version":"0.1",
-    "description":"My sample celltypist application",
+    "description":"CellTypist",
     "runtime":"SINGULARITY",
     "runtimeOptions": ["SINGULARITY_RUN"],
     "containerImage":"ir_celltypist-1.1.0.sif",
