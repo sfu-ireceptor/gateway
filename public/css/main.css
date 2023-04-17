@@ -507,6 +507,10 @@ a.external:after {
     animation-duration: 4s;
 }
 
+.button_botttom_container {
+	margin-top: 40px;
+}
+
 /* @end */
 
 /* @group top navigation */

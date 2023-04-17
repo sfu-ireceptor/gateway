@@ -60,7 +60,7 @@
 					</div>
 				</div>
 
-				{{ Form::submit('Register', array('class' => 'btn btn-primary')) }}
+				{{ Form::submit('Create an account', array('class' => 'btn btn-primary')) }}
 
 			{{ Form::close() }}
 		</div>
