@@ -216,11 +216,13 @@ class UserController extends Controller
         $rules = [
             'first_name' => 'required',
             'last_name' => 'required',
-            'email2' => 'required|email|unique:user,username',
+            'email2' => 'required|email|unique:user,email',
         ];
 
         $messages = [
             'required' => 'This field is required.',
+            'unique' => 'This account already exists',
+            'email' => 'Must be a valid email',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);

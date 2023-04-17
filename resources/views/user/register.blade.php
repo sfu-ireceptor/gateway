@@ -17,7 +17,7 @@
 
 	<div class="row">
 
-		<div class="col-md-4">
+		<div class="col-md-5">
 			{{ Form::open(array('url' => 'register', 'role' => 'form')) }}
 				<div class="honey-pot">
 					<label for="email">Do no fill this field, it's used to prevent spam</label>
