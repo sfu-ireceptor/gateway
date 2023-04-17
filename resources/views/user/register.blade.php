@@ -37,16 +37,17 @@
 						</div>
 
 					    <div class="form-group {{ $errors->first('email') ? 'has-error' : ''}}">
-							{{ Form::label('email2', 'Email') }} <span class="error">{{ $errors->first('email2') }}</span>
+							{{ Form::label('email2', 'Email (institution/company preferred)') }} <span class="error">{{ $errors->first('email2') }}</span>
 							{{ Form::text('email2', '', array('class' => 'form-control')) }}
 						</div>
 					</div>
 				</div>
 
 				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Required by our funders</h3>
+					</div>
 					<div class="panel-body">
-					  	<p>Required by our funders.</p>
-
 					    <div class="form-group {{ $errors->first('country') ? 'has-error' : ''}}">
 							{{ Form::label('country', 'Country') }} <span class="error">{{ $errors->first('country') }}</span>
 							{{ Form::text('country', $country, array('class' => 'form-control')) }}
