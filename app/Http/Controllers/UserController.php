@@ -237,6 +237,7 @@ class UserController extends Controller
         $email = $request->get('email2');
         $country = $request->get('country');
         $institution = $request->get('institution');
+        $notes = $request->get('notes');
 
         // check it's not a bot
         $honey_pot_email = $request->get('email');
@@ -247,7 +248,7 @@ class UserController extends Controller
 
         $password = str_random(24);
 
-        $u = User::add($first_name, $last_name, $email, $password, $country, $institution);
+        $u = User::add($first_name, $last_name, $email, $password, $country, $institution, $notes);
 
         $t = [];
         $t['app_url'] = config('app.url');

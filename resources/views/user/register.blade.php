@@ -17,7 +17,7 @@
 
 	<div class="row">
 
-		<div class="col-md-5">
+		<div class="col-md-6">
 			{{ Form::open(array('url' => 'register', 'role' => 'form')) }}
 				<div class="honey-pot">
 					<label for="email">Do no fill this field, it's used to prevent spam</label>
@@ -43,6 +43,12 @@
 								<a href="/user/forgot-password/{{ old('email2') }}">Forgot your password?</a>
 							@endif
 						</div>
+
+					    <div class="form-group {{ $errors->first('notes') ? 'has-error' : ''}}">
+							{{ Form::label('notes', 'Tell us about yourself and your interest in the iReceptor Gateway') }} <span class="error">{{ $errors->first('notes') }}</span>
+							{{ Form::textarea('notes', '', array('class' => 'form-control')) }}
+						</div>
+
 					</div>
 				</div>
 

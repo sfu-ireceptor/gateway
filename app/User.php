@@ -60,7 +60,7 @@ class User extends Authenticatable
         return $username;
     }
 
-    public static function add($first_name, $last_name, $email, $password, $country, $institution)
+    public static function add($first_name, $last_name, $email, $password, $country, $institution, $notes)
     {
         $user = new User();
 
@@ -69,6 +69,7 @@ class User extends Authenticatable
         $user->email = $email;
         $user->country = $country;
         $user->institution = $institution;
+        $user->notes = $notes;
 
         $user->username = $user->generateUsername();
         $user->password = Hash::make($password);
