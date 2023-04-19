@@ -147,7 +147,7 @@ function do_histogram()
     chmod 644 $TSV_OFILE
 
     # Remove the temporary file.
-    #rm -f $TMP_FILE
+    rm -f $TMP_FILE
 }
 
 function run_analysis()
@@ -328,7 +328,7 @@ mv ${GATEWAY_ANALYSIS_DIR}.zip output/
 
 # We don't want the analysis files to remain - they are in the ZIP file
 echo "IR-INFO: Removing analysis output"
-#rm -rf ${GATEWAY_ANALYSIS_DIR}
+rm -rf ${GATEWAY_ANALYSIS_DIR}
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
 echo "IR-INFO: Removing original ZIP file $ZIP_FILE"
