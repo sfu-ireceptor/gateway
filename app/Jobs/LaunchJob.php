@@ -181,7 +181,7 @@ class LaunchJob implements ShouldQueue
             // Set up the App Tapis name, the human name, and the deployment path.
             // The path for the app is the same as the appID
             //$appName = $appId . '-' . $executionSystem->name;
-            $appName = $appId; 
+            $appName = $appId;
             $appDeploymentPath = $appId;
             $appHumanName = $appTemplateConfig['description'];
 
