@@ -1,10 +1,12 @@
 Hello {{ $first_name }},
 
 Your iReceptor Gateway account has been created.
-Log in at {{ $login_link }}
+Log in at {{ $app_url }}/login
 
 Your username: {{ $username }}
 Your password: {{ $password }}
+
+You can change your password at {{ $app_url }}/user/change-password
 
 Documentation on how to use the gateway: https://ireceptor.org/platform/doc
 
@@ -18,6 +20,6 @@ Suggested wording for a citation that is storing data in the AIRR Data Commons: 
 
 Suggested wording for an attribution for data reuse: "Study data was queried and downloaded from the AIRR Data Commons [Christley et al.] using the iReceptor Gateway [Corrie et al.] on January 1, 2021."
 
-If you use data from a paper from within the AIRR Data Commons, please also cite that paper.
+If you use data from a paper from within the AIRR Data Commons (https://www.antibodysociety.org/the-airr-community/airr-data-commons/), please also cite that paper.
 
 Let us know if you have questions, problems, or feedback at support@ireceptor.org
