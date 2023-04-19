@@ -93,7 +93,7 @@ function do_heatmap()
 
     # preprocess input files -> tmp.csv
     echo "IR-INFO: Extracting ${variable1} and ${variable2} from files started at: `date`" 
-    #rm -f $TMP_FILE
+    rm -f $TMP_FILE
     echo -e "${variable1}\t${variable2}" > $TMP_FILE
 
     for filename in "${array_of_files[@]}"; do
@@ -128,7 +128,7 @@ function do_heatmap()
     then
         echo "IR-ERROR: Could not generate heatmap for ${variable1},${variable2}"
         # Remove the temporary file.
-        #rm -f $TMP_FILE
+        rm -f $TMP_FILE
         return 
     fi
 
@@ -137,7 +137,7 @@ function do_heatmap()
     chmod 644 "$TSV_OFILE"
 
     # Remove the temporary file.
-    #rm -f $TMP_FILE
+    rm -f $TMP_FILE
 }
 
 function do_histogram()
@@ -194,17 +194,16 @@ function do_histogram()
     then
         echo "IR-ERROR: Could not generate histogram for ${variable_name}"
         # Remove the temporary file.
-        #rm -f $TMP_FILE
+        rm -f $TMP_FILE
         return 
     fi
-
 
     # change permissions
     chmod 644 $PNG_OFILE
     chmod 644 $TSV_OFILE
 
     # Remove the temporary file.
-    #rm -f $TMP_FILE
+    rm -f $TMP_FILE
 }
 
 function run_analysis()
