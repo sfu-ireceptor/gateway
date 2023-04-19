@@ -284,6 +284,7 @@ class UserController extends Controller
     public function getForgotPassword($email = '')
     {
         $data['email'] = $email;
+
         return view('user/forgotPassword', $data);
     }
 
