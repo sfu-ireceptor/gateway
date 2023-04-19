@@ -92,23 +92,23 @@ class JobController extends Controller
                     // Generate the parameters label and value.
                     $param_string = json_decode($param->notes)->label;
                     $param_value = $param->arg;
-                    $s .= $param_string . ': ' . $param_value . '<br>\n';
+                    $s .= $param_string . ': ' . $param_value . '<br>';
                     $param_count++;
                 }
             }
         }
         if ($param_count == 0) {
-            $s .= 'None<br>\n';
+            $s .= 'None<br>';
         }
         $s .= '<p>';
 
         $s .= '<p><strong>Job Parameters</strong></p>';
         $s .= '<p>';
-        $s .= 'Number of cores: ' . strval($tapis->processorsPerNode()) . '<br>\n';
-        $s .= 'Maximum memory per node: ' . strval(round($tapis->memoryMBPerNode()/1024,1)) . ' GB<br>\n';
-        $s .= 'Maximum run time: ' . strval(round($tapis->maxRunTimeMinutes()/60,1)) . ' hours<br>\n';
+        $s .= 'Number of cores: ' . strval($tapis->processorsPerNode()) . '<br>';
+        $s .= 'Maximum memory per node: ' . strval(round($tapis->memoryMBPerNode()/1024,1)) . ' GB<br>';
+        $s .= 'Maximum run time: ' . strval(round($tapis->maxRunTimeMinutes()/60,1)) . ' hours<br>';
         $s .= '<p>';
-        $data['job_summary'] = explode('\n', $s);
+        $data['job_summary'] = $s;
 
         // Build the job control button HTML. This is rendered by the blade,
         // and controls when the job control button is enabled or not.
@@ -424,7 +424,7 @@ class JobController extends Controller
         $s .= '<p><strong>Job Parameters</strong></p>';
         $s .= '<p>';
         $s .= 'Number of cores: ' . strval($tapis->processorsPerNode()) . '<br>\n';
-        $s .= 'Maximum memory per core: ' . strval(round($tapis->memoryMBPerNode()/1024,1)) . ' GB<br>\n';
+        $s .= 'Maximum memory per node: ' . strval(round($tapis->memoryMBPerNode()/1024,1)) . ' GB<br>\n';
         $s .= 'Maximum run time: ' . strval(round($tapis->maxRunTimeMinutes()/60,1)) . ' hours<br>\n';
         $s .= '<p>';
         $data['job_summary'] = explode('\n', $s);
