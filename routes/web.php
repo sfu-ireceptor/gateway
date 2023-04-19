@@ -20,7 +20,7 @@ Route::get('logout', 'UserController@getLogout');
 Route::get('register', 'UserController@getRegister')->name('register');
 Route::post('register', 'UserController@postRegister');
 
-Route::get('user/forgot-password', 'UserController@getForgotPassword');
+Route::get('user/forgot-password/{email?}', 'UserController@getForgotPassword');
 Route::post('user/forgot-password', 'UserController@postForgotPassword');
 Route::get('user/forgot-password-email-sent', 'UserController@getForgotPasswordEmailSent');
 

@@ -39,6 +39,9 @@
 					    <div class="form-group {{ $errors->first('email') ? 'has-error' : ''}}">
 							{{ Form::label('email2', 'Email (institution/company preferred)') }} <span class="error">{{ $errors->first('email2') }}</span>
 							{{ Form::text('email2', '', array('class' => 'form-control')) }}
+							@if ($errors->first('email2') == 'This account already exists')
+								<a href="/user/forgot-password/{{ old('email2') }}">Forgot your password?</a>
+							@endif
 						</div>
 					</div>
 				</div>
