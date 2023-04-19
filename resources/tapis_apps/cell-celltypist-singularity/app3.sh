@@ -237,10 +237,10 @@ function run_analysis()
     echo "IR-INFO: Done generating label file ${label_file}"
 
     # Remove the intermediate files generated for CellTypist
-    #rm -f ${output_directory}/${CONTIG_PREFIX}.csv ${output_directory}/${CONTIG_PREFIX}_*
+    rm -f ${output_directory}/${CONTIG_PREFIX}.csv ${output_directory}/${CONTIG_PREFIX}_*
 
     # We don't want to keep around the generated data files or the manifest file.
-    #rm -f ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/${rearrangement_file} ${output_directory}/${manifest_file}
+    rm -f ${output_directory}/${cell_file} ${output_directory}/${gex_file} ${output_directory}/${rearrangement_file} ${output_directory}/${manifest_file}
 
     # done
     printf "IR-INFO: Done running Repertoire Analysis on ${cell_file} at $(date)\n"
@@ -284,14 +284,11 @@ echo "IR-INFO: Done ZIPing analysis results - $(date)"
 
 # We don't want the analysis files to remain - they are in the ZIP file
 echo "IR-INFO: Removing analysis output"
-#rm -rf ${GATEWAY_ANALYSIS_DIR}
-
-# We don't want the iReceptor Utilities to be part of the results.
-#rm -rf ${GATEWAY_UTIL_DIR}
+rm -rf ${GATEWAY_ANALYSIS_DIR}
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
 echo "IR-INFO: Removing original ZIP file $ZIP_FILE"
-#rm -f $ZIP_FILE
+rm -f $ZIP_FILE
 
 # End
 printf "IR-INFO: DONE at $(date)\n\n"

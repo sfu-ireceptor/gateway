@@ -262,15 +262,15 @@ function run_analysis()
 
 	# Generate the histogram and heatmap stats
 	do_histogram v_call $output_directory $file_string $title_string ${array_of_files[@]}
-        do_histogram d_call $output_directory $file_string $title_string ${array_of_files[@]}
-        do_histogram j_call $output_directory $file_string $title_string ${array_of_files[@]}
-        do_histogram junction_aa_length $output_directory $file_string $title_string ${array_of_files[@]}
-        do_heatmap v_call j_call $output_directory $file_string $title_string ${array_of_files[@]}
-        do_heatmap v_call junction_aa_length $output_directory $file_string $title_string ${array_of_files[@]}
-        # Remove the TSV files, we don't want to return them
-        for filename in "${array_of_files[@]}"; do
-	        echo "IR-INFO: Removing data file $output_directory/$filename"
-		#rm -f $output_directory/$filename
+    do_histogram d_call $output_directory $file_string $title_string ${array_of_files[@]}
+    do_histogram j_call $output_directory $file_string $title_string ${array_of_files[@]}
+    do_histogram junction_aa_length $output_directory $file_string $title_string ${array_of_files[@]}
+    do_heatmap v_call j_call $output_directory $file_string $title_string ${array_of_files[@]}
+    do_heatmap v_call junction_aa_length $output_directory $file_string $title_string ${array_of_files[@]}
+    # Remove the TSV files, we don't want to return them
+    for filename in "${array_of_files[@]}"; do
+	    echo "IR-INFO: Removing data file $output_directory/$filename"
+	    rm -f $output_directory/$filename
 	done
 
 	# Generate a label file for the Gateway to use to present this info to the user
@@ -386,23 +386,20 @@ cd ${SCRIPT_DIR}
 cp ${GATEWAY_ANALYSIS_DIR}/${INFO_FILE} .
 
 # We want to keep the job error and output files as part of the analysis output.
-cp output/*.out ${GATEWAY_ANALYSIS_DIR}
+cp *.out ${GATEWAY_ANALYSIS_DIR}
+cp *.err ${GATEWAY_ANALYSIS_DIR}
 
 # ZIP up the analysis results for easy download
 zip -r ${GATEWAY_ANALYSIS_DIR}.zip ${GATEWAY_ANALYSIS_DIR}
 mv ${GATEWAY_ANALYSIS_DIR}.zip output/
 
-# We don't want the iReceptor Utilities to be part of the results.
-echo "IR-INFO: Removing Gateway utilities"
-#rm -rf ${GATEWAY_UTIL_DIR}
-
 # We don't want the analysis files to remain - they are in the ZIP file
 echo "IR-INFO: Removing analysis output"
-#rm -rf ${GATEWAY_ANALYSIS_DIR}
+rm -rf ${GATEWAY_ANALYSIS_DIR}
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
 echo "IR-INFO: Removing original ZIP file $ZIP_FILE"
-#rm -f $ZIP_FILE
+rm -f $ZIP_FILE
 
 # Debugging output, print data/time when shell command is finished.
 echo "IR-INFO: Statistics finished at: `date`"

@@ -335,14 +335,11 @@ echo "IR-INFO: Done ZIPing analysis results - $(date)"
 
 # We don't want the analysis files to remain - they are in the ZIP file
 echo "IR-INFO: Removing analysis output"
-#rm -rf ${GATEWAY_ANALYSIS_DIR}
-
-# We don't want the iReceptor Utilities to be part of the results.
-#rm -rf ${GATEWAY_UTIL_DIR}
+rm -rf ${GATEWAY_ANALYSIS_DIR}
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
 echo "IR-INFO: Removing original ZIP file $ZIP_FILE"
-#rm -f $ZIP_FILE
+rm -f $ZIP_FILE
 
 # End
 printf "IR-INFO: DONE at $(date)\n\n"
