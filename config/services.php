@@ -181,9 +181,9 @@ return [
             'port'  => intval(env('TAPIS_DEFAULT_EXECUTION_SYSTEM_PORT', 22)),
             'auth'  => [
                 'username'      => env('TAPIS_DEFAULT_EXECUTION_SYSTEM_AUTH_USERNAME', 'ireceptorgw'),
-                'sshkeys'    => @file_get_contents(env('TAPIS_DEFAULT_EXECUTION_SYSTEM_AUTH_SSHKEYS', base_path('storage/config/tapis-default-execution-system_cred.json'))),
-                'public_key'    => @file_get_contents(env('TAPIS_DEFAULT_EXECUTION_SYSTEM_AUTH_PUBLIC_KEY', base_path('storage/config/tapis-default-execution-system_public-key.txt'))),
-                'private_key'   => @file_get_contents(env('TAPIS_DEFAULT_EXECUTION_SYSTEM_AUTH_PRIVATE_KEY', base_path('storage/config/tapis-default-execution-system_private-key.txt'))),
+                //'sshkeys'    => @file_get_contents(env('TAPIS_DEFAULT_EXECUTION_SYSTEM_AUTH_SSHKEYS', base_path('storage/config/tapis-default-execution-system_cred.json'))),
+                //'public_key'    => @file_get_contents(env('TAPIS_DEFAULT_EXECUTION_SYSTEM_AUTH_PUBLIC_KEY', base_path('storage/config/tapis-default-execution-system_public-key.txt'))),
+                //'private_key'   => @file_get_contents(env('TAPIS_DEFAULT_EXECUTION_SYSTEM_AUTH_PRIVATE_KEY', base_path('storage/config/tapis-default-execution-system_private-key.txt'))),
             ],
             'rootdir'  => env('TAPIS_DEFAULT_EXECUTION_SYSTEM_ROOTDIR', '/tmp'),
         ],
