@@ -4,7 +4,6 @@ namespace App;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 
 if (! function_exists('curl_file_create')) {
     function curl_file_create($filename, $mimetype = '', $postname = '')
