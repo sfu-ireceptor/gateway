@@ -121,8 +121,8 @@ return [
             'name_prefix'  => env('TAPIS_SYSTEM_EXECUTION_NAME_PREFIX', 'exec'),
             'max_minutes' => intval(1439),
             'cores_per_node' => intval(1),
-            'memory_per_node' => intval(7900),
-            'memory_per_core' => intval(7900),
+            'memory_per_node' => intval(7999),
+            'memory_per_core' => intval(7999),
             // Base directory for all job output. Uses the Tapis HOST_EVAL function
             // to access a host environment variable.
             //'exec_job_working_dir' => 'HOST_EVAL($HOME)/projects/rpp-breden/ireceptorgw/tapis-jobs',

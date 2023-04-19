@@ -13,9 +13,10 @@ class Tapis
     private $tenant_client;
     private $appTemplates;
     private $jobParameters;
-    private $maxRunTime;
-    private $processorsPerNode;
-    private $memoryPerProcessor;
+    private $maxMinutes;
+    private $coresPerNode;
+    private $memoryMBPerNode;
+    private $memoryMBPerCore;
     private static $analysisTokenData;
     private static $analysisUser;
 
@@ -67,7 +68,7 @@ class Tapis
         $job_parameter['label'] = 'coresPerNode';
         $job_parameter['type'] = 'integer';
         $job_parameter['name'] = 'Number of CPUs (max ' . strval($this->coresPerNode) . ')';
-        $job_parameter['description'] = 'Number of CPUs used by the job, with a maximum of ' . strval($this->processorsPerNode) . ' per job. Note not all jobs will scale well so adding more CPUs may not reduce execution time.';
+        $job_parameter['description'] = 'Number of CPUs used by the job, with a maximum of ' . strval($this->coresPerNode) . ' per job. Note not all jobs will scale well so adding more CPUs may not reduce execution time.';
         $job_parameter['default'] = $this->coresPerNode;
         $this->jobParameters[$job_parameter['label']] = $job_parameter;
 
@@ -92,19 +93,19 @@ class Tapis
         //$this->jobParameters[$job_parameter['label']] = $job_parameter;
     }
 
-    public function maxRunTime()
+    public function maxRunTimeMinutes()
     {
-        return $this->maxRunTime;
+        return $this->maxMinutes;
     }
 
     public function processorsPerNode()
     {
-        return $this->processorsPerNode;
+        return $this->coresPerNode;
     }
 
-    public function memoryPerProcessor()
+    public function memoryMBPerNode()
     {
-        return $this->memoryPerProcessor;
+        return $this->memoryMBPerNode;
     }
 
     public function isUp()
@@ -599,7 +600,7 @@ class Tapis
                     'minCoresPerNode' => 1,
                     'maxCoresPerNode' => $this->coresPerNode,
                     'minMemoryMB' => 1,
-                    'maxMemoryMB' => $this->memoryMBPerCore,
+                    'maxMemoryMB' => $this->memoryMBPerNode,
                     'minMinutes' => 1,
                     'maxMinutes' => $this->maxMinutes,
                 ],
@@ -609,55 +610,6 @@ class Tapis
         return $t;
     }
 
-/*
-    public function getExcutionSystemConfig($name, $host, $port, $username, $privateKey, $publicKey)
-    {
-        $t = [
-            'id' => $name,
-            'name' => $name,
-            'type' => 'EXECUTION',
-            'executionType' => 'HPC',
-            'scheduler' => 'SLURM',
-            'queues' => [
-                [
-                    'default' => true,
-                    'name' => 'default',
-                    'maxRequestedTime' => strval($this->maxRunTime) . ':00:00',
-                    'maxNodes' => 1,
-                    'maxProcessorsPerNode' => $this->processorsPerNode,
-                    'maxMemoryPerNode' => '64GB',
-                    'customDirectives' => '--mem-per-cpu=' . $this->memoryPerProcessor . 'G',
-                ],
-            ],
-
-            'login' => [
-                'protocol' => 'SSH',
-                'host' => $host,
-                'port' => $port,
-                'auth' => [
-                    'type' => 'SSHKEYS',
-                    'username' => $username,
-                    'publicKey' => $publicKey,
-                    'privateKey' => $privateKey,
-                ],
-            ],
-            'storage' => [
-                'protocol' => 'SFTP',
-                'host' => $host,
-                'port' => $port,
-                'auth' => [
-                    'type' => 'SSHKEYS',
-                    'username' => $username,
-                    'publicKey' => $publicKey,
-                    'privateKey' => $privateKey,
-                ],
-                'rootDir' => '/home' . '/' . $username . '/scratch',
-            ],
-        ];
-
-        return $t;
-    }
-*/
     public function getStorageSystemConfig($name, $host, $port, $username, $rootDir)
     {
         $t = [
@@ -671,25 +623,6 @@ class Tapis
             'canExec' => false,
             'rootDir' => $rootDir,
         ];
-        /*
-        $t = [
-            'id' => $name,
-            'name' => $name,
-            'type' => 'STORAGE',
-            'storage' => [
-                'protocol' => 'SFTP',
-                'host' => $host,
-                'port' => $port,
-                'auth' => [
-                    'type' => 'SSHKEYS',
-                    'username' => $username,
-                    'publicKey' => $publicKey,
-                    'privateKey' => $privateKey,
-                ],
-                'rootDir' => $rootDir,
-            ],
-        ];
-        */
 
         return $t;
     }
@@ -793,25 +726,6 @@ class Tapis
         $t['parameterSet']['containerArgs'][] = ['name'=>'project_mount', 'arg'=>'-B /project:/project'];
         $t['parameterSet']['containerArgs'][] = ['name'=>'scratch_mount', 'arg'=>'-B /scratch:/scratch'];
         $t['parameterSet']['containerArgs'][] = ['name'=>'gateway_app_mount', 'arg'=>'-B ' . $exec_gateway_mount_dir . ':' . $container_gateway_mount_dir];
-
-        /*
-        $t = [
-            'name' => $name,
-            'appId' => $app_id,
-            'parameters' => $params,
-            'inputs' => $inputs,
-            'archive' => true,
-            'archiveSystem' => $storage_archiving,
-            'archivePath' => $folder,
-            'notifications' => [
-                [
-                    'url' => $notification_url . '/tapis/update-status/${JOB_ID}/${JOB_STATUS}',
-                    'event' => '*',
-                    'persistent' => true,
-                ],
-            ],
-        ];
-        */
 
         // Set up the job parameters. We loop over the possible job parameters and
         // check to see if any of them are set in the job_params provided by the caller.

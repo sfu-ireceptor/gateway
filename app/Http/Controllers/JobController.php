@@ -105,8 +105,8 @@ class JobController extends Controller
         $s .= '<p><strong>Job Parameters</strong></p>';
         $s .= '<p>';
         $s .= 'Number of cores: ' . strval($tapis->processorsPerNode()) . '<br>\n';
-        $s .= 'Maximum memory per core: ' . strval($tapis->memoryPerProcessor()) . ' GB<br>\n';
-        $s .= 'Maximum run time: ' . strval($tapis->maxRunTime()) . ' hours<br>\n';
+        $s .= 'Maximum memory per node: ' . strval(round($tapis->memoryMBPerNode()/1024,1)) . ' GB<br>\n';
+        $s .= 'Maximum run time: ' . strval(round($tapis->maxRunTimeMinutes()/60,1)) . ' hours<br>\n';
         $s .= '<p>';
         $data['job_summary'] = explode('\n', $s);
 
@@ -424,8 +424,8 @@ class JobController extends Controller
         $s .= '<p><strong>Job Parameters</strong></p>';
         $s .= '<p>';
         $s .= 'Number of cores: ' . strval($tapis->processorsPerNode()) . '<br>\n';
-        $s .= 'Maximum memory per core: ' . strval($tapis->memoryPerProcessor()) . ' GB<br>\n';
-        $s .= 'Maximum run time: ' . strval($tapis->maxRunTime()) . ' hours<br>\n';
+        $s .= 'Maximum memory per core: ' . strval(round($tapis->memoryMBPerNode()/1024,1)) . ' GB<br>\n';
+        $s .= 'Maximum run time: ' . strval(round($tapis->maxRunTimeMinutes()/60,1)) . ' hours<br>\n';
         $s .= '<p>';
         $data['job_summary'] = explode('\n', $s);
 
