@@ -1010,13 +1010,17 @@ class Tapis
             Log::debug('Tapis::doHTTPRequest - url = ' . $url);
             $response = $client->request($method, $url, $data);
         } catch (ClientException $exception) {
-            $response = $exception->getResponse()->getBody()->getContents();
+            $tapis_response_str = $exception->getResponse()->getBody()->getContents();
+            $tapis_response = json_decode($tapis_response_str);
             Log::error('Tapis::doHTTPRequest:: ClientException - query = ' . $url);
-            Log::error('Tapis::doHTTPRequest:: ClientException - response = ' . $response);
-            $this->raiseExceptionIfTapisError($response);
-            Log::error('Tapis::doHTTPRequest:: ClientException - returning response = ' . $response);
-
-            return $response;
+            Log::error('Tapis::doHTTPRequest:: ClientException - response = ' . $tapis_response_str);
+            // If it is a Tapis error we want the client to handle it.
+            if ($this->isTapisError($tapis_response)) {
+                Log::error('Tapis::doHTTPRequest:: ClientException - returning response = ' . $tapis_response_str);
+                return $tapis_response;
+            } else {
+                throw exception;
+            }
         } catch (RequestException $exception) {
             $response = $exception->getResponse()->getBody()->getContents();
             Log::error('Tapis::doHTTPRequest:: RequestException - query = ' . $url);
@@ -1054,32 +1058,38 @@ class Tapis
         if (property_exists($response, 'error')) {
             return true;
         }
+        if (property_exists($response, 'status') && $response->status == 'error') {
+            return true;
+        }
         if (property_exists($response, 'fault')) {
             return true;
         }
-        if (property_exists($response, 'status') && $response->status == 'error') {
+        if (property_exists($response, 'status') && $response->status != 'success') {
             return true;
         }
 
         return false;
     }
 
-    private function raiseExceptionIfTapisError($response)
+    public function raiseExceptionIfTapisError($response)
     {
-        if ($response == null) {
-            throw new \Exception('TAPIS error: response was empty');
-        }
-        if (property_exists($response, 'error')) {
-            throw new \Exception('TAPIS error: ' . $response->error . ': ' . $response->error_description);
-        }
-        if (property_exists($response, 'status') && $response->status == 'error') {
-            throw new \Exception('TAPIS error: ' . $response->message);
-        }
-        if (property_exists($response, 'fault')) {
-            throw new \Exception('TAPIS error: ' . $response->fault->message);
-        }
-        if (property_exists($response, 'status') && $response->status != 'success') {
-            throw new \Exception('TAPIS error: ' . $response->message);
+        if ($this->isTapisError($response))
+        {
+            if ($response == null) {
+                throw new \Exception('TAPIS error: response was empty');
+            }
+            if (property_exists($response, 'error')) {
+                throw new \Exception('TAPIS error: ' . $response->error . ': ' . $response->error_description);
+            }
+            if (property_exists($response, 'status') && $response->status == 'error') {
+                throw new \Exception('TAPIS error: ' . $response->message);
+            }
+            if (property_exists($response, 'fault')) {
+                throw new \Exception('TAPIS error: ' . $response->fault->message);
+            }
+            if (property_exists($response, 'status') && $response->status != 'success') {
+                throw new \Exception('TAPIS error: ' . $response->message);
+            }
         }
     }
 }
