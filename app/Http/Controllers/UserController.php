@@ -255,10 +255,20 @@ class UserController extends Controller
         $t['first_name'] = $u->first_name;
         $t['username'] = $u->username;
         $t['password'] = $password;
+        $t['last_name'] = $u->last_name;
+        $t['email'] = $u->email;
+        $t['notes'] = $u->notes;
+        $t['country'] = $u->country;
+        $t['institution'] = $institution;
 
         // email credentials
         Mail::send(['text' => 'emails.auth.accountCreated'], $t, function ($message) use ($u) {
             $message->to($u->email)->subject('iReceptor account');
+        });
+
+        // admin notification email
+        Mail::send(['text' => 'emails.auth.newUser'], $t, function ($message) use ($u) {
+            $message->to(config('ireceptor.email_support'))->subject('New account - ' . $u->first_name . ' ' . $u->last_name);
         });
 
         Auth::login($u);
