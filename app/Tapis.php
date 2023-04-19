@@ -1017,6 +1017,7 @@ class Tapis
             // If it is a Tapis error we want the client to handle it.
             if ($this->isTapisError($tapis_response)) {
                 Log::error('Tapis::doHTTPRequest:: ClientException - returning response = ' . $tapis_response_str);
+
                 return $tapis_response;
             } else {
                 throw exception;
@@ -1073,8 +1074,7 @@ class Tapis
 
     public function raiseExceptionIfTapisError($response)
     {
-        if ($this->isTapisError($response))
-        {
+        if ($this->isTapisError($response)) {
             if ($response == null) {
                 throw new \Exception('TAPIS error: response was empty');
             }
