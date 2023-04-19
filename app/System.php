@@ -55,13 +55,13 @@ class System extends Model
         $sysResponse = $tapis->getSystem($systemExecutionName, $token);
         if ($sysResponse->status == 'success') {
             $response = $tapis->updateSystem($token, $systemExecutionName, $config);
+            $tapis->raiseExceptionIfTapisError($response);
             Log::info('System::createDefaulySystemForUser - system updated: ' . $systemExecutionName);
         } else {
             $response = $tapis->createSystem($token, $config);
+            $tapis->raiseExceptionIfTapisError($response);
             Log::info('System::createDefaulySystemForUser - system created: ' . $systemExecutionName);
         }
-        //$response = $tapis->createSystem($token, $config);
-        //Log::info('execution system created: ' . $systemExecutionName);
 
         // add execution system to database
         $systemExecution = self::firstOrNew(['user_id' => $gw_userid, 'host' => $defaultExecutionSystemHost, 'username' => $defaultExecutionSystemUsername]);
