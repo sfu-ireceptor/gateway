@@ -8,13 +8,12 @@ echo "IR-INFO: iReceptor Statistics App - starting at: `date`"
 # Get the script directory where all the code is.
 SCRIPT_DIR=${_tapisExecSystemExecDir}
 echo "IR-INFO: Running job from ${SCRIPT_DIR}"
-ls /
 
 #
 # Tapis App Parameters: Will be on the singularity command line to
-# the App.
+# the App in the order specified in the App JSON file.
 #
-split_repertoire=$1
+SPLIT_REPERTOIRE=$1
 
 # Environment variable IR_GATEWAY_URL contains the URL of the source gateway. Use
 # this to gather iReceptor Gateway specific resources if needed.
@@ -56,9 +55,14 @@ echo "IR-INFO: Done loading iReceptor Gateway Utilities"
 # Start
 printf "IR-INFO:\n"
 printf "IR-INFO: START at $(date)\n"
-printf "IR-INFO: PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n"
-printf "IR-INFO: MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n"
+printf "IR-INFO: PROCS = ${_tapisCoresPerNode}\n"
+printf "IR-INFO: MEM = ${_tapisMemoryMB}\n"
+printf "IR-INFO: MAX RUNTIME = ${_tapisMaxMinutes}\n"
 printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
+printf "IR-INFO: ZIP FILE = ${ZIP_FILE}\n"
+printf "IR-INFO: SPLIT_REPERTOIRE = ${SPLIT_REPERTOIRE}\n"
+printf "IR-INFO: "
+lscpu | grep "Model name"
 printf "IR-INFO: \n"
 
 #########################################################################
@@ -329,7 +333,7 @@ function run_analysis()
 INFO_FILE="info.txt"
 AIRR_MANIFEST_FILE="AIRR-manifest.json"
 
-if [ "${split_repertoire}" = "True" ]; then
+if [ "${SPLIT_REPERTOIRE}" = "True" ]; then
     echo -e "IR-INFO:\nIR-INFO: Splitting data by Repertoire"
     echo "IR-INFO:"
     # Split the download into single repertoire files, with a directory per
@@ -341,7 +345,7 @@ if [ "${split_repertoire}" = "True" ]; then
     gateway_run_analysis ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR} 
     gateway_cleanup ${ZIP_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
-elif [ "${split_repertoire}" = "False" ]; then
+elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
     echo -e "IR-INFO:\nIR-INFO: Running app on entire data set"
     echo "IR-INFO:"
 
@@ -373,7 +377,7 @@ elif [ "${split_repertoire}" = "False" ]; then
     cp ${GATEWAY_ANALYSIS_DIR}/${outdir}/${INFO_FILE} ${GATEWAY_ANALYSIS_DIR}/
 
 else
-    echo "IR-ERROR: Unknown repertoire operation ${split_repertoire}" >&2
+    echo "IR-ERROR: Unknown repertoire operation ${SPLIT_REPERTOIRE}" >&2
     exit 1
 fi
 

@@ -5,30 +5,15 @@
 # Get the script directory where all the code is.
 SCRIPT_DIR=${_tapisExecSystemExecDir}
 echo "IR-INFO: Running job from ${SCRIPT_DIR}"
-ls /
 
 ########################################################################
 # Tapis configuration/settings
 ########################################################################
 
 #
-# Tapis/AGAVE job variables.
+# Tapis App Parameters: Will be subsituted by Tapis. There are no
+# parameters for this App.
 #
-
-AGAVE_JOB_ID=${AGAVE_JOB_ID}
-AGAVE_JOB_NAME=${AGAVE_JOB_NAME}
-AGAVE_LOG_NAME=${AGAVE_JOB_NAME}-${AGAVE_JOB_ID}
-AGAVE_JOB_PROCESSORS_PER_NODE=${AGAVE_JOB_PROCESSORS_PER_NODE}
-AGAVE_JOB_MEMORY_PER_NODE=${AGAVE_JOB_MEMORY_PER_NODE}
-
-#
-# Tapis App Parameters: Will be subsituted by Tapis. If they don't exist
-# use command line arguments so we can test from the command line.
-#
-
-# Tapis parameter ir_gateway_url contains the URL of the source gateway. Use
-# this to gather iReceptor Gateway specific resources if needed.
-GATEWAY_URL="${IR_GATEWAY_URL}"
 
 #
 # Tapis App Inputs
@@ -37,6 +22,10 @@ GATEWAY_URL="${IR_GATEWAY_URL}"
 # Download file is a ZIP archive that is provided by the Gateway and contains
 # the results of the users query. This is the data that is being analyzed.
 ZIP_FILE=${IR_DOWNLOAD_FILE}
+
+# Tapis environment variable IR_GATEWYA_URL contains the URL of the source gateway. Use
+# this to gather iReceptor Gateway specific resources if needed.
+GATEWAY_URL="${IR_GATEWAY_URL}"
 
 ########################################################################
 # Done Tapis setup/processing.
@@ -72,9 +61,11 @@ MANIFEST_FILE="AIRR-manifest.json"
 # Start
 printf "IR-INFO:\nIR-INFO:\n"
 printf "IR-INFO: START at $(date)\n"
-printf "IR-INFO: PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n"
-printf "IR-INFO: MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n"
+printf "IR-INFO: PROCS = ${_tapisCoresPerNode}\n"
+printf "IR-INFO: MEM = ${_tapisMemoryMB}\n"
+printf "IR-INFO: MAX RUNTIME = ${_tapisMaxMinutes}\n"
 printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
+printf "IR-INFO: ZIP FILE = ${ZIP_FILE}\n"
 printf "IR-INFO: "
 lscpu | grep "Model name"
 printf "IR-INFO:\nIR-INFO:\n"

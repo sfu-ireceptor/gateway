@@ -5,31 +5,18 @@
 # Get the script directory where all the code is.
 SCRIPT_DIR=${_tapisExecSystemExecDir}
 echo "IR-INFO: Running job from ${SCRIPT_DIR}"
-ls /
 
 ########################################################################
 # Tapis configuration/settings
 ########################################################################
 
 #
-# Tapis/AGAVE job variables.
-#
-
-AGAVE_JOB_ID=${AGAVE_JOB_ID}
-AGAVE_JOB_NAME=${AGAVE_JOB_NAME}
-AGAVE_LOG_NAME=${AGAVE_JOB_NAME}-${AGAVE_JOB_ID}
-AGAVE_JOB_PROCESSORS_PER_NODE=${AGAVE_JOB_PROCESSORS_PER_NODE}
-AGAVE_JOB_MEMORY_PER_NODE=${AGAVE_JOB_MEMORY_PER_NODE}
-
-#
-# Tapis App Parameters: Will be subsituted by Tapis. If they don't exist
-# use command line arguments so we can test from the command line.
-#
-
-#
-# Tapis App Parameters: Will be subsituted by Tapis. If they don't exist
-# use command line arguments so we can test from the command line.
-#
+# Tapis App Parameters: Will be subsituted by Tapis in the order 
+# specified in the App JSON file. No arguements for this App.
+# Many of our TAPIS Apps have a split_reperotire variable, so to keep thinks
+# consistent we define it here if it isn't provided by the App.
+# Immunarch as we use it here only works on single repertoires.
+SPLIT_REPERTOIRE="True"
 
 # Environment variable IR_GATEWAY_URL contains the URL of the source gateway. Use
 # this to gather iReceptor Gateway specific resources if needed.
@@ -43,10 +30,6 @@ GATEWAY_URL="${IR_GATEWAY_URL}"
 # the results of the users query. This is the data that is being analyzed.
 ZIP_FILE=${IR_DOWNLOAD_FILE}
 
-# Many of our TAPIS Apps have a split_reperotire variable, so to keep thinks
-# consistent we define it here if it isn't provided by the App.
-# Immunarch as we use it here only works on single repertoires.
-SPLIT_REPERTOIRE="True"
 
 ########################################################################
 # Done Tapis setup/processing.
@@ -83,9 +66,15 @@ MANIFEST_FILE="AIRR-manifest.json"
 # Start
 printf "IR-INFO:\n"
 printf "IR-INFO: START at $(date)\n"
-printf "IR-INFO: PROCS = ${AGAVE_JOB_PROCESSORS_PER_NODE}\n"
-printf "IR-INFO: MEM = ${AGAVE_JOB_MEMORY_PER_NODE}\n"
+printf "IR-INFO: PROCS = ${_tapisCoresPerNode}\n"
+printf "IR-INFO: MEM = ${_tapisMemoryMB}\n"
+printf "IR-INFO: MAX RUNTIME = ${_tapisMaxMinutes}\n"
 printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
+printf "IR-INFO: ZIP FILE = ${ZIP_FILE}\n"
+printf "IR-INFO: SPLIT_REPERTOIRE = ${SPLIT_REPERTOIRE}\n"
+printf "IR-INFO: "
+lscpu | grep "Model name"
+printf "IR-INFO: \n"
 printf "IR-INFO: \n"
 
 

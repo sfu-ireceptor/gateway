@@ -7,20 +7,10 @@ echo "IR-INFO: iReceptor Historgram App"
 # Get the script directory where all the code is.
 SCRIPT_DIR=${_tapisExecSystemExecDir}
 echo "IR-INFO: Running job from ${SCRIPT_DIR}"
-ls /
 
 ########################################################################
 # Tapis configuration/settings
 ########################################################################
-
-#
-# Tapis/AGAVE job variables.
-#
-AGAVE_JOB_ID=${AGAVE_JOB_ID}
-AGAVE_JOB_NAME=${AGAVE_JOB_NAME}
-AGAVE_LOG_NAME=${AGAVE_JOB_NAME}-${AGAVE_JOB_ID}
-AGAVE_JOB_PROCESSORS_PER_NODE=${AGAVE_JOB_PROCESSORS_PER_NODE}
-AGAVE_JOB_MEMORY_PER_NODE=${AGAVE_JOB_MEMORY_PER_NODE}
 
 #
 # Tapis ENV variables expected
@@ -30,7 +20,7 @@ ZIP_FILE=${IR_DOWNLOAD_FILE}
 
 #
 # Tapis App Parameters: Will be subsituted by Tapis on the command line to the singularity
-# command that is executed.
+# command that is executed in the order specified in the App JSON file
 #
 SPLIT_REPERTOIRE=$1
 VARNAME=$2
@@ -81,7 +71,8 @@ printf "IR-INFO: SPLIT_REPERTOIRE = ${SPLIT_REPERTOIRE}\n"
 printf "IR-INFO: VARNAME = ${VARNAME}\n"
 printf "IR-INFO: NUM_VALUES = ${NUM_VALUES}\n"
 printf "IR-INFO: SORT_VALUES = ${SORT_VALUES}\n"
-
+printf "IR-INFO: "
+lscpu | grep "Model name"
 printf "IR-INFO: \nIR-INFO: \n"
 
 echo "IR-INFO: Running histogram on variable ${VARNAME}"
