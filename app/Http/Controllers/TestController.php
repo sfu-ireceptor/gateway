@@ -42,7 +42,7 @@ class TestController extends Controller
         //echo "<p>";
         //echo json_encode($systems);
 
-        $apps = $tapis->listApps(null);
+        $apps = $tapis->listApps();
         echo '<p>';
         echo json_encode($apps);
 
@@ -53,11 +53,11 @@ class TestController extends Controller
         echo '<p>';
         echo json_encode($appConfig);
 
-        $response = $tapis->updateApp(null, $appName, $appConfig);
+        $response = $tapis->updateApp($appName, $appConfig);
         echo '<p>';
         echo json_encode($response);
 
-        $appResponse = $tapis->getApp($appName, null);
+        $appResponse = $tapis->getApp($appName);
         echo '<p>';
         echo json_encode($appResponse);
         exit;

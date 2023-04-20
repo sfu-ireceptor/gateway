@@ -189,21 +189,21 @@ class LaunchJob implements ShouldQueue
             $appConfig = $tapis->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
             Log::debug('LaunchJob::handle - app token: ' . $token);
             // Try to get the App if it already exists.
-            $appResponse = $tapis->getApp($appName, $token);
+            $appResponse = $tapis->getApp($appName);
             Log::debug('LaunchJob::handle - App info = ' . json_encode($appResponse));
             if ($appResponse->status == 'success') {
                 // If it exists, update it in case the config has changed, throw
                 // an error of the update fails.
                 Log::debug('LaunchJob::handle - Updating app: ' . $appId);
                 $tapisAppId = $appResponse->result->uuid;
-                $response = $tapis->updateApp($token, $appName, $appConfig);
+                $response = $tapis->updateApp($appName, $appConfig);
                 $tapis->raiseExceptionIfTapisError($response);
                 Log::debug('LaunchJob::handle - app updated: ' . $appId);
             } else {
                 // If it doesn't exist, create it and throw an error if the creation
                 // fails.
                 Log::debug('LaunchJob::handle - Creating app: ' . $appId);
-                $response = $tapis->createApp($token, $appConfig);
+                $response = $tapis->createApp($appConfig);
                 $tapis->raiseExceptionIfTapisError($response);
                 $tapisAppId = $response->result->uuid;
                 Log::debug('LaunchJob::handle - app created: ' . $appId);

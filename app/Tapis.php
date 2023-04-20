@@ -362,18 +362,16 @@ class Tapis
         return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token, $config);
     }
 
-    public function createApp($token, $config)
+    public function createApp($config)
     {
-        //$url = '/apps/v2/?pretty=true';
         $url = '/v3/apps';
         $token = self::$analysisTokenData->access_token;
 
         return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token, $config);
     }
 
-    public function updateApp($token, $app, $config)
+    public function updateApp($app, $config)
     {
-        //$url = '/systems/v2/?pretty=true';
         $version = '0.1';
         $token = self::$analysisTokenData->access_token;
         $url = '/v3/apps/' . $app . '/' . $version;
@@ -435,16 +433,15 @@ class Tapis
         $this->doDELETERequest($url, $token);
     }
 */
-    public function listApps($token)
+    public function listApps()
     {
-        //$url = '/apps/v2/?pretty=true';
         $url = '/v3/apps';
         $token = self::$analysisTokenData->access_token;
 
         return $this->doGETRequest($this->tapis_client, $url, $token);
     }
 
-    public function getApp($app_id, $token)
+    public function getApp($app_id)
     {
         $url = '/v3/apps/' . $app_id;
         $token = self::$analysisTokenData->access_token;
