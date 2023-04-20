@@ -472,27 +472,24 @@ class Tapis
         return $this->doGETRequest($this->tapis_client, $url, $token, true);
     }
 
-    public function getJobStatus($job_id, $token)
+    public function getJobStatus($job_id)
     {
-        //$url = '/jobs/v2/' . $job_id . '/status?pretty=true';
         $url = '/v3/jobs/' . $job_id . '/status';
         $token = self::$analysisTokenData->access_token;
 
         return $this->doGETRequest($this->tapis_client, $url, $token, true);
     }
 
-    public function getJob($job_id, $token)
+    public function getJob($job_id)
     {
-        //$url = '/jobs/v2/' . $job_id;
         $url = '/v3/jobs/' . $job_id;
         $token = self::$analysisTokenData->access_token;
 
         return $this->doGETRequest($this->tapis_client, $url, $token, true);
     }
 
-    public function getJobOutputFile($job_id, $token, $file)
+    public function getJobOutputFile($job_id, $file)
     {
-        //$url = '/jobs/v2/' . $job_id . '/outputs/media/' . $file;
         $url = '/v3/jobs/' . $job_id . '/output/' . $file;
         $token = self::$analysisTokenData->access_token;
 

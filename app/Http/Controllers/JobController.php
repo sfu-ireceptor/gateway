@@ -521,7 +521,7 @@ class JobController extends Controller
             $stderr_response = '';
             if (File::exists($folder) && ! File::exists($err_path)) {
                 // Tapis command to get the file.
-                //$stderr_response = $tapis->getJobOutputFile($job->getJobID(), $token, $error_file);
+                //$stderr_response = $tapis->getJobOutputFile($job->getJobID(), $error_file);
                 $stderr_response = 'THIS NEEDS TO BE FIXED';
                 // Check for the analysis directory, create if it doesn't exist.
                 if (! File::exists($analysis_folder)) {
@@ -545,7 +545,7 @@ class JobController extends Controller
             $stdout_response = '';
             if (File::exists($folder) && ! File::exists($out_path)) {
                 // Tapis command to get the file.
-                //$stdout_response = $tapis->getJobOutputFile($job->getJobID(), $token, $output_file);
+                //$stdout_response = $tapis->getJobOutputFile($job->getJobID(), $output_file);
                 $stdout_response = 'THIS NEEDS TO BE FIXED';
                 // Check for the analysis directory, create if it doesn't exist.
                 if (! File::exists($analysis_folder)) {
@@ -569,7 +569,7 @@ class JobController extends Controller
             $info_response = '';
             if (File::exists($folder) && ! File::exists($info_path)) {
                 // Tapis command to get the file.
-                //$info_response = $tapis->getJobOutputFile($job->getJobID(), $token, 'info.txt');
+                //$info_response = $tapis->getJobOutputFile($job->getJobID(), 'info.txt');
                 $info_response = 'THIS NEEDS TO BE FIXED';
                 $info_object = json_decode($info_response);
 
@@ -780,7 +780,7 @@ class JobController extends Controller
                 if ($this_user->isAdmin()) {
                     $token = $tapis->getAdminToken();
                     if ($token != null) {
-                        $response = $tapis->getJob($job_id, $token);
+                        $response = $tapis->getJob($job_id);
                     }
                     // If we can get the info, return it
                     if ($token == null || $tapis->isTapisError(json_decode($response))) {
@@ -806,7 +806,7 @@ class JobController extends Controller
             $job_user = User::where('id', $job->user_id)->first();
             $token = $job_user->getToken();
             if ($token != null) {
-                $response = $tapis->getJob($job_id, $token);
+                $response = $tapis->getJob($job_id);
             }
             // If the token was not valid or if there was an error, try
             // as an admin user to get the same info.
@@ -818,7 +818,7 @@ class JobController extends Controller
                     $token = $tapis->getAdminToken();
                     // If we can get the info, return it
                     if ($token != null) {
-                        $response = $tapis->getJob($job_id, $token);
+                        $response = $tapis->getJob($job_id);
                     }
                     // If we can't get the token or there is an error, then return null.
                     if ($token == null || $tapis->isTapisError(json_decode($response))) {
@@ -855,7 +855,7 @@ class JobController extends Controller
                 $token = $user->getToken();
                 // Kill the job and update the status.
                 $tapis = new Tapis;
-                $response = $tapis->killJob($job->getJobID(), $token);
+                $response = $tapis->killJob($job->getJobID());
                 $job->updateStatus('STOPPED');
             }
         }
@@ -880,7 +880,7 @@ class JobController extends Controller
                 $token = $user->getToken();
                 // Kill the job and update the status.
                 $tapis = new Tapis;
-                $response = $tapis->killJob($job->getJobID(), $token);
+                $response = $tapis->killJob($job->getJobID());
                 $job->updateStatus('STOPPED');
             }
 
