@@ -123,7 +123,7 @@ Route::middleware('auth')->group(function () {
         Route::get('job-list-grouped-by-month', 'JobController@getJobListGroupedByMonth');
         Route::post('launch-app', 'JobController@postLaunchApp');
         Route::get('view/{id}', 'JobController@getView');
-        Route::get('agave-history/{id}', 'JobController@getAgaveHistory');
+        Route::get('job-history/{id}', 'JobController@getJobHistory');
         Route::get('status/{id}', 'JobController@getStatus');
         Route::get('delete/{id}', 'JobController@getDelete');
         Route::get('cancel/{id}', 'JobController@getCancel');
