@@ -1,0 +1,19 @@
+{
+    "id":"singularity-conga-irec_analysis",
+    "version":"0.1",
+    "description":"Conga",
+    "runtime":"SINGULARITY",
+    "runtimeOptions": ["SINGULARITY_RUN"],
+    "containerImage":"ir_conga-ireceptor.sif",
+    "jobType":"BATCH",
+    "jobAttributes": {
+      "description": "<p><a href=\"https://github.com/phbradley/conga/blob/master/README.md\" target=\"_blank\">Conga</a> was developed to detect correlation between T cell gene expression profile and TCR sequence in single-cell datasets. This iReceptor Analysis App uses Conga to perform T-cell repertoire analyses involving both gene expression and TCR receptors. The analysis will split the data by Repertoire and anlayse each repertoire individually.</p><p>Notes:<ul><li>Conga is designed for T-cell repertoires only. If a B-cell repetoire is downloaded the analysis will not analyze that repertoire.</ul></p>",
+      "execSystemId": "cedar.computecanada.ca-compute-irec_analysis",
+      "parameterSet": {
+        "appArgs": []
+      }
+    },
+    "notes":
+        {"ir_hints":[{"object":"Cell"}]}
+}
+

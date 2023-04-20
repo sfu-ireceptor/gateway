@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Agave;
 use App\Bookmark;
 use App\Download;
 use App\FieldName;
@@ -10,6 +9,7 @@ use App\QueryLog;
 use App\Sample;
 use App\Sequence;
 use App\System;
+use App\Tapis;
 use Facades\App\Query;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -244,13 +244,13 @@ class SequenceController extends Controller
         $data['filter_fields'] = $filter_fields;
 
         // Get information about all of the Apps for the AIRR "Rearrangement" object
-        $agave = new Agave;
-        $appTemplates = $agave->getAppTemplates('Rearrangement');
+        $tapis = new Tapis;
+        $appTemplates = $tapis->getAppTemplates('Rearrangement');
         $app_list = [];
 
         // Store the normal job contorl parameters for the UI. The same parameters are used
         // by all Apps.
-        $job_parameter_list = $agave->getJobParameters();
+        $job_parameter_list = $tapis->getJobParameters();
 
         // For each app, set up the info required by the UI for the App parameters.
         foreach ($appTemplates as $app_tag => $app_info) {
@@ -259,29 +259,36 @@ class SequenceController extends Controller
             Log::debug('Processing app ' . $app_tag);
             // Process the parameters.
             $parameter_list = [];
-            foreach ($app_config['parameters'] as $parameter_info) {
+            Log::debug('App config = ' . json_encode($app_config));
+            foreach ($app_config['jobAttributes']['parameterSet']['appArgs'] as $parameter_info) {
                 // We only want the visible parameters to be visible. The
                 // UI uses the Tapis ID as a label and the Tapis paramenter
                 // "label" as the human readable name of the parameter.
-                if ($parameter_info['value']['visible']) {
+                if ($parameter_info['inputMode'] != 'FIXED') {
                     $parameter = [];
-                    Log::debug('   Processing parameter ' . $parameter_info['id']);
-                    $parameter['label'] = $parameter_info['id'];
-                    $parameter['name'] = $parameter_info['details']['label'];
-                    $parameter['description'] = $parameter_info['details']['description'];
-                    $parameter['type'] = $parameter_info['value']['type'];
-                    $parameter['default'] = $parameter_info['value']['default'];
-                    $parameter_list[$parameter_info['id']] = $parameter;
+                    Log::debug('   Processing parameter - ' . $parameter_info['name']);
+                    Log::debug('   Processing parameter - ' . $parameter_info['notes']['label']);
+                    $parameter['label'] = $parameter_info['notes']['label'];
+                    $parameter['name'] = $parameter_info['name'];
+                    $parameter['description'] = $parameter_info['description'];
+                    $parameter['type'] = 'string';
+                    $parameter['default'] = $parameter_info['arg'];
+                    //$parameter['label'] = $parameter_info['id'];
+                    //$parameter['name'] = $parameter_info['details']['label'];
+                    //$parameter['description'] = $parameter_info['details']['description'];
+                    //$parameter['type'] = $parameter_info['value']['type'];
+                    //$parameter['default'] = $parameter_info['value']['default'];
+                    $parameter_list[$parameter_info['name']] = $parameter;
                 } else {
-                    Log::debug('   Not displaying invisible parameter ' . $parameter_info['id']);
+                    Log::debug('   Not displaying invisible parameter ' . $parameter_info['name']);
                 }
             }
 
             // The name of the App is the Tapis App label. We pass the UI the short
             // and long descriptions as well . The UI ID and tag are the Tapis ID.
-            $app_ui_info['name'] = $app_config['label'];
-            $app_ui_info['description'] = $app_config['shortDescription'];
-            $app_ui_info['info'] = $app_config['longDescription'];
+            $app_ui_info['name'] = $app_config['description'];
+            $app_ui_info['description'] = $app_config['description'];
+            $app_ui_info['info'] = $app_config['jobAttributes']['description'];
             $app_ui_info['parameter_list'] = $parameter_list;
             $app_ui_info['job_parameter_list'] = $job_parameter_list;
             $app_ui_info['app_id'] = $app_tag;

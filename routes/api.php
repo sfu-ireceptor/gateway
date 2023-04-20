@@ -10,7 +10,8 @@
 */
 
 // Agave jobs notifications
-Route::any('agave/update-status/{id}/{status}', 'UtilController@updateAgaveStatus');
+//Route::any('job/update-status/{id}/{status}', 'UtilController@updateJobStatus');
+Route::any('job/update-status', 'UtilController@updateJobStatus');
 
 // Deployment trigger for GitHub hook
 Route::any('deploy', 'UtilController@deploy');

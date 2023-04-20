@@ -1,0 +1,25 @@
+{
+    "id":"singularity-statistics-irec_analysis",
+    "version":"0.1",
+    "description": "Statistics",
+    "runtime":"SINGULARITY",
+    "runtimeOptions": ["SINGULARITY_RUN"],
+    "containerImage":"ir_statistics-4.0.0.sif",
+    "jobType":"BATCH",
+    "jobAttributes": {
+      "description": "<p>iReceptor Rearrangement Analysis App that computes a range of statistics on:<ul><li>V, D, and J gene usage (histogram)</li><li>Junction AA length (histogram)</li><li>Combined V-J gene usage (heatmap)</li><li>Combined V gene - Junction length (heatmap)</li></ul></p>",
+      "execSystemId": "cedar.computecanada.ca-compute-irec_analysis",
+      "parameterSet": {
+        "appArgs": [
+            {"name":"split_repertoire",
+             "description": "Split overall data based on Repertoire ID?",
+             "notes":{"label":"Split Repertoire (True/False)?"},
+             "arg":"True", "inputMode":"REQUIRED"
+            }
+        ]
+      }
+    },
+    "notes":
+        {"ir_hints":[{"object":"Rearrangement"}]}
+}
+
