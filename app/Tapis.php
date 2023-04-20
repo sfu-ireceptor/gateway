@@ -713,7 +713,7 @@ class Tapis
         return $response->result;
     }
 
-    public function userExists($username, $token)
+    public function userExists($username)
     {
         $l = $this->getUsers();
         foreach ($l as $u) {
@@ -733,10 +733,10 @@ class Tapis
         $username = iconv('UTF-8', 'ASCII//TRANSLIT', $username); // remove diacritics
 
         // if username already exists, append number
-        if ($this->userExists($username, $token)) {
+        if ($this->userExists($username)) {
             $i = 2;
             $alternate_username = $username . $i;
-            while ($this->userExists($alternate_username, $token)) {
+            while ($this->userExists($alternate_username)) {
                 $i++;
                 $alternate_username = $username . $i;
             }
