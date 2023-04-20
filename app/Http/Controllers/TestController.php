@@ -939,7 +939,7 @@ class TestController extends Controller
 //         $tapis = new Tapis;
 //         $token = $tapis->getAdminToken();
 
-//         $user = $tapis->getUserWithEmail('jlj7@sfu.ca', $token);
+//         $user = $tapis->getUserWithEmail('jlj7@sfu.ca');
 //         if ($user == null) {
 //             echo 'ok';
 //             die();
