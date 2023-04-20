@@ -354,7 +354,7 @@ class Tapis
         return $this->doPUTRequestWithJSON($this->tapis_client, $url, $token, [], $config);
     }
 
-    public function updateSystemCredentials($token, $system, $user, $config)
+    public function updateSystemCredentials($system, $user, $config)
     {
         $url = '/v3/systems/credential/' . $system . '/user/' . $user;
         $token = self::$analysisTokenData->access_token;
@@ -379,9 +379,8 @@ class Tapis
         return $this->doPUTRequestWithJSON($this->tapis_client, $url, $token, [], $config);
     }
 
-    public function createJob($token, $config)
+    public function createJob($config)
     {
-        //$url = '/jobs/v2/?pretty=true';
         $url = '/v3/jobs/submit';
         $token = self::$analysisTokenData->access_token;
 

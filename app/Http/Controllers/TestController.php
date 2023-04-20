@@ -115,7 +115,7 @@ class TestController extends Controller
         $defaultExecutionSystemSSHKeys= config('services.tapis.default_execution_system.auth.sshkeys');
         echo "<p>";
         echo $defaultExecutionSystemSSHKeys;
-        $response = $tapis->updateSystemCredentials(null, $systemExecutionName, $defaultExecutionSystemUsername, $config);
+        $response = $tapis->updateSystemCredentials($systemExecutionName, $defaultExecutionSystemUsername, $config);
         echo "<p>";
         echo json_encode($response);
         */
