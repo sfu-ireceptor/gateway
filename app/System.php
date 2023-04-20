@@ -52,11 +52,11 @@ class System extends Model
         $config = $tapis->getExecutionSystemConfig($systemExecutionName, $defaultExecutionSystemHost, $defaultExecutionSystemPort, $defaultExecutionSystemUsername);
         $sysResponse = $tapis->getSystem($systemExecutionName, $token);
         if ($sysResponse->status == 'success') {
-            $response = $tapis->updateSystem($token, $systemExecutionName, $config);
+            $response = $tapis->updateSystem($systemExecutionName, $config);
             $tapis->raiseExceptionIfTapisError($response);
             Log::info('System::createDefaulySystemForUser - system updated: ' . $systemExecutionName);
         } else {
-            $response = $tapis->createSystem($token, $config);
+            $response = $tapis->createSystem($config);
             $tapis->raiseExceptionIfTapisError($response);
             Log::info('System::createDefaulySystemForUser - system created: ' . $systemExecutionName);
         }
@@ -82,7 +82,7 @@ class System extends Model
         $systemDeploymentRootDir = config('services.tapis.system_deploy.rootdir');
 
         $config = $tapis->getStorageSystemConfig($systemDeploymentName, $systemDeploymentHost, $systemDeploymentPort, $systemDeploymentUsername, $systemDeploymentRootDir);
-        $response = $tapis->createSystem($token, $config);
+        $response = $tapis->createSystem($config);
         Log::info('deployment system created: ' . $systemDeploymentName);
 
         // create staging system (on this machine, where the data files will copied from)
@@ -95,7 +95,7 @@ class System extends Model
         $systemStagingRootDir = config('services.tapis.system_staging.rootdir');
 
         $config = $tapis->getStorageSystemConfig($systemStagingName, $systemStagingHost, $systemStagingPort, $systemStagingUsername, $systemStagingRootDir);
-        $response = $tapis->createSystem($token, $config);
+        $response = $tapis->createSystem($config);
         Log::info('staging system created: ' . $systemStagingName);
 
         return null;

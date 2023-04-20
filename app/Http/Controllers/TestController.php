@@ -73,7 +73,7 @@ class TestController extends Controller
         echo '<p>';
         echo json_encode($config);
         // Create the system with the above config
-        $response = $tapis->createSystem(null, $config);
+        $response = $tapis->createSystem($config);
         echo '<p>';
         echo '####';
         echo json_encode($response);
@@ -100,11 +100,11 @@ class TestController extends Controller
         $config = $tapis->getStorageSystemConfig($systemName, $systemHost, $systemPort, $systemUsername, $systemRootDir);
         echo '<p>';
         echo json_encode($config);
-        $response = $tapis->createSystem(null, $config);
+        $response = $tapis->createSystem($config);
         echo '<p>';
         echo json_encode($response);
 
-        $response = $tapis->updateSystem(null, $systemName, $config);
+        $response = $tapis->updateSystem($systemName, $config);
         echo '<p>';
         echo json_encode($response);
         exit;

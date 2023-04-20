@@ -338,9 +338,8 @@ class Tapis
         return $this->jobParameters;
     }
 
-    public function createSystem($token, $config)
+    public function createSystem($config)
     {
-        //$url = '/systems/v2/?pretty=true';
         $url = '/v3/systems';
         $token = self::$analysisTokenData->access_token;
 

@@ -47,7 +47,7 @@ class SystemController extends Controller
         $systemExecutionPort = 22;
 
         $config = $tapis->getExecutionSystemConfig($systemExecutionName, $systemExecutionHost, $systemExecutionPort, $systemExecutionUsername);
-        $response = $tapis->createSystem($token, $config);
+        $response = $tapis->createSystem($config);
         Log::info('execution system created: ' . $systemExecutionName);
 
         // add exec system to DB
@@ -69,7 +69,7 @@ class SystemController extends Controller
         $systemDeploymentRootDir = config('services.tapis.system_deploy.rootdir');
 
         $config = $tapis->getStorageSystemConfig($systemDeploymentName, $systemDeploymentHost, $systemDeploymentPort, $systemDeploymentUsername, $systemDeploymentRootDir);
-        $response = $tapis->createSystem($token, $config);
+        $response = $tapis->createSystem($config);
         Log::info('deployment system created: ' . $systemDeploymentName);
 
         // create staging system (on this machine, where the data files will copied from)
@@ -80,7 +80,7 @@ class SystemController extends Controller
         $systemStagingRootDir = config('services.tapis.system_staging.rootdir');
 
         $config = $tapis->getStorageSystemConfig($systemStagingName, $systemStagingHost, $systemStagingPort, $systemStagingUsername, $systemStagingRootDir);
-        $response = $tapis->createSystem($token, $config);
+        $response = $tapis->createSystem($config);
         Log::info('staging system created: ' . $systemStagingName);
 
         return redirect('systems')->with('notification', 'The system was successfully created and selected. Add the SSH key in ~/.ssh/authorized_keys');
