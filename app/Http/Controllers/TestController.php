@@ -38,7 +38,7 @@ class TestController extends Controller
 
         // Test Tapis
         $tapis = new Tapis;
-        //$systems = $tapis->listSystems(null);
+        //$systems = $tapis->listSystems();
         //echo "<p>";
         //echo json_encode($systems);
 

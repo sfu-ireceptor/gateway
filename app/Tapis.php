@@ -452,9 +452,8 @@ class Tapis
         return $this->doGETRequest($this->tapis_client, $url, $token);
     }
 
-    public function listSystems($token)
+    public function listSystems()
     {
-        //$url = '/systems/v2/?pretty=true';
         $url = '/v3/systems';
         $token = self::$analysisTokenData->access_token;
 
