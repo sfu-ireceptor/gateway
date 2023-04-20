@@ -122,7 +122,6 @@ class TestController extends Controller
 
         exit;
 
-        
         // dd(getcwd());
         dd(Str::length(''));
         dd($request->getClientIp());
