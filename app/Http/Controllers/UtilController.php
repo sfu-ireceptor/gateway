@@ -14,7 +14,6 @@ use Symfony\Component\Process\Process;
 class UtilController extends Controller
 {
     // URL Controller function for receiving updates from Tapis
-    //public function updateJobStatus($id, $status)
     public function updateJobStatus(Request $request)
     {
         Log::info('Tapis job status update: job ' . json_encode($request));

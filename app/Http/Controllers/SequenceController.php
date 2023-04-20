@@ -273,11 +273,6 @@ class SequenceController extends Controller
                     $parameter['description'] = $parameter_info['description'];
                     $parameter['type'] = 'string';
                     $parameter['default'] = $parameter_info['arg'];
-                    //$parameter['label'] = $parameter_info['id'];
-                    //$parameter['name'] = $parameter_info['details']['label'];
-                    //$parameter['description'] = $parameter_info['details']['description'];
-                    //$parameter['type'] = $parameter_info['value']['type'];
-                    //$parameter['default'] = $parameter_info['value']['default'];
                     $parameter_list[$parameter_info['name']] = $parameter;
                 } else {
                     Log::debug('   Not displaying invisible parameter ' . $parameter_info['name']);

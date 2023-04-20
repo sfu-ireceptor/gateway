@@ -47,8 +47,6 @@ class System extends Model
         //$defaultExecutionSystemPublicKey = config('services.tapis.default_execution_system.auth.public_key');
         //$defaultExecutionSystemPrivateKey = config('services.tapis.default_execution_system.auth.private_key');
 
-        //$systemExecutionName = config('services.tapis.system_execution.name_prefix') . $gw_username . '-' . $defaultExecutionSystemUsername . '-' . $defaultExecutionSystemHost;
-        //$systemExecutionName = config('services.tapis.system_execution.name_prefix') . str_replace('_', '-', $gw_username) . '-tapis3-test-' . $defaultExecutionSystemHost;
         $systemExecutionName = config('services.tapis.system_execution.name_prefix') . '-' . $defaultExecutionSystemHost . '-' . str_replace('_', '-', $gw_username);
 
         $config = $tapis->getExecutionSystemConfig($systemExecutionName, $defaultExecutionSystemHost, $defaultExecutionSystemPort, $defaultExecutionSystemUsername);

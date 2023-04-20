@@ -191,9 +191,6 @@ class LaunchJob implements ShouldQueue
             // Try to get the App if it already exists.
             $appResponse = $tapis->getApp($appName, $token);
             Log::debug('LaunchJob::handle - App info = ' . json_encode($appResponse));
-            //if (is_string($appResponse)) {
-            //    $appResponse = json_decode($appResponse);
-            //}
             if ($appResponse->status == 'success') {
                 // If it exists, update it in case the config has changed, throw
                 // an error of the update fails.
@@ -218,10 +215,6 @@ class LaunchJob implements ShouldQueue
                 'name' => 'gateway_download_zip',
                 'sourceUrl' => 'tapis://' . $systemStaging . '/' . $zip_info['zip_name'],
             ];
-            //$inputs['download_file'] = 'tapis://' . $systemStaging . '/' . $zip_info['zip_name'];
-            //foreach ($inputs as $i) {
-            //    Log::debug('Job input ' . $i['name'] . ' = ' . $i['sourceUrl']);
-            //}
 
             // Process the App parameters
             $params = [];
@@ -232,9 +225,7 @@ class LaunchJob implements ShouldQueue
                     $param = new \stdClass();
                     $param->name = $parameter_info['name'];
                     $param->arg = $this->request_data[$parameter_info['name']];
-                    //$param['arg'] = $this->request_data[$parameter_info['name']];
                     $params[] = $param;
-                    //$params[$parameter_info['name']] = $this->request_data[$parameter_info['name']];
                     Log::debug('   Parameter value = ' . $this->request_data[$parameter_info['name']]);
                 }
             }
