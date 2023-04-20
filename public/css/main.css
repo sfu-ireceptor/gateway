@@ -507,6 +507,10 @@ a.external:after {
     animation-duration: 4s;
 }
 
+.button_botttom_container {
+	margin-top: 40px;
+}
+
 /* @end */
 
 /* @group top navigation */
@@ -1139,6 +1143,10 @@ fieldset[disabled] .btn-sequences.focus {
 	border: 1px solid #f4a45a;
 }
 
+.honey-pot {
+	display: none;	
+}
+
 /* @end */
 
 /* @group home page */
@@ -1160,62 +1168,6 @@ fieldset[disabled] .btn-sequences.focus {
 	margin-bottom: 0;
 }
 
-.announcement {
-	text-align: center;
-	font-size: 16px;
-	margin-top: -15px;
-	background-color: #f4e0ce;
-	border-color: #f4a45a;
-	color: black;
-	padding-top: 20px;
-	border-radius: 6px;
-	position: relative;
-	overflow: hidden;
-}
-
-.announcement a {
-	margin-left: 10px;
-	font-size: 16px;
-}
-
-.announcement .logo {
-	/*position: absolute;
-	top: 15px;
-	left: 20px;
-	transform: scale(3) rotate(-10deg);
-	filter: blur(1px);*/
-	
-	position: absolute;
-top: 54px;
-left: 81px;
-transform: scale(6) rotate(-20deg);
-filter: blur(1px);
-opacity: 80%;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-
-@keyframes slide-down {
-  from {
-    transform: translateY(-40%);
-  }
-  to {
-    transform: translateY(0%);
-  }
-}
-
-.announcement {
-	will-change: transform;
-	/*transform: translateY(-15px);
-	transition: transform 2s;*/
-
-	animation: slide-down 500ms;
-	animation-timing-function: ease-out;
-	/*animation-delay: 500ms;*/
-	animation-fill-mode: forwards;
-}
-
-}
 
 .quick_search_link {
 	margin-top: 55px;
@@ -2004,6 +1956,51 @@ form.column_selector {
 .repository .panel-footer a.email {
 
 } 
+
+
+/* @end */
+
+/* @group survey */
+.survey_message {
+	font-size: 18px;
+	line-height: 1.5;
+	background-color: #F5F5F5;
+	padding: 20px 30px 15px;
+	width: 585px;
+	margin-right: auto;
+	margin-left: auto;
+	margin-top: 30px;
+}
+
+.announcement {
+	text-align: center;
+	font-size: 16px;
+	color: black;
+	padding-top: 20px;
+	border-radius: 6px;
+	position: relative;
+	overflow: hidden;
+}
+
+.announcement a {
+	font-size: 16px;
+}
+
+.announcement a.btn {
+	font-size: 18px;
+	padding: 10px 30px;
+	margin-right: 2px;
+	margin-bottom: 10px;
+	background-color: #2ecc71;
+}
+
+.announcement a.btn {
+	font-size: 18px;
+	padding: 10px 30px;
+	margin-right: 2px;
+	margin-bottom: 10px;
+	background-color: #2ecc71;
+}
 
 
 /* @end */

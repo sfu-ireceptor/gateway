@@ -17,6 +17,7 @@ use App\Sample;
 use App\Tapis;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -251,6 +252,8 @@ class AdminController extends Controller
         $data['first_name'] = $user->first_name;
         $data['last_name'] = $user->last_name;
         $data['email'] = $user->email;
+        $data['country'] = $user->country;
+        $data['institution'] = $user->institution;
 
         return view('user/edit', $data);
     }
@@ -281,6 +284,8 @@ class AdminController extends Controller
         $user->first_name = $request->get('first_name');
         $user->last_name = $request->get('last_name');
         $user->email = $request->get('email');
+        $user->country = $request->get('country');
+        $user->institution = $request->get('institution');
         $user->save();
 
         return redirect('admin/users')->with('notification', 'Modifications for ' . $user->first_name . ' ' . $user->lastName . ' were successfully saved.');
@@ -302,6 +307,9 @@ class AdminController extends Controller
         $n = CachedSample::cache();
 
         $message = "$n samples have been retrieved and cached.";
+
+        // delete cached sata
+        Cache::flush();
 
         return redirect('admin/databases')->with('notification', $message);
     }

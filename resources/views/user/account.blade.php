@@ -37,6 +37,8 @@
 			  		<p><strong>First Name</strong><br /> {{ $user->first_name}}</p>
 			  		<p><strong>Last name</strong><br /> {{ $user->last_name}}</p>
 			  		<p><strong>Email</strong><br /> {{ $user->email}}</p>
+			  		<p><strong>Country</strong><br /> {{ $user->country}}</p>
+			  		<p><strong>Institution</strong><br /> {{ $user->institution}}</p>
 			  		<p>
 			  			<a href="/user/change-personal-info" class="pull-right">
 				  			<button type="button" class="btn btn-default" aria-label="Edit">

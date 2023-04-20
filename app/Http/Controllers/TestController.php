@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Adrianorosa\GeoLocation\GeoLocation;
 use App\Download;
 use App\FieldName;
 use App\Job;
@@ -121,43 +122,13 @@ class TestController extends Controller
 
         exit;
 
-        // run FIRST
-        // retrieve users from Agave
-        $agave = new Agave;
-        $t = $agave->getTokenForUser('titi', '');
-        $token = $t->access_token;
-        // dd($token);
-        $l = $agave->getUsers($token);
-        // dd($l);
-
-        foreach ($l as $agave_user) {
-            $username = $agave_user->username;
-            $u = User::where('username', $username)->first();
-            if ($u == null) {
-                Log::info('Agave user ' . $username . ' does not exist in local database');
-
-                $u = new User();
-                $u->username = $username;
-                $u->email = $agave_user->email;
-                $u->first_name = $agave_user->first_name;
-                $u->last_name = $agave_user->last_name;
-                $u->password = '';
-
-                $u->save();
-            }
-
-            $create_time = $agave_user->create_time;
-            $datetime = \DateTime::createFromFormat('YmdHis\Z', $create_time);
-            $created_at = $datetime->format('Y-m-d H:i:s');
-            $u->created_at = $created_at;
-
-            $u->save();
-            Log::info('Created.');
-        }
-        echo 'done';
-
-        exit;
+        
         // dd(getcwd());
+        dd(Str::length(''));
+        dd($request->getClientIp());
+
+        $details = GeoLocation::lookup('142.250.217.67');
+        echo $details->getCountry();
 
         exit;
         // $u = new User('jj', 'kk', 'fdsfs@gmail.com');
@@ -283,16 +254,6 @@ class TestController extends Controller
 
             return $error_message;
         }
-        exit;
-
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $agave_user = $agave->getUserWithEmail('', $token);
-
-        $new_password = str_random(24);
-        $t = $agave->updateUser($token, $agave_user->username, $agave_user->first_name, $agave_user->last_name, $agave_user->email, $new_password);
-
-        echo $new_password;
         exit;
 
         $rs = RestService::find(69);
@@ -1157,5 +1118,29 @@ class TestController extends Controller
     {
         User::parseTapisUsersLDIF('../test3/tenantirec_20230224.ldif');
         echo 'done';
+    }
+
+    public function updateLastUsersPwd()
+    {
+        $file_path = '../test3/u3.txt';
+        $file = fopen($file_path, 'r');
+
+        while ($line = fgets($file)) {
+            $line = trim($line);
+
+            // Skip any blank lines
+            if (empty($line)) {
+                continue;
+            }
+
+            [$username, $pwd] = explode(',', $line);
+            $pwd_hashed = Hash::make($pwd);
+
+            Log::debug("update user set password='" . $pwd_hashed . "' where username='" . $username . "';");
+
+            // Log::debug($username);
+        }
+
+        Log::debug('ok');
     }
 }

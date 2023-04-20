@@ -22,7 +22,7 @@
 			{{ Form::open(array('url' => 'user/forgot-password', 'role' => 'form')) }}
 			    <div class="form-group {{ $errors->first('current_password') ? 'has-error' : ''}}">
 					{{ Form::label('email', 'Email') }} <span class="error">{{ $errors->first('email') }}</span>
-					{{ Form::text('email', '',array('class' => 'form-control', 'placeholder' => '')) }}
+					{{ Form::text('email', $email, array('class' => 'form-control', 'placeholder' => '')) }}
 				</div>
 				
 

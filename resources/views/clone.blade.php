@@ -333,7 +333,7 @@
 						</tbody>
 					</table>
 
-					@if(config('services.agave.enabled'))
+					@if(config('services.tapis.enabled'))
 						<h3>
 							<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
 							Launch an Analysis Job

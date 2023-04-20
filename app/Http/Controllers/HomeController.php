@@ -8,11 +8,18 @@ use App\RestService;
 use App\Sample;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
+        $cached_data = Cache::get('home-data');
+        if ($cached_data != null) {
+            return view('home', $cached_data);
+        }
+
         // get count of available data (sequences, samples)
         Log::debug('HomeController::index');
         $username = auth()->user()->username;
@@ -56,6 +63,8 @@ class HomeController extends Controller
 
         // clear any lingering form data
         $request->session()->forget('_old_input');
+
+        Cache::put('home-data', $data);
 
         return view('home', $data);
     }
@@ -111,5 +120,19 @@ class HomeController extends Controller
         $data['rs_list'] = $rs_list;
 
         return view('repositories', $data);
+    }
+
+    public function survey()
+    {
+        return view('survey');
+    }
+
+    public function surveyGo()
+    {
+        $user = Auth::user();
+        $user->did_survey = true;
+        $user->save();
+
+        return redirect('https://www.surveymonkey.ca/r/TVCQJXB');
     }
 }

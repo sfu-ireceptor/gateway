@@ -17,7 +17,10 @@ Route::post('login', 'UserController@postLogin');
 
 Route::get('logout', 'UserController@getLogout');
 
-Route::get('user/forgot-password', 'UserController@getForgotPassword');
+Route::get('register', 'UserController@getRegister')->name('register');
+Route::post('register', 'UserController@postRegister');
+
+Route::get('user/forgot-password/{email?}', 'UserController@getForgotPassword');
 Route::post('user/forgot-password', 'UserController@postForgotPassword');
 Route::get('user/forgot-password-email-sent', 'UserController@getForgotPasswordEmailSent');
 
@@ -47,6 +50,7 @@ Route::any('phpinfo', 'TestController@phpinfo');
 Route::any('wait/{seconds}', 'TestController@wait');
 Route::get('u1', 'TestController@createMissingAgaveUser');
 Route::get('u2', 'TestController@parseLDIF');
+Route::get('u3', 'TestController@updateLastUsersPwd');
 
 /*
 |--------------------------------------------------------------------------
@@ -87,6 +91,8 @@ Route::middleware('auth')->group(function () {
 
         Route::get('change-personal-info', 'UserController@getChangePersonalInfo');
         Route::post('change-personal-info', 'UserController@postChangePersonalInfo');
+
+        Route::get('welcome', 'UserController@getWelcome');
     });
 
     Route::prefix('bookmarks')->group(function () {
@@ -156,6 +162,10 @@ Route::middleware('auth')->group(function () {
         Route::get('queries2/months/{n}', 'AdminController@queriesMonths2');
         Route::get('queries/{id}', 'AdminController@query');
     });
+
+    // other
+    Route::get('/ireceptor-survey', 'HomeController@survey')->name('survey');
+    Route::get('/ireceptor-survey-go', 'HomeController@surveyGo')->name('survey-go');
 });
 
 /*
