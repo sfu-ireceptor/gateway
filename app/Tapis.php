@@ -496,7 +496,7 @@ class Tapis
         return $this->doGETRequest($this->tapis_client, $url, $token, true);
     }
 
-    public function killJob($job_id, $token)
+    public function killJob($job_id)
     {
         // Set up the URL for to kill/cancel a Tapis job.
         $url = '/v3/jobs/' . $job_id . '/cancel';
@@ -714,7 +714,7 @@ class Tapis
         return false;
     }
 
-    public function generateUsername($first_name, $last_name, $token)
+    public function generateUsername($first_name, $last_name)
     {
         $first_name_stripped = str_replace(' ', '', $first_name);
         $last_name_stripped = str_replace(' ', '', $last_name);
@@ -735,7 +735,7 @@ class Tapis
         return $username;
     }
 
-    public function getUserWithEmail($email, $token)
+    public function getUserWithEmail($email)
     {
         $user = null;
 
@@ -749,7 +749,7 @@ class Tapis
         return $user;
     }
 
-    public function getUserWithUsername($username, $token)
+    public function getUserWithUsername($username)
     {
         $user = null;
 
