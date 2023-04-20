@@ -50,7 +50,7 @@ class System extends Model
         $systemExecutionName = config('services.tapis.system_execution.name_prefix') . '-' . $defaultExecutionSystemHost . '-' . str_replace('_', '-', $gw_username);
 
         $config = $tapis->getExecutionSystemConfig($systemExecutionName, $defaultExecutionSystemHost, $defaultExecutionSystemPort, $defaultExecutionSystemUsername);
-        $sysResponse = $tapis->getSystem($systemExecutionName, $token);
+        $sysResponse = $tapis->getSystem($systemExecutionName);
         if ($sysResponse->status == 'success') {
             $response = $tapis->updateSystem($systemExecutionName, $config);
             $tapis->raiseExceptionIfTapisError($response);

@@ -346,9 +346,8 @@ class Tapis
         return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token, $config);
     }
 
-    public function updateSystem($token, $system, $config)
+    public function updateSystem($system, $config)
     {
-        //$url = '/systems/v2/?pretty=true';
         $url = '/v3/systems/' . $system;
         $token = self::$analysisTokenData->access_token;
 
@@ -462,7 +461,7 @@ class Tapis
         return $this->doGETRequest($this->tapis_client, $url, $token);
     }
 
-    public function getSystem($system_id, $token)
+    public function getSystem($system_id)
     {
         $url = '/v3/systems/' . $system_id;
         $token = self::$analysisTokenData->access_token;
