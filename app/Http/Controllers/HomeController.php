@@ -7,18 +7,22 @@ use App\News;
 use App\RestService;
 use App\Sample;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
         // get count of available data (sequences, samples)
+        Log::debug('HomeController::index');
         $username = auth()->user()->username;
         $metadata = Sample::metadata($username);
+        Log::debug('HomeController::index - got metadata');
         $data = $metadata;
 
         // get list of samples
         $sample_list = Sample::public_samples();
+        Log::debug('HomeController::index - got samples');
 
         // Fields we want to graph. The UI/blade expects six fields
         $charts_fields = ['study_type_id', 'organism', 'disease_diagnosis_id',
@@ -30,6 +34,7 @@ class HomeController extends Controller
             'disease_diagnosis_id' => 'disease_diagnosis',
             'tissue_id' => 'tissue', ];
         $data['charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map);
+        Log::debug('HomeController::index - got charts');
 
         // generate statistics
         $sample_data = Sample::stats($sample_list);
