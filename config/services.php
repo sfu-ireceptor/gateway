@@ -53,6 +53,9 @@ return [
         'test_user_username' => env('TEST_USER_USERNAME'),
         'test_user_password' => env('TEST_USER_PASSWORD'),
         'app_base_dir' => 'tapis_apps',
+        // App script that is run for every App. Apps need to implement this, and the
+        // Gateway runs it in the container with the other App Args.
+        'app_json_file' => 'app3.json',
         'app_directories' => [
             'stats', 'histogram', 'clone-stats', 'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity',
         ],
