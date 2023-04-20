@@ -1085,7 +1085,7 @@ class TestController extends Controller
         $t = $tapis->getTokenForUser($admin_username, $admin_password);
         $token = $t->access_token;
 
-        $l = $tapis->getUsers($token);
+        $l = $tapis->getUsers();
 
         foreach ($l as $tapis_user) {
             $username = $tapis_user->username;
