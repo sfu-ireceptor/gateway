@@ -704,9 +704,8 @@ class Tapis
         return $t;
     }
 
-    public function getUsers($token)
+    public function getUsers()
     {
-        //$url = '/profiles/v2/?pretty=true';
         $url = '/v3/oauth2/profiles';
         $token = self::$analysisTokenData->access_token;
         $response = $this->doGETRequest($url, $token);
@@ -714,16 +713,9 @@ class Tapis
         return $response->result;
     }
 
-    public function getUser($username, $token)
-    {
-        $url = '/profiles/v2/' . $username;
-
-        return $this->doGETRequest($url, $token);
-    }
-
     public function userExists($username, $token)
     {
-        $l = $this->getUsers($token);
+        $l = $this->getUsers();
         foreach ($l as $u) {
             if ($u->username == $username) {
                 return true;
@@ -758,7 +750,7 @@ class Tapis
     {
         $user = null;
 
-        $user_list = $this->getUsers($token);
+        $user_list = $this->getUsers();
         foreach ($user_list as $u) {
             if ($u->email == $email) {
                 $user = $u;
@@ -772,7 +764,7 @@ class Tapis
     {
         $user = null;
 
-        $user_list = $this->getUsers($token);
+        $user_list = $this->getUsers();
         foreach ($user_list as $u) {
             if ($u->username == $username) {
                 $user = $u;
