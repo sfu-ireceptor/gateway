@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Adrianorosa\GeoLocation\GeoLocation;
 use App\Agave;
 use App\Download;
 use App\FieldName;
@@ -27,6 +28,12 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
+        dd(Str::length(''));
+        dd($request->getClientIp());
+
+        $details = GeoLocation::lookup('142.250.217.67');
+        echo $details->getCountry();
+
         exit;
         // $u = new User('jj', 'kk', 'fdsfs@gmail.com');
         echo 'ok';

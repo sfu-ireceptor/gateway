@@ -507,6 +507,10 @@ a.external:after {
     animation-duration: 4s;
 }
 
+.button_botttom_container {
+	margin-top: 40px;
+}
+
 /* @end */
 
 /* @group top navigation */
@@ -1137,6 +1141,10 @@ fieldset[disabled] .btn-sequences.focus {
 
 .beta_version {
 	border: 1px solid #f4a45a;
+}
+
+.honey-pot {
+	display: none;	
 }
 
 /* @end */

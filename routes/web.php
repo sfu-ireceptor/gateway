@@ -17,7 +17,10 @@ Route::post('login', 'UserController@postLogin');
 
 Route::get('logout', 'UserController@getLogout');
 
-Route::get('user/forgot-password', 'UserController@getForgotPassword');
+Route::get('register', 'UserController@getRegister')->name('register');
+Route::post('register', 'UserController@postRegister');
+
+Route::get('user/forgot-password/{email?}', 'UserController@getForgotPassword');
 Route::post('user/forgot-password', 'UserController@postForgotPassword');
 Route::get('user/forgot-password-email-sent', 'UserController@getForgotPasswordEmailSent');
 
@@ -88,6 +91,8 @@ Route::middleware('auth')->group(function () {
 
         Route::get('change-personal-info', 'UserController@getChangePersonalInfo');
         Route::post('change-personal-info', 'UserController@postChangePersonalInfo');
+
+        Route::get('welcome', 'UserController@getWelcome');
     });
 
     Route::prefix('bookmarks')->group(function () {

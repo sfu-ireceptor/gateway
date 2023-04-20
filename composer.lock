@@ -4,8 +4,71 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c6d1899c1c900a9ff9195590217b7f31",
+    "content-hash": "c714ddc29318db5a0c27ae9570bbe08b",
     "packages": [
+        {
+            "name": "adrianorosa/laravel-geolocation",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/adrianorsouza/laravel-geolocation.git",
+                "reference": "eab4560b28fa84cb0ced530269582f22944ce324"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/adrianorsouza/laravel-geolocation/zipball/eab4560b28fa84cb0ced530269582f22944ce324",
+                "reference": "eab4560b28fa84cb0ced530269582f22944ce324",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-openssl": "*",
+                "guzzlehttp/guzzle": "^6.0|^7.0",
+                "illuminate/support": "~5.7.0|~5.8.0|^6.0|^7.0|^8.0|^9.0|^10.0",
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^7.4",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Adrianorosa\\GeoLocation\\GeoLocationServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [],
+                "psr-4": {
+                    "Adrianorosa\\GeoLocation\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Adriano Rosa",
+                    "email": "info@adrianorosa.com"
+                }
+            ],
+            "description": "Laravel Geo Location package to get details for a given Ip Address",
+            "keywords": [
+                "geoip",
+                "geolocation",
+                "ipinfo",
+                "laravel",
+                "laravel-geolocation"
+            ],
+            "support": {
+                "issues": "https://github.com/adrianorsouza/laravel-geolocation/issues",
+                "source": "https://github.com/adrianorsouza/laravel-geolocation/tree/v1.2.0"
+            },
+            "time": "2023-03-08T00:16:54+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.11.0",

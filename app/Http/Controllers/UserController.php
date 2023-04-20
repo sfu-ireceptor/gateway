@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Adrianorosa\GeoLocation\GeoLocation;
 use App\Agave;
 use App\News;
 use App\Sample;
@@ -159,6 +160,8 @@ class UserController extends Controller
         $data['first_name'] = $user->first_name;
         $data['last_name'] = $user->last_name;
         $data['email'] = $user->email;
+        $data['country'] = $user->country;
+        $data['institution'] = $user->institution;
         $data['notification'] = session('notification');
 
         return view('user/changePersonalInfo', $data);
@@ -188,14 +191,101 @@ class UserController extends Controller
         $user->first_name = $request->input('first_name');
         $user->last_name = $request->input('last_name');
         $user->email = $request->input('email');
+        $user->country = $request->input('country');
+        $user->institution = $request->input('institution');
         $user->save();
 
         return redirect('/user/account')->with('notification', 'Personal information was successfully chaged.');
     }
 
-    public function getForgotPassword()
+    public function getRegister(Request $request)
     {
-        return view('user/forgotPassword');
+        $ip = $request->getClientIp();
+        $ip_info = GeoLocation::lookup($ip);
+        $country = $ip_info->getCountry();
+
+        $data = [];
+        $data['country'] = $country;
+
+        return view('user/register', $data);
+    }
+
+    public function postRegister(Request $request)
+    {
+        // validate form
+        $rules = [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email2' => 'required|email|unique:user,email',
+        ];
+
+        $messages = [
+            'required' => 'This field is required.',
+            'unique' => 'This account already exists',
+            'email' => 'Must be a valid email',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
+            $request->flash();
+
+            return redirect('/register')->withErrors($validator);
+        }
+
+        $first_name = $request->get('first_name');
+        $last_name = $request->get('last_name');
+        $email = $request->get('email2');
+        $country = $request->get('country');
+        $institution = $request->get('institution');
+        $notes = $request->get('notes');
+
+        // check it's not a bot
+        $honey_pot_email = $request->get('email');
+        if (Str::length($honey_pot_email) != 0) {
+            Log::info('Bot account creation prevented: ' . $first_name . ' ' . $last_name . ' - ' . $email . ' - ' . $country . ' - ' . $institution);
+            abort(403, 'Sorry, registration is not allowed to bots.');
+        }
+
+        $password = str_random(24);
+
+        $u = User::add($first_name, $last_name, $email, $password, $country, $institution, $notes);
+
+        $t = [];
+        $t['app_url'] = config('app.url');
+        $t['first_name'] = $u->first_name;
+        $t['username'] = $u->username;
+        $t['password'] = $password;
+        $t['last_name'] = $u->last_name;
+        $t['email'] = $u->email;
+        $t['notes'] = $u->notes;
+        $t['country'] = $u->country;
+        $t['institution'] = $institution;
+
+        // email credentials
+        Mail::send(['text' => 'emails.auth.accountCreated'], $t, function ($message) use ($u) {
+            $message->to($u->email)->subject('iReceptor account');
+        });
+
+        // admin notification email
+        Mail::send(['text' => 'emails.auth.newUser'], $t, function ($message) use ($u) {
+            $message->to(config('ireceptor.email_support'))->subject('New account - ' . $u->first_name . ' ' . $u->last_name);
+        });
+
+        Auth::login($u);
+
+        return redirect('/user/welcome');
+    }
+
+    public function getWelcome()
+    {
+        return view('user/welcome');
+    }
+
+    public function getForgotPassword($email = '')
+    {
+        $data['email'] = $email;
+
+        return view('user/forgotPassword', $data);
     }
 
     public function postForgotPassword(Request $request)
