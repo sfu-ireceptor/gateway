@@ -936,10 +936,10 @@ class TestController extends Controller
 //         echo Hash::make('0bed3fd19bc087e03ca5e99f98f7e976d330fbf1b966e23de17b41534a942cb6');
 //         die();
 
-//         $agave = new Agave;
-//         $token = $agave->getAdminToken();
+//         $tapis = new Tapis;
+//         $token = $tapis->getAdminToken();
 
-//         $user = $agave->getUserWithEmail('jlj7@sfu.ca', $token);
+//         $user = $tapis->getUserWithEmail('jlj7@sfu.ca', $token);
 //         if ($user == null) {
 //             echo 'ok';
 //             die();
@@ -1006,10 +1006,10 @@ class TestController extends Controller
 //         // $job->updateStatus('PENDING');
 //         // $job->save();
 
-//         // echo json_decode(config('services.agave.system_deploy.auth'));
-//         // var_dump(json_decode(config('services.agave.system_deploy.auth'), true));
+//         // echo json_decode(config('services.tapis.system_deploy.auth'));
+//         // var_dump(json_decode(config('services.tapis.system_deploy.auth'), true));
 
-//         // $c = config('services.agave.system_deploy.auth');
+//         // $c = config('services.tapis.system_deploy.auth');
 //         // $c = rtrim($c, "'");
 //         // $c = ltrim($c, "'");
 //         // var_dump(json_decode($c, true));
@@ -1076,34 +1076,34 @@ class TestController extends Controller
         echo 'hi there 40';
     }
 
-    public function createMissingAgaveUser()
+    public function createMissingTapisUser()
     {
-        $admin_username = config('services.agave.admin_username');
-        $admin_password = config('services.agave.admin_password');
+        $admin_username = config('services.tapis.admin_username');
+        $admin_password = config('services.tapis.admin_password');
 
-        $agave = new Agave;
-        $t = $agave->getTokenForUser($admin_username, $admin_password);
+        $tapis = new Tapis;
+        $t = $tapis->getTokenForUser($admin_username, $admin_password);
         $token = $t->access_token;
 
-        $l = $agave->getUsers($token);
+        $l = $tapis->getUsers($token);
 
-        foreach ($l as $agave_user) {
-            $username = $agave_user->username;
+        foreach ($l as $tapis_user) {
+            $username = $tapis_user->username;
             $u = User::where('username', $username)->first();
             if ($u == null) {
-                Log::info('Agave user ' . $username . ' does not exist in local database');
+                Log::info('Tapis user ' . $username . ' does not exist in local database');
 
                 $u = new User();
                 $u->username = $username;
-                $u->email = $agave_user->email;
-                $u->first_name = $agave_user->first_name;
-                $u->last_name = $agave_user->last_name;
+                $u->email = $tapis_user->email;
+                $u->first_name = $tapis_user->first_name;
+                $u->last_name = $tapis_user->last_name;
                 $u->password = '';
 
                 $u->save();
             }
 
-            $create_time = $agave_user->create_time;
+            $create_time = $tapis_user->create_time;
             $datetime = \DateTime::createFromFormat('YmdHis\Z', $create_time);
             $created_at = $datetime->format('Y-m-d H:i:s');
             $u->created_at = $created_at;
