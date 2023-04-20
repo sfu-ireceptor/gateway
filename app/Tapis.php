@@ -464,9 +464,8 @@ class Tapis
         return $this->doGETRequest($this->tapis_client, $url, $token);
     }
 
-    public function getJobHistory($job_id, $token)
+    public function getJobHistory($job_id)
     {
-        //$url = '/jobs/v2/' . $job_id . '/history?pretty=true';
         $url = '/v3/jobs/' . $job_id . '/history';
         $token = self::$analysisTokenData->access_token;
 

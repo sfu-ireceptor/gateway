@@ -769,7 +769,7 @@ class JobController extends Controller
             $job_user = User::where('id', $job->user_id)->first();
             $token = $job_user->getToken();
             if ($token != null) {
-                $response = $tapis->getJobHistory($job_id, $token);
+                $response = $tapis->getJobHistory($job_id);
             }
             // If the token was not valid or if there was an error, try
             // as an admin user to get the same info.
