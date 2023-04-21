@@ -74,13 +74,12 @@ class UserController extends Controller
 
         $request->session()->regenerate();
 
-        // TEMPORARY, potential to remove when switching to Tapis V3
+        // TODO: potential to remove when switching to Tapis V3
         // generate new Tapis token using iReceptor Analysis credential and store it as the user's token
 
-        $tapis = new Tapis;
         $analysis_username = config('services.tapis.analysis_username');
         $analysis_password = config('services.tapis.analysis_password');
-        $tapis_token_info = $tapis->getTokenForUser($analysis_username, $analysis_password);
+        $tapis_token_info = Tapis::getTokenForUser($analysis_username, $analysis_password);
 
         if ($tapis_token_info == null) {
             Log::error('Failed to get token for ' . $analysis_username);

@@ -1081,7 +1081,7 @@ class TestController extends Controller
         $admin_password = config('services.tapis.admin_password');
 
         $tapis = new Tapis;
-        $t = $tapis->getTokenForUser($admin_username, $admin_password);
+        $t = Tapis::getTokenForUser($admin_username, $admin_password);
         $token = $t->access_token;
 
         $l = $tapis->getUsers();

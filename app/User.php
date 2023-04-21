@@ -137,6 +137,8 @@ class User extends Authenticatable
      */
     public function getToken()
     {
+        return $this->token;
+        /*
         // Check to see if we are close to token expiry
         // Expiry threshold is 30 minutes
         $expiry_threshold_min = 30;
@@ -169,6 +171,7 @@ class User extends Authenticatable
         } else {
             return null;
         }
+         */
     }
 
     /**
