@@ -133,7 +133,7 @@ class User extends Authenticatable
      * Get the token for the user.
      *
      * @param void
-     * @return string
+     * @return string Tapis 3 JWT token
      */
     public function getToken()
     {
@@ -158,7 +158,7 @@ class User extends Authenticatable
         // it in the local token field.
         Log::debug('User::getToken: Requesting a new token');
         $tapis = new Tapis;
-        $tapis_token_info = $tapis->renewToken($this->refresh_token);
+        $tapis_token_info = $tapis->renewToken();
         if ($tapis_token_info != null) {
             Log::debug('User::getToken: tapis token info = ' . json_encode($tapis_token_info));
             // update the token
@@ -172,29 +172,14 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the refresh token for the user.
-     *
-     * @param void
-     * @return string
-     */
-    public function getRefreshToken()
-    {
-        return $this->refresh_token;
-    }
-
-    /**
      * Update the token state for the user.
      *
      * @param  object  $tapis_token_info
-     * @return void
+     * @return string  Tapis 3 JWT token string
      *
      * The Tapis token info is of the form:
-     * {
-     *  "scope":"default","token_type":"bearer",
-     *  "expires_in":14400,
-     *  "refresh_token":"6256416cf0bfbd4163ff7e758ba22d93",
-     *  "access_token":"873f7d1d9333a935ca4e3f487da7e34"
-     * }
+     * {"access_token":"JWT TOKEN INFO DELETED","expires_at":"2023-03-25T21:13:31.081319+00:00",
+     *  "expires_in":14400,"jti":"38a395a2-7496-4349-89ef-afff5c5f69ad"}
      *
      * We want to save some of this state for the user.
      */
@@ -204,9 +189,9 @@ class User extends Authenticatable
         $token = $tapis_token_info->access_token;
         $this->token = $token;
 
-        // refresh token
-        $refreshToken = $tapis_token_info->refresh_token;
-        $this->refresh_token = $refreshToken;
+        // Refresh token is no longer supported by Tapis. We keep it in the DB
+        // for now, but this should be removed. TODO
+        $this->refresh_token = $null;
 
         // token expiration date
         $tokenExpirationDate = new Carbon();
@@ -217,7 +202,6 @@ class User extends Authenticatable
         $this->save();
 
         Log::debug('User::updateToken(' . $this->username . ') - access_token = ' . $this->token);
-        Log::debug('User::updateToken(' . $this->username . ') - refresh_token = ' . $this->refresh_token);
         Log::debug('User::updateToken(' . $this->username . ') - expiration_date = ' . $this->token_expiration_date);
         // Return the user token
         return $this->token;

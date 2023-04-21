@@ -28,19 +28,9 @@ class Tapis
         // Update the AppTemplates at start up.
         $this->updateAppTemplates();
 
-        // Get the analysis username
-        self::$analysisUser = config('services.tapis.analysis_username');
-        $password = config('services.tapis.analysis_password');
-        Log::debug('Tapis::construct - analysis user = ' . self::$analysisUser);
-        $tokendata = $this->getTokenForUser(self::$analysisUser, $password);
-        if ($tokendata != null && isset($tokendata->access_token)) {
-            $tokendata->refresh_token = null;
-            self::$analysisTokenData = $tokendata;
-            Log::debug('Tapis::constuct - setting token');
-        } else {
-            Log::debug('Tapis::constuct - Could not generate and Analysis Token for ' . self::$analysisUser);
-            self::$analysisTokenData = null;
-        }
+        // Renew the token whenever we create an object. Probably overkill
+        // and inefficient, but safe.
+        $this->renewToken();
 
         // Maximum run time for a job in hours.
         $this->maxMinutes = config('services.tapis.system_execution.max_minutes');
@@ -135,8 +125,6 @@ class Tapis
         if (isset($t->result) && isset($t->result->access_token)) {
             //Log::debug('Tapis::getTokenForUser - Token info for user ' . $username . ' = ' . json_encode($t->result->access_token));
             $token_info = $t->result->access_token;
-            $token_info->refresh_token = null;
-
             return $token_info;
         } else {
             Log::debug('Tapis::getTokenForUser - Could not get token for ' . $username);
@@ -160,49 +148,23 @@ class Tapis
         return self::$analysisTokenData->access_token;
     }
 
-    public function renewToken($refresh_token)
+    public function renewToken()
     {
-        Log::debug('Tapis::renewToken - Analysis token data = ' . json_encode(self::$analysisTokenData));
+        // Get the analysis username and password.
+        self::$analysisUser = config('services.tapis.analysis_username');
+        $password = config('services.tapis.analysis_password');
+        Log::debug('Tapis::renewToken - analysis user = ' . self::$analysisUser);
 
-        return self::$analysisTokenData;
-        /*
-        Log::debug('Tapis::renewToken - refresh_token = ' . json_encode($refresh_token));
-        $api_key = config('services.tapis.api_key');
-        $api_secret = config('services.tapis.api_token');
-
-        $headers = [];
-        $headers['Content-Type'] = 'application/x-www-form-urlencoded';
-
-        $auth = [$api_key, $api_secret];
-
-        $params = [];
-        $params['grant_type'] = 'refresh_token';
-        $params['refresh_token'] = $refresh_token;
-        $params['scope'] = 'PRODUCTION';
-
-        try {
-            // Normal respsonse from Tapis is:
-            //  {"scope":"default","token_type":"bearer",
-            //  "expires_in":14400,
-            //  "refresh_token":"4e6e8a38f0a33f2cff7fe0318fe314db",
-            //  "access_token":"8485748fbaa9a36efe941d8f3c36c2a1"}
-            $response = $this->client->request('POST', '/token', ['auth' => $auth, 'headers' => $headers, 'form_params' => $params]);
-            // Convert the body of the Guzzle response JSON to a PHP object
-            $response_obj = json_decode($response->getBody());
-            Log::debug('Tapis::renewToken - refresh response = ' . json_encode($response_obj));
-            // Check for Tapis errors and raise an exception if we see one.
-            $this->raiseExceptionIfTapisError($response_obj);
-        } catch (ClientException $e) {
-            Log::debug('Tapis::renewToken - A ClientException occurred while getting a token from Tapis:');
-            Log::debug('Tapis::renewToken - exception = ' . json_encode($e));
-
-            return null;
+        $tokendata = $this->getTokenForUser(self::$analysisUser, $password);
+        if ($tokendata != null && isset($tokendata->access_token)) {
+            self::$analysisTokenData = $tokendata;
+            Log::debug('Tapis::renewToken - setting token');
+        } else {
+            Log::debug('Tapis::renewToken - Could not generate Analysis Token for ' . self::$analysisUser);
+            self::$analysisTokenData = null;
         }
 
-        Log::debug('Tapis:renewToken - returning refresh response = ' . json_encode($response_obj));
-
-        return $response_obj;
-        */
+        return self::$analysisTokenData;
     }
 
     public function updateAppTemplates()
