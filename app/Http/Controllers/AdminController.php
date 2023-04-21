@@ -14,7 +14,6 @@ use App\News;
 use App\QueryLog;
 use App\RestService;
 use App\Sample;
-use App\Tapis;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
