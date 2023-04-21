@@ -31,13 +31,12 @@ class Tapis
         // Get the analysis username
         self::$analysisUser = config('services.tapis.analysis_username');
         $password = config('services.tapis.analysis_password');
-        Log::debug('analysis user = ' . self::$analysisUser);
+        Log::debug('Tapis::construct - analysis user = ' . self::$analysisUser);
         $tokendata = $this->getTokenForUser(self::$analysisUser, $password);
         if ($tokendata != null && isset($tokendata->access_token)) {
             $tokendata->refresh_token = null;
             self::$analysisTokenData = $tokendata;
             Log::debug('Tapis::constuct - setting token');
-        //Log::debug('Tapis::constuct - Analysis token data = ' . json_encode(self::$analysisTokenData));
         } else {
             Log::debug('Tapis::constuct - Could not generate and Analysis Token for ' . self::$analysisUser);
             self::$analysisTokenData = null;
@@ -120,7 +119,7 @@ class Tapis
         return $t != null;
     }
 
-    /* Returns a token object as per that provide by Tapis, which looks like this:
+    /* Returns a token object as per that provide by Tapis 3, which looks like this:
     ** {"access_token":"JWT TOKEN INFO DELETED","expires_at":"2023-03-25T21:13:31.081319+00:00",
     **  "expires_in":14400,"jti":"38a395a2-7496-4349-89ef-afff5c5f69ad"}
     */
@@ -222,7 +221,6 @@ class Tapis
             // app.json file that is the Tapis definition of the App. We use this
             // to determine how to submit the App to Tapis and to build the UI.
             $file_path = resource_path($app_base_dir . '/' . $app_dir . '/' . $app_json_file);
-            //Log::debug('updateAppTemplates: Trying to open App file ' . $file_path);
             // Open the file and convert the JSON to an object.
             try {
                 $app_json = file_get_contents($file_path);
@@ -238,7 +236,6 @@ class Tapis
             $gateway_count = -1;
             $app_info = [];
             if (array_key_exists('notes', $app_config)) {
-                //if (property_exists($app_config, 'notes')) {
                 $notes = $app_config['notes'];
                 if (array_key_exists('ir_hints', $notes)) {
                     $hints = $notes['ir_hints'];
@@ -303,13 +300,13 @@ class Tapis
 
     public function getAppTemplate($app_tag)
     {
-        Log::debug('getAppTemplate: looking for ' . $app_tag);
+        Log::debug('Tapis::getAppTemplate: looking for ' . $app_tag);
 
         // Return the app template for the given app tap/name.
         if (array_key_exists($app_tag, $this->appTemplates)) {
             return $this->appTemplates[$app_tag];
         } else {
-            Log::debug('getAppTemplate: could not find app ' . $app_tag);
+            Log::debug('Tapis::getAppTemplate: could not find app ' . $app_tag);
 
             return null;
         }
@@ -318,7 +315,7 @@ class Tapis
     public function getAppTemplateByLabel($app_label)
     {
         // Return the app template for the given app label.
-        Log::debug('getAppTemplateByLabel: looking for ' . $app_label);
+        Log::debug('Tapis::getAppTemplateByLabel: looking for ' . $app_label);
         foreach ($this->appTemplates as $app_tag => $app_info) {
             // Get this template's label and if it is the same we found it.
             $config = $app_info['config'];
@@ -328,7 +325,7 @@ class Tapis
             }
         }
         // Couldn't find it if we get here.
-        Log::debug('getAppTemplateByLabel: could not find ' . $app_label);
+        Log::debug('Tapis::getAppTemplateByLabel: could not find ' . $app_label);
 
         return null;
     }
@@ -387,51 +384,6 @@ class Tapis
         return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token, $config);
     }
 
-/*
-    public function createUser($token, $username, $first_name, $last_name, $email)
-    {
-        $password = str_random(24);
-
-        $url = '/profiles/v2/?pretty=true';
-
-        $variables = [
-            'username' => $username,
-            'password' => $password,
-            'email' => $email,
-            'first_name' => $first_name,
-            'last_name' => $last_name,
-        ];
-
-        $this->doPOSTRequest($url, $token, $variables);
-
-        return $variables;
-    }
-
-    public function updateUser($token, $username, $first_name, $last_name, $email, $password = '')
-    {
-        $url = '/profiles/v2/' . $username;
-
-        $variables = [
-            'first_name' => $first_name,
-            'last_name' => $last_name,
-            'email' => $email,
-        ];
-
-        if ($password != '') {
-            $variables['password'] = $password;
-        }
-
-        $this->doPUTRequest($url, $token, $variables);
-
-        return $variables;
-    }
-
-    public function deleteUser($token, $username)
-    {
-        $url = '/profiles/v2/' . $username;
-        $this->doDELETERequest($url, $token);
-    }
-*/
     public function listApps()
     {
         $url = '/v3/apps';
@@ -833,7 +785,6 @@ class Tapis
     {
         $headers = [];
         if ($token != null) {
-            //$headers['Authorization'] = 'Bearer ' . $token;
             $headers['X-Tapis-Token'] = $token;
             //Log::debug('Tapis::doHTTPRequest - Auth headers:' . $headers['X-Tapis-Token']);
         }
