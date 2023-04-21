@@ -291,16 +291,6 @@ class AdminController extends Controller
         return redirect('admin/users')->with('notification', 'Modifications for ' . $user->first_name . ' ' . $user->lastName . ' were successfully saved.');
     }
 
-    public function getDeleteUser($username)
-    {
-        // create Tapis account
-        $tapis = new Tapis;
-        $token = $tapis->getAdminToken();
-        $tapis->deleteUser($token, $username);
-
-        return redirect('admin/users')->with('notification', 'User ' . $username . ' was successfully deleted.');
-    }
-
     public function getUpdateSampleCache()
     {
         $username = auth()->user()->username;
