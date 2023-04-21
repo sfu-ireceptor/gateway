@@ -250,6 +250,11 @@
 					</div>
 				@endif 
 				
+				<a href="#analysis" class="btn btn-warning pull-right download_sequences">
+					<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
+					<span class="text">Run analysis</span>
+				</a>
+
 				@if (! empty($clone_list))
 					@if ($total_filtered_clones > config('ireceptor.clones_download_limit'))
 						<a href="/clones-download" class="btn btn-primary pull-right download_clones" disabled="disabled" role="button" data-container="body" data-toggle="tooltip" data-placement="top" title="Downloads of more than {{ number_format(config('ireceptor.clones_download_limit')) }} clones will be possible in the near future." data-trigger="hover" tabindex="0">
@@ -334,11 +339,11 @@
 					</table>
 
 					@if(config('services.agave.enabled'))
-						<h3>
+						<h3 id="analysis">
 							<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
 							Launch an Analysis Job
 						</h3>
-                        
+
                         <div class="row">
                         	<div class="col-md-6">
 

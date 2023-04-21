@@ -210,6 +210,11 @@ class RestServiceSeeder extends Seeder
                 'name' => 'Mitmynid',
                 'country' => 'Portugal',
             ],
+            [
+                'url' => 'https://hpap.ireceptor.org/airr/v1/',
+                'name' => 'HPAP',
+                'country' => 'Canada',
+            ],
         ];
 
         // if grouping is disabled, remove group code
