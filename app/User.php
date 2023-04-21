@@ -178,7 +178,7 @@ class User extends Authenticatable
      * Update the token state for the user.
      *
      * @param  object  $tapis_token_info
-     * @return string  Tapis 3 JWT token string
+     * @return string Tapis 3 JWT token string
      *
      * The Tapis token info is of the form:
      * {"access_token":"JWT TOKEN INFO DELETED","expires_at":"2023-03-25T21:13:31.081319+00:00",

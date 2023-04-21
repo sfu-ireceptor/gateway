@@ -127,6 +127,7 @@ class Tapis
         if (isset($t->result) && isset($t->result->access_token)) {
             //Log::debug('Tapis::getTokenForUser - Token info for user ' . $username . ' = ' . json_encode($t->result->access_token));
             $token_info = $t->result->access_token;
+
             return $token_info;
         } else {
             Log::debug('Tapis::getTokenForUser - Could not get token for ' . $username);
@@ -147,7 +148,10 @@ class Tapis
 
     public static function getAnalysisToken()
     {
-        if (self::$analysisTokenData == null) self::renewToken();
+        if (self::$analysisTokenData == null) {
+            self::renewToken();
+        }
+
         return self::$analysisTokenData->access_token;
     }
 
@@ -175,6 +179,7 @@ class Tapis
             Carbon::parse(self::$analysisTokenData->expires_at)->gt($expiry_threshold)) {
             Log::debug('Tapis::renewToken: token expiration = ' . self::$analysisTokenData->expires_at);
             Log::debug('Tapis::renewToken: No refresh required');
+
             return $self::$analysisTokenData;
         }
 
