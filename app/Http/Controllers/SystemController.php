@@ -33,8 +33,6 @@ class SystemController extends Controller
 
         $username = $request->get('username');
 
-        $token = auth()->user()->password;
-
         // create systems
         $tapis = new Tapis;
 
