@@ -143,17 +143,8 @@ class LaunchJob implements ShouldQueue
             // Get a Tapis object to work with.
             $tapis = new Tapis;
 
-            // Get the user token
-            $user = User::where('username', $gw_username)->first();
-            //$user = Auth::user();
-            if ($user == null) {
-                throw new \Exception('User ' . $gw_username . ' could not be found in local database.');
-            }
-            Log::debug('###### LaunchJob::handle - jobId = ' . $this->jobId . ', localJobId = ' . $this->localJobId);
-            $token = $user->getToken();
-
             // Create systems for this user if they don't exist.
-            System::createDefaultSystemsForUser($gw_username, $gw_userid, $token);
+            System::createDefaultSystemsForUser($gw_username, $gw_userid);
 
             // Get the current system for the current user.
             $executionSystem = System::getCurrentSystem($gw_userid);
@@ -187,7 +178,6 @@ class LaunchJob implements ShouldQueue
 
             // Based on the above, create the Tapis App.
             $appConfig = $tapis->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
-            Log::debug('LaunchJob::handle - app token: ' . $token);
             // Try to get the App if it already exists.
             $appResponse = $tapis->getApp($appName);
             Log::debug('LaunchJob::handle - App info = ' . json_encode($appResponse));

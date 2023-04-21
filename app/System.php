@@ -36,7 +36,7 @@ class System extends Model
         return $system;
     }
 
-    public static function createDefaultSystemsForUser($gw_username, $gw_userid, $token)
+    public static function createDefaultSystemsForUser($gw_username, $gw_userid)
     {
         $tapis = new Tapis;
 
