@@ -173,6 +173,11 @@
 					</div>
 				@endif	
 
+				<a href="#analysis" class="btn btn-warning pull-right download_sequences">
+					<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
+					<span class="text">Run analysis</span>
+				</a>
+
 				@if (empty($cell_list))
 					<!-- No results -->
 					<div class="no_results">
@@ -322,7 +327,7 @@
 						</tbody>
 					</table>
                     @if(config('services.agave.enabled'))
-						<h3>
+						<h3 id="analysis">
 							<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
 							Launch an Analysis Job
 						</h3>
