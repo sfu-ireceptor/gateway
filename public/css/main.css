@@ -1288,7 +1288,7 @@ table.sample_list {
 	margin-left: 1px;
 }
 
-a.download_sequences {
+a.download_sequences, a.download_clones, a.download_cells {
 	margin-top: 5px;
 	margin-right: 2px;
 }

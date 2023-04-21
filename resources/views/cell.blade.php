@@ -173,11 +173,6 @@
 					</div>
 				@endif	
 
-				<a href="#analysis" class="btn btn-warning pull-right download_sequences">
-					<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
-					<span class="text">Run analysis</span>
-				</a>
-
 				@if (empty($cell_list))
 					<!-- No results -->
 					<div class="no_results">
@@ -229,6 +224,11 @@
 									
 					</div>
 				@endif 
+				
+				<a href="#analysis" class="btn btn-warning pull-right download_sequences">
+					<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
+					<span class="text">Run analysis</span>
+				</a>
 				
 				@if (! empty($cell_list))
 					@if ($total_filtered_cells > config('ireceptor.cells_download_limit'))
