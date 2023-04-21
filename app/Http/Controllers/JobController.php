@@ -368,11 +368,6 @@ class JobController extends Controller
         // Create an Tapis object to work with. This is constant across all jobs.
         $tapis = new Tapis;
 
-        // Refresh the Tapis token for use.
-        Log::debug('JobController::getView: renewing token for ' . auth()->user()->username);
-        $user = User::where('username', auth()->user()->username)->first();
-        $token = $user->getToken();
-
         // Build the job summary HTML. This is rendered by the blade.
         $s = '<p><strong>App Parameters</strong></p>';
         $s .= '<p>';
@@ -764,26 +759,20 @@ class JobController extends Controller
         $job = Job::where('id', '=', $id)->first();
         $response = null;
         if ($job != null && $job->getJobID() != '') {
+            // Get the job info.
             $job_id = $job->getJobID();
-            // Get the user, the user's token, and job info
             $job_user = User::where('id', $job->user_id)->first();
-            $token = $job_user->getToken();
-            if ($token != null) {
-                $response = $tapis->getJobHistory($job_id);
-            }
-            // If the token was not valid or if there was an error, try
-            // as an admin user to get the same info.
-            // getJob returns a JSON string, isTapisError expects an object.
-            if ($token == null || $tapis->isTapisError(json_decode($response))) {
+            $response = $tapis->getJobHistory($job_id);
+            // If there was an error, tryas an admin user to get the same info.
+            // TODO: is this true - check and fix: getJob returns a JSON string,
+            // isTapisError expects an object.
+            if ($tapis->isTapisError(json_decode($response))) {
                 Log::debug('JobContorller::getJobHistory - got an error');
                 $this_user = User::where('username', auth()->user()->username)->first();
                 if ($this_user->isAdmin()) {
-                    $token = $tapis->getAdminToken();
-                    if ($token != null) {
-                        $response = $tapis->getJob($job_id);
-                    }
+                    $response = $tapis->getJob($job_id);
                     // If we can get the info, return it
-                    if ($token == null || $tapis->isTapisError(json_decode($response))) {
+                    if ($tapis->isTapisError(json_decode($response))) {
                         $response = null;
                     }
                 }
@@ -801,27 +790,20 @@ class JobController extends Controller
         $job = Job::where('id', '=', $id)->first();
         $response = null;
         if ($job != null && $job->getJobID() != '') {
+            // Get the job info
             $job_id = $job->getJobID();
-            // Get the user, the user's token, and job info
             $job_user = User::where('id', $job->user_id)->first();
-            $token = $job_user->getToken();
-            if ($token != null) {
-                $response = $tapis->getJob($job_id);
-            }
-            // If the token was not valid or if there was an error, try
-            // as an admin user to get the same info.
-            // getJob returns a JSON string, isTapisError expects an object.
-            if ($token == null || $tapis->isTapisError(json_decode($response))) {
+            $response = $tapis->getJob($job_id);
+            // If there was an error, try as an admin user to get the same info.
+            // TODO: is this true - check and fix: getJob returns a JSON string,
+            // isTapisError expects an object.
+            if ($tapis->isTapisError(json_decode($response))) {
                 Log::debug('JobContorller::getJobJSON - got an error');
                 $this_user = User::where('username', auth()->user()->username)->first();
                 if ($this_user->isAdmin()) {
-                    $token = $tapis->getAdminToken();
-                    // If we can get the info, return it
-                    if ($token != null) {
-                        $response = $tapis->getJob($job_id);
-                    }
-                    // If we can't get the token or there is an error, then return null.
-                    if ($token == null || $tapis->isTapisError(json_decode($response))) {
+                    $response = $tapis->getJob($job_id);
+                    // If there is an error, then return null.
+                    if ($tapis->isTapisError(json_decode($response))) {
                         $response = null;
                     }
                 }
@@ -842,8 +824,6 @@ class JobController extends Controller
     {
         // Get user and job info
         $userId = auth()->user()->id;
-        $username = auth()->user()->username;
-        $user = User::where('username', $username)->first();
         $job = Job::get($id, $userId);
 
         // If we found one, clean up
@@ -851,8 +831,6 @@ class JobController extends Controller
             // Clean up the running Tapis job if it exists and is not finished.
             if (isset($job['agave_id']) and isset($job['agave_status']) and $job['agave_status'] != 'FINISHED' and $job['agave_status'] != 'INTERNAL_ERROR') {
                 Log::debug('Deleting Tapis job ' . $job->getJobID());
-                $user = User::where('username', auth()->user()->username)->first();
-                $token = $user->getToken();
                 // Kill the job and update the status.
                 $tapis = new Tapis;
                 $response = $tapis->killJob($job->getJobID());
@@ -867,8 +845,6 @@ class JobController extends Controller
     {
         // Get user and job info
         $userId = auth()->user()->id;
-        $username = auth()->user()->username;
-        $user = User::where('username', $username)->first();
         $job = Job::get($id, $userId);
 
         Log::debug($job);
@@ -876,8 +852,6 @@ class JobController extends Controller
             // Clean up the running Tapis it exists and the job if not finished.
             if (isset($job['agave_id']) and isset($job['agave_status']) and $job['agave_status'] != 'FINISHED' and $job['agave_status'] != 'STOPPED' and $job['agave_status'] != 'INTERNAL_ERROR') {
                 Log::debug('Deleting Tapis job ' . $job->getJobID());
-                $user = User::where('username', auth()->user()->username)->first();
-                $token = $user->getToken();
                 // Kill the job and update the status.
                 $tapis = new Tapis;
                 $response = $tapis->killJob($job->getJobID());
