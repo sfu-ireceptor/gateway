@@ -194,7 +194,7 @@ class User extends Authenticatable
 
         // Refresh token is no longer supported by Tapis. We keep it in the DB
         // for now, but this should be removed. TODO
-        $this->refresh_token = $null;
+        $this->refresh_token = null;
 
         // token expiration date
         $tokenExpirationDate = new Carbon();
