@@ -10,10 +10,10 @@
         "doctrine/dbal": "^3.6",
         "flynsarmy/csv-seeder": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
-        "jenssegers/mongodb": "^3.6",
-        "laravel/framework": "^9.19",
+        "jenssegers/mongodb": "dev-master",
+        "laravel/framework": "^10.0",
         "laravel/helpers": "^1.3",
-        "laravel/sanctum": "^3.0",
+        "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.7",
         "laravelcollective/html": "6.*",
         "pda/pheanstalk": "^4.0",
@@ -27,7 +27,7 @@
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^6.1",
         "phpunit/phpunit": "^9.5.10",
-        "spatie/laravel-ignition": "^1.0"
+        "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
         "psr-4": {
@@ -72,6 +72,6 @@
             "pestphp/pest-plugin": true
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true
 }
