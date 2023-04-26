@@ -27,7 +27,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'token_expiration_date' => 'datetime',
-    ];    
+    ];
 
     public function isAdmin()
     {

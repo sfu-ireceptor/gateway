@@ -18,7 +18,6 @@ class QueryLog extends Model
         'end_time' => 'datetime',
     ];
 
-
     public static function get_query_log_id()
     {
         $query_log_id = request()->get('query_log_id');
