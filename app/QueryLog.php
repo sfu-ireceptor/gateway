@@ -138,7 +138,7 @@ class QueryLog extends Model
     {
         $ql = self::find($query_log_id);
 
-        $now = Carbon::now();
+        $now = Carbon::now(); 
         $now_mongo = new \MongoDB\BSON\UTCDateTime($now->timestamp * 1000);
         $ql->end_time = $now_mongo;
 
