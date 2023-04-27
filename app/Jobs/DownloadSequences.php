@@ -125,25 +125,25 @@ class DownloadSequences implements ShouldQueue
         $this->download->save();
 
         // send notification email
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $user = $agave->getUserWithUsername($this->username, $token);
-        $email = $user->email;
+        $user = User::where('username', $this->username)->first();
+        if ($user != null && $user->email != '') {
+            $email = $user->email;
 
-        $date_str = $this->download->createdAtShort();
+            $date_str = $this->download->createdAtShort();
 
-        $t = [];
-        $t['page_url'] = config('app.url') . $this->download->page_url;
-        $t['file_url'] = config('app.url') . '/' . $this->download->file_url;
-        $t['download_page_url'] = config('app.url') . '/downloads';
-        $t['download_days_available'] = self::DAYS_AVAILABLE;
-        $t['date_str'] = $date_str;
+            $t = [];
+            $t['page_url'] = config('app.url') . $this->download->page_url;
+            $t['file_url'] = config('app.url') . '/' . $this->download->file_url;
+            $t['download_page_url'] = config('app.url') . '/downloads';
+            $t['download_days_available'] = self::DAYS_AVAILABLE;
+            $t['date_str'] = $date_str;
 
-        Mail::send(['text' => 'emails.download_successful'], $t, function ($message) use ($email, $date_str) {
-            Log::debug('test1');
-            Log::debug($email);
-            $message->to($email)->subject('[iReceptor] Your download from ' . $date_str . ' is ready');
-        });
+            Mail::send(['text' => 'emails.download_successful'], $t, function ($message) use ($email, $date_str) {
+                $message->to($email)->subject('[iReceptor] Your download from ' . $date_str . ' is ready');
+            });
+        } else {
+            Log::error('Error email not send. Could not find email for user ' . $this->username);
+        }
 
         if ($this->download->incomplete) {
             // email notification to iReceptor support
