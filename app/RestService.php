@@ -526,7 +526,7 @@ class RestService extends Model
 
         $has_mhc_filters = false;
         foreach ($filters as $filter_name => $filter_value) {
-            if(Str::startsWith($filter_name, 'genotype-mhc')) {
+            if (Str::startsWith($filter_name, 'genotype-mhc')) {
                 $has_mhc_filters = true;
                 break;
             }
@@ -536,7 +536,7 @@ class RestService extends Model
         $request_params_all = [];
         foreach ($rest_service_list as $rs) {
             // if 1.0 repo, and there are MHC filters, don't query that repo
-            if($rs->api_version == '1.0' && $has_mhc_filters) {
+            if ($rs->api_version == '1.0' && $has_mhc_filters) {
                 continue;
             }
 
