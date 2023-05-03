@@ -646,7 +646,7 @@ class Agave
 
     public function getUserWithEmail($email, $token)
     {
-        $user = null; 
+        $user = null;
 
         $user_list = $this->getUsers($token);
         foreach ($user_list as $u) {
