@@ -23,7 +23,7 @@ class Tapis
     public function __construct()
     {
         // Initialize the rest client interface.
-        $this->initGuzzleRESTClient(); 
+        $this->initGuzzleRESTClient();
 
         // Update the AppTemplates at start up.
         $this->updateAppTemplates();
