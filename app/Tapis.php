@@ -18,8 +18,7 @@ class Tapis
     private $coresPerNode;
     private $memoryMBPerNode;
     private $memoryMBPerCore;
-    private static $analysisTokenData;
-    private static $analysisUser;
+    public static $analysisTokenData = null;
 
     public function __construct()
     {
@@ -28,10 +27,6 @@ class Tapis
 
         // Update the AppTemplates at start up.
         $this->updateAppTemplates();
-
-        // Renew the token whenever we create an object. Probably overkill
-        // and inefficient, but safe.
-        //self::renewToken();
 
         // Maximum run time for a job in hours.
         $this->maxMinutes = config('services.tapis.system_execution.max_minutes');
@@ -148,14 +143,14 @@ class Tapis
 
     public static function getAnalysisToken()
     {
-        if (self::$analysisTokenData == null) {
-            self::renewToken();
-        }
+        //Log::debug('Tapis::getAnalysisToken: renewing');
+        self::renewToken();
 
+        //Log::debug('Tapis::getAnalysisToken: returning');
         return self::$analysisTokenData->access_token;
     }
 
-    /* Returns a token object as per that provide by Tapis 3, which looks like this:
+    /* Stores a token object as per that provide by Tapis 3, which looks like this:
     ** {"access_token":"JWT TOKEN INFO DELETED","expires_at":"2023-03-25T21:13:31.081319+00:00",
     **  "expires_in":14400,"jti":"38a395a2-7496-4349-89ef-afff5c5f69ad"}
     */
@@ -166,10 +161,12 @@ class Tapis
         $expiry_threshold_min = 30;
         $now = Carbon::now();
         $expiry_threshold = Carbon::now()->addMinutes($expiry_threshold_min);
-        Log::debug('Tapis::renewToken: now = ' . $now);
-        Log::debug('Tapis::renewToken: expiry threshold = ' . $expiry_threshold);
+        //Log::debug('Tapis::renewToken: now = ' . $now);
+        //Log::debug('Tapis::renewToken: expiry threshold = ' . $expiry_threshold);
         if (self::$analysisTokenData != null) {
-            Log::debug('Tapis::renewToken: token expiration = ' . self::$analysisTokenData->expires_at);
+            //Log::debug('Tapis::renewToken: token expiration = ' . self::$analysisTokenData->expires_at);
+        } else {
+            //Log::debug('Tapis::renewToken: token is null');
         }
 
         // If we are not close to expiry (within threshold), just return the
@@ -177,33 +174,37 @@ class Tapis
         if (self::$analysisTokenData != null &&
             self::$analysisTokenData->expires_at != null &&
             Carbon::parse(self::$analysisTokenData->expires_at)->gt($expiry_threshold)) {
-            Log::debug('Tapis::renewToken: token expiration = ' . self::$analysisTokenData->expires_at);
+            //Log::debug('Tapis::renewToken: token expiration = ' . self::$analysisTokenData->expires_at);
             Log::debug('Tapis::renewToken: No refresh required');
 
-            return $self::$analysisTokenData;
+            return;
         }
 
         // If we get here we need to renew the token as we are getting close to expiry
         // Get the analysis username and password.
-        self::$analysisUser = config('services.tapis.analysis_username');
+        $analysisUser = config('services.tapis.analysis_username');
         $password = config('services.tapis.analysis_password');
-        Log::debug('Tapis::renewToken - analysis user = ' . self::$analysisUser);
+        //Log::debug('Tapis::renewToken - analysis user = ' . $analysisUser);
 
-        $tokendata = self::getTokenForUser(self::$analysisUser, $password);
+        $tokendata = self::getTokenForUser($analysisUser, $password);
         if ($tokendata != null && isset($tokendata->access_token)) {
-            Log::debug('Tapis::renewToken: token data = ' . json_encode($tokendata));
+            //Log::debug('Tapis::renewToken: token data = ' . json_encode($tokendata));
             self::$analysisTokenData = $tokendata;
-            Log::debug('Tapis::renewToken - setting token');
-            Log::debug('Tapis::renewToken: token expiration = ' . self::$analysisTokenData->expires_at);
+            //Log::debug('Tapis::renewToken - setting token');
+            Log::debug('Tapis::renewToken: New token expiration = ' . self::$analysisTokenData->expires_at);
             if (Carbon::parse(self::$analysisTokenData->expires_at)->gt($expiry_threshold)) {
-                Log::debug('Tapis::renewToken: New token expires after threshold!!!');
+                //Log::debug('Tapis::renewToken: New token expires after threshold!!!');
             }
         } else {
-            Log::debug('Tapis::renewToken - Could not generate Analysis Token for ' . self::$analysisUser);
+            Log::debug('Tapis::renewToken - Could not generate Analysis Token for ' . $analysisUser);
             self::$analysisTokenData = null;
         }
 
-        return self::$analysisTokenData;
+        if (self::$analysisTokenData != null) {
+            //Log::debug('Tapis::renewToken: Final token expiration = ' . self::$analysisTokenData->expires_at);
+        } else {
+            //Log::debug('Tapis::renewToken: Final token is null');
+        }
     }
 
     public function updateAppTemplates()
@@ -213,7 +214,7 @@ class Tapis
         $app_base_dir = config('services.tapis.app_base_dir');
         $app_directories = config('services.tapis.app_directories');
         $app_json_file = config('services.tapis.app_json_file');
-        Log::debug('Tapis::updateAppTemplates: using directory ' . json_encode($app_directories));
+        //Log::debug('Tapis::updateAppTemplates: using directory ' . json_encode($app_directories));
         // Build a list of Tapis App templates.
         $this->appTemplates = [];
         foreach ($app_directories as $app_dir) {
@@ -339,7 +340,6 @@ class Tapis
     public function createSystem($config)
     {
         $url = '/v3/systems';
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
 
         return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token, $config);
@@ -348,7 +348,6 @@ class Tapis
     public function updateSystem($system, $config)
     {
         $url = '/v3/systems/' . $system;
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
 
         return $this->doPUTRequestWithJSON($this->tapis_client, $url, $token, [], $config);
@@ -357,7 +356,6 @@ class Tapis
     public function updateSystemCredentials($system, $user, $config)
     {
         $url = '/v3/systems/credential/' . $system . '/user/' . $user;
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
 
         return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token, $config);
@@ -366,7 +364,6 @@ class Tapis
     public function createApp($config)
     {
         $url = '/v3/apps';
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
 
         return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token, $config);
@@ -375,7 +372,6 @@ class Tapis
     public function updateApp($app, $config)
     {
         $version = '0.1';
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
         $url = '/v3/apps/' . $app . '/' . $version;
 
@@ -385,7 +381,6 @@ class Tapis
     public function createJob($config)
     {
         $url = '/v3/jobs/submit';
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
 
         return $this->doPOSTRequestWithJSON($this->tapis_client, $url, $token, $config);
@@ -394,7 +389,6 @@ class Tapis
     public function listApps()
     {
         $url = '/v3/apps';
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
 
         return $this->doGETRequest($this->tapis_client, $url, $token);
@@ -403,7 +397,6 @@ class Tapis
     public function getApp($app_id)
     {
         $url = '/v3/apps/' . $app_id;
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
 
         return $this->doGETRequest($this->tapis_client, $url, $token);
@@ -412,7 +405,6 @@ class Tapis
     public function listSystems()
     {
         $url = '/v3/systems';
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
 
         return $this->doGETRequest($this->tapis_client, $url, $token);
@@ -421,7 +413,6 @@ class Tapis
     public function getSystem($system_id)
     {
         $url = '/v3/systems/' . $system_id;
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
 
         return $this->doGETRequest($this->tapis_client, $url, $token);
@@ -430,7 +421,6 @@ class Tapis
     public function getJobHistory($job_id)
     {
         $url = '/v3/jobs/' . $job_id . '/history';
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
 
         return $this->doGETRequest($this->tapis_client, $url, $token, true);
@@ -439,7 +429,6 @@ class Tapis
     public function getJobStatus($job_id)
     {
         $url = '/v3/jobs/' . $job_id . '/status';
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
 
         return $this->doGETRequest($this->tapis_client, $url, $token, true);
@@ -448,7 +437,6 @@ class Tapis
     public function getJob($job_id)
     {
         $url = '/v3/jobs/' . $job_id;
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
 
         return $this->doGETRequest($this->tapis_client, $url, $token, true);
@@ -457,7 +445,6 @@ class Tapis
     public function getJobOutputFile($job_id, $file)
     {
         $url = '/v3/jobs/' . $job_id . '/output/' . $file;
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
 
         return $this->doGETRequest($this->tapis_client, $url, $token, true);
@@ -468,7 +455,6 @@ class Tapis
         // Set up the URL for to kill/cancel a Tapis job.
         $url = '/v3/jobs/' . $job_id . '/cancel';
         // Get the analysis token
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
         // Post the request and return the result.
         return $this->doPOSTRequest($this->tapis_client, $url, $token);
@@ -664,7 +650,6 @@ class Tapis
     public function getUsers()
     {
         $url = '/v3/oauth2/profiles';
-        //$token = self::$analysisTokenData->access_token;
         $token = self::getAnalysisToken();
         $response = $this->doGETRequest($url, $token);
 
@@ -812,7 +797,6 @@ class Tapis
             $data = ['headers' => $headers, 'form_params' => $variables];
         } else {
             $headers['Content-Type'] = 'application/json';
-            // dd($body);
             $data = ['headers' => $headers, 'body' => $body];
         }
 
