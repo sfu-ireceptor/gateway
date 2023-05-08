@@ -16,6 +16,9 @@ class User extends Authenticatable
     protected $table = 'user';
 
     // attributes that are mass assignable.
+    // TODO: Token per user is no longer used in Tapis 3 implementation. This should
+    // be removed from the database at some point. Leaving for now in case need to
+    // revisit this need.
     protected $fillable = [
         'name', 'email', 'password', 'username', 'admin', 'galaxy_url', 'galaxy_tool_id', 'stats_popup_count', 'token',
     ];
@@ -127,86 +130,5 @@ class User extends Authenticatable
                 $user->save();
             }
         }
-    }
-
-    /**
-     * Get the token for the user.
-     *
-     * @param void
-     * @return string Tapis 3 JWT token
-     */
-    public function getToken()
-    {
-        return $this->token;
-        /*
-        // Check to see if we are close to token expiry
-        // Expiry threshold is 30 minutes
-        $expiry_threshold_min = 30;
-        $now = Carbon::now();
-        $expiry_threshold = Carbon::now()->addMinutes($expiry_threshold_min);
-        Log::debug('User::getToken: user = ' . $this->username);
-        Log::debug('User::getToken: now = ' . $now);
-        Log::debug('User::getToken: expiry threshold = ' . $expiry_threshold);
-        Log::debug('User::getToken: token expiration = ' . $this->token_expiration_date);
-        // If we are not close to expiry (within threshold), just return the
-        // current token.
-        if ($this->token_expiration_date != null && $this->token_expiration_date->gt($expiry_threshold)) {
-            Log::debug('User::getToken: No refresh required');
-
-            return $this->token;
-        }
-
-        // If we are within an hour, then request a new token and stores
-        // it in the local token field.
-        Log::debug('User::getToken: Requesting a new token');
-        $tapis = new Tapis;
-        $tapis_token_info = $tapis->renewToken();
-        if ($tapis_token_info != null) {
-            Log::debug('User::getToken: tapis token info = ' . json_encode($tapis_token_info));
-            // update the token
-            $this->updateToken($tapis_token_info);
-
-            // Return the new token
-            return $this->token;
-        } else {
-            return null;
-        }
-         */
-    }
-
-    /**
-     * Update the token state for the user.
-     *
-     * @param  object  $tapis_token_info
-     * @return string Tapis 3 JWT token string
-     *
-     * The Tapis token info is of the form:
-     * {"access_token":"JWT TOKEN INFO DELETED","expires_at":"2023-03-25T21:13:31.081319+00:00",
-     *  "expires_in":14400,"jti":"38a395a2-7496-4349-89ef-afff5c5f69ad"}
-     *
-     * We want to save some of this state for the user.
-     */
-    public function updateToken($tapis_token_info)
-    {
-        // token
-        $token = $tapis_token_info->access_token;
-        $this->token = $token;
-
-        // Refresh token is no longer supported by Tapis. We keep it in the DB
-        // for now, but this should be removed. TODO
-        $this->refresh_token = null;
-
-        // token expiration date
-        $tokenExpirationDate = new Carbon();
-        $tokenExpirationDate->addSeconds($tapis_token_info->expires_in);
-        $this->token_expiration_date = $tokenExpirationDate;
-
-        // Save the state
-        $this->save();
-
-        Log::debug('User::updateToken(' . $this->username . ') - access_token = ' . $this->token);
-        Log::debug('User::updateToken(' . $this->username . ') - expiration_date = ' . $this->token_expiration_date);
-        // Return the user token
-        return $this->token;
     }
 }
