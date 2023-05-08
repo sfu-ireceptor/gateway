@@ -368,7 +368,7 @@
 							</tbody>
 						</table>
 					@endif
-					@if(config('services.agave.enabled'))
+					@if(config('services.tapis.enabled'))
 						<h3 id="analysis">
 							<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
 							Launch an Analysis Job
@@ -408,14 +408,14 @@
 
 											        @foreach ($app['parameter_list'] as $parameter)
 												  	    <div class="row"> <div class="col-md-6"> <div class="form-group">
-														    {{ Form::label($parameter['label'], $parameter['name']) }}
+														    {{ Form::label($parameter['name'], $parameter['label']) }}
 			                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$parameter['description']}}</p>" data-trigger="hover" tabindex="0">
 			                                                <span class="glyphicon glyphicon-question-sign">
 			                                                </span></span>
 									                        @if ( ! empty($parameter['choices']) )
-															    {{ Form::select($parameter['label'], $parameter['choices'], '', array('class' => 'form-control')) }}
+															    {{ Form::select($parameter['name'], $parameter['choices'], '', array('class' => 'form-control')) }}
 			                                                @else
-												                {{ Form::text($parameter['label'], $parameter['default'], array('class' => 'form-control')) }}
+												                {{ Form::text($parameter['name'], $parameter['default'], array('class' => 'form-control')) }}
 			                                                @endif
 													    </div> </div> </div>
 										            @endforeach

@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Agave;
 use App\Job;
 use App\LocalJob;
 use App\Query;
@@ -10,6 +9,7 @@ use App\Sequence;
 use App\SequenceCell;
 use App\SequenceClone;
 use App\System;
+use App\Tapis;
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class LaunchAgaveJob implements ShouldQueue
+class LaunchJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -60,8 +60,8 @@ class LaunchAgaveJob implements ShouldQueue
 
             // generate csv file
             $job->updateStatus('FEDERATING DATA');
-            Log::debug('LaunchAgaveJob::handle - $this->request_data = ' . json_encode($this->request_data));
-            Log::debug('LaunchAgaveJob::handle - $request_data[filters_json]' . $this->request_data['filters_json']);
+            Log::debug('LaunchJob::handle - $this->request_data = ' . json_encode($this->request_data));
+            Log::debug('LaunchJob::handle - $request_data[filters_json]' . $this->request_data['filters_json']);
             $filters = json_decode($this->request_data['filters_json'], true);
 
             // Get the sample filters
@@ -102,7 +102,7 @@ class LaunchAgaveJob implements ShouldQueue
             } elseif (strpos($job_url, 'cells?' . $query_string)) {
                 $jobType = 'cell';
             }
-            Log::debug('LaunchAgaveJob::handle - Job type = ' . $jobType);
+            Log::debug('LaunchJob::handle - Job type = ' . $jobType);
 
             // Generate the ZIP file for the data that meets the query criteria.
             // Return object contains attributes that describe the ZIP archive that was
@@ -139,79 +139,96 @@ class LaunchAgaveJob implements ShouldQueue
             $job->input_folder = $archive_folder;
             $job->save();
 
-            // Get an Agave object to work with.
-            $agave = new Agave;
-
-            // Get the user token
-            $user = User::where('username', $gw_username)->first();
-            if ($user == null) {
-                throw new \Exception('User ' . $gw_username . ' could not be found in local database.');
-            }
-            Log::debug('###### LaunchAgaveJob::handle - jobId = ' . $this->jobId . ', localJobId = ' . $this->localJobId);
-            $token = $user->getToken();
+            // Get a Tapis object to work with.
+            $tapis = new Tapis;
 
             // Create systems for this user if they don't exist.
-            System::createDefaultSystemsForUser($gw_username, $gw_userid, $token);
+            System::createDefaultSystemsForUser($gw_username, $gw_userid);
 
             // Get the current system for the current user.
             $executionSystem = System::getCurrentSystem($gw_userid);
             // Get the username on the execution system
             $username = $executionSystem->username;
-            // Get the Agave name for the execution system
+            // Get the Tapis name for the execution system
             $appExecutionSystem = $executionSystem->name;
 
-            // Call back URL to use for agave notifications
-            $notificationUrl = config('services.agave.gw_notification_url');
+            // Call back URL to use for tapis notifications
+            $notificationUrl = config('services.tapis.gw_notification_url');
 
-            // Agave name of the system where the data is staged. Essentially the
-            // Agave system name for the Gateway for this user. This is where the
+            // Tapis name of the system where the data is staged. Essentially the
+            // Tapis system name for the Gateway for this user. This is where the
             // data is stored.
-            $systemStaging = config('services.agave.system_staging.name_prefix') . str_replace('_', '-', $gw_username);
-            // Agave name for the deployment system. This is where the Apps are stored.
-            $appDeploymentSystem = config('services.agave.system_deploy.name_prefix') . str_replace('_', '-', $gw_username) . '-' . $username;
+            $systemStaging = config('services.tapis.system_staging.name_prefix') . str_replace('_', '-', $gw_username);
+            // Tapis name for the deployment system. This is where the Apps are stored.
+            $appDeploymentSystem = config('services.tapis.system_deploy.name_prefix') . str_replace('_', '-', $gw_username) . '-tapis3-' . $username;
 
             // Get the App config for the app in question. The AppID is in the request.
             $appId = $this->request_data['app_id'];
-            Log::info('LaunchAgaveJob::handle - app_id = ' . $appId);
-            $appTemplateInfo = $agave->getAppTemplate($appId);
+            Log::info('LaunchJob::handle - app_id = ' . $appId);
+            $appTemplateInfo = $tapis->getAppTemplate($appId);
             $appTemplateConfig = $appTemplateInfo['config'];
 
             // Set up the App Tapis name, the human name, and the deployment path.
             // The path for the app is the same as the appID
-            $appName = $appId . '-' . $executionSystem->name;
+            //$appName = $appId . '-' . $executionSystem->name;
+            $appName = $appId;
             $appDeploymentPath = $appId;
-            $appHumanName = $appTemplateConfig['label'];
+            $appHumanName = $appTemplateConfig['description'];
 
             // Based on the above, create the Tapis App.
-            $appConfig = $agave->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
-            Log::debug('LaunchAgaveJob::handle - app token: ' . $token);
-            $response = $agave->createApp($token, $appConfig);
-            $agaveAppId = $response->result->id;
-            Log::debug('LaunchAgaveJob::handle - app created: ' . $appId);
+            $appConfig = $tapis->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
+            // Try to get the App if it already exists.
+            $appResponse = $tapis->getApp($appName);
+            Log::debug('LaunchJob::handle - App info = ' . json_encode($appResponse));
+            if ($appResponse->status == 'success') {
+                // If it exists, update it in case the config has changed, throw
+                // an error of the update fails.
+                Log::debug('LaunchJob::handle - Updating app: ' . $appId);
+                $tapisAppId = $appResponse->result->uuid;
+                $response = $tapis->updateApp($appName, $appConfig);
+                $tapis->raiseExceptionIfTapisError($response);
+                Log::debug('LaunchJob::handle - app updated: ' . $appId);
+            } else {
+                // If it doesn't exist, create it and throw an error if the creation
+                // fails.
+                Log::debug('LaunchJob::handle - Creating app: ' . $appId);
+                $response = $tapis->createApp($appConfig);
+                $tapis->raiseExceptionIfTapisError($response);
+                $tapisAppId = $response->result->uuid;
+                Log::debug('LaunchJob::handle - app created: ' . $appId);
+            }
 
             // The Gateway sets the download_file input as it controls the data
             // that is processed by the application.
-            $inputs['download_file'] = 'agave://' . $systemStaging . '/' . $zip_info['zip_name'];
-            foreach ($inputs as $key => $value) {
-                Log::debug('Job input ' . $key . ' = ' . $value);
-            }
+            $inputs = [
+                'name' => 'gateway_download_zip',
+                'sourceUrl' => 'tapis://' . $systemStaging . '/' . $zip_info['zip_name'],
+            ];
 
             // Process the App parameters
             $params = [];
-            foreach ($appConfig['parameters'] as $parameter_info) {
-                Log::debug('   Processing parameter ' . $parameter_info['id']);
+            foreach ($appConfig['jobAttributes']['parameterSet']['appArgs'] as $parameter_info) {
+                Log::debug('   Processing parameter ' . $parameter_info['name']);
                 // If it visible, we want to pass on the input to the job.
-                if ($parameter_info['value']['visible']) {
-                    $params[$parameter_info['id']] = $this->request_data[$parameter_info['id']];
-                    Log::debug('   Parameter value = ' . $this->request_data[$parameter_info['id']]);
+                if ($parameter_info['inputMode'] != 'FIXED') {
+                    $param = new \stdClass();
+                    $param->name = $parameter_info['name'];
+                    $param->arg = $this->request_data[$parameter_info['name']];
+                    $params[] = $param;
+                    Log::debug('   Parameter value = ' . $this->request_data[$parameter_info['name']]);
                 }
             }
 
+            $env_variables = [
+                ['key'=>'PYTHONNOUSERSITE', 'value' => '1'],
+                ['key'=>'download_file', 'value'=>$zip_info['zip_name']],
+            ];
+
             // Process the job parameters
             $job_params = [];
-            // Get the possible list of parameters that can be set. The Agave class
+            // Get the possible list of parameters that can be set. The Tapis class
             // manages which job parameters can be set.
-            $job_parameter_list = $agave->getJobParameters();
+            $job_parameter_list = $tapis->getJobParameters();
             foreach ($job_parameter_list as $job_parameter_info) {
                 // If the parameter is provided, keep track of it so we can give it to the job.
                 Log::debug('   Processing job parameter ' . $job_parameter_info['label']);
@@ -221,17 +238,18 @@ class LaunchAgaveJob implements ShouldQueue
                 }
             }
 
-            // submit AGAVE job
-            $job->updateStatus('SENDING JOB TO AGAVE');
-            $job_config = $agave->getJobConfig('irec-job-' . $this->jobId, $agaveAppId, $systemStaging, $notificationUrl, $archive_folder, $params, $inputs, $job_params);
-            $response = $agave->createJob($token, $job_config);
-            $job->agave_id = $response->result->id;
-            $job->updateStatus('JOB ACCEPTED BY AGAVE. PENDING.');
+            // submit Tapis job
+            $job->updateStatus('SENDING JOB FOR ANALYSIS');
+            $job_config = $tapis->getJobConfig('ireceptor-' . $this->jobId, $appName, $zip_info['zip_name'], $systemStaging, $notificationUrl, $archive_folder, $params, $inputs, $job_params);
+            $response = $tapis->createJob($job_config);
+            Log::debug('LaunchJob::handle submit response = ' . json_encode($response));
+            $job->agave_id = $response->result->uuid;
+            $job->updateStatus('JOB ACCEPTED FOR ANALYSIS. PENDING.');
 
-            // Now that we are done and the Agave job is running, this LocalJob is done.
+            // Now that we are done and the Tapis job is running, this LocalJob is done.
             $localJob->setFinished();
         } catch (Exception $e) {
-            Log::error('LaunchAgaveJob::handle - ' . $e->getMessage());
+            Log::error('LaunchJob::handle - ' . $e->getMessage());
             Log::error($e);
             $job = Job::find($this->jobId);
             $job->updateStatus('INTERNAL_ERROR');
@@ -251,7 +269,7 @@ class LaunchAgaveJob implements ShouldQueue
     public function failed(Throwable $exception)
     {
         // Print an error message
-        Log::error('LaunchAgaveJob::failed - ' . $exception->getMessage());
+        Log::error('LaunchJob::failed - ' . $exception->getMessage());
         Log::error($exception);
 
         // Mark the job as failed.

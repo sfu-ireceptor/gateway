@@ -432,6 +432,7 @@ class Sample
                     // AIRR Mapping file. This is required for fields like 'genotype' which need
                     // to be processed as JSON objects.
                     if (str_contains($sample_field['ir_id'], '-')) {
+                        Log::debug('Sample::convert_sample_list - calling airr_flatten for ' . $sample_field['ir_id']);
                         $new_sample->{$field_name} = Sample::airr_flatten($sample, $sample_field['ir_adc_api_query']);
                     } else {
                         $field_value = data_get($sample, $sample_field['ir_adc_api_response']);

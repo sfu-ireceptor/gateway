@@ -123,7 +123,7 @@ Route::middleware('auth')->group(function () {
         Route::get('job-list-grouped-by-month', 'JobController@getJobListGroupedByMonth');
         Route::post('launch-app', 'JobController@postLaunchApp');
         Route::get('view/{id}', 'JobController@getView');
-        Route::get('agave-history/{id}', 'JobController@getAgaveHistory');
+        Route::get('job-history/{id}', 'JobController@getJobHistory');
         Route::get('status/{id}', 'JobController@getStatus');
         Route::get('delete/{id}', 'JobController@getDelete');
         Route::get('cancel/{id}', 'JobController@getCancel');
@@ -147,7 +147,6 @@ Route::middleware('auth')->group(function () {
         Route::post('add-user', 'AdminController@postAddUser');
         Route::get('edit-user/{id}', 'AdminController@getEditUser');
         Route::post('edit-user', 'AdminController@postEditUser');
-        Route::get('delete-user/{username}', 'AdminController@getDeleteUser');
         Route::get('samples/update-cache', 'AdminController@getUpdateSampleCache');
         Route::get('samples/update-sequence_count/{rest_service_id}', 'AdminController@getUpdateSequenceCount');
         Route::get('samples/update-clone_count/{rest_service_id}', 'AdminController@getUpdateCloneCount');

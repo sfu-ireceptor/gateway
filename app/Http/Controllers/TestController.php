@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Adrianorosa\GeoLocation\GeoLocation;
-use App\Agave;
 use App\Download;
 use App\FieldName;
 use App\Job;
 use App\RestService;
 use App\RestServiceGroup;
 use App\Sample;
+use App\Tapis;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -28,6 +28,122 @@ class TestController extends Controller
 {
     public function getIndex(Request $request)
     {
+        // run SECOND
+        // User::parseTapisUsersLDIF('../test3/tenantirec_20230224.ldif');
+        // echo "done";
+        // die();
+
+        // Generate password
+        // echo Hash::make('foobar');die();
+
+        $token = Tapis::getAnalysisToken();
+        if ($token != null) {
+            echo 'Token generated successfully';
+        } else {
+            echo 'ERROR: Token not generated successfully';
+        }
+        echo json_encode(Tapis::$analysisTokenData);
+        Tapis::renewToken();
+        Tapis::renewToken();
+        Tapis::renewToken();
+        echo 'getAnalyisToken()';
+        $token = Tapis::getAnalysisToken();
+        Tapis::renewToken();
+        Tapis::renewToken();
+        echo 'new Tapis';
+        $tapis = new Tapis;
+        Tapis::renewToken();
+        Tapis::renewToken();
+        exit;
+
+        // Test Tapis
+        $tapis = new Tapis;
+
+        //$systems = $tapis->listSystems();
+        //echo "<p>";
+        //echo json_encode($systems);
+
+        $apps = $tapis->listApps();
+        echo '<p>';
+        echo json_encode($apps);
+
+        $appId = 'histogram';
+        $appExecutionSystem = 'staging-analysis-dev-exec-cedar.computecanada.ca-bcorrie';
+        $appName = 'histogram-staging-analysis-dev-exec-cedar.computecanada.ca-bcorrie';
+        $appConfig = $tapis->getAppConfig($appId, $appName, $appExecutionSystem, null, null);
+        echo '<p>';
+        echo json_encode($appConfig);
+
+        $response = $tapis->updateApp($appName, $appConfig);
+        echo '<p>';
+        echo json_encode($response);
+
+        $appResponse = $tapis->getApp($appName);
+        echo '<p>';
+        echo json_encode($appResponse);
+        exit;
+
+        /*
+        $defaultExecutionSystemHost = config('services.tapis.default_execution_system.host');
+        $defaultExecutionSystemPort = config('services.tapis.default_execution_system.port');
+        $defaultExecutionSystemUsername = config('services.tapis.default_execution_system.auth.username');
+        $gw_username = 'bcorrie';
+
+        $systemExecutionName = config('services.tapis.system_execution.name_prefix') . '-' . $defaultExecutionSystemHost . '-' . str_replace('_', '-', $gw_username);
+        $config = $tapis->getExecutionSystemConfig($systemExecutionName, $defaultExecutionSystemHost, $defaultExecutionSystemPort, $defaultExecutionSystemUsername);
+        echo '<p>';
+        echo json_encode($config);
+        // Create the system with the above config
+        $response = $tapis->createSystem($config);
+        echo '<p>';
+        echo '####';
+        echo json_encode($response);
+         */
+
+        // create deployment system (where the app originally is)
+        /*
+        $gw_username = 'bcorrie';
+        $systemName = config('services.tapis.system_staging.name_prefix') . str_replace('_', '-', $gw_username);
+        $systemHost = config('services.tapis.system_staging.host');
+        $systemPort = config('services.tapis.system_staging.port');
+        $systemUsername = config('services.tapis.system_staging.auth.username');
+        $systemRootDir = config('services.tapis.system_staging.rootdir');
+         */
+        /*
+        $systemName = config('services.tapis.system_deploy.name_prefix') . str_replace('_', '-', $gw_username);
+        $systemHost = config('services.tapis.system_deploy.host');
+        $systemPort = config('services.tapis.system_deploy.port');
+        $systemUsername = config('services.tapis.system_deploy.auth.username');
+        $systemRootDir = config('services.tapis.system_deploy.rootdir');
+         */
+        /*
+        echo $systemName;
+        $config = $tapis->getStorageSystemConfig($systemName, $systemHost, $systemPort, $systemUsername, $systemRootDir);
+        echo '<p>';
+        echo json_encode($config);
+        $response = $tapis->createSystem($config);
+        echo '<p>';
+        echo json_encode($response);
+
+        $response = $tapis->updateSystem($systemName, $config);
+        echo '<p>';
+        echo json_encode($response);
+        exit;
+         */
+
+        /*
+
+        $defaultExecutionSystemSSHKeys= config('services.tapis.default_execution_system.auth.sshkeys');
+        echo "<p>";
+        echo $defaultExecutionSystemSSHKeys;
+        $response = $tapis->updateSystemCredentials($systemExecutionName, $defaultExecutionSystemUsername, $config);
+        echo "<p>";
+        echo json_encode($response);
+        */
+
+        exit;
+
+        // dd(getcwd());
         dd(Str::length(''));
         dd($request->getClientIp());
 
@@ -158,16 +274,6 @@ class TestController extends Controller
 
             return $error_message;
         }
-        exit;
-
-        $agave = new Agave;
-        $token = $agave->getAdminToken();
-        $agave_user = $agave->getUserWithEmail('', $token);
-
-        $new_password = str_random(24);
-        $t = $agave->updateUser($token, $agave_user->username, $agave_user->first_name, $agave_user->last_name, $agave_user->email, $new_password);
-
-        echo $new_password;
         exit;
 
         $rs = RestService::find(69);
@@ -850,10 +956,10 @@ class TestController extends Controller
 //         echo Hash::make('0bed3fd19bc087e03ca5e99f98f7e976d330fbf1b966e23de17b41534a942cb6');
 //         die();
 
-//         $agave = new Agave;
-//         $token = $agave->getAdminToken();
+//         $tapis = new Tapis;
+//         $token = $tapis->getAdminToken();
 
-//         $user = $agave->getUserWithEmail('jlj7@sfu.ca', $token);
+//         $user = $tapis->getUserWithEmail('jlj7@sfu.ca');
 //         if ($user == null) {
 //             echo 'ok';
 //             die();
@@ -920,10 +1026,10 @@ class TestController extends Controller
 //         // $job->updateStatus('PENDING');
 //         // $job->save();
 
-//         // echo json_decode(config('services.agave.system_deploy.auth'));
-//         // var_dump(json_decode(config('services.agave.system_deploy.auth'), true));
+//         // echo json_decode(config('services.tapis.system_deploy.auth'));
+//         // var_dump(json_decode(config('services.tapis.system_deploy.auth'), true));
 
-//         // $c = config('services.agave.system_deploy.auth');
+//         // $c = config('services.tapis.system_deploy.auth');
 //         // $c = rtrim($c, "'");
 //         // $c = ltrim($c, "'");
 //         // var_dump(json_decode($c, true));
@@ -990,34 +1096,34 @@ class TestController extends Controller
         echo 'hi there 40';
     }
 
-    public function createMissingAgaveUser()
+    public function createMissingTapisUser()
     {
-        $admin_username = config('services.agave.admin_username');
-        $admin_password = config('services.agave.admin_password');
+        $admin_username = config('services.tapis.admin_username');
+        $admin_password = config('services.tapis.admin_password');
 
-        $agave = new Agave;
-        $t = $agave->getTokenForUser($admin_username, $admin_password);
+        $tapis = new Tapis;
+        $t = Tapis::getTokenForUser($admin_username, $admin_password);
         $token = $t->access_token;
 
-        $l = $agave->getUsers($token);
+        $l = $tapis->getUsers();
 
-        foreach ($l as $agave_user) {
-            $username = $agave_user->username;
+        foreach ($l as $tapis_user) {
+            $username = $tapis_user->username;
             $u = User::where('username', $username)->first();
             if ($u == null) {
-                Log::info('Agave user ' . $username . ' does not exist in local database');
+                Log::info('Tapis user ' . $username . ' does not exist in local database');
 
                 $u = new User();
                 $u->username = $username;
-                $u->email = $agave_user->email;
-                $u->first_name = $agave_user->first_name;
-                $u->last_name = $agave_user->last_name;
+                $u->email = $tapis_user->email;
+                $u->first_name = $tapis_user->first_name;
+                $u->last_name = $tapis_user->last_name;
                 $u->password = '';
 
                 $u->save();
             }
 
-            $create_time = $agave_user->create_time;
+            $create_time = $tapis_user->create_time;
             $datetime = \DateTime::createFromFormat('YmdHis\Z', $create_time);
             $created_at = $datetime->format('Y-m-d H:i:s');
             $u->created_at = $created_at;

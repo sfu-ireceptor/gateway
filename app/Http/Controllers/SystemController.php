@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Agave;
 use App\System;
+use App\Tapis;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -33,23 +33,19 @@ class SystemController extends Controller
 
         $username = $request->get('username');
 
-        $token = auth()->user()->password;
-
         // create systems
-        $agave = new Agave;
+        $tapis = new Tapis;
 
         // create execution system
-        $sshKeys = $agave->generateSSHKeys();
+        $sshKeys = $tapis->generateSSHKeys();
 
-        $systemExecutionName = config('services.agave.system_execution.name_prefix') . $username . '-' . $systemHostStr;
+        $systemExecutionName = config('services.tapis.system_execution.name_prefix') . '-' . $systemHostStr . '-' . $username;
         $systemExecutionHost = $systemHost;
         $systemExecutionUsername = $username;
-        $systemExecutionPublicKey = $sshKeys['public'];
-        $systemExecutionPrivateKey = $sshKeys['private'];
         $systemExecutionPort = 22;
 
-        $config = $agave->getExcutionSystemConfig($systemExecutionName, $systemExecutionHost, $systemExecutionPort, $systemExecutionUsername, $systemExecutionPrivateKey, $systemExecutionPublicKey);
-        $response = $agave->createSystem($token, $config);
+        $config = $tapis->getExecutionSystemConfig($systemExecutionName, $systemExecutionHost, $systemExecutionPort, $systemExecutionUsername);
+        $response = $tapis->createSystem($config);
         Log::info('execution system created: ' . $systemExecutionName);
 
         // add exec system to DB
@@ -64,29 +60,25 @@ class SystemController extends Controller
         System::select($systemExecution->id);
 
         // create deployment system (where the app originally is)
-        $systemDeploymentName = config('services.agave.system_deploy.name_prefix') . $username;
-        $systemDeploymentHost = config('services.agave.system_deploy.host');
-        $systemDeploymentPort = config('services.agave.system_deploy.port');
-        $systemDeploymentUsername = config('services.agave.system_deploy.auth.username');
-        $systemDeploymentPrivateKey = config('services.agave.system_deploy.auth.private_key');
-        $systemDeploymentPublicKey = config('services.agave.system_deploy.auth.public_key');
-        $systemDeploymentRootDir = config('services.agave.system_deploy.rootdir');
+        $systemDeploymentName = config('services.tapis.system_deploy.name_prefix') . $username;
+        $systemDeploymentHost = config('services.tapis.system_deploy.host');
+        $systemDeploymentPort = config('services.tapis.system_deploy.port');
+        $systemDeploymentUsername = config('services.tapis.system_deploy.auth.username');
+        $systemDeploymentRootDir = config('services.tapis.system_deploy.rootdir');
 
-        $config = $agave->getStorageSystemConfig($systemDeploymentName, $systemDeploymentHost, $systemDeploymentPort, $systemDeploymentUsername, $systemDeploymentPrivateKey, $systemDeploymentPublicKey, $systemDeploymentRootDir);
-        $response = $agave->createSystem($token, $config);
+        $config = $tapis->getStorageSystemConfig($systemDeploymentName, $systemDeploymentHost, $systemDeploymentPort, $systemDeploymentUsername, $systemDeploymentRootDir);
+        $response = $tapis->createSystem($config);
         Log::info('deployment system created: ' . $systemDeploymentName);
 
         // create staging system (on this machine, where the data files will copied from)
-        $systemStagingName = config('services.agave.system_staging.name_prefix') . $username;
-        $systemStagingHost = config('services.agave.system_staging.host');
-        $systemStagingPort = config('services.agave.system_staging.port');
-        $systemStagingUsername = config('services.agave.system_staging.auth.username');
-        $systemStagingPrivateKey = config('services.agave.system_staging.auth.private_key');
-        $systemStagingPublicKey = config('services.agave.system_staging.auth.public_key');
-        $systemStagingRootDir = config('services.agave.system_staging.rootdir');
+        $systemStagingName = config('services.tapis.system_staging.name_prefix') . $username;
+        $systemStagingHost = config('services.tapis.system_staging.host');
+        $systemStagingPort = config('services.tapis.system_staging.port');
+        $systemStagingUsername = config('services.tapis.system_staging.auth.username');
+        $systemStagingRootDir = config('services.tapis.system_staging.rootdir');
 
-        $config = $agave->getStorageSystemConfig($systemStagingName, $systemStagingHost, $systemStagingPort, $systemStagingUsername, $systemStagingPrivateKey, $systemStagingPublicKey, $systemStagingRootDir);
-        $response = $agave->createSystem($token, $config);
+        $config = $tapis->getStorageSystemConfig($systemStagingName, $systemStagingHost, $systemStagingPort, $systemStagingUsername, $systemStagingRootDir);
+        $response = $tapis->createSystem($config);
         Log::info('staging system created: ' . $systemStagingName);
 
         return redirect('systems')->with('notification', 'The system was successfully created and selected. Add the SSH key in ~/.ssh/authorized_keys');

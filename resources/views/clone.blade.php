@@ -340,6 +340,7 @@
 
 					@if(config('services.agave.enabled'))
 						<h3 id="analysis">
+
 							<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
 							Launch an Analysis Job
 						</h3>

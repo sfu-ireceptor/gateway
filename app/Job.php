@@ -4,7 +4,6 @@ namespace App;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 
 if (! function_exists('curl_file_create')) {
     function curl_file_create($filename, $mimetype = '', $postname = '')
@@ -63,122 +62,6 @@ class Job extends Model
         return $j;
     }
 
-    public static function createToken()
-    {
-        $tenant_url = Config::get('services.agave.tenant_url');
-        $username = Config::get('services.agave.username');
-        $password = Config::get('services.agave.password');
-        $api_key = Config::get('services.agave.api_key');
-        $api_secret = Config::get('services.agave.api_token');
-
-        $c = curl_init();
-
-        // url
-        curl_setopt($c, CURLOPT_URL, $tenant_url);
-        curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
-
-        // headers
-        $h = [];
-        $h[0] = 'Content-Type:application/x-www-form-urlencoded';
-        curl_setopt($c, CURLOPT_HTTPHEADER, $h);
-
-        // POST data
-        curl_setopt($c, CURLOPT_POST, true);
-        $post_data = 'grant_type=password&username=' . $username . '&password=' . $password . '&scope=PRODUCTION';
-        curl_setopt($c, CURLOPT_POSTFIELDS, $post_data);
-
-        // auth
-        curl_setopt($c, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($c, CURLOPT_USERPWD, $api_key . ':' . $api_secret);
-
-        // return output instead of displaying it
-        curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-
-        $json = curl_exec($c);
-        curl_close($c);
-
-        Log::info('createToken -> ' . $json);
-        $response = json_decode($json);
-
-        return $response->access_token;
-    }
-
-    public static function generateJobJSON($app_id, $gw_storage_staging, $inputFolder, $gw_storage_archiving)
-    {
-        $notification_url = Config::get('services.agave.gw_notification_url');
-
-        $str = <<<STR
-{
-    "name": "jerome_job1",
-    "appId": "$app_id",
-
-    "parameters":{
-        "variable":"junction_nt_length"
-    },
-
-    "inputs":{
-        "download_file":"agave://$gw_storage_staging/${inputFolder}/data.csv.zip"
-    },
-
-    "maxRunTime":"00:10:00",
-
-    "archive": true,
-    "archiveSystem": "$gw_storage_archiving",
-    "archivePath": "${inputFolder}",
-
-    "notifications":
-    [
-        {
-            "url": "$notification_url/agave/update-status/\${JOB_ID}/\${JOB_STATUS}",
-            "event": "*",
-            "persistent": true
-        }
-    ]
-}
-STR;
-        Log::info('json file -> ' . $str);
-
-        return $str;
-    }
-
-    public static function submitJob($token, $job_json)
-    {
-        $c = curl_init();
-
-        // url
-        curl_setopt($c, CURLOPT_URL, 'https://agave.iplantc.org/jobs/v2/?pretty=true');
-
-        // headers
-        $h = [];
-        $h[0] = 'Content-type: multipart/form-data';
-        $h[1] = 'Authorization: Bearer ' . $token;
-        curl_setopt($c, CURLOPT_HTTPHEADER, $h);
-
-        // POST
-        curl_setopt($c, CURLOPT_POST, true);
-
-        // put json in tmp file
-        $f = tempnam(sys_get_temp_dir(), 'agave_job_');
-        file_put_contents($f, $job_json);
-        $post = [
-            'fileToUpload'=>'@' . $f,
-        ];
-        $post_data['fileToUpload'] = curl_file_create($f);
-        curl_setopt($c, CURLOPT_POSTFIELDS, $post_data);
-
-        // return output instead of displaying it
-        curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-
-        $json = curl_exec($c);
-        curl_close($c);
-        unlink($f);
-
-        Log::info('submitJob -> ' . $json);
-        $response = json_decode($json);
-
-        return $response->result->id;
-    }
-
     public function updateStatus($str)
     {
         $status = 0;
@@ -194,10 +77,10 @@ STR;
             case 'FEDERATING DATA':
                 $progress = 5;
                 break;
-            case 'SENDING JOB TO AGAVE':
+            case 'SENDING JOB FOR ANALYSIS':
                 $progress = 10;
                 break;
-            case 'JOB ACCEPTED BY AGAVE. PENDING.':
+            case 'JOB ACCEPTED FOR ANALYSIS. PENDING.':
                 $progress = 20;
                 break;
             case 'PENDING.':
@@ -272,6 +155,18 @@ STR;
         return $job;
     }
 
+    public function getJobID()
+    {
+        // Return the ID of the internal processing ID (not $this->id)
+        return $this->agave_id;
+    }
+
+    public function getJobStatus()
+    {
+        // Return the internal status of the job
+        return $this->agave_status;
+    }
+
     public function totalTime()
     {
         if ($this->status < 2) { // is job still running?
@@ -282,8 +177,13 @@ STR;
         }
 
         $firstJobStep = JobStep::findFirstForJob($this->id);
-        $from = $firstJobStep->created_at;
+        // If we have a job without a JobStep handle the case elegantly.
+        if ($firstJobStep != null) {
+            $from = $firstJobStep->created_at;
 
-        return $to->diffForHumans($from, true);
+            return $to->diffForHumans($from, true);
+        } else {
+            return 'Unknown';
+        }
     }
 }
