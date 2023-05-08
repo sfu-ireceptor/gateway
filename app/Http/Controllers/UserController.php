@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Adrianorosa\GeoLocation\GeoLocation;
 use App\News;
 use App\Sample;
-use App\Tapis;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
