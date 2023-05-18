@@ -89,7 +89,7 @@ class TestController extends Controller
         $defaultExecutionSystemUsername = config('services.tapis.default_execution_system.auth.username');
         $gw_username = 'bcorrie';
 
-        $systemExecutionName = config('services.tapis.system_execution.name_prefix') . '-' . $defaultExecutionSystemHost . '-' . str_replace('_', '-', $gw_username);
+        $systemExecutionName = config('services.tapis.system_execution.name_prefix') . '-' . $defaultExecutionSystemHost;
         $config = $tapis->getExecutionSystemConfig($systemExecutionName, $defaultExecutionSystemHost, $defaultExecutionSystemPort, $defaultExecutionSystemUsername);
         echo '<p>';
         echo json_encode($config);
@@ -103,14 +103,14 @@ class TestController extends Controller
         // create deployment system (where the app originally is)
         /*
         $gw_username = 'bcorrie';
-        $systemName = config('services.tapis.system_staging.name_prefix') . str_replace('_', '-', $gw_username);
+        $systemName = config('services.tapis.system_staging.name_prefix');
         $systemHost = config('services.tapis.system_staging.host');
         $systemPort = config('services.tapis.system_staging.port');
         $systemUsername = config('services.tapis.system_staging.auth.username');
         $systemRootDir = config('services.tapis.system_staging.rootdir');
          */
         /*
-        $systemName = config('services.tapis.system_deploy.name_prefix') . str_replace('_', '-', $gw_username);
+        $systemName = config('services.tapis.system_deploy.name_prefix');
         $systemHost = config('services.tapis.system_deploy.host');
         $systemPort = config('services.tapis.system_deploy.port');
         $systemUsername = config('services.tapis.system_deploy.auth.username');

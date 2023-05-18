@@ -47,9 +47,10 @@ class System extends Model
         //$defaultExecutionSystemPublicKey = config('services.tapis.default_execution_system.auth.public_key');
         //$defaultExecutionSystemPrivateKey = config('services.tapis.default_execution_system.auth.private_key');
 
-        $systemExecutionName = config('services.tapis.system_execution.name_prefix') . '-' . $defaultExecutionSystemHost . '-' . str_replace('_', '-', $gw_username);
+        $systemExecutionName = config('services.tapis.system_execution.name_prefix') . '-' . $defaultExecutionSystemHost;
 
-        $config = $tapis->getExecutionSystemConfig($systemExecutionName, $defaultExecutionSystemHost, $defaultExecutionSystemPort, $defaultExecutionSystemUsername);
+        $config = $tapis->getExecutionSystemConfig($systemExecutionName, $defaultExecutionSystemHost,
+                                                   $defaultExecutionSystemPort, $defaultExecutionSystemUsername);
         $sysResponse = $tapis->getSystem($systemExecutionName);
         if ($sysResponse->status == 'success') {
             $response = $tapis->updateSystem($systemExecutionName, $config);
@@ -73,7 +74,7 @@ class System extends Model
         self::select($systemExecution->id);
 
         // create deployment system (where the app originally is)
-        $systemDeploymentName = config('services.tapis.system_deploy.name_prefix') . str_replace('_', '-', $gw_username) . '-tapis3-test-' . $defaultExecutionSystemUsername;
+        $systemDeploymentName = config('services.tapis.system_deploy.name_prefix');
         $systemDeploymentHost = config('services.tapis.system_deploy.host');
         $systemDeploymentPort = config('services.tapis.system_deploy.port');
         $systemDeploymentUsername = config('services.tapis.system_deploy.auth.username');
@@ -86,7 +87,7 @@ class System extends Model
         Log::info('deployment system created: ' . $systemDeploymentName);
 
         // create staging system (on this machine, where the data files will copied from)
-        $systemStagingName = config('services.tapis.system_staging.name_prefix') . str_replace('_', '-tapis3-test-', $gw_username);
+        $systemStagingName = config('services.tapis.system_staging.name_prefix');
         $systemStagingHost = config('services.tapis.system_staging.host');
         $systemStagingPort = config('services.tapis.system_staging.port');
         $systemStagingUsername = config('services.tapis.system_staging.auth.username');
