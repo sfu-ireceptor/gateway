@@ -39,7 +39,7 @@ class SystemController extends Controller
         // create execution system
         $sshKeys = $tapis->generateSSHKeys();
 
-        $systemExecutionName = config('services.tapis.system_execution.name_prefix') . '-' . $systemHostStr . '-' . $username;
+        $systemExecutionName = config('services.tapis.system_execution.name_prefix') . '-' . $systemHostStr;
         $systemExecutionHost = $systemHost;
         $systemExecutionUsername = $username;
         $systemExecutionPort = 22;
@@ -60,7 +60,7 @@ class SystemController extends Controller
         System::select($systemExecution->id);
 
         // create deployment system (where the app originally is)
-        $systemDeploymentName = config('services.tapis.system_deploy.name_prefix') . $username;
+        $systemDeploymentName = config('services.tapis.system_deploy.name_prefix');
         $systemDeploymentHost = config('services.tapis.system_deploy.host');
         $systemDeploymentPort = config('services.tapis.system_deploy.port');
         $systemDeploymentUsername = config('services.tapis.system_deploy.auth.username');
@@ -71,7 +71,7 @@ class SystemController extends Controller
         Log::info('deployment system created: ' . $systemDeploymentName);
 
         // create staging system (on this machine, where the data files will copied from)
-        $systemStagingName = config('services.tapis.system_staging.name_prefix') . $username;
+        $systemStagingName = config('services.tapis.system_staging.name_prefix');
         $systemStagingHost = config('services.tapis.system_staging.host');
         $systemStagingPort = config('services.tapis.system_staging.port');
         $systemStagingUsername = config('services.tapis.system_staging.auth.username');

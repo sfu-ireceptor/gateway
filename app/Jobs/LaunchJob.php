@@ -156,11 +156,11 @@ class LaunchJob implements ShouldQueue
             $notificationUrl = config('services.tapis.gw_notification_url');
 
             // Tapis name of the system where the data is staged. Essentially the
-            // Tapis system name for the Gateway for this user. This is where the
+            // Tapis system name for the Gateway. This is where the
             // data is stored.
-            $systemStaging = config('services.tapis.system_staging.name_prefix') . str_replace('_', '-', $gw_username);
+            $systemStaging = config('services.tapis.system_staging.name_prefix');
             // Tapis name for the deployment system. This is where the Apps are stored.
-            $appDeploymentSystem = config('services.tapis.system_deploy.name_prefix') . str_replace('_', '-', $gw_username) . '-tapis3-' . $username;
+            $appDeploymentSystem = config('services.tapis.system_deploy.name_prefix');
 
             // Get the App config for the app in question. The AppID is in the request.
             $appId = $this->request_data['app_id'];

@@ -233,29 +233,31 @@ class CloneController extends Controller
             Log::debug('Processing app ' . $app_tag);
             // Process the parameters.
             $parameter_list = [];
-            foreach ($app_config['parameters'] as $parameter_info) {
+            foreach ($app_config['jobAttributes']['parameterSet']['appArgs'] as $parameter_info) {
+                //foreach ($app_config['parameters'] as $parameter_info) {
                 // We only want the visible parameters to be visible. The
                 // UI uses the Tapis ID as a label and the Tapis paramenter
                 // "label" as the human readable name of the parameter.
-                if ($parameter_info['value']['visible']) {
+                if ($parameter_info['inputMode'] != 'FIXED') {
                     $parameter = [];
-                    Log::debug('   Processing parameter ' . $parameter_info['id']);
-                    $parameter['label'] = $parameter_info['id'];
-                    $parameter['name'] = $parameter_info['details']['label'];
-                    $parameter['description'] = $parameter_info['details']['description'];
-                    $parameter['type'] = $parameter_info['value']['type'];
-                    $parameter['default'] = $parameter_info['value']['default'];
-                    $parameter_list[$parameter_info['id']] = $parameter;
+                    Log::debug('   Processing parameter - ' . $parameter_info['name']);
+                    $parameter['label'] = $parameter_info['notes']['label'];
+                    $parameter['name'] = $parameter_info['name'];
+                    $parameter['description'] = $parameter_info['description'];
+                    $parameter['type'] = 'string';
+                    $parameter['default'] = $parameter_info['arg'];
+                    $parameter_list[$parameter_info['name']] = $parameter;
                 } else {
-                    Log::debug('   Not displaying invisible parameter ' . $parameter_info['id']);
+                    Log::debug('   Not displaying invisible parameter ' . $parameter_info['name']);
                 }
             }
 
             // The name of the App is the Tapis App label. We pass the UI the short
             // and long descriptions as well . The UI ID and tag are the Tapis ID.
-            $app_ui_info['name'] = $app_config['label'];
-            $app_ui_info['description'] = $app_config['shortDescription'];
-            $app_ui_info['info'] = $app_config['longDescription'];
+            $app_ui_info['name'] = $app_config['description'];
+            $app_ui_info['description'] = $app_config['description'];
+            $app_ui_info['info'] = $app_config['jobAttributes']['description'];
+
             $app_ui_info['parameter_list'] = $parameter_list;
             $app_ui_info['job_parameter_list'] = $job_parameter_list;
             $app_ui_info['app_id'] = $app_tag;

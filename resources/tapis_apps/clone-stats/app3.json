@@ -1,32 +1,21 @@
 {
     "id":"singularity-clone-stats-irec_analysis",
     "version":"0.1",
-    "description":"Clone statistics application",
+    "description":"Clone statistics",
     "runtime":"SINGULARITY",
     "runtimeOptions": ["SINGULARITY_RUN"],
-    "containerImage":"/scratch/ireceptorgw/singularity/histogram/ir_clone_stats-4.0.0.sif",
+    "containerImage":"ir_clone_stats-4.0.0.sif",
     "jobType":"BATCH",
     "jobAttributes": {
-      "description": "default job description",
+      "description": "<p>iReceptor Clone Analysis App that performs a range of analyses that provide statistics on:<ul><li>V, D, and J gene usage (histogram)</li><li>Junction AA length (histogram)</li></ul></p>",
       "execSystemId": "cedar.computecanada.ca-compute-irec_analysis",
       "parameterSet": {
-        "containerArgs": [
-            {"name":"project_mount", "inputMode": "FIXED", "arg":"-B /project:/project"},
-            {"name":"scratch_mount", "inputMode": "FIXED", "arg":"-B /scratch:/scratch"}
-        ],
         "appArgs": [
-            {"name":"program", "arg":"bash /scratch/ireceptorgw/src/gateway/resources/agave_apps/clone_stats/app3.sh","inputMode":"FIXED"},
             {"name":"split_repertoire",
              "description": "Split overall data based on Repertoire ID?",
              "notes":{"label":"Split Repertoire (True/False)?"},
              "arg":"True", "inputMode":"REQUIRED"
             }
-        ],
-        "envVariables": [
-            {"key": "PYTHONNOUSERSITE","value":"1"},
-            {"key": "ir_singularity","value":"/scratch/ireceptorgw/singularity/histogram/ir_clone_stats-4.0.0.sif"},
-            {"key":"ir_gateway_url","value":"https://gateway-analysis-dev/"},
-            {"key":"download_file","value":"gateway_download.zip"}
         ]
       }
     },
