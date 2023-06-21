@@ -143,11 +143,19 @@ class Tapis
 
     public static function getAnalysisToken()
     {
+        // Renew the token. This actually does nothing if the token doesn't
+        // need to be renewed
         //Log::debug('Tapis::getAnalysisToken: renewing');
         self::renewToken();
 
+        // If we have an analsis token, return the access token. If not
+        // then something went wrong in the renewal so we return null.
         //Log::debug('Tapis::getAnalysisToken: returning');
-        return self::$analysisTokenData->access_token;
+        if (self::$analysisTokenData != null) {
+            return self::$analysisTokenData->access_token;
+        } else {
+            return null;
+        }
     }
 
     /* Stores a token object as per that provide by Tapis 3, which looks like this:
