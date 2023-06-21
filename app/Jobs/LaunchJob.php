@@ -10,7 +10,6 @@ use App\SequenceCell;
 use App\SequenceClone;
 use App\System;
 use App\Tapis;
-use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

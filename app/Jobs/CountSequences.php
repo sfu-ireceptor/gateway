@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Job;
 use App\LocalJob;
 use App\Sample;
 use Illuminate\Bus\Queueable;
