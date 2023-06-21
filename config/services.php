@@ -53,7 +53,7 @@ return [
         'test_user_password' => env('TEST_USER_PASSWORD'),
         'app_base_dir' => 'tapis_apps',
         // App JSON defintion script that is used for every App. Apps need to
-        // implement this as it describes the parameters and type of App. 
+        // implement this as it describes the parameters and type of App.
         'app_json_file' => 'app3.json',
         // Directories where the Apps can be found that are currently active.
         'app_directories' => [
