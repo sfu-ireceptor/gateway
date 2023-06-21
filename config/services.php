@@ -52,17 +52,22 @@ return [
         'test_user_username' => env('TEST_USER_USERNAME'),
         'test_user_password' => env('TEST_USER_PASSWORD'),
         'app_base_dir' => 'tapis_apps',
-        // App script that is run for every App. Apps need to implement this, and the
-        // Gateway runs it in the container with the other App Args.
+        // App JSON defintion script that is used for every App. Apps need to
+        // implement this as it describes the parameters and type of App. 
         'app_json_file' => 'app3.json',
+        // Directories where the Apps can be found that are currently active.
         'app_directories' => [
             'stats', 'histogram', 'clone-stats', 'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity',
         ],
         'system_execution' => [
             'name_prefix'  => env('TAPIS_SYSTEM_EXECUTION_NAME_PREFIX', 'exec'),
+            // Max length of a job
             'max_minutes' => intval(1439),
+            // Number of cores per node for a job
             'cores_per_node' => intval(1),
+            // Memory per node for a job
             'memory_per_node' => intval(7999),
+            // Memory per core for a job
             'memory_per_core' => intval(7999),
             // Base directory for all job output. Uses the Tapis HOST_EVAL function
             // to access a host environment variable.
