@@ -8,7 +8,6 @@ use App\Jobs\PrepareDataForThirdPartyAnalysis;
 use App\JobStep;
 use App\LocalJob;
 use App\Query;
-use App\System;
 use App\Tapis;
 use App\User;
 use Illuminate\Http\Request;
