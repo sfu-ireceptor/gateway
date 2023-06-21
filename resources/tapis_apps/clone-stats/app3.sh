@@ -391,10 +391,6 @@ cp *.out ${GATEWAY_ANALYSIS_DIR}
 zip -r ${GATEWAY_ANALYSIS_DIR}.zip ${GATEWAY_ANALYSIS_DIR}
 mv ${GATEWAY_ANALYSIS_DIR}.zip output/
 
-# We don't want the iReceptor Utilities to be part of the results.
-echo "IR-INFO: Removing Gateway utilities"
-rm -rf ${GATEWAY_UTIL_DIR}
-
 # We don't want the analysis files to remain - they are in the ZIP file
 echo "IR-INFO: Removing analysis output"
 rm -rf ${GATEWAY_ANALYSIS_DIR}
