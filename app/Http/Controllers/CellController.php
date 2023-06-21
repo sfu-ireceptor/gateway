@@ -7,7 +7,6 @@ use App\Download;
 use App\FieldName;
 use App\QueryLog;
 use App\Sample;
-use App\Sequence;
 use App\SequenceCell;
 use App\System;
 use App\Tapis;

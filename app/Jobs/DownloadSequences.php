@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Download;
 use App\LocalJob;
 use App\Query;
 use App\QueryLog;
