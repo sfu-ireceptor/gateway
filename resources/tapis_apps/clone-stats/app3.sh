@@ -357,7 +357,7 @@ elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
     # Copy the HTML resources for the Apps
     echo "IR-INFO: Copying HTML assets"
     mkdir -p ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
-    cp -r ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/assets/* ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
+    cp -r ${GATEWAY_UTIL_DIR}/assets/* ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not create HTML asset directory"
