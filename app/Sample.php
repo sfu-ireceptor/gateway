@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Facades\App\CloneCount;
 use Facades\App\FieldName;
 use Facades\App\RestService;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
 class Sample
@@ -185,7 +184,7 @@ class Sample
     /**
      * Find samples matching the filters.
      *
-     * @param $raw - if true, don't convert fields
+     * @param  $raw  - if true, don't convert fields
      */
     public static function find($filters, $username, $count_sequences = true, $type = '', $raw = false)
     {

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Deployment;
-use App\Job;
 use App\Jobs\ProcessJobNotification;
 use App\LocalJob;
 use Carbon\Carbon;

@@ -2,19 +2,9 @@
 
 echo "IR-INFO: iReceptor Clone Stats App - starting at: `date`"
 
-##############################################
-# init environment
-##############################################
-if [ -f /etc/bashrc ]; then
-. /etc/bashrc
-fi
-
 # Get the script directory where all the code is.
-SCRIPT_DIR=`pwd`
+SCRIPT_DIR=${_tapisExecSystemExecDir}
 echo "IR-INFO: Running job from ${SCRIPT_DIR}"
-
-# Load the environment/modules needed.
-module load scipy-stack
 
 # Start
 printf "IR-INFO:\n"
@@ -25,59 +15,60 @@ printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
 printf "IR-INFO: \n"
 
 #
-# Tapis App Parameters: Will be subsituted by Tapis. If they don't exist
-# use command line arguments so we can test from the command line.
+# Tapis App Parameters: Will be on the singularity command line to
+# the App in the order specified in the App JSON file.
 #
+SPLIT_REPERTOIRE=$1
+
+# Environment variable IR_GATEWAY_URL contains the URL of the source gateway. Use
+# this to gather iReceptor Gateway specific resources if needed.
+#
+# Download file to be used is stored in IR_DOWNLOAD_FILE
+#
+ZIP_FILE=${IR_DOWNLOAD_FILE}
 
 # Tapis parameter ir_gateway_url contains the URL of the source gateway. Use
 # this to gather iReceptor Gateway specific resources if needed.
-GATEWAY_URL="${ir_gateway_url}"
+GATEWAY_URL="${IR_GATEWAY_URL}"
 
 ##############################################
-# Get the iRecpetor Gateway utilities from the Gateway
+# Set up Gateway Utilities
 ##############################################
+echo "IR-INFO: Using Gateway ${GATEWAY_URL}"
 
-echo -n "IR-INFO:Downloading iReceptor Gateway Utilities from ${GATEWAY_URL} - "
-date
-GATEWAY_UTIL_DIR="gateway_utilities"
-mkdir -p ${GATEWAY_UTIL_DIR}
-pushd ${GATEWAY_UTIL_DIR} > /dev/null
-wget --no-verbose -r -nH --no-parent --cut-dir=1 --reject="index.html*" --reject="robots.txt*" ${GATEWAY_URL}/gateway_utilities/
-popd > /dev/null
-echo -n "IR-INFO: Done downloading iReceptor Gateway Utilities - "
-date
+# Report where we get the Gateway utilities from
+GATEWAY_UTIL_DIR=${IR_GATEWAY_UTIL_DIR}
+echo "IR-INFO: Using iReceptor Gateway Utilities from ${GATEWAY_UTIL_DIR}"
 
 # Load the iReceptor Gateway utilities functions.
-. ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/gateway_utilities.sh
+source ${GATEWAY_UTIL_DIR}/gateway_utilities.sh
+if [ $? -ne 0 ]
+then
+    echo "IR-ERROR: Could not load GATEWAY UTILIIES"
+    exit 1
+fi
+
 # This directory is defined in the gateway_utilities.sh. The Gateway
 # relies on this being set. If it isn't set, abort as something has
 # gone wrong with loading the Gateway utilties.
 echo "IR-INFO: Gateway analysis directory = ${GATEWAY_ANALYSIS_DIR}"
 if [ -z "${GATEWAY_ANALYSIS_DIR}" ]; then
         echo "IR-ERROR: GATEWAY_ANALYSIS_DIR not defined, gateway_utilities not loaded correctly." >&2
-	exit 1
-fi
-echo "IR-INFO: Done loading iReceptor Gateway Utilities"
-
-#########################################################################
-# Application variables (will be subsituted by Tapis). If they don't exist
-# use command line arguments.
-#########################################################################
-
-# Download file provide by Tapis, if not, set it to command line $1
-if [ -z "${download_file}" ]; then
-	ZIP_FILE=$1
-else
-	ZIP_FILE=${download_file}
+    exit 1
 fi
 
-# If split_repertoire is not provided by Tapis then set it to the 
-# command line argument.
-echo "IR-INFO: Tapis split = ${split_repertoire}"
-if [ -z "${split_repertoire}" ]; then
-	split_repertoire=$2
-fi
-
+# Print some info about the state of our environment.
+printf "IR-INFO:\n"
+printf "IR-INFO: START at $(date)\n"
+printf "IR-INFO: PROCS = ${_tapisCoresPerNode}\n"
+printf "IR-INFO: MEM = ${_tapisMemoryMB}\n"
+printf "IR-INFO: MAX RUNTIME = ${_tapisMaxMinutes}\n"
+printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
+printf "IR-INFO: ZIP FILE = ${ZIP_FILE}\n"
+printf "IR-INFO: SPLIT_REPERTOIRE = ${SPLIT_REPERTOIRE}\n"
+printf "IR-INFO: "
+lscpu | grep "Model name"
+printf "IR-INFO: \n"
 
 #########################################################################
 # Code to do the analysis
@@ -137,7 +128,7 @@ function do_heatmap()
     TSV_OFILE=${output_dir}/${file_tag}-${variable1}-${variable2}-heatmap.tsv
 
     # Generate the heatmap
-    python3 ${SCRIPT_DIR}/airr_heatmap.py ${variable1} ${variable2} $xvals $yvals $TMP_FILE $PNG_OFILE $TSV_OFILE "${title}(${variable1},${variable2})"
+    python3 /ireceptor/airr_heatmap.py ${variable1} ${variable2} $xvals $yvals $TMP_FILE $PNG_OFILE $TSV_OFILE "${title}(${variable1},${variable2})"
 
     # change permissions
     chmod 644 "$PNG_OFILE"
@@ -182,7 +173,7 @@ function do_histogram()
     #echo ${variable_name} > $TMP_FILE
     #for filename in "${array_of_files[@]}"; do
 	#    echo "IR-INFO:     Extracting ${variable_name} from $filename"
-	#    python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/preprocess.py ${output_dir}/$filename ${variable_name} >> $TMP_FILE
+	#    python3 ${GATEWAY_UTIL_DIR}/preprocess.py ${output_dir}/$filename ${variable_name} >> $TMP_FILE
     #done
 #
     # Generate the image file.
@@ -197,7 +188,7 @@ function do_histogram()
     echo "IR-INFO: Data output file = $TSV_OFILE"
 
     # Run the python histogram command
-    python3 ${SCRIPT_DIR}/airr_clone_histogram.py ${variable_name} ${output_dir}/${filename} $PNG_OFILE $TSV_OFILE "${title},${variable_name}"
+    python3 /ireceptor/airr_clone_histogram.py ${variable_name} ${output_dir}/${filename} $PNG_OFILE $TSV_OFILE "${title},${variable_name}"
 
     # change permissions
     chmod 644 $PNG_OFILE
@@ -231,7 +222,7 @@ function run_analysis()
     pwd
 
 	# Get a list of rearrangement files to process from the manifest.
-    local array_of_files=( `python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "clone_file"` )
+    local array_of_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "clone_file"` )
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not process manifest file ${manifest_file}"
@@ -247,13 +238,13 @@ function run_analysis()
 
 	# Check to see if we are processing a specific repertoire_id
 	if [ "${repertoire_id}" != "Total" ]; then
-	    file_string=`python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
+	    file_string=`python3 ${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
         if [ $? -ne 0 ]
         then
             echo "IR-ERROR: Could not generate repertoire summary from ${repertoire_file}"
             return 
         fi
-        title_string="$(python3 ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
+        title_string="$(python3 ${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
         if [ $? -ne 0 ]
         then
             echo "IR-ERROR: Could not generate repertoire summary from ${repertoire_file}"
@@ -337,7 +328,7 @@ function run_analysis()
 INFO_FILE="info.txt"
 AIRR_MANIFEST_FILE="AIRR-manifest.json"
 
-if [ "${split_repertoire}" = "True" ]; then
+if [ "${SPLIT_REPERTOIRE}" = "True" ]; then
     echo -e "IR-INFO:\nIR-INFO: Splitting data by Repertoire"
     echo "IR-INFO:"
     # Split the download into single repertoire files, with a directory per
@@ -350,7 +341,7 @@ if [ "${split_repertoire}" = "True" ]; then
     gateway_cleanup ${ZIP_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 
-elif [ "${split_repertoire}" = "False" ]; then
+elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
     echo -e "IR-INFO:\nIR-INFO: Running app on entire data set"
     echo "IR-INFO:"
 
@@ -366,7 +357,7 @@ elif [ "${split_repertoire}" = "False" ]; then
     # Copy the HTML resources for the Apps
     echo "IR-INFO: Copying HTML assets"
     mkdir -p ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
-    cp -r ${SCRIPT_DIR}/${GATEWAY_UTIL_DIR}/assets/* ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
+    cp -r ${GATEWAY_UTIL_DIR}/assets/* ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not create HTML asset directory"
@@ -379,8 +370,12 @@ elif [ "${split_repertoire}" = "False" ]; then
     # Run the stats analysis.
     run_analysis ${GATEWAY_ANALYSIS_DIR}/${outdir} "AIRRDataCommons" ${outdir} "NULL" ${GATEWAY_ANALYSIS_DIR}/${outdir}/${AIRR_MANIFEST_FILE}
 
+    # Copy the INFO_FILE to the analysis DIR as the Gateway expects it to be there.
+    cp ${GATEWAY_ANALYSIS_DIR}/${outdir}/${INFO_FILE} ${GATEWAY_ANALYSIS_DIR}/
+
+
 else
-    echo "IR-ERROR: Unknown repertoire operation ${split_repertoire}" >&2
+    echo "IR-ERROR: Unknown repertoire operation ${SPLIT_REPERTOIRE}" >&2
     exit 1
 fi
 
@@ -398,10 +393,7 @@ cp *.out ${GATEWAY_ANALYSIS_DIR}
 
 # ZIP up the analysis results for easy download
 zip -r ${GATEWAY_ANALYSIS_DIR}.zip ${GATEWAY_ANALYSIS_DIR}
-
-# We don't want the iReceptor Utilities to be part of the results.
-echo "IR-INFO: Removing Gateway utilities"
-rm -rf ${GATEWAY_UTIL_DIR}
+mv ${GATEWAY_ANALYSIS_DIR}.zip output/
 
 # We don't want the analysis files to remain - they are in the ZIP file
 echo "IR-INFO: Removing analysis output"
@@ -414,9 +406,3 @@ rm -f $ZIP_FILE
 # Debugging output, print data/time when shell command is finished.
 echo "IR-INFO: Statistics finished at: `date`"
 
-
-# Handle AGAVE errors - this doesn't seem to have any effect...
-#export JOB_ERROR=1
-#if [[ $JOB_ERROR -eq 1 ]]; then
-#    ${AGAVE_JOB_CALLBACK_FAILURE}
-#fi
