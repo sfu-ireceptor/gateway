@@ -326,7 +326,7 @@
 							@endforeach
 						</tbody>
 					</table>
-                    @if(config('services.agave.enabled'))
+                    @if(config('services.tapis.enabled'))
 						<h3 id="analysis">
 
 							<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
