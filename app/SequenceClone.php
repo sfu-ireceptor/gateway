@@ -261,11 +261,11 @@ class SequenceClone
                     $download_incomplete_info .= 'Downloads from the following repositories finished successfully: ' . $rs_name_list_str . ".\n";
                 }
             } else {
-                $download_incomplete_info .= 'Some files appear to be incomplete. See the included info.txt file for more details.';
+                $download_incomplete_info .= 'Some files appear to be incomplete. See the included Info file for more details.';
             }
         }
 
-        // generate info.txt
+        // generate info file
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
         // generate manifest.json
         $manifest_file_path = Sequence::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
@@ -488,6 +488,10 @@ class SequenceClone
 
     public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
+        // Set info file.
+        $info_file = 'info.txt';
+
+        // Initialize string.
         $s = '';
 
         $s .= '<p><b>Metadata filters</b></p>' . "\n";
@@ -579,7 +583,7 @@ class SequenceClone
         $time_str_human = date('H:i T', $now);
         $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "<br/>\n";
 
-        $info_file_path = $folder_path . '/info.txt';
+        $info_file_path = $folder_path . '/' . $info_file;
         file_put_contents($info_file_path, $s);
 
         return $info_file_path;
@@ -620,7 +624,7 @@ class SequenceClone
             }
         }
 
-        // info.txt
+        // Info file
         $zip->addFile($info_file_path, basename($info_file_path));
 
         // AIRR-manifest.json
