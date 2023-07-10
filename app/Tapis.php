@@ -826,8 +826,11 @@ class Tapis
                 Log::error('Tapis::doHTTPRequest:: ClientException - returning response = ' . $tapis_response_str);
 
                 //return $tapis_response;
-                if ($raw_json) return $tapis_response_str;
-                else return $tapis_response;
+                if ($raw_json) {
+                    return $tapis_response_str;
+                } else {
+                    return $tapis_response;
+                }
             } else {
                 throw exception;
             }
