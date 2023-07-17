@@ -575,7 +575,7 @@ class Tapis
         return $app_config;
     }
 
-    public function getJobConfig($name, $app_id, $download_file, $storage_archiving, $notification_url, $folder, $params, $inputs, $job_params)
+    public function getJobConfig($name, $app_id, $download_file, $gateway_system, $gateway_notification_url, $gateway_dir, $params, $inputs, $job_params)
     {
         // Get the gateway environment stuff required
         $gateway_url = config('app.url');
@@ -593,8 +593,8 @@ class Tapis
             'name' => $name,
             'appId' => $app_id,
             'appVersion' => '0.1',
-            'archiveSystemId' => $storage_archiving,
-            'archiveSystemDir' => $folder,
+            'archiveSystemId' => $gateway_system,
+            'archiveSystemDir' => $gateway_dir,
             'parameterSet' => [
                 'appArgs' => $params,
             ],
@@ -606,7 +606,7 @@ class Tapis
                     'eventCategoryFilter' => 'JOB_NEW_STATUS',
                     'deliveryTargets' => [[
                         'deliveryMethod' => 'WEBHOOK',
-                        'deliveryAddress' => $notification_url . '/job/update-status',
+                        'deliveryAddress' => $gateway_notification_url . '/job/update-status',
                     ]],
                 ],
             ],
