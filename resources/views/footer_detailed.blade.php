@@ -8,18 +8,20 @@
 			<p>
 				The iReceptor Gateway integrates large, distributed, AIRR-seq data repositories, following standards for sharing and interoperability developed by the
 				<a href="http://airr-community.org/">Adaptive Immune Receptor Repertoire (AIRR) Community</a>.
-				The main goal of iReceptor is to connect this distributed network of AIRR-seq repositories into an AIRR Data Commons, allowing queries across multiple projects, labs, and institutions.
+				The main goal of iReceptor is to connect this distributed network of AIRR-seq repositories into an AIRR Data Commons, allowing for the query, analysis, and visualization of AIRR-seq data across multiple projects, labs, and institutions.
 			</p>
 			<p>Present functionalities include:</p>
 			<ul>
-				<li>Search for repertoires satisfying certain metadata (e.g. find all AIRR-seq repertoires from ovarian cancer studies)</li>
-				<li>Search for all repertoires that contain specific CDR3 sequences</li>
-				<li>Search identified repertoires for sequences derived from particular V, D, and J genes and alleles</li>
-				<li>Download sequences from these repertoires in AIRR.tsv format, easily importable to other AIRR-seq analysis tools</li>
+				<li>Search for <strong>Repertoires</strong> satisfying certain metadata (e.g. find all AIRR-seq repertoires from ovarian cancer studies)</li>
+				<li>Search selected repertoires for <strong>Sequence</strong> characteristics such as a specific CDR3 sequence or particular V, D, and J genes and alleles</li>
+				<li>Search selected repertoires for <strong>Clone</strong> attributes such as a specific CDR3 sequence or particular V, D, and J genes and alleles</li>
+				<li>Search selected repertoires for <strong>Cell</strong> characteristics such as Gene Expression Levels.</li>
+				<li>Download Sequences, Clones, Cells and their related Repertoire metadata in AIRR compliant file formats, easily importable to other AIRR-seq analysis tools</li>
+				<li>Perform advandced analyses on Sequences, Clones, Cells and their related Repertoire metadata using community built analysis tools.</li>
 			</ul>
-			<p>iReceptor is a member of the <a href="http://www.ireceptor-plus.com/">iReceptor Plus Consortium</a>. This project will expand the analysis tools available on the Gateway, including for single cell or systems immunology approaches, and add security for iReceptor Plus repositories.</p>
+			<p>iReceptor was a leading member of the CIHR/EU Horizon 2020 funded <a href="http://www.ireceptor-plus.com/">iReceptor Plus Consortium</a>.</p>
 
-			<p>For more information, see the <a href="http://www.ireceptor.org/">iReceptor public website</a> or refer to the paper <a href="http://doi.org/10.1111/imr.12666">iReceptor: a platform for querying and analyzing antibody/B-cell and T-cell receptor repertoire data across federated repositories</a>.  To sign up for an account and explore AIRR-seq data on the Gateway, to host a data repository, or to provide feedback on this developing community resource, email <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
+			<p>For more information, see the <a href="http://www.ireceptor.org/">iReceptor public website</a> or refer to the paper <a href="http://doi.org/10.1111/imr.12666">iReceptor: a platform for querying and analyzing antibody/B-cell and T-cell receptor repertoire data across federated repositories</a>.  If you are interested in hosting a data repository or if you want to provide feedback on this developing community resource, email <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
 
 			<h5>Acknowledging iReceptor</h5>
 			<p>If you find iReceptor useful in your research, please acknowledge the iReceptor Platform's contribution by citing the iReceptor paper by Corrie et al. <a href="http://doi.org/10.1111/imr.12666">iReceptor: a platform for querying and analyzing antibody/B-cell and T-cell receptor repertoire data across federated repositories</a>, Immunological Reviews, Volume 284:24-41 (2018).</p>
@@ -77,10 +79,10 @@
 	</div>
 	<div class="col-md-4">
 		<h4 class="powered">Powered by</h4>
-		<a href="https://www.computecanada.ca/" class="compute_canada">
-			<img src="/images/logos/compute_canada.png">
+		<a href="https://www.alliancecan.ca/" class="alliance">
+			<img src="https://alliancecan.ca/themes/custom/site_theme/logo.svg">
 		</a>
-		<a href="https://www.tacc.utexas.edu/tapis" class="tapis">
+		<a href="https://tapis-project.org/" class="tapis">
 			<img src="/images/logos/tapis.png">
 		</a>
 	</div>

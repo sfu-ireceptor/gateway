@@ -699,6 +699,10 @@ footer a:hover {
 	max-width: 230px;		
 }
 
+.credits .alliance img {
+	max-width: 230px;		
+}
+
 .credits .bckdf img {
 	max-width: 100px;
 }
