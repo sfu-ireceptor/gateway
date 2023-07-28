@@ -3,7 +3,15 @@
 		<div class="login_about_box">
 			<h3>About iReceptor</h3>
 			<h5>Our Mission</h5>
-			<p>iReceptor facilitates the curation, analysis and sharing of antibody/B-cell and T-cell receptor repertoires (Adaptive Immune Receptor Repertoire or AIRR-seq data) from multiple labs and institutions. We are committed to providing a platform for researchers to increase the value of their data through sharing with the community.  This will greatly increase the amount of data available to answer complex questions about the adaptive immune response, accelerating the development of vaccines, therapeutic antibodies against autoimmune diseases, and cancer immunotherapies.</p>
+            <p>
+iReceptor is a data discovery platform that facilitates the curation, analysis and sharing of antibody/B-cell and T-cell receptor repertoires (Adaptive Immune Receptor Repertoire or AIRR-seq data) and related subject and sample metadata from multiple studies across many labs and institutions. We are committed to providing a platform for researchers to increase the value of their data through sharing with the community. This will greatly increase the amount of data available to answer complex questions about the adaptive immune response, accelerating the development of vaccines, therapeutic antibodies against autoimmune diseases, and cancer immunotherapies.
+</p>
+<h5>Curated Studies Available</h5>
+<p>
+Users of the iReceptor Gateway can search AIRR-seq data from studies on cancer (for example breast and ovarian), autoimmune diseases (for example MS and SLE), and infectious diseases (for example HIV and influenza).  Working with the COVID-19 and Type 1 Diabetes communities we have recently expanded our curated studies in those areas.
+
+Following the AIRR Data Commons standards we are the only public resource that curates data from single-cell immune-profiling studies.
+</p>
 			<h5>Our Approach</h5>
 			<p>
 				The iReceptor Gateway integrates large, distributed, AIRR-seq data repositories, following standards for sharing and interoperability developed by the
@@ -33,6 +41,9 @@
 
 		<h3>Getting Started</h3>
 			<ul class="small_padding">
+				<li><a href="https://ireceptor.org/node/201" class="external" target="_blank">Exploring single-cell data</a></li>
+				<li><a href="https://ireceptor.org/node/204" class="external" target="_blank">Running analysis jobs</a></li>
+				<li><a href="https://ireceptor.org/node/203" class="external" target="_blank">Looking for antigen specific CDR3s</a></li>
 				<li><a href="https://ireceptor.org/node/177" class="external" target="_blank">Displaying repertoire statistics</a></li>
 				<li><a href="https://ireceptor.org/node/153" class="external" target="_blank">Finding COVID-19 data</a></li>
 				<li><a href="https://ireceptor.org/node/155" class="external" target="_blank">Finding B-cell or T-cell repertoires</a></li>
