@@ -1021,18 +1021,21 @@ fieldset[disabled] .btn-sequences.focus {
 
 .login_logo img {
 	display: inline-block;
-	margin-top: -18px;
+	margin-top: -12px;
 	margin-left: 6px;
 	margin-right: 0;
 	width: 250px;
 }
 
+.foo {
+	font: 18px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
 .intro {
 	margin-bottom: 37px;
 	margin-top: 17px;
 	background-color: transparent;
 	border-radius: 6px;
-	font: 22px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font: 18px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;
 	padding: 0 60px 0 0;
 }
 
