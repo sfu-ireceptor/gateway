@@ -36,7 +36,7 @@
 								{{ Form::submit('Log In →', array('class' => 'btn btn-primary')) }}
 							</p>					
 						{{ Form::close() }}
-						<p><a href="/register">Create an account</a></p>
+						<p><a href="/register"><strong>Create an account</strong></a></p>
 					</div>
 				</div>
 
@@ -61,20 +61,27 @@
 
 			<div class="intro">
 				<p class="tagline">
-					<span>A <strong>science gateway</strong></span>
-					<span>that enables the discovery, analysis and download</span>
-					<span>of <a href="https://www.antibodysociety.org/the-airr-community/">AIRR-seq data</a> (antibody/B-cell and T-cell receptor repertoires)</span>
-					<span>from <a href="/repositories">multiple independent repositories</a> of the <a href="https://www.antibodysociety.org/the-airr-community/airr-data-commons/">AIRR Data Commons</a>.</span>
+					A <strong>science gateway</strong>
+					that enables the discovery, analysis and download
+                    of <a href="https://www.antibodysociety.org/the-airr-community/">
+                    AIRR-seq data</a> (antibody/B-cell and T-cell receptor repertoires)
+                    from studies on cancer (for example breast and ovarian),
+                    autoimmune diseases (for example MS and SLE),
+                    and infectious diseases (for example HIV and influenza) from the
+<a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}</a>
+                    of the
+                    <a href="https://www.antibodysociety.org/the-airr-community/airr-data-commons/">AIRR Data Commons</a>.
 				</p>
 			</div>
 
 			<div class="intro2">
 
 				<p class="intro_login">
-					Search study metadata and sequence features from
-					<strong>{{ human_number($total_sequences) }} {{ str_plural('sequence', $total_sequences)}}</strong>,
+					<strong>{{ human_number($total_sequences) }} {{ str_plural('sequence', $total_sequences)}}</strong> from
+<!--
 					<strong>{{ $total_samples }} {{ str_plural('repertoire', $total_samples)}}</strong>, and
-					<a href="#" class="toggle_modal_rest_service_list_expanded">{{ $total_studies }} {{ str_plural('study', $total_studies)}}</a>
+-->
+					<a href="#" class="toggle_modal_rest_service_list_expanded">{{ $total_projects_sequences }} {{ str_plural('study', $total_projects_sequences)}}</a>
 					across
 					<a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}</a>.
 					<!-- repos/labs/studies popup -->
@@ -82,6 +89,12 @@
 				</p>
 
 				<div class="charts">
+					<div class="row">
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart3']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart4']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart5']) !!}"></div>
+					</div>
+<!--
 					<div class="row">
 						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart1']) !!}"></div>
 						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart2']) !!}"></div>
@@ -92,7 +105,46 @@
 						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart5']) !!}"></div>
 						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart6']) !!}"></div>
 					</div>
+-->
 				</div>
+                <p class="intro_login">
+                    <strong>{{ human_number($total_clones) }} {{ str_plural('clone', $total_clones)}}</strong> from
+<!--
+                    <strong>{{ $total_samples }} {{ str_plural('repertoire', $total_samples)}}</strong>, and
+-->
+                    <a href="#" class="toggle_modal_rest_service_list_expanded">{{ $total_projects_clones}} {{ str_plural('study', $total_projects_clones)}}</a>
+                    across
+                    <a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}</a>.
+                    <!-- repos/labs/studies popup -->
+                    @include('rest_service_list', ['tab' => 'clone'])
+                </p>
+				<div class="charts">
+					<div class="row">
+						<div class="col-md-4 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($clone_charts_data['chart3']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($clone_charts_data['chart4']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($clone_charts_data['chart5']) !!}"></div>
+					</div>
+			    </div>
+
+                <p class="intro_login">
+                    <strong>{{ human_number($total_cells) }} {{ str_plural('cell', $total_cells)}}</strong> from
+<!--
+                    <strong>{{ $total_samples }} {{ str_plural('repertoire', $total_samples)}}</strong>, and
+-->
+                    <a href="#" class="toggle_modal_rest_service_list_expanded">{{ $total_projects_cells }} {{ str_plural('study', $total_projects_cells)}}</a>
+                    across
+                    <a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}</a>.
+                    <!-- repos/labs/studies popup -->
+                    @include('rest_service_list', ['tab' => 'cell'])
+                </p>
+				<div class="charts">
+					<div class="row">
+						<div class="col-md-4 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($cell_charts_data['chart4']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($cell_charts_data['chart5']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($cell_charts_data['chart6']) !!}"></div>
+					</div>
+			    </div>
+
 				
 			</div>
 		</div>

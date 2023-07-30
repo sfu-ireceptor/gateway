@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Log;
 
 class Sample
 {
-    public static function public_samples()
+    public static function public_samples($sample_type='sequence')
     {
-        return CachedSample::cached();
+        return CachedSample::cached($sample_type);
     }
 
     public static function metadata()
@@ -431,7 +431,7 @@ class Sample
                     // AIRR Mapping file. This is required for fields like 'genotype' which need
                     // to be processed as JSON objects.
                     if (str_contains($sample_field['ir_id'], '-')) {
-                        Log::debug('Sample::convert_sample_list - calling airr_flatten for ' . $sample_field['ir_id']);
+                        //Log::debug('Sample::convert_sample_list - calling airr_flatten for ' . $sample_field['ir_id']);
                         $new_sample->{$field_name} = Sample::airr_flatten($sample, $sample_field['ir_adc_api_query']);
                     } else {
                         $field_value = data_get($sample, $sample_field['ir_adc_api_response']);
@@ -841,14 +841,19 @@ class Sample
         $valuesLabels = [];
         $valuesLabels['None'] = 'None';
 
+        Log::debug('generateChartData: field = ' . $count_field);
         // Iterate over each sample
         foreach ($sample_list as $sample) {
             $sample = json_decode(json_encode($sample), true);
+            //Log::debug('Sample = ' . $sample['sample_id']);
+
 
             // Get the number of sequences for that sample
             $nb_sequences = 0;
             if (isset($sample[$count_field])) {
                 $nb_sequences = $sample[$count_field];
+                if ($nb_sequences > 0 && $count_field == "ir_cell_count")
+                    Log::debug('Sample = ' . $sample['sample_id'] . " = " .  $nb_sequences );
             }
 
             if (isset($sample[$stat_field]) && $sample[$stat_field] != null) {
