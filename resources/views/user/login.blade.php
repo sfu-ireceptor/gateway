@@ -78,12 +78,10 @@
 
 				<p class="intro_login">
 					<strong>{{ human_number($total_sequences) }} {{ str_plural('sequence', $total_sequences)}}</strong> from
-<!--
-					<strong>{{ $total_samples }} {{ str_plural('repertoire', $total_samples)}}</strong>, and
--->
+					<strong>{{ $total_samples_sequences }} {{ str_plural('repertoire', $total_samples_sequences)}}</strong> and
 					<a href="#" class="toggle_modal_rest_service_list_expanded">{{ $total_projects_sequences }} {{ str_plural('study', $total_projects_sequences)}}</a>
 					across
-					<a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}</a>.
+					<a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}</a>
 					<!-- repos/labs/studies popup -->
 					@include('rest_service_list', ['tab' => 'sequence'])
 				</p>
@@ -109,12 +107,10 @@
 				</div>
                 <p class="intro_login">
                     <strong>{{ human_number($total_clones) }} {{ str_plural('clone', $total_clones)}}</strong> from
-<!--
-                    <strong>{{ $total_samples }} {{ str_plural('repertoire', $total_samples)}}</strong>, and
--->
+                    <strong>{{ $total_samples_clones }} {{ str_plural('repertoire', $total_samples_clones)}}</strong> and
                     <a href="#" class="toggle_modal_rest_service_list_expanded">{{ $total_projects_clones}} {{ str_plural('study', $total_projects_clones)}}</a>
                     across
-                    <a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}</a>.
+                    <a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}</a>
                     <!-- repos/labs/studies popup -->
                     @include('rest_service_list', ['tab' => 'clone'])
                 </p>
@@ -128,12 +124,10 @@
 
                 <p class="intro_login">
                     <strong>{{ human_number($total_cells) }} {{ str_plural('cell', $total_cells)}}</strong> from
-<!--
-                    <strong>{{ $total_samples }} {{ str_plural('repertoire', $total_samples)}}</strong>, and
--->
+                    <strong>{{ $total_samples_cells }} {{ str_plural('repertoire', $total_samples_cells)}}</strong> and
                     <a href="#" class="toggle_modal_rest_service_list_expanded">{{ $total_projects_cells }} {{ str_plural('study', $total_projects_cells)}}</a>
                     across
-                    <a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}</a>.
+                    <a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}</a>
                     <!-- repos/labs/studies popup -->
                     @include('rest_service_list', ['tab' => 'cell'])
                 </p>

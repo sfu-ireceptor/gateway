@@ -88,15 +88,24 @@ class CachedSample extends Model
         // list of REST services
         $t['rest_service_list'] = RestService::findEnabled(['id', 'name', 'rest_service_group_code'])->toArray();
 
-        // stats
+        // Get the total number of repositories.
         $t['total_repositories'] = count(self::distinctValuesGrouped(['rest_service_id']));
+        // Get the total number of labs.
         $t['total_labs'] = count(self::distinctValuesGrouped(['rest_service_id', 'lab_name']));
+
+        // Get the study counts for total, sequence, clone, and cell studies.
         $t['total_projects'] = count(self::distinctValuesGrouped(['rest_service_id', 'study_title']));
         $t['total_projects_sequences'] = count(self::distinctValuesFiltered('study_title', 'ir_repertoire_type', 'sequence'));
         $t['total_projects_cells'] = count(self::distinctValuesFiltered('study_title', 'ir_repertoire_type', 'cell'));
         $t['total_projects_clones'] = count(self::distinctValuesFiltered('study_title', 'ir_repertoire_type', 'clone'));
+
+        // Get the repertoire counts for all, sequence, clone, and cell repertoires.
         $t['total_samples'] = self::count();
-        //return self::where('ir_repertoire_type', '=', $sample_type)->get();
+        $t['total_samples_sequences'] = self::where('ir_repertoire_type', '=', 'sequence')->count();
+        $t['total_samples_clones'] = self::where('ir_repertoire_type', '=', 'clone')->count();
+        $t['total_samples_cells'] = self::where('ir_repertoire_type', '=', 'cell')->count();
+
+        // Get the total counts for sequences, clones, and cells.
         $t['total_sequences'] = self::sum('ir_sequence_count');
         $t['total_clones'] = self::sum('ir_clone_count');
         $t['total_cells'] = self::sum('ir_cell_count');
