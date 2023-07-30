@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class Sample
 {
-    public static function public_samples($sample_type='sequence')
+    public static function public_samples($sample_type = 'sequence')
     {
         return CachedSample::cached($sample_type);
     }
@@ -847,13 +847,13 @@ class Sample
             $sample = json_decode(json_encode($sample), true);
             //Log::debug('Sample = ' . $sample['sample_id']);
 
-
             // Get the number of sequences for that sample
             $nb_sequences = 0;
             if (isset($sample[$count_field])) {
                 $nb_sequences = $sample[$count_field];
-                if ($nb_sequences > 0 && $count_field == "ir_cell_count")
-                    Log::debug('Sample = ' . $sample['sample_id'] . " = " .  $nb_sequences );
+                if ($nb_sequences > 0 && $count_field == 'ir_cell_count') {
+                    Log::debug('Sample = ' . $sample['sample_id'] . ' = ' . $nb_sequences);
+                }
             }
 
             if (isset($sample[$stat_field]) && $sample[$stat_field] != null) {

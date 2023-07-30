@@ -51,7 +51,7 @@ class UserController extends Controller
             $data['charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map);
             Log::debug('Chart data = ' . json_encode($data['charts_data']));
 
-            # Get the cached clone public_samples
+            // Get the cached clone public_samples
             $sample_list = Sample::public_samples('clone');
             // Clone Fields we want to graph. The UI/blade expects six fields
             $charts_fields = ['study_type_id', 'organism', 'disease_diagnosis_id',
@@ -63,8 +63,8 @@ class UserController extends Controller
                 'tissue_id' => 'tissue', ];
             $data['clone_charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map, 'ir_clone_count');
             Log::debug('Clone Chart data = ' . json_encode($data['clone_charts_data']));
-            
-            # Get the cached cell public_samples
+
+            // Get the cached cell public_samples
             $sample_list = Sample::public_samples('cell');
             // Cell fields we want to graph. The UI/blade expects six fields
             $charts_fields = ['disease_diagnosis_id', 'tissue_id', 'cell_subset', 'disease_diagnosis_id', 'tissue_id', 'cell_subset'];
