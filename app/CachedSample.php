@@ -2,9 +2,9 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Jenssegers\Mongodb\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 
 class CachedSample extends Model
 {
@@ -32,7 +32,7 @@ class CachedSample extends Model
         $sample_count += count($sample_list);
 
         // get clone data
-        $sample_data = Sample::find([], 'titi', true, 'clone'); 
+        $sample_data = Sample::find([], 'titi', true, 'clone');
         $sample_list = $sample_data['items'];
 
         // cache data
@@ -57,7 +57,7 @@ class CachedSample extends Model
     }
 
     // return cached samples
-    public static function cached($sample_type='sequence')
+    public static function cached($sample_type = 'sequence')
     {
         return self::where('ir_repertoire_type', '=', $sample_type)->get();
         //return self::all();
@@ -92,9 +92,9 @@ class CachedSample extends Model
         $t['total_repositories'] = count(self::distinctValuesGrouped(['rest_service_id']));
         $t['total_labs'] = count(self::distinctValuesGrouped(['rest_service_id', 'lab_name']));
         $t['total_projects'] = count(self::distinctValuesGrouped(['rest_service_id', 'study_title']));
-        $t['total_projects_sequences'] = count(self::distinctValuesFiltered('study_title','ir_repertoire_type','sequence'));
-        $t['total_projects_cells'] = count(self::distinctValuesFiltered('study_title','ir_repertoire_type','cell'));
-        $t['total_projects_clones'] = count(self::distinctValuesFiltered('study_title','ir_repertoire_type','clone'));
+        $t['total_projects_sequences'] = count(self::distinctValuesFiltered('study_title', 'ir_repertoire_type', 'sequence'));
+        $t['total_projects_cells'] = count(self::distinctValuesFiltered('study_title', 'ir_repertoire_type', 'cell'));
+        $t['total_projects_clones'] = count(self::distinctValuesFiltered('study_title', 'ir_repertoire_type', 'clone'));
         $t['total_samples'] = self::count();
         //return self::where('ir_repertoire_type', '=', $sample_type)->get();
         $t['total_sequences'] = self::sum('ir_sequence_count');
@@ -126,7 +126,7 @@ class CachedSample extends Model
 
     public static function distinctValuesFiltered($fieldName, $filterField, $filterValue)
     {
-        $l = self::where($filterField,'=', $filterValue)->whereNotNull($fieldName)->distinct($fieldName)->get();
+        $l = self::where($filterField, '=', $filterValue)->whereNotNull($fieldName)->distinct($fieldName)->get();
         $l = $l->toArray();
 
         // replace each array item (a one-item array) by the value directly
@@ -148,7 +148,6 @@ class CachedSample extends Model
     {
         $l = self::groupBy($fields);
         Log::debug('distinctValuesGrouped: l = ' . json_encode($l));
-
 
         // exclude null values
         foreach ($fields as $fieldName) {
