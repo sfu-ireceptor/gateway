@@ -1064,9 +1064,10 @@ fieldset[disabled] .btn-sequences.focus {
 }
 
 .intro_login {
-	font-size: 18px;	
+	font-size: 16px;	
 }
 
+/*
 .intro_login a {
 	color: white;
 	background-color: #337ab7;
@@ -1075,6 +1076,7 @@ fieldset[disabled] .btn-sequences.focus {
 	padding: 1px 7px 3px;
 	white-space: nowrap;
 }
+*/
 
 .login_main {
 	margin-top: 0px;
