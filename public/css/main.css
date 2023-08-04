@@ -1122,7 +1122,7 @@ fieldset[disabled] .btn-sequences.focus {
 }
 
 .beta_version > .panel-heading {
-	background-color: #f4a45a;
+	background-color: #eee;
 	color: black;
 	border-bottom-style: none;
 }
@@ -1131,9 +1131,12 @@ fieldset[disabled] .btn-sequences.focus {
 	margin-bottom: 0;
 }
 
+/*
+	background-color: #f4a45a;
+*/
 .beta_version > .panel-footer {
 	padding-top: 5px;
-	background-color: #f4a45a;
+	background-color: #eee;
 	color: black;
 	padding-bottom: 4px;
 	text-align: right;
@@ -1149,7 +1152,7 @@ fieldset[disabled] .btn-sequences.focus {
 }
 
 .beta_version {
-	border: 1px solid #f4a45a;
+	border: 1px solid #eee;
 }
 
 .honey-pot {
