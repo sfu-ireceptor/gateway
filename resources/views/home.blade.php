@@ -46,16 +46,24 @@
 					<h3 class="panel-title">Repertoire Metadata Search</h3>
 				</div>
 				<div class="panel-body filters sequence_search">
-					<p>Find interesting sequences and sequence annotations by exploring study, subject, and sample metadata</p>
+					<p>Find interesting sequence annotations, clones, and cells by exploring study, subject, and sample metadata</p>
 
-						<div class="row">
-							<div class="col-md-2">
-							</div>
-							<div class="col-md-10">
 								<p class="button_container">	
-									<a  class="btn btn-primary search_samples" role="button" href="/samples">Browse Repertoire Metadata →</a>
+									<a  class="btn btn-primary search_samples" role="button" href="/samples">Browse Sequence Repertoire Metadata →</a>
 								</p>
+							<div class="col-md-10">
 							</div>
+								<p class="button_container">	
+									<a  class="btn btn-primary btn-clones search_samples" role="button" href="/samples/clone?query_id=">Browse Clone Repertoire Metadata →</a>
+								</p>
+							<div class="col-md-10">
+							</div>
+								<p class="button_container">	
+									<a  class="btn btn-primary btn-cells search_samples" role="button" href="/samples/cell?query_id=">Browse Cell Repertoire Metadata →</a>
+								</p>
+							<div class="col-md-10">
+							</div>
+						<div class="row">
 						</div>
 
 				</div>

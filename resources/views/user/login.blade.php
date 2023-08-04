@@ -70,19 +70,29 @@
                     of
                     <a href="https://www.antibodysociety.org/the-airr-community/" class="external"> AIRR-seq data</a>
                     (antibody/B-cell and T-cell receptor repertoires)
-                    from studies on cancer (for example breast and ovarian),
-                    autoimmune diseases (for example MS and SLE),
-                    and infectious diseases (for example HIV and influenza) from the
-<a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}</a>
-                    of the
-                    <a href="https://www.antibodysociety.org/the-airr-community/airr-data-commons/" class="external">AIRR Data Commons</a>.
+                    from studies on cancer (e.g. breast and ovarian),
+                    autoimmune diseases (e.g. MS and SLE),
+                    and infectious diseases (e.g. HIV and influenza) in the
+                    <a href="https://www.antibodysociety.org/the-airr-community/airr-data-commons/" class="external">AIRR Data Commons</a>
 				</p>
+<!--
+                <p>
+                    Summary of bulk and single-cell data from 
+                    <a href="/repositories">{{ $total_repositories }} {{ str_plural('repository', $total_repositories)}}</a>
+                    in the
+                    <a href="https://www.antibodysociety.org/the-airr-community/airr-data-commons/" class="external">AIRR Data Commons</a>
+                </p>
+-->
 			</div>
 
 			<div class="intro2">
-
-				<p class="intro_login">
-                    <strong>Summary of bulk and single-cell data in the AIRR Data Commons.</strong>
+                <p>
+                    <strong>
+                    Summary of the bulk and single-cell data from the
+                    <a href="/repositories">{{ $total_repositories }} {{ str_plural('repository', $total_repositories)}}</a>
+                    in the
+                    <a href="https://www.antibodysociety.org/the-airr-community/airr-data-commons/" class="external">AIRR Data Commons</a>
+                    </strong>
                 </p>
                 </br>
 				<p class="intro_login">
