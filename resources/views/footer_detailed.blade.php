@@ -20,12 +20,12 @@ Following the AIRR Data Commons standards we are the only public resource that c
 			</p>
 			<p>Present functionalities include:</p>
 			<ul>
-				<li>Search for <strong>Repertoires</strong> satisfying certain metadata (e.g. find all AIRR-seq repertoires from ovarian cancer studies)</li>
-				<li>Search selected repertoires for <strong>Sequence</strong> characteristics such as a specific CDR3 sequence or particular V, D, and J genes and alleles</li>
-				<li>Search selected repertoires for <strong>Clone</strong> attributes such as a specific CDR3 sequence or particular V, D, and J genes and alleles</li>
-				<li>Search selected repertoires for <strong>Cell</strong> characteristics such as Gene Expression Levels.</li>
-				<li>Download Sequences, Clones, Cells and their related Repertoire metadata in AIRR compliant file formats, easily importable to other AIRR-seq analysis tools</li>
-				<li>Perform advandced analyses on Sequences, Clones, Cells and their related Repertoire metadata using community built analysis tools.</li>
+				<li><strong>Search</strong> for <strong>Repertoires</strong> satisfying certain metadata (e.g. find all AIRR-seq repertoires from ovarian cancer studies)</li>
+				<li><strong>Search</strong> selected repertoires for <strong>Sequence</strong> characteristics such as a specific CDR3 sequence or particular V, D, and J genes and alleles</li>
+				<li><strong>Search</strong> selected repertoires for <strong>Clone</strong> attributes such as a specific CDR3 sequence or particular V, D, and J genes and alleles</li>
+				<li><strong>Search</strong> selected repertoires for <strong>Cell</strong> characteristics such as Gene Expression Levels.</li>
+				<li><strong>Download Sequences, Clones, Cells</strong> and their related Repertoire metadata in AIRR compliant file formats, easily importable to other AIRR-seq analysis tools</li>
+			    <li><strong>Analyze Sequences, Clones, Cells</strong> and their related Repertoire metadata using <strong>community built analysis tools</strong>.</li>
 			</ul>
 			<p>iReceptor was a leading member of the CIHR/EU Horizon 2020 funded <a href="http://www.ireceptor-plus.com/">iReceptor Plus Consortium</a>.</p>
 
