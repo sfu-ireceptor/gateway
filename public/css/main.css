@@ -993,8 +993,9 @@ fieldset[disabled] .btn-sequences.focus {
 	margin-top: 20px;
 }
 
+/* 46 px works for 4 lines of text in login_logo */
 .login-box {
-	margin-top: 46px;
+	margin-top: 37px;
 }
 
 .login-box .panel-body, .news_list .panel-body {
@@ -1010,8 +1011,14 @@ fieldset[disabled] .btn-sequences.focus {
 	font-size: 14px;
 }
 
+/*
+ * margin-top gives us spacing to get the image in the middle
+ * 47px works for 4 lines of text
+ *
+*/
+
 .login_logo {
-	margin-top: 47px;
+	margin-top: 30px;
 	padding-left: 0px;
 }
 
