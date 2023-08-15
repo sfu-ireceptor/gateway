@@ -510,6 +510,7 @@ class SampleController extends Controller
         }
 
         Log::debug('Sample::index - view data = ' . json_encode($data));
+
         return view('sample', $data);
     }
 
