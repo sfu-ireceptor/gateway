@@ -67,6 +67,64 @@ $(document).ready(function() {
 		return false;
 	});
 
+	// jstree: rest services tree for clones -> labs -> projects tree
+	$('#rest_service_list_clones').jstree();
+
+	// jstree: hack to make links work
+	// (otherwise link default behaviour is overrided by jstree)
+	$('#rest_service_list_clones').on('after_open.jstree', function (e, data) {
+		$('.jstree-anchor').removeClass('jstree-anchor').addClass('jstree-anchor-simple');
+  	});
+
+	// rest services modal
+	$('.toggle_modal_rest_service_list_clones_folded').click(function () {
+
+		$('#rest_service_list_clones .rs_node').each(function(){
+			$('#rest_service_list_clones').jstree('close_node', $(this));
+		});
+
+		$('#myModalClones').modal('toggle');
+		return false;
+	});
+
+	$('.toggle_modal_rest_service_list_clones_expanded').click(function () {
+		$('#rest_service_list_clones .rs_node').each(function(){
+			$('#rest_service_list_clones').jstree('open_node', $(this));
+		});
+
+		$('#myModalClones').modal('toggle');
+		return false;
+	});
+
+	// jstree: rest services tree for cells -> labs -> projects tree
+	$('#rest_service_list_cells').jstree();
+
+	// jstree: hack to make links work
+	// (otherwise link default behaviour is overrided by jstree)
+	$('#rest_service_list_cells').on('after_open.jstree', function (e, data) {
+		$('.jstree-anchor').removeClass('jstree-anchor').addClass('jstree-anchor-simple');
+  	});
+
+	// rest services modal
+	$('.toggle_modal_rest_service_list_cells_folded').click(function () {
+
+		$('#rest_service_list_cells .rs_node').each(function(){
+			$('#rest_service_list_cells').jstree('close_node', $(this));
+		});
+
+		$('#myModalCells').modal('toggle');
+		return false;
+	});
+
+	$('.toggle_modal_rest_service_list_cells_expanded').click(function () {
+		$('#rest_service_list_cells .rs_node').each(function(){
+			$('#rest_service_list_cells').jstree('open_node', $(this));
+		});
+
+		$('#myModalCells').modal('toggle');
+		return false;
+	});
+
 	// save filters panels state when submitting form
 	$('form.sample_search, form.sequence_search, form.clone_search, form.cell_search').submit(function(){
 		var filters_form = $(this);
