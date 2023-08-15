@@ -24,6 +24,7 @@ Following the AIRR Data Commons standards we are the only public resource that c
 				<li><strong>Search</strong> selected repertoires for <strong>Sequence</strong> characteristics such as a specific CDR3 sequence or particular V, D, and J genes and alleles</li>
 				<li><strong>Search</strong> selected repertoires for <strong>Clone</strong> attributes such as a specific CDR3 sequence or particular V, D, and J genes and alleles</li>
 				<li><strong>Search</strong> selected repertoires for <strong>Cell</strong> characteristics such as Gene Expression Levels.</li>
+				<li><strong>Correlate</strong> a B/T cell's <strong>gene expression</strong> pattern with its <strong>receptor sequence</strong>, and search for cells displaying specific markers of health and disease.</li>
 				<li><strong>Download Sequences, Clones, Cells</strong> and their related Repertoire metadata in AIRR compliant file formats, easily importable to other AIRR-seq analysis tools</li>
 			    <li><strong>Analyze Sequences, Clones, Cells</strong> and their related Repertoire metadata using <strong>community built analysis tools</strong>.</li>
 			</ul>
