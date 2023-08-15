@@ -93,6 +93,7 @@ class CachedSample extends Model
         $t['total_repositories_sequences'] = count(self::distinctValuesFiltered('rest_service_id', 'ir_repertoire_type', 'sequence'));
         $t['total_repositories_clones'] = count(self::distinctValuesFiltered('rest_service_id', 'ir_repertoire_type', 'clone'));
         $t['total_repositories_cells'] = count(self::distinctValuesFiltered('rest_service_id', 'ir_repertoire_type', 'cell'));
+
         // Get the total number of labs.
         $t['total_labs'] = count(self::distinctValuesGrouped(['rest_service_id', 'lab_name']));
 
