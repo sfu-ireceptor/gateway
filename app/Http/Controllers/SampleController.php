@@ -359,7 +359,7 @@ class SampleController extends Controller
         $data['total_filtered_labs'] = $sample_data['total_filtered_labs'];
         $data['total_filtered_studies'] = $sample_data['total_filtered_studies'];
         $data['total_filtered_samples'] = $sample_data['total_filtered_samples'];
-        $data['total_filtered_sequences'] = $sample_data['total_filtered_sequences'];
+        $data['total_filtered_objects'] = $sample_data['total_filtered_objects'];
 
         $data['nb_samples_with_sequences'] = $sample_data['nb_samples_with_sequences'];
         $data['nb_samples_with_clones'] = $sample_data['nb_samples_with_clones'];
@@ -509,6 +509,7 @@ class SampleController extends Controller
             Cache::put('samples-no-filters-data', $data);
         }
 
+        Log::debug('Sample::index - view data = ' . json_encode($data));
         return view('sample', $data);
     }
 

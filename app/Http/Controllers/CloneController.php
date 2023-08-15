@@ -64,7 +64,7 @@ class CloneController extends Controller
         $query_log_id = $request->get('query_log_id');
         $query_log = QueryLog::find($query_log_id);
         if ($query_log != null) {
-            $query_log->result_size = $clone_data['total_filtered_clones'];
+            $query_log->result_size = $clone_data['total_filtered_objects'];
             $query_log->save();
         }
 
@@ -87,6 +87,7 @@ class CloneController extends Controller
         $data['charts_data'] = Sample::generateChartsData($clone_data['summary'], $charts_fields, $field_map, 'ir_filtered_clone_count');
 
         $data['rest_service_list'] = $clone_data['rs_list'];
+        $data['rest_service_list_clones'] = $clone_data['rs_list'];
         $data['rest_service_list_no_response'] = $clone_data['rs_list_no_response'];
         $data['rest_service_list_no_response_timeout'] = $clone_data['rs_list_no_response_timeout'];
         $data['rest_service_list_no_response_error'] = $clone_data['rs_list_no_response_error'];
@@ -96,7 +97,7 @@ class CloneController extends Controller
         $data['total_filtered_repositories'] = $clone_data['total_filtered_repositories'];
         $data['total_filtered_labs'] = $clone_data['total_filtered_labs'];
         $data['total_filtered_studies'] = $clone_data['total_filtered_studies'];
-        $data['total_filtered_clones'] = $clone_data['total_filtered_clones'];
+        $data['total_filtered_objects'] = $clone_data['total_filtered_objects'];
         $data['filtered_repositories'] = $clone_data['filtered_repositories'];
 
         // populate form fields if needed
@@ -273,7 +274,7 @@ class CloneController extends Controller
         $data['system'] = System::getCurrentSystem(auth()->user()->id);
 
         // download time estimate
-        $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_clones']);
+        $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_objects']);
 
         // display view
         return view('clone', $data);
