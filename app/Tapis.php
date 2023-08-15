@@ -452,7 +452,11 @@ class Tapis
 
     public function getJobOutputFile($job_id, $file)
     {
-        $url = '/v3/jobs/' . $job_id . '/output/' . $file;
+        $host_name = config('services.tapis.default_execution_system.host');
+        $system_id = config('services.tapis.system_execution.name_prefix') . '-' . $host_name;
+
+        $job_dir = config('services.tapis.system_execution.exec_job_working_dir');
+        $url = '/v3/files/content/' . $system_id . $job_dir . '/jobs/' . $job_id . '/' . $file;
         $token = self::getAnalysisToken();
 
         return $this->doGETRequest($this->tapis_client, $url, $token, true);
@@ -571,7 +575,7 @@ class Tapis
         return $app_config;
     }
 
-    public function getJobConfig($name, $app_id, $download_file, $storage_archiving, $notification_url, $folder, $params, $inputs, $job_params)
+    public function getJobConfig($name, $app_id, $download_file, $gateway_system, $gateway_notification_url, $gateway_dir, $params, $inputs, $job_params)
     {
         // Get the gateway environment stuff required
         $gateway_url = config('app.url');
@@ -589,8 +593,8 @@ class Tapis
             'name' => $name,
             'appId' => $app_id,
             'appVersion' => '0.1',
-            'archiveSystemId' => $storage_archiving,
-            'archiveSystemDir' => $folder,
+            'archiveSystemId' => $gateway_system,
+            'archiveSystemDir' => $gateway_dir,
             'parameterSet' => [
                 'appArgs' => $params,
             ],
@@ -602,7 +606,7 @@ class Tapis
                     'eventCategoryFilter' => 'JOB_NEW_STATUS',
                     'deliveryTargets' => [[
                         'deliveryMethod' => 'WEBHOOK',
-                        'deliveryAddress' => $notification_url . '/job/update-status',
+                        'deliveryAddress' => $gateway_notification_url . '/job/update-status',
                     ]],
                 ],
             ],
@@ -821,7 +825,12 @@ class Tapis
             if ($this->isTapisError($tapis_response)) {
                 Log::error('Tapis::doHTTPRequest:: ClientException - returning response = ' . $tapis_response_str);
 
-                return $tapis_response;
+                //return $tapis_response;
+                if ($raw_json) {
+                    return $tapis_response_str;
+                } else {
+                    return $tapis_response;
+                }
             } else {
                 throw exception;
             }
