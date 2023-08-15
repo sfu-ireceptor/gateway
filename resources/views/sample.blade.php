@@ -336,8 +336,8 @@
 								<div class="statistics">
 									<p>
 										<strong>
-											<span title="{{ number_format($total_filtered_sequences) }}">
-												{{ number_format($total_filtered_sequences) }} sequences
+											<span title="{{ number_format($total_filtered_objects) }}">
+												{{ number_format($total_filtered_objects) }} sequences
 											</span>
 											({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
 										</strong>
@@ -592,15 +592,15 @@
 								<div class="statistics">
 									<p>
 										<strong>
-											<span title="{{ number_format($total_filtered_sequences) }}">
-												{{ number_format($total_filtered_sequences) }} clones
+											<span title="{{ number_format($total_filtered_objects) }}">
+												{{ number_format($total_filtered_objects) }} clones
 											</span>
 											({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})										</strong>
 										returned from
 					
-										<a href="#" class="toggle_modal_rest_service_list_folded">
+										<a href="#" class="toggle_modal_rest_service_list_clones_folded">
 											{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},</a>
-										<a href="#" class="toggle_modal_rest_service_list_expanded">
+										<a href="#" class="toggle_modal_rest_service_list_clones_expanded">
 											{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}} and
 											{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}.
 										</a>
@@ -614,7 +614,7 @@
 									</p>
 
 									<!-- repos/labs/studies details popup -->
-									@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
+									@include('rest_service_list_clones', ['rest_service_list_clones' => $rest_service_list, 'total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
 
 									<div class="charts">
 										<div class="row">
@@ -826,16 +826,16 @@
 								<div class="statistics">
 									<p>
 										<strong>
-											<span title="{{ number_format($total_filtered_sequences) }}">
-												{{ number_format($total_filtered_sequences) }} cells
+											<span title="{{ number_format($total_filtered_objects) }}">
+												{{ number_format($total_filtered_objects) }} cells
 											</span>
 											({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
 										</strong>
 										returned from
 					
-										<a href="#" class="toggle_modal_rest_service_list_folded">
+										<a href="#" class="toggle_modal_rest_service_list_cells_folded">
 											{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},</a>
-										<a href="#" class="toggle_modal_rest_service_list_expanded">
+										<a href="#" class="toggle_modal_rest_service_list_cells_expanded">
 											{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}} and
 											{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}.
 										</a>
@@ -849,7 +849,7 @@
 									</p>
 
 									<!-- repos/labs/studies details popup -->
-									@include('rest_service_list', ['total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
+									@include('rest_service_list_cells', ['rest_service_list_cells' => $rest_service_list, 'total_repositories' => $total_filtered_repositories, 'total_labs' => $total_filtered_labs, 'total_projects' => $total_filtered_studies])
 
 									<div class="charts">
 										<div class="row">
