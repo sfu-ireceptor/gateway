@@ -470,12 +470,14 @@ class Sample
             $rs_id = $sample->rest_service_id;
             $rs_group_code = $sample->rest_service_group_code;
 
+            // Initialize if first time we have seen this rs_id
             if (! isset($samples_by_rs[$rs_id])) {
                 $samples_by_rs[$rs_id]['name'] = $sample->rest_service_name;
                 $samples_by_rs[$rs_id]['rs_group_code'] = $rs_group_code;
                 $samples_by_rs[$rs_id]['sample_list'] = [];
             }
 
+            // Add the sample to the sample_list for the rest service ID (rs_id)
             $samples_by_rs[$rs_id]['sample_list'][] = $sample;
         }
 
@@ -499,30 +501,31 @@ class Sample
         $data['rs_list'] = [];
         $data['total'] = 0;
 
-        foreach ($samples_by_rs as $rs_id => $t) {
-            $rs_name = $t['name'];
-            $rs_group_code = $t['rs_group_code'];
-            $sample_list = $t['sample_list'];
+        foreach ($samples_by_rs as $rs_id => $rs_sample_info) {
+            $rs_name = $rs_sample_info['name'];
+            $rs_group_code = $rs_sample_info['rs_group_code'];
+            $rs_sample_list = $rs_sample_info['sample_list'];
 
             // calculate summary statistics
             $lab_list = [];
-            $lab_sequence_count = [];
-            $study_sequence_count = [];
             $study_list = [];
-            $total_sequences = 0;
+            // We count objects, either sequences, clones, or cells.
+            $lab_object_count = [];
+            $study_object_count = [];
+            $total_object_count = 0;
 
-            foreach ($sample_list as $sample) {
-                $sequence_count = 0;
+            foreach ($rs_sample_list as $sample) {
+                $object_count = 0;
                 if (isset($sample->{$count_field}) && is_numeric($sample->{$count_field})) {
-                    $sequence_count = $sample->{$count_field};
+                    $object_count = $sample->{$count_field};
                 }
 
                 if (isset($sample->lab_name)) {
                     if (! in_array($sample->lab_name, $lab_list)) {
                         $lab_list[] = $sample->lab_name;
-                        $lab_sequence_count[$sample->lab_name] = $sequence_count;
+                        $lab_object_count[$sample->lab_name] = $object_count;
                     } else {
-                        $lab_sequence_count[$sample->lab_name] += $sequence_count;
+                        $lab_object_count[$sample->lab_name] += $object_count;
                     }
                 } elseif (isset($sample->collected_by)) {
                     if (! in_array($sample->collected_by, $lab_list)) {
@@ -536,16 +539,16 @@ class Sample
 
                 if (! in_array($sample->study_title, $study_list)) {
                     $study_list[] = $sample->study_title;
-                    $study_sequence_count[$sample->study_title] = $sequence_count;
+                    $study_object_count[$sample->study_title] = $object_count;
                 } else {
-                    $study_sequence_count[$sample->study_title] += $sequence_count;
+                    $study_object_count[$sample->study_title] += $object_count;
                 }
 
-                $total_sequences += $sequence_count;
+                $total_object_count += $object_count;
             }
 
             $study_tree = [];
-            foreach ($sample_list as $sample) {
+            foreach ($rs_sample_list as $sample) {
                 // sample has no lab_name.
                 if (isset($sample->lab_name)) {
                     $lab = $sample->lab_name;
@@ -556,10 +559,10 @@ class Sample
                 // If we don't have this lab already, create it.
                 if (! isset($study_tree[$lab])) {
                     $lab_data['name'] = $lab;
-                    if (isset($lab_sequence_count[$lab])) {
-                        $lab_data['total_sequences'] = $lab_sequence_count[$lab];
+                    if (isset($lab_object_count[$lab])) {
+                        $lab_data['total_object_count'] = $lab_object_count[$lab];
                     } else {
-                        $lab_data['total_sequences'] = 0;
+                        $lab_data['total_object_count'] = 0;
                     }
                     $study_tree[$lab] = $lab_data;
                 }
@@ -567,10 +570,10 @@ class Sample
                 // Check to see if the study exists in the lab, and if not, create it.
                 if (! isset($study_tree[$lab]['studies'])) {
                     $new_study_data['study_title'] = $sample->study_title;
-                    if (isset($study_sequence_count[$sample->study_title])) {
-                        $new_study_data['total_sequences'] = $study_sequence_count[$sample->study_title];
+                    if (isset($study_object_count[$sample->study_title])) {
+                        $new_study_data['total_object_count'] = $study_object_count[$sample->study_title];
                     } else {
-                        $new_study_data['total_sequences'] = 0;
+                        $new_study_data['total_object_count'] = 0;
                     }
                     $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
                 } else {
@@ -581,10 +584,10 @@ class Sample
                         } else {
                             unset($new_study_data['study_url']);
                         }
-                        if (isset($study_sequence_count[$sample->study_title])) {
-                            $new_study_data['total_sequences'] = $study_sequence_count[$sample->study_title];
+                        if (isset($study_object_count[$sample->study_title])) {
+                            $new_study_data['total_object_count'] = $study_object_count[$sample->study_title];
                         } else {
-                            $new_study_data['total_sequences'] = 0;
+                            $new_study_data['total_object_count'] = 0;
                         }
                         $study_tree[$lab]['studies'][$sample->study_title] = $new_study_data;
                     }
@@ -597,16 +600,16 @@ class Sample
             $rs_data['rs_group_code'] = $rs_group_code;
             $rs_data['rs_id'] = $rs_id;
             $rs_data['study_tree'] = $study_tree;
-            $rs_data['total_samples'] = count($sample_list);
+            $rs_data['total_samples'] = count($rs_sample_list);
             $rs_data['total_labs'] = count($lab_list);
             $rs_data['total_studies'] = count($study_list);
-            $rs_data['total_sequences'] = $total_sequences;
-            $rs_data['total_filtered_sequences'] = $total_sequences;
+            $rs_data['total_object_count'] = $total_object_count;
+            $rs_data['total_filtered_objects'] = $total_object_count;
             $data['rs_list'][] = $rs_data;
 
             // sample data
             $data['total'] += $rs_data['total_samples'];
-            $data['items'] = array_merge($sample_list, $data['items']);
+            $data['items'] = array_merge($rs_sample_list, $data['items']);
         }
 
         // aggregate summary statistics
@@ -614,7 +617,7 @@ class Sample
         $total_filtered_labs = 0;
         $total_filtered_studies = 0;
         $total_filtered_samples = 0;
-        $total_filtered_sequences = 0;
+        $total_filtered_objects = 0;
 
         foreach ($data['rs_list'] as $rs_data) {
             if ($rs_data['total_samples'] > 0) {
@@ -624,7 +627,7 @@ class Sample
             $total_filtered_samples += $rs_data['total_samples'];
             $total_filtered_labs += $rs_data['total_labs'];
             $total_filtered_studies += $rs_data['total_studies'];
-            $total_filtered_sequences += $rs_data['total_sequences'];
+            $total_filtered_objects += $rs_data['total_object_count'];
         }
 
         // sort alphabetically repositories/labs/studies
@@ -634,7 +637,7 @@ class Sample
         $data['total_filtered_repositories'] = $total_filtered_repositories;
         $data['total_filtered_labs'] = $total_filtered_labs;
         $data['total_filtered_studies'] = $total_filtered_studies;
-        $data['total_filtered_sequences'] = $total_filtered_sequences;
+        $data['total_filtered_objects'] = $total_filtered_objects;
 
         return $data;
     }
