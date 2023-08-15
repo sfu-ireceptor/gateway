@@ -70,19 +70,10 @@
                     of
                     <a href="https://www.antibodysociety.org/the-airr-community/" class="external"> AIRR-seq data</a>
                     (antibody/B-cell and T-cell receptor repertoires)
-                    from studies on cancer (e.g. breast and ovarian),
-                    autoimmune diseases (e.g. MS and SLE),
-                    and infectious diseases (e.g. HIV and influenza) in the
-                    <a href="https://www.antibodysociety.org/the-airr-community/airr-data-commons/" class="external">AIRR Data Commons (ADC)</a>
+                    from studies in the
+                    <a href="https://www.antibodysociety.org/the-airr-community/airr-data-commons/" class="external">AIRR Data Commons (ADC)</a>.
+                    Search for disease data (e.g. cancer, autoimmunity, infections) and healthy controls.
 				</p>
-<!--
-                <p>
-                    Summary of bulk and single-cell data from 
-                    <a href="/repositories">{{ $total_repositories }} {{ str_plural('repository', $total_repositories)}}</a>
-                    in the
-                    <a href="https://www.antibodysociety.org/the-airr-community/airr-data-commons/" class="external">AIRR Data Commons</a>
-                </p>
--->
 			</div>
 
 			<div class="intro2">
@@ -90,8 +81,7 @@
                     <strong>
                     Summary of bulk and single-cell data from the
                     <a href="/repositories">{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}}</a>
-                    in the
-                    <a href="https://www.antibodysociety.org/the-airr-community/airr-data-commons/" class="external">ADC</a>
+                    in the ADC.
                     </strong>
                 </p>
                 </br>
@@ -108,10 +98,10 @@
 					<a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories_sequences }} {{ str_plural('repository', $total_repositories_sequences)}}</a>
                     </strong>
                     <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Sequence Help" data-content='<p>Click to visit the iReceptor Sequence Documentation for more information on working with Sequences.</p>' data-trigger="hover" tabindex="0">
-                     <a href="http://www.ireceptor.org/node/199" class="external" target="_blank"><span class="glyphicon glyphicon-question-sign"></span></a>
-                     </span>
+                     <a href="http://www.ireceptor.org/node/199" target="_blank"><span class="glyphicon glyphicon-question-sign"></span></a>
+                    </span>
 					<!-- repos/labs/studies popup -->
-					<!--@include('rest_service_list', ['tab' => 'sequence'])-->
+					@include('rest_service_list', ['rest_service_list' => $rest_service_list_sequences, 'tab' => 'sequence'])
 				</p>
 
 				<div class="charts">
@@ -120,18 +110,6 @@
 						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart4']) !!}"></div>
 						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart5']) !!}"></div>
 					</div>
-<!--
-					<div class="row">
-						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart1']) !!}"></div>
-						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart2']) !!}"></div>
-						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart3']) !!}"></div>
-					</div>
-					<div class="row">
-						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart4']) !!}"></div>
-						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart5']) !!}"></div>
-						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart6']) !!}"></div>
-					</div>
--->
 				</div>
                 <p class="intro_login">
                     <strong>{{ human_number($total_clones) }} {{ str_plural('clone', $total_clones)}}</strong>
@@ -142,17 +120,17 @@
                     {{ str_plural('repertoire', $total_samples_clones)}},
                     </strong>
                     <strong>
-                    <a href="#" class="toggle_modal_rest_service_list_expanded">{{ $total_projects_clones}} {{ str_plural('study', $total_projects_clones)}}</a>,
+                    <a href="#" class="toggle_modal_rest_service_list_clones_expanded">{{ $total_projects_clones}} {{ str_plural('study', $total_projects_clones)}}</a>,
                     </strong>
                     <strong>
-                    <a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories_clones }} {{ str_plural('repository', $total_repositories_clones)}}</a>
+                    <a href="#" class="toggle_modal_rest_service_list_clones_folded">{{ $total_repositories_clones }} {{ str_plural('repository', $total_repositories_clones)}}</a>
                     </strong>
                     <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Clone Help" data-content='<p>Click to visit the iReceptor Clone Documentation for more information on working with Clones.</p>' data-trigger="hover" tabindex="0">
-                     <a href="http://www.ireceptor.org/node/200" class="external" target="_blank"><span class="glyphicon glyphicon-question-sign"></span></a>
+                     <a href="http://www.ireceptor.org/node/200" target="_blank"><span class="glyphicon glyphicon-question-sign"></span></a>
                      </span>
 
                     <!-- repos/labs/studies popup -->
-                    @include('rest_service_list', ['tab' => 'clone'])
+                    @include('rest_service_list_clones', ['rest_service_list' => $rest_service_list_clones, 'tab' => 'clone'])
                 </p>
 				<div class="charts">
 					<div class="row">
@@ -165,7 +143,7 @@
                 <p class="intro_login">
                     <strong>
                     {{ human_number($total_cells) }} 
-                    {{ str_plural('immune cell', $total_cells)}}
+                    {{ str_plural('sorted, single B/T cell', $total_cells)}}
                     </strong>
                     with paired receptors, gene expression, and cell phenotype
                     from
@@ -174,16 +152,16 @@
                     {{ str_plural('repertoire', $total_samples_cells)}},
                     </strong>
                     <strong>
-                    <a href="#" class="toggle_modal_rest_service_list_expanded">{{ $total_projects_cells }} {{ str_plural('study', $total_projects_cells)}}</a>,
+                    <a href="#" class="toggle_modal_rest_service_list_cells_expanded">{{ $total_projects_cells }} {{ str_plural('study', $total_projects_cells)}}</a>,
                     </strong>
                     <strong>
-                    <a href="#" class="toggle_modal_rest_service_list_folded">{{ $total_repositories_cells }} {{ str_plural('repository', $total_repositories_cells)}}</a>
+                    <a href="#" class="toggle_modal_rest_service_list_cells_folded">{{ $total_repositories_cells }} {{ str_plural('repository', $total_repositories_cells)}}</a>
                     </strong> 
                     <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Cell Help" data-content='<p>Click to visit the iReceptor Cell Documentation for more information on working with Cells.</p>' data-trigger="hover" tabindex="0">
-                     <a href="http://www.ireceptor.org/node/201" class="external" target="_blank"><span class="glyphicon glyphicon-question-sign"></span></a>
+                     <a href="http://www.ireceptor.org/node/201" target="_blank"><span class="glyphicon glyphicon-question-sign"></span></a>
                      </span>
                     <!-- repos/labs/studies popup -->
-                    @include('rest_service_list', ['tab' => 'cell'])
+                    @include('rest_service_list_cells', ['rest_service_list' => $rest_service_list_cells, 'tab' => 'cell'])
                 </p>
 				<div class="charts">
 					<div class="row">
