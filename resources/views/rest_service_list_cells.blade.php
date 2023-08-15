@@ -1,4 +1,4 @@
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="myModalCells" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog" role="document">
     	<div class="modal-content">
 
@@ -8,11 +8,12 @@
 		        	{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}},
 		        	{{ $total_labs }} research {{ str_plural('lab', $total_labs)}},
 		        	{{ $total_projects }} {{ str_plural('study', $total_projects)}}
+CELL-ZZZZ
 		        </h4>
       		</div>
 
 	  		<div class="modal-body">		        	
-				<div id="rest_service_list">
+				<div id="rest_service_list_cells">
 					<ul>
 						@foreach ($rest_service_list as $rs_data)
 						    <li  class="rs_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-home"}'>
@@ -25,7 +26,7 @@
 						     			{{ $rs_data['rs']->display_name }}
 						     		@endisset
 						     	</span>
-						     	<em>{{ human_number($rs_data['total_filtered_cells']) }} cells</em>
+						     	<em>{{ human_number($rs_data['total_filtered_objects']) }} cells</em>
 							    <ul>
 						 			@foreach ($rs_data['study_tree'] as $lab)
 										<li class="lab_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-folder-open"}'>
@@ -37,8 +38,8 @@
 													<em>unknown</em>
 												@endif
 											</span>
-											@if(isset($lab['total_cells']) && $lab['total_cells'] > 0)
-												<em>{{ human_number($lab['total_cells']) }} cells</em>
+											@if(isset($lab['total_object_count']) && $lab['total_object_count'] > 0)
+												<em>{{ human_number($lab['total_object_count']) }} cells</em>
 											@endif
 										    <ul>
 										    	@isset($lab['studies'])
@@ -55,8 +56,8 @@
 																		{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
 																	</span>
 																@endif
-																@if ($study['total_cells'] > 0)
-																	<em>{{ human_number($study['total_cells']) }} cells</em>
+																@if ($study['total_object_count'] > 0)
+																	<em>{{ human_number($study['total_object_count']) }} cells</em>
 																@endif
 															</span>
 														</li>
