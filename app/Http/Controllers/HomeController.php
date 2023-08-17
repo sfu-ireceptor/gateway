@@ -35,13 +35,13 @@ class HomeController extends Controller
         $sample_list = Sample::public_samples('sequence');
         // Fields we want to graph. The UI/blade expects six fields
         $charts_fields = ['study_type_id', 'organism', 'disease_diagnosis_id',
-                          'tissue_id', 'pcr_target_locus', 'template_class', ];
+            'tissue_id', 'pcr_target_locus', 'template_class', ];
         // Mapping of fields to display as labels on the graph for those that need
         // mappings. These are usually required for ontology fields where we want
         // to aggregate on the ontology ID but display the ontology label.
         $field_map = ['study_type_id' => 'study_type',
-                      'disease_diagnosis_id' => 'disease_diagnosis',
-                      'tissue_id' => 'tissue', ];
+            'disease_diagnosis_id' => 'disease_diagnosis',
+            'tissue_id' => 'tissue', ];
         // Generate the graph
         $data['charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map);
 
@@ -57,13 +57,13 @@ class HomeController extends Controller
 
         // Fields we want to graph. The UI/blade expects six fields
         $charts_fields = ['study_type_id', 'organism', 'disease_diagnosis_id',
-                          'tissue_id', 'pcr_target_locus', 'template_class', ];
+            'tissue_id', 'pcr_target_locus', 'template_class', ];
         // Mapping of fields to display as labels on the graph for those that need
         // mappings. These are usually required for ontology fields where we want
         // to aggregate on the ontology ID but display the ontology label.
         $field_map = ['study_type_id' => 'study_type',
-                      'disease_diagnosis_id' => 'disease_diagnosis',
-                      'tissue_id' => 'tissue', ];
+            'disease_diagnosis_id' => 'disease_diagnosis',
+            'tissue_id' => 'tissue', ];
         $data['clone_charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map, 'ir_clone_count');
 
         // Generate the rest service list info for this query. This has the
@@ -78,12 +78,12 @@ class HomeController extends Controller
 
         // Fields we want to graph. The UI/blade expects six fields
         $charts_fields = ['disease_diagnosis_id', 'tissue_id', 'cell_subset',
-                          'disease_diagnosis_id', 'tissue_id', 'cell_subset'];
+            'disease_diagnosis_id', 'tissue_id', 'cell_subset'];
         // Mapping of fields to display as labels on the graph for those that need
         // mappings. These are usually required for ontology fields where we want
         // to aggregate on the ontology ID but display the ontology label.
         $field_map = ['disease_diagnosis_id' => 'disease_diagnosis',
-                      'tissue_id' => 'tissue', ];
+            'tissue_id' => 'tissue', ];
         $data['cell_charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map, 'ir_cell_count');
 
         // Generate the rest service list info for this query. This has the
