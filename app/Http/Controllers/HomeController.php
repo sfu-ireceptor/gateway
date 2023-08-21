@@ -16,16 +16,15 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         $cached_data = Cache::get('home-data');
+        // Uncomment the following if you need to force cache rebuild.
         //$cached_data = null;
         if ($cached_data != null) {
             return view('home', $cached_data);
         }
 
         // get count of available data (sequences, samples)
-        Log::debug('HomeController::index');
         $username = auth()->user()->username;
         $metadata = Sample::metadata($username);
-        Log::debug('HomeController::index - got metadata');
         $data = $metadata;
 
         // Prepare the data for the pie charts for sequences, clones, cells.

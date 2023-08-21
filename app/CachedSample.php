@@ -160,18 +160,18 @@ class CachedSample extends Model
     public static function distinctValuesGrouped($fields)
     {
         $l = self::groupBy($fields);
-        Log::debug('distinctValuesGrouped: l = ' . json_encode($l));
+        //Log::debug('distinctValuesGrouped: l = ' . json_encode($l));
 
         // exclude null values
         foreach ($fields as $fieldName) {
             $l = $l->whereNotNull($fieldName);
         }
-        Log::debug('distinctValuesGrouped: l = ' . json_encode($l));
+        //Log::debug('distinctValuesGrouped: l = ' . json_encode($l));
 
         // do query
         $l = $l->get();
         $l = $l->toArray();
-        Log::debug('distinctValuesGrouped: l = ' . json_encode($l));
+        //Log::debug('distinctValuesGrouped: l = ' . json_encode($l));
 
         // remove useless '_id' key
         foreach ($l as $k => $v) {

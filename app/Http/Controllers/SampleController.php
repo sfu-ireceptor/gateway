@@ -232,7 +232,6 @@ class SampleController extends Controller
             $params = Query::getParams($query_id);
             $data['query_id'] = $query_id;
         }
-        //Log::debug('XXX Params: ' . json_encode($params));
 
         // fill form fields accordingly
         $request->session()->forget('_old_input');
@@ -432,7 +431,6 @@ class SampleController extends Controller
         unset($filter_fields['tab']);
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
-        //Log::debug('XXX Filter fields: ' . json_encode($filter_fields));
 
         // for bookmarking
         $current_url = $request->fullUrl();
@@ -509,8 +507,7 @@ class SampleController extends Controller
             Cache::put('samples-no-filters-data', $data);
         }
 
-        Log::debug('Sample::index - view data = ' . json_encode($data));
-
+        // Return the data to the view.
         return view('sample', $data);
     }
 

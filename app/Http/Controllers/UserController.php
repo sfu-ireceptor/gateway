@@ -55,7 +55,6 @@ class UserController extends Controller
                 'disease_diagnosis_id' => 'disease_diagnosis',
                 'tissue_id' => 'tissue', ];
             $data['charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map);
-            Log::debug('Chart data = ' . json_encode($data['charts_data']));
 
             // Get the cached clone public_samples
             $sample_list = Sample::public_samples('clone');
@@ -74,7 +73,6 @@ class UserController extends Controller
             $field_map = ['disease_diagnosis_id' => 'disease_diagnosis',
                 'tissue_id' => 'tissue', ];
             $data['clone_charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map, 'ir_clone_count');
-            Log::debug('Clone Chart data = ' . json_encode($data['clone_charts_data']));
 
             // Get the cached cell public_samples
             $sample_list = Sample::public_samples('cell');
@@ -92,7 +90,6 @@ class UserController extends Controller
             $field_map = ['disease_diagnosis_id' => 'disease_diagnosis',
                 'tissue_id' => 'tissue', ];
             $data['cell_charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map, 'ir_cell_count');
-            Log::debug('Cell Chart data = ' . json_encode($data['cell_charts_data']));
 
             // Temporarily store this the old way. This should not be required.
             $data['rest_service_list'] = $data['rest_service_list_sequences'];
