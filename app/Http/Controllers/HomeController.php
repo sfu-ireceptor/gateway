@@ -9,7 +9,6 @@ use App\Sample;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
