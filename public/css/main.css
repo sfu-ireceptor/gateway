@@ -1575,6 +1575,88 @@ a.download_sequences, a.download_clones, a.download_cells {
 
 /* @end */
 
+/* @group rest service list clones */
+
+#rest_service_list_clones em {
+	margin-left: 5px;
+	color: gray;
+}
+
+#rest_service_list_clones .rs_node {
+	margin-bottom: 10px;
+}
+
+#rest_service_list_clones .node_name {
+	font-weight: bold;
+	font-size: 20px;
+}
+
+#rest_service_list_clones .lab_node {
+	margin-top: 5px;
+}
+
+#rest_service_list_clones .lab_name {
+	font-weight: bold;
+	margin-top: 10px;
+}
+
+#accordion .panel-heading a:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\2212";
+    float: right;
+    color: #337ab7;
+}
+#accordion .panel-heading a.collapsed:after {
+    content: "\002b";
+}
+
+#rest_service_list_clones .repositories {
+	margin-top: 20px;
+}
+
+/* @end */
+
+/* @group rest service list cells */
+
+#rest_service_list_cells em {
+	margin-left: 5px;
+	color: gray;
+}
+
+#rest_service_list_cells .rs_node {
+	margin-bottom: 10px;
+}
+
+#rest_service_list_cells .node_name {
+	font-weight: bold;
+	font-size: 20px;
+}
+
+#rest_service_list_cells .lab_node {
+	margin-top: 5px;
+}
+
+#rest_service_list_cells .lab_name {
+	font-weight: bold;
+	margin-top: 10px;
+}
+
+#accordion .panel-heading a:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\2212";
+    float: right;
+    color: #337ab7;
+}
+#accordion .panel-heading a.collapsed:after {
+    content: "\002b";
+}
+
+#rest_service_list_cells .repositories {
+	margin-top: 20px;
+}
+
+/* @end */
+
 /* @group pie charts */
 
 #summary_charts {
