@@ -364,8 +364,6 @@ class Sample
             $field_array = explode('.', $path);
             $current_field = $field_array[0];
             $target_field = $field_array[count($field_array) - 1];
-            //Log::debug('xxxx current field = ' . $current_field);
-            //Log::debug('xxxx target field = ' . $target_field);
 
             // If the property we are processing currently exists, process it.
             if (property_exists($object, $current_field)) {
@@ -397,15 +395,12 @@ class Sample
                     } elseif (strlen($new_value) > 1) {
                         $field_value = $field_value . ', ' . $new_value;
                     }
-                    //Log::debug('xxxx field_value = ' . $field_value);
                 }
             }
         } else {
             // If we are here, we are at the end of the path, so just get the data element.
             $current_field = $path;
             $field_value = trim(data_get($object, $current_field));
-            //Log::debug('!!!! current field = ' . $current_field);
-            //Log::debug('!!!! current value = ' . $field_value);
         }
         // Return the value.
         return $field_value;
@@ -844,7 +839,7 @@ class Sample
         $valuesLabels = [];
         $valuesLabels['None'] = 'None';
 
-        Log::debug('generateChartData: field = ' . $count_field);
+        //Log::debug('generateChartData: field = ' . $count_field);
         // Iterate over each sample
         foreach ($sample_list as $sample) {
             $sample = json_decode(json_encode($sample), true);
@@ -855,7 +850,7 @@ class Sample
             if (isset($sample[$count_field])) {
                 $nb_sequences = $sample[$count_field];
                 if ($nb_sequences > 0 && $count_field == 'ir_cell_count') {
-                    Log::debug('Sample = ' . $sample['sample_id'] . ' = ' . $nb_sequences);
+                    //Log::debug('Sample = ' . $sample['sample_id'] . ' = ' . $nb_sequences);
                 }
             }
 
