@@ -8,7 +8,6 @@
 		        	{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}},
 		        	{{ $total_labs }} research {{ str_plural('lab', $total_labs)}},
 		        	{{ $total_projects }} {{ str_plural('study', $total_projects)}}
-CLONE-YYYY
 		        </h4>
       		</div>
 
