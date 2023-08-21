@@ -8,9 +8,9 @@ iReceptor is a data discovery platform that facilitates the curation, analysis a
 </p>
 <h5>Curated Studies Available</h5>
 <p>
-Users of the iReceptor Gateway can search AIRR-seq data from studies on cancer (for example breast and ovarian), autoimmune diseases (for example MS and SLE), and infectious diseases (for example HIV and influenza).  Working with the COVID-19 and Type 1 Diabetes communities we have recently expanded our curated studies in those areas.
+Users of the iReceptor Gateway can search AIRR-seq data from studies on cancer (e.g. breast and ovarian), autoimmune diseases (e.g. MS and SLE), and infectious diseases (e.g. HIV and influenza).  Working with the COVID-19 and Type 1 Diabetes communities we have recently expanded our curated studies in those areas.
 
-Following the AIRR Data Commons standards we are the only public resource that curates data from single-cell immune-profiling studies.
+Following the AIRR Data Commons standards we are the only public resource that integrates bulk AIRR-seq data with single-cell immune-profiling date (paired receptor chains and gene expression).
 </p>
 			<h5>Our Approach</h5>
 			<p>
