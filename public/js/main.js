@@ -598,7 +598,7 @@ $(document).ready(function() {
 				});			
 			}
 
-			var timer = setInterval(refresh, 5000);
+			var timer = setInterval(refresh, 10000);
 		}
 	});	
 
@@ -622,7 +622,7 @@ $(document).ready(function() {
 			});			
 		}
 
-		var timer = setInterval(refreshJobList, 5000);
+		var timer = setInterval(refreshJobList, 10000);
 	});	
 
 	/**********************************************************
