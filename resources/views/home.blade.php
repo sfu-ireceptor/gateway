@@ -13,13 +13,13 @@
 				<p>
                     <strong>{{ human_number($total_sequences) }} annotated sequences</strong>
                     from  
-					{{ $total_samples }} repertoires, 
+					{{ $total_samples_sequences }} repertoires, 
 					<a href="#" class="toggle_modal_rest_service_list_expanded">
-					{{ $total_projects }} {{ str_plural('study', $total_projects)}}
+					{{ $total_projects_sequences }} {{ str_plural('study', $total_projects_sequences)}}
 					</a>
                     ,
 					<a href="#" class="toggle_modal_rest_service_list_folded">
-                    {{ $total_repositories }} {{ str_plural('repository', $total_repositories)}}
+                    {{ $total_repositories_sequences }} {{ str_plural('repository', $total_repositories_sequences)}}
                     </a>
                     <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Sequence Help" data-content='<p>Click to visit the iReceptor Sequence Documentation for more information on working with Sequences.</p>' data-trigger="hover" tabindex="0">
                      <a href="http://www.ireceptor.org/node/199" target="_blank"><span class="glyphicon glyphicon-question-sign"></span></a>
