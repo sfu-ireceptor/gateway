@@ -237,6 +237,9 @@ class JobController extends Controller
 
     public function getView($id)
     {
+        // Set info file name
+        $info_file = 'info.txt';
+
         // Get the job for the user.
         $job = Job::findJobForUser($id, auth()->user()->id);
 
@@ -303,13 +306,12 @@ class JobController extends Controller
 
         // Generate a set of summary information about where the data came from
         $data['summary'] = [];
-        $info_file = $folder . '/info.txt';
-        if ($job['input_folder'] != '' && File::exists($info_file)) {
+        $info_file_path = $folder . '/' . $info_file;
+        if ($job['input_folder'] != '' && File::exists($info_file_path)) {
             try {
-                $info_txt = file_get_contents($info_file);
-                $lines = file($info_file);
+                $lines = file($info_file_path);
             } catch (Exception $e) {
-                Log::debug('JobController::getView: Could not open file ' . $info_file);
+                Log::debug('JobController::getView: Could not open file ' . $info_file_path);
                 Log::debug('JobController::getView: Error: ' . $e->getMessage());
             }
             $data['summary'] = $lines;
@@ -442,7 +444,7 @@ class JobController extends Controller
         $data['error_summary'] = [];
         $err_path = $analysis_folder . '/' . $error_file;
         $out_path = $analysis_folder . '/' . $output_file;
-        $info_path = $analysis_folder . '/' . 'info.txt';
+        $info_path = $analysis_folder . '/' . $info_file;
 
         // Error strings we expect to see if an error occured in an App
         $ireceptor_error = 'IR-ERROR';
@@ -515,8 +517,7 @@ class JobController extends Controller
             $stderr_response = '';
             if (File::exists($folder) && ! File::exists($err_path)) {
                 // Tapis command to get the file.
-                //$stderr_response = $tapis->getJobOutputFile($job->getJobID(), $error_file);
-                $stderr_response = 'THIS NEEDS TO BE FIXED';
+                $stderr_response = $tapis->getJobOutputFile($job->getJobID(), $error_file);
                 // Check for the analysis directory, create if it doesn't exist.
                 if (! File::exists($analysis_folder)) {
                     mkdir($analysis_folder);
@@ -539,8 +540,7 @@ class JobController extends Controller
             $stdout_response = '';
             if (File::exists($folder) && ! File::exists($out_path)) {
                 // Tapis command to get the file.
-                //$stdout_response = $tapis->getJobOutputFile($job->getJobID(), $output_file);
-                $stdout_response = 'THIS NEEDS TO BE FIXED';
+                $stdout_response = $tapis->getJobOutputFile($job->getJobID(), $output_file);
                 // Check for the analysis directory, create if it doesn't exist.
                 if (! File::exists($analysis_folder)) {
                     mkdir($analysis_folder);
@@ -563,8 +563,7 @@ class JobController extends Controller
             $info_response = '';
             if (File::exists($folder) && ! File::exists($info_path)) {
                 // Tapis command to get the file.
-                //$info_response = $tapis->getJobOutputFile($job->getJobID(), 'info.txt');
-                $info_response = 'THIS NEEDS TO BE FIXED';
+                $info_response = $tapis->getJobOutputFile($job->getJobID(), $info_file);
                 $info_object = json_decode($info_response);
 
                 // Catch the case when the info file doesn't exist on the Tapis compute side.

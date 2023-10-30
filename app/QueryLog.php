@@ -113,6 +113,10 @@ class QueryLog extends Model
         } elseif (str_contains($url, '/samples/tsv')) {
             $type = 'sample';
             $t['file'] = 'tsv';
+        } elseif (str_contains($url, '/samples/clone')) {
+            $type = 'sample-clone';
+        } elseif (str_contains($url, '/samples/cell')) {
+            $type = 'sample-cell';
         } elseif (str_contains($url, '/samples')) {
             $type = 'sample';
         } elseif (str_contains($url, '/sequences-quick-search')) {
@@ -121,6 +125,14 @@ class QueryLog extends Model
             $type = 'sequence';
         } elseif (str_contains($url, '/sequences')) {
             $type = 'sequence';
+        } elseif (str_contains($url, '/clones')) {
+            $type = 'clone';
+        } elseif (str_contains($url, '/clones-download')) {
+            $type = 'clone';
+        } elseif (str_contains($url, '/cells')) {
+            $type = 'cell';
+        } elseif (str_contains($url, '/cells-download')) {
+            $type = 'cell';
         } else {
             $type = 'unknown';
         }
