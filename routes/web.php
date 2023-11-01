@@ -179,6 +179,7 @@ Route::get('user/login', function () {
 });
 
 // update page count for CANARIE
+// this is no longer necessary, can be removed.
 if (! App::runningInConsole()) {
     App\Stats::incrementNbRequests();
 }
