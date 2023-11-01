@@ -51,11 +51,13 @@ class UtilController extends Controller
     // called by GitHub hook
     public function deploy(Request $request)
     {
+        Log::info('UtilContorller::deploy');
         $already_running_deployment = Deployment::where('running', 1)->first();
         while ($already_running_deployment != null) {
             sleep(5);
             $already_running_deployment = Deployment::where('running', 1)->first();
         }
+        Log::info('UtilContorller::deploy - after checking for running');
 
         $start_time = Carbon::now();
 
@@ -64,11 +66,11 @@ class UtilController extends Controller
 
         $githubPayload = $request->getContent();
         $githubHash = $request->header('X-Hub-Signature');
-        Log::info('githubhash = ' . $githubHash);
+        Log::info('UtilContorller::deploy - githubhash = ' . $githubHash);
 
         $localToken = config('app.deploy_secret');
         $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
-        Log::info('localhash = ' . $localHash);
+        Log::info('UtilContorller::deploy - localhash = ' . $localHash);
 
         if (hash_equals($githubHash, $localHash)) {
             Log::info('-------- Deployment STARTED --------');
