@@ -69,6 +69,7 @@ class UtilController extends Controller
         Log::info('UtilContorller::deploy - githubhash = ' . $githubHash);
 
         $localToken = config('app.deploy_secret');
+        Log::info('UtilContorller::deploy - local secret = ' . $localToken);
         $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
         Log::info('UtilContorller::deploy - localhash = ' . $localHash);
 
