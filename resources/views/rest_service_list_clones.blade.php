@@ -1,4 +1,4 @@
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="myModalClones" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog" role="document">
     	<div class="modal-content">
 
@@ -12,9 +12,9 @@
       		</div>
 
 	  		<div class="modal-body">		        	
-				<div id="rest_service_list">
+				<div id="rest_service_list_clones">
 					<ul>
-						@foreach ($rest_service_list as $rs_data)
+						@foreach ($rest_service_list_clones as $rs_data)
 						    <li  class="rs_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-home"}'>
 						     	<span class="node_name">
 						     		@isset($rs_data['rs_name'])
@@ -25,7 +25,7 @@
 						     			{{ $rs_data['rs']->display_name }}
 						     		@endisset
 						     	</span>
-						     	<em>{{ human_number($rs_data['total_filtered_clones']) }} clones</em>
+						     	<em>{{ human_number($rs_data['total_filtered_objects']) }} clones</em>
 							    <ul>
 						 			@foreach ($rs_data['study_tree'] as $lab)
 										<li class="lab_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-folder-open"}'>
@@ -37,8 +37,8 @@
 													<em>unknown</em>
 												@endif
 											</span>
-											@if(isset($lab['total_clones']) && $lab['total_clones'] > 0)
-												<em>{{ human_number($lab['total_clones']) }} clones</em>
+											@if(isset($lab['total_object_count']) && $lab['total_object_count'] > 0)
+												<em>{{ human_number($lab['total_object_count']) }} clones</em>
 											@endif
 										    <ul>
 										    	@isset($lab['studies'])
@@ -55,8 +55,8 @@
 																		{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
 																	</span>
 																@endif
-																@if ($study['total_clones'] > 0)
-																	<em>{{ human_number($study['total_clones']) }} clones</em>
+																@if ($study['total_object_count'] > 0)
+																	<em>{{ human_number($study['total_object_count']) }} clones</em>
 																@endif
 															</span>
 														</li>

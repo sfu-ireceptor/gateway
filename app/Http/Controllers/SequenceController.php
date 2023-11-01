@@ -64,7 +64,7 @@ class SequenceController extends Controller
         $query_log_id = $request->get('query_log_id');
         $query_log = QueryLog::find($query_log_id);
         if ($query_log != null) {
-            $query_log->result_size = $sequence_data['total_filtered_sequences'];
+            $query_log->result_size = $sequence_data['total_filtered_objects'];
             $query_log->save();
         }
 
@@ -98,7 +98,7 @@ class SequenceController extends Controller
         $data['total_filtered_repositories'] = $sequence_data['total_filtered_repositories'];
         $data['total_filtered_labs'] = $sequence_data['total_filtered_labs'];
         $data['total_filtered_studies'] = $sequence_data['total_filtered_studies'];
-        $data['total_filtered_sequences'] = $sequence_data['total_filtered_sequences'];
+        $data['total_filtered_objects'] = $sequence_data['total_filtered_objects'];
         $data['filtered_repositories'] = $sequence_data['filtered_repositories'];
 
         // populate form fields if needed
@@ -300,7 +300,7 @@ class SequenceController extends Controller
         $data['system'] = System::getCurrentSystem(auth()->user()->id);
 
         // download time estimate
-        $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_sequences']);
+        $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_objects']);
 
         // if there is a junction_aa filter, ask IEDB for info about it
         if (isset($filters['junction_aa'])) {
@@ -376,7 +376,7 @@ class SequenceController extends Controller
         $query_log_id = $request->get('query_log_id');
         $query_log = QueryLog::find($query_log_id);
         if ($query_log != null) {
-            $query_log->result_size = $sequence_data['total_filtered_sequences'];
+            $query_log->result_size = $sequence_data['total_filtered_objects'];
             $query_log->save();
         }
 
@@ -434,7 +434,7 @@ class SequenceController extends Controller
         $data['total_filtered_repositories'] = $sequence_data['total_filtered_repositories'];
         $data['total_filtered_labs'] = $sequence_data['total_filtered_labs'];
         $data['total_filtered_studies'] = $sequence_data['total_filtered_studies'];
-        $data['total_filtered_sequences'] = $sequence_data['total_filtered_sequences'];
+        $data['total_filtered_objects'] = $sequence_data['total_filtered_objects'];
         $data['filtered_repositories'] = $sequence_data['filtered_repositories'];
 
         // populate form fields if needed
@@ -529,7 +529,7 @@ class SequenceController extends Controller
         $data['filter_fields'] = $filter_fields;
 
         // download time estimate
-        $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_sequences']);
+        $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_objects']);
 
         if (isset($sequence_filters['junction_aa'])) {
             $junction_aa = $filters['junction_aa'];

@@ -9,27 +9,49 @@ use App\Sample;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
         $cached_data = Cache::get('home-data');
+        // Uncomment the following if you need to force cache rebuild.
+        //$cached_data = null;
         if ($cached_data != null) {
             return view('home', $cached_data);
         }
 
         // get count of available data (sequences, samples)
-        Log::debug('HomeController::index');
         $username = auth()->user()->username;
         $metadata = Sample::metadata($username);
-        Log::debug('HomeController::index - got metadata');
         $data = $metadata;
 
-        // get list of samples
-        $sample_list = Sample::public_samples();
-        Log::debug('HomeController::index - got samples');
+        // Prepare the data for the pie charts for sequences, clones, cells.
+        //
+        // Get list cached sequence samples
+        //
+        $sample_list = Sample::public_samples('sequence');
+        // Fields we want to graph. The UI/blade expects six fields
+        $charts_fields = ['study_type_id', 'organism', 'disease_diagnosis_id',
+            'tissue_id', 'pcr_target_locus', 'template_class', ];
+        // Mapping of fields to display as labels on the graph for those that need
+        // mappings. These are usually required for ontology fields where we want
+        // to aggregate on the ontology ID but display the ontology label.
+        $field_map = ['study_type_id' => 'study_type',
+            'disease_diagnosis_id' => 'disease_diagnosis',
+            'tissue_id' => 'tissue', ];
+        // Generate the graph
+        $data['charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map);
+
+        // Generate the rest service list info for this query. This has the
+        // sample tree info required for our study browsing.
+        $sample_data = Sample::stats($sample_list);
+        $data['rest_service_list_sequences'] = $sample_data['rs_list'];
+
+        //
+        // Get the cached clone samples
+        //
+        $sample_list = Sample::public_samples('clone');
 
         // Fields we want to graph. The UI/blade expects six fields
         $charts_fields = ['study_type_id', 'organism', 'disease_diagnosis_id',
@@ -40,13 +62,39 @@ class HomeController extends Controller
         $field_map = ['study_type_id' => 'study_type',
             'disease_diagnosis_id' => 'disease_diagnosis',
             'tissue_id' => 'tissue', ];
-        $data['charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map);
-        Log::debug('HomeController::index - got charts');
+        $data['clone_charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map, 'ir_clone_count');
 
-        // generate statistics
-        $sample_data = Sample::stats($sample_list);
-        $data['rest_service_list'] = $sample_data['rs_list'];
+        // Generate the rest service list info for this query. This has the
+        // sample tree info required for our study browsing.
+        $sample_data = Sample::stats($sample_list, 'ir_clone_count');
+        $data['rest_service_list_clones'] = $sample_data['rs_list'];
 
+        //
+        // Get the cached cell samples
+        //
+        $sample_list = Sample::public_samples('cell');
+
+        // Fields we want to graph. The UI/blade expects six fields
+        $charts_fields = ['disease_diagnosis_id', 'tissue_id', 'cell_subset',
+            'disease_diagnosis_id', 'tissue_id', 'cell_subset'];
+        // Mapping of fields to display as labels on the graph for those that need
+        // mappings. These are usually required for ontology fields where we want
+        // to aggregate on the ontology ID but display the ontology label.
+        $field_map = ['disease_diagnosis_id' => 'disease_diagnosis',
+            'tissue_id' => 'tissue', ];
+        $data['cell_charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map, 'ir_cell_count');
+
+        // Generate the rest service list info for this query. This has the
+        // sample tree info required for our study browsing.
+        $sample_data = Sample::stats($sample_list, 'ir_cell_count');
+        $data['rest_service_list_cells'] = $sample_data['rs_list'];
+
+        // Temporarily store this the old way. This should not be required.
+        $data['rest_service_list'] = $data['rest_service_list_sequences'];
+
+        //
+        // Prepare the data for the menus for sequence quick search box
+        //
         // cell type
         $cell_type_ontology_list = [];
         foreach ($metadata['cell_subset_id'] as $v) {

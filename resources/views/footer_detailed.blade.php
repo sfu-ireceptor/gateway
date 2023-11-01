@@ -8,9 +8,9 @@ iReceptor is a data discovery platform that facilitates the curation, analysis a
 </p>
 <h5>Curated Studies Available</h5>
 <p>
-Users of the iReceptor Gateway can search AIRR-seq data from studies on cancer (for example breast and ovarian), autoimmune diseases (for example MS and SLE), and infectious diseases (for example HIV and influenza).  Working with the COVID-19 and Type 1 Diabetes communities we have recently expanded our curated studies in those areas.
+Users of the iReceptor Gateway can search AIRR-seq data from studies on cancer (e.g. breast and ovarian), autoimmune diseases (e.g. MS and SLE), and infectious diseases (e.g. HIV and influenza).  Working with the COVID-19 and Type 1 Diabetes communities we have recently expanded our curated studies in those areas.
 
-Following the AIRR Data Commons standards we are the only public resource that curates data from single-cell immune-profiling studies.
+Following the AIRR Data Commons standards we are the only public resource that integrates bulk AIRR-seq data with single-cell immune-profiling date (paired receptor chains and gene expression).
 </p>
 			<h5>Our Approach</h5>
 			<p>
@@ -20,12 +20,13 @@ Following the AIRR Data Commons standards we are the only public resource that c
 			</p>
 			<p>Present functionalities include:</p>
 			<ul>
-				<li>Search for <strong>Repertoires</strong> satisfying certain metadata (e.g. find all AIRR-seq repertoires from ovarian cancer studies)</li>
-				<li>Search selected repertoires for <strong>Sequence</strong> characteristics such as a specific CDR3 sequence or particular V, D, and J genes and alleles</li>
-				<li>Search selected repertoires for <strong>Clone</strong> attributes such as a specific CDR3 sequence or particular V, D, and J genes and alleles</li>
-				<li>Search selected repertoires for <strong>Cell</strong> characteristics such as Gene Expression Levels.</li>
-				<li>Download Sequences, Clones, Cells and their related Repertoire metadata in AIRR compliant file formats, easily importable to other AIRR-seq analysis tools</li>
-				<li>Perform advandced analyses on Sequences, Clones, Cells and their related Repertoire metadata using community built analysis tools.</li>
+				<li><strong>Search</strong> for <strong>Repertoires</strong> satisfying certain metadata (e.g. find all AIRR-seq repertoires from ovarian cancer studies)</li>
+				<li><strong>Search</strong> selected repertoires for <strong>Sequence</strong> characteristics such as a specific CDR3 sequence or particular V, D, and J genes and alleles</li>
+				<li><strong>Search</strong> selected repertoires for <strong>Clone</strong> attributes such as a specific CDR3 sequence or particular V, D, and J genes and alleles</li>
+				<li><strong>Search</strong> selected repertoires for <strong>Cell</strong> characteristics such as Gene Expression Levels.</li>
+				<li><strong>Correlate</strong> a B/T cell's <strong>gene expression</strong> pattern with its <strong>receptor sequence</strong>, and search for cells displaying specific markers of health and disease.</li>
+				<li><strong>Download Sequences, Clones, Cells</strong> and their related Repertoire metadata in AIRR compliant file formats, easily importable to other AIRR-seq analysis tools</li>
+			    <li><strong>Analyze Sequences, Clones, Cells</strong> and their related Repertoire metadata using <strong>community built analysis tools</strong>.</li>
 			</ul>
 			<p>iReceptor was a leading member of the CIHR/EU Horizon 2020 funded <a href="http://www.ireceptor-plus.com/">iReceptor Plus Consortium</a>.</p>
 

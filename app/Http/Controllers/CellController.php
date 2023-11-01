@@ -75,7 +75,7 @@ class CellController extends Controller
         $query_log_id = $request->get('query_log_id');
         $query_log = QueryLog::find($query_log_id);
         if ($query_log != null) {
-            $query_log->result_size = $cell_data['total_filtered_cells'];
+            $query_log->result_size = $cell_data['total_filtered_objects'];
             $query_log->save();
         }
 
@@ -98,6 +98,7 @@ class CellController extends Controller
         $data['charts_data'] = Sample::generateChartsData($cell_data['summary'], $charts_fields, $field_map, 'ir_filtered_cell_count');
 
         $data['rest_service_list'] = $cell_data['rs_list'];
+        $data['rest_service_list_cells'] = $cell_data['rs_list'];
         $data['rest_service_list_no_response'] = $cell_data['rs_list_no_response'];
         $data['rest_service_list_no_response_timeout'] = $cell_data['rs_list_no_response_timeout'];
         $data['rest_service_list_no_response_error'] = $cell_data['rs_list_no_response_error'];
@@ -107,7 +108,7 @@ class CellController extends Controller
         $data['total_filtered_repositories'] = $cell_data['total_filtered_repositories'];
         $data['total_filtered_labs'] = $cell_data['total_filtered_labs'];
         $data['total_filtered_studies'] = $cell_data['total_filtered_studies'];
-        $data['total_filtered_cells'] = $cell_data['total_filtered_cells'];
+        $data['total_filtered_objects'] = $cell_data['total_filtered_objects'];
         $data['filtered_repositories'] = $cell_data['filtered_repositories'];
 
         // populate form fields if needed
@@ -286,7 +287,7 @@ class CellController extends Controller
         $data['system'] = System::getCurrentSystem(auth()->user()->id);
 
         // download time estimate
-        $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_cells']);
+        $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_objects']);
 
         // display view
         return view('cell', $data);

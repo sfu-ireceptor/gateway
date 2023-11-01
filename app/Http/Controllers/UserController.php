@@ -22,15 +22,28 @@ class UserController extends Controller
     public function getLogin(Request $request)
     {
         $cached_data = Cache::get('login-data');
+        //$cached_data = null;
         if ($cached_data != null) {
             $data = $cached_data;
         } else {
             // get count of available data (sequences, samples)
             $username = 'titi';
+            // Metadata is essentially a list of fields and the possible data
+            // values that those fields can take on. The fields are those that
+            // are contorlled vocabulary fields or ontology fields in the AIRR
+            // Standard.
+            // E.g. metadata = {"template_class":["DNA","RNA","cDNA"],
+            // "pcr_target_locus":["IGH","IGK","IGL","TRA","TRB","TRD"] ... } etc
             $metadata = Sample::metadata($username);
             $data = $metadata;
 
-            $sample_list = Sample::public_samples();
+            // Get the cached sequence public samples
+            $sample_list = Sample::public_samples('sequence');
+
+            // Generate the rest service list info for this query. This has the
+            // sample tree info required for our study browsing.
+            $sample_data = Sample::stats($sample_list);
+            $data['rest_service_list_sequences'] = $sample_data['rs_list'];
 
             // Fields we want to graph. The UI/blade expects six fields
             $charts_fields = ['study_type_id', 'organism', 'disease_diagnosis_id',
@@ -43,16 +56,52 @@ class UserController extends Controller
                 'tissue_id' => 'tissue', ];
             $data['charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map);
 
-            // generate statistics
-            $sample_data = Sample::stats($sample_list);
-            $data['rest_service_list'] = $sample_data['rs_list'];
+            // Get the cached clone public_samples
+            $sample_list = Sample::public_samples('clone');
 
+            // Generate the rest service list info for this query. This has the
+            // sample tree info required for our study browsing.
+            $sample_data = Sample::stats($sample_list, 'ir_clone_count');
+            $data['rest_service_list_clones'] = $sample_data['rs_list'];
+
+            // Clone Fields we want to graph. The UI/blade expects six fields
+            $charts_fields = ['study_type_id', 'organism', 'disease_diagnosis_id',
+                'tissue_id', 'pcr_target_locus', 'template_class', ];
+            // Mapping of fields to display as labels on the graph for those that need
+            // mappings. These are usually required for ontology fields where we want
+            // to aggregate on the ontology ID but display the ontology label.
+            $field_map = ['disease_diagnosis_id' => 'disease_diagnosis',
+                'tissue_id' => 'tissue', ];
+            $data['clone_charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map, 'ir_clone_count');
+
+            // Get the cached cell public_samples
+            $sample_list = Sample::public_samples('cell');
+
+            // Generate the rest service list info for this query. This has the
+            // sample tree info required for our study browsing.
+            $sample_data = Sample::stats($sample_list, 'ir_cell_count');
+            $data['rest_service_list_cells'] = $sample_data['rs_list'];
+
+            // Cell fields we want to graph. The UI/blade expects six fields
+            $charts_fields = ['disease_diagnosis_id', 'tissue_id', 'cell_subset', 'disease_diagnosis_id', 'tissue_id', 'cell_subset'];
+            // Mapping of fields to display as labels on the graph for those that need
+            // mappings. These are usually required for ontology fields where we want
+            // to aggregate on the ontology ID but display the ontology label.
+            $field_map = ['disease_diagnosis_id' => 'disease_diagnosis',
+                'tissue_id' => 'tissue', ];
+            $data['cell_charts_data'] = Sample::generateChartsData($sample_list, $charts_fields, $field_map, 'ir_cell_count');
+
+            // Temporarily store this the old way. This should not be required.
+            $data['rest_service_list'] = $data['rest_service_list_sequences'];
+
+            /* I don't think this is required - $data = Sample::metadata(); from above.
             $metadata = Sample::metadata();
             $data['total_repositories'] = $metadata['total_repositories'];
             $data['total_labs'] = $metadata['total_labs'];
             $data['total_studies'] = $metadata['total_projects'];
             $data['total_samples'] = $metadata['total_samples'];
             $data['total_sequences'] = $metadata['total_sequences'];
+            */
 
             Cache::put('login-data', $data);
         }

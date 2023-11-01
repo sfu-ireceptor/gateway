@@ -232,7 +232,6 @@ class SampleController extends Controller
             $params = Query::getParams($query_id);
             $data['query_id'] = $query_id;
         }
-        //Log::debug('XXX Params: ' . json_encode($params));
 
         // fill form fields accordingly
         $request->session()->forget('_old_input');
@@ -359,7 +358,7 @@ class SampleController extends Controller
         $data['total_filtered_labs'] = $sample_data['total_filtered_labs'];
         $data['total_filtered_studies'] = $sample_data['total_filtered_studies'];
         $data['total_filtered_samples'] = $sample_data['total_filtered_samples'];
-        $data['total_filtered_sequences'] = $sample_data['total_filtered_sequences'];
+        $data['total_filtered_objects'] = $sample_data['total_filtered_objects'];
 
         $data['nb_samples_with_sequences'] = $sample_data['nb_samples_with_sequences'];
         $data['nb_samples_with_clones'] = $sample_data['nb_samples_with_clones'];
@@ -432,7 +431,6 @@ class SampleController extends Controller
         unset($filter_fields['tab']);
         unset($filter_fields['open_filter_panel_list']);
         $data['filter_fields'] = $filter_fields;
-        //Log::debug('XXX Filter fields: ' . json_encode($filter_fields));
 
         // for bookmarking
         $current_url = $request->fullUrl();
@@ -509,6 +507,7 @@ class SampleController extends Controller
             Cache::put('samples-no-filters-data', $data);
         }
 
+        // Return the data to the view.
         return view('sample', $data);
     }
 

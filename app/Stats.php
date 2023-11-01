@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Stats extends Model
 {
@@ -43,10 +44,14 @@ class Stats extends Model
 
     public static function incrementNbRequests()
     {
+        Log::debug('Stats::incrementNbRequests');
         $s = static::currentStats();
 
         $s->nb_requests++;
+        Log::debug('Stats::incrementNbRequests - ' . json_encode($s->nb_requests));
+
         $s->save();
+        Log::debug('Stats::incrementNbRequests - done save');
     }
 
     public static function nbRequests()

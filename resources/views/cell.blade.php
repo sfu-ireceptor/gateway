@@ -192,16 +192,16 @@
 					<div class="statistics">
 						<p>
 							<strong class="summary">
-								<span title="{{ number_format($total_filtered_cells) }}">
-									{{ number_format($total_filtered_cells) }} {{ str_plural('cell', $total_filtered_cells)}}
+								<span title="{{ number_format($total_filtered_objects) }}">
+									{{ number_format($total_filtered_objects) }} {{ str_plural('cell', $total_filtered_objects)}}
 								</span>
 								({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
 							</strong>
 							returned from
 
-							<a href="#" class="toggle_modal_rest_service_list_folded">
+							<a href="#" class="toggle_modal_rest_service_list_cells_folded">
 								{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},</a>
-							<a href="#" class="toggle_modal_rest_service_list_expanded">
+							<a href="#" class="toggle_modal_rest_service_list_cells_expanded">
 								{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}} and
 								{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}.
 							</a>
@@ -231,15 +231,15 @@
 				</a>
 				
 				@if (! empty($cell_list))
-					@if ($total_filtered_cells > config('ireceptor.cells_download_limit'))
+					@if ($total_filtered_objects > config('ireceptor.cells_download_limit'))
 						<a href="/cells-download" class="btn btn-primary pull-right download_cells" disabled="disabled" role="button" data-container="body" data-toggle="tooltip" data-placement="top" title="Downloads of more than {{ number_format(config('ireceptor.cells_download_limit')) }} cells will be possible in the near future." data-trigger="hover" tabindex="0">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-							<span class="text">Download all {{number_format($total_filtered_cells)}} cells</span>
+							<span class="text">Download all {{number_format($total_filtered_objects)}} cells</span>
 						</a>
 					@else
-						<a href="/cells-download?query_id={{ $query_id }}&amp;n={{ $total_filtered_cells }}&amp;page=cells" class="btn btn-primary btn-cells pull-right download_cells">
+						<a href="/cells-download?query_id={{ $query_id }}&amp;n={{ $total_filtered_objects }}&amp;page=cells" class="btn btn-primary btn-cells pull-right download_cells">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-							<span class="text">Download all {{number_format($total_filtered_cells)}} cells <strong>{{ $download_time_estimate ? '(will take up to ' . $download_time_estimate . ')' : ''}}</strong></span>
+							<span class="text">Download all {{number_format($total_filtered_objects)}} cells <strong>{{ $download_time_estimate ? '(will take up to ' . $download_time_estimate . ')' : ''}}</strong></span>
 						</a>
 					@endif
 
@@ -248,8 +248,8 @@
 						<small class="cell_count">
 							1-{{ count($cell_list) }}
 							of
-							<span title="{{ number_format($total_filtered_cells) }}">
-								{{ human_number($total_filtered_cells) }}
+							<span title="{{ number_format($total_filtered_objects) }}">
+								{{ human_number($total_filtered_objects) }}
 							</span>
 						</small>
 
@@ -338,7 +338,7 @@
 
 								<p>Note: an analysis job <strong>can take multiple hours</strong>, depending on the size of the data and the complexity of the analysis.</p>
 
-		                        @if (count($app_list) > 0 && $total_filtered_cells <= config('ireceptor.cells_download_limit'))
+		                        @if (count($app_list) > 0 && $total_filtered_objects <= config('ireceptor.cells_download_limit'))
 
 		                            <div role="tabpanel" class="analysis_apps_tabpanel">
 		                                <!-- Tab links -->
@@ -363,7 +363,7 @@
 			                                        {{ Form::hidden('filters_json', $filters_json) }}
 			                                        {{ Form::hidden('data_url', $url) }}
 			                                        {{ Form::hidden('app_id', $app['app_id']) }}
-                                                    {{ Form::hidden('n_objects', $total_filtered_cells) }}
+                                                    {{ Form::hidden('n_objects', $total_filtered_objects) }}
 
 													<h4>{{ $app['description'] }}</h4>
 													<p>{!! $app['info'] !!}</p>
@@ -417,7 +417,7 @@
 
 		                                </div>
 		                            </div>
-		                        @elseif ($total_filtered_cells > config('ireceptor.cells_download_limit'))
+		                        @elseif ($total_filtered_objects > config('ireceptor.cells_download_limit'))
 		                            <p>Sorry, analyses of more than {{ number_format(config('ireceptor.cells_download_limit')) }} Cells will be possible in the near future.</p>
 		                        @else
 		                            <p>No Analysis Apps for Cells available</p>

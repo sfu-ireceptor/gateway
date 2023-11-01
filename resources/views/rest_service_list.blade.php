@@ -25,7 +25,7 @@
 						     			{{ $rs_data['rs']->display_name }}
 						     		@endisset
 						     	</span>
-						     	<em>{{ human_number($rs_data['total_filtered_sequences']) }} {{ str_plural($tab, $rs_data['total_filtered_sequences']) }}</em>
+						     	<em>{{ human_number($rs_data['total_filtered_objects']) }} {{ str_plural($tab, $rs_data['total_filtered_objects']) }}</em>
 							    <ul>
 						 			@foreach ($rs_data['study_tree'] as $lab)
 										<li class="lab_node" data-jstree='{"opened":true, "disabled":true, "icon":"glyphicon glyphicon-folder-open"}'>
@@ -37,8 +37,8 @@
 													<em>unknown</em>
 												@endif
 											</span>
-											@if(isset($lab['total_sequences']) && $lab['total_sequences'] > 0)
-												<em>{{ human_number($lab['total_sequences']) }} {{ str_plural($tab, $lab['total_sequences']) }}</em>
+											@if(isset($lab['total_object_count']) && $lab['total_object_count'] > 0)
+												<em>{{ human_number($lab['total_object_count']) }} {{ str_plural($tab, $lab['total_object_count']) }}</em>
 											@endif
 										    <ul>
 										    	@isset($lab['studies'])
@@ -55,8 +55,8 @@
 																		{{ str_limit($study['study_title'], $limit = 64, $end = '‥') }}
 																	</span>
 																@endif
-																@if ($study['total_sequences'] > 0)
-																	<em>{{ human_number($study['total_sequences']) }} {{ str_plural($tab, $study['total_sequences']) }}</em>
+																@if ($study['total_object_count'] > 0)
+																	<em>{{ human_number($study['total_object_count']) }} {{ str_plural($tab, $study['total_object_count']) }}</em>
 																@endif
 															</span>
 														</li>

@@ -358,25 +358,25 @@ class SequenceClone
 
     public static function stats($sample_list)
     {
-        $total_clones = 0;
-        $total_filtered_clones = 0;
+        $total_object_count = 0;
+        $total_filtered_objects = 0;
 
         $lab_list = [];
-        $lab_clone_count = [];
+        $lab_object_count = [];
 
         $study_list = [];
-        $study_clone_count = [];
+        $study_object_count = [];
 
         foreach ($sample_list as $sample) {
             // clone count for that sample
             if (isset($sample->ir_clone_count)) {
-                $total_clones += $sample->ir_clone_count;
+                $total_object_count += $sample->ir_clone_count;
             }
 
             // filtered clone count for that sample
             if (isset($sample->ir_filtered_clone_count)) {
                 $nb_filtered_clones = $sample->ir_filtered_clone_count;
-                $total_filtered_clones += $nb_filtered_clones;
+                $total_filtered_objects += $nb_filtered_clones;
 
                 // add lab
                 $lab_name = '';
@@ -389,9 +389,9 @@ class SequenceClone
                 if ($lab_name != '') {
                     if (! in_array($lab_name, $lab_list)) {
                         $lab_list[] = $lab_name;
-                        $lab_clone_count[$lab_name] = 0;
+                        $lab_object_count[$lab_name] = 0;
                     }
-                    $lab_clone_count[$lab_name] += $nb_filtered_clones;
+                    $lab_object_count[$lab_name] += $nb_filtered_clones;
                 }
 
                 // add study
@@ -399,9 +399,9 @@ class SequenceClone
                 if ($study_title != '') {
                     if (! in_array($study_title, $study_list)) {
                         $study_list[] = $study_title;
-                        $study_clone_count[$study_title] = 0;
+                        $study_object_count[$study_title] = 0;
                     }
-                    $study_clone_count[$study_title] += $nb_filtered_clones;
+                    $study_object_count[$study_title] += $nb_filtered_clones;
                 }
             }
         }
@@ -417,7 +417,7 @@ class SequenceClone
             // lab
             if (! isset($study_tree[$lab])) {
                 $lab_data['name'] = $lab;
-                $lab_data['total_clones'] = isset($lab_clone_count[$lab]) ? $lab_clone_count[$lab] : 0;
+                $lab_data['total_object_count'] = isset($lab_object_count[$lab]) ? $lab_object_count[$lab] : 0;
                 $study_tree[$lab] = $lab_data;
             }
 
@@ -428,7 +428,7 @@ class SequenceClone
             $new_study_data['study_title'] = $sample->study_title;
 
             // total clones
-            $new_study_data['total_clones'] = isset($study_clone_count[$sample->study_title]) ? $study_clone_count[$sample->study_title] : 0;
+            $new_study_data['total_object_count'] = isset($study_object_count[$sample->study_title]) ? $study_object_count[$sample->study_title] : 0;
 
             // study url
             if (isset($sample->study_url)) {
@@ -444,8 +444,8 @@ class SequenceClone
         $rs_data['total_samples'] = count($sample_list);
         $rs_data['total_labs'] = count($lab_list);
         $rs_data['total_studies'] = count($study_list);
-        $rs_data['total_clones'] = $total_clones;
-        $rs_data['total_filtered_clones'] = $total_filtered_clones;
+        $rs_data['total_object_count'] = $total_object_count;
+        $rs_data['total_filtered_objects'] = $total_filtered_objects;
         $rs_data['study_tree'] = $study_tree;
 
         return $rs_data;
@@ -459,7 +459,7 @@ class SequenceClone
         $total_filtered_labs = 0;
         $total_filtered_studies = 0;
         $total_filtered_samples = 0;
-        $total_filtered_clones = 0;
+        $total_filtered_objects = 0;
 
         foreach ($data['rs_list'] as $rs_data) {
             if ($rs_data['total_samples'] > 0) {
@@ -470,7 +470,7 @@ class SequenceClone
             $total_filtered_samples += $rs_data['total_samples'];
             $total_filtered_labs += $rs_data['total_labs'];
             $total_filtered_studies += $rs_data['total_studies'];
-            $total_filtered_clones += $rs_data['total_filtered_clones'];
+            $total_filtered_objects += $rs_data['total_filtered_objects'];
         }
 
         // sort alphabetically repositories/labs/studies
@@ -480,7 +480,7 @@ class SequenceClone
         $data['total_filtered_repositories'] = $total_filtered_repositories;
         $data['total_filtered_labs'] = $total_filtered_labs;
         $data['total_filtered_studies'] = $total_filtered_studies;
-        $data['total_filtered_clones'] = $total_filtered_clones;
+        $data['total_filtered_objects'] = $total_filtered_objects;
         $data['filtered_repositories'] = $filtered_repositories;
 
         return $data;
