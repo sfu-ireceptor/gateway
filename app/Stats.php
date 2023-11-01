@@ -44,14 +44,14 @@ class Stats extends Model
 
     public static function incrementNbRequests()
     {
-	Log::debug('Stats::incrementNbRequests');
+        Log::debug('Stats::incrementNbRequests');
         $s = static::currentStats();
 
         $s->nb_requests++;
-	Log::debug('Stats::incrementNbRequests - ' . json_encode($s->nb_requests));
+        Log::debug('Stats::incrementNbRequests - ' . json_encode($s->nb_requests));
 
         $s->save();
-	Log::debug('Stats::incrementNbRequests - done save');
+        Log::debug('Stats::incrementNbRequests - done save');
     }
 
     public static function nbRequests()
