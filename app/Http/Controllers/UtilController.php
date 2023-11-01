@@ -64,9 +64,11 @@ class UtilController extends Controller
 
         $githubPayload = $request->getContent();
         $githubHash = $request->header('X-Hub-Signature');
+        Log::info('githubhash = ' . $githubHash);
 
         $localToken = config('app.deploy_secret');
         $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
+        Log::info('localhash = ' . $localHash);
 
         if (hash_equals($githubHash, $localHash)) {
             Log::info('-------- Deployment STARTED --------');
