@@ -89,10 +89,10 @@ class UtilController extends Controller
             Log::info('-------- Deployment FINISHED --------');
         } else {
             Log::error('Deployment attempt failed because of hash mismatch.');
-            Log::info('$githubHash =' . $githubHash);
-            Log::info('$localHash  =' . $localHash);
-            Log::info('$localToken =' . $localToken);
-            Log::info('$githubPayload=' . $githubPayload);
+            Log::info('$githubHash = ' . $githubHash);
+            Log::info('$localHash  = ' . $localHash);
+            Log::info('$localToken = ' . $localToken);
+            //Log::info('$githubPayload=' . $githubPayload);
             var_dump($request->header());
         }
 
