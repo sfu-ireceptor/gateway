@@ -366,7 +366,7 @@ class Sequence
         // zip files
         $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path, $repertoire_query_file_path, $rearrangement_query_file_path);
 
-        // delete files 
+        // delete files
         self::delete_files($folder_path);
 
         $zip_public_path = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
@@ -792,18 +792,18 @@ class Sequence
 
     public static function delete_files($folder_path)
     {
-	// Check to see if the path exists.
+        // Check to see if the path exists.
         if (File::exists($folder_path)) {
             // Check to see if the path is within the file space of Laravel managed
             // storage. This is a paranoid check to make sure we don't remove everything
             // on the system 8-)
-	    if (str_contains($folder_path, storage_path())) {
+            if (str_contains($folder_path, storage_path())) {
                 Log::debug('Deleting folder of downloaded files: ' . $folder_path);
-	        exec(sprintf("rm -rf %s", escapeshellarg($folder_path)));
-	    } else {
+                exec(sprintf('rm -rf %s', escapeshellarg($folder_path)));
+            } else {
                 Log::error('Could not delete folder ' . $folder_path);
                 Log::error('Folder is not in the Laravel storage area ' . storage_path());
-	    }
+            }
         }
     }
 
