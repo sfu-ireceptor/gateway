@@ -51,7 +51,7 @@ class Stats extends Model
         Log::debug('Stats::incrementNbRequests - ' . json_encode($s->nb_requests));
 
         $s->save();
-        Log::debug('Stats::incrementNbRequests - done save' );
+        Log::debug('Stats::incrementNbRequests - done save  ');
     }
 
     public static function nbRequests()
