@@ -73,7 +73,7 @@ class UtilController extends Controller
         Log::info('UtilContorller::deploy - localhash = ' . $localHash);
 
         if (hash_equals($githubHash, $localHash)) {
-            Log::info('-------- Deployment STARTED ---------');
+            Log::info('-------- Deployment STARTED --------');
 
             $root_path = base_path();
             $process = new Process(['./util/scripts/deploy.sh']);
