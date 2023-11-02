@@ -47,8 +47,8 @@ class ProcessJobNotification implements ShouldQueue
         }
 
         // ignore the status update if the job has already FAILED, FINISHED, or STOPPED
-	if ($job->agave_status == 'FAILED' || $job->agave_status == 'FINISHED' ||
-	    $job->agave_status == 'STOPPED' ) {
+        if ($job->agave_status == 'FAILED' || $job->agave_status == 'FINISHED' ||
+            $job->agave_status == 'STOPPED') {
             $localJob->setFinished();
 
             return;
