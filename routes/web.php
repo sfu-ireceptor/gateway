@@ -181,8 +181,8 @@ Route::get('user/login', function () {
 // update page count for CANARIE
 // this is no longer necessary, can be removed.
 // This also is the query that is causing the mysql lock/commit problem
-// See IR-3079. 
-/* 
+// See IR-3079.
+/*
 if (! App::runningInConsole()) {
     App\Stats::incrementNbRequests();
 }
