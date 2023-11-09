@@ -381,7 +381,7 @@ function gateway_split_repertoire(){
     echo "GW-INFO: Data files = ${data_files[@]}"
     if [ ${#data_files[@]} -eq 0 ]; then
         echo "GW-ERROR: Could not find any ${ANALYSIS_TYPE} in ${MANIFEST_FILE}"
-        exit $?
+        exit 1
     fi
 
     # Get the repository from the manifest file.
