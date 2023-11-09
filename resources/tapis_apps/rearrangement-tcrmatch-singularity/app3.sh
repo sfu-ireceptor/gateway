@@ -116,34 +116,81 @@ function run_analysis()
     title_string=`echo ${title_string} | sed "s/[ ]//g"`
 
     # Run TCRMatch on each rearrangement file provided.
-    echo "IR-INFO: Running TCRMatch on $rearrangemen_file"
+    echo "IR-INFO: Running TCRMatch on $rearrangement_file"
     echo "IR-INFO: Mapping ${PWD} to /data"
     echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
     echo "IR-INFO: Storing output in /data/${output_directory}"
 
-    # Run TCRMatch 
-    echo -n "IR-INFO: Running TCRMatch on ${rearrangement_file} - "
-    date
-    /TCRMatch/tcrmatch \
-        -a -i ${output_directory}/${rearrangement_file} \
-        -d /TCRMatch/data/IEDB_data.tsv -t ${AGAVE_JOB_PROCESSORS_PER_NODE} \
-	> ${output_directory}/${repertoire_id}.tsv
-    if [ $? -ne 0 ]
-    then
-        echo "IR-ERROR: TCRMatch failed on file ${rearrangement_file}"
-        return
-    fi
-    echo -n "IR-INFO: Done running TCRMatch on ${rearrangement_file} - "
-    date
+    # Use a temporary file for output
+    #CDR3_FILE=${output_directory}/${repertoire_id}_cdr3.tsv
+    #rm -f ${CDR3_FILE}
 
-    # Copy the TCRMatch summary report to the gateway expected summary for this repertoire
-    #echo "IR-INFO: Copying ${output_directory}/majority_voting_v2.pdf to ${output_directory}/${repertoire_id}.pdf"
-    #cp ${output_directory}/majority_voting_v2.pdf ${output_directory}/${repertoire_id}.pdf
+    # Extract cdr3_aa column if it exists - for now we are not doing this. 
+    #python3 ${IR_GATEWAY_UTIL_DIR}/preprocess.py ${output_directory}/${rearrangement_file} cdr3_aa \
+    #    | grep -v nan \
+    #    | sort -u \
+    #    | egrep -v "\*" \
+    #    >> $CDR3_FILE
     #if [ $? -ne 0 ]
     #then
-        #echo "IR-ERROR: Could not copy summary file ${output_directory}/majority_voting_v2.pdf"
+    #    echo "IR-ERROR: Unable to extract CDR3s from ${output_directory}/${rearrangement_file}"
     #fi
-    
+
+    # Use a temporary file for output
+    JUNCTION_FILE=${output_directory}/${repertoire_id}_junction.tsv
+    rm -f ${JUNCTION_FILE}
+
+    # Extract junction_aa column if it exists
+    #
+    # grep -v nan - We extract all lines that are 'nan' as that is what is produced
+    # if preprocess doesn't find a value in the field.
+    #
+    # TCRMatch needs CDR3s so if we are processing Junctions we need to strip off
+    # the first and last AA.
+    # For junctions if the first character is a C and the last is either W or F 
+    # (/^C.*[WF]$/) we assume it is a full junction and strip of those characters 
+    # with the sed regular expression substuution s/^.\(.*\).$/\1/'
+    #
+    # sort -u - We only want to search once per CDR3
+    #
+    # egrep -v "\*" - Remove any CDR3s with special characters
+    python3 ${IR_GATEWAY_UTIL_DIR}/preprocess.py ${output_directory}/${rearrangement_file} junction_aa \
+        | grep -v nan \
+        | sed '/^C.*[WF]$/ s/^.\(.*\).$/\1/' \
+        | sort -u \
+        | egrep "^[ABCDEFGHIKLMNPQRSTVWYZ]*$" \
+        >> $JUNCTION_FILE
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: Unable to extract Junctions from ${output_directory}/${rearrangement_file}"
+    fi
+
+    # Run TCRMatch on CDR3s
+    #echo -n "IR-INFO: Running TCRMatch on ${CDR3_FILE} - "
+    #date
+    #/TCRMatch/tcrmatch \
+    #    -i ${CDR3_FILE} \
+    #    -d /TCRMatch/data/IEDB_data.tsv -t 1\
+    #    >> ${output_directory}/${repertoire_id}_epitope.tsv
+    #if [ $? -ne 0 ]
+    #then
+    #    echo "IR-ERROR: TCRMatch failed on file ${CDR3_FILE}"
+    #fi
+
+    # Run TCRMatch on Junctions
+    echo -n "IR-INFO: Running TCRMatch on ${JUNCTION_FILE} - "
+    date
+    /TCRMatch/tcrmatch \
+        -i ${JUNCTION_FILE} \
+        -d /TCRMatch/data/IEDB_data.tsv -t 1\
+        > ${output_directory}/${repertoire_id}_epitope.tsv
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: TCRMatch failed on file ${JUNCTION_FILE}"
+    fi
+    echo -n "IR-INFO: Done running TCRMatch on ${JUNCTION_FILE} - "
+    date
+
     # Generate a summary HTML file for the Gateway to present this info to the user
     html_file=${output_directory}/${repertoire_id}.html
 
@@ -165,9 +212,32 @@ function run_analysis()
     printf "<h2>TCRMatch: %s</h2>\n" ${title_string} >> ${html_file}
 
     printf "<h2>Analysis</h2>\n" >> ${html_file}
-    printf "<h3>TCRMatch</h3>\n" >> ${html_file}
+    printf "<h3>TCRMatch Summary</h3>\n" >> ${html_file}
+    
+    echo "<ul>" >> ${html_file}
+
+    echo -n "<li>Number of unique CDR3s: " >> ${html_file}
+    wc -l ${JUNCTION_FILE} | cut -f 1 -d " " >> ${html_file}
+    echo "</li>" >> ${html_file}
+
+    echo -n "<li>Number of CDR3/epitope matches: " >> ${html_file}
+    wc -l ${output_directory}/${repertoire_id}_epitope.tsv  | cut -f 1 -d " " >> ${html_file}
+    echo "</li>" >> ${html_file}
+
+    echo -n "<li>Number of unique CDR3/epitope matches: " >> ${html_file}
+    cut -f 2 ${output_directory}/${repertoire_id}_epitope.tsv | sort -u | wc -l | cut -f 1 -d " " >> ${html_file}
+    echo "</li>" >> ${html_file}
+
+    echo "</ul>" >> ${html_file}
+
+
     printf "<h3>%s</h3>\n" ${title_string} >> ${html_file}
-    printf '<iframe src="%s" width="100%%", height="700px"></iframe>\n' ${repertoire_id}.tsv >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py ${output_directory}/${repertoire_id}_epitope.tsv >> ${html_file}
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_epitope.tsv"
+        echo "ERROR occurred generating HTML report generation" >> ${html_file}
+    fi
 
     # End of main div container
     printf '</div>' >> ${html_file}
