@@ -289,6 +289,7 @@ class Tapis
             // Save this app template keyed by the name/tag/dir
             $this->appTemplates[$app_dir] = $app_info;
         }
+
         // Return the template list.
         return $this->appTemplates;
     }
@@ -468,6 +469,7 @@ class Tapis
         $url = '/v3/jobs/' . $job_id . '/cancel';
         // Get the analysis token
         $token = self::getAnalysisToken();
+
         // Post the request and return the result.
         return $this->doPOSTRequest($this->tapis_client, $url, $token);
     }
@@ -613,22 +615,22 @@ class Tapis
         ];
 
         // Set up the SLURM scheduler commands
-        $t['parameterSet']['schedulerOptions'][] = ['name'=>'name', 'arg'=>'--job-name ' . $name];
-        $t['parameterSet']['schedulerOptions'][] = ['name'=>'output_file', 'arg'=>'--output ' . $name . '.out'];
-        $t['parameterSet']['schedulerOptions'][] = ['name'=>'error_file', 'arg'=>'--error ' . $name . '.err'];
+        $t['parameterSet']['schedulerOptions'][] = ['name' => 'name', 'arg' => '--job-name ' . $name];
+        $t['parameterSet']['schedulerOptions'][] = ['name' => 'output_file', 'arg' => '--output ' . $name . '.out'];
+        $t['parameterSet']['schedulerOptions'][] = ['name' => 'error_file', 'arg' => '--error ' . $name . '.err'];
         // Set up the environment variables iReceptor Apps can use.
-        $t['parameterSet']['envVariables'][] = ['key'=>'PYTHONNOUSERSITE', 'value'=>'1'];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_DOWNLOAD_FILE', 'value'=>$download_file];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_SINGULARITY', 'value'=>$exec_singularity_dir];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_URL', 'value'=>$gateway_url];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_BASE_DIR', 'value'=>$container_gateway_mount_dir];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_UTIL_DIR', 'value'=>$gateway_util_dir];
-        $t['parameterSet']['envVariables'][] = ['key'=>'IR_GATEWAY_APP_DIR', 'value'=>$gateway_app_dir];
+        $t['parameterSet']['envVariables'][] = ['key' => 'PYTHONNOUSERSITE', 'value' => '1'];
+        $t['parameterSet']['envVariables'][] = ['key' => 'IR_DOWNLOAD_FILE', 'value' => $download_file];
+        $t['parameterSet']['envVariables'][] = ['key' => 'IR_SINGULARITY', 'value' => $exec_singularity_dir];
+        $t['parameterSet']['envVariables'][] = ['key' => 'IR_GATEWAY_URL', 'value' => $gateway_url];
+        $t['parameterSet']['envVariables'][] = ['key' => 'IR_GATEWAY_BASE_DIR', 'value' => $container_gateway_mount_dir];
+        $t['parameterSet']['envVariables'][] = ['key' => 'IR_GATEWAY_UTIL_DIR', 'value' => $gateway_util_dir];
+        $t['parameterSet']['envVariables'][] = ['key' => 'IR_GATEWAY_APP_DIR', 'value' => $gateway_app_dir];
 
         // Set up the container arguments. We want to mount external mount points.
-        $t['parameterSet']['containerArgs'][] = ['name'=>'project_mount', 'arg'=>'-B /project:/project'];
-        $t['parameterSet']['containerArgs'][] = ['name'=>'scratch_mount', 'arg'=>'-B /scratch:/scratch'];
-        $t['parameterSet']['containerArgs'][] = ['name'=>'gateway_app_mount', 'arg'=>'-B ' . $exec_gateway_mount_dir . ':' . $container_gateway_mount_dir];
+        $t['parameterSet']['containerArgs'][] = ['name' => 'project_mount', 'arg' => '-B /project:/project'];
+        $t['parameterSet']['containerArgs'][] = ['name' => 'scratch_mount', 'arg' => '-B /scratch:/scratch'];
+        $t['parameterSet']['containerArgs'][] = ['name' => 'gateway_app_mount', 'arg' => '-B ' . $exec_gateway_mount_dir . ':' . $container_gateway_mount_dir];
 
         // Set up the job parameters. We loop over the possible job parameters and
         // check to see if any of them are set in the job_params provided by the caller.

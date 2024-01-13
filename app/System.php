@@ -44,8 +44,6 @@ class System extends Model
         $defaultExecutionSystemHost = config('services.tapis.default_execution_system.host');
         $defaultExecutionSystemPort = config('services.tapis.default_execution_system.port');
         $defaultExecutionSystemUsername = config('services.tapis.default_execution_system.auth.username');
-        //$defaultExecutionSystemPublicKey = config('services.tapis.default_execution_system.auth.public_key');
-        //$defaultExecutionSystemPrivateKey = config('services.tapis.default_execution_system.auth.private_key');
 
         $systemExecutionName = config('services.tapis.system_execution.name_prefix') . '-' . $defaultExecutionSystemHost;
 
@@ -65,8 +63,9 @@ class System extends Model
         // add execution system to database
         $systemExecution = self::firstOrNew(['user_id' => $gw_userid, 'host' => $defaultExecutionSystemHost, 'username' => $defaultExecutionSystemUsername]);
         $systemExecution->name = $systemExecutionName;
-        //$systemExecution->public_key = $defaultExecutionSystemPublicKey;
-        //$systemExecution->private_key = $defaultExecutionSystemPrivateKey;
+        // Public/private key no longer stored in DB for Tapis 3.
+        $systemExecution->public_key = '';
+        $systemExecution->private_key = '';
         $systemExecution->selected = false;
         $systemExecution->save();
 

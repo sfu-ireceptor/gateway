@@ -55,13 +55,13 @@ return [
         ],
 
         'mongodb' => [
-            'driver'   => 'mongodb',
-            'host'     => env('CACHE_DB_HOST', 'localhost'),
-            'port'     => env('CACHE_DB_PORT', 27017),
+            'driver' => 'mongodb',
+            'host' => env('CACHE_DB_HOST', 'localhost'),
+            'port' => env('CACHE_DB_PORT', 27017),
             'database' => env('CACHE_DB_DATABASE'),
             'username' => env('CACHE_DB_USERNAME'),
             'password' => env('CACHE_DB_PASSWORD'),
-            'options'  => [
+            'options' => [
                 'database' => 'admin', // sets the authentication database required by mongo 3
             ],
         ],
