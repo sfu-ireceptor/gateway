@@ -219,8 +219,8 @@ class LaunchJob implements ShouldQueue
             }
 
             $env_variables = [
-                ['key'=>'PYTHONNOUSERSITE', 'value' => '1'],
-                ['key'=>'download_file', 'value'=>$zip_info['zip_name']],
+                ['key' => 'PYTHONNOUSERSITE', 'value' => '1'],
+                ['key' => 'download_file', 'value' => $zip_info['zip_name']],
             ];
 
             // Process the job parameters

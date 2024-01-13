@@ -78,7 +78,7 @@ class Sample
             $total_sequence_count = 0;
             foreach ($sample_list as $sample) {
                 $sample_id = $sample->repertoire_id;
-                $sequence_count_array = RestService::sequence_count([$rest_service_id =>[$sample_id]], [], false);
+                $sequence_count_array = RestService::sequence_count([$rest_service_id => [$sample_id]], [], false);
                 $sequence_count = $sequence_count_array[$rest_service_id]['samples'][$sample_id];
                 $t['sequence_counts'][$sample_id] = $sequence_count;
                 $total_sequence_count += $sequence_count;
@@ -112,7 +112,7 @@ class Sample
             $total_clone_count = 0;
             foreach ($sample_list as $sample) {
                 $sample_id = $sample->repertoire_id;
-                $clone_count_array = RestService::clone_count([$rest_service_id =>[$sample_id]], [], false);
+                $clone_count_array = RestService::clone_count([$rest_service_id => [$sample_id]], [], false);
                 $clone_count = $clone_count_array[$rest_service_id]['samples'][$sample_id];
                 $t['clone_counts'][$sample_id] = $clone_count;
                 $total_clone_count += $clone_count;
@@ -146,7 +146,7 @@ class Sample
             $total_cell_count = 0;
             foreach ($sample_list as $sample) {
                 $sample_id = $sample->repertoire_id;
-                $cell_count_array = RestService::cell_count([$rest_service_id =>[$sample_id]], [], false);
+                $cell_count_array = RestService::cell_count([$rest_service_id => [$sample_id]], [], false);
                 $cell_count = $cell_count_array[$rest_service_id]['samples'][$sample_id];
                 $t['cell_counts'][$sample_id] = $cell_count;
                 $total_cell_count += $cell_count;
@@ -402,6 +402,7 @@ class Sample
             $current_field = $path;
             $field_value = trim(data_get($object, $current_field));
         }
+
         // Return the value.
         return $field_value;
     }
