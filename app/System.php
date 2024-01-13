@@ -63,7 +63,7 @@ class System extends Model
         // add execution system to database
         $systemExecution = self::firstOrNew(['user_id' => $gw_userid, 'host' => $defaultExecutionSystemHost, 'username' => $defaultExecutionSystemUsername]);
         $systemExecution->name = $systemExecutionName;
-	// Public/private key no longer stored in DB for Tapis 3.
+        // Public/private key no longer stored in DB for Tapis 3.
         $systemExecution->public_key = '';
         $systemExecution->private_key = '';
         $systemExecution->selected = false;
