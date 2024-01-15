@@ -25,9 +25,9 @@ class AdminController extends Controller
 {
     public function getQueues()
     {
-	// Check to see if user is Admin, if not return unautorized message.
-	$user = User::where('username', auth()->user()->username)->first();
-	if ($user == null || !$user->isAdmin()) {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -49,7 +49,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -66,7 +66,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -86,7 +86,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -110,7 +110,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -125,7 +125,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -138,7 +138,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -172,7 +172,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -188,7 +188,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -223,7 +223,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -237,7 +237,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -254,7 +254,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -270,7 +270,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -283,7 +283,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -330,7 +330,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -351,7 +351,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -390,7 +390,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -408,7 +408,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -435,7 +435,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -462,7 +462,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -489,7 +489,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -531,7 +531,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -553,7 +553,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -574,7 +574,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -597,7 +597,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -608,7 +608,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -619,7 +619,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -635,7 +635,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -651,7 +651,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
@@ -677,7 +677,7 @@ class AdminController extends Controller
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
-        if ($user == null || !$user->isAdmin()) {
+        if ($user == null || ! $user->isAdmin()) {
             abort(401, 'Not authorized.');
         }
 
