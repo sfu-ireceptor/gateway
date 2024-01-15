@@ -124,41 +124,41 @@ class PagesOkTest extends TestCase
     public function databases()
     {
         $u = User::factory()->make();
-        $this->actingAs($u)->get('/admin/databases')->assertOk();
+        $this->actingAs($u)->get('/admin/databases')->assertStatus(401);
     }
 
     /** @test */
     public function news()
     {
         $u = User::factory()->make();
-        $this->actingAs($u)->get('/admin/news')->assertOk();
+        $this->actingAs($u)->get('/admin/news')->assertStatus(401);
     }
 
     /** @test */
     public function queues()
     {
         $u = User::factory()->make();
-        $this->actingAs($u)->get('/admin/queues')->assertOk();
+        $this->actingAs($u)->get('/admin/queues')->assertStatus(401);
     }
 
     /** @test */
     // public function users()
     // {
     //     $u = User::factory()->make();
-    //     $this->actingAs($u)->get('/admin/users')->assertOk();
+    //     $this->actingAs($u)->get('/admin/users')->assertStatus(401);
     // }
 
     /** @test */
     public function field_names()
     {
         $u = User::factory()->make();
-        $this->actingAs($u)->get('/admin/field-names')->assertOk();
+        $this->actingAs($u)->get('/admin/field-names')->assertStatus(401);
     }
 
     /** @test */
     public function queries()
     {
         $u = User::factory()->make();
-        $this->actingAs($u)->get('/admin/queries')->assertOk();
+        $this->actingAs($u)->get('/admin/queries')->assertStatus(401);
     }
 }
