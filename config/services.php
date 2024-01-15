@@ -69,35 +69,35 @@ return [
             'memory_per_node' => intval(7999),
             // Memory per core for a job
             'memory_per_core' => intval(7999),
-	    // 
-	    // Directory structure for jobs. There are three important directories
-	    // for Tapis jobs. These directories are full paths:
-	    //   - exec_job_working_dir: is where jobs are run from on the exec host.
-	    //     This is a path on cedar.
-	    //   - exec_gateway_mount_dir: This is where all of the utility files that
-	    //     the gateway needs to run, such as singularity images and App files.
-	    //     This is a path on cedar.
-	    //   - container_gateway_mount_dir: This is a directory within the container
-	    //     where the gateway files reside. This is a path within the CONTAINER and
-	    //     NOT on cedar. There is essentially a container mount performed as per:
-	    //          - B $exec_gateway_mount_dir:$container_gateway_mount_dir
-	    //
-	    // All of the container specific information is provided to the App in the
-	    // container through environment variables.
-	    //
-	    // NOTE: In the containers it appears that only one -B directive is passed to
-	    // the container by Tapis. Thus it is easiest and cleanest if all of the
-	    // above directories are the same so the job, utility, and container directories
-	    // are all one and the same.
-	    //
+            //
+            // Directory structure for jobs. There are three important directories
+            // for Tapis jobs. These directories are full paths:
+            //   - exec_job_working_dir: is where jobs are run from on the exec host.
+            //     This is a path on cedar.
+            //   - exec_gateway_mount_dir: This is where all of the utility files that
+            //     the gateway needs to run, such as singularity images and App files.
+            //     This is a path on cedar.
+            //   - container_gateway_mount_dir: This is a directory within the container
+            //     where the gateway files reside. This is a path within the CONTAINER and
+            //     NOT on cedar. There is essentially a container mount performed as per:
+            //          - B $exec_gateway_mount_dir:$container_gateway_mount_dir
+            //
+            // All of the container specific information is provided to the App in the
+            // container through environment variables.
+            //
+            // NOTE: In the containers it appears that only one -B directive is passed to
+            // the container by Tapis. Thus it is easiest and cleanest if all of the
+            // above directories are the same so the job, utility, and container directories
+            // are all one and the same.
+            //
             // Path to where the job input/ouput is on cedar.
             'exec_job_working_dir' => env('TAPIS_SYSTEM_EXEC_JOB_WORKING_DIR', '/scratch/ireceptorgw'),
             // Path to where the gateway utility files are on cedar.
             'exec_gateway_mount_dir' => env('TAPIS_SYSTEM_EXEC_GATEWAY_MOUNT_DIR', '/scratch/ireceptorgw'),
-            // Realtive directory to exec_gateway_mount_dir where the singularity images are stored 
+            // Realtive directory to exec_gateway_mount_dir where the singularity images are stored
             'exec_singularity_dir' => 'gateway_base/singularity',
             // Mount point in the singularity container for gateway files.
-	    // Essentially exec_gateway_mount_dir on cedar is mounted in the container on $container_gateway_mount_dir
+            // Essentially exec_gateway_mount_dir on cedar is mounted in the container on $container_gateway_mount_dir
             'container_gateway_mount_dir' => env('TAPIS_SYSTEM_EXEC_CONTAINER_MOUNT_DIR', '/scratch/ireceptorgw'),
             // Relative container location of gateway utilities relative container_gateway_mount_dir
             'container_util_dir' => 'gateway_base/gateway_utilities',
