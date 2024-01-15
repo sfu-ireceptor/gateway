@@ -25,6 +25,12 @@ class AdminController extends Controller
 {
     public function getQueues()
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $jobs = [];
         $jobs['admin'] = LocalJob::findLast('admin');
         $jobs['short-downloads'] = LocalJob::findLast('short-downloads');
@@ -41,6 +47,12 @@ class AdminController extends Controller
 
     public function getDatabases()
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $rs_list = RestService::findAvailable();
 
         $data = [];
@@ -52,6 +64,12 @@ class AdminController extends Controller
 
     public function getUpdateDatabase($id, $enabled)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $enabled = filter_var($enabled, FILTER_VALIDATE_BOOLEAN);
 
         $rs = RestService::find($id);
@@ -66,6 +84,12 @@ class AdminController extends Controller
 
     public function getDatabaseStats($id)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $response_list = RestService::samples([], 'titi', true, [$id]);
 
         $sample_list = [];
@@ -84,6 +108,12 @@ class AdminController extends Controller
 
     public function getNews()
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $data = [];
         $data['news_list'] = News::orderBy('created_at', 'desc')->get();
         $data['notification'] = session()->get('notification');
@@ -93,6 +123,12 @@ class AdminController extends Controller
 
     public function getAddNews()
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $data = [];
 
         return view('news/add', $data);
@@ -100,6 +136,12 @@ class AdminController extends Controller
 
     public function postAddNews(Request $request)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         // validate form
         $rules = [
             'message' => 'required',
@@ -128,6 +170,12 @@ class AdminController extends Controller
 
     public function getEditNews($id)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $news = News::find($id);
 
         $data = [];
@@ -138,6 +186,12 @@ class AdminController extends Controller
 
     public function postEditNews(Request $request)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         // validate form
         $rules = [
             'message' => 'required',
@@ -167,14 +221,26 @@ class AdminController extends Controller
 
     public function getDeleteNews($id)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $n = News::find($id);
         $n->delete();
 
-        return redirect('admin/users')->with('notification', 'News was successfully deleted.');
+        return redirect('admin/news')->with('notification', 'News was successfully deleted.');
     }
 
     public function getUsers($sort = 'created_at')
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $l = User::orderByDesc('created_at')->get();
 
         $data = [];
@@ -186,6 +252,12 @@ class AdminController extends Controller
 
     public function getUsers2($sort = 'created_at')
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $l = User::orderByDesc('created_at')->get();
 
         $data = [];
@@ -196,6 +268,12 @@ class AdminController extends Controller
 
     public function getAddUser()
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $data = [];
 
         return view('user/add', $data);
@@ -203,6 +281,12 @@ class AdminController extends Controller
 
     public function postAddUser(Request $request)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         // validate form
         $rules = [
             'first_name' => 'required',
@@ -244,6 +328,12 @@ class AdminController extends Controller
 
     public function getEditUser($id)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $user = User::find($id);
 
         $data = [];
@@ -259,6 +349,12 @@ class AdminController extends Controller
 
     public function postEditUser(Request $request)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         // validate form
         $rules = [
             'id' => 'required',
@@ -292,7 +388,12 @@ class AdminController extends Controller
 
     public function getUpdateSampleCache()
     {
-        $username = auth()->user()->username;
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $n = CachedSample::cache();
 
         $message = "$n samples have been retrieved and cached.";
@@ -305,6 +406,12 @@ class AdminController extends Controller
 
     public function getUpdateSequenceCount($rest_service_id)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $rs = RestService::find($rest_service_id);
         $username = auth()->user()->username;
 
@@ -326,6 +433,12 @@ class AdminController extends Controller
 
     public function getUpdateCloneCount($rest_service_id)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $rs = RestService::find($rest_service_id);
         $username = auth()->user()->username;
 
@@ -347,6 +460,12 @@ class AdminController extends Controller
 
     public function getUpdateCellCount($rest_service_id)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $rs = RestService::find($rest_service_id);
         $username = auth()->user()->username;
 
@@ -368,6 +487,12 @@ class AdminController extends Controller
 
     public function getUpdateChunkSize($id)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $rs = RestService::find($id);
 
         $info = $rs->refreshInfo();
@@ -404,6 +529,12 @@ class AdminController extends Controller
 
     public function getFieldNames($api_version = null)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $api_version = $api_version ?? config('ireceptor.default_api_version');
 
         $api_version_list = FieldName::getAPIVersions();
@@ -420,6 +551,12 @@ class AdminController extends Controller
 
     public function queries($nb_months = null)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $data = [];
         $data['nb_months'] = $nb_months;
         $data['queries'] = QueryLog::find_gateway_queries($nb_months);
@@ -435,6 +572,12 @@ class AdminController extends Controller
 
     public function queries2($nb_months = null)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $data = [];
         $data['nb_months'] = $nb_months;
         $query_list = QueryLog::find_gateway_queries($nb_months);
@@ -452,16 +595,34 @@ class AdminController extends Controller
 
     public function queriesMonths2($n)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         return $this->queries2($n);
     }
 
     public function queriesMonths($n)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         return $this->queries($n);
     }
 
     public function query($id)
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $data = [];
         $data['query_id'] = $id;
         $data['q'] = QueryLog::find($id);
@@ -472,6 +633,12 @@ class AdminController extends Controller
 
     public function downloads()
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $download_list = Download::orderBy('id', 'desc')->get();
 
         $data = [];
@@ -482,6 +649,12 @@ class AdminController extends Controller
 
     public function jobs()
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         // Get the list of jobs
         $job_list = Job::orderBy('updated_at', 'desc')->get();
         // The job info doesn't have username, just user ID. Add the
@@ -502,6 +675,12 @@ class AdminController extends Controller
 
     public function downloadsMultipleIPAs()
     {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
         $download_list = Download::orderBy('id', 'desc')->get();
 
         $download_list_filtered = [];
