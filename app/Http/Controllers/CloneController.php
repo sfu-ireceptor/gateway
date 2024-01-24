@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Agave;
 use App\Bookmark;
 use App\Download;
 use App\FieldName;
 use App\QueryLog;
 use App\Sample;
-use App\Sequence;
 use App\SequenceClone;
 use App\System;
+use App\Tapis;
 use Facades\App\Query;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -65,7 +64,7 @@ class CloneController extends Controller
         $query_log_id = $request->get('query_log_id');
         $query_log = QueryLog::find($query_log_id);
         if ($query_log != null) {
-            $query_log->result_size = $clone_data['total_filtered_clones'];
+            $query_log->result_size = $clone_data['total_filtered_objects'];
             $query_log->save();
         }
 
@@ -88,6 +87,7 @@ class CloneController extends Controller
         $data['charts_data'] = Sample::generateChartsData($clone_data['summary'], $charts_fields, $field_map, 'ir_filtered_clone_count');
 
         $data['rest_service_list'] = $clone_data['rs_list'];
+        $data['rest_service_list_clones'] = $clone_data['rs_list'];
         $data['rest_service_list_no_response'] = $clone_data['rs_list_no_response'];
         $data['rest_service_list_no_response_timeout'] = $clone_data['rs_list_no_response_timeout'];
         $data['rest_service_list_no_response_error'] = $clone_data['rs_list_no_response_error'];
@@ -97,7 +97,7 @@ class CloneController extends Controller
         $data['total_filtered_repositories'] = $clone_data['total_filtered_repositories'];
         $data['total_filtered_labs'] = $clone_data['total_filtered_labs'];
         $data['total_filtered_studies'] = $clone_data['total_filtered_studies'];
-        $data['total_filtered_clones'] = $clone_data['total_filtered_clones'];
+        $data['total_filtered_objects'] = $clone_data['total_filtered_objects'];
         $data['filtered_repositories'] = $clone_data['filtered_repositories'];
 
         // populate form fields if needed
@@ -218,13 +218,13 @@ class CloneController extends Controller
         $data['filter_fields'] = $filter_fields;
 
         // Get information about all of the Apps for the AIRR "Clone" object
-        $agave = new Agave;
-        $appTemplates = $agave->getAppTemplates('Clone');
+        $tapis = new Tapis;
+        $appTemplates = $tapis->getAppTemplates('Clone');
         $app_list = [];
 
         // Store the normal job contorl parameters for the UI. The same parameters are used
         // by all Apps.
-        $job_parameter_list = $agave->getJobParameters();
+        $job_parameter_list = $tapis->getJobParameters();
 
         // For each app, set up the info required by the UI for the App parameters.
         foreach ($appTemplates as $app_tag => $app_info) {
@@ -233,29 +233,31 @@ class CloneController extends Controller
             Log::debug('Processing app ' . $app_tag);
             // Process the parameters.
             $parameter_list = [];
-            foreach ($app_config['parameters'] as $parameter_info) {
+            foreach ($app_config['jobAttributes']['parameterSet']['appArgs'] as $parameter_info) {
+                //foreach ($app_config['parameters'] as $parameter_info) {
                 // We only want the visible parameters to be visible. The
                 // UI uses the Tapis ID as a label and the Tapis paramenter
                 // "label" as the human readable name of the parameter.
-                if ($parameter_info['value']['visible']) {
+                if ($parameter_info['inputMode'] != 'FIXED') {
                     $parameter = [];
-                    Log::debug('   Processing parameter ' . $parameter_info['id']);
-                    $parameter['label'] = $parameter_info['id'];
-                    $parameter['name'] = $parameter_info['details']['label'];
-                    $parameter['description'] = $parameter_info['details']['description'];
-                    $parameter['type'] = $parameter_info['value']['type'];
-                    $parameter['default'] = $parameter_info['value']['default'];
-                    $parameter_list[$parameter_info['id']] = $parameter;
+                    Log::debug('   Processing parameter - ' . $parameter_info['name']);
+                    $parameter['label'] = $parameter_info['notes']['label'];
+                    $parameter['name'] = $parameter_info['name'];
+                    $parameter['description'] = $parameter_info['description'];
+                    $parameter['type'] = 'string';
+                    $parameter['default'] = $parameter_info['arg'];
+                    $parameter_list[$parameter_info['name']] = $parameter;
                 } else {
-                    Log::debug('   Not displaying invisible parameter ' . $parameter_info['id']);
+                    Log::debug('   Not displaying invisible parameter ' . $parameter_info['name']);
                 }
             }
 
             // The name of the App is the Tapis App label. We pass the UI the short
             // and long descriptions as well . The UI ID and tag are the Tapis ID.
-            $app_ui_info['name'] = $app_config['label'];
-            $app_ui_info['description'] = $app_config['shortDescription'];
-            $app_ui_info['info'] = $app_config['longDescription'];
+            $app_ui_info['name'] = $app_config['description'];
+            $app_ui_info['description'] = $app_config['description'];
+            $app_ui_info['info'] = $app_config['jobAttributes']['description'];
+
             $app_ui_info['parameter_list'] = $parameter_list;
             $app_ui_info['job_parameter_list'] = $job_parameter_list;
             $app_ui_info['app_id'] = $app_tag;
@@ -272,7 +274,7 @@ class CloneController extends Controller
         $data['system'] = System::getCurrentSystem(auth()->user()->id);
 
         // download time estimate
-        $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_clones']);
+        $data['download_time_estimate'] = $this->timeEstimate($data['total_filtered_objects']);
 
         // display view
         return view('clone', $data);

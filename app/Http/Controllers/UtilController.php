@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Deployment;
-use App\Job;
-use App\Jobs\ProcessAgaveNotification;
+use App\Jobs\ProcessJobNotification;
 use App\LocalJob;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -13,39 +12,52 @@ use Symfony\Component\Process\Process;
 
 class UtilController extends Controller
 {
-    // called by AGAVE
-    public function updateAgaveStatus($id, $status)
+    // URL Controller function for receiving updates from Tapis
+    public function updateJobStatus(Request $request)
     {
-        Log::info('AGAVE job status update: job ' . $id . ' has status ' . $status);
-        $lj = new LocalJob('agave-notifications');
+        Log::info('Tapis job status update: job ' . json_encode($request));
+        $content = json_decode($request->getContent());
+        Log::info('Tapis job status update: content = ' . json_encode($content));
+        $event = $content->event;
+        $id = $content->event->subject;
+        $data = json_decode($content->event->data);
+        if (property_exists($data, 'newJobStatus')) {
+            $status = $data->newJobStatus;
+            Log::info('Tapis job status update: job ' . $id . ' has status ' . $status);
+            $lj = new LocalJob('agave-notifications');
 
-        $lj->user = '[Agave]';
+            $lj->user = '[Agave]';
 
-        $lj->description = 'Job ' . $id . ': ' . $status;
+            $lj->description = 'Job ' . $id . ': ' . $status;
 
-        $lj->save();
+            $lj->save();
 
-        // ignore this status because it happens at the same time as FINISHED
-        if ($status == 'ARCHIVING_FINISHED') {
-            $lj->setFinished();
+            // ignore this status because it happens at the same time as FINISHED
+            if ($status == 'ARCHIVING_FINISHED') {
+                $lj->setFinished();
 
-            return;
+                return;
+            }
+
+            $localJobId = $lj->id;
+
+            // queue as a job (to make sure notifications are processed in order)
+            ProcessJobNotification::dispatch($id, $status, $localJobId)->onQueue('agave-notifications');
+        } else {
+            Log::info('updateJobStatus: Got notification, ignoring: ' . $data->message);
         }
-
-        $localJobId = $lj->id;
-
-        // queue as a job (to make sure notifications are processed in order)
-        ProcessAgaveNotification::dispatch($id, $status, $localJobId)->onQueue('agave-notifications');
     }
 
     // called by GitHub hook
     public function deploy(Request $request)
     {
+        Log::info('UtilContorller::deploy');
         $already_running_deployment = Deployment::where('running', 1)->first();
         while ($already_running_deployment != null) {
             sleep(5);
             $already_running_deployment = Deployment::where('running', 1)->first();
         }
+        Log::info('UtilContorller::deploy - after checking for running');
 
         $start_time = Carbon::now();
 
@@ -54,9 +66,12 @@ class UtilController extends Controller
 
         $githubPayload = $request->getContent();
         $githubHash = $request->header('X-Hub-Signature');
+        Log::info('UtilContorller::deploy - githubhash = ' . $githubHash);
 
         $localToken = config('app.deploy_secret');
+        Log::info('UtilContorller::deploy - local secret = ' . $localToken);
         $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
+        Log::info('UtilContorller::deploy - localhash = ' . $localHash);
 
         if (hash_equals($githubHash, $localHash)) {
             Log::info('-------- Deployment STARTED --------');
@@ -74,10 +89,10 @@ class UtilController extends Controller
             Log::info('-------- Deployment FINISHED --------');
         } else {
             Log::error('Deployment attempt failed because of hash mismatch.');
-            Log::info('$githubHash =' . $githubHash);
-            Log::info('$localHash  =' . $localHash);
-            Log::info('$localToken =' . $localToken);
-            Log::info('$githubPayload=' . $githubPayload);
+            Log::info('$githubHash = ' . $githubHash);
+            Log::info('$localHash  = ' . $localHash);
+            Log::info('$localToken = ' . $localToken);
+            //Log::info('$githubPayload=' . $githubPayload);
             var_dump($request->header());
         }
 

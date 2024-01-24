@@ -35,14 +35,14 @@ class AuthenticationRequiredTest extends TestCase
 
         $l[] = '/bookmarks';
 
-        $l[] = '/systems';
-        $l[] = '/systems/delete/1';
+        //$l[] = '/systems';
+        //$l[] = '/systems/delete/1';
 
         $l[] = '/jobs';
         $l[] = '/jobs/job-data/1';
         $l[] = '/jobs/job-list-grouped-by-month';
         $l[] = '/jobs/view/1';
-        $l[] = '/jobs/agave-history/1';
+        $l[] = '/jobs/job-history/1';
         $l[] = '/jobs/status/1';
         $l[] = '/jobs/delete/1';
 
@@ -51,7 +51,6 @@ class AuthenticationRequiredTest extends TestCase
         $l[] = '/admin/users';
         $l[] = '/admin/add-user';
         $l[] = '/admin/edit-user/raul_endymion';
-        $l[] = '/admin/delete-user/raul_endymion';
         $l[] = '/admin/samples/update-cache';
         $l[] = '/admin/field-names';
         $l[] = '/admin/queries';

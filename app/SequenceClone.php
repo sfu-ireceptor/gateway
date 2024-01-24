@@ -261,11 +261,11 @@ class SequenceClone
                     $download_incomplete_info .= 'Downloads from the following repositories finished successfully: ' . $rs_name_list_str . ".\n";
                 }
             } else {
-                $download_incomplete_info .= 'Some files appear to be incomplete. See the included info.txt file for more details.';
+                $download_incomplete_info .= 'Some files appear to be incomplete. See the included Info file for more details.';
             }
         }
 
-        // generate info.txt
+        // generate info file
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
         // generate manifest.json
         $manifest_file_path = Sequence::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
@@ -358,25 +358,25 @@ class SequenceClone
 
     public static function stats($sample_list)
     {
-        $total_clones = 0;
-        $total_filtered_clones = 0;
+        $total_object_count = 0;
+        $total_filtered_objects = 0;
 
         $lab_list = [];
-        $lab_clone_count = [];
+        $lab_object_count = [];
 
         $study_list = [];
-        $study_clone_count = [];
+        $study_object_count = [];
 
         foreach ($sample_list as $sample) {
             // clone count for that sample
             if (isset($sample->ir_clone_count)) {
-                $total_clones += $sample->ir_clone_count;
+                $total_object_count += $sample->ir_clone_count;
             }
 
             // filtered clone count for that sample
             if (isset($sample->ir_filtered_clone_count)) {
                 $nb_filtered_clones = $sample->ir_filtered_clone_count;
-                $total_filtered_clones += $nb_filtered_clones;
+                $total_filtered_objects += $nb_filtered_clones;
 
                 // add lab
                 $lab_name = '';
@@ -389,9 +389,9 @@ class SequenceClone
                 if ($lab_name != '') {
                     if (! in_array($lab_name, $lab_list)) {
                         $lab_list[] = $lab_name;
-                        $lab_clone_count[$lab_name] = 0;
+                        $lab_object_count[$lab_name] = 0;
                     }
-                    $lab_clone_count[$lab_name] += $nb_filtered_clones;
+                    $lab_object_count[$lab_name] += $nb_filtered_clones;
                 }
 
                 // add study
@@ -399,9 +399,9 @@ class SequenceClone
                 if ($study_title != '') {
                     if (! in_array($study_title, $study_list)) {
                         $study_list[] = $study_title;
-                        $study_clone_count[$study_title] = 0;
+                        $study_object_count[$study_title] = 0;
                     }
-                    $study_clone_count[$study_title] += $nb_filtered_clones;
+                    $study_object_count[$study_title] += $nb_filtered_clones;
                 }
             }
         }
@@ -417,7 +417,7 @@ class SequenceClone
             // lab
             if (! isset($study_tree[$lab])) {
                 $lab_data['name'] = $lab;
-                $lab_data['total_clones'] = isset($lab_clone_count[$lab]) ? $lab_clone_count[$lab] : 0;
+                $lab_data['total_object_count'] = isset($lab_object_count[$lab]) ? $lab_object_count[$lab] : 0;
                 $study_tree[$lab] = $lab_data;
             }
 
@@ -428,7 +428,7 @@ class SequenceClone
             $new_study_data['study_title'] = $sample->study_title;
 
             // total clones
-            $new_study_data['total_clones'] = isset($study_clone_count[$sample->study_title]) ? $study_clone_count[$sample->study_title] : 0;
+            $new_study_data['total_object_count'] = isset($study_object_count[$sample->study_title]) ? $study_object_count[$sample->study_title] : 0;
 
             // study url
             if (isset($sample->study_url)) {
@@ -444,8 +444,8 @@ class SequenceClone
         $rs_data['total_samples'] = count($sample_list);
         $rs_data['total_labs'] = count($lab_list);
         $rs_data['total_studies'] = count($study_list);
-        $rs_data['total_clones'] = $total_clones;
-        $rs_data['total_filtered_clones'] = $total_filtered_clones;
+        $rs_data['total_object_count'] = $total_object_count;
+        $rs_data['total_filtered_objects'] = $total_filtered_objects;
         $rs_data['study_tree'] = $study_tree;
 
         return $rs_data;
@@ -459,7 +459,7 @@ class SequenceClone
         $total_filtered_labs = 0;
         $total_filtered_studies = 0;
         $total_filtered_samples = 0;
-        $total_filtered_clones = 0;
+        $total_filtered_objects = 0;
 
         foreach ($data['rs_list'] as $rs_data) {
             if ($rs_data['total_samples'] > 0) {
@@ -470,7 +470,7 @@ class SequenceClone
             $total_filtered_samples += $rs_data['total_samples'];
             $total_filtered_labs += $rs_data['total_labs'];
             $total_filtered_studies += $rs_data['total_studies'];
-            $total_filtered_clones += $rs_data['total_filtered_clones'];
+            $total_filtered_objects += $rs_data['total_filtered_objects'];
         }
 
         // sort alphabetically repositories/labs/studies
@@ -480,7 +480,7 @@ class SequenceClone
         $data['total_filtered_repositories'] = $total_filtered_repositories;
         $data['total_filtered_labs'] = $total_filtered_labs;
         $data['total_filtered_studies'] = $total_filtered_studies;
-        $data['total_filtered_clones'] = $total_filtered_clones;
+        $data['total_filtered_objects'] = $total_filtered_objects;
         $data['filtered_repositories'] = $filtered_repositories;
 
         return $data;
@@ -488,6 +488,10 @@ class SequenceClone
 
     public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
+        // Set info file.
+        $info_file = 'info.txt';
+
+        // Initialize string.
         $s = '';
 
         $s .= '<p><b>Metadata filters</b></p>' . "\n";
@@ -579,7 +583,7 @@ class SequenceClone
         $time_str_human = date('H:i T', $now);
         $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "<br/>\n";
 
-        $info_file_path = $folder_path . '/info.txt';
+        $info_file_path = $folder_path . '/' . $info_file;
         file_put_contents($info_file_path, $s);
 
         return $info_file_path;
@@ -620,7 +624,7 @@ class SequenceClone
             }
         }
 
-        // info.txt
+        // Info file
         $zip->addFile($info_file_path, basename($info_file_path));
 
         // AIRR-manifest.json
@@ -636,7 +640,16 @@ class SequenceClone
     {
         Log::debug('Deleting downloaded files...');
         if (File::exists($folder_path)) {
-            Storage::deleteDirectory($folder_path);
+            // Check to see if the path is within the file space of Laravel managed
+            // storage. This is a paranoid check to make sure we don't remove everything
+            // on the system 8-)
+            if (str_contains($folder_path, storage_path())) {
+                Log::debug('Deleting folder of downloaded files: ' . $folder_path);
+                exec(sprintf('rm -rf %s', escapeshellarg($folder_path)));
+            } else {
+                Log::error('Could not delete folder ' . $folder_path);
+                Log::error('Folder is not in the Laravel storage area ' . storage_path());
+            }
         }
     }
 

@@ -300,11 +300,11 @@ class Sequence
                     $download_incomplete_info .= 'Downloads from the following repositories finished successfully: ' . $rs_name_list_str . ".\n";
                 }
             } else {
-                $download_incomplete_info .= 'Some files appear to be incomplete. See the included info.txt file for more details.';
+                $download_incomplete_info .= 'Some files appear to be incomplete. See the included Info file for more details.';
             }
         }
 
-        // generate info.txt
+        // generate info file
         $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
 
         // generate manifest.json
@@ -366,8 +366,8 @@ class Sequence
         // zip files
         $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path, $repertoire_query_file_path, $rearrangement_query_file_path);
 
-        // delete files - TODO not working, to fix
-        // self::delete_files($folder_path);
+        // delete files
+        self::delete_files($folder_path);
 
         $zip_public_path = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
 
@@ -421,25 +421,25 @@ class Sequence
 
     public static function stats($sample_list)
     {
-        $total_sequences = 0;
-        $total_filtered_sequences = 0;
+        $total_object_count = 0;
+        $total_filtered_objects = 0;
 
         $lab_list = [];
-        $lab_sequence_count = [];
+        $lab_object_count = [];
 
         $study_list = [];
-        $study_sequence_count = [];
+        $study_object_count = [];
 
         foreach ($sample_list as $sample) {
             // sequence count for that sample
             if (isset($sample->ir_sequence_count)) {
-                $total_sequences += $sample->ir_sequence_count;
+                $total_object_count += $sample->ir_sequence_count;
             }
 
             // filtered sequence count for that sample
             if (isset($sample->ir_filtered_sequence_count)) {
-                $nb_filtered_sequences = $sample->ir_filtered_sequence_count;
-                $total_filtered_sequences += $nb_filtered_sequences;
+                $nb_filtered_objects = $sample->ir_filtered_sequence_count;
+                $total_filtered_objects += $nb_filtered_objects;
 
                 // add lab
                 $lab_name = '';
@@ -452,9 +452,9 @@ class Sequence
                 if ($lab_name != '') {
                     if (! in_array($lab_name, $lab_list)) {
                         $lab_list[] = $lab_name;
-                        $lab_sequence_count[$lab_name] = 0;
+                        $lab_object_count[$lab_name] = 0;
                     }
-                    $lab_sequence_count[$lab_name] += $nb_filtered_sequences;
+                    $lab_object_count[$lab_name] += $nb_filtered_objects;
                 }
 
                 // add study
@@ -462,9 +462,9 @@ class Sequence
                 if ($study_title != '') {
                     if (! in_array($study_title, $study_list)) {
                         $study_list[] = $study_title;
-                        $study_sequence_count[$study_title] = 0;
+                        $study_object_count[$study_title] = 0;
                     }
-                    $study_sequence_count[$study_title] += $nb_filtered_sequences;
+                    $study_object_count[$study_title] += $nb_filtered_objects;
                 }
             }
         }
@@ -480,7 +480,7 @@ class Sequence
             // lab
             if (! isset($study_tree[$lab])) {
                 $lab_data['name'] = $lab;
-                $lab_data['total_sequences'] = isset($lab_sequence_count[$lab]) ? $lab_sequence_count[$lab] : 0;
+                $lab_data['total_object_count'] = isset($lab_object_count[$lab]) ? $lab_object_count[$lab] : 0;
                 $study_tree[$lab] = $lab_data;
             }
 
@@ -491,7 +491,7 @@ class Sequence
             $new_study_data['study_title'] = $sample->study_title;
 
             // total sequences
-            $new_study_data['total_sequences'] = isset($study_sequence_count[$sample->study_title]) ? $study_sequence_count[$sample->study_title] : 0;
+            $new_study_data['total_object_count'] = isset($study_object_count[$sample->study_title]) ? $study_object_count[$sample->study_title] : 0;
 
             // study url
             if (isset($sample->study_url)) {
@@ -507,8 +507,8 @@ class Sequence
         $rs_data['total_samples'] = count($sample_list);
         $rs_data['total_labs'] = count($lab_list);
         $rs_data['total_studies'] = count($study_list);
-        $rs_data['total_sequences'] = $total_sequences;
-        $rs_data['total_filtered_sequences'] = $total_filtered_sequences;
+        $rs_data['total_object_count'] = $total_object_count;
+        $rs_data['total_filtered_objects'] = $total_filtered_objects;
         $rs_data['study_tree'] = $study_tree;
 
         return $rs_data;
@@ -522,7 +522,7 @@ class Sequence
         $total_filtered_labs = 0;
         $total_filtered_studies = 0;
         $total_filtered_samples = 0;
-        $total_filtered_sequences = 0;
+        $total_filtered_objects = 0;
 
         foreach ($data['rs_list'] as $rs_data) {
             if ($rs_data['total_samples'] > 0) {
@@ -533,7 +533,7 @@ class Sequence
             $total_filtered_samples += $rs_data['total_samples'];
             $total_filtered_labs += $rs_data['total_labs'];
             $total_filtered_studies += $rs_data['total_studies'];
-            $total_filtered_sequences += $rs_data['total_filtered_sequences'];
+            $total_filtered_objects += $rs_data['total_filtered_objects'];
         }
 
         // sort alphabetically repositories/labs/studies
@@ -543,7 +543,7 @@ class Sequence
         $data['total_filtered_repositories'] = $total_filtered_repositories;
         $data['total_filtered_labs'] = $total_filtered_labs;
         $data['total_filtered_studies'] = $total_filtered_studies;
-        $data['total_filtered_sequences'] = $total_filtered_sequences;
+        $data['total_filtered_objects'] = $total_filtered_objects;
         $data['filtered_repositories'] = $filtered_repositories;
 
         return $data;
@@ -585,6 +585,10 @@ class Sequence
 
     public static function generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs)
     {
+        // Set name of info file
+        $info_file = 'info.txt';
+
+        // Initialize string.
         $s = '';
         // We want to extract the query_id from the URL. The URL has a query_id parameter
         // wich we need to extract. URLs look like this:
@@ -667,8 +671,8 @@ class Sequence
         $s .= 'Downloaded by ' . $username . ' on ' . $date_str_human . ' at ' . $time_str_human . "<br>\n";
         $s .= "</p>\n";
 
-        // Save the info into the info.txt file.
-        $info_file_path = $folder_path . '/info.txt';
+        // Save the info into the info file.
+        $info_file_path = $folder_path . '/' . $info_file;
         file_put_contents($info_file_path, $s);
 
         return $info_file_path;
@@ -765,7 +769,7 @@ class Sequence
             }
         }
 
-        // info.txt
+        // Info file
         Log::debug('Adding to ZIP: ' . $info_file_path);
         $zip->addFile($info_file_path, basename($info_file_path));
 
@@ -788,9 +792,18 @@ class Sequence
 
     public static function delete_files($folder_path)
     {
+        // Check to see if the path exists.
         if (File::exists($folder_path)) {
-            Log::debug('Deleting folder of downloaded files: ' . $folder_path);
-            Storage::deleteDirectory($folder_path);
+            // Check to see if the path is within the file space of Laravel managed
+            // storage. This is a paranoid check to make sure we don't remove everything
+            // on the system 8-)
+            if (str_contains($folder_path, storage_path())) {
+                Log::debug('Deleting folder of downloaded files: ' . $folder_path);
+                exec(sprintf('rm -rf %s', escapeshellarg($folder_path)));
+            } else {
+                Log::error('Could not delete folder ' . $folder_path);
+                Log::error('Folder is not in the Laravel storage area ' . storage_path());
+            }
         }
     }
 

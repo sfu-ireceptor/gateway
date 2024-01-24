@@ -5,7 +5,14 @@ DOWNLOADS_FOLDER=${SCRIPT_FOLDER}'/../../storage/app/public/'
 
 date
 echo "Deleting old files in $DOWNLOADS_FOLDER"
+# Remove the ir_ json files (metadata json downloads)
+sudo find $DOWNLOADS_FOLDER  -type f -name 'ir_*.json' -mtime +6 -exec echo {} \;
+sudo find $DOWNLOADS_FOLDER  -type f -name 'ir_*.json' -mtime +6 -delete
+# Remove the ir_ tsv files (metadata tsv downloads)
+sudo find $DOWNLOADS_FOLDER  -type f -name 'ir_*.tsv' -mtime +6 -exec echo {} \;
+sudo find $DOWNLOADS_FOLDER  -type f -name 'ir_*.tsv' -mtime +6 -delete
 # Remove the ir_ download ZIP files
+sudo find $DOWNLOADS_FOLDER  -type f -name 'ir_*.zip' -mtime +6 -exec echo {} \;
 sudo find $DOWNLOADS_FOLDER  -type f -name 'ir_*.zip' -mtime +6 -delete
 # Remove the ir_ directories and all files in them. We echo the directories
 # so we know what was deleted since the find/remove is silent. We need to

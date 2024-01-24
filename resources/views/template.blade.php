@@ -184,7 +184,7 @@
 								  <li role="separator" class="divider"></li>
 								<li><a href="/bookmarks"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Bookmarks</a></li>
 								<li><a href="/downloads"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Downloads</a></li>
-								@if(config('services.agave.enabled'))
+								@if(config('services.tapis.enabled'))
 									<li><a href="/jobs"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Jobs</a></li>
 								@endif
 								  <li role="separator" class="divider"></li>

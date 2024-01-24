@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Agave;
 use App\Job;
-use App\Jobs\LaunchAgaveJob;
+use App\Jobs\LaunchJob;
 use App\Jobs\PrepareDataForThirdPartyAnalysis;
 use App\JobStep;
 use App\LocalJob;
 use App\Query;
-use App\System;
+use App\Tapis;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -45,77 +44,77 @@ class JobController extends Controller
         // essentially map to <span> elements in the HTML and are updated through
         // the JS code in main.js - in the Jobs section.
         $data['status'] = $job->status;
-        $data['agave_status'] = $job->agave_status;
+        $data['agave_status'] = $job->getJobStatus();
         $data['submission_date_relative'] = $job->createdAtRelative();
         $data['run_time'] = $job->totalTime();
         $data['job_url'] = $job->url;
         $data['job'] = $job;
 
-        // Create an Agave object to work with. This is constant across all jobs.
-        $agave = new Agave;
+        // Create an Tapis object to work with. This is constant across all jobs.
+        $tapis = new Tapis;
         // Build the job_summary block HTML
         $data['job_summary'] = [];
         $s = '<p><strong>App Parameters</strong></p>';
         $s .= '<p>';
         // Get the JSON from the Job, we need info from it.
         $param_count = 0;
-        $agave_json = $this->getAgaveJobJSON($job->id, $agave);
+        $job_json = $this->getJobJSON($job->id, $tapis);
 
         // If we have a JSON string for the Job, process the App parameters.
-        if ($agave_json != null) {
+        if ($job_json != null) {
+            /*
+             * TODO: I believe this code is no longer required. We get everthing
+             * from the job.
+             *
             // Get the App template for this App. The job stores the App Label so
             // we use the label to look it up. This returns a JSON object in the form
             // of an AGave App template.
-            $app_template = $agave->getAppTemplateByLabel($job->app);
+            $app_template = $tapis->getAppTemplateByLabel($job->app);
             // Get the parameters from this app template. We need to map parameter tags
             // to human readable names if possible.
             $template_parameters = [];
             if ($app_template != null) {
                 $config = $app_template['config'];
-                $template_parameters = $config['parameters'];
+                $template_parameters = $config['jobAttributes']['parameterSet']['appArgs'];
             }
+             */
 
-            // Get the Agave job status and from it get the parameters.
-            $agave_status = json_decode($agave_json);
-            $app_parameters = $agave_status->result->parameters;
+            // Get the Tapis job status and from it get the parameters.
+            $job_status = json_decode($job_json);
+            $app_parameters = json_decode($job_status->result->parameterSet)->appArgs;
             // For each parameter, add some text to the display string.
-            foreach ($app_parameters as $param => $value) {
-                // Basic parameters are key values with strings. Special
-                // parameters that are hidden the values are arrays. We don't
-                // want to show these.
-                if (! is_array($value)) {
-                    // Parameter is the ID by default, then overwrite the value
-                    // by the parameter label if it exists.
-                    $param_string = $param;
-                    foreach ($template_parameters as $template_param) {
-                        if ($template_param['id'] == $param) {
-                            $param_string = $template_param['details']['label'];
-                        }
-                    }
-                    $s .= $param_string . ': ' . $value . '<br>\n';
+            foreach ($app_parameters as $param) {
+                // Basic parameters have notes - special hidden parameters do not. So if
+                // we don't have a notes['label'] field then we don't do anything.
+                if (property_exists($param, 'notes') && json_decode($param->notes) != null &&
+                    property_exists(json_decode($param->notes), 'label')) {
+                    // Generate the parameters label and value.
+                    $param_string = json_decode($param->notes)->label;
+                    $param_value = $param->arg;
+                    $s .= $param_string . ': ' . $param_value . '<br>';
                     $param_count++;
                 }
             }
         }
         if ($param_count == 0) {
-            $s .= 'None<br>\n';
+            $s .= 'None<br>';
         }
         $s .= '<p>';
 
         $s .= '<p><strong>Job Parameters</strong></p>';
         $s .= '<p>';
-        $s .= 'Number of cores: ' . strval($agave->processorsPerNode()) . '<br>\n';
-        $s .= 'Maximum memory per core: ' . strval($agave->memoryPerProcessor()) . ' GB<br>\n';
-        $s .= 'Maximum run time: ' . strval($agave->maxRunTime()) . ' hours<br>\n';
+        $s .= 'Number of cores: ' . strval($tapis->processorsPerNode()) . '<br>';
+        $s .= 'Maximum memory per node: ' . strval(round($tapis->memoryMBPerNode() / 1024, 1)) . ' GB<br>';
+        $s .= 'Maximum run time: ' . strval(round($tapis->maxRunTimeMinutes() / 60, 1)) . ' hours<br>';
         $s .= '<p>';
-        $data['job_summary'] = explode('\n', $s);
+        $data['job_summary'] = $s;
 
         // Build the job control button HTML. This is rendered by the blade,
         // and controls when the job control button is enabled or not.
         $data['job_control_button'] = [];
         $s = '';
         $s .= '<a href="/jobs/cancel/' . $job->id . '">';
-        if ($job->agave_id == '') {
+        if ($job->getJobID() == '') {
             $s .= '<button type="button" class="btn btn-primary" aria-label="Cancel" disabled="disabled">';
         } else {
             $s .= '<button type="button" class="btn btn-primary" aria-label="Cancel">';
@@ -166,15 +165,15 @@ class JobController extends Controller
             $appHumanName = 'Third-party analysis';
             $jobDescription = 'Data federation';
         } else {
-            $jobDescription = 'Data federation + submission to AGAVE';
+            $jobDescription = 'Data federation + submission to Tapis';
             // Get the App template for this appId
-            $agave = new Agave;
-            $app_info = $agave->getAppTemplate($appId);
+            $tapis = new Tapis;
+            $app_info = $tapis->getAppTemplate($appId);
             // The 'config' attribute has the App configuration and in the
             // configuration, we want to use the application label as the
             // human readable description for this App.
             $app_config = $app_info['config'];
-            $appHumanName = $app_config['label'];
+            $appHumanName = $app_config['description'];
         }
 
         // create job in DB
@@ -230,7 +229,7 @@ class JobController extends Controller
         if ($appId == '999') {
             PrepareDataForThirdPartyAnalysis::dispatch($jobId, $request_data, $gw_username, $localJobId)->onQueue($queue);
         } else {
-            LaunchAgaveJob::dispatch($jobId, $request_data, $localJobId, $gw_username, $gw_userid)->onQueue($queue);
+            LaunchJob::dispatch($jobId, $request_data, $localJobId, $gw_username, $gw_userid)->onQueue($queue);
         }
 
         return redirect('jobs/view/' . $jobId);
@@ -238,6 +237,9 @@ class JobController extends Controller
 
     public function getView($id)
     {
+        // Set info file name
+        $info_file = 'info.txt';
+
         // Get the job for the user.
         $job = Job::findJobForUser($id, auth()->user()->id);
 
@@ -304,13 +306,12 @@ class JobController extends Controller
 
         // Generate a set of summary information about where the data came from
         $data['summary'] = [];
-        $info_file = $folder . '/info.txt';
-        if ($job['input_folder'] != '' && File::exists($info_file)) {
+        $info_file_path = $folder . '/' . $info_file;
+        if ($job['input_folder'] != '' && File::exists($info_file_path)) {
             try {
-                $info_txt = file_get_contents($info_file);
-                $lines = file($info_file);
+                $lines = file($info_file_path);
             } catch (Exception $e) {
-                Log::debug('JobController::getView: Could not open file ' . $info_file);
+                Log::debug('JobController::getView: Could not open file ' . $info_file_path);
                 Log::debug('JobController::getView: Error: ' . $e->getMessage());
             }
             $data['summary'] = $lines;
@@ -365,53 +366,48 @@ class JobController extends Controller
         // Generate a set of job summary comments for the Tapis part of the job.
         $data['job_summary'] = [];
 
-        // Create an Agave object to work with. This is constant across all jobs.
-        $agave = new Agave;
-
-        // Refresh the Agave token for use.
-        Log::debug('JobController::getView: renewing token for ' . auth()->user()->username);
-        $user = User::where('username', auth()->user()->username)->first();
-        $token = $user->getToken();
+        // Create an Tapis object to work with. This is constant across all jobs.
+        $tapis = new Tapis;
 
         // Build the job summary HTML. This is rendered by the blade.
         $s = '<p><strong>App Parameters</strong></p>';
         $s .= '<p>';
         // Get the JSON from the Job, we need info from it.
         $param_count = 0;
-        $agave_json = $this->getAgaveJobJSON($job->id, $agave);
+        $job_json = $this->getJobJSON($job->id, $tapis);
 
         // If we have a JSON string for the Job, process the App parameters.
-        if ($agave_json != null) {
+        if ($job_json != null) {
+            /*
+             * TODO: I believe this code is no longer required. We get everthing
+             * from the job.
+             *
             // Get the App template for this App. The job stores the App Label so
             // we use the label to look it up. This returns a JSON object in the form
             // of an AGave App template.
-            $app_template = $agave->getAppTemplateByLabel($job->app);
+            $app_template = $tapis->getAppTemplateByLabel($job->app);
             // Get the parameters from this app template. We need to map parameter tags
             // to human readable names if possible.
             $template_parameters = [];
             if ($app_template != null) {
                 $config = $app_template['config'];
-                $template_parameters = $config['parameters'];
+                $template_parameters = $config['jobAttributes']['parameterSet']['appArgs'];
             }
+             */
 
-            // Get the Agave job status and from it get the parameters.
-            $agave_status = json_decode($agave_json);
-            $app_parameters = $agave_status->result->parameters;
+            // Get the Tapis job status and from it get the parameters.
+            $job_status = json_decode($job_json);
+            $app_parameters = json_decode($job_status->result->parameterSet)->appArgs;
             // For each parameter, add some text to the display string.
-            foreach ($app_parameters as $param => $value) {
-                // Basic parameters are key values with strings. Special
-                // parameters that are hidden the values are arrays. We don't
-                // want to show these.
-                if (! is_array($value)) {
-                    // Parameter is the ID by default, then overwrite the value
-                    // by the parameter label if it exists.
-                    $param_string = $param;
-                    foreach ($template_parameters as $template_param) {
-                        if ($template_param['id'] == $param) {
-                            $param_string = $template_param['details']['label'];
-                        }
-                    }
-                    $s .= $param_string . ': ' . $value . '<br>\n';
+            foreach ($app_parameters as $param) {
+                // Basic parameters have notes - special hidden parameters do not. So if
+                // we don't have a notes['label'] field then we don't do anything.
+                if (property_exists($param, 'notes') && json_decode($param->notes) != null &&
+                    property_exists(json_decode($param->notes), 'label')) {
+                    // Generate the parameter label and its value
+                    $param_string = json_decode($param->notes)->label;
+                    $param_value = $param->arg;
+                    $s .= $param_string . ': ' . $param_value . '<br>\n';
                     $param_count++;
                 }
             }
@@ -423,9 +419,9 @@ class JobController extends Controller
 
         $s .= '<p><strong>Job Parameters</strong></p>';
         $s .= '<p>';
-        $s .= 'Number of cores: ' . strval($agave->processorsPerNode()) . '<br>\n';
-        $s .= 'Maximum memory per core: ' . strval($agave->memoryPerProcessor()) . ' GB<br>\n';
-        $s .= 'Maximum run time: ' . strval($agave->maxRunTime()) . ' hours<br>\n';
+        $s .= 'Number of cores: ' . strval($tapis->processorsPerNode()) . '<br>\n';
+        $s .= 'Maximum memory per node: ' . strval(round($tapis->memoryMBPerNode() / 1024, 1)) . ' GB<br>\n';
+        $s .= 'Maximum run time: ' . strval(round($tapis->maxRunTimeMinutes() / 60, 1)) . ' hours<br>\n';
         $s .= '<p>';
         $data['job_summary'] = explode('\n', $s);
 
@@ -433,7 +429,7 @@ class JobController extends Controller
         // and controls when the job control button is enabled or not.
         $s = '';
         $s .= '<a href="/jobs/cancel/' . $job->id . '">';
-        if ($job->agave_id == '') {
+        if ($job->getJobID() == '') {
             $s .= '<button type="button" class="btn btn-primary" aria-label="Cancel" disabled="disabled">';
         } else {
             $s .= '<button type="button" class="btn btn-primary" aria-label="Cancel">';
@@ -443,22 +439,22 @@ class JobController extends Controller
         $data['job_control_button'] = explode('\n', $s);
 
         // Generate some Error summary information if the job failed
-        $output_file = 'irec-job-' . $job['id'] . '-' . $job['agave_id'] . '.out';
-        $error_file = 'irec-job-' . $job['id'] . '-' . $job['agave_id'] . '.err';
+        $output_file = 'ireceptor-' . $job['id'] . '.out';
+        $error_file = 'ireceptor-' . $job['id'] . '.err';
         $data['error_summary'] = [];
         $err_path = $analysis_folder . '/' . $error_file;
         $out_path = $analysis_folder . '/' . $output_file;
-        $info_path = $analysis_folder . '/' . 'info.txt';
+        $info_path = $analysis_folder . '/' . $info_file;
 
         // Error strings we expect to see if an error occured in an App
         $ireceptor_error = 'IR-ERROR';
         $gateway_error = 'GW-ERROR';
         // Determine if we should be handling errors.
         $job_errors = false;
-        if ($job->agave_status == 'FAILED') {
+        if ($job->getJobStatus() == 'FAILED') {
             // If the job fails, then we need to handle error messages
             $job_errors = true;
-        } elseif ($job->agave_status == 'INTERNAL_ERROR') {
+        } elseif ($job->getJobStatus() == 'INTERNAL_ERROR') {
             $job_errors = true;
         } else {
             // If the job error file exists and has an error message then we need to handle errors
@@ -496,16 +492,17 @@ class JobController extends Controller
         if ($job_errors) {
             $s = '<em>WARNING: This job completed but errors on some stages of the processing were detected. As a result, some repertoires may not have been processed and/or some results may not be fully complete. Please refer to the Error and Output log files for more information.</em><br>\n';
             // If the Tapis job failed get the error message.
-            if ($job->agave_status == 'FAILED') {
+            if ($job->getJobStatus() == 'FAILED') {
                 // Get the Tapis error status
-                $agave_json = $this->getAgaveJobJSON($job->id, $agave);
-                if ($agave_json != null) {
-                    $agave_status = json_decode($agave_json);
+                $job_json = $this->getJobJSON($job->id, $tapis);
+                if ($job_json != null) {
+                    Log::debug('JobController::getView: job result = ' . $job_json);
+                    $job_status = json_decode($job_json);
                     $s .= '<br><p><strong>TAPIS errors</strong></p>\n';
-                    $s .= strval($agave_status->result->lastStatusMessage) . '<br>\n';
+                    $s .= strval($job_status->result->lastMessage) . '<br>\n';
                 }
             }
-            if ($job->agave_status == 'INTERNAL_ERROR') {
+            if ($job->getJobStatus() == 'INTERNAL_ERROR') {
                 $s .= '<br><p><strong>Internal Error</strong></p>\n';
                 $s .= 'Unfortunately, your job encountered an unexpected internal error. This may be due to an authentication issue, please log out and log back in and resubmit the job. If the error recurs, please send an email to support@ireceptor.org with the Job ID number and we will investigate.<br>\n';
             }
@@ -520,8 +517,7 @@ class JobController extends Controller
             $stderr_response = '';
             if (File::exists($folder) && ! File::exists($err_path)) {
                 // Tapis command to get the file.
-
-                $stderr_response = $agave->getJobOutputFile($job->agave_id, $token, $error_file);
+                $stderr_response = $tapis->getJobOutputFile($job->getJobID(), $error_file);
                 // Check for the analysis directory, create if it doesn't exist.
                 if (! File::exists($analysis_folder)) {
                     mkdir($analysis_folder);
@@ -544,7 +540,7 @@ class JobController extends Controller
             $stdout_response = '';
             if (File::exists($folder) && ! File::exists($out_path)) {
                 // Tapis command to get the file.
-                $stdout_response = $agave->getJobOutputFile($job->agave_id, $token, $output_file);
+                $stdout_response = $tapis->getJobOutputFile($job->getJobID(), $output_file);
                 // Check for the analysis directory, create if it doesn't exist.
                 if (! File::exists($analysis_folder)) {
                     mkdir($analysis_folder);
@@ -567,7 +563,7 @@ class JobController extends Controller
             $info_response = '';
             if (File::exists($folder) && ! File::exists($info_path)) {
                 // Tapis command to get the file.
-                $info_response = $agave->getJobOutputFile($job->agave_id, $token, 'info.txt');
+                $info_response = $tapis->getJobOutputFile($job->getJobID(), $info_file);
                 $info_object = json_decode($info_response);
 
                 // Catch the case when the info file doesn't exist on the Tapis compute side.
@@ -729,7 +725,7 @@ class JobController extends Controller
                     }
                     // Store the analysis summary in the data block returned to the Job view.
                     $data['analysis_summary'] = $analysis_summary;
-                } elseif ($job->agave_status == 'FINISHED') {
+                } elseif ($job->getJobStatus() == 'FINISHED') {
                     // In the case where the job is FINISHED and there are no output files,
                     // inform user data is not available. Note: this handles the case where
                     // the Gateway cleanup removes all the files but the directory structure
@@ -754,33 +750,27 @@ class JobController extends Controller
         return view('job/view', $data);
     }
 
-    public function getAgaveHistory($id)
+    public function getJobHistory($id)
     {
-        $agave = new Agave;
+        $tapis = new Tapis;
 
         $job = Job::where('id', '=', $id)->first();
         $response = null;
-        if ($job != null && $job->agave_id != '') {
-            $job_agave_id = $job->agave_id;
-            // Get the user, the user's token, and job info
+        if ($job != null && $job->getJobID() != '') {
+            // Get the job info.
+            $job_id = $job->getJobID();
             $job_user = User::where('id', $job->user_id)->first();
-            $token = $job_user->getToken();
-            if ($token != null) {
-                $response = $agave->getJobHistory($job_agave_id, $token);
-            }
-            // If the token was not valid or if there was an error, try
-            // as an admin user to get the same info.
-            // getJob returns a JSON string, isAgaveError expects an object.
-            if ($token == null || $agave->isAgaveError(json_decode($response))) {
-                Log::debug('JobContorller::getAgaveHistory - got an error');
+            $response = $tapis->getJobHistory($job_id);
+            // If there was an error, tryas an admin user to get the same info.
+            // TODO: is this true - check and fix: getJob returns a JSON string,
+            // isTapisError expects an object.
+            if ($tapis->isTapisError(json_decode($response))) {
+                Log::debug('JobContorller::getJobHistory - got an error');
                 $this_user = User::where('username', auth()->user()->username)->first();
                 if ($this_user->isAdmin()) {
-                    $token = $agave->getAdminToken();
-                    if ($token != null) {
-                        $response = $agave->getJob($job_agave_id, $token);
-                    }
+                    $response = $tapis->getJob($job_id);
                     // If we can get the info, return it
-                    if ($token == null || $agave->isAgaveError(json_decode($response))) {
+                    if ($tapis->isTapisError(json_decode($response))) {
                         $response = null;
                     }
                 }
@@ -793,32 +783,25 @@ class JobController extends Controller
         }
     }
 
-    public function getAgaveJobJSON($id, $agave)
+    public function getJobJSON($id, $tapis)
     {
         $job = Job::where('id', '=', $id)->first();
         $response = null;
-        if ($job != null && $job->agave_id != '') {
-            $job_agave_id = $job->agave_id;
-            // Get the user, the user's token, and job info
+        if ($job != null && $job->getJobID() != '') {
+            // Get the job info
+            $job_id = $job->getJobID();
             $job_user = User::where('id', $job->user_id)->first();
-            $token = $job_user->getToken();
-            if ($token != null) {
-                $response = $agave->getJob($job_agave_id, $token);
-            }
-            // If the token was not valid or if there was an error, try
-            // as an admin user to get the same info.
-            // getJob returns a JSON string, isAgaveError expects an object.
-            if ($token == null || $agave->isAgaveError(json_decode($response))) {
-                Log::debug('JobContorller::getAgaveJobJSON - got an error');
+            $response = $tapis->getJob($job_id);
+            // If there was an error, try as an admin user to get the same info.
+            // TODO: is this true - check and fix: getJob returns a JSON string,
+            // isTapisError expects an object.
+            if ($tapis->isTapisError(json_decode($response))) {
+                Log::debug('JobContorller::getJobJSON - got an error');
                 $this_user = User::where('username', auth()->user()->username)->first();
                 if ($this_user->isAdmin()) {
-                    $token = $agave->getAdminToken();
-                    // If we can get the info, return it
-                    if ($token != null) {
-                        $response = $agave->getJob($job_agave_id, $token);
-                    }
-                    // If we can't get the token or there is an error, then return null.
-                    if ($token == null || $agave->isAgaveError(json_decode($response))) {
+                    $response = $tapis->getJob($job_id);
+                    // If there is an error, then return null.
+                    if ($tapis->isTapisError(json_decode($response))) {
                         $response = null;
                     }
                 }
@@ -832,27 +815,23 @@ class JobController extends Controller
     public function getStatus($id)
     {
         $job = Job::where('id', '=', $id)->first();
-        echo $job->agave_status;
+        echo $job->getJobStatus();
     }
 
     public function getCancel($id)
     {
         // Get user and job info
         $userId = auth()->user()->id;
-        $username = auth()->user()->username;
-        $user = User::where('username', $username)->first();
         $job = Job::get($id, $userId);
 
         // If we found one, clean up
         if ($job != null) {
-            // Clean up the running AGAVE job if it exists and is not finished.
+            // Clean up the running Tapis job if it exists and is not finished.
             if (isset($job['agave_id']) and isset($job['agave_status']) and $job['agave_status'] != 'FINISHED' and $job['agave_status'] != 'INTERNAL_ERROR') {
-                Log::debug('Deleting AGAVE job ' . $job['agave_id']);
-                $user = User::where('username', auth()->user()->username)->first();
-                $token = $user->getToken();
+                Log::debug('Deleting Tapis job ' . $job->getJobID());
                 // Kill the job and update the status.
-                $agave = new Agave;
-                $response = $agave->killJob($job['agave_id'], $token);
+                $tapis = new Tapis;
+                $response = $tapis->killJob($job->getJobID());
                 $job->updateStatus('STOPPED');
             }
         }
@@ -864,20 +843,16 @@ class JobController extends Controller
     {
         // Get user and job info
         $userId = auth()->user()->id;
-        $username = auth()->user()->username;
-        $user = User::where('username', $username)->first();
         $job = Job::get($id, $userId);
 
         Log::debug($job);
         if ($job != null) {
-            // Clean up the running AGAVE it exists and the job if not finished.
+            // Clean up the running Tapis it exists and the job if not finished.
             if (isset($job['agave_id']) and isset($job['agave_status']) and $job['agave_status'] != 'FINISHED' and $job['agave_status'] != 'STOPPED' and $job['agave_status'] != 'INTERNAL_ERROR') {
-                Log::debug('Deleting AGAVE job ' . $job['agave_id']);
-                $user = User::where('username', auth()->user()->username)->first();
-                $token = $user->getToken();
+                Log::debug('Deleting Tapis job ' . $job->getJobID());
                 // Kill the job and update the status.
-                $agave = new Agave;
-                $response = $agave->killJob($job['agave_id'], $token);
+                $tapis = new Tapis;
+                $response = $tapis->killJob($job->getJobID());
                 $job->updateStatus('STOPPED');
             }
 

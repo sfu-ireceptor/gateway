@@ -699,6 +699,10 @@ footer a:hover {
 	max-width: 230px;		
 }
 
+.credits .alliance img {
+	max-width: 230px;		
+}
+
 .credits .bckdf img {
 	max-width: 100px;
 }
@@ -989,8 +993,9 @@ fieldset[disabled] .btn-sequences.focus {
 	margin-top: 20px;
 }
 
+/* 46 px works for 4 lines of text in login_logo */
 .login-box {
-	margin-top: 46px;
+	margin-top: 30px;
 }
 
 .login-box .panel-body, .news_list .panel-body {
@@ -1006,8 +1011,15 @@ fieldset[disabled] .btn-sequences.focus {
 	font-size: 14px;
 }
 
+/*
+ * margin-top gives us spacing to get the image in the middle
+ * 48px works for 4 lines of text
+ * 38px works for 3 lines of text
+ *
+*/
+
 .login_logo {
-	margin-top: 47px;
+	margin-top: 38px;
 	padding-left: 0px;
 }
 
@@ -1017,19 +1029,22 @@ fieldset[disabled] .btn-sequences.focus {
 
 .login_logo img {
 	display: inline-block;
-	margin-top: -18px;
+	margin-top: -12px;
 	margin-left: 6px;
 	margin-right: 0;
 	width: 250px;
 }
 
+.foo {
+	font: 18px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
 .intro {
 	margin-bottom: 37px;
 	margin-top: 17px;
 	background-color: transparent;
 	border-radius: 6px;
-	font: 22px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;
-	padding: 0 60px 0 0;
+	font: 18px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;
+	padding: 0 0px 0 0;
 }
 
 .intro .tagline span {
@@ -1057,9 +1072,10 @@ fieldset[disabled] .btn-sequences.focus {
 }
 
 .intro_login {
-	font-size: 18px;	
+	font-size: 16px;	
 }
 
+/*
 .intro_login a {
 	color: white;
 	background-color: #337ab7;
@@ -1068,6 +1084,7 @@ fieldset[disabled] .btn-sequences.focus {
 	padding: 1px 7px 3px;
 	white-space: nowrap;
 }
+*/
 
 .login_main {
 	margin-top: 0px;
@@ -1113,7 +1130,7 @@ fieldset[disabled] .btn-sequences.focus {
 }
 
 .beta_version > .panel-heading {
-	background-color: #f4a45a;
+	background-color: #eee;
 	color: black;
 	border-bottom-style: none;
 }
@@ -1122,9 +1139,12 @@ fieldset[disabled] .btn-sequences.focus {
 	margin-bottom: 0;
 }
 
+/*
+	background-color: #f4a45a;
+*/
 .beta_version > .panel-footer {
 	padding-top: 5px;
-	background-color: #f4a45a;
+	background-color: #eee;
 	color: black;
 	padding-bottom: 4px;
 	text-align: right;
@@ -1140,7 +1160,7 @@ fieldset[disabled] .btn-sequences.focus {
 }
 
 .beta_version {
-	border: 1px solid #f4a45a;
+	border: 1px solid #eee;
 }
 
 .honey-pot {
@@ -1550,6 +1570,88 @@ a.download_sequences, a.download_clones, a.download_cells {
 }
 
 #rest_service_list .repositories {
+	margin-top: 20px;
+}
+
+/* @end */
+
+/* @group rest service list clones */
+
+#rest_service_list_clones em {
+	margin-left: 5px;
+	color: gray;
+}
+
+#rest_service_list_clones .rs_node {
+	margin-bottom: 10px;
+}
+
+#rest_service_list_clones .node_name {
+	font-weight: bold;
+	font-size: 20px;
+}
+
+#rest_service_list_clones .lab_node {
+	margin-top: 5px;
+}
+
+#rest_service_list_clones .lab_name {
+	font-weight: bold;
+	margin-top: 10px;
+}
+
+#accordion .panel-heading a:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\2212";
+    float: right;
+    color: #337ab7;
+}
+#accordion .panel-heading a.collapsed:after {
+    content: "\002b";
+}
+
+#rest_service_list_clones .repositories {
+	margin-top: 20px;
+}
+
+/* @end */
+
+/* @group rest service list cells */
+
+#rest_service_list_cells em {
+	margin-left: 5px;
+	color: gray;
+}
+
+#rest_service_list_cells .rs_node {
+	margin-bottom: 10px;
+}
+
+#rest_service_list_cells .node_name {
+	font-weight: bold;
+	font-size: 20px;
+}
+
+#rest_service_list_cells .lab_node {
+	margin-top: 5px;
+}
+
+#rest_service_list_cells .lab_name {
+	font-weight: bold;
+	margin-top: 10px;
+}
+
+#accordion .panel-heading a:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\2212";
+    float: right;
+    color: #337ab7;
+}
+#accordion .panel-heading a.collapsed:after {
+    content: "\002b";
+}
+
+#rest_service_list_cells .repositories {
 	margin-top: 20px;
 }
 

@@ -11,29 +11,82 @@
 			<div class="intro_home">
 
 				<p>
-					<strong>{{ human_number($total_sequences) }} sequences</strong> and
-					<strong>{{ $total_samples }} repertoires</strong> are currently available,<br>
-					from
-					<a href="#" class="toggle_modal_rest_service_list_folded">
-						{{ $total_repositories }} remote {{ str_plural('repository', $total_repositories)}},</a>
+                    <strong>{{ human_number($total_sequences) }} annotated sequences</strong>
+                    from  
+					{{ $total_samples_sequences }} repertoires, 
 					<a href="#" class="toggle_modal_rest_service_list_expanded">
-						{{ $total_labs }} research {{ str_plural('lab', $total_labs)}} and
-						{{ $total_projects }} {{ str_plural('study', $total_projects)}}.
+					{{ $total_projects_sequences }} {{ str_plural('study', $total_projects_sequences)}}
 					</a>
+                    ,
+					<a href="#" class="toggle_modal_rest_service_list_folded">
+                    {{ $total_repositories_sequences }} {{ str_plural('repository', $total_repositories_sequences)}}
+                    </a>
+                    <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Sequence Help" data-content='<p>Click to visit the iReceptor Sequence Documentation for more information on working with Sequences.</p>' data-trigger="hover" tabindex="0">
+                     <a href="http://www.ireceptor.org/node/199" target="_blank"><span class="glyphicon glyphicon-question-sign"></span></a>
+                    </span>
+
 
 					@include('rest_service_list', ['tab' => 'sequence'])
 				</p>
 
 				<div class="charts">
 					<div class="row">
-						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart1']) !!}"></div>
-						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart2']) !!}"></div>
 						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart3']) !!}"></div>
-					</div>
-					<div class="row">
 						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart4']) !!}"></div>
 						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart5']) !!}"></div>
-						<div class="col-md-4 chart" data-chart-data="{!! object_to_json_for_html($charts_data['chart6']) !!}"></div>
+					</div>
+				</div>
+
+				<p>
+                    <strong>{{ human_number($total_clones) }} {{ str_plural('clone', $total_clones)}}</strong>
+                    aggregated
+                    from
+                    {{ $total_samples_clones }}
+                    {{ str_plural('repertoire', $total_samples_clones)}},
+                    <a href="#" class="toggle_modal_rest_service_list_clones_expanded">
+                    {{ $total_projects_clones}} {{ str_plural('study', $total_projects_clones)}}
+                    </a>,
+                    <a href="#" class="toggle_modal_rest_service_list_clones_folded">
+                    {{ $total_repositories_clones }} {{ str_plural('repository', $total_repositories_clones)}}
+                    </a>
+                    <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Clone Help" data-content='<p>Click to visit the iReceptor Clone Documentation for more information on working with Clones.</p>' data-trigger="hover" tabindex="0">
+                     <a href="http://www.ireceptor.org/node/200" target="_blank"><span class="glyphicon glyphicon-question-sign"></span></a>
+                     </span>
+
+                    <!-- repos/labs/studies popup -->
+                    @include('rest_service_list_clones', ['rest_service_list' => $rest_service_list_clones, 'tab' => 'clone'])
+				</p>
+
+				<div class="charts">
+					<div class="row">
+						<div class="col-md-4 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($clone_charts_data['chart3']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($clone_charts_data['chart4']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-type="clones" data-chart-data="{!! object_to_json_for_html($clone_charts_data['chart5']) !!}"></div>
+					</div>
+				</div>
+
+				<p>
+                    <strong>
+                    {{ human_number($total_cells) }}
+                    {{ str_plural('sorted, single B/T cell', $total_cells)}}
+                    </strong>
+                    with paired receptors, gene expression, and cell phenotype from
+                    {{ $total_samples_cells }}
+                    {{ str_plural('repertoire', $total_samples_cells)}},
+                    <a href="#" class="toggle_modal_rest_service_list_cells_expanded">{{ $total_projects_cells }} {{ str_plural('study', $total_projects_cells)}}</a>,
+                    <a href="#" class="toggle_modal_rest_service_list_cells_folded">{{ $total_repositories_cells }} {{ str_plural('repository', $total_repositories_cells)}}</a>
+                    <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" title="Cell Help" data-content='<p>Click to visit the iReceptor Cell Documentation for more information on working with Cells.</p>' data-trigger="hover" tabindex="0">
+                     <a href="http://www.ireceptor.org/node/201" target="_blank"><span class="glyphicon glyphicon-question-sign"></span></a>
+                     </span>
+                    <!-- repos/labs/studies popup -->
+                    @include('rest_service_list_cells', ['rest_service_list' => $rest_service_list_cells, 'tab' => 'cell'])
+				</p>
+
+				<div class="charts">
+					<div class="row">
+						<div class="col-md-4 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($cell_charts_data['chart4']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($cell_charts_data['chart5']) !!}"></div>
+						<div class="col-md-4 chart" data-chart-type="cells" data-chart-data="{!! object_to_json_for_html($cell_charts_data['chart6']) !!}"></div>
 					</div>
 				</div>
 
@@ -46,16 +99,24 @@
 					<h3 class="panel-title">Repertoire Metadata Search</h3>
 				</div>
 				<div class="panel-body filters sequence_search">
-					<p>Find interesting sequences and sequence annotations by exploring study, subject, and sample metadata</p>
+					<p>Find interesting sequence annotations, clones, and cells by exploring study, subject, and sample metadata</p>
 
-						<div class="row">
-							<div class="col-md-2">
-							</div>
-							<div class="col-md-10">
 								<p class="button_container">	
-									<a  class="btn btn-primary search_samples" role="button" href="/samples">Browse Repertoire Metadata →</a>
+									<a  class="btn btn-primary search_samples" role="button" href="/samples">Browse Sequence Repertoire Metadata →</a>
 								</p>
+							<div class="col-md-10">
 							</div>
+								<p class="button_container">	
+									<a  class="btn btn-primary btn-clones search_samples" role="button" href="/samples/clone?query_id=">Browse Clone Repertoire Metadata →</a>
+								</p>
+							<div class="col-md-10">
+							</div>
+								<p class="button_container">	
+									<a  class="btn btn-primary btn-cells search_samples" role="button" href="/samples/cell?query_id=">Browse Cell Repertoire Metadata →</a>
+								</p>
+							<div class="col-md-10">
+							</div>
+						<div class="row">
 						</div>
 
 				</div>

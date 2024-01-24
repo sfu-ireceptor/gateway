@@ -226,7 +226,7 @@
 					</div>
 				@endif	
 
-				@if ($total_filtered_sequences <= 0)
+				@if ($total_filtered_objects <= 0)
 					<!-- No results -->
 					<div class="no_results">
 						<h2>No Results</h2>
@@ -245,8 +245,8 @@
 					<div class="statistics">
 						<p>
 							<strong class="summary">
-								<span title="{{ number_format($total_filtered_sequences) }}">
-									{{ number_format($total_filtered_sequences) }} sequences
+								<span title="{{ number_format($total_filtered_objects) }}">
+									{{ number_format($total_filtered_objects) }} sequences
 								</span>
 								({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
 							</strong>
@@ -283,16 +283,16 @@
 					<span class="text">Run analysis</span>
 				</a>
 
-				@if ($total_filtered_sequences > 0)
-					@if ($total_filtered_sequences > config('ireceptor.sequences_download_limit'))
+				@if ($total_filtered_objects > 0)
+					@if ($total_filtered_objects > config('ireceptor.sequences_download_limit'))
 						<a href="/sequences-download" class="btn btn-primary pull-right download_sequences" disabled="disabled" role="button" data-container="body" data-toggle="tooltip" data-placement="top" title="Downloads of more than {{ number_format(config('ireceptor.sequences_download_limit')) }} sequences will be possible in the near future." data-trigger="hover" tabindex="0">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences</span>
+							<span class="text">Download all {{number_format($total_filtered_objects)}} sequences</span>
 						</a>
 					@else
-						<a href="/sequences-download?query_id={{ $query_id }}&amp;n={{ $total_filtered_sequences }}&amp;page=sequences" class="btn btn-sequences pull-right download_sequences">
+						<a href="/sequences-download?query_id={{ $query_id }}&amp;n={{ $total_filtered_objects }}&amp;page=sequences" class="btn btn-sequences pull-right download_sequences">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-							<span class="text">Download all {{number_format($total_filtered_sequences)}} sequences <strong>{{ $download_time_estimate ? '(will take up to ' . $download_time_estimate . ')' : ''}}</strong></span>
+							<span class="text">Download all {{number_format($total_filtered_objects)}} sequences <strong>{{ $download_time_estimate ? '(will take up to ' . $download_time_estimate . ')' : ''}}</strong></span>
 						</a>
 					@endif
 
@@ -302,8 +302,8 @@
 							<small class="sequence_count">
 								1-{{ count($sequence_list) }}
 								of
-								<span title="{{ number_format($total_filtered_sequences) }}">
-									{{ human_number($total_filtered_sequences) }}
+								<span title="{{ number_format($total_filtered_objects) }}">
+									{{ human_number($total_filtered_objects) }}
 								</span>
 							</small>
 
@@ -368,7 +368,7 @@
 							</tbody>
 						</table>
 					@endif
-					@if(config('services.agave.enabled'))
+					@if(config('services.tapis.enabled'))
 						<h3 id="analysis">
 							<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
 							Launch an Analysis Job
@@ -377,7 +377,7 @@
                         <div class="row">
                         	<div class="col-md-6">
 
-								@if ($total_filtered_sequences <= config('ireceptor.sequences_download_limit'))
+								@if ($total_filtered_objects <= config('ireceptor.sequences_download_limit'))
 									<div role="tabpanel" class="analysis_apps_tabpanel">
 										<!-- Tab links -->
 										<ul class="nav nav-tabs analysis-tabs" role="tablist">
@@ -401,21 +401,21 @@
 													{{ Form::hidden('filters_json', $filters_json) }}
 													{{ Form::hidden('data_url', $url) }}
 													{{ Form::hidden('app_id', $app['app_id']) }}
-													{{ Form::hidden('n_objects', $total_filtered_sequences) }}
+													{{ Form::hidden('n_objects', $total_filtered_objects) }}
 			                                        <!-- Application parameters  -->
 			                                        <h4>{{ $app['description'] }}</h4>
 													<p>{!! $app['info'] !!}</p>
 
 											        @foreach ($app['parameter_list'] as $parameter)
 												  	    <div class="row"> <div class="col-md-6"> <div class="form-group">
-														    {{ Form::label($parameter['label'], $parameter['name']) }}
+														    {{ Form::label($parameter['name'], $parameter['label']) }}
 			                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$parameter['description']}}</p>" data-trigger="hover" tabindex="0">
 			                                                <span class="glyphicon glyphicon-question-sign">
 			                                                </span></span>
 									                        @if ( ! empty($parameter['choices']) )
-															    {{ Form::select($parameter['label'], $parameter['choices'], '', array('class' => 'form-control')) }}
+															    {{ Form::select($parameter['name'], $parameter['choices'], '', array('class' => 'form-control')) }}
 			                                                @else
-												                {{ Form::text($parameter['label'], $parameter['default'], array('class' => 'form-control')) }}
+												                {{ Form::text($parameter['name'], $parameter['default'], array('class' => 'form-control')) }}
 			                                                @endif
 													    </div> </div> </div>
 										            @endforeach

@@ -10,7 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ProcessAgaveNotification implements ShouldQueue
+class ProcessJobNotification implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -46,8 +46,9 @@ class ProcessAgaveNotification implements ShouldQueue
             return;
         }
 
-        // ignore the status update if the job has already FAILED or is FINISHED
-        if ($job->agave_status == 'FAILED' || $job->agave_status == 'FINISHED') {
+        // ignore the status update if the job has already FAILED, FINISHED, or STOPPED
+        if ($job->agave_status == 'FAILED' || $job->agave_status == 'FINISHED' ||
+            $job->agave_status == 'STOPPED') {
             $localJob->setFinished();
 
             return;

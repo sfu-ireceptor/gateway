@@ -217,16 +217,16 @@
 					<div class="statistics">
 						<p>
 							<strong class="summary">
-								<span title="{{ number_format($total_filtered_clones) }}">
-									{{ number_format($total_filtered_clones) }} {{ str_plural('clone', $total_filtered_clones)}}
+								<span title="{{ number_format($total_filtered_objects) }}">
+									{{ number_format($total_filtered_objects) }} {{ str_plural('clone', $total_filtered_objects)}}
 								</span>
 								({{ $total_filtered_samples }} {{ str_plural('repertoire', $total_filtered_samples)}})
 							</strong>
 							returned from
 
-							<a href="#" class="toggle_modal_rest_service_list_folded">
+							<a href="#" class="toggle_modal_rest_service_list_clones_folded">
 								{{ $total_filtered_repositories }} remote {{ str_plural('repository', $total_filtered_repositories)}},</a>
-							<a href="#" class="toggle_modal_rest_service_list_expanded">
+							<a href="#" class="toggle_modal_rest_service_list_clones_expanded">
 								{{ $total_filtered_labs }} research {{ str_plural('lab', $total_filtered_labs)}} and
 								{{ $total_filtered_studies }} {{ str_plural('study', $total_filtered_studies)}}.
 							</a>
@@ -256,15 +256,15 @@
 				</a>
 
 				@if (! empty($clone_list))
-					@if ($total_filtered_clones > config('ireceptor.clones_download_limit'))
+					@if ($total_filtered_objects > config('ireceptor.clones_download_limit'))
 						<a href="/clones-download" class="btn btn-primary pull-right download_clones" disabled="disabled" role="button" data-container="body" data-toggle="tooltip" data-placement="top" title="Downloads of more than {{ number_format(config('ireceptor.clones_download_limit')) }} clones will be possible in the near future." data-trigger="hover" tabindex="0">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-							<span class="text">Download all {{number_format($total_filtered_clones)}} clones</span>
+							<span class="text">Download all {{number_format($total_filtered_objects)}} clones</span>
 						</a>
 					@else
-						<a href="/clones-download?query_id={{ $query_id }}&amp;n={{ $total_filtered_clones }}&amp;page=clones" class="btn btn-clones pull-right download_clones">
+						<a href="/clones-download?query_id={{ $query_id }}&amp;n={{ $total_filtered_objects }}&amp;page=clones" class="btn btn-clones pull-right download_clones">
 							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-							<span class="text">Download all {{number_format($total_filtered_clones)}} clones <strong>{{ $download_time_estimate ? '(will take up to ' . $download_time_estimate . ')' : ''}}</strong></span>
+							<span class="text">Download all {{number_format($total_filtered_objects)}} clones <strong>{{ $download_time_estimate ? '(will take up to ' . $download_time_estimate . ')' : ''}}</strong></span>
 						</a>
 					@endif
 
@@ -273,8 +273,8 @@
 						<small class="clone_count">
 							1-{{ count($clone_list) }}
 							of
-							<span title="{{ number_format($total_filtered_clones) }}">
-								{{ human_number($total_filtered_clones) }}
+							<span title="{{ number_format($total_filtered_objects) }}">
+								{{ human_number($total_filtered_objects) }}
 							</span>
 						</small>
 
@@ -338,8 +338,9 @@
 						</tbody>
 					</table>
 
-					@if(config('services.agave.enabled'))
+					@if(config('services.tapis.enabled'))
 						<h3 id="analysis">
+
 							<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
 							Launch an Analysis Job
 						</h3>
@@ -349,7 +350,7 @@
 
 								<p>Note: an analysis job <strong>can take multiple hours</strong>, depending on the size of the data and the complexity of the analysis.</p>
 
-								@if (count($app_list) > 0 && $total_filtered_clones <= config('ireceptor.clones_download_limit'))
+								@if (count($app_list) > 0 && $total_filtered_objects <= config('ireceptor.clones_download_limit'))
 
 									<div role="tabpanel" class="analysis_apps_tabpanel">
 									    <!-- Tab links -->
@@ -376,7 +377,7 @@
 		                                        {{ Form::hidden('filters_json', $filters_json) }}
 		                                        {{ Form::hidden('data_url', $url) }}
 		                                        {{ Form::hidden('app_id', $app['app_id']) }}
-                                                {{ Form::hidden('n_objects', $total_filtered_clones) }}
+                                                {{ Form::hidden('n_objects', $total_filtered_objects) }}
 
 	                                            <h4>{{ $app['description'] }}</h4>
 	                                            <p>{!! $app['info'] !!}</p>
@@ -385,12 +386,12 @@
 		                                            <div class="row">
 		                                            <div class="col-md-6">
 		                                            <div class="form-group">
-		                                                {{ Form::label($parameter['label'], $parameter['name']) }}
+		                                                {{ Form::label($parameter['name'], $parameter['label']) }}
 		                                                <span class="help" role="button" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$parameter['description']}}</p>" data-trigger="hover" tabindex="0"> <span class="glyphicon glyphicon-question-sign"></span></span>
 		                                                @if ( ! empty($parameter['choices']) )
-		                                                    {{ Form::select($parameter['label'], $parameter['choices'], '', array('class' => 'form-control')) }}
+		                                                    {{ Form::select($parameter['name'], $parameter['choices'], '', array('class' => 'form-control')) }}
 		                                                @else
-		                                                    {{ Form::text($parameter['label'], $parameter['default'], array('class' => 'form-control')) }}
+		                                                    {{ Form::text($parameter['name'], $parameter['default'], array('class' => 'form-control')) }}
 		                                                @endif
 		                                            </div>
 		                                            </div>
@@ -427,7 +428,7 @@
 
 		                                </div>
 									</div>
-								@elseif ($total_filtered_clones > config('ireceptor.clones_download_limit'))
+								@elseif ($total_filtered_objects > config('ireceptor.clones_download_limit'))
 									<p>Sorry, analyses of more than {{ number_format(config('ireceptor.clones_download_limit')) }} clones will be possible in the near future.</p>
 		                                                @else
 		                                                        <p>No Analysis Apps for Clones available</p>
