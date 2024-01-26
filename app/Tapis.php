@@ -818,8 +818,6 @@ class Tapis
             //Log::debug('Tapis::doHTTPRequest - data = ' . json_encode($data));
             Log::debug('Tapis::doHTTPRequest - url = ' . $url);
             $response = $client->request($method, $url, $data);
-	} catch (Throwable $e) {
-            Log::error('Tapis::doHTTPRequest:: Throwable');
 	} catch (ClientException $exception) {
             Log::error('Tapis::doHTTPRequest:: ClientException');
             $tapis_response_str = $exception->getResponse()->getBody()->getContents();
