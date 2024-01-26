@@ -842,6 +842,7 @@ class Tapis
             Log::error('Tapis::doHTTPRequest:: RequestException - query = ' . $url);
             Log::error('Tapis::doHTTPRequest:: RequestException - response = ' . $response);
             $this->raiseExceptionIfTapisError($response);
+
             return $response;
         } catch (ServerException $exception) {
             Log::error('Tapis::doHTTPRequest:: ServerException');
@@ -849,6 +850,7 @@ class Tapis
             Log::error('Tapis::doHTTPRequest:: ServerException - query = ' . $url);
             Log::error('Tapis::doHTTPRequest:: ServerException - response = ' . $response);
             $this->raiseExceptionIfTapisError($response);
+
             return $response;
         } catch (\Exception $exception) {
             Log::error('Tapis::doHTTPRequest:: Exception');
@@ -864,14 +866,14 @@ class Tapis
                     return $tapis_response_str;
                 } else {
                     return $tapis_response;
-		}
+                }
             } else {
                 throw exception;
             }
-	}
+        }
 
-        // return response as object
-        $json = $response->getBody();
+            // return response as object
+            $json = $response->getBody();
         //Log::debug('json response -> ' . $json);
         if ($raw_json) {
             return $json;
