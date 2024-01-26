@@ -62,23 +62,6 @@ class JobController extends Controller
 
         // If we have a JSON string for the Job, process the App parameters.
         if ($job_json != null) {
-            /*
-             * TODO: I believe this code is no longer required. We get everthing
-             * from the job.
-             *
-            // Get the App template for this App. The job stores the App Label so
-            // we use the label to look it up. This returns a JSON object in the form
-            // of an AGave App template.
-            $app_template = $tapis->getAppTemplateByLabel($job->app);
-            // Get the parameters from this app template. We need to map parameter tags
-            // to human readable names if possible.
-            $template_parameters = [];
-            if ($app_template != null) {
-                $config = $app_template['config'];
-                $template_parameters = $config['jobAttributes']['parameterSet']['appArgs'];
-            }
-             */
-
             // Get the Tapis job status and from it get the parameters.
             $job_status = json_decode($job_json);
             $app_parameters = json_decode($job_status->result->parameterSet)->appArgs;
@@ -378,23 +361,6 @@ class JobController extends Controller
 
         // If we have a JSON string for the Job, process the App parameters.
         if ($job_json != null) {
-            /*
-             * TODO: I believe this code is no longer required. We get everthing
-             * from the job.
-             *
-            // Get the App template for this App. The job stores the App Label so
-            // we use the label to look it up. This returns a JSON object in the form
-            // of an AGave App template.
-            $app_template = $tapis->getAppTemplateByLabel($job->app);
-            // Get the parameters from this app template. We need to map parameter tags
-            // to human readable names if possible.
-            $template_parameters = [];
-            if ($app_template != null) {
-                $config = $app_template['config'];
-                $template_parameters = $config['jobAttributes']['parameterSet']['appArgs'];
-            }
-             */
-
             // Get the Tapis job status and from it get the parameters.
             $job_status = json_decode($job_json);
             $app_parameters = json_decode($job_status->result->parameterSet)->appArgs;
@@ -804,6 +770,9 @@ class JobController extends Controller
                     if ($tapis->isTapisError(json_decode($response))) {
                         $response = null;
                     }
+                } else {
+                    // If we are not admin, return null
+                    $response = null;
                 }
             }
         }
