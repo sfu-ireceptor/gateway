@@ -770,11 +770,10 @@ class JobController extends Controller
                     if ($tapis->isTapisError(json_decode($response))) {
                         $response = null;
                     }
-                }
-		else {
+                } else {
                     // If we are not admin, return null
-		    $response = null;
-		}
+                    $response = null;
+                }
             }
         }
 
