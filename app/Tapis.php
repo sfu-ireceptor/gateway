@@ -818,7 +818,7 @@ class Tapis
             //Log::debug('Tapis::doHTTPRequest - data = ' . json_encode($data));
             Log::debug('Tapis::doHTTPRequest - url = ' . $url);
             $response = $client->request($method, $url, $data);
-	} catch (ClientException $exception) {
+        } catch (ClientException $exception) {
             Log::error('Tapis::doHTTPRequest:: ClientException');
             $tapis_response_str = $exception->getResponse()->getBody()->getContents();
             $tapis_response = json_decode($tapis_response_str);
@@ -872,8 +872,8 @@ class Tapis
             }
         }
 
-            // return response as object
-            $json = $response->getBody();
+                // return response as object
+                $json = $response->getBody();
         //Log::debug('json response -> ' . $json);
         if ($raw_json) {
             return $json;
