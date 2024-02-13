@@ -14,7 +14,7 @@
             {"name":"placeholder",
              "description": "Don't have any parameters yet",
              "notes":{"label":"Placeholder"},
-             "arg":"???", "inputMode":"REQUIRED"}
+             "arg":"---", "inputMode":"REQUIRED"}
 
 	]
       }

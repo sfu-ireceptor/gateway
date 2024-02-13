@@ -122,14 +122,14 @@ function run_analysis()
     echo "IR-INFO: Storing output in /data/${output_directory}"
 
     # Run Repcred on the file
-    echo -n "IR-INFO: Running Repcred on ${rearrangement_file} - "
+    echo -n "IR-INFO: Running Repcred on ${output_directory}/${rearrangement_file} - "
     date
-    repcred -r ${rearrangement_file} -o ${output_directory}/${repertoire_id}_repcred_report
+    repcred -r ${output_directory}/${rearrangement_file} -o ${output_directory}/${repertoire_id}_repcred_report
     if [ $? -ne 0 ]
     then
-        echo "IR-ERROR: Repcred failed on file ${rearrangement_file}"
+        echo "IR-ERROR: Repcred failed on file ${output_directory}/${rearrangement_file}"
     fi
-    echo -n "IR-INFO: Done running Repcred on ${rearrangement_file} - "
+    echo -n "IR-INFO: Done running Repcred on ${output_directory}/${rearrangement_file} - "
     date
 
     # Generate a summary HTML file for the Gateway to present this info to the user
