@@ -4,7 +4,7 @@
     "description":"Repcred",
     "runtime":"SINGULARITY",
     "runtimeOptions": ["SINGULARITY_RUN"],
-    "containerImage":"ir_repcred-2024-02-11.sif",
+    "containerImage":"ir_repcred-2024-02-12.sif",
     "jobType":"BATCH",
     "jobAttributes": {
       "description": "<p><a href=\"https://github.com/airr-community/rep-cred/blob/master/README.md\" target=\"_blank\">Repcred</a> is a tool that analyzes the credibility of an AIRR-seq repertoire.</p>",
