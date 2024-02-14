@@ -155,33 +155,14 @@ function run_analysis()
     printf "<h2>Analysis</h2>\n" >> ${html_file}
     printf "<h3>Repcred Summary</h3>\n" >> ${html_file}
     
-    #echo "<ul>" >> ${html_file}
+    printf '<ul>'
+    printf '<li><a href="${repertoire_id}_repcred_report/results/index.html"><i class="fa fa-check"></i><b>1</b> Input parameters</a></li>'
+    printf '<li><a href="${repertoire_id}_repcred_report/results/annotation-calls-statistics.html"><i class="fa fa-check"></i><b>5</b> Annotation Calls Statistics</a>'
+    printf '</ul>'
 
-    #echo -n "<li>Number of unique CDR3s: " >> ${html_file}
-    #wc -l ${JUNCTION_FILE} | cut -f 1 -d " " >> ${html_file}
-    #echo "</li>" >> ${html_file}
-
-    #echo -n "<li>Number of CDR3/epitope matches: " >> ${html_file}
-    #wc -l ${output_directory}/${repertoire_id}_epitope.tsv  | cut -f 1 -d " " >> ${html_file}
-    #echo "</li>" >> ${html_file}
-
-    #echo -n "<li>Number of unique CDR3/epitope matches: " >> ${html_file}
-    #cut -f 2 ${output_directory}/${repertoire_id}_epitope.tsv | sort -u | wc -l | cut -f 1 -d " " >> ${html_file}
-    #echo "</li>" >> ${html_file}
-
-    #echo "</ul>" >> ${html_file}
-
-
-    #printf "<h3>%s</h3>\n" ${title_string} >> ${html_file}
-    #python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py ${output_directory}/${repertoire_id}_epitope.tsv >> ${html_file}
-    #if [ $? -ne 0 ]
-    #then
-    #    echo "IR-ERROR: Repcred could not generate HTML file for ${repertoire_id}_epitope.tsv"
-    #    echo "ERROR occurred generating HTML report generation" >> ${html_file}
-    #fi
 
     # End of main div container
-    printf '</div>' >> ${html_file}
+    printf '</div>\n' >> ${html_file}
 
     # Use the normal iReceptor footer.
     cat ${output_directory}/assets/footer.html >> ${html_file}
