@@ -133,7 +133,7 @@ return [
         ],
 
         'default_execution_system' => [
-	    'host' => env('TAPIS_DEFAULT_EXECUTION_SYSTEM_HOST', 'robot.cedar.alliancecan.ca'),
+            'host' => env('TAPIS_DEFAULT_EXECUTION_SYSTEM_HOST', 'robot.cedar.alliancecan.ca'),
             'port' => intval(env('TAPIS_DEFAULT_EXECUTION_SYSTEM_PORT', 22)),
             'auth' => [
                 'username' => env('TAPIS_DEFAULT_EXECUTION_SYSTEM_AUTH_USERNAME', 'ireceptorgw'),
