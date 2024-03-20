@@ -104,6 +104,7 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('downloads')->group(function () {
         Route::get('', 'DownloadController@getIndex');
+        Route::get('download/{id}', 'DownloadController@getDownload');
         Route::get('cancel/{id}', 'DownloadController@getCancel');
         Route::get('delete/{id}', 'DownloadController@getDelete');
         Route::get('undo-delete/{id}', 'DownloadController@getUndoDelete');
@@ -122,6 +123,11 @@ Route::middleware('auth')->group(function () {
         Route::get('job-data/{job_id}', 'JobController@getJobData');
         Route::get('job-list-grouped-by-month', 'JobController@getJobListGroupedByMonth');
         Route::post('launch-app', 'JobController@postLaunchApp');
+        Route::get('download-analysis/{id}', 'JobController@getDownloadAnalysis');
+        Route::get('download-output-log/{id}', 'JobController@getDownloadOutput');
+        Route::get('download-error-log/{id}', 'JobController@getDownloadError');
+        Route::get('view/file/{id}', 'JobController@getViewJobFile');
+        Route::get('view/show', 'JobController@getShow')->name('job.show');
         Route::get('view/{id}', 'JobController@getView');
         Route::get('job-history/{id}', 'JobController@getJobHistory');
         Route::get('status/{id}', 'JobController@getStatus');
