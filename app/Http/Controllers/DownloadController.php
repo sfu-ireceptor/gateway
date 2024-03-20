@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Bookmark;
 use App\Download;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 class DownloadController extends Controller
 {
@@ -39,6 +41,25 @@ class DownloadController extends Controller
         }
 
         return view('downloadList', $data);
+    }
+
+    public function getDownload($id)
+    {
+        $d = Download::find($id);
+
+        $user = auth()->user();
+        if (($d->username != $user->username) && (! $user->isAdmin())) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        //$d->save();
+	Log::error('Download file = ' . $d->file_url);
+	if (File::exists($d->file_url)) {
+	    return response()->download($d->file_url);
+	}
+
+        // If we get here the download did not work.
+        return redirect('downloads')->with('notification', 'Unable to download data.');
     }
 
     public function getCancel($id)
