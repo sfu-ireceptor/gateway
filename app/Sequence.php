@@ -185,13 +185,18 @@ class Sequence
             throw new \Exception('Trying to download to many sequences: ' . $total_expected_nb_sequences . ' > ' . $sequences_download_limit);
         }
 
-        // create receiving folder
-        $storage_folder = storage_path() . '/app/public/';
+        // Full path of receiving folder for the download data, based on the 
+	// download_data_folder config variable, which is relative to the
+	// Laravel storage_path().
+        $storage_folder = storage_path().'/'.config('ireceptor.downloads_data_folder').'/';
+
+	// Create a unique ID for the data directory.
         $now = time();
         $time_str = date('Y-m-d_Hi', $now);
         $base_name = 'ir_' . $time_str . '_' . uniqid();
         $folder_path = $storage_folder . $base_name;
 
+	// Create the directory
         Log::debug('Sequence::sequencesTSVFolder - Creating directory: ' . $folder_path);
         $old = umask(0);
         mkdir($folder_path, 0770);
@@ -369,15 +374,12 @@ class Sequence
         // delete files
         self::delete_files($folder_path);
 
-        $zip_public_path = 'storage' . str_after($folder_path, storage_path('app/public')) . '.zip';
-
         $t = [];
         $t['size'] = filesize($zip_path);
         $t['base_path'] = $base_path;
         $t['base_name'] = $base_name;
         $t['zip_name'] = $base_name . '.zip';
         $t['system_path'] = $zip_path;
-        $t['public_path'] = $zip_public_path;
         $t['is_download_incomplete'] = $is_download_incomplete;
         $t['download_incomplete_info'] = $download_incomplete_info;
         $t['file_stats'] = $file_stats;

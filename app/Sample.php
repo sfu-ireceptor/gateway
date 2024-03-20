@@ -693,8 +693,12 @@ class Sample
         // generate JSON string from JSON structure
         $json = json_encode($obj, JSON_PRETTY_PRINT);
 
-        // generate file name
-        $storage_folder = storage_path() . '/app/public/';
+        // Full path of receiving folder for the download data, based on the
+        // download_data_folder config variable, which is relative to the
+        // Laravel storage_path().
+        $storage_folder = storage_path().'/'.config('ireceptor.downloads_data_folder').'/';
+        //$storage_folder = storage_path() . '/app/public/';
+
         $now = time();
         $time_str = date('Y-m-d_Hi', $now);
         $file_name = 'ir_' . $time_str . '_' . uniqid() . '.json';
@@ -703,12 +707,12 @@ class Sample
         // write JSON string to file
         file_put_contents($file_path, $json);
 
-        $public_path = 'storage' . str_after($file_path, storage_path('app/public'));
+        //$public_path = 'storage' . str_after($file_path, storage_path('app/public'));
 
         $t = [];
         $t['size'] = filesize($file_path);
         $t['system_path'] = $file_path;
-        $t['public_path'] = $public_path;
+        //$t['public_path'] = $public_path;
 
         return $t;
     }
@@ -731,8 +735,12 @@ class Sample
             $columns[] = $column_name;
         }
 
-        // generate file name
-        $storage_folder = storage_path() . '/app/public/';
+        // Full path of receiving folder for the download data, based on the
+        // download_data_folder config variable, which is relative to the
+        // Laravel storage_path().
+        $storage_folder = storage_path().'/'.config('ireceptor.downloads_data_folder').'/';
+        //$storage_folder = storage_path() . '/app/public/';
+
         $now = time();
         $time_str = date('Y-m-d_Hi', $now);
         $file_name = 'ir_' . $time_str . '_' . uniqid() . '.tsv';
@@ -774,12 +782,12 @@ class Sample
             fputcsv($f, $row_columns, "\t");
         }
 
-        $public_path = 'storage' . str_after($file_path, storage_path('app/public'));
+        //$public_path = 'storage' . str_after($file_path, storage_path('app/public'));
 
         $t = [];
         $t['size'] = filesize($file_path);
         $t['system_path'] = $file_path;
-        $t['public_path'] = $public_path;
+        //$t['public_path'] = $public_path;
 
         return $t;
     }
