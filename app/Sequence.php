@@ -185,18 +185,18 @@ class Sequence
             throw new \Exception('Trying to download to many sequences: ' . $total_expected_nb_sequences . ' > ' . $sequences_download_limit);
         }
 
-        // Full path of receiving folder for the download data, based on the 
-	// download_data_folder config variable, which is relative to the
-	// Laravel storage_path().
-        $storage_folder = storage_path().'/'.config('ireceptor.downloads_data_folder').'/';
+        // Full path of receiving folder for the download data, based on the
+        // download_data_folder config variable, which is relative to the
+        // Laravel storage_path().
+        $storage_folder = storage_path() . '/' . config('ireceptor.downloads_data_folder') . '/';
 
-	// Create a unique ID for the data directory.
+        // Create a unique ID for the data directory.
         $now = time();
         $time_str = date('Y-m-d_Hi', $now);
         $base_name = 'ir_' . $time_str . '_' . uniqid();
         $folder_path = $storage_folder . $base_name;
 
-	// Create the directory
+        // Create the directory
         Log::debug('Sequence::sequencesTSVFolder - Creating directory: ' . $folder_path);
         $old = umask(0);
         mkdir($folder_path, 0770);

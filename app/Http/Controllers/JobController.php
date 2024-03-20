@@ -221,14 +221,14 @@ class JobController extends Controller
 
     public function getDownloadAnalysis($id)
     {
-	// Get the download folder (relative to storage_path())
+        // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
         // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
         // that are used by Gateway Apps. This MUST be the same and probably should be
         // defined as a CONFIG variable some how. For now we hardcode here and in the
         // Tapis Gateway Utilities code.
-	// TODO: Define in config file.
+        // TODO: Define in config file.
         $analysis_base = 'gateway_analysis';
 
         // Get the job for the user.
@@ -251,28 +251,28 @@ class JobController extends Controller
         $folder = storage_path() . '/' . $download_folder . '/' . $job['input_folder'];
         Log::debug('JobController::getView: folder path = ' . $folder);
         Log::debug('JobController::getView: job[input_folder]= ' . $job['input_folder']);
-	// If the job folder exists...
+        // If the job folder exists...
         if ($job['input_folder'] != '' && File::exists($folder)) {
             // If the ZIP file exists, download it...
             $zip_file = $folder . '/' . $analysis_base . '.zip';
             if (File::exists($zip_file)) {
-	        return response()->download($zip_file);
-	    }
-	}
-	return redirect('jobs/view/'.$id)->with('notification', 'Could not download analysis ouput.');
+                return response()->download($zip_file);
+            }
+        }
 
+        return redirect('jobs/view/' . $id)->with('notification', 'Could not download analysis ouput.');
     }
 
     public function getDownloadOutput($id)
     {
-	// Get the download folder (relative to storage_path())
+        // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
         // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
         // that are used by Gateway Apps. This MUST be the same and probably should be
         // defined as a CONFIG variable some how. For now we hardcode here and in the
         // Tapis Gateway Utilities code.
-	// TODO: Define in config file.
+        // TODO: Define in config file.
         $analysis_base = 'gateway_analysis';
 
         // Get the job for the user.
@@ -291,42 +291,44 @@ class JobController extends Controller
             abort(401, 'Not authorized.');
         }
 
-	// Get the outout file name.
+        // Get the outout file name.
         $output_file = 'ireceptor-' . $job['id'] . '.out';
 
         // Get the folder where this job is stored.
         $folder = storage_path() . '/' . $download_folder . '/' . $job['input_folder'];
         Log::debug('JobController::getView: folder path = ' . $folder);
         Log::debug('JobController::getView: job[input_folder]= ' . $job['input_folder']);
-	// If the job folder exists...
+        // If the job folder exists...
         if ($job['input_folder'] != '' && File::exists($folder)) {
             // If the ZIP file exists, download it...
             $output_file_path = $folder . '/' . $analysis_base . '/' . $output_file;
             if (File::exists($output_file_path)) {
-		// Gets the contents of the file as an array of strings.
-		$file_str = file($output_file_path);
-		// Prepare the data return to the view
-		$data = [];
+                // Gets the contents of the file as an array of strings.
+                $file_str = file($output_file_path);
+                // Prepare the data return to the view
+                $data = [];
                 $data['plain_file'] = str_replace('\n', '<br>\n', $file_str);
                 $data['job'] = $job;
                 $data['title'] = 'Output Log';
-		// Return the data to the view.
-	        return view('job/plain_file', $data);
-	    }
-	}
-	return redirect('jobs/view/'.$id)->with('notification', 'Could not access analysis ouput log.');
+
+                // Return the data to the view.
+                return view('job/plain_file', $data);
+            }
+        }
+
+        return redirect('jobs/view/' . $id)->with('notification', 'Could not access analysis ouput log.');
     }
 
     public function getDownloadError($id)
     {
-	// Get the download folder (relative to storage_path())
+        // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
         // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
         // that are used by Gateway Apps. This MUST be the same and probably should be
         // defined as a CONFIG variable some how. For now we hardcode here and in the
         // Tapis Gateway Utilities code.
-	// TODO: Define in config file.
+        // TODO: Define in config file.
         $analysis_base = 'gateway_analysis';
 
         // Get the job for the user.
@@ -345,44 +347,45 @@ class JobController extends Controller
             abort(401, 'Not authorized.');
         }
 
-	// Get the outout file name.
+        // Get the outout file name.
         $error_file = 'ireceptor-' . $job['id'] . '.err';
 
         // Get the folder where this job is stored.
         $folder = storage_path() . '/' . $download_folder . '/' . $job['input_folder'];
         Log::debug('JobController::getView: folder path = ' . $folder);
         Log::debug('JobController::getView: job[input_folder]= ' . $job['input_folder']);
-	// If the job folder exists...
+        // If the job folder exists...
         if ($job['input_folder'] != '' && File::exists($folder)) {
             // If the ZIP file exists, download it...
             $error_file_path = $folder . '/' . $analysis_base . '/' . $error_file;
             if (File::exists($error_file_path)) {
-		// Gets the contents of the file as an array of strings.
-		$file_str = file($error_file_path);
-		// Prepare the data return to the view
-		$data = [];
+                // Gets the contents of the file as an array of strings.
+                $file_str = file($error_file_path);
+                // Prepare the data return to the view
+                $data = [];
                 $data['title'] = 'Error Log';
                 $data['job'] = $job;
                 $data['plain_file'] = str_replace('\n', '<br>\n', $file_str);
-		// Return the data to the view.
-	        return view('job/plain_file', $data);
-	    }
-	}
-	return redirect('jobs/view/'.$id)->with('notification', 'Could not download analysis error log.');
 
+                // Return the data to the view.
+                return view('job/plain_file', $data);
+            }
+        }
+
+        return redirect('jobs/view/' . $id)->with('notification', 'Could not download analysis error log.');
     }
 
     public function getViewJobFile(Request $request, string $id)
     {
         Log::debug('JobController::getViewJobFile: job id = ' . $id);
-	// Get the download folder (relative to storage_path())
+        // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
         // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
         // that are used by Gateway Apps. This MUST be the same and probably should be
         // defined as a CONFIG variable some how. For now we hardcode here and in the
         // Tapis Gateway Utilities code.
-	// TODO: Define in config file.
+        // TODO: Define in config file.
         $analysis_base = 'gateway_analysis';
 
         // Get the job for the user.
@@ -401,48 +404,51 @@ class JobController extends Controller
             abort(401, 'Not authorized.');
         }
 
-	$folder = storage_path() . '/' . $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base;
+        $folder = storage_path() . '/' . $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base;
         Log::debug('JobController::getViewJobFile: folder = ' . $folder);
-	$file_name = $request->input('file');
+        $file_name = $request->input('file');
         Log::debug('JobController::getViewJobFile: file = ' . $file_name);
-	$filename = basename($request->input('file'));
+        $filename = basename($request->input('file'));
         Log::debug('JobController::getViewJobFile: filename = ' . $filename);
-	$directory = dirname($request->input('file'));
+        $directory = dirname($request->input('file'));
         Log::debug('JobController::getViewJobFile: directory = ' . $directory);
-	if (File::exists($folder . '/' . $file_name) && File::isFile($folder . '/' . $file_name)) {
+        if (File::exists($folder . '/' . $file_name) && File::isFile($folder . '/' . $file_name)) {
             // Gets the contents of the file as an array of strings.
             $file_str = file($folder . '/' . $file_name);
             // Prepare the data return to the view
             $data = [];
             $data['title'] = '';
             $data['job'] = $job;
-	    $data['base_directory'] = $folder;
-	    $data['storage_directory'] = $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base . '/' . dirname($file_name);
-	    $storage_file = $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base . '/' . $file_name;
-	    $data['storage_file'] = $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base . '/' . dirname($file_name);
-	    $data['file_name'] = $file_name;
-	    $data['filename'] = $filename;
-	    $data['directory'] = $directory;
+            $data['base_directory'] = $folder;
+            $data['storage_directory'] = $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base . '/' . dirname($file_name);
+            $storage_file = $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base . '/' . $file_name;
+            $data['storage_file'] = $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base . '/' . dirname($file_name);
+            $data['file_name'] = $file_name;
+            $data['filename'] = $filename;
+            $data['directory'] = $directory;
             $file_br_str = str_replace('\n', '<br>\n', $file_str);
             $data['plain_file'] = $file_br_str;
             Log::debug('JobController::getViewJobFile: asset = ' . asset($file_name));
-	    //return response()->file(storage_path($storage_file));
-	    return view('job/css_file', $data);
-	}
-	return redirect('jobs/view/'.$id)->with('notification', 'Could not view analysis file ' . $file_name);
+
+            //return response()->file(storage_path($storage_file));
+            return view('job/css_file', $data);
+        }
+
+        return redirect('jobs/view/' . $id)->with('notification', 'Could not view analysis file ' . $file_name);
     }
+
     //public function show($filename)
     public function getShow(Request $request)
     {
-	$filename = $request->input('filename');
-	$directory = $request->input('directory');
-	$jobid = $request->input('id');
+        $filename = $request->input('filename');
+        $directory = $request->input('directory');
+        $jobid = $request->input('id');
         $job = Job::findJobForUser($jobid, auth()->user()->id);
         $download_folder = config('ireceptor.downloads_data_folder');
         $analysis_base = 'gateway_analysis';
 
         // Get the job for the user.
-	$path = storage_path() . '/' . $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base;
+        $path = storage_path() . '/' . $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base;
         //$path = storage_path('app/images/' . $filename);
 
         //if (!Storage::disk('local')->exists('images/' . $filename)) {
@@ -452,6 +458,7 @@ class JobController extends Controller
         Log::debug('JobController::getShow: path = ' . $path);
         Log::debug('JobController::getShow: directory = ' . $directory);
         Log::debug('JobController::getShow: filename = ' . $filename);
+
         return response()->file($path . '/' . $directory . '/' . $filename);
     }
 
@@ -460,7 +467,7 @@ class JobController extends Controller
         // Set info file name
         $info_file = 'info.txt';
 
-	// Get the download folder (relative to storage_path())
+        // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
         // Get the job for the user.
@@ -1060,7 +1067,7 @@ class JobController extends Controller
 
     public function getDelete($id)
     {
-	// Get the folder where we store the downloads (relative to storage_path())
+        // Get the folder where we store the downloads (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
         // Get user and job info
