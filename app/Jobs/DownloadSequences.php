@@ -105,8 +105,9 @@ class DownloadSequences implements ShouldQueue
             $t = SequenceCell::cellsTSV($filters, $this->username, $this->url, $sample_filter_fields);
         }
 
-        $file_path = $t['public_path'];
-        $this->download->file_url = $file_path;
+        //$file_path = $t['public_path'];
+        //$this->download->file_url = $file_path;
+        $this->download->file_url = $t['system_path'];
         $this->download->file_size = filesize($t['system_path']);
 
         $this->download->incomplete = false;
