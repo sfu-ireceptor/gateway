@@ -696,7 +696,7 @@ class Sample
         // Full path of receiving folder for the download data, based on the
         // download_data_folder config variable, which is relative to the
         // Laravel storage_path().
-        $storage_folder = storage_path().'/'.config('ireceptor.downloads_data_folder').'/';
+        $storage_folder = storage_path() . '/' . config('ireceptor.downloads_data_folder') . '/';
         //$storage_folder = storage_path() . '/app/public/';
 
         $now = time();
@@ -738,7 +738,7 @@ class Sample
         // Full path of receiving folder for the download data, based on the
         // download_data_folder config variable, which is relative to the
         // Laravel storage_path().
-        $storage_folder = storage_path().'/'.config('ireceptor.downloads_data_folder').'/';
+        $storage_folder = storage_path() . '/' . config('ireceptor.downloads_data_folder') . '/';
         //$storage_folder = storage_path() . '/app/public/';
 
         $now = time();

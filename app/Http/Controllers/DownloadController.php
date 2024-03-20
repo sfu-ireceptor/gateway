@@ -53,10 +53,10 @@ class DownloadController extends Controller
         }
 
         //$d->save();
-	Log::error('Download file = ' . $d->file_url);
-	if (File::exists($d->file_url)) {
-	    return response()->download($d->file_url);
-	}
+        Log::error('Download file = ' . $d->file_url);
+        if (File::exists($d->file_url)) {
+            return response()->download($d->file_url);
+        }
 
         // If we get here the download did not work.
         return redirect('downloads')->with('notification', 'Unable to download data.');

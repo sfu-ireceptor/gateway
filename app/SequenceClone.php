@@ -154,7 +154,7 @@ class SequenceClone
         // Full path of receiving folder for the download data, based on the
         // download_data_folder config variable, which is relative to the
         // Laravel storage_path().
-        $storage_folder = storage_path().'/'.config('ireceptor.downloads_data_folder').'/';
+        $storage_folder = storage_path() . '/' . config('ireceptor.downloads_data_folder') . '/';
 
         $now = time();
         $time_str = date('Y-m-d_Hi', $now);
