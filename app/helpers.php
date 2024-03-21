@@ -34,7 +34,7 @@ if (! function_exists('array_to_html')) {
                 $s .= $k;
                 $s .= array_to_html($v, $path . '/' . $k, $jobid);
             } else {
-                $s .= '<a href="show?jobid=' . $jobid . '&directory=' . $path . '&filename=' . basename($v) . '">' . basename($v). '</a>';
+                $s .= '<a href="show?jobid=' . $jobid . '&directory=' . $path . '&filename=' . basename($v) . '">' . basename($v) . '</a>';
             }
             $s .= '</li>';
         }
