@@ -442,7 +442,7 @@ class JobController extends Controller
     {
         $filename = $request->input('filename');
         $directory = $request->input('directory');
-        $jobid = $request->input('id');
+        $jobid = $request->input('jobid');
         $job = Job::findJobForUser($jobid, auth()->user()->id);
         $download_folder = config('ireceptor.downloads_data_folder');
         $analysis_base = 'gateway_analysis';
@@ -861,7 +861,7 @@ class JobController extends Controller
                 $data['files'] = File::allFiles($folder);
                 if (count($data['files']) > 0) {
                     // Create a list of files a baseline to display
-                    $data['filesHTML'] = dir_to_html($folder);
+                    $data['filesHTML'] = dir_to_html($analysis_folder, $job->id);
                     Log::debug('JobController::getView: filesHTML = ' . $data['filesHTML']);
                     // We want to have specific info for the error and output files.
                     $data['error_log_url'] = $analysis_folder . '/' . $error_file;
