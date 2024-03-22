@@ -234,7 +234,7 @@ class Tapis
             // Open the file and convert the JSON to an object.
             try {
                 $app_json = file_get_contents($file_path);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 Log::debug('Tapis::updateAppTemplates: Could not open App file ' . $file_path);
                 Log::debug('Tapis::updateAppTemplates: Error: ' . $e->getMessage());
             }

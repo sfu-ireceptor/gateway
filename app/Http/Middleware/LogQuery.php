@@ -55,7 +55,7 @@ class LogQuery
                 } catch (Throwable $e) {
                     Log::error('LogQuery::handle - Support email delivery failed');
                     Log::error('LogQuery::handle - ' . $e->getMessage());
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     Log::error('LogQuery::handle - Support email delivery failed');
                     Log::error('LogQuery::handle - ' . $e->getMessage());
                 }

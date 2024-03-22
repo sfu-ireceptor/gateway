@@ -326,7 +326,7 @@ class AdminController extends Controller
         } catch (Throwable $e) {
             Log::error('AdminController::postAddUser - Add user email delivery failed');
             Log::error('AdminController::postAddUser - ' . $e->getMessage());
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::error('AdminController::postAddUser - Add user email delivery failed');
             Log::error('AdminController::postAddUser - ' . $e->getMessage());
         }
