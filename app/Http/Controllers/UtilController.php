@@ -66,16 +66,15 @@ class UtilController extends Controller
 
         $githubPayload = $request->getContent();
         $githubHash = $request->header('X-Hub-Signature');
-        Log::info('UtilContorller::deploy - githubhash = ' . $githubHash);
+        Log::info('UtilController::deploy - githubhash = ' . $githubHash);
 
         $localToken = config('app.deploy_secret');
-        Log::info('UtilContorller::deploy - local secret = ' . $localToken);
+        Log::info('UtilController::deploy - local secret = ' . $localToken);
         $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
-        Log::info('UtilContorller::deploy - localhash = ' . $localHash);
+        Log::info('UtilController::deploy - localhash = ' . $localHash);
 
+        Log::info('-------- Deployment STARTED --------');
         if (hash_equals($githubHash, $localHash)) {
-            Log::info('-------- Deployment STARTED --------');
-
             $root_path = base_path();
             $process = new Process(['./util/scripts/deploy.sh']);
             $process->setWorkingDirectory($root_path);
@@ -85,16 +84,15 @@ class UtilController extends Controller
                 echo $buffer;
                 Log::info($buffer);
             });
-
-            Log::info('-------- Deployment FINISHED --------');
         } else {
-            Log::error('Deployment attempt failed because of hash mismatch.');
-            Log::info('$githubHash = ' . $githubHash);
-            Log::info('$localHash  = ' . $localHash);
-            Log::info('$localToken = ' . $localToken);
+            Log::info('Deployment not performed - hash not correct for this server.');
+            Log::info('githubHash = ' . $githubHash);
+            Log::info('localHash  = ' . $localHash);
+            Log::info('localToken = ' . $localToken);
             //Log::info('$githubPayload=' . $githubPayload);
             var_dump($request->header());
         }
+        Log::info('-------- Deployment FINISHED --------');
 
         $deployment->running = false;
         $deployment->save();
