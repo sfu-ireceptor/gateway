@@ -323,9 +323,6 @@ class AdminController extends Controller
             Mail::send(['text' => 'emails.auth.accountCreated'], $t, function ($message) use ($u) {
                 $message->to($u->email)->subject('iReceptor account');
             });
-        } catch (Throwable $e) {
-            Log::error('AdminController::postAddUser - Add user email delivery failed');
-            Log::error('AdminController::postAddUser - ' . $e->getMessage());
         } catch (\Exception $e) {
             Log::error('AdminController::postAddUser - Add user email delivery failed');
             Log::error('AdminController::postAddUser - ' . $e->getMessage());
