@@ -59,7 +59,6 @@ class LogQuery
                     Log::error('LogQuery::handle - Support email delivery failed');
                     Log::error('LogQuery::handle - ' . $e->getMessage());
                 }
-
             }
         }
 
