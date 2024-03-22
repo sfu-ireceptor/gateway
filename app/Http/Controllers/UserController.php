@@ -378,16 +378,14 @@ class UserController extends Controller
         $t['reset_link'] = config('app.url') . '/user/reset-password/' . $token;
         $t['first_name'] = $user->first_name;
         try {
-            Log::info('UserController::postForgotPassword - Sending user reset password email to ' . $email);
             Mail::send(['text' => 'emails.auth.resetPasswordLink'], $t, function ($message) use ($email) {
                 $message->to($email)->subject('Reset your password');
             });
-            Log::info('UserController::postForgotPassword - Done sending user reset password email to ' . $email);
         } catch (\Exception $e) {
             Log::error('UserController::postForgotPassword - YYY User reset password email delivery failed');
             Log::error('UserController::ForgotPassword - ' . $e->getMessage());
 
-            return redirect()->back()->withErrors(['email' => 'Sorry, we were unable to send the password reset email. Make sure to enter the email you registered with.']);
+            return redirect()->back()->withErrors(['email' => 'Sorry, we were unable to send the password reset email. Please try again later.']);
         }
 
         return redirect('/user/forgot-password-email-sent');
