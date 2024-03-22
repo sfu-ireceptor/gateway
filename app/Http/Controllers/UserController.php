@@ -386,8 +386,9 @@ class UserController extends Controller
         } catch (\Exception $e) {
             Log::error('UserController::postForgotPassword - YYY User reset password email delivery failed');
             Log::error('UserController::ForgotPassword - ' . $e->getMessage());
+
             return redirect()->back()->withErrors(['email' => 'Sorry, we were unable to send the password reset email. Make sure to enter the email you registered with.']);
-        } 
+        }
 
         return redirect('/user/forgot-password-email-sent');
     }

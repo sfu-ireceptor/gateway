@@ -75,7 +75,6 @@ class UtilController extends Controller
 
         Log::info('-------- Deployment STARTED --------');
         if (hash_equals($githubHash, $localHash)) {
-
             $root_path = base_path();
             $process = new Process(['./util/scripts/deploy.sh']);
             $process->setWorkingDirectory($root_path);
@@ -85,7 +84,6 @@ class UtilController extends Controller
                 echo $buffer;
                 Log::info($buffer);
             });
-
         } else {
             Log::info('Deployment not performed - hash not correct for this server.');
             Log::info('githubHash = ' . $githubHash);
