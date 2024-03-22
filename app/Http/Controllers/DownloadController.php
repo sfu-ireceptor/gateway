@@ -53,7 +53,7 @@ class DownloadController extends Controller
         }
 
         //$d->save();
-        Log::error('Download file = ' . $d->file_url);
+        Log::debug('Download file = ' . $d->file_url);
         if (File::exists($d->file_url)) {
             return response()->download($d->file_url);
         }

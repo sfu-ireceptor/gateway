@@ -2,7 +2,10 @@
 
 @section('title', $job->app . ' (Job ' . $job->id . ') ' . $job->agave_status)
 @section('base_title', ' ')
+<!--
 @section('base', asset('jobs/view/file/'.$job->id.'/'))
+-->
+@section('base', asset('/storage/Total/'))
 
 @section('content')
 <div class="container job_container">

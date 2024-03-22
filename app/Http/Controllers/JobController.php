@@ -906,7 +906,9 @@ class JobController extends Controller
                                         $label = fread($filehandle, filesize($label_file));
                                     }
                                     // Create the object with useful info (that the Gateway Job view expects).
-                                    $summary_object = ['repository' => '', 'name' => $file, 'label' => $label, 'url' => '/' . $summary_file, 'file_query' => $summary_query];
+				    $summary_object = ['repository' => '', 'name' => $file, 'label' => $label,
+					    'url' => '/' . $summary_file, 'file_query' => $summary_query,
+				            'filename' => basename($summary_query), 'directory' => $file ];
                                     // Add to the list of summary objects.
                                     $analysis_summary[] = $summary_object;
                                 } else {
@@ -937,7 +939,9 @@ class JobController extends Controller
                                                     $label = fread($filehandle, filesize($label_file));
                                                 }
                                                 // Create the summary object for the Job view to display for this analysis unit.
-                                                $summary_object = ['repository' => $repository_name, 'name' => $file, 'label' => $label, 'url' => '/' . $summary_file, 'file_query' => $summary_query];
+				                $summary_object = ['repository' => '', 'name' => $file, 'label' => $label,
+					                'url' => '/' . $summary_file, 'file_query' => $summary_query,
+				                        'filename' => basename($summary_query), 'directory' => $repository_name . '/' . $file ];
                                                 $analysis_summary[] = $summary_object;
                                             }
                                         }
