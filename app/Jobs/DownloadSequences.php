@@ -136,9 +136,13 @@ class DownloadSequences implements ShouldQueue
             $t['download_days_available'] = self::DAYS_AVAILABLE;
             $t['date_str'] = $date_str;
 
-            Mail::send(['text' => 'emails.download_successful'], $t, function ($message) use ($email, $date_str) {
-                $message->to($email)->subject('[iReceptor] Your download from ' . $date_str . ' is ready');
-            });
+            try {
+                Mail::send(['text' => 'emails.download_successful'], $t, function ($message) use ($email, $date_str) {
+                    $message->to($email)->subject('[iReceptor] Your download from ' . $date_str . ' is ready');
+                });
+            } catch (Exception e) {
+                Log::error('Error email not sent. Email failed to be delivered');
+            }
         } else {
             Log::error('Error email not send. Could not find email for user ' . $this->username);
         }
