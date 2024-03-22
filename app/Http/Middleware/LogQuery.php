@@ -52,9 +52,6 @@ class LogQuery
                     Mail::send(['text' => 'emails.data_query_error'], $t, function ($message) use ($username) {
                         $message->to(config('ireceptor.email_support'))->subject('Gateway User Query Error for ' . $username);
                     });
-                } catch (Throwable $e) {
-                    Log::error('LogQuery::handle - Support email delivery failed');
-                    Log::error('LogQuery::handle - ' . $e->getMessage());
                 } catch (\Exception $e) {
                     Log::error('LogQuery::handle - Support email delivery failed');
                     Log::error('LogQuery::handle - ' . $e->getMessage());
