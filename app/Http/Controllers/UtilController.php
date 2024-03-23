@@ -80,7 +80,7 @@ class UtilController extends Controller
         //Log::debug('Type is: ' . gettype($payload_json));
         //Log::debug('githubPayload=' . json_encode($payload_obj, JSON_PRETTY_PRINT));
 
-        // Get the branch that the payload says the commit happened on.
+        //  Get the branch that the payload says the commit happened on.
         $payloadRef = $payload_obj->ref;
         Log::debug('UtilController::deploy - Payload ref = ' . $payloadRef);
 
