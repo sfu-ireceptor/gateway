@@ -84,7 +84,7 @@ class UtilController extends Controller
         $payloadRef = $payload_obj->ref;
         Log::debug('UtilController::deploy - Payload ref = ' . $payloadRef);
 
-        // Get the branch that we are supposed to deploy on from the configuration.
+        // Get the branch that we are supposed to deploy on from the configuration. 
         $localRef = config('app.deploy_branch');
         Log::debug('UtilController::deploy - Local ref = ' . $localRef);
 
