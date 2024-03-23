@@ -72,13 +72,14 @@ class UtilController extends Controller
         Log::info('UtilController::deploy - local secret = ' . $localToken);
         $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
         Log::info('UtilController::deploy - localhash = ' . $localHash);
-        $payload_obj = $request->input('payload');
-        $type = gettype($payload_obj);
+        $payload_json = $request->input('payload');
+        $type = gettype($payload_json);
         Log::info('Type is: ' . $type);
-        Log::info('githubPayload=' . $payload_obj);
+        Log::info('githubPayload=' . $payload_json);
+        $payload_obj = json_decode($payload_json);
         Log::info('githubPayload=' . json_encode($payload_obj, JSON_PRETTY_PRINT));
         //$payload = json_decode($payload_obj));
-        //$ref = $payload->ref;
+        $ref = $payload_obj->ref;
         //Log::info('ref = ' . $ref);
         //var_dump($request->header());
 
