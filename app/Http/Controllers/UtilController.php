@@ -66,26 +66,31 @@ class UtilController extends Controller
 
         $githubPayload = $request->getContent();
         $githubHash = $request->header('X-Hub-Signature');
-        Log::info('UtilController::deploy - githubhash = ' . $githubHash);
 
         $localToken = config('app.deploy_secret');
         Log::info('UtilController::deploy - local secret = ' . $localToken);
         $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
+        Log::info('UtilController::deploy - githubhash = ' . $githubHash);
         Log::info('UtilController::deploy - localhash = ' . $localHash);
+
+        // Get the payload from the request, convert it to an object, and extract
+        // the payload branch that the push request was on.
         $payload_json = $request->input('payload');
-        $type = gettype($payload_json);
-        Log::info('Type is: ' . $type);
-        Log::info('githubPayload=' . $payload_json);
-        $payload_obj = json_decode($payload_json);
+        Log::info('Type is: ' . gettype($payload_json));
         Log::info('githubPayload=' . json_encode($payload_obj, JSON_PRETTY_PRINT));
-        //$payload = json_decode($payload_obj));
-        $ref = $payload_obj->ref;
-        Log::info('ref = ' . $ref);
-        //var_dump($request->header());
-        //
+        $payload_obj = json_decode($payload_json);
+        // Get the branch that the payload says the commit happened on.
+        $payloadRef = $payload_obj->ref;
+        Log::info('Payload ref = ' . $payloadRef);
+
+        // Get the branch that we are supposed to deploy on from the configuration.
+        $localRef = config('app.deploy_branch');
+        Log::info('Local ref = ' . $localRef);
 
         Log::info('-------- Deployment STARTED --------');
-        if (hash_equals($githubHash, $localHash)) {
+        // If the payload hashes are the same and the branches are the same
+        // then we deploy, otherwise we ignore the github webhook callback.
+        if (hash_equals($githubHash, $localHash) && $payloadRef == $localRef) {
             $root_path = base_path();
             $process = new Process(['./util/scripts/deploy.sh']);
             $process->setWorkingDirectory($root_path);
@@ -96,12 +101,10 @@ class UtilController extends Controller
                 Log::info($buffer);
             });
         } else {
-            Log::info('Deployment not performed - hash not correct for this server.');
+            Log::info('Deployment not performed - hash/branch not correct for this gateway.');
             Log::info('githubHash = ' . $githubHash);
             Log::info('localHash  = ' . $localHash);
             Log::info('localToken = ' . $localToken);
-            //Log::info('$githubPayload=' . $githubPayload);
-            var_dump($request->header());
         }
         Log::info('-------- Deployment FINISHED --------');
 
