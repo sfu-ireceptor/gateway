@@ -74,6 +74,7 @@ class UtilController extends Controller
         Log::info('UtilController::deploy - localhash = ' . $localHash);
         Log::info('githubPayload=' . json_encode($githubPayload));
         //var_dump($request->header());
+        //
 
         Log::info('-------- Deployment STARTED --------');
         if (hash_equals($githubHash, $localHash)) {
