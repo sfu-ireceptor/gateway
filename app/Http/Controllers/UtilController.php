@@ -51,13 +51,13 @@ class UtilController extends Controller
     // called by GitHub hook
     public function deploy(Request $request)
     {
-        Log::debug('UtilController::deploy');
+        Log::info('UtilContorller::deploy');
         $already_running_deployment = Deployment::where('running', 1)->first();
         while ($already_running_deployment != null) {
             sleep(5);
             $already_running_deployment = Deployment::where('running', 1)->first();
         }
-        Log::debug('UtilController::deploy - after checking for running');
+        Log::info('UtilContorller::deploy - after checking for running');
 
         $start_time = Carbon::now();
 
@@ -66,32 +66,16 @@ class UtilController extends Controller
 
         $githubPayload = $request->getContent();
         $githubHash = $request->header('X-Hub-Signature');
+        Log::info('UtilContorller::deploy - githubhash = ' . $githubHash);
 
         $localToken = config('app.deploy_secret');
-        Log::debug('UtilController::deploy - local secret = ' . $localToken);
+        Log::info('UtilContorller::deploy - local secret = ' . $localToken);
         $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
-        Log::debug('UtilController::deploy - githubhash = ' . $githubHash);
-        Log::debug('UtilController::deploy - localhash = ' . $localHash);
+        Log::info('UtilContorller::deploy - localhash = ' . $localHash);
 
-        // Get the payload from the request, convert it to an object, and extract
-        // the payload branch that the push request was on.
-        $payload_json = $request->input('payload');
-        $payload_obj = json_decode($payload_json);
-        //Log::debug('Type is: ' . gettype($payload_json));
-        //Log::debug('githubPayload=' . json_encode($payload_obj, JSON_PRETTY_PRINT));
+        if (hash_equals($githubHash, $localHash)) {
+            Log::info('-------- Deployment STARTED --------');
 
-        //  Get the branch that the payload says the commit happened on.
-        $payloadRef = $payload_obj->ref;
-        Log::debug('UtilController::deploy - Payload ref = ' . $payloadRef);
-
-        // Get the branch that we are supposed to deploy on from the configuration.
-        $localRef = config('app.deploy_branch');
-        Log::debug('UtilController::deploy - Local ref = ' . $localRef);
-
-        Log::info('-------- Deployment STARTED --------');
-        // If the payload hashes are the same and the branches are the same
-        // then we deploy, otherwise we ignore the github webhook callback.
-        if (hash_equals($githubHash, $localHash) && $payloadRef == $localRef) {
             $root_path = base_path();
             $process = new Process(['./util/scripts/deploy.sh']);
             $process->setWorkingDirectory($root_path);
@@ -101,13 +85,16 @@ class UtilController extends Controller
                 echo $buffer;
                 Log::info($buffer);
             });
+
+            Log::info('-------- Deployment FINISHED --------');
         } else {
-            Log::info('Deployment not performed - hash/branch not correct for this gateway.');
-            Log::info('githubHash = ' . $githubHash);
-            Log::info('localHash  = ' . $localHash);
-            Log::info('localToken = ' . $localToken);
+            Log::error('Deployment attempt failed because of hash mismatch.');
+            Log::info('$githubHash = ' . $githubHash);
+            Log::info('$localHash  = ' . $localHash);
+            Log::info('$localToken = ' . $localToken);
+            //Log::info('$githubPayload=' . $githubPayload);
+            var_dump($request->header());
         }
-        Log::info('-------- Deployment FINISHED --------');
 
         $deployment->running = false;
         $deployment->save();

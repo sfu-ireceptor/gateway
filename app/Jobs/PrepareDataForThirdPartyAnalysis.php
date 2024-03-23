@@ -54,7 +54,7 @@ class PrepareDataForThirdPartyAnalysis implements ShouldQueue
 
             $job->updateStatus('FINISHED');
             $localJob->setFinished();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage());
             Log::error($e);
             $job->updateStatus('FAILED');
