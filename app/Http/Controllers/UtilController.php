@@ -51,13 +51,13 @@ class UtilController extends Controller
     // called by GitHub hook
     public function deploy(Request $request)
     {
-        Log::info('UtilContorller::deploy');
+        Log::info('UtilController::deploy');
         $already_running_deployment = Deployment::where('running', 1)->first();
         while ($already_running_deployment != null) {
             sleep(5);
             $already_running_deployment = Deployment::where('running', 1)->first();
         }
-        Log::info('UtilContorller::deploy - after checking for running');
+        Log::info('UtilController::deploy - after checking for running');
 
         $start_time = Carbon::now();
 
@@ -77,6 +77,7 @@ class UtilController extends Controller
         Log::info('githubPayload=' . json_encode($payload_json));
         Log::info('githubPayload=' . json_decode($payload_json));
         //var_dump($request->header());
+        //
 
         Log::info('-------- Deployment STARTED --------');
         if (hash_equals($githubHash, $localHash)) {
