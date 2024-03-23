@@ -77,8 +77,9 @@ class UtilController extends Controller
         // the payload branch that the push request was on.
         $payload_json = $request->input('payload');
         Log::info('Type is: ' . gettype($payload_json));
-        Log::info('githubPayload=' . json_encode($payload_obj, JSON_PRETTY_PRINT));
         $payload_obj = json_decode($payload_json);
+        Log::info('githubPayload=' . json_encode($payload_obj, JSON_PRETTY_PRINT));
+
         // Get the branch that the payload says the commit happened on.
         $payloadRef = $payload_obj->ref;
         Log::info('Payload ref = ' . $payloadRef);
