@@ -82,6 +82,7 @@ class UtilController extends Controller
         $ref = $payload_obj->ref;
         //Log::info('ref = ' . $ref);
         //var_dump($request->header());
+        //
 
         Log::info('-------- Deployment STARTED --------');
         if (hash_equals($githubHash, $localHash)) {
