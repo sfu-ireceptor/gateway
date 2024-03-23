@@ -550,7 +550,8 @@ class SampleController extends Controller
         }
 
         $t = Sample::samplesJSON($params, $username);
-        $file_path = $t['public_path'];
+        //$file_path = $t['public_path'];
+        $file_path = $t['system_path'];
 
         // log result
         $query_log_id = $request->get('query_log_id');
@@ -577,7 +578,7 @@ class SampleController extends Controller
         }
 
         $t = Sample::samplesTSV($params, $username);
-        $file_path = $t['public_path'];
+        $file_path = $t['system_path'];
 
         // log result
         $query_log_id = $request->get('query_log_id');

@@ -8,6 +8,8 @@
 	    <meta name="csrf-token" content="{{ csrf_token() }}">
 
 		<title>@yield('title', 'Untitled')@yield('base_title', ' | iReceptor')</title>
+                
+		<base href="@yield('base','')">
 
 		<!-- css -->
 		<link rel="stylesheet" href="/css/bootstrap.min.css" />

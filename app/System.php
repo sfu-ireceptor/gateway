@@ -82,8 +82,18 @@ class System extends Model
         $systemDeploymentRootDir = config('services.tapis.system_deploy.rootdir');
 
         $config = $tapis->getStorageSystemConfig($systemDeploymentName, $systemDeploymentHost, $systemDeploymentPort, $systemDeploymentUsername, $systemDeploymentRootDir);
-        $response = $tapis->createSystem($config);
-        Log::info('deployment system created: ' . $systemDeploymentName);
+        $sysResponse = $tapis->getSystem($systemDeploymentName);
+        if ($sysResponse->status == 'success') {
+            Log::info('System::createDefaulySystemForUser - updating system: ' . $systemDeploymentName);
+            $response = $tapis->updateSystem($systemDeploymentName, $config);
+            $tapis->raiseExceptionIfTapisError($response);
+            Log::info('System::createDefaulySystemForUser - system updated: ' . $systemDeploymentName);
+        } else {
+            Log::info('System::createDefaulySystemForUser - creating system: ' . $systemDeploymentName);
+            $response = $tapis->createSystem($config);
+            $tapis->raiseExceptionIfTapisError($response);
+            Log::info('System::createDefaulySystemForUser - system created: ' . $systemDeploymentName);
+        }
 
         // create staging system (on this machine, where the data files will copied from)
         $systemStagingName = config('services.tapis.system_staging.name_prefix');
@@ -95,7 +105,21 @@ class System extends Model
         $systemStagingRootDir = config('services.tapis.system_staging.rootdir');
 
         $config = $tapis->getStorageSystemConfig($systemStagingName, $systemStagingHost, $systemStagingPort, $systemStagingUsername, $systemStagingRootDir);
-        $response = $tapis->createSystem($config);
+        $sysResponse = $tapis->getSystem($systemStagingName);
+        if ($sysResponse->status == 'success') {
+            Log::info('System::createDefaulySystemForUser - updating system: ' . $systemStagingName);
+            Log::info('System::createDefaulySystemForUser - rootDir: ' . $systemStagingRootDir);
+            $response = $tapis->updateSystem($systemStagingName, $config);
+            Log::debug('staging update response: ' . json_encode($response, JSON_PRETTY_PRINT));
+            $tapis->raiseExceptionIfTapisError($response);
+            Log::info('System::createDefaulySystemForUser - system updated: ' . $systemStagingName);
+        } else {
+            Log::info('System::createDefaulySystemForUser - creating system: ' . $systemStagingName);
+            $response = $tapis->createSystem($config);
+            $tapis->raiseExceptionIfTapisError($response);
+            Log::info('System::createDefaulySystemForUser - system created: ' . $systemStagingName);
+        }
+        //$response = $tapis->createSystem($config);
         Log::info('staging system created: ' . $systemStagingName);
 
         return null;

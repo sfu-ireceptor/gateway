@@ -105,8 +105,9 @@ class DownloadSequences implements ShouldQueue
             $t = SequenceCell::cellsTSV($filters, $this->username, $this->url, $sample_filter_fields);
         }
 
-        $file_path = $t['public_path'];
-        $this->download->file_url = $file_path;
+        //$file_path = $t['public_path'];
+        //$this->download->file_url = $file_path;
+        $this->download->file_url = $t['system_path'];
         $this->download->file_size = filesize($t['system_path']);
 
         $this->download->incomplete = false;
@@ -136,9 +137,16 @@ class DownloadSequences implements ShouldQueue
             $t['download_days_available'] = self::DAYS_AVAILABLE;
             $t['date_str'] = $date_str;
 
-            Mail::send(['text' => 'emails.download_successful'], $t, function ($message) use ($email, $date_str) {
-                $message->to($email)->subject('[iReceptor] Your download from ' . $date_str . ' is ready');
-            });
+            // Send a notficiation email, catch errors of the email can't be delivered.
+            try {
+                Log::debug('DownloadSequences::handle - Sending user download completed email');
+                Mail::send(['text' => 'emails.download_successful'], $t, function ($message) use ($email, $date_str) {
+                    $message->to($email)->subject('[iReceptor] Your download from ' . $date_str . ' is ready');
+                });
+            } catch (\Exception $e) {
+                Log::error('DownloadSequences::handle - User email delivery failed');
+                Log::error('DownloadSequences::handle - ' . $e->getMessage());
+            }
         } else {
             Log::error('Error email not send. Could not find email for user ' . $this->username);
         }
@@ -153,9 +161,16 @@ class DownloadSequences implements ShouldQueue
                 $t['error_message'] = 'Incomplete download';
                 $t['user_query_admin_page_url'] = config('app.url') . '/admin/queries/' . $query_log_id;
 
-                Mail::send(['text' => 'emails.data_query_error'], $t, function ($message) use ($username) {
-                    $message->to(config('ireceptor.email_support'))->subject('Gateway Download Incomplete for ' . $username);
-                });
+                // Send support a notficiation email, catch errors of the email can't be delivered.
+                try {
+                    Log::debug('DownloadSequences::handle - Sending support download failed email');
+                    Mail::send(['text' => 'emails.data_query_error'], $t, function ($message) use ($username) {
+                        $message->to(config('ireceptor.email_support'))->subject('Gateway Download Incomplete for ' . $username);
+                    });
+                } catch (\Exception $e) {
+                    Log::error('DownloadSequences::handle - Support email delivery failed');
+                    Log::error('DownloadSequences::handle - ' . $e->getMessage());
+                }
             }
         }
 
@@ -185,9 +200,16 @@ class DownloadSequences implements ShouldQueue
             $t['download_page_url'] = config('app.url') . '/downloads';
             $t['support_email'] = config('ireceptor.email_support');
 
-            Mail::send(['text' => 'emails.download_failed'], $t, function ($message) use ($email) {
-                $message->to($email)->subject('[iReceptor] Download error');
-            });
+            // Send user a notficiation email, catch errors if the email can't be delivered.
+            try {
+                Log::debug('DownloadSequences::failed - Sending user download failed email');
+                Mail::send(['text' => 'emails.download_failed'], $t, function ($message) use ($email) {
+                    $message->to($email)->subject('[iReceptor] Download error');
+                });
+            } catch (\Exception $e) {
+                Log::error('DownloadSequences::failed - User email delivery failed');
+                Log::error('DownloadSequences::failed - ' . $e->getMessage());
+            }
         } else {
             Log::error('Error email not send. Could not find email for user ' . $this->username);
         }
@@ -204,9 +226,17 @@ class DownloadSequences implements ShouldQueue
             $t['error_message'] = $error_message;
             $t['user_query_admin_page_url'] = config('app.url') . '/admin/queries/' . $query_log_id;
 
-            Mail::send(['text' => 'emails.data_query_error'], $t, function ($message) use ($username) {
-                $message->to(config('ireceptor.email_support'))->subject('Gateway Download Error for ' . $username);
-            });
+            // Send support a notficiation email, catch errors if the email can't be delivered.
+            try {
+                Log::debug('DownloadSequences::failed - Sending download failed support email');
+
+                Mail::send(['text' => 'emails.data_query_error'], $t, function ($message) use ($username) {
+                    $message->to(config('ireceptor.email_support'))->subject('Gateway Download Error for ' . $username);
+                });
+            } catch (\Exception $e) {
+                Log::error('DownloadSequences::failed - Support email delivery failed');
+                Log::error('DownloadSequences::failed - ' . $e->getMessage());
+            }
         }
         QueryLog::end_job($query_log_id, 'error', $error_message);
     }

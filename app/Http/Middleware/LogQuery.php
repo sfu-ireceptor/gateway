@@ -48,9 +48,14 @@ class LogQuery
                 $t['error_message'] = $error_message;
                 $t['user_query_admin_page_url'] = config('app.url') . '/admin/queries/' . $query_log_id;
 
-                Mail::send(['text' => 'emails.data_query_error'], $t, function ($message) use ($username) {
-                    $message->to(config('ireceptor.email_support'))->subject('Gateway User Query Error for ' . $username);
-                });
+                try {
+                    Mail::send(['text' => 'emails.data_query_error'], $t, function ($message) use ($username) {
+                        $message->to(config('ireceptor.email_support'))->subject('Gateway User Query Error for ' . $username);
+                    });
+                } catch (\Exception $e) {
+                    Log::error('LogQuery::handle - Support email delivery failed');
+                    Log::error('LogQuery::handle - ' . $e->getMessage());
+                }
             }
         }
 

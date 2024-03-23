@@ -5,6 +5,13 @@
  
 @section('content')
 <div class="container job_container" data-job-id="{{ $job->id }}" data-job-status="{{ $job->status }}">
+        @if (session('notification'))
+        <div class="alert alert-warning alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                {!! session('notification') !!}
+        </div>
+        @endif
+
 
 	<h2>
 		{{ $job->app }} (Job {{ $job->id }})
@@ -62,7 +69,8 @@
                                 <tr>
                                     <td>{{ $summary_object['repository'] }}</td>
                                     <td>{{ $summary_object['label'] }}</td>
-		                            <td><a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="{{ $summary_object['url'] }}"> View Summary </a></td>
+		                            <td><a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="file/{{$job->id}}?file={{ $summary_object['file_query'] }}"> View Summary </a></td>
+		                            <td><a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="show?jobid={{$job->id}}&filename={{ $summary_object['filename'] }}&directory={{$summary_object['directory']}}"> View Summary </a></td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -74,18 +82,18 @@
 	                    @endif
 
 	                @if ($analysis_download_url != '') 
-		            <a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/{{ $analysis_download_url }}">
+		            <a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/jobs/download-analysis/{{ $job->id }}">
         
                                 Download Analysis Results Archive (ZIP)
                             </a>
                         @endif
 	                @if ($output_log_url != '') 
-		            <a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/{{ $output_log_url }}">
+		            <a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/jobs/download-output-log/{{ $job->id }}">
                                 View Analysis Output Log 
                             </a>
                         @endif
 	                @if ($error_log_url != '') 
-		            <a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/{{ $error_log_url }}">
+		            <a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="/jobs/download-error-log/{{ $job->id }}">
                                 View Analysis Error Log
                             </a>
                         @endif

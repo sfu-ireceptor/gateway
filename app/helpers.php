@@ -25,16 +25,16 @@ if (! function_exists('dir_to_array')) {
 }
 
 if (! function_exists('array_to_html')) {
-    function array_to_html($t)
+    function array_to_html($t, $path, $jobid)
     {
         $s = '<ul>';
         foreach ($t as $k => $v) {
             $s .= '<li>';
             if (is_array($v)) {
                 $s .= $k;
-                $s .= array_to_html($v);
+                $s .= array_to_html($v, $path . '/' . $k, $jobid);
             } else {
-                $s .= '<a href="/' . $v . '">' . basename($v) . '</a>';
+                $s .= '<a href="show?jobid=' . $jobid . '&directory=' . $path . '&filename=' . basename($v) . '">' . basename($v) . '</a>';
             }
             $s .= '</li>';
         }
@@ -45,11 +45,11 @@ if (! function_exists('array_to_html')) {
 }
 
 if (! function_exists('dir_to_html')) {
-    function dir_to_html($dir)
+    function dir_to_html($dir, $jobid)
     {
         $t = dir_to_array($dir);
 
-        return array_to_html($t);
+        return array_to_html($t, '', $jobid);
     }
 }
 
