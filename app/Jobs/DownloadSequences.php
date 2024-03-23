@@ -236,6 +236,7 @@ class DownloadSequences implements ShouldQueue
             } catch (\Exception $e) {
                 Log::error('DownloadSequences::failed - Support email delivery failed');
                 Log::error('DownloadSequences::failed - ' . $e->getMessage());
+
             }
         }
         QueryLog::end_job($query_log_id, 'error', $error_message);
