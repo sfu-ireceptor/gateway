@@ -72,8 +72,8 @@ class UtilController extends Controller
         Log::info('UtilController::deploy - local secret = ' . $localToken);
         $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
         Log::info('UtilController::deploy - localhash = ' . $localHash);
-        Log::info('githubPayload=' . $githubPayload);
-        var_dump($request->header());
+        Log::info('githubPayload=' . json_encode($githubPayload));
+        //var_dump($request->header());
 
         Log::info('-------- Deployment STARTED --------');
         if (hash_equals($githubHash, $localHash)) {
