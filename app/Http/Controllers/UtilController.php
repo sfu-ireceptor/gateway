@@ -77,9 +77,9 @@ class UtilController extends Controller
         Log::info('Type is: ' . $type);
         Log::info('githubPayload=' . $payload_obj);
         Log::info('githubPayload=' . json_encode($payload_obj, JSON_PRETTY_PRINT));
-        $payload = json_decode($payload_obj));
-        $ref = $payload->ref;
-        Log::info('ref = ' . $ref);
+        //$payload = json_decode($payload_obj));
+        //$ref = $payload->ref;
+        //Log::info('ref = ' . $ref);
         //var_dump($request->header());
 
         Log::info('-------- Deployment STARTED --------');
