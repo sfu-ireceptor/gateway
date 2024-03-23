@@ -51,13 +51,13 @@ class UtilController extends Controller
     // called by GitHub hook
     public function deploy(Request $request)
     {
-        Log::info('UtilController::deploy');
+        Log::debug('UtilController::deploy');
         $already_running_deployment = Deployment::where('running', 1)->first();
         while ($already_running_deployment != null) {
             sleep(5);
             $already_running_deployment = Deployment::where('running', 1)->first();
         }
-        Log::info('UtilController::deploy - after checking for running');
+        Log::debug('UtilController::deploy - after checking for running');
 
         $start_time = Carbon::now();
 
@@ -68,25 +68,25 @@ class UtilController extends Controller
         $githubHash = $request->header('X-Hub-Signature');
 
         $localToken = config('app.deploy_secret');
-        Log::info('UtilController::deploy - local secret = ' . $localToken);
+        Log::debug('UtilController::deploy - local secret = ' . $localToken);
         $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
-        Log::info('UtilController::deploy - githubhash = ' . $githubHash);
-        Log::info('UtilController::deploy - localhash = ' . $localHash);
+        Log::debug('UtilController::deploy - githubhash = ' . $githubHash);
+        Log::debug('UtilController::deploy - localhash = ' . $localHash);
 
         // Get the payload from the request, convert it to an object, and extract
         // the payload branch that the push request was on.
         $payload_json = $request->input('payload');
-        Log::info('Type is: ' . gettype($payload_json));
         $payload_obj = json_decode($payload_json);
-        Log::info('githubPayload=' . json_encode($payload_obj, JSON_PRETTY_PRINT));
+        //Log::debug('Type is: ' . gettype($payload_json));
+        //Log::debug('githubPayload=' . json_encode($payload_obj, JSON_PRETTY_PRINT));
 
         // Get the branch that the payload says the commit happened on.
         $payloadRef = $payload_obj->ref;
-        Log::info('Payload ref = ' . $payloadRef);
+        Log::debug('UtilController::deploy - Payload ref = ' . $payloadRef);
 
         // Get the branch that we are supposed to deploy on from the configuration.
         $localRef = config('app.deploy_branch');
-        Log::info('Local ref = ' . $localRef);
+        Log::debug('UtilController::deploy - Local ref = ' . $localRef);
 
         Log::info('-------- Deployment STARTED --------');
         // If the payload hashes are the same and the branches are the same
