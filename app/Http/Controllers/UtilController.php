@@ -88,7 +88,7 @@ class UtilController extends Controller
         $localRef = config('app.deploy_branch');
         Log::debug('UtilController::deploy - Local ref = ' . $localRef);
 
-        Log::info('-------- Deployment STARTED --------'); 
+        Log::info('-------- Deployment STARTED --------');
         // If the payload hashes are the same and the branches are the same
         // then we deploy, otherwise we ignore the github webhook callback.
         if (hash_equals($githubHash, $localHash) && $payloadRef == $localRef) {
