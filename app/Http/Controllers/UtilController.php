@@ -80,7 +80,7 @@ class UtilController extends Controller
         Log::info('githubPayload=' . json_encode($payload_obj, JSON_PRETTY_PRINT));
         //$payload = json_decode($payload_obj));
         $ref = $payload_obj->ref;
-        //Log::info('ref = ' . $ref);
+        Log::info('ref = ' . $ref);
         //var_dump($request->header());
         //
 
