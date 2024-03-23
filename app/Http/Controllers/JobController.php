@@ -541,10 +541,9 @@ class JobController extends Controller
         $data['summary'] = [];
         $info_file_path = $folder . '/' . $info_file;
         if ($job['input_folder'] != '' && File::exists($info_file_path)) {
-            $lines = [];
             try {
                 $lines = file($info_file_path);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::debug('JobController::getView: Could not open file ' . $info_file_path);
                 Log::debug('JobController::getView: Error: ' . $e->getMessage());
             }

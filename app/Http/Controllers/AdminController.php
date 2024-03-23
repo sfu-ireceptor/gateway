@@ -319,14 +319,9 @@ class AdminController extends Controller
         $t['password'] = $password;
 
         // email credentials
-        try {
-            Mail::send(['text' => 'emails.auth.accountCreated'], $t, function ($message) use ($u) {
-                $message->to($u->email)->subject('iReceptor account');
-            });
-        } catch (\Exception $e) {
-            Log::error('AdminController::postAddUser - Add user email delivery failed');
-            Log::error('AdminController::postAddUser - ' . $e->getMessage());
-        }
+        Mail::send(['text' => 'emails.auth.accountCreated'], $t, function ($message) use ($u) {
+            $message->to($u->email)->subject('iReceptor account');
+        });
 
         return redirect('admin/users')->with('notification', 'User ' . $u->username . ' has been created. An email with credentials was sent.');
     }

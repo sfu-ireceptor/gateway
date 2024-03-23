@@ -246,7 +246,7 @@ class LaunchJob implements ShouldQueue
 
             // Now that we are done and the Tapis job is running, this LocalJob is done.
             $localJob->setFinished();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('LaunchJob::handle - ' . $e->getMessage());
             Log::error($e);
             $job = Job::find($this->jobId);
