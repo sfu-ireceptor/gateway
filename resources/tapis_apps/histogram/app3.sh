@@ -254,6 +254,12 @@ function run_analysis()
     # Generate end body end HTML
     printf '</body>' >> ${html_file}
     printf '</html>' >> ${html_file}
+
+    # Generate a summary HTML file for the Gateway to present this info to the user
+    html_file=${output_directory}/${repertoire_id}-gateway.html
+    printf "<h2>Histogram: %s</h2>\n" ${title_string} >> ${html_file}
+    printf "<h2>Analysis</h2>\n" >> ${html_file}
+    printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-%s-histogram.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} ${VARNAME} >> ${html_file}
 }
 
 # Set up the required variables. An iReceptor Gateway download consists

@@ -319,6 +319,19 @@ function run_analysis()
     printf '</body>' >> ${html_file}
     printf '</html>' >> ${html_file}
 
+	# Generate a summary HTML file for the Gateway to present this info to the user
+	html_file=${output_directory}/${repertoire_id}-gateway.html
+
+	printf "<h2>Stats: %s</h2>\n" ${title_string} >> ${html_file}
+	printf "<h2>Analysis</h2>\n" >> ${html_file}
+	printf "<h3>V Gene usage</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-histogram.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf "<h3>D Gene usage</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-d_call-histogram.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf "<h3>J Gene usage</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-j_call-histogram.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf "<h3>Junction AA Length</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-junction_aa_length-histogram.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
 }
 
 # Set up the required variables. An iReceptor Gateway download consists
