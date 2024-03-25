@@ -61,6 +61,7 @@ printf "IR-INFO: MAX RUNTIME = ${_tapisMaxMinutes}\n"
 printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
 printf "IR-INFO: ZIP FILE = ${ZIP_FILE}\n"
 printf "IR-INFO: SPLIT_REPERTOIRE = ${SPLIT_REPERTOIRE}\n"
+printf "IR-INFO: IR_GATEWAY_JOBID = ${IR_GATEWAY_JOBID}\n"
 printf "IR-INFO: "
 lscpu | grep "Model name"
 printf "IR-INFO: \n"
@@ -322,6 +323,26 @@ function run_analysis()
     # Generate end body end HTML
     printf '</body>' >> ${html_file}
     printf '</html>' >> ${html_file}
+
+	# Generate a summary HTML file for the Gateway to present this info to the user
+	html_file=${output_directory}/${repertoire_id}-gateway.html
+
+	printf "<h2>Stats: %s</h2>\n" ${title_string} >> ${html_file}
+	printf "<h2>Analysis</h2>\n" >> ${html_file}
+	printf "<h3>V/J gene usage heatmap</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-j_call-heatmap.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf "<h3>V gene/Junction AA Length heatmap</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-junction_aa_length-heatmap.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf "<h3>V Gene usage</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-histogram.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf "<h3>D Gene usage</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-d_call-histogram.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf "<h3>J Gene usage</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-j_call-histogram.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf "<h3>Junction AA Length</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-junction_aa_length-histogram.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+    # End of main div container
+    printf '</div>' >> ${html_file}
 
 }
 
