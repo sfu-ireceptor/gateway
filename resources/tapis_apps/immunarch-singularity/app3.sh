@@ -209,7 +209,7 @@ function run_analysis()
 
         # Generate a summary output report for the analysis for the
         # gateway to use as a summary.
-        html_file=${output_directory}/${repertoire_id}.html
+        html_file=${output_directory}/${repertoire_id}-gateway.html
 
         # Generate the output from the analysis.
         printf "<h2>Immunarch: %s</h1>\n" ${title_string} >> ${html_file}
