@@ -226,16 +226,6 @@ function run_analysis()
         printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} gene_usage_normalized.png >> ${html_file}
         printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} len.png >> ${html_file}
 
-        # End of main div container
-        printf '</div>' >> ${html_file}
-
-        # Use the normal iReceptor footer.
-        cat ${output_directory}/assets/footer.html >> ${html_file}
-
-        # Generate end body end HTML
-        printf '</body>' >> ${html_file}
-        printf '</html>' >> ${html_file}
-
     done
     # Remove the Immunarch required data directory
     rmdir ${PWD}/${output_directory}/data
