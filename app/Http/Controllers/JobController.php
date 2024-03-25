@@ -428,10 +428,13 @@ class JobController extends Controller
             $data['directory'] = $directory;
             $file_br_str = str_replace('\n', '<br>\n', $file_str);
             $data['plain_file'] = $file_br_str;
+            $data['pattern'] = '/<img.*?src=["\'](.*?)["\'].*?>/i';
+            $data['replace_str'] = '<img src="https://gateway-clean.ireceptor.org/jobs/view/show?jobid=167&filename=ipa1.ireceptor.org_PRJEB8745_BS4IgG_LAMGC1d22_BS4IgG_LAMGC1d22_spleen_IGH-d_call-histogram.png&directory=ipa1.ireceptor.org/662">';
+            $data['replace_str'] = '<img src="view/show?jobid=167&filename=ipa1.ireceptor.org_PRJEB8745_BS4IgG_LAMGC1d22_BS4IgG_LAMGC1d22_spleen_IGH-d_call-histogram.png&directory=ipa1.ireceptor.org/662">';
             Log::debug('JobController::getViewJobFile: asset = ' . asset($file_name));
 
             //return response()->file(storage_path($storage_file));
-            return view('job/css_file', $data);
+            return view('job/html_file', $data);
         }
 
         return redirect('jobs/view/' . $id)->with('notification', 'Could not view analysis file ' . $file_name);
@@ -887,12 +890,15 @@ class JobController extends Controller
                                 $summary_file = '';
                                 if (File::exists($analysis_folder . '/' . $file . '/' . $file . '.html')) {
                                     $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.html';
+                                    $summary_gateway_file = $file . '/' . $file . '-gateway.html';
                                     $summary_query = $file . '/' . $file . '.html';
                                 } elseif (File::exists($analysis_folder . '/' . $file . '/' . $file . '.pdf')) {
                                     $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.pdf';
+                                    $summary_gateway_file = $file . '/' . $file . '-gateway.pdf';
                                     $summary_query = $file . '/' . $file . '.pdf';
                                 } elseif (File::exists($analysis_folder . '/' . $file . '/' . $file . '.tsv')) {
                                     $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.tsv';
+                                    $summary_gateway_file = $file . '/' . $file . '-gateway.tsv';
                                     $summary_query = $file . '/' . $file . '.tsv';
                                 }
                                 Log::debug('summary_file = ' . $summary_file);
@@ -909,7 +915,8 @@ class JobController extends Controller
                                     // Create the object with useful info (that the Gateway Job view expects).
                                     $summary_object = ['repository' => '', 'name' => $file, 'label' => $label,
                                         'url' => '/' . $summary_file, 'file_query' => $summary_query,
-                                        'filename' => basename($summary_query), 'directory' => $file];
+                                        'filename' => basename($summary_query), 'directory' => $file,
+                                        'gateway_filename' => basename($summary_gateway_file)];
                                     // Add to the list of summary objects.
                                     $analysis_summary[] = $summary_object;
                                 } else {
@@ -923,12 +930,15 @@ class JobController extends Controller
                                             $summary_file = '';
                                             if (File::exists($repository_dir . '/' . $file . '/' . $file . '.html')) {
                                                 $summary_file = $repository_dir . '/' . $file . '/' . $file . '.html';
+                                                $summary_gateway_file = $repository_name . '/' . $file . '/' . $file . '-gateway.html';
                                                 $summary_query = $repository_name . '/' . $file . '/' . $file . '.html';
                                             } elseif (File::exists($repository_dir . '/' . $file . '/' . $file . '.pdf')) {
                                                 $summary_file = $repository_dir . '/' . $file . '/' . $file . '.pdf';
+                                                $summary_gateway_file = $repository_name . '/' . $file . '/' . $file . '-gateway.pdf';
                                                 $summary_query = $repository_name . '/' . $file . '/' . $file . '.pdf';
                                             } elseif (File::exists($repository_dir . '/' . $file . '/' . $file . '.tsv')) {
                                                 $summary_file = $repository_dir . '/' . $file . '/' . $file . '.tsv';
+                                                $summary_gateway_file = $repository_name . '/' . $file . '/' . $file . '-gateway.tsv';
                                                 $summary_query = $repository_name . '/' . $file . '/' . $file . '.tsv';
                                             }
                                             $label_file = $repository_dir . '/' . $file . '/' . $file . '.txt';
@@ -942,7 +952,8 @@ class JobController extends Controller
                                                 // Create the summary object for the Job view to display for this analysis unit.
                                                 $summary_object = ['repository' => '', 'name' => $file, 'label' => $label,
                                                     'url' => '/' . $summary_file, 'file_query' => $summary_query,
-                                                    'filename' => basename($summary_query), 'directory' => $repository_name . '/' . $file];
+                                                    'filename' => basename($summary_query), 'directory' => $repository_name . '/' . $file,
+                                                    'gateway_filename' => $summary_gateway_file];
                                                 $analysis_summary[] = $summary_object;
                                             }
                                         }
