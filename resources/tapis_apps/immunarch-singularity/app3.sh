@@ -207,6 +207,35 @@ function run_analysis()
         printf '</body>' >> ${html_file}
         printf '</html>' >> ${html_file}
 
+        # Generate a summary output report for the analysis for the
+        # gateway to use as a summary.
+        html_file=${output_directory}/${repertoire_id}.html
+
+        # Generate the output from the analysis.
+        printf "<h2>Immunarch: %s</h1>\n" ${title_string} >> ${html_file}
+        printf "<h2>Analysis</h2>\n" >> ${html_file}
+        printf "<h3>Top Clones</h3>\n" >> ${html_file}
+        printf '<iframe src="/jobs/view/show?jobid=%s&directory=%s&filename=%s" width="800" height="300" style="border: none;" seamless></iframe>\n' ${IR_GATEWAY_JOBID} ${output_directory} top_10_clones.html >> ${html_file}
+        # The below would be more elegant but it is HTML5 and doesn't work
+        #printf "<h3>Top Clones 2</h3>\n" >> ${html_file}
+        #printf '<link href="%s" rel="import" />\n' top_10_clones.html >> ${html_file}
+        printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} clonal_homeo.png >> ${html_file}
+        printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} clonal_rare.png >> ${html_file}
+        printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} count.png >> ${html_file}
+        printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} gene_family_usage_normalized.png >> ${html_file}
+        printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} gene_usage_normalized.png >> ${html_file}
+        printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} len.png >> ${html_file}
+
+        # End of main div container
+        printf '</div>' >> ${html_file}
+
+        # Use the normal iReceptor footer.
+        cat ${output_directory}/assets/footer.html >> ${html_file}
+
+        # Generate end body end HTML
+        printf '</body>' >> ${html_file}
+        printf '</html>' >> ${html_file}
+
     done
     # Remove the Immunarch required data directory
     rmdir ${PWD}/${output_directory}/data
