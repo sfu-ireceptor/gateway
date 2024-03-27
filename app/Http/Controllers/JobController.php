@@ -916,7 +916,7 @@ class JobController extends Controller
                                     $summary_object = ['repository' => '', 'name' => $file, 'label' => $label,
                                         'url' => '/' . $summary_file, 'file_query' => $summary_query,
                                         'filename' => basename($summary_query), 'directory' => $file,
-                                        'gateway_filename' => basename($summary_gateway_file)];
+                                        'gateway_filename' => $summary_gateway_file];
                                     // Add to the list of summary objects.
                                     $analysis_summary[] = $summary_object;
                                 } else {
