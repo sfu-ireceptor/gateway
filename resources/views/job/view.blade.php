@@ -70,7 +70,6 @@
                                     <td>{{ $summary_object['repository'] }}</td>
                                     <td>{{ $summary_object['label'] }}</td>
 		                            <td><a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="file/{{$job->id}}?file={{ $summary_object['gateway_filename'] }}"> View Summary </a></td>
-		                            <td><a role="button" class="btn btn-primary browse_sequences browse-seq-data-button button_to_enable_on_load"  href="show?jobid={{$job->id}}&filename={{ $summary_object['filename'] }}&directory={{$summary_object['directory']}}"> View Summary </a></td>
                                 </tr>
                                 @endforeach
                             </tbody>
