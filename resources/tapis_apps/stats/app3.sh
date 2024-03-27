@@ -303,17 +303,17 @@ function run_analysis()
 	printf "<h2>Stats: %s</h2>\n" ${title_string} >> ${html_file}
 	printf "<h2>Analysis</h2>\n" >> ${html_file}
 	printf "<h3>V/J gene usage heatmap</h3>\n" >> ${html_file}
-	printf '<img src="%s-v_call-j_call-heatmap.png" width="800">' ${file_string} >> ${html_file}
+	printf '<img src="%s-v_call-j_call-heatmap.png" width="800">\n' ${file_string} >> ${html_file}
 	printf "<h3>V gene/Junction AA Length heatmap</h3>\n" >> ${html_file}
-	printf '<img src="%s-v_call-junction_aa_length-heatmap.png" width="800">' ${file_string} >> ${html_file}
+	printf '<img src="%s-v_call-junction_aa_length-heatmap.png" width="800">\n' ${file_string} >> ${html_file}
 	printf "<h3>V Gene usage</h3>\n" >> ${html_file}
-	printf '<img src="%s-v_call-histogram.png" width="800">' ${file_string} >> ${html_file}
+	printf '<img src="%s-v_call-histogram.png" width="800">\n' ${file_string} >> ${html_file}
 	printf "<h3>D Gene usage</h3>\n" >> ${html_file}
-	printf '<img src="%s-d_call-histogram.png" width="800">' ${file_string} >> ${html_file}
+	printf '<img src="%s-d_call-histogram.png" width="800">\n' ${file_string} >> ${html_file}
 	printf "<h3>J Gene usage</h3>\n" >> ${html_file}
-	printf '<img src="%s-j_call-histogram.png" width="800">' ${file_string} >> ${html_file}
+	printf '<img src="%s-j_call-histogram.png" width="800">\n' ${file_string} >> ${html_file}
 	printf "<h3>Junction AA Length</h3>\n" >> ${html_file}
-	printf '<img src="%s-junction_aa_length-histogram.png" width="800">' ${file_string} >> ${html_file}
+	printf '<img src="%s-junction_aa_length-histogram.png" width="800">\n' ${file_string} >> ${html_file}
     # End of main div container
     printf '</div>' >> ${html_file}
 
@@ -330,17 +330,17 @@ function run_analysis()
 	printf "<h2>Stats: %s</h2>\n" ${title_string} >> ${html_file}
 	printf "<h2>Analysis</h2>\n" >> ${html_file}
 	printf "<h3>V/J gene usage heatmap</h3>\n" >> ${html_file}
-	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-j_call-heatmap.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-j_call-heatmap.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
 	printf "<h3>V gene/Junction AA Length heatmap</h3>\n" >> ${html_file}
-	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-junction_aa_length-heatmap.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-junction_aa_length-heatmap.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
 	printf "<h3>V Gene usage</h3>\n" >> ${html_file}
-	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-histogram.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-histogram.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
 	printf "<h3>D Gene usage</h3>\n" >> ${html_file}
-	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-d_call-histogram.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-d_call-histogram.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
 	printf "<h3>J Gene usage</h3>\n" >> ${html_file}
-	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-j_call-histogram.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-j_call-histogram.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
 	printf "<h3>Junction AA Length</h3>\n" >> ${html_file}
-	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-junction_aa_length-histogram.png" width="800">' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-junction_aa_length-histogram.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
     # End of main div container
     printf '</div>' >> ${html_file}
 
@@ -376,7 +376,9 @@ elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
     # Lastly, provide the list of TSV files to process. Remember that
     # the array elements are expanded into separate parameters, which
     # the run_analyis function handles.
-    outdir="Total"
+    reperotire_id="Total"
+    repository="AIRRDataCommons"
+    outdir=${repository}/${repertoire_id}
     
     # Copy the HTML resources for the Apps
     echo "IR-INFO: Copying HTML assets"
@@ -391,7 +393,8 @@ elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
     gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}/${outdir}
 
     # Run the stats analysis.
-    run_analysis ${GATEWAY_ANALYSIS_DIR}/${outdir} "AIRRDataCommons" ${outdir} "NULL" ${GATEWAY_ANALYSIS_DIR}/${outdir}/${AIRR_MANIFEST_FILE}
+    #run_analysis ${GATEWAY_ANALYSIS_DIR}/${outdir} "AIRRDataCommons" ${outdir} "NULL" ${GATEWAY_ANALYSIS_DIR}/${outdir}/${AIRR_MANIFEST_FILE}
+    run_analysis ${outdir} ${repository} ${repertoire_id} "NULL" ${GATEWAY_ANALYSIS_DIR}/${outdir}/${AIRR_MANIFEST_FILE}
 
     # Copy the INFO_FILE to the analysis DIR as the Gateway expects it to be there.
     cp ${GATEWAY_ANALYSIS_DIR}/${outdir}/${INFO_FILE} ${GATEWAY_ANALYSIS_DIR}/
