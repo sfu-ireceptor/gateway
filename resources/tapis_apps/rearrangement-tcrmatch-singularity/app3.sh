@@ -11,9 +11,13 @@ echo "IR-INFO: Running job from ${SCRIPT_DIR}"
 ########################################################################
 
 #
-# Tapis App Parameters: Will be subsituted by Tapis. There are no
-# parameters for this App.
+# Tapis App Parameters: Will be subsituted by Tapis as command line 
+# arguments to this shell script.
 #
+# First (and only) argument is the TCRmatch threshold to use.
+#
+
+TCR_MATCH_THRESHOLD=$1
 
 #
 # Tapis App Inputs
@@ -183,6 +187,7 @@ function run_analysis()
     /TCRMatch/tcrmatch \
         -i ${JUNCTION_FILE} \
         -d /TCRMatch/data/IEDB_data.tsv -t 1\
+        -s ${TCR_MATCH_THRESHOLD} \
         > ${output_directory}/${repertoire_id}_epitope.tsv
     if [ $? -ne 0 ]
     then
