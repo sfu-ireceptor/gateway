@@ -272,7 +272,7 @@ function run_analysis()
 # AIRR manifest JSON file that describes the relationships between
 # AIRR Repertoire JSON files and AIRR TSV files.
 INFO_FILE="info.txt"
-MANIFEST_FILE="AIRR-manifest.json"
+AIRR_MANIFEST_FILE="AIRR-manifest.json"
 
 if [ "${SPLIT_REPERTOIRE}" = "True" ]; then
     echo -e "IR-INFO: \nIR-INFO: Splitting data by Repertoire\n"
@@ -281,9 +281,9 @@ if [ "${SPLIT_REPERTOIRE}" = "True" ]; then
     # user to define a function called run_analysis() that will be
     # called for each repertoire. See the docs in the gateway_utilities.sh file
     # for parameters to this function.
-    gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
-    gateway_run_analysis ${INFO_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
-    gateway_cleanup ${ZIP_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_split_repertoire ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_run_analysis ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_cleanup ${ZIP_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 
 elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
