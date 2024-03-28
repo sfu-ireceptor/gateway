@@ -5,8 +5,8 @@
 
 @section('content')
 <div class="container job_container">
-    @if (count($plain_file) > 0)
-        @foreach ($plain_file as $line)
+    @if (count($html_file) > 0)
+        @foreach ($html_file as $line)
             {!! $line !!}
         @endforeach
     @else

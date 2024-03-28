@@ -51,13 +51,18 @@ return [
 
         'test_user_username' => env('TEST_USER_USERNAME'),
         'test_user_password' => env('TEST_USER_PASSWORD'),
+        // The directory where Tapis Apps are found relative to resource_path()
         'app_base_dir' => 'tapis_apps',
+        // The base directory in the analysis app where the analysis output is stored.
+        // This exists on the compute plaform and is also needed on the Gateway since
+        // the gateway downloads the analsyis output.
+        'analysis_base_dir' => 'gateway_analysis',
         // App JSON defintion script that is used for every App. Apps need to
         // implement this as it describes the parameters and type of App.
         'app_json_file' => 'app3.json',
         // Directories where the Apps can be found that are currently active.
         'app_directories' => [
-            'stats', 'histogram', 'clone-stats', 'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity', 'rearrangement-tcrmatch-singularity'
+            'stats', 'histogram', 'clone-stats', 'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity', 'rearrangement-tcrmatch-singularity',
         ],
         'system_execution' => [
             'name_prefix' => env('TAPIS_SYSTEM_EXECUTION_NAME_PREFIX', 'exec'),
