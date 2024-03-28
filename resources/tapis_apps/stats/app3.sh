@@ -214,6 +214,10 @@ function run_analysis()
 #     $3 repertoire_id ("NULL" if should skip repertoire processing)
 #     $4 repertoire file (Not used if repertoire_id == NULL)
 #     $5 manifest file
+#
+# Note: this function assumes that the jobs are running from the base
+# analysis directory, with files and directories (e.g. $1) being specified
+# relative to that location.
 {
 	# Use local variables - no scope issues please...
 	local output_directory=$1
@@ -231,7 +235,7 @@ function run_analysis()
     pwd
 
     # Get a list of rearrangement files to process from the manifest.
-    local array_of_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
+    array_of_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not process manifest file ${manifest_file}"
@@ -376,10 +380,16 @@ elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
     # Lastly, provide the list of TSV files to process. Remember that
     # the array elements are expanded into separate parameters, which
     # the run_analyis function handles.
-    reperotire_id="Total"
+    repertoire_id="Total"
     repository="AIRRDataCommons"
     outdir=${repository}/${repertoire_id}
     
+    # Unzip the files in the base directory like a normal analysis
+    gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
+    # Also unzip into the analysis dir, as the files in the zip
+    # are the files to perform the analysis on.
+    gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}/${outdir}
+
     # Copy the HTML resources for the Apps
     echo "IR-INFO: Copying HTML assets"
     mkdir -p ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
@@ -389,16 +399,14 @@ elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
         echo "IR-ERROR: Could not create HTML asset directory"
     fi
 
-    # Run the stats on all the data combined. Unzip the files
-    gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}/${outdir}
 
-    # Run the stats analysis.
-    #run_analysis ${GATEWAY_ANALYSIS_DIR}/${outdir} "AIRRDataCommons" ${outdir} "NULL" ${GATEWAY_ANALYSIS_DIR}/${outdir}/${AIRR_MANIFEST_FILE}
-    run_analysis ${outdir} ${repository} ${repertoire_id} "NULL" ${GATEWAY_ANALYSIS_DIR}/${outdir}/${AIRR_MANIFEST_FILE}
+    # Run the stats analysis. We need to run this from the GATEWAY_ANALYSIS_DIR
+    cd ${GATEWAY_ANALYSIS_DIR}
+    run_analysis ${outdir} ${repository} ${repertoire_id} "NULL" ${outdir}/${AIRR_MANIFEST_FILE}
 
-    # Copy the INFO_FILE to the analysis DIR as the Gateway expects it to be there.
-    cp ${GATEWAY_ANALYSIS_DIR}/${outdir}/${INFO_FILE} ${GATEWAY_ANALYSIS_DIR}/
-
+    # Clean up after doing the analysis. We don't want to leave behind all of the
+    # large TSV and zip files etc.
+    gateway_cleanup ${ZIP_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 else
     echo "IR-ERROR: Unknown repertoire operation ${SPLIT_REPERTOIRE}" >&2
     exit 1
