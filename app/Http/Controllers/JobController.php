@@ -866,7 +866,7 @@ class JobController extends Controller
                 if (count($data['files']) > 0) {
                     // Create a list of files a baseline to display
                     $data['filesHTML'] = dir_to_html($analysis_folder, $job->id);
-                    Log::debug('JobController::getView: filesHTML = ' . $data['filesHTML']);
+                    // Log::debug('JobController::getView: filesHTML = ' . $data['filesHTML']);
                     // We want to have specific info for the error and output files.
                     $data['error_log_url'] = $analysis_folder . '/' . $error_file;
                     $data['output_log_url'] = $analysis_folder . '/' . $output_file;
@@ -881,6 +881,7 @@ class JobController extends Controller
                         foreach (scandir($analysis_folder) as $file) {
                             // Look at each file and if it is a folder, process it.
                             if ($file !== '.' && $file !== '..' && is_dir($analysis_folder . '/' . $file)) {
+                                Log::debug('JobController::getView: processing dir = ' . $file);
                                 // Look for gateway specific analysis summary files. If the analysis app
                                 // produces an .html/.pdf and a .txt file with the same name as the directory
                                 // for this analysis unit, then we give that information to the Gateway so that
@@ -950,7 +951,7 @@ class JobController extends Controller
                                                     $label = fread($filehandle, filesize($label_file));
                                                 }
                                                 // Create the summary object for the Job view to display for this analysis unit.
-                                                $summary_object = ['repository' => '', 'name' => $file, 'label' => $label,
+                                                $summary_object = ['repository' => $repository_name, 'name' => $file, 'label' => $label,
                                                     'url' => '/' . $summary_file, 'file_query' => $summary_query,
                                                     'filename' => basename($summary_query), 'directory' => $repository_name . '/' . $file,
                                                     'gateway_filename' => $summary_gateway_file];
