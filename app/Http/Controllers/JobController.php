@@ -224,12 +224,10 @@ class JobController extends Controller
         // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
-        // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same and probably should be
-        // defined as a CONFIG variable some how. For now we hardcode here and in the
-        // Tapis Gateway Utilities code.
-        // TODO: Define in config file.
-        $analysis_base = 'gateway_analysis';
+        // The analysis directory is shated between the Gateway and the Gateway Utilities
+        // that are used by Gateway Apps. This MUST be the same across both environments. 
+        // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
+        $analysis_base = config('services.tapis.analysis_base_dir');
 
         // Get the job for the user.
         $job = Job::findJobForUser($id, auth()->user()->id);
@@ -268,12 +266,10 @@ class JobController extends Controller
         // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
-        // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same and probably should be
-        // defined as a CONFIG variable some how. For now we hardcode here and in the
-        // Tapis Gateway Utilities code.
-        // TODO: Define in config file.
-        $analysis_base = 'gateway_analysis';
+        // The analysis directory is shated between the Gateway and the Gateway Utilities
+        // that are used by Gateway Apps. This MUST be the same across both environments. 
+        // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
+        $analysis_base = config('services.tapis.analysis_base_dir');
 
         // Get the job for the user.
         $job = Job::findJobForUser($id, auth()->user()->id);
@@ -324,12 +320,10 @@ class JobController extends Controller
         // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
-        // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same and probably should be
-        // defined as a CONFIG variable some how. For now we hardcode here and in the
-        // Tapis Gateway Utilities code.
-        // TODO: Define in config file.
-        $analysis_base = 'gateway_analysis';
+        // The analysis directory is shated between the Gateway and the Gateway Utilities
+        // that are used by Gateway Apps. This MUST be the same across both environments. 
+        // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
+        $analysis_base = config('services.tapis.analysis_base_dir');
 
         // Get the job for the user.
         $job = Job::findJobForUser($id, auth()->user()->id);
@@ -381,12 +375,10 @@ class JobController extends Controller
         // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
-        // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same and probably should be
-        // defined as a CONFIG variable some how. For now we hardcode here and in the
-        // Tapis Gateway Utilities code.
-        // TODO: Define in config file.
-        $analysis_base = 'gateway_analysis';
+        // The analysis directory is shated between the Gateway and the Gateway Utilities
+        // that are used by Gateway Apps. This MUST be the same across both environments. 
+        // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
+        $analysis_base = config('services.tapis.analysis_base_dir');
 
         // Get the job for the user.
         $job = Job::findJobForUser($id, auth()->user()->id);
@@ -458,7 +450,10 @@ class JobController extends Controller
         }
         // Get the base directory information.
         $download_folder = config('ireceptor.downloads_data_folder');
-        $analysis_base = 'gateway_analysis';
+        // The analysis directory is shated between the Gateway and the Gateway Utilities
+        // that are used by Gateway Apps. This MUST be the same across both environments. 
+        // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
+        $analysis_base = config('services.tapis.analysis_base_dir');
 
         // Get the path for the file relative to storage_path()
         $path = storage_path() . '/' . $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base;
@@ -497,11 +492,10 @@ class JobController extends Controller
         $data['job'] = $job;
         Log::debug('JobController::getView: job = ' . json_encode($job, JSON_PRETTY_PRINT));
 
-        // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same and probably should be
-        // defined as a CONFIG variable some how. For now we hardcode here and in the
-        // Tapis Gateway Utilities code.
-        $analysis_base = 'gateway_analysis';
+        // The analysis directory is shated between the Gateway and the Gateway Utilities
+        // that are used by Gateway Apps. This MUST be the same across both environments. 
+        // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
+        $analysis_base = config('services.tapis.analysis_base_dir');
 
         $data['analysis_download_url'] = '';
         $data['output_log_url'] = '';
