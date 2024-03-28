@@ -249,6 +249,39 @@ function run_analysis()
     printf '</body>' >> ${html_file}
     printf '</html>' >> ${html_file}
     
+    # Generate a summary HTML file for the Gateway to present this info to the user
+    html_file=${output_directory}/${repertoire_id}-gateway.html
+
+    printf "<h2>TCRMatch: %s</h2>\n" ${title_string} >> ${html_file}
+
+    printf "<h2>Analysis</h2>\n" >> ${html_file}
+    printf "<h3>TCRMatch Summary</h3>\n" >> ${html_file}
+    
+    echo "<ul>" >> ${html_file}
+
+    echo -n "<li>Number of unique CDR3s: " >> ${html_file}
+    wc -l ${JUNCTION_FILE} | cut -f 1 -d " " >> ${html_file}
+    echo "</li>" >> ${html_file}
+
+    echo -n "<li>Number of CDR3/epitope matches: " >> ${html_file}
+    wc -l ${output_directory}/${repertoire_id}_epitope.tsv  | cut -f 1 -d " " >> ${html_file}
+    echo "</li>" >> ${html_file}
+
+    echo -n "<li>Number of unique CDR3/epitope matches: " >> ${html_file}
+    cut -f 2 ${output_directory}/${repertoire_id}_epitope.tsv | sort -u | wc -l | cut -f 1 -d " " >> ${html_file}
+    echo "</li>" >> ${html_file}
+
+    echo "</ul>" >> ${html_file}
+
+
+    printf "<h3>%s</h3>\n" ${title_string} >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py ${output_directory}/${repertoire_id}_epitope.tsv >> ${html_file}
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_epitope.tsv"
+        echo "ERROR occurred generating HTML report generation" >> ${html_file}
+    fi
+
     # Add the required label file for the Gateway to present the results as a summary.
     label_file=${output_directory}/${repertoire_id}.txt
     echo "IR-INFO: Generating label file ${label_file}"

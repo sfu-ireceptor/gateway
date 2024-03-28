@@ -268,6 +268,14 @@ function run_analysis()
     printf '</body>' >> ${html_file}
     printf '</html>' >> ${html_file}
 
+    # Generate a summary HTML file for the Gateway to present this info to the user
+    html_file=${output_directory}/${repertoire_id}-gateway.html
+
+    printf "<h2>Conga: %s</h2>\n" ${title_string} >> ${html_file}
+    printf "<h3>Conga Analysis: %s</h3>\n" ${title_string} >> ${html_file}
+    #sed -i 's/gex_clusters_tcrdist_trees.png/gex_clusters_tcrdist_trees.svg/g' ${output_directory}/${file_string}_results_summary.html
+    #sed -i 's/conga_threshold_tcrdist_tree.png/conga_threshold_tcrdist_tree.svg/g' ${output_directory}/${file_string}_results_summary.html
+    printf '<iframe src="/jobs/view/show?jobid=%s&directory=%s&filename=%s" width="100%%", height="700px"></iframe>\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string}_results_summary.html >> ${html_file}
 
     # Copy the Conga summary report to the gateway expected summary for this repertoire
     #cp ${output_directory}/${file_string}_results_summary.html ${output_directory}/${repertoire_id}.html

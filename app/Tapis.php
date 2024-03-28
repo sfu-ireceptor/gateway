@@ -577,7 +577,7 @@ class Tapis
         return $app_config;
     }
 
-    public function getJobConfig($name, $app_id, $download_file, $gateway_system, $gateway_notification_url, $gateway_dir, $params, $inputs, $job_params)
+    public function getJobConfig($gateway_jobid, $name, $app_id, $download_file, $gateway_system, $gateway_notification_url, $gateway_dir, $params, $inputs, $job_params)
     {
         // Get the gateway environment stuff required
         $gateway_url = config('app.url');
@@ -626,6 +626,7 @@ class Tapis
         $t['parameterSet']['envVariables'][] = ['key' => 'IR_GATEWAY_BASE_DIR', 'value' => $container_gateway_mount_dir];
         $t['parameterSet']['envVariables'][] = ['key' => 'IR_GATEWAY_UTIL_DIR', 'value' => $gateway_util_dir];
         $t['parameterSet']['envVariables'][] = ['key' => 'IR_GATEWAY_APP_DIR', 'value' => $gateway_app_dir];
+        $t['parameterSet']['envVariables'][] = ['key' => 'IR_GATEWAY_JOBID', 'value' => strval($gateway_jobid)];
 
         // Set up the container arguments. We want to mount external mount points.
         $t['parameterSet']['containerArgs'][] = ['name' => 'project_mount', 'arg' => '-B /project:/project'];

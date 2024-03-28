@@ -224,12 +224,10 @@ class JobController extends Controller
         // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
-        // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same and probably should be
-        // defined as a CONFIG variable some how. For now we hardcode here and in the
-        // Tapis Gateway Utilities code.
-        // TODO: Define in config file.
-        $analysis_base = 'gateway_analysis';
+        // The analysis directory is shated between the Gateway and the Gateway Utilities
+        // that are used by Gateway Apps. This MUST be the same across both environments.
+        // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
+        $analysis_base = config('services.tapis.analysis_base_dir');
 
         // Get the job for the user.
         $job = Job::findJobForUser($id, auth()->user()->id);
@@ -268,12 +266,10 @@ class JobController extends Controller
         // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
-        // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same and probably should be
-        // defined as a CONFIG variable some how. For now we hardcode here and in the
-        // Tapis Gateway Utilities code.
-        // TODO: Define in config file.
-        $analysis_base = 'gateway_analysis';
+        // The analysis directory is shated between the Gateway and the Gateway Utilities
+        // that are used by Gateway Apps. This MUST be the same across both environments.
+        // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
+        $analysis_base = config('services.tapis.analysis_base_dir');
 
         // Get the job for the user.
         $job = Job::findJobForUser($id, auth()->user()->id);
@@ -324,12 +320,10 @@ class JobController extends Controller
         // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
-        // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same and probably should be
-        // defined as a CONFIG variable some how. For now we hardcode here and in the
-        // Tapis Gateway Utilities code.
-        // TODO: Define in config file.
-        $analysis_base = 'gateway_analysis';
+        // The analysis directory is shated between the Gateway and the Gateway Utilities
+        // that are used by Gateway Apps. This MUST be the same across both environments.
+        // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
+        $analysis_base = config('services.tapis.analysis_base_dir');
 
         // Get the job for the user.
         $job = Job::findJobForUser($id, auth()->user()->id);
@@ -381,12 +375,10 @@ class JobController extends Controller
         // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
-        // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same and probably should be
-        // defined as a CONFIG variable some how. For now we hardcode here and in the
-        // Tapis Gateway Utilities code.
-        // TODO: Define in config file.
-        $analysis_base = 'gateway_analysis';
+        // The analysis directory is shated between the Gateway and the Gateway Utilities
+        // that are used by Gateway Apps. This MUST be the same across both environments.
+        // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
+        $analysis_base = config('services.tapis.analysis_base_dir');
 
         // Get the job for the user.
         $job = Job::findJobForUser($id, auth()->user()->id);
@@ -417,44 +409,56 @@ class JobController extends Controller
             $file_str = file($folder . '/' . $file_name);
             // Prepare the data return to the view
             $data = [];
-            $data['title'] = '';
             $data['job'] = $job;
-            $data['base_directory'] = $folder;
-            $data['storage_directory'] = $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base . '/' . dirname($file_name);
-            $storage_file = $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base . '/' . $file_name;
-            $data['storage_file'] = $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base . '/' . dirname($file_name);
-            $data['file_name'] = $file_name;
-            $data['filename'] = $filename;
-            $data['directory'] = $directory;
+            // Add HTML <br> to make the file look OK.
             $file_br_str = str_replace('\n', '<br>\n', $file_str);
-            $data['plain_file'] = $file_br_str;
-            Log::debug('JobController::getViewJobFile: asset = ' . asset($file_name));
+            // Return the HTML data to the blade for rendering.
+            $data['html_file'] = $file_br_str;
 
-            //return response()->file(storage_path($storage_file));
-            return view('job/css_file', $data);
+            return view('job/html_file', $data);
         }
 
+        // If we can't view the file, notify the user.
         return redirect('jobs/view/' . $id)->with('notification', 'Could not view analysis file ' . $file_name);
     }
 
-    //public function show($filename)
     public function getShow(Request $request)
     {
+        // Check to see if the three required parameters are present.
+        // If missing, respond with a Not authorized response.
+        if (! $request->has('filename') || ! $request->has('directory') || ! $request->has('jobid')) {
+            abort(401, 'Not authorized.');
+        }
+
+        // Get the three expected request parameters.
         $filename = $request->input('filename');
         $directory = $request->input('directory');
         $jobid = $request->input('jobid');
-        $job = Job::findJobForUser($jobid, auth()->user()->id);
-        $download_folder = config('ireceptor.downloads_data_folder');
-        $analysis_base = 'gateway_analysis';
 
         // Get the job for the user.
+        $job = Job::findJobForUser($jobid, auth()->user()->id);
+
+        // If there isn't one, check to see if we are the admin user. If so, then
+        // we can access the job info.
+        if ($job == null) {
+            $user = User::where('username', auth()->user()->username)->first();
+            if ($user->isAdmin()) {
+                $job = Job::where('id', '=', $jobid)->first();
+            }
+        }
+        // If the job is still null, then we are not authorized.
+        if ($job == null) {
+            abort(401, 'Not authorized.');
+        }
+        // Get the base directory information.
+        $download_folder = config('ireceptor.downloads_data_folder');
+        // The analysis directory is shated between the Gateway and the Gateway Utilities
+        // that are used by Gateway Apps. This MUST be the same across both environments.
+        // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
+        $analysis_base = config('services.tapis.analysis_base_dir');
+
+        // Get the path for the file relative to storage_path()
         $path = storage_path() . '/' . $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base;
-        //$path = storage_path('app/images/' . $filename);
-
-        //if (!Storage::disk('local')->exists('images/' . $filename)) {
-        //    abort(404);
-        //}
-
         Log::debug('JobController::getShow: path = ' . $path);
         Log::debug('JobController::getShow: directory = ' . $directory);
         Log::debug('JobController::getShow: filename = ' . $filename);
@@ -490,11 +494,10 @@ class JobController extends Controller
         $data['job'] = $job;
         Log::debug('JobController::getView: job = ' . json_encode($job, JSON_PRETTY_PRINT));
 
-        // The analysis directory "gateway_analysis" is defined in the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same and probably should be
-        // defined as a CONFIG variable some how. For now we hardcode here and in the
-        // Tapis Gateway Utilities code.
-        $analysis_base = 'gateway_analysis';
+        // The analysis directory is shated between the Gateway and the Gateway Utilities
+        // that are used by Gateway Apps. This MUST be the same across both environments.
+        // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
+        $analysis_base = config('services.tapis.analysis_base_dir');
 
         $data['analysis_download_url'] = '';
         $data['output_log_url'] = '';
@@ -863,7 +866,7 @@ class JobController extends Controller
                 if (count($data['files']) > 0) {
                     // Create a list of files a baseline to display
                     $data['filesHTML'] = dir_to_html($analysis_folder, $job->id);
-                    Log::debug('JobController::getView: filesHTML = ' . $data['filesHTML']);
+                    // Log::debug('JobController::getView: filesHTML = ' . $data['filesHTML']);
                     // We want to have specific info for the error and output files.
                     $data['error_log_url'] = $analysis_folder . '/' . $error_file;
                     $data['output_log_url'] = $analysis_folder . '/' . $output_file;
@@ -878,6 +881,7 @@ class JobController extends Controller
                         foreach (scandir($analysis_folder) as $file) {
                             // Look at each file and if it is a folder, process it.
                             if ($file !== '.' && $file !== '..' && is_dir($analysis_folder . '/' . $file)) {
+                                Log::debug('JobController::getView: processing dir = ' . $file);
                                 // Look for gateway specific analysis summary files. If the analysis app
                                 // produces an .html/.pdf and a .txt file with the same name as the directory
                                 // for this analysis unit, then we give that information to the Gateway so that
@@ -887,12 +891,15 @@ class JobController extends Controller
                                 $summary_file = '';
                                 if (File::exists($analysis_folder . '/' . $file . '/' . $file . '.html')) {
                                     $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.html';
+                                    $summary_gateway_file = $file . '/' . $file . '-gateway.html';
                                     $summary_query = $file . '/' . $file . '.html';
                                 } elseif (File::exists($analysis_folder . '/' . $file . '/' . $file . '.pdf')) {
                                     $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.pdf';
+                                    $summary_gateway_file = $file . '/' . $file . '-gateway.pdf';
                                     $summary_query = $file . '/' . $file . '.pdf';
                                 } elseif (File::exists($analysis_folder . '/' . $file . '/' . $file . '.tsv')) {
                                     $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.tsv';
+                                    $summary_gateway_file = $file . '/' . $file . '-gateway.tsv';
                                     $summary_query = $file . '/' . $file . '.tsv';
                                 }
                                 Log::debug('summary_file = ' . $summary_file);
@@ -909,7 +916,8 @@ class JobController extends Controller
                                     // Create the object with useful info (that the Gateway Job view expects).
                                     $summary_object = ['repository' => '', 'name' => $file, 'label' => $label,
                                         'url' => '/' . $summary_file, 'file_query' => $summary_query,
-                                        'filename' => basename($summary_query), 'directory' => $file];
+                                        'filename' => basename($summary_query), 'directory' => $file,
+                                        'gateway_filename' => $summary_gateway_file];
                                     // Add to the list of summary objects.
                                     $analysis_summary[] = $summary_object;
                                 } else {
@@ -923,12 +931,15 @@ class JobController extends Controller
                                             $summary_file = '';
                                             if (File::exists($repository_dir . '/' . $file . '/' . $file . '.html')) {
                                                 $summary_file = $repository_dir . '/' . $file . '/' . $file . '.html';
+                                                $summary_gateway_file = $repository_name . '/' . $file . '/' . $file . '-gateway.html';
                                                 $summary_query = $repository_name . '/' . $file . '/' . $file . '.html';
                                             } elseif (File::exists($repository_dir . '/' . $file . '/' . $file . '.pdf')) {
                                                 $summary_file = $repository_dir . '/' . $file . '/' . $file . '.pdf';
+                                                $summary_gateway_file = $repository_name . '/' . $file . '/' . $file . '-gateway.pdf';
                                                 $summary_query = $repository_name . '/' . $file . '/' . $file . '.pdf';
                                             } elseif (File::exists($repository_dir . '/' . $file . '/' . $file . '.tsv')) {
                                                 $summary_file = $repository_dir . '/' . $file . '/' . $file . '.tsv';
+                                                $summary_gateway_file = $repository_name . '/' . $file . '/' . $file . '-gateway.tsv';
                                                 $summary_query = $repository_name . '/' . $file . '/' . $file . '.tsv';
                                             }
                                             $label_file = $repository_dir . '/' . $file . '/' . $file . '.txt';
@@ -940,9 +951,10 @@ class JobController extends Controller
                                                     $label = fread($filehandle, filesize($label_file));
                                                 }
                                                 // Create the summary object for the Job view to display for this analysis unit.
-                                                $summary_object = ['repository' => '', 'name' => $file, 'label' => $label,
+                                                $summary_object = ['repository' => $repository_name, 'name' => $file, 'label' => $label,
                                                     'url' => '/' . $summary_file, 'file_query' => $summary_query,
-                                                    'filename' => basename($summary_query), 'directory' => $repository_name . '/' . $file];
+                                                    'filename' => basename($summary_query), 'directory' => $repository_name . '/' . $file,
+                                                    'gateway_filename' => $summary_gateway_file];
                                                 $analysis_summary[] = $summary_object;
                                             }
                                         }
