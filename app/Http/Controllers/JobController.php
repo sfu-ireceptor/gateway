@@ -417,47 +417,51 @@ class JobController extends Controller
             $file_str = file($folder . '/' . $file_name);
             // Prepare the data return to the view
             $data = [];
-            $data['title'] = '';
             $data['job'] = $job;
-            $data['base_directory'] = $folder;
-            $data['storage_directory'] = $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base . '/' . dirname($file_name);
-            $storage_file = $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base . '/' . $file_name;
-            $data['storage_file'] = $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base . '/' . dirname($file_name);
-            $data['file_name'] = $file_name;
-            $data['filename'] = $filename;
-            $data['directory'] = $directory;
+            // Add HTML <br> to make the file look OK.
             $file_br_str = str_replace('\n', '<br>\n', $file_str);
-            $data['plain_file'] = $file_br_str;
-            $data['pattern'] = '/<img.*?src=["\'](.*?)["\'].*?>/i';
-            $data['replace_str'] = '<img src="https://gateway-clean.ireceptor.org/jobs/view/show?jobid=167&filename=ipa1.ireceptor.org_PRJEB8745_BS4IgG_LAMGC1d22_BS4IgG_LAMGC1d22_spleen_IGH-d_call-histogram.png&directory=ipa1.ireceptor.org/662">';
-            $data['replace_str'] = '<img src="view/show?jobid=167&filename=ipa1.ireceptor.org_PRJEB8745_BS4IgG_LAMGC1d22_BS4IgG_LAMGC1d22_spleen_IGH-d_call-histogram.png&directory=ipa1.ireceptor.org/662">';
-            Log::debug('JobController::getViewJobFile: asset = ' . asset($file_name));
-
-            //return response()->file(storage_path($storage_file));
+            // Return the HTML data to the blade for rendering.
+            $data['html_file'] = $file_br_str;
             return view('job/html_file', $data);
         }
-
+        // If we can't view the file, notify the user.
         return redirect('jobs/view/' . $id)->with('notification', 'Could not view analysis file ' . $file_name);
     }
 
-    //public function show($filename)
     public function getShow(Request $request)
     {
+        // Check to see if the three required parameters are present.
+        // If missing, respond with a Not authorized response.
+        if (!$request->has('filename') || !$request->has('directory') || !$request->has('jobid')) {
+            abort(401, 'Not authorized.');
+        }
+
+        // Get the three expected request parameters.
         $filename = $request->input('filename');
         $directory = $request->input('directory');
         $jobid = $request->input('jobid');
+
+        // Get the job for the user.
         $job = Job::findJobForUser($jobid, auth()->user()->id);
+
+        // If there isn't one, check to see if we are the admin user. If so, then
+        // we can access the job info.
+        if ($job == null) {
+            $user = User::where('username', auth()->user()->username)->first();
+            if ($user->isAdmin()) {
+                $job = Job::where('id', '=', $jobid)->first();
+            }
+        }
+        // If the job is still null, then we are not authorized.
+        if ($job == null) {
+            abort(401, 'Not authorized.');
+        }
+        // Get the base directory information.
         $download_folder = config('ireceptor.downloads_data_folder');
         $analysis_base = 'gateway_analysis';
 
-        // Get the job for the user.
+        // Get the path for the file relative to storage_path()
         $path = storage_path() . '/' . $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base;
-        //$path = storage_path('app/images/' . $filename);
-
-        //if (!Storage::disk('local')->exists('images/' . $filename)) {
-        //    abort(404);
-        //}
-
         Log::debug('JobController::getShow: path = ' . $path);
         Log::debug('JobController::getShow: directory = ' . $directory);
         Log::debug('JobController::getShow: filename = ' . $filename);
