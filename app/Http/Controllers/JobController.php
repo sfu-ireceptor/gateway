@@ -225,7 +225,7 @@ class JobController extends Controller
         $download_folder = config('ireceptor.downloads_data_folder');
 
         // The analysis directory is shated between the Gateway and the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same across both environments. 
+        // that are used by Gateway Apps. This MUST be the same across both environments.
         // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
         $analysis_base = config('services.tapis.analysis_base_dir');
 
@@ -267,7 +267,7 @@ class JobController extends Controller
         $download_folder = config('ireceptor.downloads_data_folder');
 
         // The analysis directory is shated between the Gateway and the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same across both environments. 
+        // that are used by Gateway Apps. This MUST be the same across both environments.
         // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
         $analysis_base = config('services.tapis.analysis_base_dir');
 
@@ -321,7 +321,7 @@ class JobController extends Controller
         $download_folder = config('ireceptor.downloads_data_folder');
 
         // The analysis directory is shated between the Gateway and the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same across both environments. 
+        // that are used by Gateway Apps. This MUST be the same across both environments.
         // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
         $analysis_base = config('services.tapis.analysis_base_dir');
 
@@ -376,7 +376,7 @@ class JobController extends Controller
         $download_folder = config('ireceptor.downloads_data_folder');
 
         // The analysis directory is shated between the Gateway and the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same across both environments. 
+        // that are used by Gateway Apps. This MUST be the same across both environments.
         // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
         $analysis_base = config('services.tapis.analysis_base_dir');
 
@@ -414,8 +414,10 @@ class JobController extends Controller
             $file_br_str = str_replace('\n', '<br>\n', $file_str);
             // Return the HTML data to the blade for rendering.
             $data['html_file'] = $file_br_str;
+
             return view('job/html_file', $data);
         }
+
         // If we can't view the file, notify the user.
         return redirect('jobs/view/' . $id)->with('notification', 'Could not view analysis file ' . $file_name);
     }
@@ -424,7 +426,7 @@ class JobController extends Controller
     {
         // Check to see if the three required parameters are present.
         // If missing, respond with a Not authorized response.
-        if (!$request->has('filename') || !$request->has('directory') || !$request->has('jobid')) {
+        if (! $request->has('filename') || ! $request->has('directory') || ! $request->has('jobid')) {
             abort(401, 'Not authorized.');
         }
 
@@ -451,7 +453,7 @@ class JobController extends Controller
         // Get the base directory information.
         $download_folder = config('ireceptor.downloads_data_folder');
         // The analysis directory is shated between the Gateway and the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same across both environments. 
+        // that are used by Gateway Apps. This MUST be the same across both environments.
         // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
         $analysis_base = config('services.tapis.analysis_base_dir');
 
@@ -493,7 +495,7 @@ class JobController extends Controller
         Log::debug('JobController::getView: job = ' . json_encode($job, JSON_PRETTY_PRINT));
 
         // The analysis directory is shated between the Gateway and the Gateway Utilities
-        // that are used by Gateway Apps. This MUST be the same across both environments. 
+        // that are used by Gateway Apps. This MUST be the same across both environments.
         // Stored in a config on the Gateway, hardcoded in the Tapis Gateway Utilities code.
         $analysis_base = config('services.tapis.analysis_base_dir');
 
