@@ -211,12 +211,12 @@ function run_analysis()
 # Parameters:
 #     $1 output directory
 #     $2 repository name [string]
-#     $3 repertoire_id ("NULL" if should skip repertoire processing)
-#     $4 repertoire file (Not used if repertoire_id == NULL)
+#     $3 repertoire_id [string] "Total" if aggergate/combined analysis
+#     $4 repertoire file (Not used if repertoire_id == "Total")
 #     $5 manifest file
 #
 # Note: this function assumes that the jobs are running from the base
-# analysis directory, with files and directories (e.g. $1) being specified
+# analysis directory, with files and directories (e.g. $1, $5) being specified
 # relative to that location.
 {
 	# Use local variables - no scope issues please...
@@ -373,13 +373,9 @@ elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
     echo -e "IR-INFO:\nIR-INFO: Running app on entire data set"
     echo "IR-INFO:"
 
-    # Output directory is called "Total"
     # Run the analysis with a token repository name of "ADC" since the
     # analysis is being run on data from the entire ADC.
-    # repertoire_id and repository should be "NULL"
-    # Lastly, provide the list of TSV files to process. Remember that
-    # the array elements are expanded into separate parameters, which
-    # the run_analyis function handles.
+    # repertoire_id is "Total" since it isn't a repertoire analysis.
     repertoire_id="Total"
     repository="AIRRDataCommons"
     outdir=${repository}/${repertoire_id}
@@ -399,8 +395,7 @@ elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
         echo "IR-ERROR: Could not create HTML asset directory"
     fi
 
-
-    # Run the stats analysis. We need to run this from the GATEWAY_ANALYSIS_DIR
+    # Run the analysis. We need to run this from the GATEWAY_ANALYSIS_DIR
     cd ${GATEWAY_ANALYSIS_DIR}
     run_analysis ${outdir} ${repository} ${repertoire_id} "NULL" ${outdir}/${AIRR_MANIFEST_FILE}
 
