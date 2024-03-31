@@ -254,7 +254,7 @@ class LaunchJob implements ShouldQueue
 
             $localJob = LocalJob::find($this->localJobId);
             $localJob->setFailed();
-            throw new App\Jobs\Exception('Job failed.');
+            throw new \Exception('Job failed.');
         }
     }
 

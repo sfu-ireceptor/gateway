@@ -29,13 +29,13 @@ class Tapis
         $this->updateAppTemplates();
 
         // Maximum run time for a job in hours.
-        $this->maxMinutes = config('services.tapis.system_execution.max_minutes');
+        $this->maxMinutes = intval(config('services.tapis.system_execution.max_minutes'));
         // Maximum number of processors per job. For now all serial jobs.
-        $this->coresPerNode = config('services.tapis.system_execution.cores_per_node');
+        $this->coresPerNode = intval(config('services.tapis.system_execution.cores_per_node'));
         // Amount of memory per node (in MB)
-        $this->memoryMBPerNode = config('services.tapis.system_execution.memory_per_node');
+        $this->memoryMBPerNode = intval(config('services.tapis.system_execution.memory_per_node'));
         // Amount of memory per processor (in MB)
-        $this->memoryMBPerCore = config('services.tapis.system_execution.memory_per_core');
+        $this->memoryMBPerCore = intval(config('services.tapis.system_execution.memory_per_core'));
 
         // Set up the default job contorl parameters used by TAPIS
         $this->jobParameters = [];
