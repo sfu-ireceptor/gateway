@@ -70,11 +70,11 @@ return [
             // Max length of a job
             'max_minutes' => env('TAPIS_JOB_MAX_MINUTES', intval(1439)),
             // Number of cores per node for a job
-            'cores_per_node' => env('TAPIS_JOB_CORES_PER_NODE',intval(1)),
+            'cores_per_node' => env('TAPIS_JOB_CORES_PER_NODE', intval(1)),
             // Memory per node for a job
             'memory_per_node' => env('TAPIS_JOB_MEMORY_PER_NODE', intval(7999)),
             // Memory per core for a job
-            'memory_per_core' => env('TAPIS_JOB_MEMORY_PER_CORE',intval(7999)),
+            'memory_per_core' => env('TAPIS_JOB_MEMORY_PER_CORE', intval(7999)),
             //
             // Directory structure for jobs. There are three important directories
             // for Tapis jobs. These directories are full paths:
