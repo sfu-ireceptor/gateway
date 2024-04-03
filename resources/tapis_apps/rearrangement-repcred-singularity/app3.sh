@@ -171,6 +171,21 @@ function run_analysis()
     printf '</body>' >> ${html_file}
     printf '</html>' >> ${html_file}
     
+    # Generate a summary HTML file for the Gateway to present this info to the user
+    html_file=${output_directory}/${repertoire_id}-gateway.html
+
+    printf "<h2>Repcred: %s</h2>\n" ${title_string} >> ${html_file}
+
+    printf "<h2>Analysis</h2>\n" >> ${html_file}
+    printf "<h3>Repcred Summary</h3>\n" >> ${html_file}
+    
+    printf '<ul>'
+    printf '<iframe src="/jobs/view/show?jobid=%s&directory=%s&filename=%s" width="100%%", height="700px"></iframe>\n' ${IR_GATEWAY_JOBID} ${output_directory} ${repertoire_id}_repcred_report/results/index.html >> ${html_file}
+
+    #printf '<li><a href="${repertoire_id}_repcred_report/results/index.html"><i class="fa fa-check"></i><b>1</b> Input parameters</a></li>'
+    #printf '<li><a href="${repertoire_id}_repcred_report/results/annotation-calls-statistics.html"><i class="fa fa-check"></i><b>5</b> Annotation Calls Statistics</a>'
+    printf '</ul>'
+
     # Add the required label file for the Gateway to present the results as a summary.
     label_file=${output_directory}/${repertoire_id}.txt
     echo "IR-INFO: Generating label file ${label_file}"
