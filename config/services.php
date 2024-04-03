@@ -51,24 +51,30 @@ return [
 
         'test_user_username' => env('TEST_USER_USERNAME'),
         'test_user_password' => env('TEST_USER_PASSWORD'),
+        // The directory where Tapis Apps are found relative to resource_path()
         'app_base_dir' => 'tapis_apps',
+        // The base directory in the analysis app where the analysis output is stored.
+        // This exists on the compute plaform and is also needed on the Gateway since
+        // the gateway downloads the analsyis output.
+        'analysis_base_dir' => 'gateway_analysis',
         // App JSON defintion script that is used for every App. Apps need to
         // implement this as it describes the parameters and type of App.
         'app_json_file' => 'app3.json',
         // Directories where the Apps can be found that are currently active.
         'app_directories' => [
-            'stats', 'histogram', 'clone-stats', 'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity',
+            'stats', 'histogram', 'clone-stats', 'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity', 'rearrangement-tcrmatch-singularity',
         ],
         'system_execution' => [
+            // Prefix for execution system
             'name_prefix' => env('TAPIS_SYSTEM_EXECUTION_NAME_PREFIX', 'exec'),
             // Max length of a job
-            'max_minutes' => intval(1439),
+            'max_minutes' => env('TAPIS_JOB_MAX_MINUTES', intval(1439)),
             // Number of cores per node for a job
-            'cores_per_node' => intval(1),
+            'cores_per_node' => env('TAPIS_JOB_CORES_PER_NODE', intval(1)),
             // Memory per node for a job
-            'memory_per_node' => intval(7999),
+            'memory_per_node' => env('TAPIS_JOB_MEMORY_PER_NODE', intval(7999)),
             // Memory per core for a job
-            'memory_per_core' => intval(7999),
+            'memory_per_core' => env('TAPIS_JOB_MEMORY_PER_CORE', intval(7999)),
             //
             // Directory structure for jobs. There are three important directories
             // for Tapis jobs. These directories are full paths:

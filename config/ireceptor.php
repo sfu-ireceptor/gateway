@@ -156,6 +156,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Downloads data folder
+    |--------------------------------------------------------------------------
+    |
+    | Where downloads are stored. This should be relative to Laravel's
+    | storage_path().
+    | Ex: downloads would imply storage_path() . '/downloads'
+    |
+    */
+
+    'downloads_data_folder' => env('IRECEPTOR_DOWNLOADS_DATA_FOLDER', 'downloads'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Display all ir_ fields
     |--------------------------------------------------------------------------
     |

@@ -29,13 +29,13 @@ class Tapis
         $this->updateAppTemplates();
 
         // Maximum run time for a job in hours.
-        $this->maxMinutes = config('services.tapis.system_execution.max_minutes');
+        $this->maxMinutes = intval(config('services.tapis.system_execution.max_minutes'));
         // Maximum number of processors per job. For now all serial jobs.
-        $this->coresPerNode = config('services.tapis.system_execution.cores_per_node');
+        $this->coresPerNode = intval(config('services.tapis.system_execution.cores_per_node'));
         // Amount of memory per node (in MB)
-        $this->memoryMBPerNode = config('services.tapis.system_execution.memory_per_node');
+        $this->memoryMBPerNode = intval(config('services.tapis.system_execution.memory_per_node'));
         // Amount of memory per processor (in MB)
-        $this->memoryMBPerCore = config('services.tapis.system_execution.memory_per_core');
+        $this->memoryMBPerCore = intval(config('services.tapis.system_execution.memory_per_core'));
 
         // Set up the default job contorl parameters used by TAPIS
         $this->jobParameters = [];
@@ -577,7 +577,7 @@ class Tapis
         return $app_config;
     }
 
-    public function getJobConfig($name, $app_id, $download_file, $gateway_system, $gateway_notification_url, $gateway_dir, $params, $inputs, $job_params)
+    public function getJobConfig($gateway_jobid, $name, $app_id, $download_file, $gateway_system, $gateway_notification_url, $gateway_dir, $params, $inputs, $job_params)
     {
         // Get the gateway environment stuff required
         $gateway_url = config('app.url');
@@ -626,6 +626,7 @@ class Tapis
         $t['parameterSet']['envVariables'][] = ['key' => 'IR_GATEWAY_BASE_DIR', 'value' => $container_gateway_mount_dir];
         $t['parameterSet']['envVariables'][] = ['key' => 'IR_GATEWAY_UTIL_DIR', 'value' => $gateway_util_dir];
         $t['parameterSet']['envVariables'][] = ['key' => 'IR_GATEWAY_APP_DIR', 'value' => $gateway_app_dir];
+        $t['parameterSet']['envVariables'][] = ['key' => 'IR_GATEWAY_JOBID', 'value' => strval($gateway_jobid)];
 
         // Set up the container arguments. We want to mount external mount points.
         $t['parameterSet']['containerArgs'][] = ['name' => 'project_mount', 'arg' => '-B /project:/project'];

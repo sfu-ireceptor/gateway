@@ -116,8 +116,7 @@ class LaunchJob implements ShouldQueue
 
             // Get the path to where the data and ZIP file is in the app local file system.
             $base_path = $zip_info['base_path'];
-            // Get the public storage path (this is relative to the gateway's public data).
-            $dataFilePath = $zip_info['public_path'];
+            Log::debug('LaunchJob::handle - base_path  = ' . $base_path);
 
             // Since we have the ZIP file of the download, we don't need to keep the
             // original data file directory. We are a bit careful that we don't remove
@@ -131,7 +130,7 @@ class LaunchJob implements ShouldQueue
             // from the job and store the name in the database
             $archive_folder = $zip_info['base_name'] . '_output';
             $archive_folder_path = $base_path . $archive_folder;
-            Log::debug('Creating archive folder: ' . $archive_folder_path);
+            Log::debug('LaunchJob::handle - Creating archive folder: ' . $archive_folder_path);
             $old = umask(0);
             mkdir($archive_folder_path, 0770);
             umask($old);
@@ -239,7 +238,7 @@ class LaunchJob implements ShouldQueue
 
             // submit Tapis job
             $job->updateStatus('SENDING JOB FOR ANALYSIS');
-            $job_config = $tapis->getJobConfig('ireceptor-' . $this->jobId, $appName, $zip_info['zip_name'], $systemStaging, $notificationUrl, $archive_folder, $params, $inputs, $job_params);
+            $job_config = $tapis->getJobConfig($this->jobId, 'ireceptor-' . $this->jobId, $appName, $zip_info['zip_name'], $systemStaging, $notificationUrl, $archive_folder, $params, $inputs, $job_params);
             $response = $tapis->createJob($job_config);
             Log::debug('LaunchJob::handle submit response = ' . json_encode($response));
             $job->agave_id = $response->result->uuid;
@@ -255,7 +254,7 @@ class LaunchJob implements ShouldQueue
 
             $localJob = LocalJob::find($this->localJobId);
             $localJob->setFailed();
-            throw new App\Jobs\Exception('Job failed.');
+            throw new \Exception('Job failed.');
         }
     }
 

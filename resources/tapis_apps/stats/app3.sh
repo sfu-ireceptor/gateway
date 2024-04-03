@@ -61,6 +61,7 @@ printf "IR-INFO: MAX RUNTIME = ${_tapisMaxMinutes}\n"
 printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
 printf "IR-INFO: ZIP FILE = ${ZIP_FILE}\n"
 printf "IR-INFO: SPLIT_REPERTOIRE = ${SPLIT_REPERTOIRE}\n"
+printf "IR-INFO: IR_GATEWAY_JOBID = ${IR_GATEWAY_JOBID}\n"
 printf "IR-INFO: "
 lscpu | grep "Model name"
 printf "IR-INFO: \n"
@@ -210,9 +211,13 @@ function run_analysis()
 # Parameters:
 #     $1 output directory
 #     $2 repository name [string]
-#     $3 repertoire_id ("NULL" if should skip repertoire processing)
-#     $4 repertoire file (Not used if repertoire_id == NULL)
+#     $3 repertoire_id [string] "Total" if aggergate/combined analysis
+#     $4 repertoire file (Not used if repertoire_id == "Total")
 #     $5 manifest file
+#
+# Note: this function assumes that the jobs are running from the base
+# analysis directory, with files and directories (e.g. $1, $5) being specified
+# relative to that location.
 {
 	# Use local variables - no scope issues please...
 	local output_directory=$1
@@ -230,7 +235,7 @@ function run_analysis()
     pwd
 
     # Get a list of rearrangement files to process from the manifest.
-    local array_of_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
+    array_of_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not process manifest file ${manifest_file}"
@@ -302,17 +307,17 @@ function run_analysis()
 	printf "<h2>Stats: %s</h2>\n" ${title_string} >> ${html_file}
 	printf "<h2>Analysis</h2>\n" >> ${html_file}
 	printf "<h3>V/J gene usage heatmap</h3>\n" >> ${html_file}
-	printf '<img src="%s-v_call-j_call-heatmap.png" width="800">' ${file_string} >> ${html_file}
+	printf '<img src="%s-v_call-j_call-heatmap.png" width="800">\n' ${file_string} >> ${html_file}
 	printf "<h3>V gene/Junction AA Length heatmap</h3>\n" >> ${html_file}
-	printf '<img src="%s-v_call-junction_aa_length-heatmap.png" width="800">' ${file_string} >> ${html_file}
+	printf '<img src="%s-v_call-junction_aa_length-heatmap.png" width="800">\n' ${file_string} >> ${html_file}
 	printf "<h3>V Gene usage</h3>\n" >> ${html_file}
-	printf '<img src="%s-v_call-histogram.png" width="800">' ${file_string} >> ${html_file}
+	printf '<img src="%s-v_call-histogram.png" width="800">\n' ${file_string} >> ${html_file}
 	printf "<h3>D Gene usage</h3>\n" >> ${html_file}
-	printf '<img src="%s-d_call-histogram.png" width="800">' ${file_string} >> ${html_file}
+	printf '<img src="%s-d_call-histogram.png" width="800">\n' ${file_string} >> ${html_file}
 	printf "<h3>J Gene usage</h3>\n" >> ${html_file}
-	printf '<img src="%s-j_call-histogram.png" width="800">' ${file_string} >> ${html_file}
+	printf '<img src="%s-j_call-histogram.png" width="800">\n' ${file_string} >> ${html_file}
 	printf "<h3>Junction AA Length</h3>\n" >> ${html_file}
-	printf '<img src="%s-junction_aa_length-histogram.png" width="800">' ${file_string} >> ${html_file}
+	printf '<img src="%s-junction_aa_length-histogram.png" width="800">\n' ${file_string} >> ${html_file}
     # End of main div container
     printf '</div>' >> ${html_file}
 
@@ -322,6 +327,26 @@ function run_analysis()
     # Generate end body end HTML
     printf '</body>' >> ${html_file}
     printf '</html>' >> ${html_file}
+
+	# Generate a summary HTML file for the Gateway to present this info to the user
+	html_file=${output_directory}/${repertoire_id}-gateway.html
+
+	printf "<h2>Stats: %s</h2>\n" ${title_string} >> ${html_file}
+	printf "<h2>Analysis</h2>\n" >> ${html_file}
+	printf "<h3>V/J gene usage heatmap</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-j_call-heatmap.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf "<h3>V gene/Junction AA Length heatmap</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-junction_aa_length-heatmap.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf "<h3>V Gene usage</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-histogram.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf "<h3>D Gene usage</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-d_call-histogram.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf "<h3>J Gene usage</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-j_call-histogram.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+	printf "<h3>Junction AA Length</h3>\n" >> ${html_file}
+	printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-junction_aa_length-histogram.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
+    # End of main div container
+    printf '</div>' >> ${html_file}
 
 }
 
@@ -348,15 +373,19 @@ elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
     echo -e "IR-INFO:\nIR-INFO: Running app on entire data set"
     echo "IR-INFO:"
 
-    # Output directory is called "Total"
     # Run the analysis with a token repository name of "ADC" since the
     # analysis is being run on data from the entire ADC.
-    # repertoire_id and repository should be "NULL"
-    # Lastly, provide the list of TSV files to process. Remember that
-    # the array elements are expanded into separate parameters, which
-    # the run_analyis function handles.
-    outdir="Total"
+    # repertoire_id is "Total" since it isn't a repertoire analysis.
+    repertoire_id="Total"
+    repository="AIRRDataCommons"
+    outdir=${repository}/${repertoire_id}
     
+    # Unzip the files in the base directory like a normal analysis
+    gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
+    # Also unzip into the analysis dir, as the files in the zip
+    # are the files to perform the analysis on.
+    gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}/${outdir}
+
     # Copy the HTML resources for the Apps
     echo "IR-INFO: Copying HTML assets"
     mkdir -p ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
@@ -366,15 +395,13 @@ elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
         echo "IR-ERROR: Could not create HTML asset directory"
     fi
 
-    # Run the stats on all the data combined. Unzip the files
-    gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}/${outdir}
+    # Run the analysis. We need to run this from the GATEWAY_ANALYSIS_DIR
+    cd ${GATEWAY_ANALYSIS_DIR}
+    run_analysis ${outdir} ${repository} ${repertoire_id} "NULL" ${outdir}/${AIRR_MANIFEST_FILE}
 
-    # Run the stats analysis.
-    run_analysis ${GATEWAY_ANALYSIS_DIR}/${outdir} "AIRRDataCommons" ${outdir} "NULL" ${GATEWAY_ANALYSIS_DIR}/${outdir}/${AIRR_MANIFEST_FILE}
-
-    # Copy the INFO_FILE to the analysis DIR as the Gateway expects it to be there.
-    cp ${GATEWAY_ANALYSIS_DIR}/${outdir}/${INFO_FILE} ${GATEWAY_ANALYSIS_DIR}/
-
+    # Clean up after doing the analysis. We don't want to leave behind all of the
+    # large TSV and zip files etc.
+    gateway_cleanup ${ZIP_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 else
     echo "IR-ERROR: Unknown repertoire operation ${SPLIT_REPERTOIRE}" >&2
     exit 1

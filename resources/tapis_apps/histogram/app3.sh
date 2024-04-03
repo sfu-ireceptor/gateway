@@ -68,6 +68,7 @@ printf "IR-INFO: MAX RUNTIME = ${_tapisMaxMinutes}\n"
 printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
 printf "IR-INFO: ZIP FILE = ${ZIP_FILE}\n"
 printf "IR-INFO: SPLIT_REPERTOIRE = ${SPLIT_REPERTOIRE}\n"
+printf "IR-INFO: IR_GATEWAY_JOBID = ${IR_GATEWAY_JOBID}\n"
 printf "IR-INFO: VARNAME = ${VARNAME}\n"
 printf "IR-INFO: NUM_VALUES = ${NUM_VALUES}\n"
 printf "IR-INFO: SORT_VALUES = ${SORT_VALUES}\n"
@@ -154,9 +155,13 @@ function run_analysis()
 # Parameters:
 #     $1 output directory
 #     $2 repository name [string]
-#     $3 repertoire_id ("NULL" if should skip repertoire processing)
-#     $4 repertoire file (Not used if repertoire_id == NULL)
+#     $3 repertoire_id [string] "Total" if aggergate/combined analysis
+#     $4 repertoire file (Not used if repertoire_id == "Total")
 #     $5 manifest file
+#
+# Note: this function assumes that the jobs are running from the base
+# analysis directory, with files and directories (e.g. $1, $5) being specified
+# relative to that location.
 {
     # Use local variables - no scope issues please...
     local output_directory=$1
@@ -174,7 +179,7 @@ function run_analysis()
     pwd
 
     # Get a list of rearrangement files to process from the manifest.
-    local array_of_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
+    array_of_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "rearrangement_file"` )
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not process manifest file ${manifest_file}"
@@ -243,7 +248,7 @@ function run_analysis()
 
     printf "<h2>Histogram: %s</h2>\n" ${title_string} >> ${html_file}
     printf "<h2>Analysis</h2>\n" >> ${html_file}
-    printf '<img src="%s-%s-histogram.png" width="800">' ${file_string} ${VARNAME} >> ${html_file}
+    printf '<img src="%s-%s-histogram.png" width="800">\n' ${file_string} ${VARNAME} >> ${html_file}
 
     # End of main div container
     printf '</div>' >> ${html_file}
@@ -254,6 +259,12 @@ function run_analysis()
     # Generate end body end HTML
     printf '</body>' >> ${html_file}
     printf '</html>' >> ${html_file}
+
+    # Generate a summary HTML file for the Gateway to present this info to the user
+    html_file=${output_directory}/${repertoire_id}-gateway.html
+    printf "<h2>Histogram: %s</h2>\n" ${title_string} >> ${html_file}
+    printf "<h2>Analysis</h2>\n" >> ${html_file}
+    printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-%s-histogram.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} ${VARNAME} >> ${html_file}
 }
 
 # Set up the required variables. An iReceptor Gateway download consists
@@ -261,7 +272,7 @@ function run_analysis()
 # AIRR manifest JSON file that describes the relationships between
 # AIRR Repertoire JSON files and AIRR TSV files.
 INFO_FILE="info.txt"
-MANIFEST_FILE="AIRR-manifest.json"
+AIRR_MANIFEST_FILE="AIRR-manifest.json"
 
 if [ "${SPLIT_REPERTOIRE}" = "True" ]; then
     echo -e "IR-INFO: \nIR-INFO: Splitting data by Repertoire\n"
@@ -270,23 +281,25 @@ if [ "${SPLIT_REPERTOIRE}" = "True" ]; then
     # user to define a function called run_analysis() that will be
     # called for each repertoire. See the docs in the gateway_utilities.sh file
     # for parameters to this function.
-    gateway_split_repertoire ${INFO_FILE} ${MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
-    gateway_run_analysis ${INFO_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
-    gateway_cleanup ${ZIP_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_split_repertoire ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_run_analysis ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_cleanup ${ZIP_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 
 elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
     echo -e "IR-INFO: \nIR-INFO: Running app on entire data set\n"
-    # Output directory is called "Total"
     # Run the analysis with a token repository name of "ADC" since the
     # analysis is being run on data from the entire ADC.
-    # repertoire_id and repository should be "NULL"
-    # Lastly, provide the list of TSV files to process. Remember that
-    # the array elements are expanded into separate parameters, which
-    # the run_analyis function handles.
-    outdir="Total"
+    # repertoire_id is "Total" since it isn't a repertoire analysis. 
+    repertoire_id="Total"
+    repository="AIRRDataCommons"
+    outdir=${repository}/${repertoire_id}
 
-    # Run the stats on all the data combined. Unzip the files
+
+    # Unzip the files in the base directory like a normal analysis
+    gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
+    # Also unzip into the analysis dir, as the files in the zip
+    # are the files to perform the analysis on.
     gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}/${outdir}
 
     # Copy the HTML resources for the Apps
@@ -298,13 +311,13 @@ elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
         echo "IR-ERROR: Could not create HTML asset directory"
     fi
 
-    # Run the Histogram analysis.
-    run_analysis  ${GATEWAY_ANALYSIS_DIR}/${outdir} "AIRRDataCommons" ${outdir} "NULL" ${GATEWAY_ANALYSIS_DIR}/${outdir}/${MANIFEST_FILE}
-    
-    # Copy the INFO_FILE to the analysis DIR as the Gateway expects it to be there.
-    cp ${GATEWAY_ANALYSIS_DIR}/${outdir}/${INFO_FILE} ${GATEWAY_ANALYSIS_DIR}/
+    # Run the analysis. We need to run this from the GATEWAY_ANALYSIS_DIR
+    cd ${GATEWAY_ANALYSIS_DIR}
+    run_analysis ${outdir} ${repository} ${repertoire_id} "NULL" ${outdir}/${AIRR_MANIFEST_FILE}
 
-
+    # Clean up after doing the analysis. We don't want to leave behind all of the
+    # large TSV and zip files etc.
+    gateway_cleanup ${ZIP_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 else
     echo "IR-ERROR: Unknown repertoire operation ${SPLIT_REPERTOIRE}" >&2
     exit 1
