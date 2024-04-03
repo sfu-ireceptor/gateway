@@ -83,7 +83,7 @@
 						<em>Expired</em>
 
 					@elseif($d->isDone())
-							<a href="/{{ $d->file_url }}" class="btn btn-primary btn-xs" type="button" title="Download">
+							<a href="/downloads/download/{{ $d->id }}" class="btn btn-primary btn-xs" type="button" title="Download">
 								<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 								<span class="text">
 									Download
