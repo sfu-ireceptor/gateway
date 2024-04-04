@@ -124,7 +124,7 @@ function run_analysis()
     # Run Repcred on the file
     echo -n "IR-INFO: Running Repcred on ${output_directory}/${rearrangement_file} - "
     date
-    repcred -r ${output_directory}/${rearrangement_file} -o ${output_directory}/${repertoire_id}_repcred_report
+    repcred -f all -r ${output_directory}/${rearrangement_file} -o ${output_directory}/${repertoire_id}_repcred_report
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Repcred failed on file ${output_directory}/${rearrangement_file}"
@@ -180,7 +180,7 @@ function run_analysis()
     printf "<h3>Repcred Summary</h3>\n" >> ${html_file}
     
     printf '<ul>'
-    printf '<iframe src="/jobs/view/show?jobid=%s&directory=%s&filename=%s" width="100%%", height="700px"></iframe>\n' ${IR_GATEWAY_JOBID} ${output_directory} ${repertoire_id}_repcred_report/results/index.html >> ${html_file}
+    printf '<iframe src="/jobs/view/show?jobid=%s&directory=%s&filename=%s" width="100%%", height="700px"></iframe>\n' ${IR_GATEWAY_JOBID} ${output_directory} ${repertoire_id}_repcred_report/results/repcred-report.pdf >> ${html_file}
 
     #printf '<li><a href="${repertoire_id}_repcred_report/results/index.html"><i class="fa fa-check"></i><b>1</b> Input parameters</a></li>'
     #printf '<li><a href="${repertoire_id}_repcred_report/results/annotation-calls-statistics.html"><i class="fa fa-check"></i><b>5</b> Annotation Calls Statistics</a>'
