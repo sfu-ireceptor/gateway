@@ -1,0 +1,25 @@
+{
+    "id":"singularity-repcred-irec_analysis",
+    "version":"0.1",
+    "description":"Repcred",
+    "runtime":"SINGULARITY",
+    "runtimeOptions": ["SINGULARITY_RUN"],
+    "containerImage":"ir_repcred-2024-04-03.sif",
+    "jobType":"BATCH",
+    "jobAttributes": {
+      "description": "<p><a href=\"https://github.com/airr-community/rep-cred/blob/master/README.md\" target=\"_blank\">Repcred</a> is a tool that analyzes the credibility of an AIRR-seq repertoire.</p>",
+      "execSystemId": "cedar.computecanada.ca-compute-irec_analysis",
+      "parameterSet": {
+        "appArgs": [
+            {"name":"placeholder",
+             "description": "Don't have any parameters yet",
+             "notes":{"label":"Placeholder"},
+             "arg":"---", "inputMode":"REQUIRED"}
+
+	]
+      }
+    },
+    "notes":
+        {"ir_hints":[{"object":"Rearrangement"}]}
+}
+
