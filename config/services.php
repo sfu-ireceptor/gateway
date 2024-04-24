@@ -62,7 +62,7 @@ return [
         'app_json_file' => 'app3.json',
         // Directories where the Apps can be found that are currently active.
         'app_directories' => [
-            'stats', 'histogram', 'clone-stats', 'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity',
+            'stats', 'histogram', 'clone-stats', 'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity', 'rearrangement-repcred-singularity', 'rearrangement-tcrmatch-singularity',
         ],
         'system_execution' => [
             // Prefix for execution system
@@ -139,7 +139,7 @@ return [
         ],
 
         'default_execution_system' => [
-            'host' => env('TAPIS_DEFAULT_EXECUTION_SYSTEM_HOST', 'cedar.computecanada.ca'),
+            'host' => env('TAPIS_DEFAULT_EXECUTION_SYSTEM_HOST', 'robot.cedar.alliancecan.ca'),
             'port' => intval(env('TAPIS_DEFAULT_EXECUTION_SYSTEM_PORT', 22)),
             'auth' => [
                 'username' => env('TAPIS_DEFAULT_EXECUTION_SYSTEM_AUTH_USERNAME', 'ireceptorgw'),
