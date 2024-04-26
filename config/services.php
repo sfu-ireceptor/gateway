@@ -62,7 +62,7 @@ return [
         'app_json_file' => 'app3.json',
         // Directories where the Apps can be found that are currently active.
         'app_directories' => [
-            'stats', 'histogram', 'clone-stats', 'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity', 'rearrangement-repcred-singularity', 'rearrangement-tcrmatch-singularity',
+            'stats', 'histogram', 'clone-stats', 'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity', 'rearrangement-repcred-singularity', 'rearrangement-cdr3_motif-singularity', 'rearrangement-tcrmatch-singularity',
         ],
         'system_execution' => [
             // Prefix for execution system
