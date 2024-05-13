@@ -635,7 +635,7 @@ function gateway_split_repertoire(){
             echo -n "GW-INFO: Splitting Rearrangement file ${data_file} by ${SPLIT_FIELD} - "
             date
             # Create a temporary directory to work in
-            TMP_DIR=${PWD}/tmp
+            TMP_DIR=${IR_JOB_DIR}/${WORKING_DIR}/tmp
             mkdir ${TMP_DIR}
 
             # Create a header line for each repertoire based rearrangement file.
