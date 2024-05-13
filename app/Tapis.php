@@ -239,6 +239,11 @@ class Tapis
                 Log::debug('Tapis::updateAppTemplates: Error: ' . $e->getMessage());
             }
             $app_config = json_decode($app_json, true);
+            // We want to overwrite/set some parameters that need to be set for all Apps.
+            // We don't want the external config to be able to set these.
+            $app_config['jobType'] = 'BATCH';
+            $app_config['runtime'] = 'SINGULARITY';
+            $app_config['runtimeOptions'] = ['SINGULARITY_RUN'];
             // We want to store information about the app that is useful in helping us
             // determine when to use it. This information is encoded in the Apps notes
             // field as an ir_hint object.

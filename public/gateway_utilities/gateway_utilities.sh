@@ -17,7 +17,7 @@ function gateway_get_singularity() {
     local GW_WORKING_DIR=$2
 
     # Go to the destination directory
-    echo "GW-INFO: Getting singularity image ${GW_SINGULARITY_FILE} from ${GATEWAY_URL} started at: `date`" 
+    echo "GW-INFO: Getting singularity image ${GW_SINGULARITY_FILE} from ${IR_GATEWAY_URL} started at: `date`" 
     pushd ${GW_WORKING_DIR} > /dev/null
     if [ $? -ne 0 ]
     then
@@ -26,10 +26,10 @@ function gateway_get_singularity() {
     fi
 
     # Get the file from the Gateway
-    wget -nv ${GATEWAY_URL}/storage/singularity/${GW_SINGULARITY_FILE}
+    wget -nv ${IR_GATEWAY_URL}/storage/singularity/${GW_SINGULARITY_FILE}
     if [ $? -ne 0 ]
     then
-        echo "GW-ERROR: Could not copy ${GW_SINGULARITY_FILE} from ${GATEWAY_URL}"
+        echo "GW-ERROR: Could not copy ${GW_SINGULARITY_FILE} from ${IR_GATEWAY_URL}"
         return
     fi
 
@@ -116,16 +116,16 @@ function gateway_cleanup(){
     # Determine the files that were extracted for the computation
     if [ ${ANALYSIS_TYPE} = "rearrangement_file" ]
     then
-        data_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
+        data_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
     elif [ ${ANALYSIS_TYPE} = "clone_file" ]
     then
-        data_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
+        data_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
     elif [ ${ANALYSIS_TYPE} = "cell_file" ]
     then
         # Cell analyses have three different types of files to process.
-        data_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
-        expression_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "expression_file"` )
-        rearrangement_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "rearrangement_file"` )
+        data_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
+        expression_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "expression_file"` )
+        rearrangement_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "rearrangement_file"` )
     fi
 
     # Clean up the files we created. First the ZIP file
@@ -183,27 +183,27 @@ function gateway_run_analysis(){
     pushd ${WORKING_DIR} > /dev/null
 
     # Get the repository from the manifest file.
-    repository_urls=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "repository_url"` )
+    repository_urls=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "repository_url"` )
     echo "GW-INFO: Repository URLs = ${repository_urls[@]}"
 
     # Get the Reperotire files from the manifest file.
-    repertoire_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "repertoire_file"` )
+    repertoire_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "repertoire_file"` )
     echo "GW-INFO: Repertoire files = ${repertoire_files[@]}"
 
     # Determine the files to process. We extract the data files from the AIRR-manifest.json
     # and store them in an array. The type is one of rearrangement_file, cell_file, clone_file
     if [ ${ANALYSIS_TYPE} = "rearrangement_file" ]
     then
-        data_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
+        data_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
     elif [ ${ANALYSIS_TYPE} = "clone_file" ]
     then
-        data_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
+        data_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
     elif [ ${ANALYSIS_TYPE} = "cell_file" ]
     then
         # Cell analyses have three different types of files to process.
-        data_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
-        expression_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "expression_file"` )
-        rearrangement_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "rearrangement_file"` )
+        data_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
+        expression_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "expression_file"` )
+        rearrangement_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "rearrangement_file"` )
     fi
 
     # Check to make sure we have some data files to process in the manifest file.
@@ -242,21 +242,21 @@ function gateway_run_analysis(){
             # all of the reperotire_ids - we sort them to get unique ids and then
             # use awk to print them all on the same line to create an array
             # of repertoire_ids
-            repertoire_ids=( `python3 ${GATEWAY_UTIL_DIR}/preprocess.py $data_file $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
+            repertoire_ids=( `python3 ${IR_GATEWAY_UTIL_DIR}/preprocess.py $data_file $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
         elif [ ${ANALYSIS_TYPE} = "cell_file" ]
         then
             # preprocess-json.py dumps a field of interest from a JSON data file. We want
             # all of the reperotire_ids - we sort them to get unique ids and then
             # use awk to print them all on the same line to create an array
             # of repertoire_ids
-            repertoire_ids=( `python3 ${GATEWAY_UTIL_DIR}/preprocess-json.py $data_file Cell $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
+            repertoire_ids=( `python3 ${IR_GATEWAY_UTIL_DIR}/preprocess-json.py $data_file Cell $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
         elif [ ${ANALYSIS_TYPE} = "clone_file" ]
         then
             # preprocess-json.py dumps a field of interest from a JSON data file. We want
             # all of the reperotire_ids - we sort them to get unique ids and then
             # use awk to print them all on the same line to create an array
             # of repertoire_ids
-            repertoire_ids=( `python3 ${GATEWAY_UTIL_DIR}/preprocess-json.py $data_file Clone $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
+            repertoire_ids=( `python3 ${IR_GATEWAY_UTIL_DIR}/preprocess-json.py $data_file Clone $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
         else
             echo "GW-ERROR: Do not know how to split repertoires for ${ANALYSIS_TYPE}"
             exit 1
@@ -365,16 +365,16 @@ function gateway_split_repertoire(){
     # and store them in an array. The type is one of rearrangement_file, cell_file, clone_file
     if [ ${ANALYSIS_TYPE} = "rearrangement_file" ]
     then
-        data_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
+        data_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
     elif [ ${ANALYSIS_TYPE} = "clone_file" ]
     then
-        data_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
+        data_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
     elif [ ${ANALYSIS_TYPE} = "cell_file" ]
     then
         # Cell analyses have three different types of files to process.
-        data_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
-        expression_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "expression_file"` )
-        rearrangement_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "rearrangement_file"` )
+        data_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
+        expression_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "expression_file"` )
+        rearrangement_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "rearrangement_file"` )
     fi
 
     # Check to make sure we have some data files to process in the manifest file.
@@ -385,11 +385,11 @@ function gateway_split_repertoire(){
     fi
 
     # Get the repository from the manifest file.
-    repository_urls=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "repository_url"` )
+    repository_urls=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "repository_url"` )
     echo "GW-INFO: Repository URLs = ${repository_urls[@]}"
 
     # Get the Reperotire files from the manifest file.
-    repertoire_files=( `python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "repertoire_file"` )
+    repertoire_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "repertoire_file"` )
     echo "GW-INFO: Repertoire files = ${repertoire_files[@]}"
 
     # For each repository, process the data from it.
@@ -416,21 +416,21 @@ function gateway_split_repertoire(){
             # all of the reperotire_ids - we sort them to get unique ids and then
             # use awk to print them all on the same line to create an array
             # of repertoire_ids
-            repertoire_ids=( `python3 ${GATEWAY_UTIL_DIR}/preprocess.py $data_file $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
+            repertoire_ids=( `python3 ${IR_GATEWAY_UTIL_DIR}/preprocess.py $data_file $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
         elif [ ${ANALYSIS_TYPE} = "cell_file" ]
         then
             # preprocess-json.py dumps a field of interest from a JSON data file. We want
             # all of the reperotire_ids - we sort them to get unique ids and then
             # use awk to print them all on the same line to create an array
             # of repertoire_ids
-            repertoire_ids=( `python3 ${GATEWAY_UTIL_DIR}/preprocess-json.py $data_file Cell $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
+            repertoire_ids=( `python3 ${IR_GATEWAY_UTIL_DIR}/preprocess-json.py $data_file Cell $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
         elif [ ${ANALYSIS_TYPE} = "clone_file" ]
         then
             # preprocess-json.py dumps a field of interest from a JSON data file. We want
             # all of the reperotire_ids - we sort them to get unique ids and then
             # use awk to print them all on the same line to create an array
             # of repertoire_ids
-            repertoire_ids=( `python3 ${GATEWAY_UTIL_DIR}/preprocess-json.py $data_file Clone $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
+            repertoire_ids=( `python3 ${IR_GATEWAY_UTIL_DIR}/preprocess-json.py $data_file Clone $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
         else
             echo "GW-ERROR: Do not know how to split repertoires for ${ANALYSIS_TYPE}"
             exit 1
@@ -462,7 +462,7 @@ function gateway_split_repertoire(){
             # Copy the HTML resources for the Apps
             echo "GW-INFO: Copying HTML assets"
             mkdir -p ${repository_name}/${repertoire_dirname}/assets
-            cp -r ${GATEWAY_UTIL_DIR}/assets/* ${repository_name}/${repertoire_dirname}/assets
+            cp -r ${IR_GATEWAY_UTIL_DIR}/assets/* ${repository_name}/${repertoire_dirname}/assets
             if [ $? -ne 0 ]
             then
                 echo "GW-ERROR: Could not create HTML asset directory"
@@ -496,7 +496,7 @@ function gateway_split_repertoire(){
                 # Filter the input file $data_file and extract all records that have the given
                 # repertoire_id in the SPLIT_FIELD.
                 # Command line parameters: inputfile, field_name, field_value, outfile
-                python3 ${GATEWAY_UTIL_DIR}/filter-json.py $data_file Clone ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
+                python3 ${IR_GATEWAY_UTIL_DIR}/filter-json.py $data_file Clone ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
                 if [ $? -ne 0 ]
                 then
                     echo "GW-ERROR: Could not filter Clone data for ${repertoire_id} from ${data_file}"
@@ -526,7 +526,7 @@ function gateway_split_repertoire(){
                 # repertoire_id in the SPLIT_FIELD.
                 # Command line parameters: inputfile, field_name, field_value, outfile
                 echo "GW-INFO: Splitting Cell file ${data_file} by ${SPLIT_FIELD} ${repertoire_id}"
-                python3 ${GATEWAY_UTIL_DIR}/filter-json.py $data_file Cell ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${cell_datafile}
+                python3 ${IR_GATEWAY_UTIL_DIR}/filter-json.py $data_file Cell ${SPLIT_FIELD} ${repertoire_id} ${repository_name}/${repertoire_dirname}/${cell_datafile}
                 if [ $? -ne 0 ]
                 then
                     echo "GW-ERROR: Could not filter Cell data for ${repertoire_id} from ${data_file}"
@@ -541,7 +541,7 @@ function gateway_split_repertoire(){
                 # Handle the rearrangement files. 
                 # First we get a set of unique linking field IDs from the Cell file, all on one line, space separated. 
                 # We expect only one of these per repertoire.
-                link_ids=( `python3 ${GATEWAY_UTIL_DIR}/preprocess-json.py ${repository_name}/${repertoire_dirname}/${cell_datafile} Cell ${LINK_FIELD} | sort -u | awk '{printf("%s ",$0)}'` )
+                link_ids=( `python3 ${IR_GATEWAY_UTIL_DIR}/preprocess-json.py ${repository_name}/${repertoire_dirname}/${cell_datafile} Cell ${LINK_FIELD} | sort -u | awk '{printf("%s ",$0)}'` )
                 if [ ${#link_ids[@]} != 1 ]
                 then
                     echo "GW-ERROR: Analysis expects a single ${LINK_FIELD} per Cell repertoire."
@@ -556,7 +556,7 @@ function gateway_split_repertoire(){
                 echo "GW-INFO: Input file = ${rearrangement_file}"
                 echo "GW-INFO: Output file = ${rearrangement_datafile}"
                 echo "GW-INFO: Splitting Rearrangement file ${rearrangement_file} by ${LINK_FIELD} ${link_id}"
-                python3 ${GATEWAY_UTIL_DIR}/filter.py $rearrangement_file ${LINK_FIELD} ${link_id} ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
+                python3 ${IR_GATEWAY_UTIL_DIR}/filter.py $rearrangement_file ${LINK_FIELD} ${link_id} ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
                 if [ $? -ne 0 ]
                 then
                     echo "GW-ERROR: Could not filter Rearrangement data for ${link_id} from ${rearrangement_file}"
@@ -595,7 +595,7 @@ function gateway_split_repertoire(){
             # data from JSON to h5ad for downstream processing. Output goes in the
             # current directory. Output files are named $repertoire_id.h5ad. 
             #
-            python3 ${GATEWAY_UTIL_DIR}/gateway-airr-to-h5ad.py -v \
+            python3 ${IR_GATEWAY_UTIL_DIR}/gateway-airr-to-h5ad.py -v \
                 ${expression_file} . 'CellExpression' ${SPLIT_FIELD}
             if [ $? -ne 0 ]
             then
