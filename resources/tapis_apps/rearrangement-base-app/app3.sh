@@ -68,7 +68,7 @@ function run_analysis()
 
     # Add a header line to the Gateway rendered HTML file.
     echo "<h2>${title_string}</h2>" > ${working_path}/${repertoire_id}-gateway.html
-    echo "<p>Your analysis output goes here!</p>" > ${working_path}/${repertoire_id}-gateway.html
+    echo "<p>Your analysis output for this repertoire goes here!</p>" >> ${working_path}/${repertoire_id}-gateway.html
 }
 
 ###############################################################################
