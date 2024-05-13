@@ -68,6 +68,7 @@ function run_analysis()
 
     # Add a header line to the Gateway rendered HTML file.
     echo "<h2>${title_string}</h2>" > ${working_path}/${repertoire_id}-gateway.html
+    echo "<p>Your analysis output goes here!</p>" > ${working_path}/${repertoire_id}-gateway.html
 }
 
 ###############################################################################
@@ -89,7 +90,7 @@ gateway_run_analysis ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 # Cleanup the data files in the directory stucture
 echo "IR-INFO: Cleaning up the data"
-gateway_cleanup ${ZIP_FILE} ${MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+gateway_cleanup ${ZIP_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 ###############################################################################
 # Do some housekeeping.
