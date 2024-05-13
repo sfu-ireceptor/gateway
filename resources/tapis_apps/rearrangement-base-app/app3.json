@@ -1,4 +1,6 @@
 {
+    "id":"singularity-base-app",
+    "version":"0.1",
     "description": "Basic iReceptor App",
     "containerImage":"ir_base_app.sif",
     "jobAttributes": {
