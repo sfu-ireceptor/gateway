@@ -51,13 +51,13 @@ function run_analysis()
 	local repertoire_id=$3
 	local repertoire_file=$4
     local manifest_file=$5
-    local analysis_type = $6
+    local analysis_type=$6
 
     # Print out a message to the log file.
     echo "IR-INFO: Running on repertoire = ${repertoire_id}"
 
     # Determine the fully qualified path of where the data is as a shortcut.
-    working_path=${GATEWAY_ANALYSIS_DIR}/${working_directory}
+    working_path=${IR_JOB_DIR}/${GATEWAY_ANALYSIS_DIR}/${working_directory}
 
     # Generate the label string.
     title_string="$(python3 ${IR_GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
@@ -67,7 +67,7 @@ function run_analysis()
     echo "${title_string}" > ${working_path}/${repertoire_id}.txt
 
     # Add a header line to the Gateway rendered HTML file.
-    echo "<h2>${title_string}</h2> > ${working_path}/${repertoire_id}-gateway.html"
+    echo "<h2>${title_string}</h2>" > ${working_path}/${repertoire_id}-gateway.html
 }
 
 ###############################################################################
