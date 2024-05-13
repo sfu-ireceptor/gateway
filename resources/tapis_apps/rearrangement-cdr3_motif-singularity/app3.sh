@@ -16,6 +16,9 @@ echo "IR-INFO: Running job from ${SCRIPT_DIR}"
 #
 # First parameter is the REGEX string
 JUNCTION_AA_REGEX=${1}
+# Commons parameter is SPLIT_REPERTOIRE. This App does not do this, so
+# set to False
+SPLIT_REPERTOIRE="False"
 
 # Environment variable IR_GATEWAY_URL contains the URL of the source gateway. Use
 # this to gather iReceptor Gateway specific resources if needed.
@@ -238,7 +241,6 @@ if [ "${SPLIT_REPERTOIRE}" = "True" ]; then
     gateway_run_analysis ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
     gateway_cleanup ${ZIP_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
-elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
 elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
     echo -e "IR-INFO:\nIR-INFO: Running app on entire data set"
     echo "IR-INFO:"
