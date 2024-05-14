@@ -7,7 +7,7 @@
     "containerImage":"ir_tcrmatch-1.1.1.sif",
     "jobType":"BATCH",
     "jobAttributes": {
-      "description": "<p><a href=\"http://tools.iedb.org/tcrmatch/\" target=\"_blank\">TCRMatch</a> is an openly accessible tool that takes TCR β-chain CDR3 sequences as an input, identifies TCRs with a match in the <a href=\"http://iedb.org/\" target=\"_blank\">Immune Epitope Database (IEDB)</a>, and reports the specificity of each match. This iReceptor Analysis App uses TCRMatch to output TCR β-chain CDR3 that are found to have specificity in IEDB at the threshold provided. The data selected is split into Repertoires and TCRMatch is run separately on each Repertoire.</p><p><strong>Restrictions:</strong><ul><li><strong>TCRMatch works only on TCR β-chain CDR3s!</b> Any repertoires that are not TCRβ will be skipped.</li></ul></p>",
+      "description": "<p><a href=\"http://tools.iedb.org/tcrmatch/\" target=\"_blank\">TCRMatch</a> is an openly accessible tool that takes TCR β-chain CDR3 sequences as an input, identifies TCRs with a match in the <a href=\"http://iedb.org/\" target=\"_blank\">Immune Epitope Database (IEDB)</a>, and reports the specificity of each match. This iReceptor Analysis App uses TCRMatch to output TCR β-chain CDR3 that are found to have specificity in IEDB at the threshold provided. The data selected is split into Repertoires and TCRMatch is run separately on each Repertoire.</p><p><strong>Restrictions:</strong><ul><li><strong>TCRMatch works only on TCR β-chain CDR3s!</strong> Any repertoires that are not TCRβ will be skipped.</li></ul></p>",
       "execSystemId": "cedar.computecanada.ca-compute-irec_analysis",
       "parameterSet": {
         "appArgs": [
