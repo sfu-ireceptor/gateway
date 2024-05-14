@@ -25,22 +25,20 @@ SPLIT_REPERTOIRE="False"
 #
 # Download file to be used is stored in IR_DOWNLOAD_FILE
 #
-ZIP_FILE=${IR_DOWNLOAD_FILE}
 # Tapis parameter IR_GATEWAY_URL contains the URL of the source gateway. Use
 # this to gather iReceptor Gateway specific resources if needed.
-GATEWAY_URL="${IR_GATEWAY_URL}"
+echo "IR-INFO: Using Gateway ${IR_GATEWAY_URL}"
+echo "IR-INFO: Download ZIP file = ${IR_DOWNLOAD_FILE}"
 
 ##############################################
 # Set up Gateway Utilities
 ##############################################
-echo "IR-INFO: Using Gateway ${GATEWAY_URL}"
 
 # Report where we get the Gateway utilities from
-GATEWAY_UTIL_DIR=${IR_GATEWAY_UTIL_DIR}
-echo "IR-INFO: Using iReceptor Gateway Utilities from ${GATEWAY_UTIL_DIR}"
+echo "IR-INFO: Using iReceptor Gateway Utilities from ${IR_GATEWAY_UTIL_DIR}"
 
 # Load the iReceptor Gateway utilities functions.
-source ${GATEWAY_UTIL_DIR}/gateway_utilities.sh
+source ${IR_GATEWAY_UTIL_DIR}/gateway_utilities.sh
 if [ $? -ne 0 ]
 then
     echo "IR-ERROR: Could not load GATEWAY UTILIIES"
@@ -66,7 +64,7 @@ printf "IR-INFO: PROCS = ${_tapisCoresPerNode}\n"
 printf "IR-INFO: MEM = ${_tapisMemoryMB}\n"
 printf "IR-INFO: MAX RUNTIME = ${_tapisMaxMinutes}\n"
 printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
-printf "IR-INFO: ZIP FILE = ${ZIP_FILE}\n"
+printf "IR-INFO: ZIP FILE = ${IR_DOWNLOAD_FILE}\n"
 printf "IR-INFO: SPLIT_REPERTOIRE = ${SPLIT_REPERTOIRE}\n"
 printf "IR-INFO: IR_GATEWAY_JOBID = ${IR_GATEWAY_JOBID}\n"
 printf "IR-INFO: "
@@ -110,7 +108,7 @@ function run_analysis()
     # Get a file with the list of repositories to process.
     local url_file=${output_directory}/${repertoire_id}_url.tsv
     echo "URL" > ${url_file}
-    python3 ${GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "repository_url" >> ${url_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "repository_url" >> ${url_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not process manifest file ${manifest_file}"
@@ -144,6 +142,15 @@ function run_analysis()
     local output_file=${output_directory}/${repertoire_id}_output.json
     local repertoire_query_file=${output_directory}/repertoire_query.json
     local field_file=${SCRIPT_DIR}/repertoire_fields.tsv
+    echo "Fields" > ${field_file}
+    echo "repertoire_id" > ${field_file}
+    echo "study.study_id" > ${field_file}
+    echo "study.study_title" > ${field_file}
+    echo "subject.diagnosis.disease_diagnosis.label" > ${field_file}
+    echo "subject.subject_id" > ${field_file}
+    echo "sample.sample_id" > ${field_file}
+    echo "sample.pcr_target.pcr_target_locus" > ${field_file}
+
     python3 /ireceptor/adc-search.py ${url_file} ${repertoire_query_file} ${motif_file} --field_file=${field_file} --output_file=${output_file}
     if [ $? -ne 0 ]
     then
@@ -154,6 +161,11 @@ function run_analysis()
 	# Generate a label file for the Gateway to use to present this info to the user
 	label_file=${output_directory}/${repertoire_id}.txt
 	echo "${title_string}" > ${label_file}
+
+	# Generate a summary HTML file for the Gateway to present this info to the user
+	gateway_file=${output_directory}/${repertoire_id}-gateway.html
+    echo "<h2>${title_string}</h2>" >> $gateway_file
+    cat $output_file >> $gateway_file
 
 	# Generate a summary HTML file for the Gateway to present this info to the user
 	html_file=${output_directory}/${repertoire_id}.html
@@ -175,19 +187,6 @@ function run_analysis()
     printf '<div class="container job_container">'  >> ${html_file}
 
 	printf "<h2>Stats: %s</h2>\n" ${title_string} >> ${html_file}
-	printf "<h2>Analysis</h2>\n" >> ${html_file}
-	printf "<h3>V/J gene usage heatmap</h3>\n" >> ${html_file}
-	printf '<img src="%s-v_call-j_call-heatmap.png" width="800">' ${file_string} >> ${html_file}
-	printf "<h3>V gene/Junction AA Length heatmap</h3>\n" >> ${html_file}
-	printf '<img src="%s-v_call-junction_aa_length-heatmap.png" width="800">' ${file_string} >> ${html_file}
-	printf "<h3>V Gene usage</h3>\n" >> ${html_file}
-	printf '<img src="%s-v_call-histogram.png" width="800">' ${file_string} >> ${html_file}
-	printf "<h3>D Gene usage</h3>\n" >> ${html_file}
-	printf '<img src="%s-d_call-histogram.png" width="800">' ${file_string} >> ${html_file}
-	printf "<h3>J Gene usage</h3>\n" >> ${html_file}
-	printf '<img src="%s-j_call-histogram.png" width="800">' ${file_string} >> ${html_file}
-	printf "<h3>Junction AA Length</h3>\n" >> ${html_file}
-	printf '<img src="%s-junction_aa_length-histogram.png" width="800">' ${file_string} >> ${html_file}
     # End of main div container
     printf '</div>' >> ${html_file}
 
@@ -197,28 +196,6 @@ function run_analysis()
     # Generate end body end HTML
     printf '</body>' >> ${html_file}
     printf '</html>' >> ${html_file}
-
-    # Generate a summary HTML file for the Gateway to present this info to the user
-    html_file=${output_directory}/${repertoire_id}-gateway.html
-
-    printf "<h2>Stats: %s</h2>\n" ${title_string} >> ${html_file}
-    printf "<h2>Analysis</h2>\n" >> ${html_file}
-    printf "<h3>V/J gene usage heatmap</h3>\n" >> ${html_file}
-    printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-j_call-heatmap.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
-    printf "<h3>V gene/Junction AA Length heatmap</h3>\n" >> ${html_file}
-    printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-junction_aa_length-heatmap.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
-    printf "<h3>V Gene usage</h3>\n" >> ${html_file}
-    printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-v_call-histogram.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
-    printf "<h3>D Gene usage</h3>\n" >> ${html_file}
-    printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-d_call-histogram.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
-    printf "<h3>J Gene usage</h3>\n" >> ${html_file}
-    printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-j_call-histogram.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
-    printf "<h3>Junction AA Length</h3>\n" >> ${html_file}
-    printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-junction_aa_length-histogram.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} >> ${html_file}
-    # End of main div container
-    printf '</div>' >> ${html_file}
-
-
 }
 
 # Set up the required variables. An iReceptor Gateway download consists
@@ -237,9 +214,9 @@ if [ "${SPLIT_REPERTOIRE}" = "True" ]; then
     # user to define a function called run_analysis() that will be
     # called for each repertoire. See the docs in the gateway_utilities.sh file
     # for parameters to this function.
-    gateway_split_repertoire ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_split_repertoire ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${IR_DOWNLOAD_FILE} ${GATEWAY_ANALYSIS_DIR}
     gateway_run_analysis ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
-    gateway_cleanup ${ZIP_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_cleanup ${IR_DOWNLOAD_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
     echo -e "IR-INFO:\nIR-INFO: Running app on entire data set"
@@ -253,15 +230,15 @@ elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
     outdir=${repository}/${repertoire_id}
 
     # Unzip the files in the base directory like a normal analysis
-    gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_unzip ${IR_DOWNLOAD_FILE} ${GATEWAY_ANALYSIS_DIR}
     # Also unzip into the analysis dir, as the files in the zip
     # are the files to perform the analysis on.
-    gateway_unzip ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR}/${outdir}
+    gateway_unzip ${IR_DOWNLOAD_FILE} ${GATEWAY_ANALYSIS_DIR}/${outdir}
 
     # Copy the HTML resources for the Apps
     echo "IR-INFO: Copying HTML assets"
     mkdir -p ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
-    cp -r ${GATEWAY_UTIL_DIR}/assets/* ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
+    cp -r ${IR_GATEWAY_UTIL_DIR}/assets/* ${GATEWAY_ANALYSIS_DIR}/${outdir}/assets
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not create HTML asset directory"
@@ -273,7 +250,7 @@ elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
 
     # Clean up after doing the analysis. We don't want to leave behind all of the
     # large TSV and zip files etc.
-    gateway_cleanup ${ZIP_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_cleanup ${IR_DOWNLOAD_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 else
     echo "IR-ERROR: Unknown repertoire operation ${SPLIT_REPERTOIRE}" >&2
     exit 1
@@ -300,8 +277,8 @@ echo "IR-INFO: Removing analysis output"
 rm -rf ${GATEWAY_ANALYSIS_DIR}
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
-echo "IR-INFO: Removing original ZIP file $ZIP_FILE"
-rm -f $ZIP_FILE
+echo "IR-INFO: Removing original ZIP file $IR_DOWNLOAD_FILE"
+rm -f $IR_DOWNLOAD_FILE
 
 # Debugging output, print data/time when shell command is finished.
 echo "IR-INFO: Junction AA Motif Search finished at: `date`"
