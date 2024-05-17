@@ -154,7 +154,9 @@ class Sequence
         return $filtered_samples_by_rs;
     }
 
-    public static function sequencesTSVFolder($filters, $username, $url = '', $sample_filters = [])
+    public static function sequencesTSVFolder($filters, $username, $url = '',
+                                              $sample_filters = [],
+                                              $download_data = True)
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
@@ -203,10 +205,16 @@ class Sequence
         umask($old);
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
-        $response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_sequences_by_rs);
+        $data_response_list = [];
+        if ($download_data) {
+            $data_response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_sequences_by_rs);
+        } else {
+            Log::debug('Sequence::sequencesTSVFolder - SKIPPING DOWNLOAD');
+
+        }
 
         // Get a list of file information as a block of data.
-        $file_stats = self::file_stats($response_list, $metadata_response_list, $expected_nb_sequences_by_rs);
+        $file_stats = self::file_stats($data_response_list, $metadata_response_list, $expected_nb_sequences_by_rs);
 
         // if some files are incomplete, log it
         foreach ($file_stats as $t) {
@@ -227,7 +235,7 @@ class Sequence
 
         // did the download fail for some services?
         $failed_rs = [];
-        foreach ($response_list as $response) {
+        foreach ($data_response_list as $response) {
             if ($response['status'] == 'error') {
                 $failed_rs[] = $response['rs'];
                 $is_download_incomplete = true;
@@ -351,9 +359,11 @@ class Sequence
         return $t;
     }
 
-    public static function sequencesTSV($filters, $username, $url = '', $sample_filters = [])
+    public static function sequencesTSV($filters, $username, $url = '',
+                                        $sample_filters = [], $download_data=True)
     {
-        $t = self::sequencesTSVFolder($filters, $username, $url, $sample_filters);
+        $t = self::sequencesTSVFolder($filters, $username, $url,
+                                      $sample_filters, $download_data);
 
         $base_path = $t['base_path'];
         $base_name = $t['base_name'];
@@ -369,7 +379,7 @@ class Sequence
         $file_stats = $t['file_stats'];
 
         // zip files
-        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path, $repertoire_query_file_path, $rearrangement_query_file_path);
+        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path, $repertoire_query_file_path, $rearrangement_query_file_path, $download_data);
 
         // delete files
         self::delete_files($folder_path);
@@ -736,7 +746,7 @@ class Sequence
         return $manifest_file_path;
     }
 
-    public static function zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path, $repertoire_query_file_path, $rearrangement_query_file_path)
+    public static function zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path, $repertoire_query_file_path, $rearrangement_query_file_path, $download_data)
     {
         $zipPath = $folder_path . '.zip';
         Log::info('Zip files to ' . $zipPath);
