@@ -6,6 +6,9 @@
 
 echo "IR-INFO: iReceptor Junction AA Motif - starting at: `date`"
 
+unset SSL_CERT_FILE
+unset CURL_CA_BUNDLE
+
 # Get the script directory where all the code is.
 SCRIPT_DIR=${_tapisExecSystemExecDir}
 echo "IR-INFO: Running job from ${SCRIPT_DIR}"
@@ -158,6 +161,10 @@ function run_analysis()
         return 
     fi
 
+    # Change JSON to TSV file
+    local tsv_output_file=${output_directory}/${repertoire_id}_output.tsv
+    python3 /ireceptor/facet-to-tsv.py ${output_file} --output_file=$tsv_output_file
+
 	# Generate a label file for the Gateway to use to present this info to the user
 	label_file=${output_directory}/${repertoire_id}.txt
 	echo "${title_string}" > ${label_file}
@@ -165,7 +172,9 @@ function run_analysis()
 	# Generate a summary HTML file for the Gateway to present this info to the user
 	gateway_file=${output_directory}/${repertoire_id}-gateway.html
     echo "<h2>${title_string}</h2>" >> $gateway_file
-    cat $output_file >> $gateway_file
+    echo "<pre>" >> $gateway_file
+    cat $tsv_output_file >> $gateway_file
+    echo "</pre>" >> $gateway_file
 
 	# Generate a summary HTML file for the Gateway to present this info to the user
 	html_file=${output_directory}/${repertoire_id}.html

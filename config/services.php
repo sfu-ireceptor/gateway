@@ -64,8 +64,8 @@ return [
         'app_directories' => [
             'stats', 'histogram', 'immunarch-singularity', 'rearrangement-repcred-singularity',
             'rearrangement-tcrmatch-singularity', 'rearrangement-cdr3_motif-singularity', 'rearrangement-base-app',
-            'clone-stats', 
-            'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity'
+            'clone-stats',
+            'cell-conga-singularity', 'cell-celltypist-singularity', 'immunarch-singularity',
         ],
         'system_execution' => [
             // Prefix for execution system
