@@ -174,11 +174,10 @@ function run_analysis()
 
     # Generate a summary HTML file for the Gateway to present this info to the user
     gateway_file=${output_directory}/${repertoire_id}-gateway.html
-    echo "<h2>${title_string}</h2>" > $gateway_file
-    echo "<table>" >> $gateway_file
-    cat $tsv_output_file >> $gateway_file
-    head -1 $tsv_output_file | sed -e 's/\t/<\/th><th class="metric">/g' -e 's/^/<tr><th class="metric">/' -e 's/$/<\/th><\/tr>/' >> $gateway_file
-cat $tsv_output_file | sed -e 3d -e 's/\t/<\/td><td class="metric">/g' -e 's/^/<tr><td class="metric">/' -e 's/$/<\/td><\/tr>/' >> $gateway_file
+    echo "<h2>Junction AA counts for ${JUNCTION_AA_REGEX}</h2>" > $gateway_file
+    echo '<table style="table-layout:fixed; width=100%; border-collapse:collapse">' >> $gateway_file
+    head -1 $tsv_output_file | sed -e 's/\t/<\/th><th style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/g' -e 's/^/<tr><th style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/' -e 's/$/<\/th><\/tr>/' >> $gateway_file
+cat $tsv_output_file | sed -e 1d -e 's/\t/<\/td><td style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/g' -e 's/^/<tr><td style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/' -e 's/$/<\/td><\/tr>/' >> $gateway_file
     echo "</table>" >> $gateway_file
 
     # Generate a summary HTML file for the Gateway to present this info to the user
