@@ -6,12 +6,15 @@
 
 echo "IR-INFO: iReceptor Junction AA Motif - starting at: `date`"
 
+# Unset any locally set SSL Cert bundles. If such an environment
+# variable is set it will point to something that doesn't exist
+# inside the container.
 unset SSL_CERT_FILE
 unset CURL_CA_BUNDLE
 
 # Get the script directory where all the code is.
-SCRIPT_DIR=${_tapisExecSystemExecDir}
-echo "IR-INFO: Running job from ${SCRIPT_DIR}"
+IR_JOB_DIR=${_tapisExecSystemExecDir}
+echo "IR-INFO: Running job from ${IR_JOB_DIR}"
 
 #
 # Tapis App Parameters: Will be on the singularity command line to
@@ -144,7 +147,7 @@ function run_analysis()
 
     local output_file=${output_directory}/${repertoire_id}_output.json
     local repertoire_query_file=${output_directory}/repertoire_query.json
-    local field_file=${SCRIPT_DIR}/repertoire_fields.tsv
+    local field_file=${IR_JOB_DIR}/repertoire_fields.tsv
     echo "Fields" > ${field_file}
     echo "repertoire_id" >> ${field_file}
     echo "study.study_id" >> ${field_file}
@@ -267,7 +270,7 @@ fi
 
 # Make sure we are back where we started, although the gateway functions should
 # not change the working directory that we are in.
-cd ${SCRIPT_DIR}
+cd ${IR_JOB_DIR}
 
 # We want to move the info.txt to the main directory as the Gateway uses it if
 # it is available.
