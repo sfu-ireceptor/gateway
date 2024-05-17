@@ -89,13 +89,13 @@ function run_analysis()
 # analysis directory, with files and directories (e.g. $1, $5) being specified
 # relative to that location.
 {
-	# Use local variables - no scope issues please...
-	local output_directory=$1
-	local repository_name=$2
-	local repertoire_id=$3
-	local repertoire_file=$4
+    # Use local variables - no scope issues please...
+    local output_directory=$1
+    local repository_name=$2
+    local repertoire_id=$3
+    local repertoire_file=$4
     local manifest_file=$5
-	echo "IR-INFO: Running an Analysis with manifest ${manifest_file}"
+    echo "IR-INFO: Running an Analysis with manifest ${manifest_file}"
     echo "IR-INFO:     Working directory = ${output_directory}"
     echo "IR-INFO:     Repository name = ${repository_name}"
     echo "IR-INFO:     Repertoire id = ${repertoire_id}"
@@ -143,13 +143,13 @@ function run_analysis()
     local repertoire_query_file=${output_directory}/repertoire_query.json
     local field_file=${SCRIPT_DIR}/repertoire_fields.tsv
     echo "Fields" > ${field_file}
-    echo "repertoire_id" > ${field_file}
-    echo "study.study_id" > ${field_file}
-    echo "study.study_title" > ${field_file}
-    echo "subject.diagnosis.disease_diagnosis.label" > ${field_file}
-    echo "subject.subject_id" > ${field_file}
-    echo "sample.sample_id" > ${field_file}
-    echo "sample.pcr_target.pcr_target_locus" > ${field_file}
+    echo "repertoire_id" >> ${field_file}
+    echo "study.study_id" >> ${field_file}
+    echo "study.study_title" >> ${field_file}
+    echo "subject.diagnosis.disease_diagnosis.label" >> ${field_file}
+    echo "subject.subject_id" >> ${field_file}
+    echo "sample.sample_id" >> ${field_file}
+    echo "sample.pcr_target.pcr_target_locus" >> ${field_file}
 
     python3 /ireceptor/adc-search.py ${url_file} ${repertoire_query_file} ${motif_file} --field_file=${field_file} --output_file=${output_file}
     if [ $? -ne 0 ]
