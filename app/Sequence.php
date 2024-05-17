@@ -156,7 +156,7 @@ class Sequence
 
     public static function sequencesTSVFolder($filters, $username, $url = '',
                                               $sample_filters = [],
-                                              $download_data = True)
+                                              $download_data = true)
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
@@ -210,7 +210,6 @@ class Sequence
             $data_response_list = RestService::sequences_data($filters, $folder_path, $username, $expected_nb_sequences_by_rs);
         } else {
             Log::debug('Sequence::sequencesTSVFolder - SKIPPING DOWNLOAD');
-
         }
 
         // Get a list of file information as a block of data.
@@ -360,10 +359,10 @@ class Sequence
     }
 
     public static function sequencesTSV($filters, $username, $url = '',
-                                        $sample_filters = [], $download_data=True)
+                                        $sample_filters = [], $download_data = true)
     {
         $t = self::sequencesTSVFolder($filters, $username, $url,
-                                      $sample_filters, $download_data);
+            $sample_filters, $download_data);
 
         $base_path = $t['base_path'];
         $base_name = $t['base_name'];

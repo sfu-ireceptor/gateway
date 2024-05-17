@@ -67,13 +67,13 @@ class LaunchJob implements ShouldQueue
             $appTemplateConfig = $appTemplateInfo['config'];
 
             // Check to see if this App requires downloads.
-            $download_data = True;
-            if (array_key_exists('download', $appTemplateInfo) && $appTemplateInfo['download'] == "FALSE") {
+            $download_data = true;
+            if (array_key_exists('download', $appTemplateInfo) && $appTemplateInfo['download'] == 'FALSE') {
                 Log::info('LaunchJob::handle - App does not require downloads');
-                $download_data = False;
+                $download_data = false;
             } else {
                 Log::info('LaunchJob::handle - App requires downloads');
-                $download_data = True;
+                $download_data = true;
             }
 
             // generate csv file
@@ -127,13 +127,13 @@ class LaunchJob implements ShouldQueue
             // created.
             if ($jobType == 'sequence') {
                 $zip_info = Sequence::sequencesTSV($filters, $gw_username, $job->url,
-                                                   $sample_filter_fields, $download_data);
+                    $sample_filter_fields, $download_data);
             } elseif ($jobType == 'clone') {
                 $zip_info = SequenceClone::clonesTSV($filters, $gw_username, $job->url,
-                                                     $sample_filter_fields, $download_data);
+                    $sample_filter_fields, $download_data);
             } elseif ($jobType == 'cell') {
                 $zip_info = SequenceCell::cellsTSV($filters, $gw_username, $job->url,
-                                                   $sample_filter_fields, $download_data);
+                    $sample_filter_fields, $download_data);
             }
 
             // Get the path to where the data and ZIP file is in the app local file system.
@@ -178,7 +178,6 @@ class LaunchJob implements ShouldQueue
             $systemStaging = config('services.tapis.system_staging.name_prefix');
             // Tapis name for the deployment system. This is where the Apps are stored.
             $appDeploymentSystem = config('services.tapis.system_deploy.name_prefix');
-
 
             // Set up the App Tapis name, the human name, and the deployment path.
             // The path for the app is the same as the appID
