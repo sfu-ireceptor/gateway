@@ -168,19 +168,21 @@ function run_analysis()
     local tsv_output_file=${output_directory}/${repertoire_id}_output.tsv
     python3 /ireceptor/facet-to-tsv.py ${output_file} --output_file=$tsv_output_file
 
-	# Generate a label file for the Gateway to use to present this info to the user
-	label_file=${output_directory}/${repertoire_id}.txt
-	echo "${title_string}" > ${label_file}
+    # Generate a label file for the Gateway to use to present this info to the user
+    label_file=${output_directory}/${repertoire_id}.txt
+    echo "${title_string}" > ${label_file}
 
-	# Generate a summary HTML file for the Gateway to present this info to the user
-	gateway_file=${output_directory}/${repertoire_id}-gateway.html
-    echo "<h2>${title_string}</h2>" >> $gateway_file
-    echo "<pre>" >> $gateway_file
+    # Generate a summary HTML file for the Gateway to present this info to the user
+    gateway_file=${output_directory}/${repertoire_id}-gateway.html
+    echo "<h2>${title_string}</h2>" > $gateway_file
+    echo "<table>" >> $gateway_file
     cat $tsv_output_file >> $gateway_file
-    echo "</pre>" >> $gateway_file
+    head -1 $tsv_output_file | sed -e 's/\t/<\/th><th class="metric">/g' -e 's/^/<tr><th class="metric">/' -e 's/$/<\/th><\/tr>/' >> $gateway_file
+cat $tsv_output_file | sed -e 3d -e 's/\t/<\/td><td class="metric">/g' -e 's/^/<tr><td class="metric">/' -e 's/$/<\/td><\/tr>/' >> $gateway_file
+    echo "</table>" >> $gateway_file
 
-	# Generate a summary HTML file for the Gateway to present this info to the user
-	html_file=${output_directory}/${repertoire_id}.html
+    # Generate a summary HTML file for the Gateway to present this info to the user
+    html_file=${output_directory}/${repertoire_id}.html
 
     # Generate the HTML main block
     printf '<!DOCTYPE HTML5>\n' > ${html_file}
@@ -285,12 +287,12 @@ zip -r ${GATEWAY_ANALYSIS_DIR}.zip ${GATEWAY_ANALYSIS_DIR}
 mv ${GATEWAY_ANALYSIS_DIR}.zip output/
 
 # We don't want the analysis files to remain - they are in the ZIP file
-echo "IR-INFO: Removing analysis output"
-rm -rf ${GATEWAY_ANALYSIS_DIR}
+#echo "IR-INFO: Removing analysis output"
+#rm -rf ${GATEWAY_ANALYSIS_DIR}
 
 # Cleanup the input data files, don't want to return them as part of the resulting analysis
-echo "IR-INFO: Removing original ZIP file $IR_DOWNLOAD_FILE"
-rm -f $IR_DOWNLOAD_FILE
+#echo "IR-INFO: Removing original ZIP file $IR_DOWNLOAD_FILE"
+#rm -f $IR_DOWNLOAD_FILE
 
 # Debugging output, print data/time when shell command is finished.
 echo "IR-INFO: Junction AA Motif Search finished at: `date`"
