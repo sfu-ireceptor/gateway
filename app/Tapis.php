@@ -259,8 +259,8 @@ class Tapis
                             // Get the object attribute - this tells us which AIRR object type this
                             // App can be applied to (e.g. Rearrangement, Clone, Cell).
                             $app_info['object'] = $hint['object'];
-                        } else if (array_key_exists('download', $hint)) {
-                            // Get the download attribute - this tells us whether the app needs 
+                        } elseif (array_key_exists('download', $hint)) {
+                            // Get the download attribute - this tells us whether the app needs
                             // the data from the Gateway or not. Some Apps use the queries provided
                             // to get the data rather than rely on the Gateway to download it.
                             // This is either TRUE or FALSE as a string.
