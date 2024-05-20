@@ -200,8 +200,6 @@ class SequenceCell
             Log::debug('SequenceCell::cellTSVFolder - SKIPPING DOWNLOAD');
         }
 
-
-
         $file_stats = self::file_stats($cell_response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs, $download_data);
 
         // if some files are incomplete, log it
@@ -345,7 +343,7 @@ class SequenceCell
     }
 
     public static function cellsTSV($filters, $username, $url = '',
-                                    $sample_filters = [],$download_data = true)
+                                    $sample_filters = [], $download_data = true)
     {
         $t = self::cellsTSVFolder($filters, $username, $url, $sample_filters, $download_data);
 
@@ -855,7 +853,6 @@ class SequenceCell
                     // If we aren't downloading we expect and got 0 cells
                     $t['nb_cells'] = 0;
                     $t['expected_nb_cells'] = 0;
-
                 }
                 $t['query_log_id'] = $response['query_log_id'];
                 $t['rest_service_name'] = $response['rs']->name;

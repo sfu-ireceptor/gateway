@@ -663,7 +663,7 @@ class SequenceClone
     public static function file_stats($cell_response_list, $metadata_response_list, $expected_nb_clones_by_rs, $download_data)
     {
         Log::debug('Get TSV files stats');
-                // Process the correct response list, depending on if we are downloading
+        // Process the correct response list, depending on if we are downloading
         // data or not.
         if ($download_data) {
             $response_list = $cell_response_list;
