@@ -122,7 +122,8 @@ class SequenceCell
         return $filtered_samples_by_rs;
     }
 
-    public static function cellsTSVFolder($filters, $username, $url = '', $sample_filters = [])
+    public static function cellsTSVFolder($filters, $username, $url = '',
+                                          $sample_filters = [], $download_data)
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
@@ -170,32 +171,38 @@ class SequenceCell
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
 
-        $response_list = [];
+        $cell_response_list = [];
         $expression_response_list = [];
         $sequence_response_list = [];
 
-        if ($query_type == 'cell') {
-            $cell_id_list_by_rs = RestService::cell_id_list($filters, $username, $expected_nb_cells_by_rs);
+        if ($download_data) {
+            if ($query_type == 'cell') {
+                $cell_id_list_by_rs = RestService::cell_id_list($filters, $username, $expected_nb_cells_by_rs);
 
-            // cell data
-            $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs);
+                // cell data
+                $cell_response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs);
 
-            // expression data
-            $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list);
+                // expression data
+                $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list);
+            } else {
+                $cell_id_list_by_rs = RestService::cell_id_list_from_expression_query($filters, $username, $expected_nb_cells_by_rs);
+
+                // cell data (filtered by expression)
+                $cell_response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_rs);
+
+                // expression data (filtered by filtered cell data)
+                $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_id_list_by_rs);
+            }
+
+            // sequence data
+            $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_rs);
         } else {
-            $cell_id_list_by_rs = RestService::cell_id_list_from_expression_query($filters, $username, $expected_nb_cells_by_rs);
-
-            // cell data (filtered by expression)
-            $response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_rs);
-
-            // expression data (filtered by filtered cell data)
-            $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_id_list_by_rs);
+            Log::debug('SequenceCell::cellTSVFolder - SKIPPING DOWNLOAD');
         }
 
-        // sequence data
-        $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_rs);
 
-        $file_stats = self::file_stats($response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs);
+
+        $file_stats = self::file_stats($cell_response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs, $download_data);
 
         // if some files are incomplete, log it
         foreach ($file_stats as $t) {
@@ -216,7 +223,7 @@ class SequenceCell
 
         // did the download fail for some services?
         $failed_rs = [];
-        foreach ($response_list as $response) {
+        foreach ($cell_response_list as $response) {
             if ($response['status'] == 'error') {
                 $failed_rs[] = $response['rs'];
                 $is_download_incomplete = true;
@@ -284,7 +291,7 @@ class SequenceCell
 
                 // list successful repositories
                 $success_rs = [];
-                foreach ($response_list as $response) {
+                foreach ($cell_response_list as $response) {
                     $rs = $response['rs'];
                     $is_failed = false;
                     foreach ($failed_rs as $rs_failed) {
@@ -324,7 +331,7 @@ class SequenceCell
         $t['base_path'] = $storage_folder;
         $t['base_name'] = $base_name;
         $t['folder_path'] = $folder_path;
-        $t['response_list'] = $response_list;
+        $t['response_list'] = $cell_response_list;
         $t['metadata_response_list'] = $metadata_response_list;
         $t['expression_response_list'] = $expression_response_list;
         $t['sequence_response_list'] = $sequence_response_list;
@@ -337,14 +344,15 @@ class SequenceCell
         return $t;
     }
 
-    public static function cellsTSV($filters, $username, $url = '', $sample_filters = [])
+    public static function cellsTSV($filters, $username, $url = '',
+                                    $sample_filters = [],$download_data = true)
     {
-        $t = self::cellsTSVFolder($filters, $username, $url, $sample_filters);
+        $t = self::cellsTSVFolder($filters, $username, $url, $sample_filters, $download_data);
 
         $base_path = $t['base_path'];
         $base_name = $t['base_name'];
         $folder_path = $t['folder_path'];
-        $response_list = $t['response_list'];
+        $cell_response_list = $t['response_list'];
         $metadata_response_list = $t['metadata_response_list'];
         $expression_response_list = $t['expression_response_list'];
         $sequence_response_list = $t['sequence_response_list'];
@@ -355,7 +363,7 @@ class SequenceCell
         $file_stats = $t['file_stats'];
 
         // zip files
-        $zip_path = self::zip_files($folder_path, $response_list, $expression_response_list, $metadata_response_list, $info_file_path, $sequence_response_list, $manifest_file_path);
+        $zip_path = self::zip_files($folder_path, $cell_response_list, $expression_response_list, $metadata_response_list, $info_file_path, $sequence_response_list, $manifest_file_path, $download_data);
 
         // delete files
         self::delete_files($folder_path);
@@ -669,7 +677,7 @@ class SequenceCell
         return $cell_list_by_rs;
     }
 
-    public static function zip_files($folder_path, $response_list, $expression_response_list, $metadata_response_list, $info_file_path, $sequence_response_list, $manifest_file_path)
+    public static function zip_files($folder_path, $cell_response_list, $expression_response_list, $metadata_response_list, $info_file_path, $sequence_response_list, $manifest_file_path, $download_data)
     {
         $zipPath = $folder_path . '.zip';
         Log::info('Cell: Zip files to ' . $zipPath);
@@ -677,7 +685,7 @@ class SequenceCell
         $zip->open($zipPath, ZipArchive::CREATE);
 
         // cell data
-        foreach ($response_list as $response) {
+        foreach ($cell_response_list as $response) {
             if (isset($response['data']['file_path'])) {
                 $file_path = $response['data']['file_path'];
                 Log::debug('Adding to ZIP: ' . $file_path);
@@ -752,9 +760,17 @@ class SequenceCell
         }
     }
 
-    public static function file_stats($response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs)
+    public static function file_stats($cell_response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs, $download_data)
     {
         Log::debug('Get files stats');
+        // Process the correct response list, depending on if we are downloading
+        // data or not.
+        if ($download_data) {
+            $response_list = $cell_response_list;
+        } else {
+            $response_list = $metadata_response_list;
+        }
+
         $file_stats = [];
         foreach ($response_list as $response) {
             $rest_service_id = $response['rs']->id;
@@ -766,70 +782,80 @@ class SequenceCell
                 $t['rs_url'] = $response['rs']->url;
                 $t['size'] = human_filesize($file_path);
 
-                // cell file name
-                $t['cell_file_name'] = $t['name'];
+                if ($download_data) {
+                    // cell file name
+                    $t['cell_file_name'] = $t['name'];
 
-                // repertoire file name
-                foreach ($metadata_response_list as $r) {
-                    if ($rest_service_id == $r['rs']->id) {
-                        if (isset($r['data']['file_path'])) {
-                            $repertoire_file_path = $r['data']['file_path'];
-                            $t['metadata_file_name'] = basename($repertoire_file_path);
+                    // repertoire file name
+                    foreach ($metadata_response_list as $r) {
+                        if ($rest_service_id == $r['rs']->id) {
+                            if (isset($r['data']['file_path'])) {
+                                $repertoire_file_path = $r['data']['file_path'];
+                                $t['metadata_file_name'] = basename($repertoire_file_path);
+                            }
                         }
                     }
-                }
 
-                // expression file name
-                foreach ($expression_response_list as $r) {
-                    if ($rest_service_id == $r['rs']->id) {
-                        if (isset($r['data']['file_path'])) {
-                            $expression_file_path = $r['data']['file_path'];
-                            $t['expression_file_name'] = basename($expression_file_path);
+                    // expression file name
+                    foreach ($expression_response_list as $r) {
+                        if ($rest_service_id == $r['rs']->id) {
+                            if (isset($r['data']['file_path'])) {
+                                $expression_file_path = $r['data']['file_path'];
+                                $t['expression_file_name'] = basename($expression_file_path);
+                            }
                         }
                     }
-                }
 
-                // sequence file name
-                foreach ($sequence_response_list as $r) {
-                    if ($rest_service_id == $r['rs']->id) {
-                        if (isset($r['data']['file_path'])) {
-                            $sequence_file_path = $r['data']['file_path'];
-                            $t['sequence_file_name'] = basename($sequence_file_path);
+                    // sequence file name
+                    foreach ($sequence_response_list as $r) {
+                        if ($rest_service_id == $r['rs']->id) {
+                            if (isset($r['data']['file_path'])) {
+                                $sequence_file_path = $r['data']['file_path'];
+                                $t['sequence_file_name'] = basename($sequence_file_path);
+                            }
                         }
                     }
-                }
 
-                // Get the associated sequence file
-                foreach ($sequence_response_list as $sequence_response) {
-                    // If the service IDs match, then the files match
-                    if ($rest_service_id == $sequence_response['rs']->id) {
-                        // If there is a file path, keep track of the metadata file
-                        if (isset($sequence_response['data']['file_path'])) {
-                            $sequence_file_path = $sequence_response['data']['file_path'];
-                            $t['rearrangement_name'] = basename($sequence_file_path);
+                    // Get the associated sequence file
+                    foreach ($sequence_response_list as $sequence_response) {
+                        // If the service IDs match, then the files match
+                        if ($rest_service_id == $sequence_response['rs']->id) {
+                            // If there is a file path, keep track of the metadata file
+                            if (isset($sequence_response['data']['file_path'])) {
+                                $sequence_file_path = $sequence_response['data']['file_path'];
+                                $t['rearrangement_name'] = basename($sequence_file_path);
+                            }
                         }
                     }
-                }
 
-                // Count number of times the AIRR cell_id field occurs in the file.
-                // This is the number of cells returned by the query.
-                $n = 0;
-                $f = fopen($file_path, 'r');
-                while (! feof($f)) {
-                    $line = fgets($f);
-                    if (! empty($line)) {
-                        $n += substr_count($line, '"cell_id"');
+                    // Count number of times the AIRR cell_id field occurs in the file.
+                    // This is the number of cells returned by the query.
+                    $n = 0;
+                    $f = fopen($file_path, 'r');
+                    while (! feof($f)) {
+                        $line = fgets($f);
+                        if (! empty($line)) {
+                            $n += substr_count($line, '"cell_id"');
+                        }
                     }
-                }
-                fclose($f);
-                $t['nb_cells'] = $n;
+                    fclose($f);
+                    $t['nb_cells'] = $n;
 
-                $t['expected_nb_cells'] = 0;
-                if (isset($expected_nb_cells_by_rs[$rest_service_id])) {
-                    $t['expected_nb_cells'] = $expected_nb_cells_by_rs[$rest_service_id];
+                    $t['expected_nb_cells'] = 0;
+                    if (isset($expected_nb_cells_by_rs[$rest_service_id])) {
+                        $t['expected_nb_cells'] = $expected_nb_cells_by_rs[$rest_service_id];
+                    } else {
+                        Log::error('rest_service ' . $rest_service_id . ' is missing from $expected_nb_cells_by_rs array');
+                        Log::error($expected_nb_cells_by_rs);
+                    }
                 } else {
-                    Log::error('rest_service ' . $rest_service_id . ' is missing from $expected_nb_cells_by_rs array');
-                    Log::error($expected_nb_cells_by_rs);
+                    // The metadata/repertoire file name is just the name
+                    $t['metadata_file_name'] = $t['name'];
+
+                    // If we aren't downloading we expect and got 0 cells
+                    $t['nb_cells'] = 0;
+                    $t['expected_nb_cells'] = 0;
+
                 }
                 $t['query_log_id'] = $response['query_log_id'];
                 $t['rest_service_name'] = $response['rs']->name;
