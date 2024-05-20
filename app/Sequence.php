@@ -214,7 +214,7 @@ class Sequence
         }
 
         // Get a list of file information as a block of data.
-        $file_stats = self::file_stats($data_response_list, $metadata_response_list, $expected_nb_sequences_by_rs);
+        $file_stats = self::file_stats($data_response_list, $metadata_response_list, $expected_nb_sequences_by_rs, $download_data);
 
         // if some files are incomplete, log it
         foreach ($file_stats as $t) {
@@ -287,7 +287,7 @@ class Sequence
 
                 // list successful repositories
                 $success_rs = [];
-                foreach ($response_list as $response) {
+                foreach ($data_response_list as $response) {
                     $rs = $response['rs'];
                     $is_failed = false;
                     foreach ($failed_rs as $rs_failed) {
@@ -346,7 +346,7 @@ class Sequence
         $t['base_path'] = $storage_folder;
         $t['base_name'] = $base_name;
         $t['folder_path'] = $folder_path;
-        $t['response_list'] = $response_list;
+        $t['response_list'] = $data_response_list;
         $t['metadata_response_list'] = $metadata_response_list;
         $t['info_file_path'] = $info_file_path;
         $t['manifest_file_path'] = $manifest_file_path;
@@ -819,9 +819,19 @@ class Sequence
         }
     }
 
-    public static function file_stats($response_list, $metadata_response_list, $expected_nb_sequences_by_rs)
+    public static function file_stats($data_response_list, $metadata_response_list,
+                                      $expected_nb_sequences_by_rs, $download_data)
     {
         Log::debug('Get TSV files stats');
+        Log::debug('response_list = '.json_encode($data_response_list));
+        Log::debug('metadata_response_list = '.json_encode($metadata_response_list));
+        // Process the correct response list, depending on if we are downloading
+        // data or not.
+        if ($download_data) {
+            $response_list = $data_response_list;
+        } else {
+            $response_list = $metadata_response_list;
+        }
         $file_stats = [];
         foreach ($response_list as $response) {
             $rest_service_id = $response['rs']->id;
@@ -833,39 +843,53 @@ class Sequence
                 $t['rs_url'] = $response['rs']->url;
                 $t['size'] = human_filesize($file_path);
 
-                // sequence file name
-                $t['sequence_file_name'] = $t['name'];
 
-                // repertoire file name
-                foreach ($metadata_response_list as $r) {
-                    if ($rest_service_id == $r['rs']->id) {
-                        if (isset($r['data']['file_path'])) {
-                            $repertoire_file_path = $r['data']['file_path'];
-                            $t['metadata_file_name'] = basename($repertoire_file_path);
+                if ($download_data) {
+                    // If we are downloading, we need to...
+
+                    // Get the sequence file name
+                    $t['sequence_file_name'] = $t['name'];
+
+                    // Get the matching repertoire file name from the metadata list
+                    foreach ($metadata_response_list as $r) {
+                        if ($rest_service_id == $r['rs']->id) {
+                            if (isset($r['data']['file_path'])) {
+                                $repertoire_file_path = $r['data']['file_path'];
+                                $t['metadata_file_name'] = basename($repertoire_file_path);
+                            }
                         }
                     }
-                }
 
-                // count number of lines
-                Log::debug('Get TSV files stats for ' . $file_path);
-                $n = 0;
-                $f = fopen($file_path, 'r');
-                while (! feof($f)) {
-                    $line = fgets($f);
-                    if (! empty(trim($line))) {
-                        $n++;
+                    // Count number of lines in the file
+                    Log::debug('Get TSV files stats for ' . $file_path);
+                    $n = 0;
+                    $f = fopen($file_path, 'r');
+                    while (! feof($f)) {
+                        $line = fgets($f);
+                        if (! empty(trim($line))) {
+                            $n++;
+                        }
                     }
-                }
-                fclose($f);
-                $t['nb_sequences'] = $n - 1; // don't count first line (columns headers)
-                $t['expected_nb_sequences'] = 0;
-                if (isset($expected_nb_sequences_by_rs[$rest_service_id])) {
-                    $t['expected_nb_sequences'] = $expected_nb_sequences_by_rs[$rest_service_id];
+                    fclose($f);
+                    $t['nb_sequences'] = $n - 1; // don't count first line (columns headers)
+
+                    // Count number of expected lines.
+                    $t['expected_nb_sequences'] = 0;
+                    if (isset($expected_nb_sequences_by_rs[$rest_service_id])) {
+                        $t['expected_nb_sequences'] = $expected_nb_sequences_by_rs[$rest_service_id];
+                    } else {
+                        Log::error('rest_service ' . $rest_service_id . ' is missing from $expected_nb_sequences_by_rs array');
+                        Log::error($expected_nb_sequences_by_rs);
+                    }
+                    Log::debug('Counts: total = ' . $t['nb_sequences'] . ' expected = ' . $t['expected_nb_sequences']);
                 } else {
-                    Log::error('rest_service ' . $rest_service_id . ' is missing from $expected_nb_sequences_by_rs array');
-                    Log::error($expected_nb_sequences_by_rs);
+                    // The metadata/repertoire file name is just the name
+                    $t['metadata_file_name'] = $t['name'];
+
+                    // If we aren't downloading we expect and got 0 sequences
+                    $t['nb_sequences'] = 0;
+                    $t['expected_nb_sequences'] = 0;
                 }
-                Log::debug('Counts: total = ' . $t['nb_sequences'] . ' expected = ' . $t['expected_nb_sequences']);
                 $t['query_log_id'] = $response['query_log_id'];
                 $t['rest_service_name'] = $response['rs']->name;
                 $t['incomplete'] = ($t['nb_sequences'] != $t['expected_nb_sequences']);
