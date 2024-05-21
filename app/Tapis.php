@@ -865,23 +865,9 @@ class Tapis
 
             return $response;
         } catch (\Exception $exception) {
-            Log::error('Tapis::doHTTPRequest:: Exception');
-            $tapis_response_str = $exception->getResponse()->getBody()->getContents();
-            $tapis_response = json_decode($tapis_response_str);
-            Log::error('Tapis::doHTTPRequest:: Exception - query = ' . $url);
-            Log::error('Tapis::doHTTPRequest:: Exception - response = ' . $tapis_response_str);
-            // If it is a Tapis error we want the client to try and handle it.
-            if ($this->isTapisError($tapis_response)) {
-                Log::error('Tapis::doHTTPRequest:: Exception - Tapis error, returning response = ' . $tapis_response_str);
-
-                if ($raw_json) {
-                    return $tapis_response_str;
-                } else {
-                    return $tapis_response;
-                }
-            } else {
-                throw exception;
-            }
+            Log::debug('Tapis::doHTTPRequest: error on query ' . $url);
+            Log::debug('Tapis::doHTTPRequest: Error: ' . $e->getMessage());
+            return null;
         }
 
                 // return response as object
