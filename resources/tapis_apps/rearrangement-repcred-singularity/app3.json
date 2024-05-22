@@ -11,11 +11,6 @@
       "execSystemId": "cedar.computecanada.ca-compute-irec_analysis",
       "parameterSet": {
         "appArgs": [
-            {"name":"placeholder",
-             "description": "Don't have any parameters yet",
-             "notes":{"label":"Placeholder"},
-             "arg":"NA", "inputMode":"REQUIRED"}
-
 	]
       }
     },

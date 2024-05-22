@@ -121,7 +121,8 @@ class SequenceClone
         return $filtered_samples_by_rs;
     }
 
-    public static function clonesTSVFolder($filters, $username, $url = '', $sample_filters = [])
+    public static function clonesTSVFolder($filters, $username, $url = '',
+                                           $sample_filters = [], $download_data)
     {
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
@@ -163,9 +164,15 @@ class SequenceClone
         File::makeDirectory($folder_path, 0777, true, true);
 
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
-        $response_list = RestService::clones_data($filters, $folder_path, $username, $expected_nb_clones_by_rs);
+        $clone_response_list = [];
+        if ($download_data) {
+            $clone_response_list = RestService::clones_data($filters, $folder_path, $username, $expected_nb_clones_by_rs);
+        } else {
+            Log::debug('Sequence::sequencesTSVFolder - SKIPPING DOWNLOAD');
+        }
 
-        $file_stats = self::file_stats($response_list, $metadata_response_list, $expected_nb_clones_by_rs);
+        // Get a list of file information as a block of data.
+        $file_stats = self::file_stats($clone_response_list, $metadata_response_list, $expected_nb_clones_by_rs, $download_data);
 
         // if some files are incomplete, log it
         foreach ($file_stats as $t) {
@@ -186,7 +193,7 @@ class SequenceClone
 
         // did the download fail for some services?
         $failed_rs = [];
-        foreach ($response_list as $response) {
+        foreach ($clone_response_list as $response) {
             if ($response['status'] == 'error') {
                 $failed_rs[] = $response['rs'];
                 $is_download_incomplete = true;
@@ -238,7 +245,7 @@ class SequenceClone
 
                 // list successful repositories
                 $success_rs = [];
-                foreach ($response_list as $response) {
+                foreach ($clone_response_list as $response) {
                     $rs = $response['rs'];
                     $is_failed = false;
                     foreach ($failed_rs as $rs_failed) {
@@ -277,7 +284,7 @@ class SequenceClone
         $t['base_path'] = $storage_folder;
         $t['base_name'] = $base_name;
         $t['folder_path'] = $folder_path;
-        $t['response_list'] = $response_list;
+        $t['response_list'] = $clone_response_list;
         $t['metadata_response_list'] = $metadata_response_list;
         $t['info_file_path'] = $info_file_path;
         $t['manifest_file_path'] = $manifest_file_path;
@@ -288,14 +295,14 @@ class SequenceClone
         return $t;
     }
 
-    public static function clonesTSV($filters, $username, $url = '', $sample_filters = [])
+    public static function clonesTSV($filters, $username, $url = '', $sample_filters = [], $download_data = true)
     {
-        $t = self::clonesTSVFolder($filters, $username, $url, $sample_filters);
+        $t = self::clonesTSVFolder($filters, $username, $url, $sample_filters, $download_data);
 
         $base_path = $t['base_path'];
         $base_name = $t['base_name'];
         $folder_path = $t['folder_path'];
-        $response_list = $t['response_list'];
+        $clone_response_list = $t['response_list'];
         $metadata_response_list = $t['metadata_response_list'];
         $info_file_path = $t['info_file_path'];
         $manifest_file_path = $t['manifest_file_path'];
@@ -304,7 +311,7 @@ class SequenceClone
         $file_stats = $t['file_stats'];
 
         // zip files
-        $zip_path = self::zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path);
+        $zip_path = self::zip_files($folder_path, $clone_response_list, $metadata_response_list, $info_file_path, $manifest_file_path, $download_data);
 
         // delete files
         self::delete_files($folder_path);
@@ -589,7 +596,7 @@ class SequenceClone
         return $info_file_path;
     }
 
-    public static function zip_files($folder_path, $response_list, $metadata_response_list, $info_file_path, $manifest_file_path)
+    public static function zip_files($folder_path, $cell_response_list, $metadata_response_list, $info_file_path, $manifest_file_path, $download_file)
     {
         $zipPath = $folder_path . '.zip';
         Log::info('Zip files to ' . $zipPath);
@@ -597,7 +604,7 @@ class SequenceClone
         $zip->open($zipPath, ZipArchive::CREATE);
 
         // clone data
-        foreach ($response_list as $response) {
+        foreach ($cell_response_list as $response) {
             if (isset($response['data']['file_path'])) {
                 $file_path = $response['data']['file_path'];
                 Log::debug('Adding to ZIP: ' . $file_path);
@@ -653,9 +660,17 @@ class SequenceClone
         }
     }
 
-    public static function file_stats($response_list, $metadata_response_list, $expected_nb_clones_by_rs)
+    public static function file_stats($cell_response_list, $metadata_response_list, $expected_nb_clones_by_rs, $download_data)
     {
         Log::debug('Get TSV files stats');
+        // Process the correct response list, depending on if we are downloading
+        // data or not.
+        if ($download_data) {
+            $response_list = $cell_response_list;
+        } else {
+            $response_list = $metadata_response_list;
+        }
+
         $file_stats = [];
         foreach ($response_list as $response) {
             $rest_service_id = $response['rs']->id;
@@ -667,37 +682,51 @@ class SequenceClone
                 $t['rs_url'] = $response['rs']->url;
                 $t['size'] = human_filesize($file_path);
 
-                // clone file name
-                $t['clone_file_name'] = $t['name'];
+                if ($download_data) {
+                    // If we are downloading, we need to...
 
-                // repertoire file name
-                foreach ($metadata_response_list as $r) {
-                    if ($rest_service_id == $r['rs']->id) {
-                        if (isset($r['data']['file_path'])) {
-                            $repertoire_file_path = $r['data']['file_path'];
-                            $t['metadata_file_name'] = basename($repertoire_file_path);
+                    // clone file name
+                    $t['clone_file_name'] = $t['name'];
+
+                    // repertoire file name
+                    foreach ($metadata_response_list as $r) {
+                        if ($rest_service_id == $r['rs']->id) {
+                            if (isset($r['data']['file_path'])) {
+                                $repertoire_file_path = $r['data']['file_path'];
+                                $t['metadata_file_name'] = basename($repertoire_file_path);
+                            }
                         }
                     }
+
+                    // count number of times the AIRR clone_id field occurs in the file.
+                    $n = 0;
+                    $f = fopen($file_path, 'r');
+                    while (! feof($f)) {
+                        $line = fgets($f);
+                        if (! empty($line)) {
+                            $n += substr_count($line, '"clone_id"');
+                        }
+                    }
+                    fclose($f);
+                    $t['nb_clones'] = $n;
+
+                    // Count the number of expected lines from the service list.
+                    $t['expected_nb_clones'] = 0;
+                    if (isset($expected_nb_clones_by_rs[$rest_service_id])) {
+                        $t['expected_nb_clones'] = $expected_nb_clones_by_rs[$rest_service_id];
+                    } else {
+                        Log::error('rest_service ' . $rest_service_id . ' is missing from $expected_nb_clones_by_rs array');
+                        Log::error($expected_nb_clones_by_rs);
+                    }
+                } else {
+                    // The metadata/repertoire file name is just the name
+                    $t['metadata_file_name'] = $t['name'];
+
+                    // If we aren't downloading we expect and got 0 clones
+                    $t['nb_clones'] = 0;
+                    $t['expected_nb_clones'] = 0;
                 }
 
-                // count number of times the AIRR clone_id field occurs in the file.
-                $n = 0;
-                $f = fopen($file_path, 'r');
-                while (! feof($f)) {
-                    $line = fgets($f);
-                    if (! empty($line)) {
-                        $n += substr_count($line, '"clone_id"');
-                    }
-                }
-                fclose($f);
-                $t['nb_clones'] = $n;
-                $t['expected_nb_clones'] = 0;
-                if (isset($expected_nb_clones_by_rs[$rest_service_id])) {
-                    $t['expected_nb_clones'] = $expected_nb_clones_by_rs[$rest_service_id];
-                } else {
-                    Log::error('rest_service ' . $rest_service_id . ' is missing from $expected_nb_clones_by_rs array');
-                    Log::error($expected_nb_clones_by_rs);
-                }
                 $t['query_log_id'] = $response['query_log_id'];
                 $t['rest_service_name'] = $response['rs']->name;
                 $t['incomplete'] = ($t['nb_clones'] != $t['expected_nb_clones']);
