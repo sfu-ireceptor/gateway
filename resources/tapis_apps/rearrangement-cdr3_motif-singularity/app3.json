@@ -15,7 +15,7 @@
              "name":"junction_aa_regex",
              "description": "The AA regular expression to use. Square brackets with a list of AA between them (e.g. [RS]) will be replaced with each AA in the list and a . will be replace with any AA in the AA alphabet (e.g. 'ASSI[RS].SYEQY').",
              "notes":{"label":"Junction AA Regular Expression"},
-             "arg":"ASSI[RS].SYEQY", "inputMode":"REQUIRED"
+             "arg":"CASS[YD][SGR][DTGN]TGELFF", "inputMode":"REQUIRED"
             }
         ]
       }

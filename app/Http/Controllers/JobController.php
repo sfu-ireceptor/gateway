@@ -158,6 +158,14 @@ class JobController extends Controller
             // human readable description for this App.
             $app_config = $app_info['config'];
             $appHumanName = $app_config['description'];
+            // We want to know if the job requires downloads
+            if (array_key_exists('download', $app_info) && $app_info['download'] == 'FALSE') {
+                Log::info('JobController::postLaunchApp - App does not require downloads');
+                $download_data = false;
+            } else {
+                Log::info('JobController::postLaunchApp - App requires downloads');
+                $download_data = true;
+            }
         }
 
         // create job in DB
@@ -190,13 +198,19 @@ class JobController extends Controller
         $sequence_large_download_limit = config('ireceptor.sequence_large_download_limit');
         Log::debug('JobController::LaunchApp - Number of objects = ' . $n_objects);
         $queue = 'short-analysis-jobs';
-        if ($query_type == 'sequence' && $n_objects > $sequence_large_download_limit) {
+        if ($download_data == false) {
+            // If we don't download data, use the short queue. This should run quickly
+            $queue = 'short-analysis-jobs';
+        } elseif ($query_type == 'sequence' && $n_objects > $sequence_large_download_limit) {
             $queue = 'long-analysis-jobs';
         } elseif ($query_type == 'clone' && $n_objects > $clone_large_download_limit) {
             $queue = 'long-analysis-jobs';
         } elseif ($query_type == 'cell' && $n_objects > $cell_large_download_limit) {
             $queue = 'long-analysis-jobs';
+        } else {
+            $queue = 'short-analysis-jobs';
         }
+
         Log::debug('JobController::LaunchApp - Job queue = ' . $queue);
 
         // queue job
