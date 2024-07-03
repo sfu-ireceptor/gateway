@@ -114,7 +114,9 @@ function run_analysis()
     # Get a file with the list of repositories to process.
     local url_file=${output_directory}/${repertoire_id}_url.tsv
     echo "URL" > ${url_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "repository_url" >> ${url_file}
+    # mainfest_summary.py puts files on the same line with a space
+    # separator so we need to use sed to put each on a new line.
+    python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${manifest_file} "repository_url" | sed 's/ /\n/g' >> ${url_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not process manifest file ${manifest_file}"
@@ -155,7 +157,13 @@ function run_analysis()
     echo "subject.diagnosis.disease_diagnosis.label" >> ${field_file}
     echo "subject.subject_id" >> ${field_file}
     echo "sample.sample_id" >> ${field_file}
+    echo "sample.tissue.label" >> ${field_file}
+    echo "sample.collection_time_point_relative" >> ${field_file}
+    echo "sample.collection_time_point_relative_unit.label" >> ${field_file}
+    echo "sample.collection_time_point_reference" >> ${field_file}
     echo "sample.pcr_target.pcr_target_locus" >> ${field_file}
+    echo "sample.cell_subset.label" >> ${field_file}
+    echo "sample.cell_phenotype" >> ${field_file}
 
     python3 /ireceptor/adc-search.py ${url_file} ${repertoire_query_file} ${motif_file} --field_file=${field_file} --output_file=${output_file}
     if [ $? -ne 0 ]
