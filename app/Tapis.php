@@ -867,6 +867,7 @@ class Tapis
         } catch (\Exception $exception) {
             Log::debug('Tapis::doHTTPRequest: error on query ' . $url);
             Log::debug('Tapis::doHTTPRequest: Error: ' . $e->getMessage());
+
             return null;
         }
 
