@@ -1,13 +1,13 @@
 {
     "id":"singularity-repcred-irec_analysis",
     "version":"0.1",
-    "description":"Repcred",
+    "description":"RepCred",
     "runtime":"SINGULARITY",
     "runtimeOptions": ["SINGULARITY_RUN"],
     "containerImage":"ir_repcred-ireceptor.sif",
     "jobType":"BATCH",
     "jobAttributes": {
-      "description": "<p><a href=\"https://github.com/airr-community/rep-cred/blob/master/README.md\" target=\"_blank\">Repcred</a> is a tool that analyzes the credibility of an AIRR-seq repertoire.</p>",
+      "description": "<p><a href=\"https://github.com/airr-community/rep-cred/blob/master/README.md\" target=\"_blank\">RepCred</a> is a tool that analyzes the credibility of an AIRR-seq repertoire.</p>",
       "execSystemId": "cedar.computecanada.ca-compute-irec_analysis",
       "parameterSet": {
         "appArgs": [
