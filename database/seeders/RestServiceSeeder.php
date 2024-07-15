@@ -219,6 +219,11 @@ class RestServiceSeeder extends Seeder
                 'country' => 'Portugal',
             ],
             [
+                'url' => 'https://ireceptor.clalit.co.il/airr/v1/',
+                'name' => 'Clalit',
+                'country' => 'Israel',
+            ],
+            [
                 'url' => 'https://hpap.ireceptor.org/airr/v1/',
                 'name' => 'HPAP',
                 'country' => 'Canada',
