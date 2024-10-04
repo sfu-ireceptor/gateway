@@ -14,7 +14,12 @@
 	]
       }
     },
-    "notes":
-        {"ir_hints":[{"object":"Rearrangement"}]}
+    "notes": {
+        "ir_hints": {
+            "object":"Rearrangement",
+            "requirements":{},
+            "resources":{"Rearrangement": {"time_ms_per_unit":1,"memory_byte_per_unit":1}}
+        }
+    }
 }
 

@@ -19,7 +19,12 @@
         ]
       }
     },
-    "notes":
-        {"ir_hints":[{"object":"Clone"}]}
+    "notes": {
+        "ir_hints":{
+            "object":"Clone",
+            "requirements":{},
+            "resources":{"Clone": {"time_ms_per_unit":1,"memory_byte_per_unit":1}}
+        }
+    }
 }
 
