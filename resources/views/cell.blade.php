@@ -40,6 +40,11 @@
 						<div id="collapseOne" class="panel-collapse collapse {{ in_array('0', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingOne">
 							<div class="panel-body">
 								<div class="form-group">
+									{{ Form::label('cell_id_cell',  __('short.cell_id_cell')) }}
+									@include('help', ['id' => 'cell_id_cell'])
+									{{ Form::text('cell_id_cell', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
+								</div>
+								<div class="form-group">
 									{{ Form::label('expression_study_method_cell',  __('short.expression_study_method_cell')) }}
 									@include('help', ['id' => 'expression_study_method_cell'])
 									{{ Form::text('expression_study_method_cell', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}

@@ -130,6 +130,10 @@
 						<div id="collapseThree" class="panel-collapse collapse {{ in_array('2', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingThree">
 							<div class="panel-body">
 								<div class="form-group">
+									{{ Form::label('cell_id', __('short.cell_id')) }}
+									{{ Form::text('cell_id', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match - no substrings allowed', 'data-placement' => 'bottom')) }}
+								</div>
+								<div class="form-group">
 									{{ Form::label('productive', __('short.productive')) }}
 									{{ Form::select('productive', $functional_list, '', array('class' => 'form-control')) }}
 								</div>
