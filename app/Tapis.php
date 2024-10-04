@@ -254,19 +254,19 @@ class Tapis
                 $notes = $app_config['notes'];
                 if (array_key_exists('ir_hints', $notes)) {
                     $hints = $notes['ir_hints'];
-                    #foreach ($hints as $hint) {
-                        if (array_key_exists('object', $hints)) {
-                            // Get the object attribute - this tells us which AIRR object type this
-                            // App can be applied to (e.g. Rearrangement, Clone, Cell).
-                            $app_info['object'] = $hints['object'];
-                        } elseif (array_key_exists('requirements', $hints) && array_key_exists('Download', $hints['requirements'])) {
-                            // Get the download attribute - this tells us whether the app needs
-                            // the data from the Gateway or not. Some Apps use the queries provided
-                            // to get the data rather than rely on the Gateway to download it.
-                            // This is either TRUE or FALSE as a string.
-                            $app_info['download'] = $hints['requirements']['download'];
-                        }
-                    #}
+                    //foreach ($hints as $hint) {
+                    if (array_key_exists('object', $hints)) {
+                        // Get the object attribute - this tells us which AIRR object type this
+                        // App can be applied to (e.g. Rearrangement, Clone, Cell).
+                        $app_info['object'] = $hints['object'];
+                    } elseif (array_key_exists('requirements', $hints) && array_key_exists('Download', $hints['requirements'])) {
+                        // Get the download attribute - this tells us whether the app needs
+                        // the data from the Gateway or not. Some Apps use the queries provided
+                        // to get the data rather than rely on the Gateway to download it.
+                        // This is either TRUE or FALSE as a string.
+                        $app_info['download'] = $hints['requirements']['download'];
+                    }
+                    //}
                 }
             }
             if (array_key_exists('jobAttributes', $app_config) &&
