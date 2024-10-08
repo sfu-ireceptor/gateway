@@ -2,13 +2,9 @@
     "id":"singularity-clone-stats-irec_analysis",
     "version":"0.1",
     "description":"Clone statistics",
-    "runtime":"SINGULARITY",
-    "runtimeOptions": ["SINGULARITY_RUN"],
     "containerImage":"ir_clone_stats-4.0.0.sif",
-    "jobType":"BATCH",
     "jobAttributes": {
       "description": "<p>iReceptor Clone Analysis App that performs a range of analyses that provide statistics on:<ul><li>V, D, and J gene usage (histogram)</li><li>Junction AA length (histogram)</li></ul></p>",
-      "execSystemId": "cedar.computecanada.ca-compute-irec_analysis",
       "parameterSet": {
         "appArgs": [
             {"name":"split_repertoire",
@@ -23,7 +19,7 @@
         "ir_hints":{
             "object":"Clone",
             "requirements":{},
-            "resources":{"Clone": {"time_ms_per_unit":1,"memory_byte_per_unit":1}}
+            "resources":{}
         }
     }
 }

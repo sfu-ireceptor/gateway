@@ -2,13 +2,9 @@
     "id":"singularity-histogram-irec_analysis",
     "version":"0.1",
     "description":"Histogram",
-    "runtime":"SINGULARITY",
-    "runtimeOptions": ["SINGULARITY_RUN"],
     "containerImage":"ir_histogram-4.0.0.sif",
-    "jobType":"BATCH",
     "jobAttributes": {
       "description": "<p>iReceptor Analysis App that performs count statistics (histogram) on any valid AIRR Rearrangement field. For each unique value of the chosen field (e.g. <em>IGHV3-53*01</em> for <em>v_call</em> or <em>CALGDYKLSF</em> for <em>junction_aa</em>) in the data set, a count of the number of occurrences for that value is provided. Although this will work for any AIRR field, typically useful analyses would be on fields such as <em>v_call, d_call, j_call, junction_aa_length, junction_aa</em>.</p><p>Notes:<ul><li>Most fields will have many (thousands) of unique values (e.g. <em>junction_aa</em>) so limiting the \"Number of values\" parameter is highly recommended. Combining this with \"Sort the values\" = TRUE will provide the top N values for a field.</li></ul>",
-      "execSystemId": "cedar.computecanada.ca-compute-irec_analysis",
       "parameterSet": {
         "appArgs": [
             {"name":"split_repertoire",
@@ -34,7 +30,7 @@
         "ir_hints": {
             "object":"Rearrangement",
             "requirements":{},
-            "resources":{"Rearrangement": {"time_ms_per_unit":1,"memory_byte_per_unit":1}}
+            "resources":{}
         }
     }
 }
