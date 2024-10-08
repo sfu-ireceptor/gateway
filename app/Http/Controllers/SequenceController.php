@@ -330,12 +330,12 @@ class SequenceController extends Controller
 
             // If we have a time per unit, make sure it will fit in the job runtime.
             if (array_key_exists('time_secs_per_million', $app_info)) {
-                // Get the allowed run time 
+                // Get the allowed run time
                 $job_runtime_secs = $tapis->maxRunTimeMinutes() * 60;
                 // Get the number of objects
                 $num_objects = $data['total_filtered_objects'];
                 // Get the required time based on the apps ms performance per unit
-                $required_time_secs = ($num_objects/1000000) * $app_info['time_secs_per_million'];
+                $required_time_secs = ($num_objects / 1000000) * $app_info['time_secs_per_million'];
                 // If requried is greater than run time, disable the app.
                 if ($required_time_secs > $job_runtime_secs) {
                     Log::debug('   Run time exceeded');
