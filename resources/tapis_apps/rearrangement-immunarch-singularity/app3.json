@@ -13,7 +13,7 @@
         "ir_hints":{
             "object":"Rearrangement",
             "requirements":{"query":{},"comment":""},
-            "resources":{"time_ms_per_unit":1,"memory_byte_per_unit_repertoire":4000}
+            "resources":{"time_secs_per_million":1,"memory_byte_per_unit_repertoire":4000}
         }
     }
 }

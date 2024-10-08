@@ -260,15 +260,14 @@ class SequenceController extends Controller
             Log::debug('Processing app ' . $app_tag);
             // Process the parameters.
             $parameter_list = [];
-            Log::debug('App config = ' . json_encode($app_config));
+            // Log::debug('App config = ' . json_encode($app_config));
             foreach ($app_config['jobAttributes']['parameterSet']['appArgs'] as $parameter_info) {
                 // We only want the visible parameters to be visible. The
                 // UI uses the Tapis ID as a label and the Tapis paramenter
                 // "label" as the human readable name of the parameter.
                 if ($parameter_info['inputMode'] != 'FIXED') {
                     $parameter = [];
-                    Log::debug('   Processing parameter - ' . $parameter_info['name']);
-                    Log::debug('   Processing parameter - ' . $parameter_info['notes']['label']);
+                    Log::debug('   Processing parameter - ' . $parameter_info['name'] . ', ' . $parameter_info['notes']['label']);
                     $parameter['label'] = $parameter_info['notes']['label'];
                     $parameter['name'] = $parameter_info['name'];
                     $parameter['description'] = $parameter_info['description'];
@@ -304,7 +303,6 @@ class SequenceController extends Controller
             if (array_key_exists('memory_byte_per_unit_repertoire', $app_info)) {
                 $repertoire_objects = 0;
                 foreach ($sequence_data['summary'] as $sample) {
-                    Log::debug($sample->ir_filtered_sequence_count);
                     if ($sample->ir_filtered_sequence_count > $repertoire_objects) {
                         $repertoire_objects = $sample->ir_filtered_sequence_count;
                     }
@@ -319,10 +317,39 @@ class SequenceController extends Controller
 
             // Get the node memory
             $node_memory = $tapis->memoryMBPerNode() * 1024 * 1024;
+
+            // If required memory is more than node memory, disable the app and
+            // generate an error message.
             if ($required_memory > $node_memory) {
-                Log::debug('   Over memory');
+                Log::debug('   Memory exceeded');
+                Log::debug('      Required memory = ' . human_filesize($required_memory));
+                Log::debug('      Node memory = ' . human_filesize($node_memory));
                 $app_ui_info['runnable'] = false;
                 $app_ui_info['runnable_comment'] = 'Unable to run Analysis Job. It is estmated that "' . $app_ui_info['name'] . '" will require ' . human_filesize($required_memory) . ' of memory to process ' . human_number($num_objects) . ' rearrangements' . $added_string . '. Compute nodes are limited to ' . human_filesize($node_memory) . ' of memory.';
+            }
+
+            // If we have a time per unit, make sure it will fit in the job runtime.
+            if (array_key_exists('time_secs_per_million', $app_info)) {
+                // Get the allowed run time 
+                $job_runtime_secs = $tapis->maxRunTimeMinutes() * 60;
+                // Get the number of objects
+                $num_objects = $data['total_filtered_objects'];
+                // Get the required time based on the apps ms performance per unit
+                $required_time_secs = ($num_objects/1000000) * $app_info['time_secs_per_million'];
+                // If requried is greater than run time, disable the app.
+                if ($required_time_secs > $job_runtime_secs) {
+                    Log::debug('   Run time exceeded');
+                    Log::debug('      Required run time (s) = ' . human_number($required_time_secs));
+                    Log::debug('      Max run time (s) =  ' . human_number($job_runtime_secs));
+                    $app_ui_info['runnable'] = false;
+                    $error_string = 'It is estimated that "' . $app_ui_info['name'] . '" will require ' . human_number($required_time_secs / 60) . ' minutes to process ' . human_number($num_objects) . ' rearrangements. Current maximum job run time is ' . human_number($tapis->maxRunTimeMinutes()) . ' minutes.';
+                    // If we have a comment already, then add to it, otherwise generate new comment.
+                    if (strlen($app_ui_info['runnable_comment']) > 0) {
+                        $app_ui_info['runnable_comment'] = $app_ui_info['runnable_comment'] . ' ' . $error_string;
+                    } else {
+                        $app_ui_info['runnable_comment'] = 'Unable to run Analysis Job. ' . $error_string;
+                    }
+                }
             }
 
             // Save the info in the app list given to the UI.

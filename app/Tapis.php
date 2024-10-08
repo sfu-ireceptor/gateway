@@ -275,9 +275,9 @@ class Tapis
                         // Get the memory (in bytes) required per unit in total units for this App
                         $app_info['memory_byte_per_unit_total'] = $hints['resources']['memory_byte_per_unit_total'];
                     }
-                    if (array_key_exists('resources', $hints) && array_key_exists('time_ms_per_unit', $hints['resources'])) {
+                    if (array_key_exists('resources', $hints) && array_key_exists('time_secs_per_million', $hints['resources'])) {
                         // Get the time (in ms) required per unit for this App
-                        $app_info['time_ms_per_unit'] = $hints['resources']['time_ms_per_unit'];
+                        $app_info['time_secs_per_million'] = $hints['resources']['time_secs_per_million'];
                     }
                     if (array_key_exists('requirements', $hints) && array_key_exists('query', $hints['requirements'])) {
                         // Get the object description that describes the repertoire query that must return a repertoire to run.
