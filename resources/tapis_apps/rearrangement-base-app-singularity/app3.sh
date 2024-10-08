@@ -81,15 +81,18 @@ INFO_FILE="info.txt"
 AIRR_MANIFEST_FILE="AIRR-manifest.json"
 
 # Split the repertoires into the directory structure
-echo "IR-INFO: Splitting repertoires"
+echo -n "IR-INFO: Splitting repertoires at "
+date
 gateway_split_repertoire ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${IR_DOWNLOAD_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 # Run the run_analysis function on every repertoire in the directory structure
-echo "IR-INFO: Running the analysis"
+echo -n "IR-INFO: Running the analysis at "
+date
 gateway_run_analysis ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 # Cleanup the data files in the directory stucture
-echo "IR-INFO: Cleaning up the data"
+echo -n "IR-INFO: Cleaning up the data at "
+date
 gateway_cleanup ${IR_DOWNLOAD_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 ###############################################################################
@@ -107,7 +110,8 @@ cp *.err ${GATEWAY_ANALYSIS_DIR}
 cp *.out ${GATEWAY_ANALYSIS_DIR}
 
 # Zip up the analysis results for easy download
-echo "IR-INFO: Ziping the analysis results"
+echo -n "IR-INFO: Ziping the analysis results at "
+date
 zip -r ${GATEWAY_ANALYSIS_DIR}.zip ${GATEWAY_ANALYSIS_DIR}
 mv ${GATEWAY_ANALYSIS_DIR}.zip output/
 
@@ -117,4 +121,5 @@ rm -rf ${GATEWAY_ANALYSIS_DIR}
 # Cleanup the input data files, don't want to return them as part of the
 # resulting analysis
 rm -f $IR_DOWNLOAD_FILE
-echo "IR-INFO: Analysis app finished"
+echo -n "IR-INFO: Analysis app finished at "
+date
