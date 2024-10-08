@@ -255,6 +255,7 @@ class SequenceController extends Controller
         // For each app, set up the info required by the UI for the App parameters.
         foreach ($appTemplates as $app_tag => $app_info) {
             $app_config = $app_info['config'];
+
             $app_ui_info = [];
             Log::debug('Processing app ' . $app_tag);
             // Process the parameters.
@@ -288,6 +289,41 @@ class SequenceController extends Controller
             $app_ui_info['job_parameter_list'] = $job_parameter_list;
             $app_ui_info['app_id'] = $app_tag;
             $app_ui_info['app_tag'] = $app_tag;
+            $app_ui_info['runnable'] = true; 
+            $app_ui_info['runnable_comment'] = ''; 
+
+            // Get the required memory depending on whether the App proceses data per
+            // repertoire or in total
+            $required_memory = 0;
+            $num_objects = 0;
+            $added_string = '';
+            if (array_key_exists('memory_byte_per_unit_total', $app_info)) {
+                $num_objects = $data['total_filtered_objects'];
+                $required_memory = $num_objects * $app_info['memory_byte_per_unit_total'];
+            }
+            if (array_key_exists('memory_byte_per_unit_repertoire', $app_info)) {
+                $repertoire_objects = 0;
+                foreach( $sequence_data['summary'] as $sample) {
+                    Log::debug($sample->ir_filtered_sequence_count);
+                    if ($sample->ir_filtered_sequence_count > $repertoire_objects) {
+                        $repertoire_objects = $sample->ir_filtered_sequence_count;
+                    }
+                }
+                $required_repertoire_memory = $repertoire_objects * $app_info['memory_byte_per_unit_repertoire'];
+                if ($required_repertoire_memory > $required_memory) {
+                    $required_memory = $required_repertoire_memory;
+                    $num_objects = $repertoire_objects;
+                    $added_string = ' (the largest repertoire)';
+                }
+            }
+
+            // Get the node memory
+            $node_memory = $tapis->memoryMBPerNode()*1024*1024;
+            if ($required_memory > $node_memory) {
+                Log::debug('   Over memory');
+                $app_ui_info['runnable'] = false; 
+                $app_ui_info['runnable_comment'] = 'Unable to run Analysis Job. It is estmated that "'. $app_ui_info['name'] . '" will require ' . human_filesize($required_memory) . ' of memory to process ' . human_number($num_objects) . ' rearrangements' . $added_string . '. Compute nodes are limited to ' . human_filesize($node_memory) . ' of memory.'; 
+            }
 
             // Save the info in the app list given to the UI.
             $app_list[$app_tag] = $app_ui_info;

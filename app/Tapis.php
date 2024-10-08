@@ -259,13 +259,35 @@ class Tapis
                         // Get the object attribute - this tells us which AIRR object type this
                         // App can be applied to (e.g. Rearrangement, Clone, Cell).
                         $app_info['object'] = $hints['object'];
-                    } elseif (array_key_exists('requirements', $hints) && array_key_exists('Download', $hints['requirements'])) {
+                    }
+                    if (array_key_exists('requirements', $hints) && array_key_exists('Download', $hints['requirements'])) {
                         // Get the download attribute - this tells us whether the app needs
                         // the data from the Gateway or not. Some Apps use the queries provided
                         // to get the data rather than rely on the Gateway to download it.
                         // This is either TRUE or FALSE as a string.
-                        $app_info['download'] = $hints['requirements']['download'];
+                        $app_info['download'] = $hints['requirements']['Download'];
                     }
+                    if (array_key_exists('resources', $hints) && array_key_exists('memory_byte_per_unit_repertoire', $hints['resources'])) {
+                        // Get the memory (in bytes) required per unit for each repertoire for this App
+                        $app_info['memory_byte_per_unit_repertoire'] = $hints['resources']['memory_byte_per_unit_repertoire'];
+                    }
+                    if (array_key_exists('resources', $hints) && array_key_exists('memory_byte_per_unit_total', $hints['resources'])) {
+                        // Get the memory (in bytes) required per unit in total units for this App
+                        $app_info['memory_byte_per_unit_total'] = $hints['resources']['memory_byte_per_unit_total'];
+                    }
+                    if (array_key_exists('resources', $hints) && array_key_exists('time_ms_per_unit', $hints['resources'])) {
+                        // Get the time (in ms) required per unit for this App
+                        $app_info['time_ms_per_unit'] = $hints['resources']['time_ms_per_unit'];
+                    }
+                    if (array_key_exists('requirements', $hints) && array_key_exists('query', $hints['requirements'])) {
+                        // Get the object description that describes the repertoire query that must return a repertoire to run.
+                        $app_info['repertoire_query'] = $hints['requirements']['query'];
+                    }
+                    if (array_key_exists('requirements', $hints) && array_key_exists('comment', $hints['requirements'])) {
+                        // Get the object description that describes the repertoire query that must return a repertoire to run.
+                        $app_info['query_comment'] = $hints['requirements']['query'];
+                    }
+
                     //}
                 }
             }
