@@ -289,8 +289,8 @@ class SequenceController extends Controller
             $app_ui_info['job_parameter_list'] = $job_parameter_list;
             $app_ui_info['app_id'] = $app_tag;
             $app_ui_info['app_tag'] = $app_tag;
-            $app_ui_info['runnable'] = true; 
-            $app_ui_info['runnable_comment'] = ''; 
+            $app_ui_info['runnable'] = true;
+            $app_ui_info['runnable_comment'] = '';
 
             // Get the required memory depending on whether the App proceses data per
             // repertoire or in total
@@ -303,7 +303,7 @@ class SequenceController extends Controller
             }
             if (array_key_exists('memory_byte_per_unit_repertoire', $app_info)) {
                 $repertoire_objects = 0;
-                foreach( $sequence_data['summary'] as $sample) {
+                foreach ($sequence_data['summary'] as $sample) {
                     Log::debug($sample->ir_filtered_sequence_count);
                     if ($sample->ir_filtered_sequence_count > $repertoire_objects) {
                         $repertoire_objects = $sample->ir_filtered_sequence_count;
@@ -318,11 +318,11 @@ class SequenceController extends Controller
             }
 
             // Get the node memory
-            $node_memory = $tapis->memoryMBPerNode()*1024*1024;
+            $node_memory = $tapis->memoryMBPerNode() * 1024 * 1024;
             if ($required_memory > $node_memory) {
                 Log::debug('   Over memory');
-                $app_ui_info['runnable'] = false; 
-                $app_ui_info['runnable_comment'] = 'Unable to run Analysis Job. It is estmated that "'. $app_ui_info['name'] . '" will require ' . human_filesize($required_memory) . ' of memory to process ' . human_number($num_objects) . ' rearrangements' . $added_string . '. Compute nodes are limited to ' . human_filesize($node_memory) . ' of memory.'; 
+                $app_ui_info['runnable'] = false;
+                $app_ui_info['runnable_comment'] = 'Unable to run Analysis Job. It is estmated that "' . $app_ui_info['name'] . '" will require ' . human_filesize($required_memory) . ' of memory to process ' . human_number($num_objects) . ' rearrangements' . $added_string . '. Compute nodes are limited to ' . human_filesize($node_memory) . ' of memory.';
             }
 
             // Save the info in the app list given to the UI.
