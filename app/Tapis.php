@@ -280,7 +280,7 @@ class Tapis
                         $app_info['time_secs_per_million'] = $hints['resources']['time_secs_per_million'];
                     }
                     if (array_key_exists('requirements', $hints)) {
-                        // Get the list of field requirements for this App. 
+                        // Get the list of field requirements for this App.
                         $app_info['requirements'] = $hints['requirements'];
                     }
 
