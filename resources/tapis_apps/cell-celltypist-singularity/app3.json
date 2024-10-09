@@ -12,7 +12,7 @@
     "notes": {
         "ir_hints":{
             "object":"Cell",
-            "requirements":{},
+            "requirements":{"Fields":{}},
             "resources":{}
         }
     }

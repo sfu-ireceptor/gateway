@@ -296,17 +296,23 @@ class SequenceController extends Controller
             $required_memory = 0;
             $num_objects = 0;
             $added_string = '';
+            // Required is bytes per unit times the number of rearrangements.
             if (array_key_exists('memory_byte_per_unit_total', $app_info)) {
                 $num_objects = $data['total_filtered_objects'];
                 $required_memory = $num_objects * $app_info['memory_byte_per_unit_total'];
             }
+            // Required is bytes per unit times the number of rearrangements in the
+            // largest repertoire.
             if (array_key_exists('memory_byte_per_unit_repertoire', $app_info)) {
+                // Get the number of rearrangements in the larges repertoire
                 $repertoire_objects = 0;
                 foreach ($sequence_data['summary'] as $sample) {
                     if ($sample->ir_filtered_sequence_count > $repertoire_objects) {
                         $repertoire_objects = $sample->ir_filtered_sequence_count;
                     }
                 }
+                // Required is bytes per unit times number of rearrangements in the
+                // largest repertoire.
                 $required_repertoire_memory = $repertoire_objects * $app_info['memory_byte_per_unit_repertoire'];
                 if ($required_repertoire_memory > $required_memory) {
                     $required_memory = $required_repertoire_memory;
@@ -348,6 +354,47 @@ class SequenceController extends Controller
                         $app_ui_info['runnable_comment'] = $app_ui_info['runnable_comment'] . ' ' . $error_string;
                     } else {
                         $app_ui_info['runnable_comment'] = 'Unable to run Analysis Job. ' . $error_string;
+                    }
+                }
+            }
+
+            // Check the field requirements for the app.
+            if (array_key_exists('requirements', $app_info) && array_key_exists('Fields', $app_info['requirements']) && count($app_info['requirements']['Fields']) > 0) {
+                //Log::debug('Sample info = ' . json_encode($sequence_data['summary']));
+                //Log::debug('Metadata info = ' . json_encode($metadata));
+                foreach ($app_info['requirements']['Fields'] as $field => $value) {
+                    Log::debug('   checking requirement ' . $field . ' = ' . json_encode($value));
+                    // For each sample being processed, make sure the field values are valid.
+                    foreach ($sequence_data['summary'] as $sample) {
+                        $error_string = '';
+                        $got_error = false;
+                        if (property_exists($sample, $field)) {
+                            // If the property exists and is a mismatch, disable app
+                            Log::debug('   found field ' . $field . ' = ' . $sample->$field);
+                            if (!in_array($sample->$field, $value)) {
+                                Log::debug('   Requirement field is not in sample.');
+                                $got_error = true;
+                                $app_ui_info['runnable'] = false;
+                                $error_string = 'A required value is missing from the "' . $field . '" field in one of the repertoires. Please filter the data so that all repertoires have one of the following values (' . json_encode($value) . ') in the "' . $field . '" field.';
+                            }
+                        } else {
+                            // If the property doesn't exist, disable the app
+                            $got_error = true;
+                            $app_ui_info['runnable'] = false;
+                            $error_string = 'A required value is missing from the "' . $field . '" field in one of the repertoires. Please filter the data so that all repertoires have one of the following values (' . json_encode($value) . ') in the "' . $field . '" field.';
+                        }
+                        // If we have a comment already, then add to it, otherwise generate new comment.
+                        if (strlen($app_ui_info['runnable_comment']) > 0) {
+                            $app_ui_info['runnable_comment'] = $app_ui_info['runnable_comment'] . ' ' . $error_string;
+                        } else {
+                            $app_ui_info['runnable_comment'] = 'Unable to run Analysis Job. ' . $error_string;
+                        }
+
+                        // If we have already processed this error for a repertoire, don't bother processing it
+                        // again for other repertoires.
+                        if ($got_error) {
+                            break;
+                        }
                     }
                 }
             }

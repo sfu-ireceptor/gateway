@@ -279,13 +279,9 @@ class Tapis
                         // Get the time (in ms) required per unit for this App
                         $app_info['time_secs_per_million'] = $hints['resources']['time_secs_per_million'];
                     }
-                    if (array_key_exists('requirements', $hints) && array_key_exists('query', $hints['requirements'])) {
-                        // Get the object description that describes the repertoire query that must return a repertoire to run.
-                        $app_info['repertoire_query'] = $hints['requirements']['query'];
-                    }
-                    if (array_key_exists('requirements', $hints) && array_key_exists('comment', $hints['requirements'])) {
-                        // Get the object description that describes the repertoire query that must return a repertoire to run.
-                        $app_info['query_comment'] = $hints['requirements']['query'];
+                    if (array_key_exists('requirements', $hints)) {
+                        // Get the list of field requirements for this App. 
+                        $app_info['requirements'] = $hints['requirements'];
                     }
 
                     //}
