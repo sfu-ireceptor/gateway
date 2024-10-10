@@ -278,7 +278,6 @@ class CellController extends Controller
             $app_ui_info['runnable'] = true;
             $app_ui_info['runnable_comment'] = '';
 
-
             // Get the required memory depending on whether the App proceses data per
             // repertoire or in total
             $required_memory = 0;
@@ -357,7 +356,7 @@ class CellController extends Controller
                         if (property_exists($sample, $field)) {
                             // If the property exists and is a mismatch, disable app
                             Log::debug('   found field ' . $field . ' = ' . $sample->$field);
-                            if (!in_array($sample->$field, $value)) {
+                            if (! in_array($sample->$field, $value)) {
                                 Log::debug('   Requirement field is not in sample.');
                                 $got_error = true;
                                 $app_ui_info['runnable'] = false;
