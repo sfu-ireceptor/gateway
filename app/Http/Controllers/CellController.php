@@ -275,6 +275,115 @@ class CellController extends Controller
             $app_ui_info['job_parameter_list'] = $job_parameter_list;
             $app_ui_info['app_id'] = $app_tag;
             $app_ui_info['app_tag'] = $app_tag;
+            $app_ui_info['runnable'] = true;
+            $app_ui_info['runnable_comment'] = '';
+
+
+            // Get the required memory depending on whether the App proceses data per
+            // repertoire or in total
+            $required_memory = 0;
+            $num_objects = 0;
+            $added_string = '';
+            // Required is bytes per unit times the number of rearrangements.
+            if (array_key_exists('memory_byte_per_unit_total', $app_info)) {
+                $num_objects = $data['total_filtered_objects'];
+                $required_memory = $num_objects * $app_info['memory_byte_per_unit_total'];
+            }
+            // Required is bytes per unit times the number of rearrangements in the
+            // largest repertoire.
+            if (array_key_exists('memory_byte_per_unit_repertoire', $app_info)) {
+                // Get the number of rearrangements in the larges repertoire
+                $repertoire_objects = 0;
+                foreach ($cell_data['summary'] as $sample) {
+                    if ($sample->ir_filtered_cell_count > $repertoire_objects) {
+                        $repertoire_objects = $sample->ir_filtered_cell_count;
+                    }
+                }
+                // Required is bytes per unit times number of rearrangements in the
+                // largest repertoire.
+                $required_repertoire_memory = $repertoire_objects * $app_info['memory_byte_per_unit_repertoire'];
+                if ($required_repertoire_memory > $required_memory) {
+                    $required_memory = $required_repertoire_memory;
+                    $num_objects = $repertoire_objects;
+                    $added_string = ' (the largest repertoire)';
+                }
+            }
+
+            // Get the node memory
+            $node_memory = $tapis->memoryMBPerNode() * 1024 * 1024;
+
+            // If required memory is more than node memory, disable the app and
+            // generate an error message.
+            if ($required_memory > $node_memory) {
+                Log::debug('   Memory exceeded');
+                Log::debug('      Required memory = ' . human_filesize($required_memory));
+                Log::debug('      Node memory = ' . human_filesize($node_memory));
+                $app_ui_info['runnable'] = false;
+                $app_ui_info['runnable_comment'] = 'Unable to run Analysis Job. It is estmated that "' . $app_ui_info['name'] . '" will require ' . human_filesize($required_memory) . ' of memory to process ' . human_number($num_objects) . ' rearrangements' . $added_string . '. Compute nodes are limited to ' . human_filesize($node_memory) . ' of memory.';
+            }
+
+            // If we have a time per unit, make sure it will fit in the job runtime.
+            if (array_key_exists('time_secs_per_million', $app_info)) {
+                // Get the allowed run time
+                $job_runtime_secs = $tapis->maxRunTimeMinutes() * 60;
+                // Get the number of objects
+                $num_objects = $data['total_filtered_objects'];
+                // Get the required time based on the apps ms performance per unit
+                $required_time_secs = ($num_objects / 1000000) * $app_info['time_secs_per_million'];
+                // If requried is greater than run time, disable the app.
+                if ($required_time_secs > $job_runtime_secs) {
+                    Log::debug('   Run time exceeded');
+                    Log::debug('      Required run time (s) = ' . human_number($required_time_secs));
+                    Log::debug('      Max run time (s) =  ' . human_number($job_runtime_secs));
+                    $app_ui_info['runnable'] = false;
+                    $error_string = 'It is estimated that "' . $app_ui_info['name'] . '" will require ' . human_number($required_time_secs / 60) . ' minutes to process ' . human_number($num_objects) . ' rearrangements. Current maximum job run time is ' . human_number($tapis->maxRunTimeMinutes()) . ' minutes.';
+                    // If we have a comment already, then add to it, otherwise generate new comment.
+                    if (strlen($app_ui_info['runnable_comment']) > 0) {
+                        $app_ui_info['runnable_comment'] = $app_ui_info['runnable_comment'] . ' ' . $error_string;
+                    } else {
+                        $app_ui_info['runnable_comment'] = 'Unable to run Analysis Job. ' . $error_string;
+                    }
+                }
+            }
+
+            // Check the field requirements for the app.
+            if (array_key_exists('requirements', $app_info) && array_key_exists('Fields', $app_info['requirements']) && count($app_info['requirements']['Fields']) > 0) {
+                foreach ($app_info['requirements']['Fields'] as $field => $value) {
+                    Log::debug('   checking requirement ' . $field . ' = ' . json_encode($value));
+                    // For each sample being processed, make sure the field values are valid.
+                    foreach ($cell_data['summary'] as $sample) {
+                        $error_string = '';
+                        $got_error = false;
+                        if (property_exists($sample, $field)) {
+                            // If the property exists and is a mismatch, disable app
+                            Log::debug('   found field ' . $field . ' = ' . $sample->$field);
+                            if (!in_array($sample->$field, $value)) {
+                                Log::debug('   Requirement field is not in sample.');
+                                $got_error = true;
+                                $app_ui_info['runnable'] = false;
+                                $error_string = 'A required value is missing from the "' . $field . '" field in one of the repertoires. Please filter the data so that all repertoires have one of the following values (' . json_encode($value) . ') in the "' . $field . '" field.';
+                            }
+                        } else {
+                            // If the property doesn't exist, disable the app
+                            $got_error = true;
+                            $app_ui_info['runnable'] = false;
+                            $error_string = 'A required value is missing from the "' . $field . '" field in one of the repertoires. Please filter the data so that all repertoires have one of the following values (' . json_encode($value) . ') in the "' . $field . '" field.';
+                        }
+                        // If we have a comment already, then add to it, otherwise generate new comment.
+                        if (strlen($app_ui_info['runnable_comment']) > 0) {
+                            $app_ui_info['runnable_comment'] = $app_ui_info['runnable_comment'] . ' ' . $error_string;
+                        } else {
+                            $app_ui_info['runnable_comment'] = 'Unable to run Analysis Job. ' . $error_string;
+                        }
+
+                        // If we have already processed this error for a repertoire, don't bother processing it
+                        // again for other repertoires.
+                        if ($got_error) {
+                            break;
+                        }
+                    }
+                }
+            }
 
             // Save the info in the app list given to the UI.
             $app_list[$app_tag] = $app_ui_info;
