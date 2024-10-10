@@ -332,7 +332,6 @@ class CloneController extends Controller
                 }
             }
 
-
             // Check the field requirements for the app.
             if (array_key_exists('requirements', $app_info) && array_key_exists('Fields', $app_info['requirements']) && count($app_info['requirements']['Fields']) > 0) {
                 foreach ($app_info['requirements']['Fields'] as $field => $value) {
@@ -344,7 +343,7 @@ class CloneController extends Controller
                         if (property_exists($sample, $field)) {
                             // If the property exists and is a mismatch, disable app
                             Log::debug('   found field ' . $field . ' = ' . $sample->$field);
-                            if (!in_array($sample->$field, $value)) {
+                            if (! in_array($sample->$field, $value)) {
                                 Log::debug('   Requirement field is not in sample.');
                                 $got_error = true;
                                 $app_ui_info['runnable'] = false;
