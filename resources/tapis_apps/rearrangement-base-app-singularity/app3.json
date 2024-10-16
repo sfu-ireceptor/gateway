@@ -9,6 +9,11 @@
         "appArgs": []
       }
     },
-    "notes":
-        {"ir_hints":[{"object":"Rearrangement"}]}
+    "notes": {
+        "ir_hints": {
+            "object":"Rearrangement",
+            "requirements":{},
+            "resources":{}
+        }
+    }
 }

@@ -254,13 +254,37 @@ class Tapis
                 $notes = $app_config['notes'];
                 if (array_key_exists('ir_hints', $notes)) {
                     $hints = $notes['ir_hints'];
-                    foreach ($hints as $hint) {
-                        if (array_key_exists('object', $hint)) {
-                            // Get the object attribute - this tells us which AIRR object type this
-                            // App can be applied to (e.g. Rearrangement, Clone, Cell).
-                            $app_info['object'] = $hint['object'];
-                        }
+                    //foreach ($hints as $hint) {
+                    if (array_key_exists('object', $hints)) {
+                        // Get the object attribute - this tells us which AIRR object type this
+                        // App can be applied to (e.g. Rearrangement, Clone, Cell).
+                        $app_info['object'] = $hints['object'];
                     }
+                    if (array_key_exists('requirements', $hints) && array_key_exists('Download', $hints['requirements'])) {
+                        // Get the download attribute - this tells us whether the app needs
+                        // the data from the Gateway or not. Some Apps use the queries provided
+                        // to get the data rather than rely on the Gateway to download it.
+                        // This is either TRUE or FALSE as a string.
+                        $app_info['download'] = $hints['requirements']['Download'];
+                    }
+                    if (array_key_exists('resources', $hints) && array_key_exists('memory_byte_per_unit_repertoire', $hints['resources'])) {
+                        // Get the memory (in bytes) required per unit for each repertoire for this App
+                        $app_info['memory_byte_per_unit_repertoire'] = $hints['resources']['memory_byte_per_unit_repertoire'];
+                    }
+                    if (array_key_exists('resources', $hints) && array_key_exists('memory_byte_per_unit_total', $hints['resources'])) {
+                        // Get the memory (in bytes) required per unit in total units for this App
+                        $app_info['memory_byte_per_unit_total'] = $hints['resources']['memory_byte_per_unit_total'];
+                    }
+                    if (array_key_exists('resources', $hints) && array_key_exists('time_secs_per_million', $hints['resources'])) {
+                        // Get the time (in ms) required per unit for this App
+                        $app_info['time_secs_per_million'] = $hints['resources']['time_secs_per_million'];
+                    }
+                    if (array_key_exists('requirements', $hints)) {
+                        // Get the list of field requirements for this App.
+                        $app_info['requirements'] = $hints['requirements'];
+                    }
+
+                    //}
                 }
             }
             if (array_key_exists('jobAttributes', $app_config) &&
@@ -859,23 +883,10 @@ class Tapis
 
             return $response;
         } catch (\Exception $exception) {
-            Log::error('Tapis::doHTTPRequest:: Exception');
-            $tapis_response_str = $exception->getResponse()->getBody()->getContents();
-            $tapis_response = json_decode($tapis_response_str);
-            Log::error('Tapis::doHTTPRequest:: Exception - query = ' . $url);
-            Log::error('Tapis::doHTTPRequest:: Exception - response = ' . $tapis_response_str);
-            // If it is a Tapis error we want the client to try and handle it.
-            if ($this->isTapisError($tapis_response)) {
-                Log::error('Tapis::doHTTPRequest:: Exception - Tapis error, returning response = ' . $tapis_response_str);
+            Log::debug('Tapis::doHTTPRequest: error on query ' . $url);
+            Log::debug('Tapis::doHTTPRequest: Error: ' . $e->getMessage());
 
-                if ($raw_json) {
-                    return $tapis_response_str;
-                } else {
-                    return $tapis_response;
-                }
-            } else {
-                throw exception;
-            }
+            return null;
         }
 
                 // return response as object
