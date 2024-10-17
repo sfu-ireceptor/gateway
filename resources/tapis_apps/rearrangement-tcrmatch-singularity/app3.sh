@@ -196,6 +196,26 @@ function run_analysis()
     echo -n "IR-INFO: Done running TCRMatch on ${JUNCTION_FILE} - "
     date
 
+    # For each junction_aa found, extract the rearrangements that have that junction_aa
+    # Loop through the input TSV file line by line
+    search_column="junction_aa"
+    column_index=$(head -1 "${output_directory}/${rearrangement_file}" | tr '\t' '\n' | awk -v header="$search_column" '{if ($1 == header) print NR}')
+    while IFS=$'\t' read -r column1 column2 column3 column4 column5 other_columns; do
+
+        # Search for a match in the specific "junction_aa" column with the pattern "C<value>F" or "C<value>W"
+        results=$(awk -v FS="\t" -v col="$column_index" -v value="$column1" \
+            'NR > 1 && $col ~ "^C" value "(F|W)$" { print }' "${output_directory}/${rearrangement_file}")
+
+        if [ -n "$results" ]; then
+            output_file="${output_directory}/${column1}_${column4}_${column5}.tsv"
+            echo "IR-INFO: Writing results for ${column1} to $output_file"
+            head -n 1 ${output_directory}/${rearrangement_file} > $output_file
+            echo "$results" >> "$output_file"
+        else
+            echo "IR-INFO: Warning, could not find ${column1} in ${output_directory}/${rearrangement_file}"
+        fi
+    done < "${output_directory}/${repertoire_id}_epitope.tsv"
+
     # Generate a summary HTML file for the Gateway to present this info to the user
     html_file=${output_directory}/${repertoire_id}.html
 
@@ -226,11 +246,13 @@ function run_analysis()
     echo "</li>" >> ${html_file}
 
     echo -n "<li>Number of CDR3/epitope matches: " >> ${html_file}
-    wc -l ${output_directory}/${repertoire_id}_epitope.tsv  | cut -f 1 -d " " >> ${html_file}
+    # Skip the header and count
+    tail -n +2 ${output_directory}/${repertoire_id}_epitope.tsv | wc -l | cut -f 1 -d " " >> ${html_file}
     echo "</li>" >> ${html_file}
 
     echo -n "<li>Number of unique CDR3/epitope matches: " >> ${html_file}
-    cut -f 2 ${output_directory}/${repertoire_id}_epitope.tsv | sort -u | wc -l | cut -f 1 -d " " >> ${html_file}
+    # Skip the header, extract the CDR3 column, sort unique and count.
+    tail -n +2 ${output_directory}/${repertoire_id}_epitope.tsv | cut -f 2 | sort -u | wc -l | cut -f 1 -d " " >> ${html_file}
     echo "</li>" >> ${html_file}
 
     echo "</ul>" >> ${html_file}
@@ -269,11 +291,13 @@ function run_analysis()
     echo "</li>" >> ${html_file}
 
     echo -n "<li>Number of CDR3/epitope matches: " >> ${html_file}
-    wc -l ${output_directory}/${repertoire_id}_epitope.tsv  | cut -f 1 -d " " >> ${html_file}
+    # Skip the header and count
+    tail -n +2 ${output_directory}/${repertoire_id}_epitope.tsv | wc -l | cut -f 1 -d " " >> ${html_file}
     echo "</li>" >> ${html_file}
 
     echo -n "<li>Number of unique CDR3/epitope matches: " >> ${html_file}
-    cut -f 2 ${output_directory}/${repertoire_id}_epitope.tsv | sort -u | wc -l | cut -f 1 -d " " >> ${html_file}
+    # Skip the header, extract the CDR3 column, sort unique and count.
+    tail -n +2 ${output_directory}/${repertoire_id}_epitope.tsv | cut -f 2 | sort -u | wc -l | cut -f 1 -d " " >> ${html_file}
     echo "</li>" >> ${html_file}
 
     echo "</ul>" >> ${html_file}
