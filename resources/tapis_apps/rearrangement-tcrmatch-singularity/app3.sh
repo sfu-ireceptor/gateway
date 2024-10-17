@@ -209,7 +209,7 @@ function run_analysis()
         if [ -n "$results" ]; then
             output_file="${output_directory}/${column1}_${column4}_${column5}.tsv"
             echo "IR-INFO: Writing results for ${column1} to $output_file"
-            head -n 1 ${output_directory}/${rearrangement_file}" > $output_file
+            head -n 1 ${output_directory}/${rearrangement_file} > $output_file
             echo "$results" >> "$output_file"
         else
             echo "IR-INFO: Warning, could not find ${column1} in ${output_directory}/${rearrangement_file}"
