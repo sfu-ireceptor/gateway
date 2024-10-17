@@ -245,11 +245,13 @@ function run_analysis()
     echo "</li>" >> ${html_file}
 
     echo -n "<li>Number of CDR3/epitope matches: " >> ${html_file}
-    wc -l ${output_directory}/${repertoire_id}_epitope.tsv  | cut -f 1 -d " " >> ${html_file}
+    # Skip the header and count
+    tail -n +2 ${output_directory}/${repertoire_id}_epitope.tsv | wc -l | cut -f 1 -d " " >> ${html_file}
     echo "</li>" >> ${html_file}
 
     echo -n "<li>Number of unique CDR3/epitope matches: " >> ${html_file}
-    cut -f 2 ${output_directory}/${repertoire_id}_epitope.tsv | sort -u | wc -l | cut -f 1 -d " " >> ${html_file}
+    # Skip the header, extract the CDR3 column, sort unique and count.
+    tail -n +2 ${output_directory}/${repertoire_id}_epitope.tsv | cut -f 2 | sort -u | wc -l | cut -f 1 -d " " >> ${html_file}
     echo "</li>" >> ${html_file}
 
     echo "</ul>" >> ${html_file}
