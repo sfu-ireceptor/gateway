@@ -207,7 +207,7 @@ function run_analysis()
             'NR > 1 && $col ~ "^C" value "(F|W)$" { print }' "${output_directory}/${rearrangement_file}")
 
         if [ -n "$results" ]; then
-            output_file="${column1}_${column4}_${column5}.tsv"
+            output_file="${output_directory}/${column1}_${column4}_${column5}.tsv"
             echo "IR-INFO: Writing results for ${column1} to $output_file"
             echo "$results" > "$output_file"
         else
