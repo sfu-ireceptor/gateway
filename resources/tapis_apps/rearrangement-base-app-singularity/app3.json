@@ -1,0 +1,19 @@
+{
+    "id":"singularity-base-app",
+    "version":"0.1",
+    "description": "Basic iReceptor App",
+    "containerImage":"ir_base_app.sif",
+    "jobAttributes": {
+      "description": "<p>iReceptor Rearrangement Analysis App at its most basic funcionality - it simply outputs the repertoire_id of each repertoire it processes.</p>",
+      "parameterSet": {
+        "appArgs": []
+      }
+    },
+    "notes": {
+        "ir_hints": {
+            "object":"Rearrangement",
+            "requirements":{},
+            "resources":{}
+        }
+    }
+}

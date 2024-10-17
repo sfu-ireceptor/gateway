@@ -18,6 +18,10 @@ class RestServiceGroupSeeder extends Seeder
                 'code' => 'c19',
                 'name' => 'AIRR COVID-19',
             ],
+            [
+                'code' => 't1d',
+                'name' => 'T1D',
+            ],
         ];
 
         foreach ($l as $t) {

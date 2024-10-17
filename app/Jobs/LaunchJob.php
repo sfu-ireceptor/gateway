@@ -57,6 +57,25 @@ class LaunchJob implements ShouldQueue
             // Get the long running job in the DB
             $job = Job::find($this->jobId);
 
+            // Get a Tapis object to work with.
+            $tapis = new Tapis;
+
+            // Get the Tapis App config for the app in question. The AppID is in the request.
+            $appId = $this->request_data['app_id'];
+            Log::info('LaunchJob::handle - app_id = ' . $appId);
+            $appTemplateInfo = $tapis->getAppTemplate($appId);
+            $appTemplateConfig = $appTemplateInfo['config'];
+
+            // Check to see if this App requires downloads.
+            $download_data = true;
+            if (array_key_exists('download', $appTemplateInfo) && $appTemplateInfo['download'] == 'FALSE') {
+                Log::info('LaunchJob::handle - App does not require downloads');
+                $download_data = false;
+            } else {
+                Log::info('LaunchJob::handle - App requires downloads');
+                $download_data = true;
+            }
+
             // generate csv file
             $job->updateStatus('FEDERATING DATA');
             Log::debug('LaunchJob::handle - $this->request_data = ' . json_encode($this->request_data));
@@ -107,11 +126,14 @@ class LaunchJob implements ShouldQueue
             // Return object contains attributes that describe the ZIP archive that was
             // created.
             if ($jobType == 'sequence') {
-                $zip_info = Sequence::sequencesTSV($filters, $gw_username, $job->url, $sample_filter_fields);
+                $zip_info = Sequence::sequencesTSV($filters, $gw_username, $job->url,
+                    $sample_filter_fields, $download_data);
             } elseif ($jobType == 'clone') {
-                $zip_info = SequenceClone::clonesTSV($filters, $gw_username, $job->url, $sample_filter_fields);
+                $zip_info = SequenceClone::clonesTSV($filters, $gw_username, $job->url,
+                    $sample_filter_fields, $download_data);
             } elseif ($jobType == 'cell') {
-                $zip_info = SequenceCell::cellsTSV($filters, $gw_username, $job->url, $sample_filter_fields);
+                $zip_info = SequenceCell::cellsTSV($filters, $gw_username, $job->url,
+                    $sample_filter_fields, $download_data);
             }
 
             // Get the path to where the data and ZIP file is in the app local file system.
@@ -137,9 +159,6 @@ class LaunchJob implements ShouldQueue
             $job->input_folder = $archive_folder;
             $job->save();
 
-            // Get a Tapis object to work with.
-            $tapis = new Tapis;
-
             // Create systems for this user if they don't exist.
             System::createDefaultSystemsForUser($gw_username, $gw_userid);
 
@@ -159,12 +178,6 @@ class LaunchJob implements ShouldQueue
             $systemStaging = config('services.tapis.system_staging.name_prefix');
             // Tapis name for the deployment system. This is where the Apps are stored.
             $appDeploymentSystem = config('services.tapis.system_deploy.name_prefix');
-
-            // Get the App config for the app in question. The AppID is in the request.
-            $appId = $this->request_data['app_id'];
-            Log::info('LaunchJob::handle - app_id = ' . $appId);
-            $appTemplateInfo = $tapis->getAppTemplate($appId);
-            $appTemplateConfig = $appTemplateInfo['config'];
 
             // Set up the App Tapis name, the human name, and the deployment path.
             // The path for the app is the same as the appID
