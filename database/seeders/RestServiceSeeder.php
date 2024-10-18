@@ -200,6 +200,14 @@ class RestServiceSeeder extends Seeder
                 'name' => 'T1D',
                 'country' => 'Canada',
                 'logo' => 'ireceptor.png',
+                'rest_service_group_code' => 't1d',
+            ],
+            [
+                'url' => 'https://t1d-2.ireceptor.org/airr/v1/',
+                'name' => 'T1D-2',
+                'country' => 'Canada',
+                'logo' => 'ireceptor.png',
+                'rest_service_group_code' => 't1d',
             ],
             [
                 'url' => 'https://repository-staging.ireceptor.org/airr/v1/',
@@ -209,6 +217,11 @@ class RestServiceSeeder extends Seeder
                 'url' => 'https://mitmynid.sytes.net:59443/airr/v1/',
                 'name' => 'Mitmynid',
                 'country' => 'Portugal',
+            ],
+            [
+                'url' => 'https://ireceptor.clalit.co.il/airr/v1/',
+                'name' => 'Clalit',
+                'country' => 'Israel',
             ],
             [
                 'url' => 'https://hpap.ireceptor.org/airr/v1/',

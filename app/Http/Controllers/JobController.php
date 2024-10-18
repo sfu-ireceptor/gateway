@@ -158,6 +158,14 @@ class JobController extends Controller
             // human readable description for this App.
             $app_config = $app_info['config'];
             $appHumanName = $app_config['description'];
+            // We want to know if the job requires downloads
+            if (array_key_exists('download', $app_info) && $app_info['download'] == 'FALSE') {
+                Log::info('JobController::postLaunchApp - App does not require downloads');
+                $download_data = false;
+            } else {
+                Log::info('JobController::postLaunchApp - App requires downloads');
+                $download_data = true;
+            }
         }
 
         // create job in DB
@@ -190,13 +198,19 @@ class JobController extends Controller
         $sequence_large_download_limit = config('ireceptor.sequence_large_download_limit');
         Log::debug('JobController::LaunchApp - Number of objects = ' . $n_objects);
         $queue = 'short-analysis-jobs';
-        if ($query_type == 'sequence' && $n_objects > $sequence_large_download_limit) {
+        if ($download_data == false) {
+            // If we don't download data, use the short queue. This should run quickly
+            $queue = 'short-analysis-jobs';
+        } elseif ($query_type == 'sequence' && $n_objects > $sequence_large_download_limit) {
             $queue = 'long-analysis-jobs';
         } elseif ($query_type == 'clone' && $n_objects > $clone_large_download_limit) {
             $queue = 'long-analysis-jobs';
         } elseif ($query_type == 'cell' && $n_objects > $cell_large_download_limit) {
             $queue = 'long-analysis-jobs';
+        } else {
+            $queue = 'short-analysis-jobs';
         }
+
         Log::debug('JobController::LaunchApp - Job queue = ' . $queue);
 
         // queue job
@@ -889,20 +903,22 @@ class JobController extends Controller
                                 //
                                 // Build the summary file name.
                                 $summary_file = '';
-                                if (File::exists($analysis_folder . '/' . $file . '/' . $file . '.html')) {
-                                    $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.html';
+                                $summary_gateway_file = '';
+                                if (File::exists($analysis_folder . '/' . $file . '/' . $file . '-gateway.html')) {
+                                    $summary_file = $analysis_folder . '/' . $file . '/' . $file . '-gateway.html';
                                     $summary_gateway_file = $file . '/' . $file . '-gateway.html';
-                                    $summary_query = $file . '/' . $file . '.html';
-                                } elseif (File::exists($analysis_folder . '/' . $file . '/' . $file . '.pdf')) {
-                                    $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.pdf';
+                                    $summary_query = $file . '/' . $file . '-gateway.html';
+                                } elseif (File::exists($analysis_folder . '/' . $file . '/' . $file . '-gateway.pdf')) {
+                                    $summary_file = $analysis_folder . '/' . $file . '/' . $file . '-gateway.pdf';
                                     $summary_gateway_file = $file . '/' . $file . '-gateway.pdf';
-                                    $summary_query = $file . '/' . $file . '.pdf';
-                                } elseif (File::exists($analysis_folder . '/' . $file . '/' . $file . '.tsv')) {
-                                    $summary_file = $analysis_folder . '/' . $file . '/' . $file . '.tsv';
+                                    $summary_query = $file . '/' . $file . '-gateway.pdf';
+                                } elseif (File::exists($analysis_folder . '/' . $file . '/' . $file . '-gateway.tsv')) {
+                                    $summary_file = $analysis_folder . '/' . $file . '/' . $file . '-gateway.tsv';
                                     $summary_gateway_file = $file . '/' . $file . '-gateway.tsv';
-                                    $summary_query = $file . '/' . $file . '.tsv';
+                                    $summary_query = $file . '/' . $file . '-gateway.tsv';
                                 }
                                 Log::debug('summary_file = ' . $summary_file);
+                                Log::debug('summary_gateway_file = ' . $summary_gateway_file);
                                 // Build the label file name
                                 $label_file = $analysis_folder . '/' . $file . '/' . $file . '.txt';
                                 // If both files exist, build a summary object for the Gateway so that it can present
@@ -929,19 +945,23 @@ class JobController extends Controller
                                         if ($file !== '.' && $file !== '..' && is_dir($repository_dir . '/' . $file)) {
                                             // Get file names
                                             $summary_file = '';
-                                            if (File::exists($repository_dir . '/' . $file . '/' . $file . '.html')) {
-                                                $summary_file = $repository_dir . '/' . $file . '/' . $file . '.html';
+                                            $summary_gateway_file = '';
+                                            if (File::exists($repository_dir . '/' . $file . '/' . $file . '-gateway.html')) {
+                                                $summary_file = $repository_dir . '/' . $file . '/' . $file . '-gateway.html';
                                                 $summary_gateway_file = $repository_name . '/' . $file . '/' . $file . '-gateway.html';
-                                                $summary_query = $repository_name . '/' . $file . '/' . $file . '.html';
-                                            } elseif (File::exists($repository_dir . '/' . $file . '/' . $file . '.pdf')) {
-                                                $summary_file = $repository_dir . '/' . $file . '/' . $file . '.pdf';
+                                                $summary_query = $repository_name . '/' . $file . '/' . $file . '-gateway.html';
+                                            } elseif (File::exists($repository_dir . '/' . $file . '/' . $file . '-gateway.pdf')) {
+                                                $summary_file = $repository_dir . '/' . $file . '/' . $file . '-gateway.pdf';
                                                 $summary_gateway_file = $repository_name . '/' . $file . '/' . $file . '-gateway.pdf';
-                                                $summary_query = $repository_name . '/' . $file . '/' . $file . '.pdf';
-                                            } elseif (File::exists($repository_dir . '/' . $file . '/' . $file . '.tsv')) {
-                                                $summary_file = $repository_dir . '/' . $file . '/' . $file . '.tsv';
+                                                $summary_query = $repository_name . '/' . $file . '/' . $file . '-gateway.pdf';
+                                            } elseif (File::exists($repository_dir . '/' . $file . '/' . $file . '-gateway.tsv')) {
+                                                $summary_file = $repository_dir . '/' . $file . '/' . $file . '-gateway.tsv';
                                                 $summary_gateway_file = $repository_name . '/' . $file . '/' . $file . '-gateway.tsv';
-                                                $summary_query = $repository_name . '/' . $file . '/' . $file . '.tsv';
+                                                $summary_query = $repository_name . '/' . $file . '/' . $file . '-gateway.tsv';
                                             }
+                                            Log::debug('summary_file = ' . $summary_file);
+                                            Log::debug('summary_gateway_file = ' . $summary_gateway_file);
+                                            // Build the label file name
                                             $label_file = $repository_dir . '/' . $file . '/' . $file . '.txt';
                                             // If they exist, process them
                                             if (File::exists($summary_file) && File::exists($label_file)) {

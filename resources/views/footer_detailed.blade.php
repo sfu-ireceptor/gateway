@@ -33,7 +33,16 @@ Following the AIRR Data Commons standards we are the only public resource that i
 			<p>For more information, see the <a href="http://www.ireceptor.org/">iReceptor public website</a> or refer to the paper <a href="http://doi.org/10.1111/imr.12666">iReceptor: a platform for querying and analyzing antibody/B-cell and T-cell receptor repertoire data across federated repositories</a>.  If you are interested in hosting a data repository or if you want to provide feedback on this developing community resource, email <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
 
 			<h5>Acknowledging iReceptor</h5>
-			<p>If you find iReceptor useful in your research, please acknowledge the iReceptor Platform's contribution by citing the iReceptor paper by Corrie et al. <a href="http://doi.org/10.1111/imr.12666">iReceptor: a platform for querying and analyzing antibody/B-cell and T-cell receptor repertoire data across federated repositories</a>, Immunological Reviews, Volume 284:24-41 (2018).</p>
+            <p>If you find iReceptor useful in your research, please acknowledge the iReceptor Platform's contribution by citing the iReceptor and ADC papers:
+              <ul>
+                <li>Corrie et al. <a href="http://doi.org/10.1111/imr.12666">iReceptor: a platform for querying and analyzing antibody/B-cell and T-cell receptor repertoire data across federated repositories</a>, Immunological Reviews, Volume 284:24-41 (2018).</li>
+                <li>Christley et al. <a href="https://doi.org/10.3389/fdata.2020.00022">The ADC API: A Web API for the Programmatic Query of the AIRR Data Commons</a>, Front. Big Data, 17 June 2020.</li>
+              </ul>
+<p>
+Suggested wording for a citation that is storing data in the AIRR Data Commons would be: "Study data is available for download from the AIRR Data Commons [Christley et al.] using the iReceptor Gateway [Corrie et al.] using Study ID PRJNA00000.”
+</p><p>
+Suggested wording for an attribution for data reuse would be "Study data was queried and downloaded from the AIRR Data Commons [Christley et al.] using the iReceptor Gateway [Corrie et al.] on January 1, 2021.”
+</p>
 		</div>
 	</div>
 	<div class="col-md-1"></div>
