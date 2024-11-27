@@ -265,6 +265,6 @@ class FieldName extends Model
 
     public static function getOntologyFields()
     {
-        return ['tissue_id', 'organism_id', 'study_type_id', 'disease_diagnosis_id', 'cell_subset_id', 'collection_time_point_relative_unit_id', 'template_amount_unit_id'];
+        return ['tissue_id', 'organism_id', 'study_type_id', 'age_unit_id', 'disease_diagnosis_id', 'cell_subset_id', 'collection_time_point_relative_unit_id', 'template_amount_unit_id'];
     }
 }
