@@ -16,7 +16,7 @@ Following the AIRR Data Commons standards we are the only public resource that i
 			<p>
 				The iReceptor Gateway integrates large, distributed, AIRR-seq data repositories, following standards for sharing and interoperability developed by the
 				<a href="http://airr-community.org/">Adaptive Immune Receptor Repertoire (AIRR) Community</a>.
-				The main goal of iReceptor is to connect this distributed network of AIRR-seq repositories into an AIRR Data Commons, allowing for the query, analysis, and visualization of AIRR-seq data across multiple projects, labs, and institutions.
+				The main goal of iReceptor is to connect this distributed network of AIRR-seq repositories in the AIRR Data Commons, allowing for the query, analysis, and visualization of AIRR-seq data across multiple projects, labs, and institutions.
 			</p>
 			<p>Present functionalities include:</p>
 			<ul>
