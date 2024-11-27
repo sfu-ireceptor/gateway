@@ -128,6 +128,12 @@
 								</div>
 
 							    <div class="form-group">
+									{{ Form::label('age_unit_id', __('short.age_unit_id')) }}
+									@include('help', ['id' => 'age_unit_id'])
+									{{ Form::select('age_unit_id[]', $subject_age_unit_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+								</div>
+
+							    <div class="form-group">
 									{{ Form::label('disease_diagnosis', __('short.disease_diagnosis')) }}
 									@include('help', ['id' => 'disease_diagnosis'])
 									{{ Form::select('disease_diagnosis_id[]', $subject_disease_diagnosis_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
