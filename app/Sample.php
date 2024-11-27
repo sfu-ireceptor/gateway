@@ -814,10 +814,10 @@ class Sample
             if (! isset($a->{$sort_column}) && (! isset($b->{$sort_column}))) {
                 // If they are both not set they are equal
                 $comparison_result = 0;
-            } else if (! isset($a->{$sort_column})) {
+            } elseif (! isset($a->{$sort_column})) {
                 // If a is not set and b is, then a < b
                 $comparison_result = -1;
-            } else if (! isset($b->{$sort_column})) {
+            } elseif (! isset($b->{$sort_column})) {
                 // If b is not set then a > b
                 $comparison_result = 1;
             } else {
