@@ -269,11 +269,6 @@ class RestService extends Model
         // clean filters
         $filters = self::clean_filters($filters);
 
-        // add "age_unit" filter if "age_min" or "age_max" is set
-        if (isset($filters['ir_subject_age_min']) || isset($filters['ir_subject_age_max'])) {
-            $filters['age_unit'] = 'year';
-        }
-
         // if API version is 1.0
         if ($api_version == '1.0') {
             $ontology_fields = FieldName::getOntologyFields();
