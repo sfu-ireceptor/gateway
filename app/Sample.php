@@ -811,23 +811,35 @@ class Sample
                 }
             }
 
-            $val1 = $a->{$sort_column};
-            $val2 = $b->{$sort_column};
-
-            if (is_array($val1) || is_object($val1) || is_array($val2) || is_object($val2)) {
-                $val1 = json_encode($val1);
-                $val2 = json_encode($val2);
-                $comparison_result = strcasecmp($val1, $val2);
-            } elseif ($field_type == 'integer' || $field_type == 'number') {
-                if ($val1 == $val2) {
-                    $comparison_result = 0;
-                } elseif ($val1 < $val2) {
-                    $comparison_result = -1;
-                } else {
-                    $comparison_result = 1;
-                }
+            if (! isset($a->{$sort_column}) && (! isset($b->{$sort_column}))) {
+                // If they are both not set they are equal
+                $comparison_result = 0;
+            } else if (! isset($a->{$sort_column})) {
+                // If a is not set and b is, then a < b
+                $comparison_result = -1;
+            } else if (! isset($b->{$sort_column})) {
+                // If b is not set then a > b
+                $comparison_result = 1;
             } else {
-                $comparison_result = strcasecmp($val1, $val2);
+                // If we get here, both are set.
+                $val1 = $a->{$sort_column};
+                $val2 = $b->{$sort_column};
+
+                if (is_array($val1) || is_object($val1) || is_array($val2) || is_object($val2)) {
+                    $val1 = json_encode($val1);
+                    $val2 = json_encode($val2);
+                    $comparison_result = strcasecmp($val1, $val2);
+                } elseif ($field_type == 'integer' || $field_type == 'number') {
+                    if ($val1 == $val2) {
+                        $comparison_result = 0;
+                    } elseif ($val1 < $val2) {
+                        $comparison_result = -1;
+                    } else {
+                        $comparison_result = 1;
+                    }
+                } else {
+                    $comparison_result = strcasecmp($val1, $val2);
+                }
             }
 
             if ($sort_order == 'desc') {

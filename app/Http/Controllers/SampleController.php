@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 
 class SampleController extends Controller
 {
-    protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type_id', 'study_group_description', 'lab_name', 'subject_id', 'organism_id', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'disease_diagnosis_id', 'sample_id', 'pcr_target_locus', 'cell_subset_id', 'tissue_id', 'template_class', 'cell_phenotype', 'sequencing_platform'];
+    protected const DEFAULT_FIELDS = ['full_text_search', 'study_id', 'study_title', 'study_type_id', 'study_group_description', 'lab_name', 'subject_id', 'organism_id', 'sex', 'ethnicity', 'ir_subject_age_min', 'ir_subject_age_max', 'age_unit_id', 'disease_diagnosis_id', 'sample_id', 'pcr_target_locus', 'cell_subset_id', 'tissue_id', 'template_class', 'cell_phenotype', 'sequencing_platform'];
     protected $extra_fields = [];
 
     public function __construct()
@@ -191,6 +191,12 @@ class SampleController extends Controller
             $dna_type_list[$v] = $v;
         }
 
+        // age_unit ontology info
+        $subject_age_unit_ontology_list = [];
+        foreach ($metadata['age_unit_id'] as $v) {
+            $subject_age_unit_ontology_list[$v['id']] = $v['label'] . ' (' . $v['id'] . ')';
+        }
+
         // disease_diagnosis ontology info
         $subject_disease_diagnosis_ontology_list = [];
         foreach ($metadata['disease_diagnosis_id'] as $v) {
@@ -206,6 +212,7 @@ class SampleController extends Controller
         $data['subject_gender_list'] = $subject_gender_list;
         $data['subject_ethnicity_list'] = $subject_ethnicity_list;
         $data['subject_organism_ontology_list'] = $subject_organism_ontology_list;
+        $data['subject_age_unit_ontology_list'] = $subject_age_unit_ontology_list;
         $data['subject_disease_diagnosis_ontology_list'] = $subject_disease_diagnosis_ontology_list;
         $data['pcr_target_locus_list'] = $pcr_target_locus_list;
         $data['cell_type_ontology_list'] = $cell_type_ontology_list;
