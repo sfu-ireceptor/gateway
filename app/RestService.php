@@ -1247,25 +1247,31 @@ class RestService extends Model
             $request_params[] = $t;
         }
 
-        // do requests
+        // Do requests
         $response_list = self::doRequests($request_params);
 
+
+        // If we are processing Cell data, we actually need to handle both
+        // Cell, Expression, and Rearrangement data to build a response.
         if ($type == 'cell') {
             foreach ($response_list as $i => $response) {
                 $rs = $response['rs'];
 
+                // If our search was for Cell Expression data, we need to
+                // get the cell information as well.
                 if (isset($response['data']->CellExpression)) {
-                    // add cell data
+                    // For each expression response, build a cell query for
+                    // the cell ID of interest.
                     $request_params = [];
                     foreach ($response['data']->CellExpression as $t) {
                         $cell_id = $t->cell_id;
                         $data_processing_id = $t->data_processing_id;
 
                         $filters = [];
-                        $filters['data_processing_id_cell'] = $data_processing_id;
-                        $filters['ir_cell_id_cell'] = $cell_id;
+                        //$filters['data_processing_id_cell'] = $data_processing_id;
+                        $filters['cell_id_cell'] = $cell_id;
 
-                        // prepare parameters for each service
+                        // Prepare cell parameters for each service
                         $t = [];
 
                         $t['rs'] = $rs;
@@ -1277,83 +1283,121 @@ class RestService extends Model
                         $request_params[] = $t;
                     }
 
+                    // Do the cell query and get a list of cells. We now have
+                    // a list of expression data and a list of cell data.
                     $response_list_cells = self::doRequests($request_params);
 
-                    // add cell data to expression data
-                    $cell_list_merged = [];
+                    // We need to ensure that for each Expression value that
+                    // meets the criteria, we keep track of the Cells that are
+                    // associated with the expression data. These are the cells
+                    // that we care about.
+                    $new_cell_list = [];
+                    $cell_id_list = [];
                     foreach ($response['data']->CellExpression as $t) {
-                        $cell_id = $t->cell_id;
+                        $cell_id_expression = $t->cell_id;
                         $data_processing_id = $t->data_processing_id;
 
+                        // If the Cell ID for this expression entity we simple
+                        // continue as the cell is already in the list.
+                        if (array_search($cell_id_expression, $cell_id_list)) {
+                            continue;
+                        }
+                            
+                        // Iterate over the Cells to make sure we have the cell
                         foreach ($response_list_cells as $response_cell) {
+
                             $cell_list = $response_cell['data']->Cell;
 
+                            // Make sure the cell_list is not empty. Since the above query is
+                            // searching for a single cell (a cell_id), the array will either
+                            // have 0 or 1 elements. If there is one element that exists,
+                            // process it.
                             if (isset($cell_list[0])) {
                                 $cell_id_cell = $cell_list[0]->cell_id;
 
-                                if ($cell_id == $cell_id_cell) {
-                                    $cell_data = $response_cell['data']->Cell[0];
-                                    $t2 = (object) array_merge((array) $t, (array) $cell_data);
-                                    $t = $t2;
-
+                                // If the expression and the cell IDs are the same,
+                                // and we don't already have this cell in the list
+                                // (we can have multiple expression values from a single
+                                // cell) then need to add this cell to our list. 
+                                // the Cell data into a single object and then break
+                                // out of the loop.
+                                if ($cell_id_expression == $cell_id_cell) {
+                                    $new_cell_list[] = $response_cell['data']->Cell[0];
+                                    $cell_id_list[] = $cell_id_expression;
+                                    // If we have added this cell we don't need to process
+                                    // more expression data for this cell.
                                     break;
+                                    //$cell_data = $response_cell['data']->Cell[0];
+                                    //$t2 = (object) array_merge((array) $t, (array) $cell_data);
+                                    //$t = $t2;
+
+                                    //break;
                                 }
                             }
                         }
-
-                        $cell_list_merged[] = $t;
                     }
 
-                    $response['data']->Cell = $cell_list_merged;
+                    // Make our query response data to be the list of cells, not
+                    // the list of expression data.
+                    $response['data']->Cell = $new_cell_list;
                 }
 
+                // If we have cell data, we need to add appropriate expression
+                // data that is related to that cell.
                 if (isset($response['data']->Cell)) {
-                    // add expression data
+                    // Loop over each repository service to get the expression data.
                     $request_params = [];
                     foreach ($response['data']->Cell as $t) {
+                        // Set up the query filters to get the expression data
                         $cell_id = $t->cell_id;
-                        $data_processing_id = $t->data_processing_id;
-
                         $filters = [];
                         $filters['cell_id_cell'] = $cell_id;
 
-                        // prepare parameters for each service
-                        $t = [];
-
-                        $t['rs'] = $rs;
-                        $t['url'] = $rs->url . 'expression';
-
+                        // Prepare parameters for the query (there are none)
                         $params = [];
-                        // $params['fields'] = ['cell_id', 'value', 'property_expression'];
+                        
+                        // Set up the actual request info
+                        $request = [];
+                        $request['rs'] = $rs;
+                        $request['url'] = $rs->url . 'expression';
+                        $request['params'] = self::generate_json_query($filters, $params, $rs->api_version);
 
-                        $t['params'] = self::generate_json_query($filters, $params, $rs->api_version);
-
-                        $request_params[] = $t;
+                        // Store it in the list of requests
+                        $request_params[] = $request;
                     }
 
+                    // Perform the requests to get the expression data.
                     $response_list_expressions = self::doRequests($request_params);
 
-                    // add expression data to cell data
+                    // Add the expression data to cell data
+                    // Loop over each Cell in our original response
                     $cell_list_merged = [];
-                    foreach ($response['data']->Cell as $t) {
-                        $cell_id = $t->cell_id;
-                        $data_processing_id = $t->data_processing_id;
+                    foreach ($response['data']->Cell as $cell_object) {
+                        $cell_id = $cell_object->cell_id;
+                        $data_processing_id = $cell_object->data_processing_id;
 
+                        // Loop over the expression data responses
                         foreach ($response_list_expressions as $response_expression) {
                             $expression_list = $response_expression['data']->CellExpression;
+                            // If there is expression data in the first element, process
                             if (isset($expression_list[0])) {
                                 $cell_id_expression = $expression_list[0]->cell_id;
 
+                                // If we have the same Cell ID in the cell and the expression,
+                                // add the expression data
                                 if ($cell_id == $cell_id_expression) {
-                                    // sort by "value"
+                                    // Expression data is an object that has a "value" key
+                                    // that stores the expression level. We want to display high
+                                    // levels of expression so we sort on the value key.
                                     $expression_list_sorted = $expression_list;
                                     $sort = 'value';
                                     usort($expression_list_sorted, function ($a, $b) use ($sort) {
                                         return $b->{$sort} >= $a->{$sort};
                                     });
-
+                                    // We only want the top 4 expression levels.
                                     $expression_list_sorted = array_slice($expression_list_sorted, 0, 4);
 
+                                    // We then get the labels for the top four, and add them to the label list
                                     $expression_label_list = [];
                                     foreach ($expression_list_sorted as $expression) {
                                         if (isset($expression->property)) {
@@ -1361,82 +1405,178 @@ class RestService extends Model
                                         }
                                     }
 
-                                    $t->expression_label_list = $expression_label_list;
-
+                                    // Add it to our object
+                                    $cell_object->expression_label_list = $expression_label_list;
+                                    // Once we have the expression for a cell, we don't need
+                                    // to look any more, so break out of the loop.
                                     break;
                                 }
                             }
                         }
-                        $cell_list_merged[] = $t;
+                        $cell_list_merged[] = $cell_object;
                     }
 
                     $response['data']->Cell = $cell_list_merged;
                 }
 
-                // add chain 1 and chain 2
+                // If we have cell data, we need to add appropriate paired
+                // chain receptor data related to that cell
                 if (isset($response['data']->Cell)) {
                     $request_params = [];
-                    foreach ($response['data']->Cell as $t) {
-                        $cell_id = $t->cell_id;
+                    // For each cell we need to get the paired chain data.
+                    foreach ($response['data']->Cell as $cell_object) {
+                        $cell_id = $cell_object->cell_id;
 
+                        // Set the filters to be the cell_id
                         $filters = [];
                         $filters['cell_id_cell'] = $cell_id;
 
-                        // prepare parameters for each service
-                        $t = [];
-
-                        $t['rs'] = $rs;
-                        $t['url'] = $rs->url . 'rearrangement';
-
+                        // Prepare request info for each service
+                        $request = [];
+                        $request['rs'] = $rs;
+                        $request['url'] = $rs->url . 'rearrangement';
+                        // We need to request specific fields that want to return 
+                        // about each chain
                         $params = [];
-                        $params['fields'] = ['v_call', 'c_call', 'junction_aa', 'cell_id', 'clone_id'];
+                        $params['fields'] = ['v_call', 'd_call', 'j_calll', 'c_call',
+                                             'junction_aa', 'cell_id', 'clone_id'];
+                        $request['params'] = self::generate_json_query($filters, $params, $rs->api_version);
 
-                        $t['params'] = self::generate_json_query($filters, $params, $rs->api_version);
-
-                        $request_params[] = $t;
+                        // Add the request to the request list
+                        $request_params[] = $request;
                     }
 
+                    // Perform the query to get the chain sequence data.
                     $response_list_sequences = self::doRequests($request_params);
 
-                    // add sequence data to cell data
+                    // Add the chain sequence data to cell data
+                    // Loop over each Cell in our original response
                     $cell_list_merged = [];
-                    foreach ($response['data']->Cell as $t) {
-                        $cell_id = $t->cell_id;
+                    foreach ($response['data']->Cell as $cell_object) {
+                        $cell_id = $cell_object->cell_id;
 
+                        // For each sequence repsonse...
                         foreach ($response_list_sequences as $response_sequence) {
+                            // If we got some sequence, process the data.
                             $sequence = $response_sequence['data']->Rearrangement;
                             if (count($sequence) > 0) {
                                 $cell_id_sequence = $sequence[0]->cell_id;
 
+                                // If the Cell ID matches the sequence Cell ID then 
+                                // collect the data.
                                 if ($cell_id == $cell_id_sequence) {
+                                    // Get the V and Junction data.
                                     $v_call_1 = isset($sequence[0]->v_call) ? $sequence[0]->v_call : '';
                                     $junction_aa_1 = isset($sequence[0]->junction_aa) ? $sequence[0]->junction_aa : '';
                                     $v_call_2 = isset($sequence[1]->v_call) ? $sequence[1]->v_call : '';
                                     $junction_aa_2 = isset($sequence[1]->junction_aa) ? $sequence[1]->junction_aa : '';
 
-                                    // array_filter() removes any empty values from the array
-                                    $chain1 = implode(', ', array_filter([$v_call_1, $junction_aa_1]));
-                                    $chain2 = implode(', ', array_filter([$v_call_2, $junction_aa_2]));
+                                    // Combine the V and junction data. array_filter() removes any empty
+                                    // values from the array
+                                    $chain1 = implode(', ', array_filter([$junction_aa_1, $v_call_1]));
+                                    $chain2 = implode(', ', array_filter([$junction_aa_2, $v_call_2]));
 
-                                    // chain 1 is always IGH/TRA/TRG locus
-                                    // chain 2  is always IGK/IGL/TRB/TRD locus
+                                    // We group chain 1 as IGH/TRA/TRG locus
+                                    // We group chain 2 as IGK/IGL/TRB/TRD locus
+                                    // Swap if necessary
                                     if (Str::startsWith($v_call_2, ['IGH', 'TRA', 'TRG']) || Str::startsWith($v_call_1, ['IGK', 'IGL', 'TRB', 'TRD'])) {
                                         $tmp_chain = $chain1;
                                         $chain1 = $chain2;
                                         $chain2 = $tmp_chain;
                                     }
 
-                                    $t->chain1 = $chain1;
-                                    $t->chain2 = $chain2;
-
+                                    // Store the chain info in the cell object data
+                                    $cell_object->chain1 = $chain1;
+                                    $cell_object->chain2 = $chain2;
+                                    // If we have chain info for this cell we don't need to
+                                    // process any more rearrangement data.
                                     break;
                                 }
                             }
                         }
 
-                        $cell_list_merged[] = $t;
+                        $cell_list_merged[] = $cell_object;
                     }
 
+                    $response['data']->Cell = $cell_list_merged;
+                }
+
+                // If we have cell data, we need to add appropriate reactivity
+                // data related to that cell
+                if (isset($response['data']->Cell)) {
+                    $request_params = [];
+                    // For each cell we need to get the reactivity data.
+                    foreach ($response['data']->Cell as $cell_object) {
+                        $cell_id = $cell_object->cell_id;
+
+                        // Set the filters to be the cell_id
+                        $filters = [];
+                        $filters['cell_id_cell'] = $cell_id;
+
+                        // Prepare request info for each service
+                        $request = [];
+                        $request['rs'] = $rs;
+                        $request['url'] = $rs->url . 'reactivity';
+                        // We need to request specific fields that want to return 
+                        // about the reactivity
+                        $params = [];
+                        $params['fields'] = ['cell_id', 'antigen', 'antigen_source_species', 'peptide_sequence_aa',
+                                'reactivity_method', 'reactivity_readout'];
+                        $request['params'] = self::generate_json_query($filters, $params, $rs->api_version);
+
+                        // Add the request to the request list
+                        $request_params[] = $request;
+                    }
+
+                    // Perform the query to get the reactivity data.
+                    $response_list_reactivity = self::doRequests($request_params);
+
+                    // Add the reactivity data to cell data
+                    // Loop over each Cell in our original response
+                    $cell_list_merged = [];
+                    foreach ($response['data']->Cell as $cell_object) {
+                        $cell_id = $cell_object->cell_id;
+
+                        // For each reactivity repsonse...
+                        foreach ($response_list_reactivity as $response_reactivity) {
+                            // If there is an error response on reactivity, skip.
+                            if ($response_reactivity['status'] == 'error') {
+                                continue;
+                            }
+                            // If we got some reactivity data, process it.
+                            $reactivity = $response_reactivity['data']->Reactivity;
+                            if (count($reactivity) > 0) {
+
+                                $cell_id_reactivity = $reactivity[0]->cell_id;
+
+                                // If the Cell ID matches the reactivity Cell ID then 
+                                // collect the data.
+                                if ($cell_id == $cell_id_reactivity) {
+                                    // Get the antigen data
+                                    $antigen_label =  isset($reactivity[0]->antigen->label) ? $reactivity[0]->antigen->label : '';
+                                    $antigen_species_label =  isset($reactivity[0]->antigen_source_species->label) ? $reactivity[0]->antigen_source_species->label : '';
+                                    $peptide_sequence_aa =  isset($reactivity[0]->peptide_sequence_aa) ? $reactivity[0]->peptide_sequence_aa : '';
+                                    $reactivity_method =  isset($reactivity[0]->reactivity_method) ? $reactivity[0]->reactivity_method : '';
+                                    $reactivity_readout =  isset($reactivity[0]->reactivity_readout) ? $reactivity[0]->reactivity_readout : '';
+                                    // Store the chain info in the cell object data
+                                    $cell_object->antigen = $antigen_label;
+                                    $cell_object->antigen_source_species = $antigen_species_label;
+                                    $cell_object->peptide_sequence_aa = $peptide_sequence_aa;
+                                    $cell_object->reactivity_method = $reactivity_method;
+                                    $cell_object->reactivity_readout = $reactivity_readout;
+                                    $cell_object->reactivity_list = [$antigen_label, $antigen_species_label, $peptide_sequence_aa];
+                                    // If we have reactivity info for this cell we don't need to
+                                    // process any more reactivity data.
+                                    break;
+                                }
+                            }
+                        }
+
+                        $cell_list_merged[] = $cell_object;
+                    }
+
+                    //Log::debug($cell_list_merged);
+                    //blah;
                     $response['data']->Cell = $cell_list_merged;
                 }
             }
