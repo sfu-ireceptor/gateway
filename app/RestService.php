@@ -1250,7 +1250,6 @@ class RestService extends Model
         // Do requests
         $response_list = self::doRequests($request_params);
 
-
         // If we are processing Cell data, we actually need to handle both
         // Cell, Expression, and Rearrangement data to build a response.
         if ($type == 'cell') {
@@ -1302,10 +1301,9 @@ class RestService extends Model
                         if (array_search($cell_id_expression, $cell_id_list)) {
                             continue;
                         }
-                            
+
                         // Iterate over the Cells to make sure we have the cell
                         foreach ($response_list_cells as $response_cell) {
-
                             $cell_list = $response_cell['data']->Cell;
 
                             // Make sure the cell_list is not empty. Since the above query is
@@ -1318,7 +1316,7 @@ class RestService extends Model
                                 // If the expression and the cell IDs are the same,
                                 // and we don't already have this cell in the list
                                 // (we can have multiple expression values from a single
-                                // cell) then need to add this cell to our list. 
+                                // cell) then need to add this cell to our list.
                                 // the Cell data into a single object and then break
                                 // out of the loop.
                                 if ($cell_id_expression == $cell_id_cell) {
@@ -1355,7 +1353,7 @@ class RestService extends Model
 
                         // Prepare parameters for the query (there are none)
                         $params = [];
-                        
+
                         // Set up the actual request info
                         $request = [];
                         $request['rs'] = $rs;
@@ -1435,11 +1433,11 @@ class RestService extends Model
                         $request = [];
                         $request['rs'] = $rs;
                         $request['url'] = $rs->url . 'rearrangement';
-                        // We need to request specific fields that want to return 
+                        // We need to request specific fields that want to return
                         // about each chain
                         $params = [];
                         $params['fields'] = ['v_call', 'd_call', 'j_calll', 'c_call',
-                                             'junction_aa', 'cell_id', 'clone_id'];
+                            'junction_aa', 'cell_id', 'clone_id'];
                         $request['params'] = self::generate_json_query($filters, $params, $rs->api_version);
 
                         // Add the request to the request list
@@ -1462,7 +1460,7 @@ class RestService extends Model
                             if (count($sequence) > 0) {
                                 $cell_id_sequence = $sequence[0]->cell_id;
 
-                                // If the Cell ID matches the sequence Cell ID then 
+                                // If the Cell ID matches the sequence Cell ID then
                                 // collect the data.
                                 if ($cell_id == $cell_id_sequence) {
                                     // Get the V and Junction data.
@@ -1517,11 +1515,11 @@ class RestService extends Model
                         $request = [];
                         $request['rs'] = $rs;
                         $request['url'] = $rs->url . 'reactivity';
-                        // We need to request specific fields that want to return 
+                        // We need to request specific fields that want to return
                         // about the reactivity
                         $params = [];
                         $params['fields'] = ['cell_id', 'antigen', 'antigen_source_species', 'peptide_sequence_aa',
-                                'reactivity_method', 'reactivity_readout'];
+                            'reactivity_method', 'reactivity_readout'];
                         $request['params'] = self::generate_json_query($filters, $params, $rs->api_version);
 
                         // Add the request to the request list
@@ -1546,18 +1544,17 @@ class RestService extends Model
                             // If we got some reactivity data, process it.
                             $reactivity = $response_reactivity['data']->Reactivity;
                             if (count($reactivity) > 0) {
-
                                 $cell_id_reactivity = $reactivity[0]->cell_id;
 
-                                // If the Cell ID matches the reactivity Cell ID then 
+                                // If the Cell ID matches the reactivity Cell ID then
                                 // collect the data.
                                 if ($cell_id == $cell_id_reactivity) {
                                     // Get the antigen data
-                                    $antigen_label =  isset($reactivity[0]->antigen->label) ? $reactivity[0]->antigen->label : '';
-                                    $antigen_species_label =  isset($reactivity[0]->antigen_source_species->label) ? $reactivity[0]->antigen_source_species->label : '';
-                                    $peptide_sequence_aa =  isset($reactivity[0]->peptide_sequence_aa) ? $reactivity[0]->peptide_sequence_aa : '';
-                                    $reactivity_method =  isset($reactivity[0]->reactivity_method) ? $reactivity[0]->reactivity_method : '';
-                                    $reactivity_readout =  isset($reactivity[0]->reactivity_readout) ? $reactivity[0]->reactivity_readout : '';
+                                    $antigen_label = isset($reactivity[0]->antigen->label) ? $reactivity[0]->antigen->label : '';
+                                    $antigen_species_label = isset($reactivity[0]->antigen_source_species->label) ? $reactivity[0]->antigen_source_species->label : '';
+                                    $peptide_sequence_aa = isset($reactivity[0]->peptide_sequence_aa) ? $reactivity[0]->peptide_sequence_aa : '';
+                                    $reactivity_method = isset($reactivity[0]->reactivity_method) ? $reactivity[0]->reactivity_method : '';
+                                    $reactivity_readout = isset($reactivity[0]->reactivity_readout) ? $reactivity[0]->reactivity_readout : '';
                                     // Store the chain info in the cell object data
                                     $cell_object->antigen = $antigen_label;
                                     $cell_object->antigen_source_species = $antigen_species_label;
