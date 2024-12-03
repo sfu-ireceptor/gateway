@@ -294,7 +294,7 @@
                                             @else
                                                 @if(is_object($s->{$field['ir_id']}))
                                                     <span title="{{ json_encode($s->{$field['ir_id']}) }}">
-                                                        {{ json_encode($s->{$field['ir_id']}) }}                                                
+                                                        {{ json_encode($s->{$field['ir_id']}) }}
                                                     </span>
                                                 @elseif (is_array($s->{$field['ir_id']}))
                                                     @if( $field['ir_id'] == 'expression_label_list' )
@@ -309,9 +309,23 @@
                                                                 {{ $loop->last ? '' : ', ' }}
                                                             @endif
                                                         @endforeach
+                                                    @elseif( $field['ir_id'] == 'reactivity_list' )
+
+                                                        @if( $s->antigen != '' )
+                                                            {{ str_limit( $s->antigen, $limit = 20, $end = '‥') }}
+                                                        @endif
+                                                        @if( $s->antigen_source_species != '' )
+                                                            <span class="badge badge-cells" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$s->antigen_source_species}}</p>" data-trigger="hover">S</span>
+                                                        @endif
+                                                        @if( $s->peptide_sequence_aa != '' )
+                                                            <span class="badge badge-cells" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$s->peptide_sequence_aa}}</p>" data-trigger="hover">E</span>
+                                                        @endif
+                                                        @if( $s->reactivity_method != '' )
+                                                            <span class="badge badge-cells" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$s->reactivity_method}}, {{$s->reactivity_readout}}</p>" data-trigger="hover">?</span>
+                                                        @endif
                                                     @else
                                                         <span title="{{ implode(', ', $s->{$field['ir_id']}) }}">
-                                                            {{ str_limit(implode(', ', $s->{$field['ir_id']}), $limit = 40, $end = '‥') }}
+                                                            {{ str_limit(implode(', ', $s->{$field['ir_id']}), $limit = 30, $end = '‥') }}
                                                         </span>
                                                     @endif
                                                 @else
@@ -319,7 +333,7 @@
                                                         @if (is_bool($s->{$field['ir_id']}))
                                                             {{ $s->{$field['ir_id']} ? 'Yes' : 'No' }}
                                                         @else
-                                                            {{ $s->{$field['ir_id']} }}
+                                                            {{ str_limit( $s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
                                                         @endif
                                                     </span>
                                                 @endif                                                
