@@ -59,10 +59,16 @@ class CellController extends Controller
         // allow only Cell filters, or only GEX filters, based on currently opened panel
         if (isset($filters['open_filter_panel_list'])) {
             $open_filter_panel_list = $filters['open_filter_panel_list'];
+            //Log::debug($open_filter_panel_list);
+            //blah;
             if ($open_filter_panel_list[0] == 0) {
                 unset($filters['property_expression']);
                 unset($filters['value_expression']);
-            } else {
+            } else if ($open_filter_panel_list[1] == 0) {
+                unset($filters['antigen']);
+                unset($filters['antigen_source_species']);
+                unset($filters['peptide_sequence_aa']);
+            } else if ($open_filter_panel_list[2] == 0) {
                 unset($filters['expression_study_method_cell']);
                 unset($filters['virtual_pairing_cell']);
             }
