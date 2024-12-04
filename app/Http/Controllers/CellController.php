@@ -58,7 +58,7 @@ class CellController extends Controller
         $username = auth()->user()->username;
 
         $basic_filters = RestService::clean_filters($filters);
-        //for ($filter in 
+        //for ($filter in
         //foreach ($basic_filters as $k => $v) {
 
         // allow only Cell filters, or only GEX filters, based on currently opened panel
