@@ -3,11 +3,11 @@
 namespace App\Jobs;
 
 use App\Cell;
+use App\Clones;
 use App\LocalJob;
 use App\Query;
 use App\QueryLog;
 use App\Sequence;
-use App\Clones;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
