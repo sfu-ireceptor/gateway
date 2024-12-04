@@ -2,11 +2,11 @@
 
 namespace App\Jobs;
 
+use App\Cell;
 use App\LocalJob;
 use App\Query;
 use App\QueryLog;
 use App\Sequence;
-use App\Cell;
 use App\SequenceClone;
 use App\User;
 use Carbon\Carbon;
