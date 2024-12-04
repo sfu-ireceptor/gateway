@@ -6,7 +6,7 @@ use App\LocalJob;
 use App\Query;
 use App\QueryLog;
 use App\Sequence;
-use App\SequenceCell;
+use App\Cell;
 use App\SequenceClone;
 use App\User;
 use Carbon\Carbon;
@@ -102,7 +102,7 @@ class DownloadSequences implements ShouldQueue
         } elseif ($this->type == 'clone') {
             $t = SequenceClone::clonesTSV($filters, $this->username, $this->url, $sample_filter_fields);
         } elseif ($this->type == 'cell') {
-            $t = SequenceCell::cellsTSV($filters, $this->username, $this->url, $sample_filter_fields);
+            $t = Cell::cellsTSV($filters, $this->username, $this->url, $sample_filter_fields);
         }
 
         //$file_path = $t['public_path'];

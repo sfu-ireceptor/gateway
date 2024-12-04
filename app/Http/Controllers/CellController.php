@@ -7,7 +7,7 @@ use App\Download;
 use App\FieldName;
 use App\QueryLog;
 use App\Sample;
-use App\SequenceCell;
+use App\Cell;
 use App\System;
 use App\Tapis;
 use Facades\App\Query;
@@ -75,7 +75,7 @@ class CellController extends Controller
         }
 
         // retrieve data
-        $cell_data = SequenceCell::summary($filters, $username);
+        $cell_data = Cell::summary($filters, $username);
 
         // store data size in user query log
         $query_log_id = $request->get('query_log_id');
