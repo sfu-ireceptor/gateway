@@ -38,7 +38,7 @@ class CellController extends Controller
 
         // if request without query id, generate query id and redirect
         if (! $request->has('query_id')) {
-            $query_id = Query::saveParams($request->except(['_token']), 'sequences');
+            $query_id = Query::saveParams($request->except(['_token']), 'cells');
 
             return redirect('cells?query_id=' . $query_id)->withInput();
         }
@@ -88,7 +88,7 @@ class CellController extends Controller
         /*************************************************
         * Prepare view data */
 
-        // sequence data
+        // cell data
         $data = [];
 
         $data['cell_list'] = $cell_data['items'];
@@ -407,15 +407,15 @@ class CellController extends Controller
         return view('cell', $data);
     }
 
-    public function timeEstimate($nb_sequences)
+    public function timeEstimate($nb_cells)
     {
         $time_estimate_max = '24 hours';
 
-        if ($nb_sequences < 500000) {
+        if ($nb_cells < 500000) {
             $time_estimate_max = '20 min';
         }
 
-        if ($nb_sequences < 100000) {
+        if ($nb_cells < 100000) {
             $time_estimate_max = '';
         }
 
@@ -456,7 +456,7 @@ class CellController extends Controller
             $new_filters = $filters;
         }
 
-        $new_query_id = Query::saveParams($new_filters, 'sequences');
+        $new_query_id = Query::saveParams($new_filters, 'cells');
 
         $uri = $request->route()->uri;
 
