@@ -1117,7 +1117,7 @@ class RestService extends Model
 
             // Filter the samples based on whether they actually returned data
             // or not. If data is returned, capture the count of the returned
-            // data in the appropriate ir_filtered count field for the type of 
+            // data in the appropriate ir_filtered count field for the type of
             // query.
             $sample_list_filtered = [];
             foreach ($response['data'] as $sample) {
@@ -1189,7 +1189,7 @@ class RestService extends Model
         return $response_list;
     }
 
-    // Retrieve a subset of data of size n of the specific type based on the provided filters. 
+    // Retrieve a subset of data of size n of the specific type based on the provided filters.
     // Parameters:
     //
     //   @param string $filters - the sequence level filters to apply. This includes gateway filter
