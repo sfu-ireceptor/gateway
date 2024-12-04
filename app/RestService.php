@@ -1055,12 +1055,12 @@ class RestService extends Model
         Log::debug('Filtered to requested samples only:');
         // Log::debug($response_list_requested);
 
-        // build list of sequence filters only (remove sample id filters)
-        $sequence_filters = $filters;
-        unset($sequence_filters['project_id_list']);
-        foreach ($sequence_filters as $key => $value) {
+        // Build list of data filters only (remove sample id filters)
+        $data_filters = $filters;
+        unset($data_filters['project_id_list']);
+        foreach ($data_filters as $key => $value) {
             if (starts_with($key, 'ir_project_sample_id_list_')) {
-                unset($sequence_filters[$key]);
+                unset($data_filters[$key]);
             }
         }
 
@@ -1077,11 +1077,11 @@ class RestService extends Model
 
         // count sequences for each requested sample
         if ($type == 'sequence') {
-            $counts_by_rs = self::sequence_count($sample_id_list_by_rs, $sequence_filters);
+            $counts_by_rs = self::sequence_count($sample_id_list_by_rs, $data_filters);
         } elseif ($type == 'clone') {
-            $counts_by_rs = self::clone_count($sample_id_list_by_rs, $sequence_filters);
+            $counts_by_rs = self::clone_count($sample_id_list_by_rs, $data_filters);
         } else {
-            $counts_by_rs = self::cell_count($sample_id_list_by_rs, $sequence_filters);
+            $counts_by_rs = self::cell_count($sample_id_list_by_rs, $data_filters);
         }
 
         // add sequences count to samples
@@ -1203,6 +1203,8 @@ class RestService extends Model
     // Return object is an array with each array element being specific to the type of query
     public static function data_subset($filters, $response_list_data_summary, $n = 10, $type = 'sequence')
     {
+        //Log::debug($filters);
+        //blah;
         if ($type == 'sequence') {
             $base_uri = 'rearrangement';
         } elseif ($type == 'clone') {
