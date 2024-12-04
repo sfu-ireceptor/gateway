@@ -64,11 +64,11 @@ class CellController extends Controller
             if ($open_filter_panel_list[0] == 0) {
                 unset($filters['property_expression']);
                 unset($filters['value_expression']);
-            } else if ($open_filter_panel_list[1] == 0) {
+            } elseif ($open_filter_panel_list[1] == 0) {
                 unset($filters['antigen']);
                 unset($filters['antigen_source_species']);
                 unset($filters['peptide_sequence_aa']);
-            } else if ($open_filter_panel_list[2] == 0) {
+            } elseif ($open_filter_panel_list[2] == 0) {
                 unset($filters['expression_study_method_cell']);
                 unset($filters['virtual_pairing_cell']);
             }
