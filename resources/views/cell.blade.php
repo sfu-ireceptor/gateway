@@ -68,11 +68,45 @@
                         <div class="panel-heading" role="tab" id="headingOne">
                             <h4 class="panel-title">
                                 <a role="button" class="{{ in_array('1', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    Filter by Cell Expression
+                                    Filter by Cell Reactivity
                                 </a>
                             </h4>
                         </div>
                         <div id="collapseTwo" class="panel-collapse collapse {{ in_array('1', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    {{ Form::label('antigen',  'Antigen') }}
+                                    @include('help', ['id' => 'antigen'])
+                                    {{ Form::text('antigen', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ Form::label('antigen_source_species', 'Antigen Species') }}
+                                    @include('help', ['id' => 'antigen_source_species'])
+                                    {{ Form::text('antigen_source_species', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ Form::label('peptide_sequence_aa', 'Epitope AA sequence') }}
+                                    @include('help', ['id' => 'peptide_sequence_aa'])
+                                    {{ Form::text('peptide_sequence_aa', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
+                                </div>
+
+                                <p class="button_container">
+                                    {{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <h4 class="panel-title">
+                                <a role="button" class="{{ in_array('2', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    Filter by Cell Expression
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseThree" class="panel-collapse collapse {{ in_array('2', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingOne">
                             <div class="panel-body">
                                 <div class="form-group">
                                     {{ Form::label('property_expression',  'Property Label') }}
@@ -312,10 +346,16 @@
                                                     @elseif( $field['ir_id'] == 'reactivity_list' )
 
                                                         @if( $s->antigen != '' )
+                                                            <span title="{{$s->antigen}}">
                                                             {{ str_limit( $s->antigen, $limit = 20, $end = '‥') }}
-                                                        @endif
-                                                        @if( $s->antigen_source_species != '' )
-                                                            <span class="badge badge-cells" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$s->antigen_source_species}}</p>" data-trigger="hover">S</span>
+                                                            </span>
+                                                            @if( $s->antigen_source_species != '' )
+                                                                <span class="badge badge-cells" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$s->antigen_source_species}}</p>" data-trigger="hover">S</span>
+                                                            @endif
+                                                        @elseif( $s->antigen == '' && $s->antigen_source_species != '' )
+                                                            <span title="{{$s->antigen_source_species}}">
+                                                            {{ str_limit( $s->antigen_source_species, $limit = 20, $end = '‥') }}
+                                                            </span>
                                                         @endif
                                                         @if( $s->peptide_sequence_aa != '' )
                                                             <span class="badge badge-cells" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$s->peptide_sequence_aa}}</p>" data-trigger="hover">E</span>
