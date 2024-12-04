@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Bookmark;
+use App\Cell;
 use App\Download;
 use App\FieldName;
 use App\QueryLog;
 use App\Sample;
-use App\Cell;
 use App\System;
 use App\Tapis;
 use Facades\App\Query;

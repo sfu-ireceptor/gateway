@@ -2,11 +2,11 @@
 
 namespace App\Jobs;
 
+use App\Cell;
 use App\Job;
 use App\LocalJob;
 use App\Query;
 use App\Sequence;
-use App\Cell;
 use App\SequenceClone;
 use App\System;
 use App\Tapis;
