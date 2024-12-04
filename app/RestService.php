@@ -462,6 +462,11 @@ class RestService extends Model
         return $filter_object_json;
     }
 
+    // Method to remove gateway specific filters and leave only
+    // AIRR query relevant filter variables.
+    // Also handles the conversion of a VDJ call filter to the
+    // appropriate exact match filter on either the _call, _gene,
+    // or _family field.
     public static function clean_filters($filters)
     {
         // remove empty filters
@@ -984,9 +989,27 @@ class RestService extends Model
         return $counts_by_rs;
     }
 
-    public static function sequences_summary($filters, $username = '', $group_by_rest_service = true, $type = 'sequence')
+    // Returns an array of services and the related repertoire metaddata based on a
+    // sequence/clone/cell level query.
+    //
+    // Parameters:
+    //
+    //   @param string $filters - the sequence level filters to apply. This includes gateway filter
+    //   fields as well as AIRR filters.
+    //   @param string $username - the username of the user making the query
+    //   @param boolean $group_by_rest_service - determines whether the responses is grouped by service
+    //   @param string $group - (e.g. c19 group) or individual repositories are returned as services.
+    //   type: the type of query to make (sequence, clone, cell).
+    //
+    // @return array List of objects that describe the data and which services it came from
+    //
+    // Return object is an array with each array element having the following fields:
+    //   rs: An object that describes the service (grouped or ungrouped by repository group (e.g. c19 group).
+    //   status: A string that describes the success/error state of the service repsonse.
+    //   data: A list of repertoires in the AIRR format from the query.
+    public static function data_summary($filters, $username = '', $group_by_rest_service = true, $type = 'sequence')
     {
-        Log::debug('RestService::sequences_summary()');
+        Log::debug('RestService::data_summary()');
 
         // build list of repository ids to query
         $rest_service_id_list = [];
@@ -1066,13 +1089,17 @@ class RestService extends Model
         foreach ($response_list_requested as $response) {
             $rs = $response['rs'];
 
-            // if there was an error with the repertoire query
+            // If there was an error with the repertoire query
             // include this response so the error is reported
             if ($response['status'] == 'error') {
                 $response_list_filtered[] = $response;
                 continue;
             }
 
+            // If there are no samples for the service, that is an
+            // error, check to see if the service generated an error
+            // and report it. Again, include the error response as we
+            // want to be able to report errors in downstream processing.
             if ($counts_by_rs[$rs->id]['samples'] == null) {
                 $response['status'] = 'error';
 
@@ -1088,6 +1115,10 @@ class RestService extends Model
                 continue;
             }
 
+            // Filter the samples based on whether they actually returned data
+            // or not. If data is returned, capture the count of the returned
+            // data in the appropriate ir_filtered count field for the type of 
+            // query.
             $sample_list_filtered = [];
             foreach ($response['data'] as $sample) {
                 $sample_count = $counts_by_rs[$rs->id]['samples'][$sample->repertoire_id];
@@ -1104,7 +1135,7 @@ class RestService extends Model
                 }
             }
 
-            // include repository only if it has samples with sequences matching the query
+            // Include repository only if it has samples with sequences matching the query
             if (count($sample_list_filtered) > 0) {
                 $response['data'] = $sample_list_filtered;
                 $response_list_filtered[] = $response;
@@ -1113,25 +1144,28 @@ class RestService extends Model
 
         $response_list = $response_list_filtered;
 
+        // If we are gropuing individual services into service groups, then
+        // do that grouping here. We group based on rest services returned
+        // rest_service_group_code value.
         if ($group_by_rest_service) {
-            // merge service responses belonging to the same group
+            // Merge service responses belonging to the same group
             $response_list_grouped = [];
             foreach ($response_list as $response) {
                 $group = $response['rs']->rest_service_group_code;
 
-                // service doesn't belong to a group -> just add response
+                // Service doesn't belong to a group -> just add response
                 if ($group == '') {
                     $response_list_grouped[] = $response;
                 } else {
-                    // a response with that group already exists? -> merge
+                    // A response with that group already exists? -> merge
                     if (isset($response_list_grouped[$group])) {
                         $r1 = $response_list_grouped[$group];
                         $r2 = $response;
 
-                        // merge data
+                        // Merge data
                         $r1['data'] = array_merge($r1['data'], $r2['data']);
 
-                        // merge response status
+                        // Merge response status
                         if ($r2['status'] != 'success') {
                             $r1['status'] = $r2['status'];
                             if (isset($r2['error_message'])) {
@@ -1155,8 +1189,19 @@ class RestService extends Model
         return $response_list;
     }
 
-    // retrieves n sequences
-    public static function sequence_list($filters, $response_list_sequences_summary, $n = 10, $type = 'sequence')
+    // Retrieve a subset of data of size n of the specific type based on the provided filters. 
+    // Parameters:
+    //
+    //   @param string $filters - the sequence level filters to apply. This includes gateway filter
+    //   fields as well as AIRR filters.
+    //   @param string $response_list_data_summary - a list of the services from which to search
+    //   @param integer $n - the number of data elements to retreive
+    //   @param string $type - the type of data/query to make (sequence, clone, cell).
+    //
+    // @return array List of objects that describe the data of the specific type (sequence, clone, cell)
+    //
+    // Return object is an array with each array element being specific to the type of query
+    public static function data_subset($filters, $response_list_data_summary, $n = 10, $type = 'sequence')
     {
         if ($type == 'sequence') {
             $base_uri = 'rearrangement';
@@ -1171,7 +1216,7 @@ class RestService extends Model
         }
 
         Log::debug('We have reponses for repos with id:');
-        foreach ($response_list_sequences_summary as $rl) {
+        foreach ($response_list_data_summary as $rl) {
             Log::debug($rl['rs']->id);
         }
 
@@ -1206,16 +1251,16 @@ class RestService extends Model
 
             // if no sequence filters, query only subset of repertoires
             if (count($service_filters) == 1) {
-                $rs_sequences_summary_response = null;
-                foreach ($response_list_sequences_summary as $response) {
+                $rs_data_summary_response = null;
+                foreach ($response_list_data_summary as $response) {
                     if ($response['rs']->id == $rs->id) {
-                        $rs_sequences_summary_response = $response;
+                        $rs_data_summary_response = $response;
                     }
                 }
 
-                if ($rs_sequences_summary_response != null) {
+                if ($rs_data_summary_response != null) {
                     $repertoire_id_list = [];
-                    $sample_list = $rs_sequences_summary_response['data'];
+                    $sample_list = $rs_data_summary_response['data'];
                     $i = 0;
                     foreach ($sample_list as $sample) {
                         if ($sample->{'ir_' . $type . '_count'} > 0) {
@@ -1572,13 +1617,13 @@ class RestService extends Model
                         $cell_list_merged[] = $cell_object;
                     }
 
-                    //Log::debug($cell_list_merged);
-                    //blah;
                     $response['data']->Cell = $cell_list_merged;
                 }
             }
         }
 
+        //Log::debug($response_list);
+        //blah;
         return $response_list;
     }
 

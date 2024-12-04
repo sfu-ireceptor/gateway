@@ -14,13 +14,13 @@ class Clones
     public static function summary($filters, $username)
     {
         // get clones summary
-        $response_list_clones_summary = RestService::sequences_summary($filters, $username, true, 'clone');
+        $response_list_clones_summary = RestService::data_summary($filters, $username, true, 'clone');
 
         // generate stats
         $data = self::process_response($response_list_clones_summary);
 
         // get a few clones from each service
-        $response_list = RestService::sequence_list($filters, $response_list_clones_summary, 10, 'clone');
+        $response_list = RestService::data_subset($filters, $response_list_clones_summary, 10, 'clone');
 
         // merge responses
         $clone_list = [];
@@ -78,7 +78,7 @@ class Clones
 
     public static function expectedClonesByRestSevice($filters, $username)
     {
-        $response_list = RestService::sequences_summary($filters, $username, false, 'clone');
+        $response_list = RestService::data_summary($filters, $username, false, 'clone');
         $expected_nb_clones_by_rs = [];
         foreach ($response_list as $response) {
             $rest_service_id = $response['rs']->id;
@@ -128,7 +128,7 @@ class Clones
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
         // do extra clone summary request
-        $response_list = RestService::sequences_summary($filters, $username, false, 'clone');
+        $response_list = RestService::data_summary($filters, $username, false, 'clone');
 
         // do extra clone summary request to get expected number of clones
         // for sanity check after download

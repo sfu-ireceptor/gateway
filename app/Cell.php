@@ -14,13 +14,13 @@ class Cell
     public static function summary($filters, $username)
     {
         // get cells summary
-        $response_list_cells_summary = RestService::sequences_summary($filters, $username, true, 'cell');
+        $response_list_cells_summary = RestService::data_summary($filters, $username, true, 'cell');
 
         // generate stats
         $data = self::process_response($response_list_cells_summary);
 
         // get a few cells from each service
-        $response_list = RestService::sequence_list($filters, $response_list_cells_summary, 10, 'cell');
+        $response_list = RestService::data_subset($filters, $response_list_cells_summary, 10, 'cell');
 
         // merge responses
         $cell_list = [];
@@ -79,7 +79,7 @@ class Cell
 
     public static function expectedCellsByRestSevice($filters, $username)
     {
-        $response_list = RestService::sequences_summary($filters, $username, false, 'cell');
+        $response_list = RestService::data_summary($filters, $username, false, 'cell');
         $expected_nb_cells_by_rs = [];
         foreach ($response_list as $response) {
             $rest_service_id = $response['rs']->id;
@@ -129,7 +129,7 @@ class Cell
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
         // do extra cell summary request
-        $response_list = RestService::sequences_summary($filters, $username, false, 'cell');
+        $response_list = RestService::data_summary($filters, $username, false, 'cell');
 
         // do extra cell summary request to get expected number of cells
         // for sanity check after download
