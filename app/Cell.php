@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
-class SequenceCell
+class Cell
 {
     public static function summary($filters, $username)
     {
@@ -77,7 +77,7 @@ class SequenceCell
         return $data;
     }
 
-    public static function expectedSequenceCellsByRestSevice($filters, $username)
+    public static function expectedCellsByRestSevice($filters, $username)
     {
         $response_list = RestService::sequences_summary($filters, $username, false, 'cell');
         $expected_nb_cells_by_rs = [];
@@ -133,7 +133,7 @@ class SequenceCell
 
         // do extra cell summary request to get expected number of cells
         // for sanity check after download
-        $expected_nb_cells_by_rs = self::expectedSequenceCellsByRestSevice($filters, $username);
+        $expected_nb_cells_by_rs = self::expectedCellsByRestSevice($filters, $username);
 
         // get filtered list of repertoires ids
         $filtered_samples_by_rs = self::filteredSamplesByRestService($response_list);
@@ -197,7 +197,7 @@ class SequenceCell
             // sequence data
             $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_rs);
         } else {
-            Log::debug('SequenceCell::cellTSVFolder - SKIPPING DOWNLOAD');
+            Log::debug('Cell::cellTSVFolder - SKIPPING DOWNLOAD');
         }
 
         $file_stats = self::file_stats($cell_response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs, $download_data);

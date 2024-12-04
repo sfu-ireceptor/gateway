@@ -228,6 +228,11 @@ class RestServiceSeeder extends Seeder
                 'name' => 'HPAP',
                 'country' => 'Canada',
             ],
+            [
+                'url' => 'https://turnkey-test2.ireceptor.org/airr/v1/',
+                'name' => 'Turnkey Test 2',
+                'country' => 'Canada',
+            ],
         ];
 
         // if grouping is disabled, remove group code
