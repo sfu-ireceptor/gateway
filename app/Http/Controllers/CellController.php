@@ -7,6 +7,7 @@ use App\Cell;
 use App\Download;
 use App\FieldName;
 use App\QueryLog;
+use App\RestService;
 use App\Sample;
 use App\System;
 use App\Tapis;
@@ -56,26 +57,37 @@ class CellController extends Controller
         $filters = Query::getParams($query_id);
         $username = auth()->user()->username;
 
+        $basic_filters = RestService::clean_filters($filters);
+        //for ($filter in 
+        //foreach ($basic_filters as $k => $v) {
+
         // allow only Cell filters, or only GEX filters, based on currently opened panel
         if (isset($filters['open_filter_panel_list'])) {
             $open_filter_panel_list = $filters['open_filter_panel_list'];
-            //Log::debug($open_filter_panel_list);
-            //blah;
             if ($open_filter_panel_list[0] == 0) {
                 unset($filters['property_expression']);
                 unset($filters['value_expression']);
-            } elseif ($open_filter_panel_list[1] == 0) {
-                unset($filters['antigen']);
-                unset($filters['antigen_source_species']);
-                unset($filters['peptide_sequence_aa']);
-            } elseif ($open_filter_panel_list[2] == 0) {
+                unset($filters['antigen_reactivity']);
+                unset($filters['antigen_source_species_reactivity']);
+                unset($filters['peptide_sequence_aa_reactivity']);
+            } elseif ($open_filter_panel_list[0] == 1) {
+                unset($filters['property_expression']);
+                unset($filters['value_expression']);
                 unset($filters['expression_study_method_cell']);
                 unset($filters['virtual_pairing_cell']);
+            } elseif ($open_filter_panel_list[0] == 2) {
+                unset($filters['expression_study_method_cell']);
+                unset($filters['virtual_pairing_cell']);
+                unset($filters['antigen_reactivity']);
+                unset($filters['antigen_source_species_reactivity']);
+                unset($filters['peptide_sequence_aa_reactivity']);
             }
         }
 
         // retrieve data
         $cell_data = Cell::summary($filters, $username);
+        //Log::debug($cell_data);
+        //blah;
 
         // store data size in user query log
         $query_log_id = $request->get('query_log_id');
@@ -86,11 +98,11 @@ class CellController extends Controller
         }
 
         /*************************************************
-        * Prepare view data */
-
-        // cell data
+        * Prepare Cell view data */
         $data = [];
 
+        // Get the relevant data that is displayed for each Cell in the UI table.
+        // This information is stored in the 'items' attribute of the the cell_data.
         $data['cell_list'] = $cell_data['items'];
 
         // Fields we want to graph. The UI/blade expects six fields

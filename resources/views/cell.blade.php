@@ -65,31 +65,31 @@
                     </div>
 
                     <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingOne">
+                        <div class="panel-heading" role="tab" id="headingTwo">
                             <h4 class="panel-title">
                                 <a role="button" class="{{ in_array('1', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                     Filter by Cell Reactivity
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseTwo" class="panel-collapse collapse {{ in_array('1', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingOne">
+                        <div id="collapseTwo" class="panel-collapse collapse {{ in_array('1', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingTwo">
                             <div class="panel-body">
                                 <div class="form-group">
-                                    {{ Form::label('antigen',  'Antigen') }}
-                                    @include('help', ['id' => 'antigen'])
-                                    {{ Form::text('antigen', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
+                                    {{ Form::label('antigen_reactivity',  'Antigen') }}
+                                    @include('help', ['id' => 'antigen_reactivity'])
+                                    {{ Form::text('antigen_reactivity', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
                                 </div>
 
                                 <div class="form-group">
-                                    {{ Form::label('antigen_source_species', 'Antigen Species') }}
-                                    @include('help', ['id' => 'antigen_source_species'])
-                                    {{ Form::text('antigen_source_species', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
+                                    {{ Form::label('antigen_source_species_reactivity', 'Antigen Species') }}
+                                    @include('help', ['id' => 'antigen_source_species_reactivity'])
+                                    {{ Form::text('antigen_source_species_reactivity', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
                                 </div>
 
                                 <div class="form-group">
-                                    {{ Form::label('peptide_sequence_aa', 'Epitope AA sequence') }}
-                                    @include('help', ['id' => 'peptide_sequence_aa'])
-                                    {{ Form::text('peptide_sequence_aa', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
+                                    {{ Form::label('peptide_sequence_aa_reactivity', 'Epitope AA sequence') }}
+                                    @include('help', ['id' => 'peptide_sequence_aa_reactivity'])
+                                    {{ Form::text('peptide_sequence_aa_reactivity', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
                                 </div>
 
                                 <p class="button_container">
@@ -99,14 +99,14 @@
                         </div>
                     </div>
                     <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingOne">
+                        <div class="panel-heading" role="tab" id="headingThree">
                             <h4 class="panel-title">
                                 <a role="button" class="{{ in_array('2', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                     Filter by Cell Expression
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseThree" class="panel-collapse collapse {{ in_array('2', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingOne">
+                        <div id="collapseThree" class="panel-collapse collapse {{ in_array('2', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingThree">
                             <div class="panel-body">
                                 <div class="form-group">
                                     {{ Form::label('property_expression',  'Property Label') }}
