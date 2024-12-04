@@ -159,7 +159,7 @@
                                 </span>
                             @endforeach
                             @isset($sample_query_id)
-                                <a href="/samples?query_id=@yield('sample_query_id', '')"class="remove_filters">
+                                <a href="/samples/clone?query_id=@yield('sample_query_id', '')"class="remove_filters">
                                     Go back to Repertoire Metadata Search
                                 </a>
                             @endisset                        
