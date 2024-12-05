@@ -11,6 +11,19 @@ use ZipArchive;
 
 class Cell
 {
+    // Returns a complex object of the form:
+    // rs_list - array of repositories and related info that were queried
+    // rs_list_no_response - array of repositories that didn't respond
+    // rs_list_no_response_timeout - array of repositories that timed out
+    // rs_list_no_response_error - array of repositories that had errors
+    // summary - array of repertoires that meet the search criteria
+    // total_filtered_samples - total number of filtered samples
+    // total_filtered_repositories - total number of filtered repositories
+    // total_filtered_labs - total number of filtered labs
+    // total_filtered_studies - total number of filtered studies
+    // total_filtered_objects - total number of filtered objects
+    // filtered_repositories - array of filtered repositories in which data was found
+    // items - array of filtered objects that were found
     public static function summary($filters, $username)
     {
         // get cells summary
