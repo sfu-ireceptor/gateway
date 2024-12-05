@@ -11,6 +11,29 @@ class Query extends Model
     protected $table = 'query';
     protected $fillable = ['params', 'duration', 'page'];
 
+    // Parameteres to queries differ depending on the type of page.
+    // They are encoded as a JSON string in the database.
+    // 
+    // The samples page has the following:
+    //   - project_id_list
+    //   - cols
+    //   - sort_column
+    //   - sort_order
+    //   - open_filter_panel_list
+    //   - the fields that are queryable with the key the field and the value the query text
+    //
+    // The sequence, clone, and cell pages have the following:
+    //   - A set of repository keys of the form ir_project_sample_id_list_NN
+    //     where NN is the ID of the repository in question. These keys capture
+    //     which repositories should be queried. The value of each key is an array
+    //     of the repertoire_id's (sample IDs) that should be queried for that
+    //     repository.
+    //   - cols
+    //   - open_filter_panel_list
+    //   - sample_query_id: The query_id for the sample query that resulted in
+    //     this sequence query
+    //   - the fields that are queryable on this page with the key the field and
+    //     the value the query text
     public static function saveParams($params, $page)
     {
         $t = [];
