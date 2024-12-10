@@ -1029,10 +1029,9 @@ class RestService extends Model
         //Log::debug($filters);
         //blah;
 
-
         // Build list of repository ids to query. For each enabled repository
         // generate the internal key (ir_project_sample_id_list_). If that key
-        // is in the filters from the gateway, then we add it to the list of 
+        // is in the filters from the gateway, then we add it to the list of
         // repositories to search.
         $rest_service_id_list = [];
         foreach (self::findEnabled() as $rs) {
@@ -1063,7 +1062,7 @@ class RestService extends Model
             $sample_id_list = $filters[$sample_id_list_key];
 
             // For each sample in full repository listing, check to see if
-            // the repertoire_id is in the filter sample list. 
+            // the repertoire_id is in the filter sample list.
             $sample_list_requested = [];
             foreach ($response['data'] as $sample) {
                 if (in_array($sample->repertoire_id, $sample_id_list)) {
@@ -2681,7 +2680,7 @@ class RestService extends Model
 
     // Do requests (in parallel)
     // @param object request_params: Can have the following:
-    //   - url = array_get($t, 'url', []); 
+    //   - url = array_get($t, 'url', []);
     //   - file_path = array_get($t, 'file_path', '');
     //   - returnArray = array_get($t, 'returnArray', false);
     //   - rs = array_get($t, 'rs');

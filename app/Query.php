@@ -13,7 +13,7 @@ class Query extends Model
 
     // Parameteres to queries differ depending on the type of page.
     // They are encoded as a JSON string in the database.
-    // 
+    //
     // The samples page has the following:
     //   - project_id_list
     //   - cols
