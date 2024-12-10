@@ -508,9 +508,22 @@ class RestService extends Model
         return $filters;
     }
 
-    // do samples request to all enabled services
+    // Do samples request on specified services
+    // @param string filters - filters to use in the search
+    // @param string username - username of the user initiating the search
+    // @param boolean count_sequences - flag to indicate if sequences should be counted
+    // @param array int rest_service_id_list - list of service IDs to search, if null all are searched
+    // @param boolean grouped - flag to determine if response should be grouped by repository group (e.g. c19)
+    //
+    // @return array response_list - a list of response objects, each of the form:
+    //   - rs: Object that decribes the repository service
+    //   - status: Error status of the response
+    //   - error_message: The error message is status == 'error'
+    //   - data: A list of samples in the AIRR repertoire format
     public static function samples($filters, $username = '', $count_sequences = true, $rest_service_id_list = null, $grouped = true)
     {
+        // If there is no service list provided, process all enabled services.
+        // Build a list of the actual services based on their IDs.
         $rest_service_list = [];
         if ($rest_service_id_list === null) {
             $rest_service_list = self::findEnabled();
@@ -521,9 +534,11 @@ class RestService extends Model
             }
         }
 
-        // clean filters for services
+        // Clean filters for services
         $filters = self::clean_filters($filters);
 
+        // Note if the filters include MHC filters. V1.0 repositories
+        // can't handle these.
         $has_mhc_filters = false;
         foreach ($filters as $filter_name => $filter_value) {
             if (Str::startsWith($filter_name, 'genotype-mhc')) {
@@ -532,10 +547,10 @@ class RestService extends Model
             }
         }
 
-        // prepare request parameters for all services
+        // Prepare request parameters for all services
         $request_params_all = [];
         foreach ($rest_service_list as $rs) {
-            // if 1.0 repo, and there are MHC filters, don't query that repo
+            // If 1.0 repo, and there are MHC filters, don't query that repo
             if ($rs->api_version == '1.0' && $has_mhc_filters) {
                 continue;
             }
@@ -551,7 +566,7 @@ class RestService extends Model
             $request_params_all[] = $t;
         }
 
-        // do requests to all services
+        // Do requests to all services
         $response_list = self::doRequests($request_params_all);
 
         // tweak responses
@@ -1011,7 +1026,14 @@ class RestService extends Model
     {
         Log::debug('RestService::data_summary()');
 
-        // build list of repository ids to query
+        //Log::debug($filters);
+        //blah;
+
+
+        // Build list of repository ids to query. For each enabled repository
+        // generate the internal key (ir_project_sample_id_list_). If that key
+        // is in the filters from the gateway, then we add it to the list of 
+        // repositories to search.
         $rest_service_id_list = [];
         foreach (self::findEnabled() as $rs) {
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
@@ -1019,27 +1041,29 @@ class RestService extends Model
                 $rest_service_id_list[] = $rs->id;
             }
         }
-
         Log::debug('List of repositories (ids) to query:');
         Log::debug($rest_service_id_list);
 
-        // get ALL samples from repositories
-        // so we don't have to send the FULL list of samples ids
-        // because VDJServer can't handle it
+        // Get ALL samples from repositories. This is so we don't
+        // send a huge list to repositories. VDJServer in particular
+        // can't handle a search with all of its repertoires specified.
         $response_list_all = self::samples([], $username, true, $rest_service_id_list, false);
         Log::debug('All samples from those repositories:');
-        // Log::debug($response_list_all);
+        Log::debug($response_list_all);
 
-        // filter repositories responses to only requested samples
+        // Filter repository responses to only requested samples
         $response_list_requested = [];
+        // We loop over the responses from all of the repositories
         foreach ($response_list_all as $response) {
             $rs = $response['rs'];
 
-            // build requested list of sample ids for this repository
+            // Get the list of samples/repertoires for this repository from
+            // the filtered samples
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             $sample_id_list = $filters[$sample_id_list_key];
 
-            // filter samples
+            // For each sample in full repository listing, check to see if
+            // the repertoire_id is in the filter sample list. 
             $sample_list_requested = [];
             foreach ($response['data'] as $sample) {
                 if (in_array($sample->repertoire_id, $sample_id_list)) {
@@ -1598,14 +1622,41 @@ class RestService extends Model
                                 if ($cell_id == $cell_id_reactivity) {
                                     // Get the antigen data
                                     $antigen_label = isset($reactivity[0]->antigen->label) ? $reactivity[0]->antigen->label : '';
+                                    // Generate a URL if we have a known CURIE type
+                                    $antigen_url = '';
+                                    if (isset($reactivity[0]->antigen->id)) {
+                                        $antigen_curie_array = explode(':', $reactivity[0]->antigen->id);
+                                        // If we don't have two elements, it is an invalid curie, do nothing
+                                        if (count($antigen_curie_array) == 2) {
+                                            if ($antigen_curie_array[0] == 'NCBIPROTEIN' || $antigen_curie_array[0] == 'NCBI') {
+                                                $antigen_url = 'https://www.ncbi.nlm.nih.gov/protein/' . $antigen_curie_array[1];
+                                            } elseif ($antigen_curie_array[0] == 'UNIPROT') {
+                                                $antigen_url = 'https://www.uniprot.org/uniprotkb/' . $antigen_curie_array[1];
+                                            }
+                                        }
+                                    }
                                     $antigen_species_label = isset($reactivity[0]->antigen_source_species->label) ? $reactivity[0]->antigen_source_species->label : '';
                                     $peptide_sequence_aa = isset($reactivity[0]->peptide_sequence_aa) ? $reactivity[0]->peptide_sequence_aa : '';
+                                    // Generate an epitope URL if we have a "receptor_ref"
+                                    $epitope_url = '';
+                                    if (isset($reactivity[0]->receptor_ref)) {
+                                        $epitope_curie_array = explode(':', $reactivity[0]->receptor_ref);
+                                        // Only generate if we have a valid IEDB CURIE
+                                        if (count($epitope_curie_array) == 2) {
+                                            if ($epitope_curie_array[0] == 'IEDB_EPITOPE') {
+                                                $epitope_url = 'https://iedb.org/epitope/' . $epitope_curie_array[1];
+                                            }
+                                        }
+                                    }
+
                                     $reactivity_method = isset($reactivity[0]->reactivity_method) ? $reactivity[0]->reactivity_method : '';
                                     $reactivity_readout = isset($reactivity[0]->reactivity_readout) ? $reactivity[0]->reactivity_readout : '';
                                     // Store the chain info in the cell object data
                                     $cell_object->antigen = $antigen_label;
+                                    $cell_object->antigen_url = $antigen_url;
                                     $cell_object->antigen_source_species = $antigen_species_label;
                                     $cell_object->peptide_sequence_aa = $peptide_sequence_aa;
+                                    $cell_object->epitope_url = $epitope_url;
                                     $cell_object->reactivity_method = $reactivity_method;
                                     $cell_object->reactivity_readout = $reactivity_readout;
                                     $cell_object->reactivity_list = [$antigen_label, $antigen_species_label, $peptide_sequence_aa];
@@ -2628,10 +2679,17 @@ class RestService extends Model
         return $final_response_list;
     }
 
-    // do requests (in parallel)
+    // Do requests (in parallel)
+    // @param object request_params: Can have the following:
+    //   - url = array_get($t, 'url', []); 
+    //   - file_path = array_get($t, 'file_path', '');
+    //   - returnArray = array_get($t, 'returnArray', false);
+    //   - rs = array_get($t, 'rs');
+    //   - timeout = array_get($t, 'timeout', config('ireceptor.service_request_timeout'));
+    //   - params_str = array_get($t, 'params', '{}');
     public static function doRequests($request_params)
     {
-        // create Guzzle client
+        // Create Guzzle client
         $defaults = [];
         $defaults['verify'] = false;    // accept self-signed SSL certificates
         $client = new \GuzzleHttp\Client($defaults);
