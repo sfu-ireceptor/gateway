@@ -347,21 +347,37 @@
 
                                                         @if( $s->antigen != '' )
                                                             <span title="{{$s->antigen}}">
-                                                            {{ str_limit( $s->antigen, $limit = 20, $end = '‥') }}
-                                                            </span>
-                                                            @if( $s->antigen_source_species != '' )
-                                                                <span class="badge badge-cells" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$s->antigen_source_species}}</p>" data-trigger="hover">S</span>
+                                                            @if( $s->antigen_url != '' )
+                                                                <a href="{{$s->antigen_url}}" target="_blank">{{ str_limit( $s->antigen, $limit = 20, $end = '‥') }}</a>
+                                                            @else
+                                                                {{ str_limit( $s->antigen, $limit = 20, $end = '‥') }}
                                                             @endif
-                                                        @elseif( $s->antigen == '' && $s->antigen_source_species != '' )
+                                                            </span>
+                                                        @endif
+                                                        @if( $s->peptide_sequence_aa != '' )
+                                                            <span>
+                                                            @if( $s->antigen_source_species != '' )
+                                                                (
+                                                            @endif
+                                                            @if( $s->epitope_url != '' )
+                                                                <a href="{{$s->epitope_url}}">{{$s->peptide_sequence_aa}}</a>
+                                                            @else
+                                                                {{$s->peptide_sequence_aa}} 
+                                                            @endif
+                                                            @if( $s->antigen_source_species != '' )
+                                                                )
+                                                            @endif
+                                                            </span>
+                                                        @endif
+                                                        @if( $s->antigen != '' && $s->antigen_source_species != '' )
+                                                                <span class="badge badge-cells" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$s->antigen_source_species}}</p>" data-trigger="hover">S</span>
+                                                        @elseif( $s->antigen_source_species != '' )
                                                             <span title="{{$s->antigen_source_species}}">
                                                             {{ str_limit( $s->antigen_source_species, $limit = 20, $end = '‥') }}
                                                             </span>
                                                         @endif
-                                                        @if( $s->peptide_sequence_aa != '' )
-                                                            <span class="badge badge-cells" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$s->peptide_sequence_aa}}</p>" data-trigger="hover">E</span>
-                                                        @endif
                                                         @if( $s->reactivity_method != '' )
-                                                            <span class="badge badge-cells" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$s->reactivity_method}}, {{$s->reactivity_readout}}</p>" data-trigger="hover">?</span>
+                                                            <span class="badge badge-cells" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$s->reactivity_method}}, {{$s->reactivity_readout}}</p>" data-trigger="hover">i</span>
                                                         @endif
                                                     @else
                                                         <span title="{{ implode(', ', $s->{$field['ir_id']}) }}">
