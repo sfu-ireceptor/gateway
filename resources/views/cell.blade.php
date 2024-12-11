@@ -333,7 +333,7 @@
                                                 @elseif (is_array($s->{$field['ir_id']}))
                                                     @if( $field['ir_id'] == 'expression_label_list' )
                                                         @foreach ($s->{$field['ir_id']} as $property)
-                                                            @if (str_contains($property->id,'ENSG'))
+                                                            @if ( isset($property->id) && str_contains($property->id,'ENSG'))
                                                                 <a href="http://www.ensembl.org/Search/Results?q={{$property->label}}" title="{{ $property->label }}" target="_blank">
                                                                     {{ $property->label }}
                                                                 </a>
@@ -360,7 +360,7 @@
                                                                 (
                                                             @endif
                                                             @if( $s->epitope_url != '' )
-                                                                <a href="{{$s->epitope_url}}">{{$s->peptide_sequence_aa}}</a>
+                                                                <a href="{{$s->epitope_url}}" target="_blank">{{$s->peptide_sequence_aa}}</a>
                                                             @else
                                                                 {{$s->peptide_sequence_aa}} 
                                                             @endif
@@ -376,8 +376,8 @@
                                                             {{ str_limit( $s->antigen_source_species, $limit = 20, $end = '‥') }}
                                                             </span>
                                                         @endif
-                                                        @if( $s->reactivity_method != '' )
-                                                            <span class="badge badge-cells" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$s->reactivity_method}}, {{$s->reactivity_readout}}</p>" data-trigger="hover">i</span>
+                                                        @if( ($s->antigen_source_species != '' || $s->peptide_sequence_aa != '' || $s->antigen != '') && $s->reactivity_method != '' )
+                                                            <span class="badge badge-cells" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$s->reactivity_method}}, {{$s->reactivity_readout}}, {{$s->reactivity_value}}, {{$s->reactivity_unit}}</p>" data-trigger="hover">i</span>
                                                         @endif
                                                     @else
                                                         <span title="{{ implode(', ', $s->{$field['ir_id']}) }}">
