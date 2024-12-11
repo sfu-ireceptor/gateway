@@ -1589,7 +1589,7 @@ class RestService extends Model
                         // about the reactivity
                         $params = [];
                         $params['fields'] = ['cell_id', 'antigen', 'antigen_source_species', 'peptide_sequence_aa',
-                            'reactivity_method', 'reactivity_readout'];
+                            'reactivity_method', 'reactivity_readout', 'reactivity_value', 'reactivity_unit', 'reactivity_ref'];
                         $request['params'] = self::generate_json_query($filters, $params, $rs->api_version);
 
                         // Add the request to the request list
@@ -1606,6 +1606,7 @@ class RestService extends Model
                         $cell_id = $cell_object->cell_id;
 
                         // For each reactivity repsonse...
+                        // TODO: This should be optimized it is a O(nxm) operation (cell x reactivity)
                         foreach ($response_list_reactivity as $response_reactivity) {
                             // If there is an error response on reactivity, skip.
                             if ($response_reactivity['status'] == 'error') {
@@ -1614,6 +1615,7 @@ class RestService extends Model
                             // If we got some reactivity data, process it.
                             $reactivity = $response_reactivity['data']->Reactivity;
                             if (count($reactivity) > 0) {
+                                // TODO: We are only handling the first reactivity record
                                 $cell_id_reactivity = $reactivity[0]->cell_id;
 
                                 // If the Cell ID matches the reactivity Cell ID then
@@ -1636,10 +1638,17 @@ class RestService extends Model
                                     }
                                     $antigen_species_label = isset($reactivity[0]->antigen_source_species->label) ? $reactivity[0]->antigen_source_species->label : '';
                                     $peptide_sequence_aa = isset($reactivity[0]->peptide_sequence_aa) ? $reactivity[0]->peptide_sequence_aa : '';
-                                    // Generate an epitope URL if we have a "receptor_ref"
+                                    // Generate an epitope URL if we have a "reactivity_ref"
                                     $epitope_url = '';
-                                    if (isset($reactivity[0]->receptor_ref)) {
-                                        $epitope_curie_array = explode(':', $reactivity[0]->receptor_ref);
+                                    if (isset($reactivity[0]->reactivity_ref)) {
+                                        // Handle the case if the repository responsds with either a
+                                        // string or an array.
+                                        if (is_array($reactivity[0]->reactivity_ref)) {
+                                            // TODO: For now we are only handling the first reactivity record
+                                            $epitope_curie_array = explode(':', $reactivity[0]->reactivity_ref[0]);
+                                        } else {
+                                            $epitope_curie_array = explode(':', $reactivity[0]->reactivity_ref);
+                                        }
                                         // Only generate if we have a valid IEDB CURIE
                                         if (count($epitope_curie_array) == 2) {
                                             if ($epitope_curie_array[0] == 'IEDB_EPITOPE') {
@@ -1650,6 +1659,8 @@ class RestService extends Model
 
                                     $reactivity_method = isset($reactivity[0]->reactivity_method) ? $reactivity[0]->reactivity_method : '';
                                     $reactivity_readout = isset($reactivity[0]->reactivity_readout) ? $reactivity[0]->reactivity_readout : '';
+                                    $reactivity_value = isset($reactivity[0]->reactivity_value) ? $reactivity[0]->reactivity_value : '';
+                                    $reactivity_unit = isset($reactivity[0]->reactivity_unit) ? $reactivity[0]->reactivity_unit : '';
                                     // Store the chain info in the cell object data
                                     $cell_object->antigen = $antigen_label;
                                     $cell_object->antigen_url = $antigen_url;
@@ -1658,6 +1669,8 @@ class RestService extends Model
                                     $cell_object->epitope_url = $epitope_url;
                                     $cell_object->reactivity_method = $reactivity_method;
                                     $cell_object->reactivity_readout = $reactivity_readout;
+                                    $cell_object->reactivity_value = $reactivity_value;
+                                    $cell_object->reactivity_unit = $reactivity_unit;
                                     $cell_object->reactivity_list = [$antigen_label, $antigen_species_label, $peptide_sequence_aa];
                                     // If we have reactivity info for this cell we don't need to
                                     // process any more reactivity data.
