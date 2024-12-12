@@ -95,7 +95,8 @@ function gateway_cleanup(){
 #     $4 - Analysis type (optional - default = "rearrangement_file"
 
     echo "GW-INFO: ========================================"
-    echo "GW-INFO: Cleaning up files"
+    echo -n "GW-INFO: Stating to clean up files at "
+    date
     # The Gateway provides information about the download in the file info.txt and
     # an AIRR Manifest JSON file.
     local ZIP_FILE=$1
@@ -145,7 +146,8 @@ function gateway_cleanup(){
         echo "GW-INFO: Removing ${f}"
         rm -f $f
     done
-    echo "GW-INFO: Done cleaning up files"
+    echo -n "GW-INFO: Done cleaning up files at "
+    date
     echo "GW-INFO: ========================================"
 
     popd > /dev/null
@@ -159,7 +161,8 @@ function gateway_run_analysis(){
 #     $4 - Analysis type (optional - default = "rearrangement_file"
 
     echo "GW-INFO: ========================================"
-    echo "GW-INFO: Running Analyses"
+    echo -n "GW-INFO: Running Analyses at "
+    date
     # The Gateway provides information about the download in the file info.txt and
     # an AIRR Manifest JSON file.
     local INFO_FILE=$1
@@ -319,7 +322,8 @@ function gateway_run_analysis(){
         count=$((count+1))
     done
     popd > /dev/null
-    echo "GW-INFO: Done running analyses" 
+    echo -n "GW-INFO: Done running analyses at " 
+    date
     echo "GW-INFO: ========================================"
 }
 
