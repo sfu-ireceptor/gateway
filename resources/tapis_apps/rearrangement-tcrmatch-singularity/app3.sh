@@ -200,18 +200,18 @@ function run_analysis()
     # Loop through the input TSV file line by line
     echo -n "IR-INFO: Generating TSV data for matched sequences at "
     date
-    search_column="junction_aa"
-    search_index=$(head -1 "${output_directory}/${rearrangement_file}" | tr '\t' '\n' | awk -v header="$search_column" '{if ($1 == header) print NR}')
-    sequence_column="sequence_id"
-    sequence_index=$(head -1 "${output_directory}/${rearrangement_file}" | tr '\t' '\n' | awk -v header="$sequence_column" '{if ($1 == header) print NR}')
+    search_column_name="junction_aa"
+    search_column=$(head -1 "${output_directory}/${rearrangement_file}" | tr '\t' '\n' | awk -v header="$search_column_name" '{if ($1 == header) print NR}')
+    sequence_column_name="sequence_id"
+    sequence_column=$(head -1 "${output_directory}/${rearrangement_file}" | tr '\t' '\n' | awk -v header="$sequence_column_name" '{if ($1 == header) print NR}')
     seq_epitope_file=${output_directory}/${repertoire_id}_sequence_epitope.tsv
     while IFS=$'\t' read -r column1 column2 column3 column4 column5 other_columns; do
 
         # Set up the output string from the epitopes
-        outstr="$column1\t$column2\t$column4\t$column5\t$other_columns"
+        epitope_str="$column1\t$column2\t$column4\t$column5\t$other_columns"
         # Search for a match in the specific "junction_aa" column with the pattern "C<value>F" or "C<value>W"
-        awk -v FS="\t" -v col="$search_index" -v value="$column1" -v outstr="$outstr" \
-            'NR > 1 && $col ~ "^C" value "(F|W)$" { printf("%s\t%s\n",$sequence_column, outstr); }' "${output_directory}/${rearrangement_file}" > $seq_epitope_file
+        awk -v FS="\t" -v search_col="$search_column" -v sequence_col="$sequence_column" -v search_val="$column1" -v outstr="$epitope_str" \
+            'NR > 1 && $search_col ~ "^C" search_val "(F|W)$" { printf("%s\t%s\n",$sequence_col, outstr); }' "${output_directory}/${rearrangement_file}" > $seq_epitope_file
         #results=$(awk -v FS="\t" -v col="$search_index" -v value="$column1" -v outstr="$outstr" \
         #    'NR > 1 && $col ~ "^C" value "(F|W)$" { print $sequence_column}' "${output_directory}/${rearrangement_file}")
 
