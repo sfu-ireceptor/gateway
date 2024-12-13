@@ -70,8 +70,10 @@ printf "IR-INFO: MEM = ${_tapisMemoryMB}\n"
 printf "IR-INFO: MAX RUNTIME = ${_tapisMaxMinutes}\n"
 printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
 printf "IR-INFO: SLURM TMPDIR = ${SLURM_TMPDIR}\n"
-echo "IR-INFO: SLURM TMPDIR size = "
-df -h ${SLURM_TMPDIR}
+echo -n "IR-INFO: SLURM TMPDIR size = "
+df -h ${SLURM_TMPDIR} | tr -s ' ' | cut -d' ' -f 2 | tail -n 1
+echo -n "IR-INFO: SLURM TMPDIR capacity = "
+df -h ${SLURM_TMPDIR} | tr -s ' ' | cut -d' ' -f 5 | tail -n 1
 printf "IR-INFO: ZIP FILE = ${ZIP_FILE}\n"
 printf "IR-INFO: "
 lscpu | grep "Model name"
@@ -125,7 +127,7 @@ function run_analysis()
     # Run TCRMatch on each rearrangement file provided.
     echo "IR-INFO: Running TCRMatch on $rearrangement_file"
     echo "IR-INFO: Mapping ${PWD} to /data"
-    echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
+    echo "IR-INFO: Asking for ${_tapisCoresPerNode} threads"
     echo "IR-INFO: Storing output in /data/${output_directory}"
 
     # Use a temporary file for output
@@ -144,8 +146,8 @@ function run_analysis()
     #fi
 
     # Use a temporary file for output
-    JUNCTION_FILE=${output_directory}/${repertoire_id}_junction.tsv
-    rm -f ${JUNCTION_FILE}
+    JUNCTION_FILE=${repertoire_id}_junction.tsv
+    rm -f ${output_directory}/${JUNCTION_FILE}
 
     # Extract junction_aa column if it exists
     #
@@ -161,12 +163,14 @@ function run_analysis()
     # sort -u - We only want to search once per CDR3
     #
     # egrep -v "\*" - Remove any CDR3s with special characters
+    echo -n "IR-INFO: Preprocessing Junction AAs"
+    date
     python3 ${IR_GATEWAY_UTIL_DIR}/preprocess.py ${output_directory}/${rearrangement_file} junction_aa \
         | grep -v nan \
         | sed '/^C.*[WF]$/ s/^.\(.*\).$/\1/' \
         | sort -u \
         | egrep "^[ABCDEFGHIKLMNPQRSTVWYZ]*$" \
-        >> $JUNCTION_FILE
+        >> ${output_directory}/$JUNCTION_FILE
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Unable to extract Junctions from ${output_directory}/${rearrangement_file}"
@@ -184,20 +188,28 @@ function run_analysis()
     #    echo "IR-ERROR: TCRMatch failed on file ${CDR3_FILE}"
     #fi
 
+    # Set up the DB file to use in the container
+    DB_FILE=IEDB_data.tsv
+    DB_PATH=/TCRMatch/data
+    cp $DB_PATH/$DB_FILE $SLURM_TMPDIR/$DB_FILE
+    cp ${output_directory}/$JUNCTION_FILE $SLURM_TMPDIR/$JUNCTION_FILE
+    
     # Run TCRMatch on Junctions
-    echo -n "IR-INFO: Running TCRMatch on ${JUNCTION_FILE} - "
+    echo -n "IR-INFO: Running TCRMatch on ${SLURM_TMPDIR}/${JUNCTION_FILE} - "
     date
+
     /TCRMatch/tcrmatch \
-        -i ${JUNCTION_FILE} \
-        -d /TCRMatch/data/IEDB_data.tsv -t 1\
+        -i ${SLURM_TMPDIR}/${JUNCTION_FILE} \
+        -d ${SLURM_TMPDIR}/${DB_FILE} -t 1\
         -s ${TCR_MATCH_THRESHOLD} \
-        > ${output_directory}/${repertoire_id}_epitope.tsv
+        > ${SLURM_TMPDIR}/${repertoire_id}_epitope.tsv
     if [ $? -ne 0 ]
     then
-        echo "IR-ERROR: TCRMatch failed on file ${JUNCTION_FILE}"
+        echo "IR-ERROR: TCRMatch failed on file ${SLURM_TMPDIR}/${JUNCTION_FILE}"
     fi
-    echo -n "IR-INFO: Done running TCRMatch on ${JUNCTION_FILE} - "
+    echo -n "IR-INFO: Done running TCRMatch on ${SLURM_TMPDIR}/${JUNCTION_FILE} - "
     date
+    cp ${SLURM_TMPDIR}/${repertoire_id}_epitope.tsv ${output_directory}/${repertoire_id}_epitope.tsv
 
     # For each junction_aa found, extract the rearrangements that have that junction_aa
     # Loop through the input TSV file line by line
@@ -267,7 +279,7 @@ function run_analysis()
     echo "<ul>" >> ${html_file}
 
     echo -n "<li>Number of unique CDR3s: " >> ${html_file}
-    wc -l ${JUNCTION_FILE} | cut -f 1 -d " " >> ${html_file}
+    wc -l ${output_directory}/${JUNCTION_FILE} | cut -f 1 -d " " >> ${html_file}
     echo "</li>" >> ${html_file}
 
     echo -n "<li>Number of CDR3/epitope matches: " >> ${html_file}
@@ -312,7 +324,7 @@ function run_analysis()
     echo "<ul>" >> ${html_file}
 
     echo -n "<li>Number of unique CDR3s: " >> ${html_file}
-    wc -l ${JUNCTION_FILE} | cut -f 1 -d " " >> ${html_file}
+    wc -l ${output_directory}/${JUNCTION_FILE} | cut -f 1 -d " " >> ${html_file}
     echo "</li>" >> ${html_file}
 
     echo -n "<li>Number of CDR3/epitope matches: " >> ${html_file}
