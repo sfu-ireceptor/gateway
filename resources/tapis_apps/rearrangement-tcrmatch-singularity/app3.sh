@@ -70,7 +70,7 @@ printf "IR-INFO: MEM = ${_tapisMemoryMB}\n"
 printf "IR-INFO: MAX RUNTIME = ${_tapisMaxMinutes}\n"
 printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
 printf "IR-INFO: SLURM TMPDIR = ${SLURM_TMPDIR}\n"
-echo -n "IR-INFO: SLURM TMPDIR size = "
+echo "IR-INFO: SLURM TMPDIR size = "
 df -h ${SLURM_TMPDIR}
 printf "IR-INFO: ZIP FILE = ${ZIP_FILE}\n"
 printf "IR-INFO: "
@@ -203,18 +203,24 @@ function run_analysis()
     # Loop through the input TSV file line by line
     echo -n "IR-INFO: Generating TSV data for matched sequences at "
     date
+    # We search the junction_aa field in the file and extract the sequence_id.
     search_column_name="junction_aa"
     search_column=$(head -1 "${output_directory}/${rearrangement_file}" | tr '\t' '\n' | awk -v header="$search_column_name" '{if ($1 == header) print NR}')
     sequence_column_name="sequence_id"
     sequence_column=$(head -1 "${output_directory}/${rearrangement_file}" | tr '\t' '\n' | awk -v header="$sequence_column_name" '{if ($1 == header) print NR}')
+    # Generate a header for the sequence/epitope file. This contains a line for
+    # each sequence that has been mapped to an epitope, containing the 
+    # sequence_id and the epitope information.
     seq_epitope_file=${output_directory}/${repertoire_id}_sequence_epitope.tsv
+    printf "sequence_id\t" > $seq_epitope_file
+    head -n 1 ${output_directory}/${repertoire_id}_epitope.tsv >> $seq_epitope_file
     while IFS=$'\t' read -r column1 column2 column3 column4 column5 other_columns; do
 
         # Set up the output string from the epitopes
-        epitope_str="$column1\t$column2\t$column4\t$column5\t$other_columns"
+        epitope_str="$column1\t$column2\t$column3\t$column4\t$column5\t$other_columns"
         # Search for a match in the specific "junction_aa" column with the pattern "C<value>F" or "C<value>W"
         awk -v FS="\t" -v search_col="$search_column" -v sequence_col="$sequence_column" -v search_val="$column1" -v outstr="$epitope_str" \
-            'NR > 1 && $search_col ~ "^C" search_val "(F|W)$" { printf("%s\t%s\n",$sequence_col, outstr); }' "${output_directory}/${rearrangement_file}" > $seq_epitope_file
+            'NR > 1 && $search_col ~ "^C" search_val "(F|W)$" { printf("%s\t%s\n",$sequence_col, outstr); }' "${output_directory}/${rearrangement_file}" >> $seq_epitope_file
         #results=$(awk -v FS="\t" -v col="$search_index" -v value="$column1" -v outstr="$outstr" \
         #    'NR > 1 && $col ~ "^C" value "(F|W)$" { print $sequence_column}' "${output_directory}/${rearrangement_file}")
 
@@ -227,6 +233,11 @@ function run_analysis()
         #    echo "IR-INFO: Warning, could not find ${column1} in ${output_directory}/${rearrangement_file}"
         #fi
     done < "${output_directory}/${repertoire_id}_epitope.tsv"
+
+
+    #while IFS=$'\t' read -r column1 column2 column3 column4 column5 other_columns; do
+    #done < "${output_directory}/${repertoire_id}_epitope.tsv"
+
     echo -n "IR-INFO: Done enerating TSV data for matched sequences at "
     date
 
