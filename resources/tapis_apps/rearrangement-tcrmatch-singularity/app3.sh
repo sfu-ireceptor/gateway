@@ -209,7 +209,9 @@ function run_analysis()
     fi
     echo -n "IR-INFO: Done running TCRMatch on ${SLURM_TMPDIR}/${JUNCTION_FILE} - "
     date
-    cp ${SLURM_TMPDIR}/${repertoire_id}_epitope.tsv ${output_directory}/${repertoire_id}_epitope.tsv
+    mv ${SLURM_TMPDIR}/${repertoire_id}_epitope.tsv ${output_directory}/${repertoire_id}_epitope.tsv
+    rm ${SLURM_TMPDIR}/${JUNCTION_FILE}
+    rm ${SLURM_TMPDIR}/${DB_FILE}
 
     # For each junction_aa found, extract the rearrangements that have that junction_aa
     # Loop through the input TSV file line by line
