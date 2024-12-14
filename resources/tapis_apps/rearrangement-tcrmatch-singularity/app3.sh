@@ -259,56 +259,45 @@ function run_analysis()
         #count=$(grep -o -F "$epitope" "$seq_eptiope_file" | wc -l)
         # Count up the epitopes we have found in the sequence file. This is in
         # column size of the sequence file as it has a sequence_id column in column 1
-        count=$(awk -F'\t' -v value="$epitope" '$6 == value {print $0}' "$seq_eptiope_file" | wc -l)
+        echo "epitope = $epitope"
+        count=$(awk -F'\t' -v value="$epitope" '$6 == value {print $0}' "$seq_epitope_file" | wc -l)
         if [ $count -gt 0 ]; then
             printf "$count\t$epitope\t$antigen\t$organism\t$receptor_group\n" >> $tmpfile
         fi
     done
     # Generate the report file by writing a header and sorting the data in the tmp file
-    printf "sequence count\tepitope\tantigen\torganism\treceptor group\n" > $epitope_report_file
+    printf "sequence_count\tepitope\tantigen\torganism\treceptor_group\n" > $epitope_report_file
     sort -r -n $tmpfile >> $epitope_report_file
 
     rm -f $tmpfile
     touch $tmpfile
-    echo "Generating antigen report"
+    echo "IR-INFO: Generating antigen report"
     awk -F'\t' '!seen[$6]++ {if (length($6) > 0) {print $0}}' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
     #awk '!seen[$6]++' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
-            count=$(awk -F'\t' -v value="$antigen" '$7 == value {print $0}' "$seq_eptiope_file" | wc -l)
-            #count=$(grep -o -F "$antigen" "$seq_eptiope_file" | wc -l)
-            if [ $count -gt 0 ]; then
-                printf "$count\t$antigen\t$organism\n" >> $tmpfile
-            fi
+        echo "antigen = $antigen"
+        count=$(awk -F'\t' -v value="$antigen" '$7 == value {print $0}' "$seq_epitope_file" | wc -l)
+        #count=$(grep -o -F "$antigen" "$seq_eptiope_file" | wc -l)
+        if [ $count -gt 0 ]; then
+            printf "$count\t$antigen\t$organism\n" >> $tmpfile
+        fi
     done
-    printf "sequence count\tantigen\torganism\n" > $antigen_report_file
+    printf "sequence_count\tantigen\torganism\n" > $antigen_report_file
     sort -r -n $tmpfile >> $antigen_report_file
 
     rm -f $tmpfile
     touch $tmpfile
     #awk -F'\t' '!seen[$7]++ {if (length($7) > 0) {print $0}}'
+    echo "IR-INFO: Generating antigen report"
     awk -F'\t' '!seen[$7]++ {if (length($7) > 0) {print $0}}' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
-            count=$(awk -F'\t' -v value="$organism" '$8 == value {print $0}' "$seq_eptiope_file" | wc -l)
-            if [ $count -gt 0 ]; then
-                printf "$count\t$organism\n" >> $tmpfile
-            fi
+        echo "organism = $organism"
+        count=$(awk -F'\t' -v value="$organism" '$8 == value {print $0}' "$seq_epitope_file" | wc -l)
+        if [ $count -gt 0 ]; then
+            printf "$count\t$organism\n" >> $tmpfile
+        fi
     done
-    printf "sequence count\torganism\n" > $organism_report_file
+    printf "sequence_count\torganism\n" > $organism_report_file
     sort -r -n $tmpfile >> $organism_report_file
     rm -f $tmpfile
-
-
-
-
-
-
-
-    printf "sequence count\tepitope\tantigen\torganism\treceptor group\n" > $epitope_report_file
-    #tail +2 ${output_directory}/${repertoire_id}_epitope.tsv | cut -f 5 > ${output_directory}/${repertoire_id}_unique_epitopes.tsv
-    while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
-        seq_count=`grep $epitope $seq_epitope_file`
-        printf "$seq_count\t$epitope\t$antigen\t$organism\t$receptor_group\n" >> $epitope_report_file
-    done < tail +2 "${output_directory}/${repertoire_id}_epitope.tsv"
-    #rm ${output_directory}/${repertoire_id}_unique_epitopes.tsv
-
 
     # Generate a summary HTML file for the Gateway to present this info to the user
     html_file=${output_directory}/${repertoire_id}.html
@@ -351,13 +340,36 @@ function run_analysis()
 
     echo "</ul>" >> ${html_file}
 
+    printf "<h3>%s - %s</h3>\n" "Organism" ${title_string} >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=50 ${output_directory}/${repertoire_id}_organism_report.tsv >> ${html_file}
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_organism_report.tsv"
+        echo "ERROR occurred generating HTML report" >> ${html_file}
+    fi
 
-    printf "<h3>%s</h3>\n" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py ${output_directory}/${repertoire_id}_epitope.tsv >> ${html_file}
+    printf "<h3>%s - %s</h3>\n" "Antigen" ${title_string} >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=40 ${output_directory}/${repertoire_id}_antigen_report.tsv >> ${html_file}
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_antigen_report.tsv"
+        echo "ERROR occurred generating HTML report" >> ${html_file}
+    fi
+    
+    printf "<h3>%s - %s</h3>\n" "Epitope" ${title_string} >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=40 ${output_directory}/${repertoire_id}_epitope_report.tsv >> ${html_file}
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_epitope_report.tsv"
+        echo "ERROR occurred generating HTML report" >> ${html_file}
+    fi
+    
+    printf "<h3>%s - %s</h3>\n" "CDR3/Epitope" ${title_string} >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=20 ${output_directory}/${repertoire_id}_epitope.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_epitope.tsv"
-        echo "ERROR occurred generating HTML report generation" >> ${html_file}
+        echo "ERROR occurred generating HTML report" >> ${html_file}
     fi
 
     # End of main div container
@@ -397,14 +409,39 @@ function run_analysis()
     echo "</ul>" >> ${html_file}
 
 
-    printf "<h3>%s</h3>\n" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py ${output_directory}/${repertoire_id}_epitope.tsv >> ${html_file}
+    
+    printf "<h3>%s - %s</h3>\n" "Organism" ${title_string} >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=50 ${output_directory}/${repertoire_id}_organism_report.tsv >> ${html_file}
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_organism_report.tsv"
+        echo "ERROR occurred generating HTML report" >> ${html_file}
+    fi
+
+    printf "<h3>%s - %s</h3>\n" "Antigen" ${title_string} >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=40 ${output_directory}/${repertoire_id}_antigen_report.tsv >> ${html_file}
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_antigen_report.tsv"
+        echo "ERROR occurred generating HTML report" >> ${html_file}
+    fi
+    
+    printf "<h3>%s - %s</h3>\n" "Epitope" ${title_string} >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=40 ${output_directory}/${repertoire_id}_epitope_report.tsv >> ${html_file}
+    if [ $? -ne 0 ]
+    then
+        echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_epitope_report.tsv"
+        echo "ERROR occurred generating HTML report" >> ${html_file}
+    fi
+    
+    printf "<h3>%s - %s</h3>\n" "CDR3 Beta" ${title_string} >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=20 ${output_directory}/${repertoire_id}_epitope.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_epitope.tsv"
-        echo "ERROR occurred generating HTML report generation" >> ${html_file}
+        echo "ERROR occurred generating HTML report" >> ${html_file}
     fi
-
+    
     # Add the required label file for the Gateway to present the results as a summary.
     label_file=${output_directory}/${repertoire_id}.txt
     echo "IR-INFO: Generating label file ${label_file}"
