@@ -176,18 +176,6 @@ function run_analysis()
         echo "IR-ERROR: Unable to extract Junctions from ${output_directory}/${rearrangement_file}"
     fi
 
-    # Run TCRMatch on CDR3s
-    #echo -n "IR-INFO: Running TCRMatch on ${CDR3_FILE} - "
-    #date
-    #/TCRMatch/tcrmatch \
-    #    -i ${CDR3_FILE} \
-    #    -d /TCRMatch/data/IEDB_data.tsv -t 1\
-    #    >> ${output_directory}/${repertoire_id}_epitope.tsv
-    #if [ $? -ne 0 ]
-    #then
-    #    echo "IR-ERROR: TCRMatch failed on file ${CDR3_FILE}"
-    #fi
-
     # Set up the DB file to use in the container
     DB_FILE=IEDB_data.tsv
     DB_PATH=/TCRMatch/data
@@ -237,7 +225,8 @@ function run_analysis()
             'NR > 1 && $search_col ~ "^C" search_val "(F|W)$" { printf("%s\t%s\n",$sequence_col, outstr); }' "${output_directory}/${rearrangement_file}" >> $seq_epitope_file
     done < "${output_directory}/${repertoire_id}_epitope.tsv"
 
-    # Generate epitope, antigen, and organism reports for the repertoire.
+    # Generate cdr3, epitope, antigen, and organism reports for the repertoire.
+    cdr3_report_file=${output_directory}/${repertoire_id}_cdr3_report.tsv
     epitope_report_file=${output_directory}/${repertoire_id}_epitope_report.tsv
     antigen_report_file=${output_directory}/${repertoire_id}_antigen_report.tsv
     organism_report_file=${output_directory}/${repertoire_id}_organism_report.tsv
@@ -247,6 +236,25 @@ function run_analysis()
     # Assign a temp file
     tmpfile=${output_directory}/${repertoire_id}_file.tmp
 
+    # Generate the cdr3 report
+    rm -f $tmpfile
+    touch $tmpfile
+    echo "IR-INFO: Generating cdr3 report"
+    # CDR3s are column 1 in TCRMatch report.
+    # TODO: the column number could be extracted from the TSV file
+    # We loop over each unique epitope and process it (seen variable tracks uniqueness).
+    awk -F'\t' '!seen[$1]++ {if (length($1) > 0) {print $0}}' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
+        # Count up the epitopes we have found in the sequence file. This is in
+        # column size of the sequence file as it has a sequence_id column in column 1
+        count=$(awk -F'\t' -v value="$trimmed_cdr3" '$2 == value {print $0}' "$seq_epitope_file" | wc -l)
+        if [ $count -gt 0 ]; then
+            printf "$count\t$trimmed_cdr3\t$match_cdr3\t$score\t$receptor_group\t$epitope\t$antigen\t$organism\n" >> $tmpfile
+        fi
+    done
+    # Generate the report file by writing a header and sorting the data in the tmp file
+    printf "sequence_count\ttrimmed_cdr3\tmatch_cdr3\tscore\treceptor_group\tepitope\tantigen\torganism\n" > $cdr3_report_file
+    sort -r -n $tmpfile >> $cdr3_report_file
+
     # Generate the epitope report
     rm -f $tmpfile
     touch $tmpfile
@@ -255,11 +263,8 @@ function run_analysis()
     # TODO: the column number could be extracted from the TSV file
     # We loop over each unique epitope and process it (seen variable tracks uniqueness).
     awk -F'\t' '!seen[$5]++ {if (length($5) > 0) {print $0}}' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
-    #awk '!seen[$5]++' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
-        #count=$(grep -o -F "$epitope" "$seq_eptiope_file" | wc -l)
         # Count up the epitopes we have found in the sequence file. This is in
         # column size of the sequence file as it has a sequence_id column in column 1
-        echo "epitope = $epitope"
         count=$(awk -F'\t' -v value="$epitope" '$6 == value {print $0}' "$seq_epitope_file" | wc -l)
         if [ $count -gt 0 ]; then
             printf "$count\t$epitope\t$antigen\t$organism\t$receptor_group\n" >> $tmpfile
@@ -273,10 +278,7 @@ function run_analysis()
     touch $tmpfile
     echo "IR-INFO: Generating antigen report"
     awk -F'\t' '!seen[$6]++ {if (length($6) > 0) {print $0}}' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
-    #awk '!seen[$6]++' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
-        echo "antigen = $antigen"
         count=$(awk -F'\t' -v value="$antigen" '$7 == value {print $0}' "$seq_epitope_file" | wc -l)
-        #count=$(grep -o -F "$antigen" "$seq_eptiope_file" | wc -l)
         if [ $count -gt 0 ]; then
             printf "$count\t$antigen\t$organism\n" >> $tmpfile
         fi
@@ -286,10 +288,8 @@ function run_analysis()
 
     rm -f $tmpfile
     touch $tmpfile
-    #awk -F'\t' '!seen[$7]++ {if (length($7) > 0) {print $0}}'
     echo "IR-INFO: Generating antigen report"
     awk -F'\t' '!seen[$7]++ {if (length($7) > 0) {print $0}}' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
-        echo "organism = $organism"
         count=$(awk -F'\t' -v value="$organism" '$8 == value {print $0}' "$seq_epitope_file" | wc -l)
         if [ $count -gt 0 ]; then
             printf "$count\t$organism\n" >> $tmpfile
@@ -324,6 +324,12 @@ function run_analysis()
     
     echo "<ul>" >> ${html_file}
 
+    echo "<li>TCRMatch threshold: $TCR_MATCH_THRESHOLD</li>" >> ${html_file}
+
+    echo -n "<li>Number of sequences: " >> ${html_file}
+    wc -l ${output_directory}/${rearrangement_file} | cut -f 1 -d " " >> ${html_file}
+    echo "</li>" >> ${html_file}
+
     echo -n "<li>Number of unique CDR3s: " >> ${html_file}
     wc -l ${output_directory}/${JUNCTION_FILE} | cut -f 1 -d " " >> ${html_file}
     echo "</li>" >> ${html_file}
@@ -341,7 +347,7 @@ function run_analysis()
     echo "</ul>" >> ${html_file}
 
     printf "<h3>%s - %s</h3>\n" "Organism" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=50 ${output_directory}/${repertoire_id}_organism_report.tsv >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=100 ${output_directory}/${repertoire_id}_organism_report.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_organism_report.tsv"
@@ -349,7 +355,7 @@ function run_analysis()
     fi
 
     printf "<h3>%s - %s</h3>\n" "Antigen" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=40 ${output_directory}/${repertoire_id}_antigen_report.tsv >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 ${output_directory}/${repertoire_id}_antigen_report.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_antigen_report.tsv"
@@ -357,7 +363,7 @@ function run_analysis()
     fi
     
     printf "<h3>%s - %s</h3>\n" "Epitope" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=40 ${output_directory}/${repertoire_id}_epitope_report.tsv >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=60 ${output_directory}/${repertoire_id}_epitope_report.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_epitope_report.tsv"
@@ -365,7 +371,7 @@ function run_analysis()
     fi
     
     printf "<h3>%s - %s</h3>\n" "CDR3/Epitope" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=20 ${output_directory}/${repertoire_id}_epitope.tsv >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=20 ${output_directory}/${repertoire_id}_cdr3_report.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_epitope.tsv"
@@ -392,6 +398,12 @@ function run_analysis()
     
     echo "<ul>" >> ${html_file}
 
+    echo "<li>TCRMatch threshold: $TCR_MATCH_THRESHOLD</li>" >> ${html_file}
+
+    echo -n "<li>Number of sequences: " >> ${html_file}
+    wc -l ${output_directory}/${rearrangement_file} | cut -f 1 -d " " >> ${html_file}
+    echo "</li>" >> ${html_file}
+
     echo -n "<li>Number of unique CDR3s: " >> ${html_file}
     wc -l ${output_directory}/${JUNCTION_FILE} | cut -f 1 -d " " >> ${html_file}
     echo "</li>" >> ${html_file}
@@ -411,7 +423,7 @@ function run_analysis()
 
     
     printf "<h3>%s - %s</h3>\n" "Organism" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=50 ${output_directory}/${repertoire_id}_organism_report.tsv >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=100 ${output_directory}/${repertoire_id}_organism_report.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_organism_report.tsv"
@@ -419,7 +431,7 @@ function run_analysis()
     fi
 
     printf "<h3>%s - %s</h3>\n" "Antigen" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=40 ${output_directory}/${repertoire_id}_antigen_report.tsv >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 ${output_directory}/${repertoire_id}_antigen_report.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_antigen_report.tsv"
@@ -427,7 +439,7 @@ function run_analysis()
     fi
     
     printf "<h3>%s - %s</h3>\n" "Epitope" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=40 ${output_directory}/${repertoire_id}_epitope_report.tsv >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=60 ${output_directory}/${repertoire_id}_epitope_report.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_epitope_report.tsv"
@@ -435,7 +447,7 @@ function run_analysis()
     fi
     
     printf "<h3>%s - %s</h3>\n" "CDR3 Beta" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=20 ${output_directory}/${repertoire_id}_epitope.tsv >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=20 ${output_directory}/${repertoire_id}_cdr3_report.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_epitope.tsv"
