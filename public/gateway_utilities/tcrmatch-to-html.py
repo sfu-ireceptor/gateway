@@ -9,8 +9,15 @@ def getArguments():
         description=""
     )
 
-    # API x and y fields to use
+    # Filename to load
     parser.add_argument("filename")
+    # Max width of columns
+    parser.add_argument(
+        "-m",
+        "--max_width",
+        type=int,
+        default=20,
+        help="Maximum width of html columns.")
 
     options = parser.parse_args()
     return options
@@ -45,11 +52,11 @@ if __name__ == "__main__":
         df['receptor_group'] = df['receptor_group'].apply(lambda rid: url_str%(rid,rid))
     # If we have long string, limit its length and provide hover over full text
     if 'epitope' in df.columns:
-        df['epitope'] = df['epitope'].apply(str_limit_hover)
+        df['epitope'] = df['epitope'].apply((lambda x: str_limit_hover(x, options.max_width)))
     if 'antigen' in df.columns:
-        df['antigen'] = df['antigen'].apply(str_limit_hover)
+        df['antigen'] = df['antigen'].apply((lambda x: str_limit_hover(x, options.max_width)))
     if 'organism' in df.columns:
-        df['organism'] = df['organism'].apply(str_limit_hover)
+        df['organism'] = df['organism'].apply((lambda x: str_limit_hover(x, options.max_width)))
 
     # Output the dataframe as an HTML table.
     html_string = df.to_html(index=False, escape=False, classes=['table', 'table-striped'])
