@@ -322,7 +322,7 @@ function run_analysis()
     printf "<h2>Analysis</h2>\n" >> ${html_file}
     printf "<h3>TCRMatch Summary</h3>\n" >> ${html_file}
     
-    echo "<p><a href=\"http://tools.iedb.org/tcrmatch/\" target=\"_blank\">TCRMatch</a> is an openly accessible tool that takes TCR β-chain CDR3 sequences as an input, identifies TCRs with a match in the <a href=\"http://iedb.org/\" target=\"_blank\">Immune Epitope Database (IEDB)</a>, and reports the specificity of each match. This iReceptor Analysis App uses TCRMatch to output TCR β-chain CDR3 that are found to have specificity in IEDB at the threshold provided.</p>" >> ${html_file}
+    echo "<p><a href=\"https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2021.640725/full\" target=\"_blank\">TCRMatch</a> is an openly accessible tool that takes TCR β-chain CDR3 sequences as an input, identifies TCRs with a match in the <a href=\"http://iedb.org/\" target=\"_blank\">Immune Epitope Database (IEDB)</a>, and reports the specificity of each match. This iReceptor Analysis App uses TCRMatch to output TCR β-chain CDR3 that are found to have specificity in IEDB at the threshold provided.</p>" >> ${html_file}
 
     echo "<ul>" >> ${html_file}
 
@@ -396,7 +396,7 @@ function run_analysis()
     printf "<h2>Analysis</h2>\n" >> ${html_file}
     printf "<h3>TCRMatch Summary</h3>\n" >> ${html_file}
     
-    echo "<p><a href=\"http://tools.iedb.org/tcrmatch/\" target=\"_blank\">TCRMatch</a> is an openly accessible tool that takes TCR β-chain CDR3 sequences as an input, identifies TCRs with a match in the <a href=\"http://iedb.org/\" target=\"_blank\">Immune Epitope Database (IEDB)</a>, and reports the specificity of each match. This iReceptor Analysis App uses TCRMatch to output TCR β-chain CDR3 that are found to have specificity in IEDB at the threshold provided.</p>" >> ${html_file}
+    echo "<p><a href=\"https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2021.640725/full\" target=\"_blank\">TCRMatch</a> is an openly accessible tool that takes TCR β-chain CDR3 sequences as an input, identifies TCRs with a match in the <a href=\"http://iedb.org/\" target=\"_blank\">Immune Epitope Database (IEDB)</a>, and reports the specificity of each match. This iReceptor Analysis App uses TCRMatch to output TCR β-chain CDR3 that are found to have specificity in IEDB at the threshold provided.</p>" >> ${html_file}
 
     echo "<ul>" >> ${html_file}
 
