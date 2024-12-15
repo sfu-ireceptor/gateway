@@ -243,10 +243,10 @@ function run_analysis()
     # CDR3s are column 1 in TCRMatch report.
     # TODO: the column number could be extracted from the TSV file
     # We loop over each unique epitope and process it (seen variable tracks uniqueness).
-    awk -F'\t' '!seen[$1]++ {if (length($1) > 0) {print $0}}' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
+    awk -F'\t' '!seen[$5]++ {if (length($5) > 0) {print $0}}' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
         # Count up the epitopes we have found in the sequence file. This is in
         # column size of the sequence file as it has a sequence_id column in column 1
-        count=$(awk -F'\t' -v value="$trimmed_cdr3" '$2 == value {print $0}' "$seq_epitope_file" | wc -l)
+        count=$(awk -F'\t' -v value="$epitope" '$6 == value {print $0}' "$seq_epitope_file" | wc -l)
         if [ $count -gt 0 ]; then
             printf "$count\t$trimmed_cdr3\t$match_cdr3\t$score\t$receptor_group\t$epitope\t$antigen\t$organism\n" >> $tmpfile
         fi
@@ -322,16 +322,22 @@ function run_analysis()
     printf "<h2>Analysis</h2>\n" >> ${html_file}
     printf "<h3>TCRMatch Summary</h3>\n" >> ${html_file}
     
+    echo "<p><a href=\"http://tools.iedb.org/tcrmatch/\" target=\"_blank\">TCRMatch</a> is an openly accessible tool that takes TCR β-chain CDR3 sequences as an input, identifies TCRs with a match in the <a href=\"http://iedb.org/\" target=\"_blank\">Immune Epitope Database (IEDB)</a>, and reports the specificity of each match. This iReceptor Analysis App uses TCRMatch to output TCR β-chain CDR3 that are found to have specificity in IEDB at the threshold provided.</p>" >> ${html_file}
+
     echo "<ul>" >> ${html_file}
 
     echo "<li>TCRMatch threshold: $TCR_MATCH_THRESHOLD</li>" >> ${html_file}
 
     echo -n "<li>Number of sequences: " >> ${html_file}
-    wc -l ${output_directory}/${rearrangement_file} | cut -f 1 -d " " >> ${html_file}
+    tail +2 ${output_directory}/${rearrangement_file} | wc -l | cut -f 1 -d " " >> ${html_file}
     echo "</li>" >> ${html_file}
 
     echo -n "<li>Number of unique CDR3s: " >> ${html_file}
     wc -l ${output_directory}/${JUNCTION_FILE} | cut -f 1 -d " " >> ${html_file}
+    echo "</li>" >> ${html_file}
+
+    echo -n "<li>Number of unique matched sequences: " >> ${html_file}
+    tail +2 ${seq_epitope_file} | cut -f 1  | sort -u | wc -l >> ${html_file}
     echo "</li>" >> ${html_file}
 
     echo -n "<li>Number of CDR3/epitope matches: " >> ${html_file}
@@ -346,7 +352,9 @@ function run_analysis()
 
     echo "</ul>" >> ${html_file}
 
-    printf "<h3>%s - %s</h3>\n" "Organism" ${title_string} >> ${html_file}
+    echo "<p>Note: Organism (and antigen) lists with multiple organisms (or antigens), sometimes the same organism (or antigen), imply that a single CDR3 is known to have cross reactivity with multiple epitopes from that set of organisms (or antigens). Lists with differing numbers of organisms (or antigens) imply that the there are CDR3s that are cross reactive with different numbers of organisms (or antigens).</p>" >> ${html_file}
+
+    printf "<h3>%s - %s</h3>\n" "Organism Report" ${title_string} >> ${html_file}
     python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=100 ${output_directory}/${repertoire_id}_organism_report.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
@@ -354,7 +362,7 @@ function run_analysis()
         echo "ERROR occurred generating HTML report" >> ${html_file}
     fi
 
-    printf "<h3>%s - %s</h3>\n" "Antigen" ${title_string} >> ${html_file}
+    printf "<h3>%s - %s</h3>\n" "Antigen Report" ${title_string} >> ${html_file}
     python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 ${output_directory}/${repertoire_id}_antigen_report.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
@@ -362,15 +370,7 @@ function run_analysis()
         echo "ERROR occurred generating HTML report" >> ${html_file}
     fi
     
-    printf "<h3>%s - %s</h3>\n" "Epitope" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=60 ${output_directory}/${repertoire_id}_epitope_report.tsv >> ${html_file}
-    if [ $? -ne 0 ]
-    then
-        echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_epitope_report.tsv"
-        echo "ERROR occurred generating HTML report" >> ${html_file}
-    fi
-    
-    printf "<h3>%s - %s</h3>\n" "CDR3/Epitope" ${title_string} >> ${html_file}
+    printf "<h3>%s - %s</h3>\n" "CDR3 Beta/Epitope Report" ${title_string} >> ${html_file}
     python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=20 ${output_directory}/${repertoire_id}_cdr3_report.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
@@ -396,16 +396,22 @@ function run_analysis()
     printf "<h2>Analysis</h2>\n" >> ${html_file}
     printf "<h3>TCRMatch Summary</h3>\n" >> ${html_file}
     
+    echo "<p><a href=\"http://tools.iedb.org/tcrmatch/\" target=\"_blank\">TCRMatch</a> is an openly accessible tool that takes TCR β-chain CDR3 sequences as an input, identifies TCRs with a match in the <a href=\"http://iedb.org/\" target=\"_blank\">Immune Epitope Database (IEDB)</a>, and reports the specificity of each match. This iReceptor Analysis App uses TCRMatch to output TCR β-chain CDR3 that are found to have specificity in IEDB at the threshold provided.</p>" >> ${html_file}
+
     echo "<ul>" >> ${html_file}
 
     echo "<li>TCRMatch threshold: $TCR_MATCH_THRESHOLD</li>" >> ${html_file}
 
     echo -n "<li>Number of sequences: " >> ${html_file}
-    wc -l ${output_directory}/${rearrangement_file} | cut -f 1 -d " " >> ${html_file}
+    tail +2 ${output_directory}/${rearrangement_file} | wc -l | cut -f 1 -d " " >> ${html_file}
     echo "</li>" >> ${html_file}
 
     echo -n "<li>Number of unique CDR3s: " >> ${html_file}
     wc -l ${output_directory}/${JUNCTION_FILE} | cut -f 1 -d " " >> ${html_file}
+    echo "</li>" >> ${html_file}
+
+    echo -n "<li>Number of unique matched sequences: " >> ${html_file}
+    tail +2 ${seq_epitope_file} | cut -f 1  | sort -u | wc -l >> ${html_file}
     echo "</li>" >> ${html_file}
 
     echo -n "<li>Number of CDR3/epitope matches: " >> ${html_file}
@@ -420,9 +426,9 @@ function run_analysis()
 
     echo "</ul>" >> ${html_file}
 
-
+    echo "<p>Note: Organism (and antigen) lists with multiple organisms (or antigens), sometimes the same organism (or antigen), imply that a single CDR3 is known to have cross reactivity with multiple epitopes from that set of organisms (or antigens). Lists with differing numbers of organisms (or antigens) imply that the there are CDR3s that are cross reactive with different numbers of organisms (or antigens).</p>" >> ${html_file}
     
-    printf "<h3>%s - %s</h3>\n" "Organism" ${title_string} >> ${html_file}
+    printf "<h3>%s - %s</h3>\n" "Organism Report" ${title_string} >> ${html_file}
     python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=100 ${output_directory}/${repertoire_id}_organism_report.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
@@ -430,7 +436,7 @@ function run_analysis()
         echo "ERROR occurred generating HTML report" >> ${html_file}
     fi
 
-    printf "<h3>%s - %s</h3>\n" "Antigen" ${title_string} >> ${html_file}
+    printf "<h3>%s - %s</h3>\n" "Antigen Report" ${title_string} >> ${html_file}
     python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 ${output_directory}/${repertoire_id}_antigen_report.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
@@ -438,15 +444,7 @@ function run_analysis()
         echo "ERROR occurred generating HTML report" >> ${html_file}
     fi
     
-    printf "<h3>%s - %s</h3>\n" "Epitope" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=60 ${output_directory}/${repertoire_id}_epitope_report.tsv >> ${html_file}
-    if [ $? -ne 0 ]
-    then
-        echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_epitope_report.tsv"
-        echo "ERROR occurred generating HTML report" >> ${html_file}
-    fi
-    
-    printf "<h3>%s - %s</h3>\n" "CDR3 Beta" ${title_string} >> ${html_file}
+    printf "<h3>%s - %s</h3>\n" "CDR3 Beta/Epitope Report" ${title_string} >> ${html_file}
     python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=20 ${output_directory}/${repertoire_id}_cdr3_report.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
