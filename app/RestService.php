@@ -1047,8 +1047,8 @@ class RestService extends Model
         // send a huge list to repositories. VDJServer in particular
         // can't handle a search with all of its repertoires specified.
         $response_list_all = self::samples([], $username, true, $rest_service_id_list, false);
-        #Log::debug('All samples from those repositories:');
-        #Log::debug($response_list_all);
+        //Log::debug('All samples from those repositories:');
+        //Log::debug($response_list_all);
 
         // Filter repository responses to only requested samples
         $response_list_requested = [];
@@ -1591,7 +1591,7 @@ class RestService extends Model
                         // For now, we don't need this as there are not many fields to return.
                         $params = [];
                         //$params['fields'] = ['cell_id', 'antigen', 'antigen_source_species', 'peptide_sequence_aa',
-                            //'reactivity_method', 'reactivity_readout', 'reactivity_value', 'reactivity_unit', 'reactivity_ref'];
+                        //'reactivity_method', 'reactivity_readout', 'reactivity_value', 'reactivity_unit', 'reactivity_ref'];
                         $request['params'] = self::generate_json_query($filters, $params, $rs->api_version);
 
                         // Add the request to the request list

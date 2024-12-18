@@ -177,7 +177,7 @@ class Cell
         $folder_path = $storage_folder . $base_name;
         File::makeDirectory($folder_path, 0777, true, true);
 
-        # TODO: Handle reactivity queries here.
+        // TODO: Handle reactivity queries here.
         $query_type = 'cell';
         if (isset($filters['property_expression'])) {
             $query_type = 'expression';
