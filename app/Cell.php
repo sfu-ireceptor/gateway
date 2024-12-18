@@ -177,6 +177,7 @@ class Cell
         $folder_path = $storage_folder . $base_name;
         File::makeDirectory($folder_path, 0777, true, true);
 
+        # TODO: Handle reactivity queries here.
         $query_type = 'cell';
         if (isset($filters['property_expression'])) {
             $query_type = 'expression';
@@ -186,6 +187,7 @@ class Cell
 
         $cell_response_list = [];
         $expression_response_list = [];
+        $reactivity_response_list = [];
         $sequence_response_list = [];
 
         if ($download_data) {
@@ -197,6 +199,9 @@ class Cell
 
                 // expression data
                 $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list);
+
+                // expression data
+                $reactivity_response_list = RestService::reactivity_data($filters, $folder_path, $username, $response_list);
             } else {
                 $cell_id_list_by_rs = RestService::cell_id_list_from_expression_query($filters, $username, $expected_nb_cells_by_rs);
 
@@ -205,6 +210,9 @@ class Cell
 
                 // expression data (filtered by filtered cell data)
                 $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_id_list_by_rs);
+
+                // rectivity data (filtered by filtered cell data)
+                $reactivity_response_list = RestService::reactivity_data($filters, $folder_path, $username, $response_list, $cell_id_list_by_rs);
             }
 
             // sequence data
@@ -213,7 +221,7 @@ class Cell
             Log::debug('Cell::cellTSVFolder - SKIPPING DOWNLOAD');
         }
 
-        $file_stats = self::file_stats($cell_response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs, $download_data);
+        $file_stats = self::file_stats($cell_response_list, $expression_response_list, $reactivity_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs, $download_data);
 
         // if some files are incomplete, log it
         foreach ($file_stats as $t) {
@@ -259,6 +267,14 @@ class Cell
 
         // did the expression query fail for some services?
         foreach ($expression_response_list as $response) {
+            if ($response['status'] == 'error') {
+                $failed_rs[] = $response['rs'];
+                $is_download_incomplete = true;
+            }
+        }
+
+        // did the reactivity query fail for some services?
+        foreach ($reactivity_response_list as $response) {
             if ($response['status'] == 'error') {
                 $failed_rs[] = $response['rs'];
                 $is_download_incomplete = true;
@@ -345,6 +361,7 @@ class Cell
         $t['response_list'] = $cell_response_list;
         $t['metadata_response_list'] = $metadata_response_list;
         $t['expression_response_list'] = $expression_response_list;
+        $t['reactivity_response_list'] = $reactivity_response_list;
         $t['sequence_response_list'] = $sequence_response_list;
         $t['info_file_path'] = $info_file_path;
         $t['manifest_file_path'] = $manifest_file_path;
@@ -366,6 +383,7 @@ class Cell
         $cell_response_list = $t['response_list'];
         $metadata_response_list = $t['metadata_response_list'];
         $expression_response_list = $t['expression_response_list'];
+        $reactivity_response_list = $t['reactivity_response_list'];
         $sequence_response_list = $t['sequence_response_list'];
         $info_file_path = $t['info_file_path'];
         $manifest_file_path = $t['manifest_file_path'];
@@ -374,7 +392,7 @@ class Cell
         $file_stats = $t['file_stats'];
 
         // zip files
-        $zip_path = self::zip_files($folder_path, $cell_response_list, $expression_response_list, $metadata_response_list, $info_file_path, $sequence_response_list, $manifest_file_path, $download_data);
+        $zip_path = self::zip_files($folder_path, $cell_response_list, $expression_response_list, $reactivity_response_list, $metadata_response_list, $info_file_path, $sequence_response_list, $manifest_file_path, $download_data);
 
         // delete files
         self::delete_files($folder_path);
@@ -688,7 +706,7 @@ class Cell
         return $cell_list_by_rs;
     }
 
-    public static function zip_files($folder_path, $cell_response_list, $expression_response_list, $metadata_response_list, $info_file_path, $sequence_response_list, $manifest_file_path, $download_data)
+    public static function zip_files($folder_path, $cell_response_list, $expression_response_list, $reactivity_response_list, $metadata_response_list, $info_file_path, $sequence_response_list, $manifest_file_path, $download_data)
     {
         $zipPath = $folder_path . '.zip';
         Log::info('Cell: Zip files to ' . $zipPath);
@@ -741,6 +759,15 @@ class Cell
             }
         }
 
+        // reactivity data
+        foreach ($reactivity_response_list as $response) {
+            if (isset($response['data']['file_path'])) {
+                $file_path = $response['data']['file_path'];
+                Log::debug('Adding to ZIP: ' . $file_path);
+                $zip->addFile($file_path, basename($file_path));
+            }
+        }
+
         // Info file
         $zip->addFile($info_file_path, basename($info_file_path));
         Log::debug('Adding to ZIP: ' . $info_file_path);
@@ -771,7 +798,7 @@ class Cell
         }
     }
 
-    public static function file_stats($cell_response_list, $expression_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs, $download_data)
+    public static function file_stats($cell_response_list, $expression_response_list, $reactivity_response_list, $metadata_response_list, $sequence_response_list, $expected_nb_cells_by_rs, $download_data)
     {
         Log::debug('Get files stats');
         // Process the correct response list, depending on if we are downloading
@@ -813,6 +840,16 @@ class Cell
                             if (isset($r['data']['file_path'])) {
                                 $expression_file_path = $r['data']['file_path'];
                                 $t['expression_file_name'] = basename($expression_file_path);
+                            }
+                        }
+                    }
+
+                    // reactivity file name
+                    foreach ($reactivity_response_list as $r) {
+                        if ($rest_service_id == $r['rs']->id) {
+                            if (isset($r['data']['file_path'])) {
+                                $reactivity_file_path = $r['data']['file_path'];
+                                $t['reactivity_file_name'] = basename($reactivity_file_path);
                             }
                         }
                     }

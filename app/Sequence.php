@@ -732,6 +732,9 @@ class Sequence
             if (isset($t['expression_file_name'])) {
                 $dataset->expression_file = $t['expression_file_name'];
             }
+            if (isset($t['reactivity_file_name'])) {
+                $dataset->reactivity_file = $t['reactivity_file_name'];
+            }
 
             $manifest->DataSets[] = $dataset;
         }

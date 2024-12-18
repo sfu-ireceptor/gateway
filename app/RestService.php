@@ -1047,8 +1047,8 @@ class RestService extends Model
         // send a huge list to repositories. VDJServer in particular
         // can't handle a search with all of its repertoires specified.
         $response_list_all = self::samples([], $username, true, $rest_service_id_list, false);
-        Log::debug('All samples from those repositories:');
-        Log::debug($response_list_all);
+        #Log::debug('All samples from those repositories:');
+        #Log::debug($response_list_all);
 
         // Filter repository responses to only requested samples
         $response_list_requested = [];
@@ -1587,9 +1587,11 @@ class RestService extends Model
                         $request['url'] = $rs->url . 'reactivity';
                         // We need to request specific fields that want to return
                         // about the reactivity
+                        // TODO (IR-3153): Param fields filter is not working when ontology fields are provided
+                        // For now, we don't need this as there are not many fields to return.
                         $params = [];
-                        $params['fields'] = ['cell_id', 'antigen', 'antigen_source_species', 'peptide_sequence_aa',
-                            'reactivity_method', 'reactivity_readout', 'reactivity_value', 'reactivity_unit', 'reactivity_ref'];
+                        //$params['fields'] = ['cell_id', 'antigen', 'antigen_source_species', 'peptide_sequence_aa',
+                            //'reactivity_method', 'reactivity_readout', 'reactivity_value', 'reactivity_unit', 'reactivity_ref'];
                         $request['params'] = self::generate_json_query($filters, $params, $rs->api_version);
 
                         // Add the request to the request list
@@ -1617,7 +1619,7 @@ class RestService extends Model
                             if (count($reactivity) > 0) {
                                 // TODO: We are only handling the first reactivity record
                                 $cell_id_reactivity = $reactivity[0]->cell_id;
-
+                                Log::debug(json_encode($reactivity[0]));
                                 // If the Cell ID matches the reactivity Cell ID then
                                 // collect the data.
                                 if ($cell_id == $cell_id_reactivity) {
@@ -2678,6 +2680,63 @@ class RestService extends Model
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
             $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . '-gex.json';
+            $request_params[] = $t;
+        }
+
+        $final_response_list = [];
+        // do requests, write data to files
+        if (count($request_params) > 0) {
+            Log::info('Do download requests...');
+            $final_response_list = self::doRequests($request_params);
+        }
+
+        return $final_response_list;
+    }
+
+    public static function reactivity_data($filters, $folder_path, $username = '', $cell_response_list, $cell_id_list_by_rs = [])
+    {
+        // build list of services to query
+        $rs_list = [];
+        foreach ($cell_response_list as $response) {
+            $rs_list[] = $response['rs'];
+        }
+
+        // prepare request parameters for each service
+        $request_params = [];
+
+        foreach ($rs_list as $rs) {
+            $rs_filters = [];
+
+            // if we retrieve cells by cell_id
+            if (count($cell_id_list_by_rs) > 0) {
+                $query_parameters = [];
+                foreach ($cell_id_list_by_rs as $response) {
+                    if ($response['rs']->id == $rs->id) {
+                        $cell_id_list = $response['cell_id_list'];
+                        $rs_filters_json = self::generate_json_query(['cell_id' => $cell_id_list], $query_parameters);
+                        break;
+                    }
+                }
+            } else {
+                $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+
+                // rename sample id filter for this service:
+                // ir_project_sample_id_list_2 -> repertoire_id
+                $rs_filters['repertoire_id'] = $filters[$sample_id_list_key];
+
+                $query_parameters = [];
+
+                // generate JSON query
+                $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters, $rs->api_version);
+            }
+
+            $t = [];
+            $t['rs'] = $rs;
+            $t['url'] = $rs->url . 'reactivity';
+            $t['params'] = $rs_filters_json;
+            $t['timeout'] = config('ireceptor.service_file_request_timeout');
+
+            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . '-reactivity.json';
             $request_params[] = $t;
         }
 
