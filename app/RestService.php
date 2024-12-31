@@ -598,7 +598,8 @@ class RestService extends Model
                 }
 
                 if ($count_sequences) {
-                    $sequence_counts = self::sequence_count_from_cache($rs->id, $sample_id_list);
+                    //$sequence_counts = self::sequence_count_from_cache($rs->id, $sample_id_list);
+                    $sequence_counts = self::object_count_from_cache('sequence', $rs->id, $sample_id_list);
 
                     foreach ($sample_list as $sample) {
                         $sample->ir_sequence_count = 0;
@@ -608,7 +609,8 @@ class RestService extends Model
                     }
 
                     // count clones
-                    $clone_counts = self::clone_count_from_cache($rs->id, $sample_id_list);
+                    //$clone_counts = self::clone_count_from_cache($rs->id, $sample_id_list);
+                    $clone_counts = self::object_count_from_cache('clone', $rs->id, $sample_id_list);
 
                     foreach ($sample_list as $sample) {
                         $sample->ir_clone_count = 0;
@@ -618,7 +620,8 @@ class RestService extends Model
                     }
 
                     // count cells
-                    $cell_counts = self::cell_count_from_cache($rs->id, $sample_id_list);
+                    //$cell_counts = self::cell_count_from_cache($rs->id, $sample_id_list);
+                    $cell_counts = self::object_count_from_cache('cell', $rs->id, $sample_id_list);
 
                     foreach ($sample_list as $sample) {
                         $sample->ir_cell_count = 0;
@@ -681,6 +684,7 @@ class RestService extends Model
         }
     }
 
+    /*
     public static function sequence_count_from_cache($rest_service_id, $sample_id_list = [])
     {
         $l = SequenceCount::where('rest_service_id', $rest_service_id)->orderBy('updated_at', 'desc')->take(1)->get();
@@ -705,8 +709,136 @@ class RestService extends Model
 
         return $sequence_counts;
     }
+     */
+
+    public static function object_count_from_cache($type, $rest_service_id, $sample_id_list = [])
+    {
+        if ($type == 'sequence') {
+            $l = SequenceCount::where('rest_service_id', $rest_service_id)->orderBy('updated_at', 'desc')->take(1)->get();
+        } elseif ($type == 'clone') {
+            $l = CloneCount::where('rest_service_id', $rest_service_id)->orderBy('updated_at', 'desc')->take(1)->get();
+        } elseif ($type == 'cell') {
+            $l = CellCount::where('rest_service_id', $rest_service_id)->orderBy('updated_at', 'desc')->take(1)->get();
+        }
+
+        if (count($l) == 0) {
+            return;
+        }
+
+        if ($type == 'sequence') {
+            $all_object_counts = $l[0]->sequence_counts;
+        } elseif ($type == 'clone') {
+            $all_object_counts = $l[0]->clone_counts;
+        } elseif ($type == 'cell') {
+            $all_object_counts = $l[0]->cell_counts;
+        }
+        //if (count($sample_id_list) == 0) {
+        //    return $all_sequence_counts;
+        //}
+
+        $object_counts = [];
+        foreach ($sample_id_list as $sample_id) {
+            if (isset($all_object_counts[$sample_id])) {
+                $object_counts[$sample_id] = $all_object_counts[$sample_id];
+            } else {
+                $object_counts[$sample_id] = null;
+            }
+        }
+
+        return $object_counts;
+    }
 
     // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
+    public static function object_count($type, $sample_id_list_by_rs, $filters = [], $use_cache_if_possible = true)
+    {
+        // clean filters
+        $filters = self::clean_filters($filters);
+
+        // hack: use cached total counts if there are no sequence filters
+        if (count($filters) == 0 && $use_cache_if_possible) {
+            $counts_by_rs = [];
+            foreach ($sample_id_list_by_rs as $rs_id => $sample_id_list) {
+                $object_count = self::object_count_from_cache($type, $rs_id, $sample_id_list);
+                $counts_by_rs[$rs_id]['samples'] = $object_count;
+            }
+
+            return $counts_by_rs;
+        }
+
+        // prepare request parameters for each service
+        $request_params = [];
+
+        foreach ($sample_id_list_by_rs as $rs_id => $sample_id_list) {
+            $service_filters = $filters;
+
+            // force all sample ids to string
+            foreach ($sample_id_list as $k => $v) {
+                $sample_id_list[$k] = (string) $v;
+            }
+
+            // generate JSON query
+            $service_filters['repertoire_id'] = $sample_id_list;
+
+            $query_parameters = [];
+            $query_parameters['facets'] = 'repertoire_id';
+
+            // prepare parameters for each service
+            $t = [];
+
+            $rs = self::find($rs_id);
+            $t['rs'] = $rs;
+            
+            if ($type == 'sequence') {
+                $t['url'] = $rs->url . 'rearrangement';
+            } elseif ($type == 'clone') {
+                $t['url'] = $rs->url . 'clone';
+            } elseif ($type == 'cell') {
+                $t['url'] = $rs->url . 'cell';
+            }
+            //$t['url'] = $rs->url . 'rearrangement';
+
+            $t['params'] = self::generate_json_query($service_filters, $query_parameters, $rs->api_version);
+            $t['timeout'] = config('ireceptor.service_request_timeout');
+
+            $request_params[] = $t;
+        }
+
+        // do requests
+        $response_list = self::doRequests($request_params);
+
+        // build list of sequence count for each sample grouped by repository id
+        $counts_by_rs = [];
+        foreach ($response_list as $response) {
+            $rest_service_id = $response['rs']->id;
+
+            if ($response['status'] == 'error') {
+                $counts_by_rs[$rest_service_id]['samples'] = null;
+                $counts_by_rs[$rest_service_id]['error_type'] = $response['error_type'];
+                continue;
+            }
+
+            $facet_list = data_get($response, 'data.Facet', []);
+            $object_count = [];
+            foreach ($facet_list as $facet) {
+                $object_count[$facet->repertoire_id] = $facet->count;
+            }
+
+            // TODO might not be needed because of IR-1484
+            // add count = 0
+            foreach ($sample_id_list_by_rs[$rest_service_id] as $sample_id) {
+                if (! isset($object_count[$sample_id])) {
+                    $object_count[$sample_id] = 0;
+                }
+            }
+
+            $counts_by_rs[$rest_service_id]['samples'] = $object_count;
+        }
+
+        return $counts_by_rs;
+    }
+
+    // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
+    /*
     public static function sequence_count($sample_id_list_by_rs, $filters = [], $use_cache_if_possible = true)
     {
         // clean filters
@@ -1003,6 +1135,7 @@ class RestService extends Model
 
         return $counts_by_rs;
     }
+*/
 
     // Returns an array of services and the related repertoire metaddata based on a
     // sequence/clone/cell level query.
@@ -1013,8 +1146,8 @@ class RestService extends Model
     //   fields as well as AIRR filters.
     //   @param string $username - the username of the user making the query
     //   @param boolean $group_by_rest_service - determines whether the responses is grouped by service
-    //   @param string $group - (e.g. c19 group) or individual repositories are returned as services.
-    //   type: the type of query to make (sequence, clone, cell).
+    //          (e.g. c19 group) or individual repositories are returned as services.
+    //   @param type: the type of query to make (sequence, clone, cell).
     //
     // @return array List of objects that describe the data and which services it came from
     //
@@ -1022,6 +1155,8 @@ class RestService extends Model
     //   rs: An object that describes the service (grouped or ungrouped by repository group (e.g. c19 group).
     //   status: A string that describes the success/error state of the service repsonse.
     //   data: A list of repertoires in the AIRR format from the query.
+    // The array is keyed either on the rest service group (e.g. "t1d" or "covid19") if
+    // $group_by_rest_service = true or by the individual repository name if not.
     public static function data_summary($filters, $username = '', $group_by_rest_service = true, $type = 'sequence')
     {
         Log::debug('RestService::data_summary()');
@@ -1046,7 +1181,9 @@ class RestService extends Model
         // Get ALL samples from repositories. This is so we don't
         // send a huge list to repositories. VDJServer in particular
         // can't handle a search with all of its repertoires specified.
+        Log::debug('Before sample query');
         $response_list_all = self::samples([], $username, true, $rest_service_id_list, false);
+        Log::debug('After sample query');
         //Log::debug('All samples from those repositories:');
         //Log::debug($response_list_all);
 
@@ -1076,7 +1213,7 @@ class RestService extends Model
         }
 
         Log::debug('Filtered to requested samples only:');
-        // Log::debug($response_list_requested);
+        Log::debug($response_list_requested);
 
         // Build list of data filters only (remove sample id filters)
         $data_filters = $filters;
@@ -1097,17 +1234,36 @@ class RestService extends Model
 
             $sample_id_list_by_rs[$response['rs']->id] = $sample_id_list_requested;
         }
+        //var_dump($sample_id_list_by_rs);
+        //var_dump($data_filters);
+        //blah;
 
-        // count sequences for each requested sample
+        // count objects for each requested sample
+        if ($type == 'sequence' || $type == 'clone' || $type == 'cell') {
+            $counts_by_rs = self::object_count($type, $sample_id_list_by_rs, $data_filters);
+        } else {
+            Log::error('Unexpected query type ' . $type);
+            throw new \Exception('Unexpected query type ' . $type);
+        }
+        var_dump($counts_by_rs);
+        
+        /*
         if ($type == 'sequence') {
             $counts_by_rs = self::sequence_count($sample_id_list_by_rs, $data_filters);
         } elseif ($type == 'clone') {
             $counts_by_rs = self::clone_count($sample_id_list_by_rs, $data_filters);
-        } else {
+        } elseif ($type == 'cell') {
             $counts_by_rs = self::cell_count($sample_id_list_by_rs, $data_filters);
+        } else {
+            Log::error('Unexpected query type ' . $type);
+            throw new \Exception('Unexpected query type ' . $type);
         }
+         */
 
-        // add sequences count to samples
+        //var_dump($counts_by_rs);
+        //blah;
+
+        // add object counts to samples
         $response_list_filtered = [];
         foreach ($response_list_requested as $response) {
             $rs = $response['rs'];
