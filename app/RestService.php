@@ -1350,7 +1350,6 @@ class RestService extends Model
             throw new \Exception('Unexpected query type ' . $type);
         }
         //var_dump($counts_by_rs);
-        
         /*
         if ($type == 'sequence') {
             $counts_by_rs = self::sequence_count($sample_id_list_by_rs, $data_filters);
