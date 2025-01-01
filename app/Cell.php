@@ -24,15 +24,86 @@ class Cell
     // total_filtered_objects - total number of filtered objects
     // filtered_repositories - array of filtered repositories in which data was found
     // items - array of filtered objects that were found
-    public static function summary($filters, $username)
+    public static function summary($service_repertoire_list, $filters, $cell_filters,
+                                   $expression_filters, $reactivity_filters, $username)
     {
-        // get cells summary
-        $response_list_cells_summary = RestService::data_summary($filters, $username, true, 'cell');
+        //var_dump('cell filters<br/>');
+        //var_dump($cell_filters);
+        //var_dump('expression filters<br/>');
+        //var_dump($expression_filters);
+        //var_dump('reactivity filters<br/>');
+        //var_dump($reactivity_filters);
+        //
+        // Create arrays of cell ids (keyed by service id) that are retrieved from
+        // each of the cell, expression, and reactivity filters.
+        $cell_ids_by_rs = array();
+        $expression_cell_ids_by_rs = array();
+        $reactivity_cell_ids_by_rs = array();
+        
+        // Get the initial set of cell ids from the cell filters.
+        $cell_ids_by_rs = RestService::object_list('cell', $service_repertoire_list, $cell_filters, 'cell_id');
+        //var_dump('cell <br/>');
+        //var_dump($cell_ids_by_rs);
+ 
+        // If we have expression filters apply them, get the list of cells, and
+        // intersect them with the current list.
+        if (count($expression_filters) > 0) {
+            $expression_cell_ids_by_rs = RestService::object_list('expression', $service_repertoire_list,
+                                                                  $expression_filters, 'cell_id');
+            // We need to loop over each service and merge cell_ids per service
+            foreach ($expression_cell_ids_by_rs as $rs=>$cell_array) {
+                if (array_key_exists($rs, $cell_ids_by_rs)) {
+                    $cell_ids_by_rs[$rs] = array_intersect($cell_ids_by_rs[$rs],
+                                                           $expression_cell_ids_by_rs[$rs]);
+                }
+            }
+        }
 
-        // generate stats
+        // If we have reactivity filters apply them, get the list of cells, and
+        // intersect them with the current list.
+        if (count($reactivity_filters) > 0) {
+            $reactivity_cell_ids_by_rs = RestService::object_list('reactivity', $service_repertoire_list,
+                                                                  $reactivity_filters, 'cell_id');
+            // We need to loop over each service and merge cell_ids per service
+            foreach ($reactivity_cell_ids_by_rs as $rs=>$cell_array) {
+                if (array_key_exists($rs, $cell_ids_by_rs)) {
+                    $cell_ids_by_rs[$rs] = array_intersect($cell_ids_by_rs[$rs],
+                                                           $reactivity_cell_ids_by_rs[$rs]);
+                }
+            }
+        }
+
+        $all_cell_ids = array();
+        foreach ($cell_ids_by_rs as $rs=>$rs_cell_id_array) {
+            $all_cell_ids = array_merge($all_cell_ids, $rs_cell_id_array);
+        }
+        var_dump('expression <br/>');
+        var_dump($expression_cell_ids_by_rs);
+        var_dump('reactivity <br/>');
+        var_dump($reactivity_cell_ids_by_rs);
+        var_dump('<br/>');
+        var_dump('final cell ids <br/>');
+        var_dump($cell_ids_by_rs);
+        var_dump('all cell ids <br/>');
+        var_dump($all_cell_ids);
+        
+        // get repertoire summary for the cells that meet the criteria.
+        $filters['cell_id_cell'] = $all_cell_ids;
+        var_dump('filters<br/>');
+        var_dump($filters);
+        
+        $response_list_cells_summary = RestService::data_summary($filters, $username, true, 'cell');
+        //var_dump($response_list_cells_summary);
+
+        // generate repertoire stats for the graphs
         $data = self::process_response($response_list_cells_summary);
+        //var_dump('process_response array keys<br/>');
+        //var_dump(array_keys($data));
+        //var_dump('process_response<br/>');
+        //var_dump($data);
 
         // get a few cells from each service
+        // TODO: Need to get this to work for combined queries.
         $response_list = RestService::data_subset($filters, $response_list_cells_summary, 10, 'cell');
 
         // merge responses
@@ -410,6 +481,16 @@ class Cell
         return $t;
     }
 
+    // Returns an array with the following keys:
+    // - rs_list
+    // - rs_list_no_response
+    // - summary
+    // - total_filtered_samples
+    // - total_filtered_repositories
+    // - total_filtered_labs
+    // - total_filtered_studies
+    // - total_filtered_objects
+    // - filtered_repositories
     public static function process_response($response_list)
     {
         // initialize return array
