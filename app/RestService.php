@@ -713,6 +713,7 @@ class RestService extends Model
 
     public static function object_count_from_cache($type, $rest_service_id, $sample_id_list = [])
     {
+        // Search the appropriate cache based on type.
         if ($type == 'sequence') {
             $l = SequenceCount::where('rest_service_id', $rest_service_id)->orderBy('updated_at', 'desc')->take(1)->get();
         } elseif ($type == 'clone') {
@@ -721,10 +722,12 @@ class RestService extends Model
             $l = CellCount::where('rest_service_id', $rest_service_id)->orderBy('updated_at', 'desc')->take(1)->get();
         }
 
+        // If we got no data, return
         if (count($l) == 0) {
             return;
         }
 
+        // Get all of the object counts base on the type.
         if ($type == 'sequence') {
             $all_object_counts = $l[0]->sequence_counts;
         } elseif ($type == 'clone') {
@@ -732,10 +735,14 @@ class RestService extends Model
         } elseif ($type == 'cell') {
             $all_object_counts = $l[0]->cell_counts;
         }
-        //if (count($sample_id_list) == 0) {
-        //    return $all_sequence_counts;
-        //}
+        // If our sample ID list is of 0 length, we are not filtering on any
+        // sample IDs and we therefore return the full list.
+        if (count($sample_id_list) == 0) {
+            return $all_object_counts;
+        }
 
+        // If we get here, we need to could up the objects for only the
+        // samples in the cache that are provided in the sample_id_list.
         $object_counts = [];
         foreach ($sample_id_list as $sample_id) {
             if (isset($all_object_counts[$sample_id])) {
@@ -754,7 +761,7 @@ class RestService extends Model
         // clean filters
         $filters = self::clean_filters($filters);
 
-        // hack: use cached total counts if there are no sequence filters
+        // use cached total counts if there are no sequence filters
         if (count($filters) == 0 && $use_cache_if_possible) {
             $counts_by_rs = [];
             foreach ($sample_id_list_by_rs as $rs_id => $sample_id_list) {
@@ -779,15 +786,18 @@ class RestService extends Model
             // generate JSON query
             $service_filters['repertoire_id'] = $sample_id_list;
 
+            // set up the facet query on repertoire_id
             $query_parameters = [];
             $query_parameters['facets'] = 'repertoire_id';
 
             // prepare parameters for each service
             $t = [];
 
+            // Get the service info for the given service ID
             $rs = self::find($rs_id);
             $t['rs'] = $rs;
             
+            // Assign the query service endpoint based on the query type.
             if ($type == 'sequence') {
                 $t['url'] = $rs->url . 'rearrangement';
             } elseif ($type == 'clone') {
@@ -795,8 +805,8 @@ class RestService extends Model
             } elseif ($type == 'cell') {
                 $t['url'] = $rs->url . 'cell';
             }
-            //$t['url'] = $rs->url . 'rearrangement';
 
+            // Generate the JSON query based on the filters and parameters.
             $t['params'] = self::generate_json_query($service_filters, $query_parameters, $rs->api_version);
             $t['timeout'] = config('ireceptor.service_request_timeout');
 
@@ -811,14 +821,18 @@ class RestService extends Model
         foreach ($response_list as $response) {
             $rest_service_id = $response['rs']->id;
 
+            // if it is an error make a note of it.
             if ($response['status'] == 'error') {
                 $counts_by_rs[$rest_service_id]['samples'] = null;
                 $counts_by_rs[$rest_service_id]['error_type'] = $response['error_type'];
                 continue;
             }
 
+            // Get the facet count list for the response. 
             $facet_list = data_get($response, 'data.Facet', []);
             $object_count = [];
+            // Iterate over the list and get a count for each repertoire, keyed
+            // on repertoire_id
             foreach ($facet_list as $facet) {
                 $object_count[$facet->repertoire_id] = $facet->count;
             }
@@ -831,10 +845,99 @@ class RestService extends Model
                 }
             }
 
+            // Add the count list for this service to this services data.
             $counts_by_rs[$rest_service_id]['samples'] = $object_count;
         }
 
         return $counts_by_rs;
+    }
+
+    // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
+    public static function object_list($type, $sample_id_list_by_rs, $filters = [], $field='')
+    {
+        // Set up info that depends on the query type
+        if ($type == 'sequence') {
+            $endpoint = 'rearrangement';
+            $airr_object = 'Rearrangement';
+        } elseif ($type == 'clone') {
+            $endpoint = 'clone';
+            $airr_object = 'Clone';
+        } elseif ($type == 'cell') {
+            $endpoint = 'cell';
+            $airr_object = 'Cell';
+        } elseif ($type == 'expression') {
+            $endpoint = 'expression';
+            $airr_object = 'CellExpression';
+        } elseif ($type == 'reactivity') {
+            $endpoint = 'reactivity';
+            $airr_object = 'Reactivity';
+        } else {
+            Log::error('RestService::object_list - Unexpected query type ' . $type);
+            throw new \Exception('Unexpected query type ' . $type);
+        }
+
+        // clean filters
+        $filters = self::clean_filters($filters);
+
+        // prepare request parameters for each service
+        $request_params = [];
+
+        foreach ($sample_id_list_by_rs as $rs_id => $sample_id_list) {
+            $service_filters = $filters;
+
+            // force all sample ids to string
+            foreach ($sample_id_list as $k => $v) {
+                $sample_id_list[$k] = (string) $v;
+            }
+
+            // generate JSON query
+            $service_filters['repertoire_id'] = $sample_id_list;
+
+            $query_parameters = [];
+            $query_parameters['facets'] = $field;
+
+            // prepare parameters for each service
+            $t = [];
+
+            // Get the service information
+            $rs = self::find($rs_id);
+            $t['rs'] = $rs;
+            
+            // Get the query URL based on the endpoint
+            $t['url'] = $rs->url . $endpoint;
+
+            $t['params'] = self::generate_json_query($service_filters, $query_parameters, $rs->api_version);
+            $t['timeout'] = config('ireceptor.service_request_timeout');
+
+            $request_params[] = $t;
+        }
+
+        // do requests
+        $response_list = self::doRequests($request_params);
+
+        // build list of sequence count for each sample grouped by repository id
+        $objects_by_rs = [];
+        foreach ($response_list as $response) {
+            $rest_service_id = $response['rs']->id;
+
+            if ($response['status'] == 'error') {
+                $objects_by_rs[$rest_service_id]['samples'] = null;
+                $objects_by_rs[$rest_service_id]['error_type'] = $response['error_type'];
+                continue;
+            }
+
+            $object_response = data_get($response, 'data.Facet', []);
+            $object_list = [];
+            foreach ($object_response as $object_data) {
+                if ($object_data->count > 0) {
+                    $object_list[] = $object_data->$field;
+                }
+            }
+
+            $objects_by_rs[$rest_service_id] = $object_list;
+        }
+
+        return $objects_by_rs;
     }
 
     // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
@@ -1161,9 +1264,6 @@ class RestService extends Model
     {
         Log::debug('RestService::data_summary()');
 
-        //Log::debug($filters);
-        //blah;
-
         // Build list of repository ids to query. For each enabled repository
         // generate the internal key (ir_project_sample_id_list_). If that key
         // is in the filters from the gateway, then we add it to the list of
@@ -1213,7 +1313,7 @@ class RestService extends Model
         }
 
         Log::debug('Filtered to requested samples only:');
-        Log::debug($response_list_requested);
+        //Log::debug($response_list_requested);
 
         // Build list of data filters only (remove sample id filters)
         $data_filters = $filters;
@@ -1234,18 +1334,22 @@ class RestService extends Model
 
             $sample_id_list_by_rs[$response['rs']->id] = $sample_id_list_requested;
         }
+        //var_dump('<br/>');
         //var_dump($sample_id_list_by_rs);
+        //var_dump('<br/>');
         //var_dump($data_filters);
-        //blah;
+        //var_dump('<br/>');
 
         // count objects for each requested sample
         if ($type == 'sequence' || $type == 'clone' || $type == 'cell') {
             $counts_by_rs = self::object_count($type, $sample_id_list_by_rs, $data_filters);
+            //$stuff = self::object_list($type, $sample_id_list_by_rs, $data_filters, 'cell_id');
+            //var_dump($stuff);
         } else {
             Log::error('Unexpected query type ' . $type);
             throw new \Exception('Unexpected query type ' . $type);
         }
-        var_dump($counts_by_rs);
+        //var_dump($counts_by_rs);
         
         /*
         if ($type == 'sequence') {
@@ -1389,11 +1493,15 @@ class RestService extends Model
         } elseif ($type == 'clone') {
             $base_uri = 'clone';
         } else {
-            $query_type = 'cell';
-            if (isset($filters['property_expression'])) {
-                $query_type = 'expression';
-            }
-            $base_uri = $query_type;
+            //$query_type = 'cell';
+            //if (isset($filters['property_expression'])) {
+            //    $query_type = 'expression';
+            //} elseif (isset($filters['peptide_sequence_aa_reactivity'])) {
+            //    $query_type = 'reactivity';
+            //}
+
+            //$base_uri = $query_type;
+            $base_uri = 'cell';
         }
 
         Log::debug('We have reponses for repos with id:');
