@@ -77,20 +77,20 @@ class Cell
         foreach ($cell_ids_by_rs as $rs=>$rs_cell_id_array) {
             $all_cell_ids = array_merge($all_cell_ids, $rs_cell_id_array);
         }
-        var_dump('expression <br/>');
-        var_dump($expression_cell_ids_by_rs);
-        var_dump('reactivity <br/>');
-        var_dump($reactivity_cell_ids_by_rs);
-        var_dump('<br/>');
-        var_dump('final cell ids <br/>');
-        var_dump($cell_ids_by_rs);
-        var_dump('all cell ids <br/>');
-        var_dump($all_cell_ids);
+        //var_dump('expression <br/>');
+        //var_dump($expression_cell_ids_by_rs);
+        //var_dump('reactivity <br/>');
+        //var_dump($reactivity_cell_ids_by_rs);
+        //var_dump('<br/>');
+        //var_dump('final cell ids <br/>');
+        //var_dump($cell_ids_by_rs);
+        //var_dump('all cell ids <br/>');
+        //var_dump($all_cell_ids);
         
         // get repertoire summary for the cells that meet the criteria.
         $filters['cell_id_cell'] = $all_cell_ids;
-        var_dump('filters<br/>');
-        var_dump($filters);
+        //var_dump('filters<br/>');
+        //var_dump($filters);
         
         $response_list_cells_summary = RestService::data_summary($filters, $username, true, 'cell');
         //var_dump($response_list_cells_summary);
@@ -665,7 +665,6 @@ class Cell
         $s = '';
 
         $s .= '<p><b>Metadata filters</b></p>' . "\n";
-        Log::debug($sample_filters);
         if (count($sample_filters) == 0) {
             $s .= 'None' . "\n";
         }
@@ -700,7 +699,6 @@ class Cell
             }
         }
 
-        Log::debug($filters);
         if (count($filters) == 0) {
             $s .= 'None' . "</br>\n";
         }

@@ -336,15 +336,14 @@ class CellController extends Controller
             $app_config = $app_info['config'];
             $app_ui_info = [];
             Log::debug('Processing app ' . $app_tag);
-            Log::debug('App config = ' . json_encode($app_config));
+            //Log::debug('App config = ' . json_encode($app_config));
+
             // Process the parameters.
             $parameter_list = [];
-            //foreach ($app_config['parameters'] as $parameter_info) {
             foreach ($app_config['jobAttributes']['parameterSet']['appArgs'] as $parameter_info) {
                 // We only want the visible parameters to be visible. The
                 // UI uses the Tapis ID as a label and the Tapis paramenter
                 // "label" as the human readable name of the parameter.
-                //if ($parameter_info['value']['visible']) {
                 if ($parameter_info['inputMode'] != 'FIXED') {
                     $parameter = [];
                     Log::debug('   Processing parameter - ' . $parameter_info['name']);
