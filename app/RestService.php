@@ -796,7 +796,7 @@ class RestService extends Model
             // Get the service info for the given service ID
             $rs = self::find($rs_id);
             $t['rs'] = $rs;
-            
+
             // Assign the query service endpoint based on the query type.
             if ($type == 'sequence') {
                 $t['url'] = $rs->url . 'rearrangement';
@@ -828,7 +828,7 @@ class RestService extends Model
                 continue;
             }
 
-            // Get the facet count list for the response. 
+            // Get the facet count list for the response.
             $facet_list = data_get($response, 'data.Facet', []);
             $object_count = [];
             // Iterate over the list and get a count for each repertoire, keyed
@@ -853,7 +853,7 @@ class RestService extends Model
     }
 
     // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
-    public static function object_list($type, $sample_id_list_by_rs, $filters = [], $field='')
+    public static function object_list($type, $sample_id_list_by_rs, $filters = [], $field = '')
     {
         // Set up info that depends on the query type
         if ($type == 'sequence') {
@@ -902,7 +902,7 @@ class RestService extends Model
             // Get the service information
             $rs = self::find($rs_id);
             $t['rs'] = $rs;
-            
+
             // Get the query URL based on the endpoint
             $t['url'] = $rs->url . $endpoint;
 
@@ -1343,8 +1343,8 @@ class RestService extends Model
         // count objects for each requested sample
         if ($type == 'sequence' || $type == 'clone' || $type == 'cell') {
             $counts_by_rs = self::object_count($type, $sample_id_list_by_rs, $data_filters);
-            //$stuff = self::object_list($type, $sample_id_list_by_rs, $data_filters, 'cell_id');
-            //var_dump($stuff);
+        //$stuff = self::object_list($type, $sample_id_list_by_rs, $data_filters, 'cell_id');
+        //var_dump($stuff);
         } else {
             Log::error('Unexpected query type ' . $type);
             throw new \Exception('Unexpected query type ' . $type);

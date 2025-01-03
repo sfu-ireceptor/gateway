@@ -7,7 +7,6 @@ use App\Cell;
 use App\Download;
 use App\FieldName;
 use App\QueryLog;
-use App\RestService;
 use App\Sample;
 use App\System;
 use App\Tapis;
@@ -66,24 +65,24 @@ class CellController extends Controller
         // - sample_query_id: the query ID of the query that was the source of this query
         // - the fields from the form that are queryable, key the field name,
         //   value the filter value.
-        //   
+        //
 
         // Convert the service repertoire lists into an associative array with key
         // the ID and the contents an array of repertoire_ids.
-        $service_repertoire_list = array();
+        $service_repertoire_list = [];
         foreach ($filters as $key => $value) {
             if (strrpos($key, 'ir_project_sample_id_list') !== false) {
                 // Use everything after the last "_" as the ID
-                $id_str = substr($key, strrpos($key, '_')+1);
+                $id_str = substr($key, strrpos($key, '_') + 1);
                 $service_repertoire_list[$id_str] = $value;
             }
         }
         //var_dump($service_repertoire_list);
 
         // Extract the cell, expression, and reactivity specific filters.
-        $cell_filters = array();
-        $expression_filters = array();
-        $reactivity_filters = array();
+        $cell_filters = [];
+        $expression_filters = [];
+        $reactivity_filters = [];
         //var_dump($basic_filters);
         foreach ($filters as $key => $value) {
             // Each key has the filter type encoded in the name after the last "_", as in
@@ -91,14 +90,14 @@ class CellController extends Controller
             $sep_location = strrpos($key, '_');
             // For each type of filter, add it to the filter list
             if ($sep_location !== false) {
-                $filter_type = substr($key, $sep_location+1);
+                $filter_type = substr($key, $sep_location + 1);
                 if ($filter_type == 'cell' && $value != null) {
                     $cell_filters[$key] = $value;
                 } elseif ($filter_type == 'expression' && $value != null) {
                     $expression_filters[$key] = $value;
                 } elseif ($filter_type == 'reactivity' && $value != null) {
                     $reactivity_filters[$key] = $value;
-                } 
+                }
             }
             // Each query type requires the repertoires, which are encoded with keys
             // that contain the string "ir_project_sample_id_list"
@@ -109,14 +108,13 @@ class CellController extends Controller
                 $reactivity_filters[$key] = $value;
             }
             */
-
         }
         //var_dump($cell_filters);
         //var_dump($expression_filters);
         //var_dump($reactivity_filters);
 
         // allow only Cell filters, or only GEX filters, or only Reactivity filters,
-        // based on currently opened panel. Panel 0 is Cell, Panel 1 Reactivity, 
+        // based on currently opened panel. Panel 0 is Cell, Panel 1 Reactivity,
         // Panel 2 Expression
         /*
         if (isset($filters['open_filter_panel_list'])) {
@@ -159,8 +157,8 @@ class CellController extends Controller
         unset($new_filters['peptide_sequence_aa_reactivity']);
         // Retrieve cell data given the filters.
         $cell_data = Cell::summary($service_repertoire_list, $new_filters,
-                                   $cell_filters, $expression_filters,
-                                   $reactivity_filters, $username);
+            $cell_filters, $expression_filters,
+            $reactivity_filters, $username);
         //var_dump($cell_data['items']);
         //Log::debug($cell_data);
         //blah;
