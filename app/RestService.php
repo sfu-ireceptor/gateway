@@ -1882,7 +1882,7 @@ class RestService extends Model
                             if (count($reactivity) > 0) {
                                 // TODO: We are only handling the first reactivity record
                                 $cell_id_reactivity = $reactivity[0]->cell_id;
-                                Log::debug(json_encode($reactivity[0]));
+
                                 // If the Cell ID matches the reactivity Cell ID then
                                 // collect the data.
                                 if ($cell_id == $cell_id_reactivity) {
