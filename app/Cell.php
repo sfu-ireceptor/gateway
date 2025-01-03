@@ -86,12 +86,12 @@ class Cell
         //var_dump($cell_ids_by_rs);
         //var_dump('all cell ids <br/>');
         //var_dump($all_cell_ids);
-        
+
         // get repertoire summary for the cells that meet the criteria.
         $filters['cell_id_cell'] = $all_cell_ids;
         //var_dump('filters<br/>');
         //var_dump($filters);
-        
+
         $response_list_cells_summary = RestService::data_summary($filters, $username, true, 'cell');
         //var_dump($response_list_cells_summary);
 
