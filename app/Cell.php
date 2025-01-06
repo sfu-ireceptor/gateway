@@ -11,7 +11,6 @@ use ZipArchive;
 
 class Cell
 {
-
     // Returns a complex object of the form:
     // rs_list - array of repositories and related info that were queried
     // rs_list_no_response - array of repositories that didn't respond
@@ -37,7 +36,7 @@ class Cell
         //var_dump('<br/>reactivity filters<br/>');
         //var_dump($reactivity_filters);
         //
-        // Get the list of Cell IDs from all of the services/repertoirs 
+        // Get the list of Cell IDs from all of the services/repertoirs
         // that meet the cell, expression, and reactivity filters. Because
         // cell IDs are globally unique, they can be searched for across repositories
         // without conflict.
@@ -164,6 +163,7 @@ class Cell
         foreach ($cell_ids_by_rs as $rs => $rs_cell_id_array) {
             $all_cell_ids = array_merge($all_cell_ids, $rs_cell_id_array);
         }
+
         return $all_cell_ids;
     }
 
