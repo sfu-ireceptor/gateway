@@ -435,6 +435,7 @@ class CellController extends Controller
                 $service_repertoire_list[$id_str] = $value;
             }
         }
+
         return $service_repertoire_list;
     }
 
@@ -465,9 +466,9 @@ class CellController extends Controller
         $object_filters['reactivity'] = $reactivity_filters;
         $object_filters['expression'] = $expression_filters;
         $object_filters['cell'] = $cell_filters;
+
         return $object_filters;
     }
-
 
     public function timeEstimate($nb_cells)
     {
