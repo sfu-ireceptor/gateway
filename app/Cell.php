@@ -118,6 +118,55 @@ class Cell
         return $data;
     }
 
+    // Return an array, keyed by service ID, with each array containing
+    // a list of repertoire IDs from a query filter.
+    public static function getServiceRepertoires($filters)
+    {
+        // Convert the service repertoire lists into an associative array with key
+        // the service ID and the contents an array of repertoire_ids. The filter contains
+        // arrays with a key ir_project_sample_id_list_NN where NN is the numeric 
+        // identifier for the service.
+        $service_repertoire_list = [];
+        foreach ($filters as $key => $value) {
+            if (strrpos($key, 'ir_project_sample_id_list') !== false) {
+                // Use everything after the last "_" as the ID
+                $id_str = substr($key, strrpos($key, '_') + 1);
+                $service_repertoire_list[$id_str] = $value;
+            }
+        }
+        return $service_repertoire_list;
+    }
+
+    public static function getCellObjectFilters($filters)
+    {
+        // Extract the cell, expression, and reactivity specific filters.
+        $cell_filters = [];
+        $expression_filters = [];
+        $reactivity_filters = [];
+        //var_dump($basic_filters);
+        foreach ($filters as $key => $value) {
+            // Each key has the filter type encoded in the name after the last "_", as in
+            // virtual_pairing_cell is a virtual_pairing filter of type cell
+            $sep_location = strrpos($key, '_');
+            // For each type of filter, add it to the filter list
+            if ($sep_location !== false) {
+                $filter_type = substr($key, $sep_location + 1);
+                if ($filter_type == 'cell' && $value != null) {
+                    $cell_filters[$key] = $value;
+                } elseif ($filter_type == 'expression' && $value != null) {
+                    $expression_filters[$key] = $value;
+                } elseif ($filter_type == 'reactivity' && $value != null) {
+                    $reactivity_filters[$key] = $value;
+                }
+            }
+        }
+        $object_filters = [];
+        $object_filters['reactivity'] = $reactivity_filters;
+        $object_filters['expression'] = $expression_filters;
+        $object_filters['cell'] = $cell_filters;
+        return $object_filters;
+    }
+
     public static function getCellIDs($service_repertoire_list, $cell_filters,
         $expression_filters, $reactivity_filters)
     {
@@ -218,6 +267,15 @@ class Cell
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
+        // Get the list of Cell IDs from all of the services/repertoirs 
+        // that meet the cell, expression, and reactivity filters. Because
+        // cell IDs are globally unique, they can be searched for across repositories
+        // without conflict.
+        $all_cell_ids = Cell::getCellIDs($service_repertoire_list, $cell_filters,
+            $expression_filters, $reactivity_filters);
+
+        // get repertoire summary for the cells that meet the criteria.
+        $filters['cell_id_cell'] = $all_cell_ids;
         // do extra cell summary request
         Log::debug('Cell::cellsTSVFolder');
         Log::debug(print_r($filters, true));

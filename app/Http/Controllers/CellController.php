@@ -69,10 +69,10 @@ class CellController extends Controller
 
         // Convert the service repertoire lists into an associative array with key
         // the ID and the contents an array of repertoire_ids.
-        $service_repertoire_list = $this->getServiceRepertoires($filters);
+        $service_repertoire_list = Cell::getServiceRepertoires($filters);
         //var_dump($service_repertoire_list);
 
-        $object_filters = $this->getCellObjectFilters($filters);
+        $object_filters = Cell::getCellObjectFilters($filters);
         //var_dump($object_filters);
         $new_filters = $filters;
         unset($new_filters['cell_id_cell']);
@@ -422,52 +422,6 @@ class CellController extends Controller
         // display view
         return view('cell', $data);
     }
-
-    public function getServiceRepertoires($filters)
-    {
-        // Convert the service repertoire lists into an associative array with key
-        // the ID and the contents an array of repertoire_ids.
-        $service_repertoire_list = [];
-        foreach ($filters as $key => $value) {
-            if (strrpos($key, 'ir_project_sample_id_list') !== false) {
-                // Use everything after the last "_" as the ID
-                $id_str = substr($key, strrpos($key, '_') + 1);
-                $service_repertoire_list[$id_str] = $value;
-            }
-        }
-        return $service_repertoire_list;
-    }
-
-    public function getCellObjectFilters($filters)
-    {
-        // Extract the cell, expression, and reactivity specific filters.
-        $cell_filters = [];
-        $expression_filters = [];
-        $reactivity_filters = [];
-        //var_dump($basic_filters);
-        foreach ($filters as $key => $value) {
-            // Each key has the filter type encoded in the name after the last "_", as in
-            // virtual_pairing_cell is a virtual_pairing filter of type cell
-            $sep_location = strrpos($key, '_');
-            // For each type of filter, add it to the filter list
-            if ($sep_location !== false) {
-                $filter_type = substr($key, $sep_location + 1);
-                if ($filter_type == 'cell' && $value != null) {
-                    $cell_filters[$key] = $value;
-                } elseif ($filter_type == 'expression' && $value != null) {
-                    $expression_filters[$key] = $value;
-                } elseif ($filter_type == 'reactivity' && $value != null) {
-                    $reactivity_filters[$key] = $value;
-                }
-            }
-        }
-        $object_filters = [];
-        $object_filters['reactivity'] = $reactivity_filters;
-        $object_filters['expression'] = $expression_filters;
-        $object_filters['cell'] = $cell_filters;
-        return $object_filters;
-    }
-
 
     public function timeEstimate($nb_cells)
     {
