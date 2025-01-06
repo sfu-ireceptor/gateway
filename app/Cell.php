@@ -11,6 +11,7 @@ use ZipArchive;
 
 class Cell
 {
+
     // Returns a complex object of the form:
     // rs_list - array of repositories and related info that were queried
     // rs_list_no_response - array of repositories that didn't respond
@@ -27,70 +28,26 @@ class Cell
     public static function summary($service_repertoire_list, $filters, $cell_filters,
                                    $expression_filters, $reactivity_filters, $username)
     {
-        //var_dump('cell filters<br/>');
+        //var_dump('<br/>Cell::summary() - filters');
+        //var_dump(print_r($filters, true));
+        //var_dump('<br/>cell filters<br/>');
         //var_dump($cell_filters);
-        //var_dump('expression filters<br/>');
+        //var_dump('<br/>expression filters<br/>');
         //var_dump($expression_filters);
-        //var_dump('reactivity filters<br/>');
+        //var_dump('<br/>reactivity filters<br/>');
         //var_dump($reactivity_filters);
         //
-        // Create arrays of cell ids (keyed by service id) that are retrieved from
-        // each of the cell, expression, and reactivity filters.
-        $cell_ids_by_rs = [];
-        $expression_cell_ids_by_rs = [];
-        $reactivity_cell_ids_by_rs = [];
-
-        // Get the initial set of cell ids from the cell filters.
-        $cell_ids_by_rs = RestService::object_list('cell', $service_repertoire_list, $cell_filters, 'cell_id');
-        //var_dump('cell <br/>');
-        //var_dump($cell_ids_by_rs);
-
-        // If we have expression filters apply them, get the list of cells, and
-        // intersect them with the current list.
-        if (count($expression_filters) > 0) {
-            $expression_cell_ids_by_rs = RestService::object_list('expression', $service_repertoire_list,
-                $expression_filters, 'cell_id');
-            // We need to loop over each service and merge cell_ids per service
-            foreach ($expression_cell_ids_by_rs as $rs => $cell_array) {
-                if (array_key_exists($rs, $cell_ids_by_rs)) {
-                    $cell_ids_by_rs[$rs] = array_intersect($cell_ids_by_rs[$rs],
-                        $expression_cell_ids_by_rs[$rs]);
-                }
-            }
-        }
-
-        // If we have reactivity filters apply them, get the list of cells, and
-        // intersect them with the current list.
-        if (count($reactivity_filters) > 0) {
-            $reactivity_cell_ids_by_rs = RestService::object_list('reactivity', $service_repertoire_list,
-                $reactivity_filters, 'cell_id');
-            // We need to loop over each service and merge cell_ids per service
-            foreach ($reactivity_cell_ids_by_rs as $rs => $cell_array) {
-                if (array_key_exists($rs, $cell_ids_by_rs)) {
-                    $cell_ids_by_rs[$rs] = array_intersect($cell_ids_by_rs[$rs],
-                        $reactivity_cell_ids_by_rs[$rs]);
-                }
-            }
-        }
-
-        $all_cell_ids = [];
-        foreach ($cell_ids_by_rs as $rs => $rs_cell_id_array) {
-            $all_cell_ids = array_merge($all_cell_ids, $rs_cell_id_array);
-        }
-        //var_dump('expression <br/>');
-        //var_dump($expression_cell_ids_by_rs);
-        //var_dump('reactivity <br/>');
-        //var_dump($reactivity_cell_ids_by_rs);
-        //var_dump('<br/>');
-        //var_dump('final cell ids <br/>');
-        //var_dump($cell_ids_by_rs);
-        //var_dump('all cell ids <br/>');
-        //var_dump($all_cell_ids);
+        // Get the list of Cell IDs from all of the services/repertoirs 
+        // that meet the cell, expression, and reactivity filters. Because
+        // cell IDs are globally unique, they can be searched for across repositories
+        // without conflict.
+        $all_cell_ids = Cell::getCellIDs($service_repertoire_list, $cell_filters,
+            $expression_filters, $reactivity_filters);
 
         // get repertoire summary for the cells that meet the criteria.
         $filters['cell_id_cell'] = $all_cell_ids;
-        //var_dump('filters<br/>');
-        //var_dump($filters);
+        //var_dump('<br/>Cell::summary() - filters');
+        //var_dump(print_r($filters, true));
 
         $response_list_cells_summary = RestService::data_summary($filters, $username, true, 'cell');
         //var_dump($response_list_cells_summary);
@@ -161,6 +118,55 @@ class Cell
         return $data;
     }
 
+    public static function getCellIDs($service_repertoire_list, $cell_filters,
+        $expression_filters, $reactivity_filters)
+    {
+        // Create arrays of cell ids (keyed by service id) that are retrieved from
+        // each of the cell, expression, and reactivity filters.
+        $cell_ids_by_rs = [];
+        $expression_cell_ids_by_rs = [];
+        $reactivity_cell_ids_by_rs = [];
+
+        // Get the initial set of cell ids from the cell filters.
+        $cell_ids_by_rs = RestService::object_list('cell', $service_repertoire_list, $cell_filters, 'cell_id');
+        //var_dump('cell <br/>');
+        //var_dump($cell_ids_by_rs);
+
+        // If we have expression filters apply them, get the list of cells, and
+        // intersect them with the current list.
+        if (count($expression_filters) > 0) {
+            $expression_cell_ids_by_rs = RestService::object_list('expression', $service_repertoire_list,
+                $expression_filters, 'cell_id');
+            // We need to loop over each service and merge cell_ids per service
+            foreach ($expression_cell_ids_by_rs as $rs => $cell_array) {
+                if (array_key_exists($rs, $cell_ids_by_rs)) {
+                    $cell_ids_by_rs[$rs] = array_intersect($cell_ids_by_rs[$rs],
+                        $expression_cell_ids_by_rs[$rs]);
+                }
+            }
+        }
+
+        // If we have reactivity filters apply them, get the list of cells, and
+        // intersect them with the current list.
+        if (count($reactivity_filters) > 0) {
+            $reactivity_cell_ids_by_rs = RestService::object_list('reactivity', $service_repertoire_list,
+                $reactivity_filters, 'cell_id');
+            // We need to loop over each service and merge cell_ids per service
+            foreach ($reactivity_cell_ids_by_rs as $rs => $cell_array) {
+                if (array_key_exists($rs, $cell_ids_by_rs)) {
+                    $cell_ids_by_rs[$rs] = array_intersect($cell_ids_by_rs[$rs],
+                        $reactivity_cell_ids_by_rs[$rs]);
+                }
+            }
+        }
+
+        $all_cell_ids = [];
+        foreach ($cell_ids_by_rs as $rs => $rs_cell_id_array) {
+            $all_cell_ids = array_merge($all_cell_ids, $rs_cell_id_array);
+        }
+        return $all_cell_ids;
+    }
+
     public static function expectedCellsByRestSevice($filters, $username)
     {
         $response_list = RestService::data_summary($filters, $username, false, 'cell');
@@ -213,6 +219,8 @@ class Cell
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
         // do extra cell summary request
+        Log::debug('Cell::cellsTSVFolder');
+        Log::debug(print_r($filters, true));
         $response_list = RestService::data_summary($filters, $username, false, 'cell');
 
         // do extra cell summary request to get expected number of cells
