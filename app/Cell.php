@@ -25,42 +25,54 @@ class Cell
     // total_filtered_objects - total number of filtered objects
     // filtered_repositories - array of filtered repositories in which data was found
     // items - array of filtered objects that were found
-    public static function summary($service_repertoire_list, $filters, $cell_filters,
-                                   $expression_filters, $reactivity_filters, $username)
+    //public static function summary($service_repertoire_list, $filters, $cell_filters,
+    //                               $expression_filters, $reactivity_filters, $username)
+    public static function summary($filters, $username)
     {
-        //var_dump('<br/>Cell::summary() - filters');
-        //var_dump(print_r($filters, true));
-        //var_dump('<br/>cell filters<br/>');
-        //var_dump($cell_filters);
-        //var_dump('<br/>expression filters<br/>');
-        //var_dump($expression_filters);
-        //var_dump('<br/>reactivity filters<br/>');
-        //var_dump($reactivity_filters);
-        //
+        // Convert the service repertoire lists from the UI filters into an associative
+        // array with key the ID and the contents an array of repertoire_ids.
+        $service_repertoire_list = Cell::getServiceRepertoires($filters);
+
+        // Get the object specific (cell, expression, reactivity) filters from
+        // the generic filter list from the UI.
+        $object_filters = Cell::getCellObjectFilters($filters);
+
         // Get the list of Cell IDs from all of the services/repertoirs 
         // that meet the cell, expression, and reactivity filters. Because
         // cell IDs are globally unique, they can be searched for across repositories
         // without conflict.
-        $all_cell_ids = Cell::getCellIDs($service_repertoire_list, $cell_filters,
-            $expression_filters, $reactivity_filters);
+        $cell_ids_by_rs = Cell::getCellIDByRS($service_repertoire_list,
+            $object_filters['cell'],
+            $object_filters['expression'],
+            $object_filters['reactivity']);
+
+        // Because cell IDs are globally unique, they can be searched for across
+        // repositories without conflict.
+        $all_cell_ids = [];
+        foreach ($cell_ids_by_rs as $rs => $rs_cell_id_array) {
+            $all_cell_ids = array_merge($all_cell_ids, $rs_cell_id_array);
+        }
+
+        // Remove the cell specific filter fields from the UI.
+        //$new_filters = $filters;
+        unset($filters['cell_id_cell']);
+        unset($filters['expression_study_method_cell']);
+        unset($filters['virtual_pairing_cell']);
+        unset($filters['property_expression']);
+        unset($filters['value_expression']);
+        unset($filters['antigen_reactivity']);
+        unset($filters['antigen_source_species_reactivity']);
+        unset($filters['peptide_sequence_aa_reactivity']);
+        // Replace them with the computed cell_id filters.
+        $filters['cell_id_cell'] = $all_cell_ids;
 
         // get repertoire summary for the cells that meet the criteria.
-        $filters['cell_id_cell'] = $all_cell_ids;
-        //var_dump('<br/>Cell::summary() - filters');
-        //var_dump(print_r($filters, true));
-
         $response_list_cells_summary = RestService::data_summary($filters, $username, true, 'cell');
-        //var_dump($response_list_cells_summary);
 
         // generate repertoire stats for the graphs
         $data = self::process_response($response_list_cells_summary);
-        //var_dump('process_response array keys<br/>');
-        //var_dump(array_keys($data));
-        //var_dump('process_response<br/>');
-        //var_dump($data);
 
         // get a few cells from each service
-        // TODO: Need to get this to work for combined queries.
         $response_list = RestService::data_subset($filters, $response_list_cells_summary, 10, 'cell');
 
         // merge responses
@@ -92,7 +104,6 @@ class Cell
 
             // We don't need to convert array properties to strings
             // as we handle arrays of objects in the code.
-            //$rs_cell_list = array_map('convert_arrays_to_strings', $rs_cell_list);
 
             // convert fields
             $rs_cell_list = FieldName::convertObjectList($rs_cell_list, 'ir_adc_api_response', 'ir_id', 'Cell', $rs->api_version);
@@ -131,19 +142,22 @@ class Cell
             if (strrpos($key, 'ir_project_sample_id_list') !== false) {
                 // Use everything after the last "_" as the ID
                 $id_str = substr($key, strrpos($key, '_') + 1);
+                // Add the list of repertoires to the array with the id as the key
                 $service_repertoire_list[$id_str] = $value;
             }
         }
         return $service_repertoire_list;
     }
 
+    // Given a set of filters from the Gateway, extract the filters that are
+    // applicable to a given type of object/endpoint (cell, expression, reactivity)
+    // and return the filters in an array keyed by the service endpoint they apply to.
     public static function getCellObjectFilters($filters)
     {
         // Extract the cell, expression, and reactivity specific filters.
         $cell_filters = [];
         $expression_filters = [];
         $reactivity_filters = [];
-        //var_dump($basic_filters);
         foreach ($filters as $key => $value) {
             // Each key has the filter type encoded in the name after the last "_", as in
             // virtual_pairing_cell is a virtual_pairing filter of type cell
@@ -160,6 +174,7 @@ class Cell
                 }
             }
         }
+        // Create an associative array for each type of filter.
         $object_filters = [];
         $object_filters['reactivity'] = $reactivity_filters;
         $object_filters['expression'] = $expression_filters;
@@ -167,7 +182,7 @@ class Cell
         return $object_filters;
     }
 
-    public static function getCellIDs($service_repertoire_list, $cell_filters,
+    public static function getCellIDByRS($service_repertoire_list, $cell_filters,
         $expression_filters, $reactivity_filters)
     {
         // Create arrays of cell ids (keyed by service id) that are retrieved from
@@ -178,8 +193,6 @@ class Cell
 
         // Get the initial set of cell ids from the cell filters.
         $cell_ids_by_rs = RestService::object_list('cell', $service_repertoire_list, $cell_filters, 'cell_id');
-        //var_dump('cell <br/>');
-        //var_dump($cell_ids_by_rs);
 
         // If we have expression filters apply them, get the list of cells, and
         // intersect them with the current list.
@@ -208,17 +221,17 @@ class Cell
                 }
             }
         }
-
-        $all_cell_ids = [];
-        foreach ($cell_ids_by_rs as $rs => $rs_cell_id_array) {
-            $all_cell_ids = array_merge($all_cell_ids, $rs_cell_id_array);
+        // We want a non associative array, the merge above maintains
+        // the associative keys from the original arrays.
+        foreach($cell_ids_by_rs as $rs_id => $cell_ids_for_rs) {
+            $cell_ids_by_rs[$rs_id] = array_values($cell_ids_for_rs);
         }
-        return $all_cell_ids;
+        // Return the array keyed by service id.
+        return $cell_ids_by_rs;
     }
 
-    public static function expectedCellsByRestSevice($filters, $username)
+    public static function expectedCellsByRestSevice($response_list)
     {
-        $response_list = RestService::data_summary($filters, $username, false, 'cell');
         $expected_nb_cells_by_rs = [];
         foreach ($response_list as $response) {
             $rest_service_id = $response['rs']->id;
@@ -267,23 +280,47 @@ class Cell
         // allow more time than usual for this request
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
-        // Get the list of Cell IDs from all of the services/repertoirs 
-        // that meet the cell, expression, and reactivity filters. Because
-        // cell IDs are globally unique, they can be searched for across repositories
-        // without conflict.
-        $all_cell_ids = Cell::getCellIDs($service_repertoire_list, $cell_filters,
-            $expression_filters, $reactivity_filters);
+        // Convert the service repertoire lists from the UI filters into an associative
+        // array with key the ID and the contents an array of repertoire_ids.
+        $service_repertoire_list = Cell::getServiceRepertoires($filters);
+
+        // Get the object specific (cell, expression, reactivity) filters from
+        // the generic filter list from the UI.
+        $object_filters = Cell::getCellObjectFilters($filters);
+
+        // Get the list of Cell IDs from all of the services
+        // that meet the cell, expression, and reactivity filters.
+        $cell_ids_by_rs = Cell::getCellIDByRS($service_repertoire_list,
+            $object_filters['cell'],
+            $object_filters['expression'],
+            $object_filters['reactivity']);
+
+        // Because cell IDs are globally unique, they can be searched for across
+        // repositories without conflict.
+        $all_cell_ids = [];
+        foreach ($cell_ids_by_rs as $rs => $rs_cell_id_array) {
+            $all_cell_ids = array_merge($all_cell_ids, $rs_cell_id_array);
+        }
+
+        // Remove the cell specific filter fields from the UI.
+        $orig_filters = $filters;
+        unset($filters['cell_id_cell']);
+        unset($filters['expression_study_method_cell']);
+        unset($filters['virtual_pairing_cell']);
+        unset($filters['property_expression']);
+        unset($filters['value_expression']);
+        unset($filters['antigen_reactivity']);
+        unset($filters['antigen_source_species_reactivity']);
+        unset($filters['peptide_sequence_aa_reactivity']);
+        // Replace them with the computed cell_id filters.
+        $filters['cell_id_cell'] = $all_cell_ids;
 
         // get repertoire summary for the cells that meet the criteria.
-        $filters['cell_id_cell'] = $all_cell_ids;
-        // do extra cell summary request
-        Log::debug('Cell::cellsTSVFolder');
-        Log::debug(print_r($filters, true));
         $response_list = RestService::data_summary($filters, $username, false, 'cell');
 
         // do extra cell summary request to get expected number of cells
         // for sanity check after download
-        $expected_nb_cells_by_rs = self::expectedCellsByRestSevice($filters, $username);
+        $expected_nb_cells_by_rs = self::expectedCellsByRestSevice($response_list);
 
         // get filtered list of repertoires ids
         $filtered_samples_by_rs = self::filteredSamplesByRestService($response_list);
@@ -314,12 +351,8 @@ class Cell
         $folder_path = $storage_folder . $base_name;
         File::makeDirectory($folder_path, 0777, true, true);
 
-        // TODO: Handle reactivity queries here.
-        $query_type = 'cell';
-        if (isset($filters['property_expression'])) {
-            $query_type = 'expression';
-        }
 
+        // Get a list of responses for the metadata.
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
 
         $cell_response_list = [];
@@ -328,32 +361,20 @@ class Cell
         $sequence_response_list = [];
 
         if ($download_data) {
-            if ($query_type == 'cell') {
-                $cell_id_list_by_rs = RestService::cell_id_list($filters, $username, $expected_nb_cells_by_rs);
+            Log::debug('Cell::cellsTSVFolder cell_ids_by_rs');
+            Log::debug(print_r($cell_ids_by_rs, true));
 
-                // cell data
-                $cell_response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs);
+            // cell data
+            $cell_response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs);
 
-                // expression data
-                $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list);
+            // expression data
+            $expression_response_list = RestService::expression_data_from_cell_ids($cell_ids_by_rs, $folder_path, $username, $response_list);
 
-                // expression data
-                $reactivity_response_list = RestService::reactivity_data($filters, $folder_path, $username, $response_list);
-            } else {
-                $cell_id_list_by_rs = RestService::cell_id_list_from_expression_query($filters, $username, $expected_nb_cells_by_rs);
-
-                // cell data (filtered by expression)
-                $cell_response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_rs);
-
-                // expression data (filtered by filtered cell data)
-                $expression_response_list = RestService::expression_data($filters, $folder_path, $username, $response_list, $cell_id_list_by_rs);
-
-                // rectivity data (filtered by filtered cell data)
-                $reactivity_response_list = RestService::reactivity_data($filters, $folder_path, $username, $response_list, $cell_id_list_by_rs);
-            }
+            // reactivity data
+            $reactivity_response_list = RestService::reactivity_data_from_cell_ids($cell_ids_by_rs, $folder_path, $username, $response_list);
 
             // sequence data
-            $sequence_response_list = RestService::sequences_data_from_cell_ids($filters, $folder_path, $username, $expected_nb_cells_by_rs, $cell_id_list_by_rs);
+            $sequence_response_list = RestService::sequences_data_from_cell_ids($cell_ids_by_rs, $folder_path, $username, $expected_nb_cells_by_rs);
         } else {
             Log::debug('Cell::cellTSVFolder - SKIPPING DOWNLOAD');
         }
@@ -486,7 +507,7 @@ class Cell
         }
 
         // generate info file
-        $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
+        $info_file_path = self::generate_info_file($folder_path, $url, $sample_filters, $orig_filters, $file_stats, $username, $now, $failed_rs);
 
         // generate manifest.json
         $manifest_file_path = Sequence::generate_manifest_file($folder_path, $url, $sample_filters, $filters, $file_stats, $username, $now, $failed_rs);
