@@ -67,32 +67,8 @@ class CellController extends Controller
         //   value the filter value.
         //
 
-        // Convert the service repertoire lists into an associative array with key
-        // the ID and the contents an array of repertoire_ids.
-        $service_repertoire_list = Cell::getServiceRepertoires($filters);
-        //var_dump($service_repertoire_list);
-
-        $object_filters = Cell::getCellObjectFilters($filters);
-        //var_dump($object_filters);
-        $new_filters = $filters;
-        unset($new_filters['cell_id_cell']);
-        unset($new_filters['expression_study_method_cell']);
-        unset($new_filters['virtual_pairing_cell']);
-        unset($new_filters['property_expression']);
-        unset($new_filters['value_expression']);
-        unset($new_filters['antigen_reactivity']);
-        unset($new_filters['antigen_source_species_reactivity']);
-        unset($new_filters['peptide_sequence_aa_reactivity']);
         // Retrieve cell data given the filters.
-        //$cell_data = Cell::summary($service_repertoire_list, $new_filters,
-        //    $cell_filters, $expression_filters,
-        //    $reactivity_filters, $username);
-        $cell_data = Cell::summary($service_repertoire_list, $new_filters,
-            $object_filters['cell'], $object_filters['expression'],
-            $object_filters['reactivity'], $username);
-        //var_dump($cell_data['items']);
-        //Log::debug($cell_data);
-        //blah;
+        $cell_data = Cell::summary($filters, $username);
 
         // store data size in user query log
         $query_log_id = $request->get('query_log_id');
