@@ -2885,16 +2885,15 @@ class RestService extends Model
         // prepare request parameters for each service
         $request_params = [];
 
-        foreach ($cell_ids_by_rs as $rs_id=>$rs_cell_id_array) {
+        foreach ($cell_ids_by_rs as $rs_id => $rs_cell_id_array) {
             $rs_filters = [];
 
-            if (array_key_exists($rs_id,$rs_list)) {
+            if (array_key_exists($rs_id, $rs_list)) {
                 $rs_data = $rs_list[$rs_id];
             } else {
                 Log::error('RestService::expression_data - Unexpected rest service id ' . $rs_id);
                 throw new \Exception('Unexpected rest service_id ' . $rs_id);
             }
-
 
             $rs_filters_json = self::generate_json_query(['cell_id' => $rs_cell_id_array], [], $rs_data->api_version);
 
@@ -2930,9 +2929,9 @@ class RestService extends Model
         $request_params = [];
 
         // Loop over the services and do a search for those specific cell ids
-        foreach ($cell_ids_by_rs as $rs_id=>$rs_cell_id_array) {
+        foreach ($cell_ids_by_rs as $rs_id => $rs_cell_id_array) {
             // Get the info about the rest service based on the ID.
-            if (array_key_exists($rs_id,$rs_list)) {
+            if (array_key_exists($rs_id, $rs_list)) {
                 $rs_data = $rs_list[$rs_id];
             } else {
                 Log::error('RestService::reactivity_data - Unexpected rest service id ' . $rs_id);

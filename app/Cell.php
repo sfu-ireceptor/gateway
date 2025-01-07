@@ -36,7 +36,7 @@ class Cell
         // the generic filter list from the UI.
         $object_filters = Cell::getCellObjectFilters($filters);
 
-        // Get the list of Cell IDs from all of the services/repertoirs 
+        // Get the list of Cell IDs from all of the services/repertoirs
         // that meet the cell, expression, and reactivity filters. Because
         // cell IDs are globally unique, they can be searched for across repositories
         // without conflict.
@@ -134,7 +134,7 @@ class Cell
     {
         // Convert the service repertoire lists into an associative array with key
         // the service ID and the contents an array of repertoire_ids. The filter contains
-        // arrays with a key ir_project_sample_id_list_NN where NN is the numeric 
+        // arrays with a key ir_project_sample_id_list_NN where NN is the numeric
         // identifier for the service.
         $service_repertoire_list = [];
         foreach ($filters as $key => $value) {
@@ -145,6 +145,7 @@ class Cell
                 $service_repertoire_list[$id_str] = $value;
             }
         }
+
         return $service_repertoire_list;
     }
 
@@ -178,6 +179,7 @@ class Cell
         $object_filters['reactivity'] = $reactivity_filters;
         $object_filters['expression'] = $expression_filters;
         $object_filters['cell'] = $cell_filters;
+
         return $object_filters;
     }
 
@@ -222,9 +224,10 @@ class Cell
         }
         // We want a non associative array, the merge above maintains
         // the associative keys from the original arrays.
-        foreach($cell_ids_by_rs as $rs_id => $cell_ids_for_rs) {
+        foreach ($cell_ids_by_rs as $rs_id => $cell_ids_for_rs) {
             $cell_ids_by_rs[$rs_id] = array_values($cell_ids_for_rs);
         }
+
         // Return the array keyed by service id.
         return $cell_ids_by_rs;
     }
@@ -349,7 +352,6 @@ class Cell
         $base_name = 'ir_' . $time_str . '_' . uniqid();
         $folder_path = $storage_folder . $base_name;
         File::makeDirectory($folder_path, 0777, true, true);
-
 
         // Get a list of responses for the metadata.
         $metadata_response_list = RestService::sample_list_repertoire_data($filtered_samples_by_rs, $folder_path, $username);
