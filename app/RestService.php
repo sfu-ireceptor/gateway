@@ -1334,37 +1334,15 @@ class RestService extends Model
 
             $sample_id_list_by_rs[$response['rs']->id] = $sample_id_list_requested;
         }
-        //var_dump('<br/>');
-        //var_dump($sample_id_list_by_rs);
-        //var_dump('<br/>');
-        //var_dump($data_filters);
-        //var_dump('<br/>');
+        Log::debug('RestService data_filters = ' . print_r($data_filters, true));
 
         // count objects for each requested sample
         if ($type == 'sequence' || $type == 'clone' || $type == 'cell') {
             $counts_by_rs = self::object_count($type, $sample_id_list_by_rs, $data_filters);
-        //$stuff = self::object_list($type, $sample_id_list_by_rs, $data_filters, 'cell_id');
-        //var_dump($stuff);
         } else {
             Log::error('Unexpected query type ' . $type);
             throw new \Exception('Unexpected query type ' . $type);
         }
-        //var_dump($counts_by_rs);
-        /*
-        if ($type == 'sequence') {
-            $counts_by_rs = self::sequence_count($sample_id_list_by_rs, $data_filters);
-        } elseif ($type == 'clone') {
-            $counts_by_rs = self::clone_count($sample_id_list_by_rs, $data_filters);
-        } elseif ($type == 'cell') {
-            $counts_by_rs = self::cell_count($sample_id_list_by_rs, $data_filters);
-        } else {
-            Log::error('Unexpected query type ' . $type);
-            throw new \Exception('Unexpected query type ' . $type);
-        }
-         */
-
-        //var_dump($counts_by_rs);
-        //blah;
 
         // add object counts to samples
         $response_list_filtered = [];
@@ -2740,7 +2718,7 @@ class RestService extends Model
         return $final_response_list;
     }
 
-    public static function sequences_data_from_cell_ids($filters, $folder_path, $username = '', $expected_nb_cells_by_rs, $cell_id_list_by_rs)
+    public static function sequences_data_from_cell_ids($cell_ids_by_rs, $folder_path, $username = '', $expected_nb_cells_by_rs)
     {
         $now = time();
 
@@ -2748,13 +2726,13 @@ class RestService extends Model
         $rs_list = [];
         foreach (self::findEnabled() as $rs) {
             if (isset($expected_nb_cells_by_rs[$rs->id]) && ($expected_nb_cells_by_rs[$rs->id] > 0)) {
-                $rs_list[] = $rs;
+                $rs_list[$rs->id] = $rs;
             }
         }
 
         // count services in each service group
         $group_list = [];
-        foreach ($rs_list as $rs) {
+        foreach ($rs_list as $rs_id => $rs) {
             $group = $rs->rest_service_group_code;
             if ($group) {
                 if (! isset($group_list[$group])) {
@@ -2770,20 +2748,17 @@ class RestService extends Model
         $query_parameters = [];
         $query_parameters['format'] = 'tsv';
 
-        $group_list_count = [];
-        foreach ($rs_list as $rs) {
+        foreach ($cell_ids_by_rs as $rs_id => $rs_cell_id_array) {
             $rs_filters = [];
 
-            foreach ($cell_id_list_by_rs as $response) {
-                if ($response['rs']->id != $rs->id) {
-                    continue;
-                }
-
-                $cell_id_list = $response['cell_id_list'];
-                $rs_filters_json = self::generate_json_query(['cell_id' => $cell_id_list], $query_parameters);
-                break;
+            if (array_key_exists($rs_id, $rs_list)) {
+                $rs_data = $rs_list[$rs_id];
+            } else {
+                Log::error('RestService::sequence_data - Unexpected rest service id ' . $rs_id);
+                throw new \Exception('Unexpected rest service_id ' . $rs_id);
             }
 
+            $rs_filters_json = self::generate_json_query(['cell_id' => $rs_cell_id_array], $query_parameters, $rs_data->api_version);
             $t = [];
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'rearrangement';
@@ -2899,50 +2874,37 @@ class RestService extends Model
         return $final_response_list;
     }
 
-    public static function expression_data($filters, $folder_path, $username = '', $cell_response_list, $cell_id_list_by_rs = [])
+    public static function expression_data_from_cell_ids($cell_ids_by_rs, $folder_path, $username = '', $cell_response_list)
     {
         // build list of services to query
         $rs_list = [];
         foreach ($cell_response_list as $response) {
-            $rs_list[] = $response['rs'];
+            $rs_list[$response['rs']->id] = $response['rs'];
         }
 
         // prepare request parameters for each service
         $request_params = [];
 
-        foreach ($rs_list as $rs) {
+        foreach ($cell_ids_by_rs as $rs_id=>$rs_cell_id_array) {
             $rs_filters = [];
 
-            // if we retrieve cells by cell_id
-            if (count($cell_id_list_by_rs) > 0) {
-                $query_parameters = [];
-                foreach ($cell_id_list_by_rs as $response) {
-                    if ($response['rs']->id == $rs->id) {
-                        $cell_id_list = $response['cell_id_list'];
-                        $rs_filters_json = self::generate_json_query(['cell_id' => $cell_id_list], $query_parameters);
-                        break;
-                    }
-                }
+            if (array_key_exists($rs_id,$rs_list)) {
+                $rs_data = $rs_list[$rs_id];
             } else {
-                $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-
-                // rename sample id filter for this service:
-                // ir_project_sample_id_list_2 -> repertoire_id
-                $rs_filters['repertoire_id'] = $filters[$sample_id_list_key];
-
-                $query_parameters = [];
-
-                // generate JSON query
-                $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters, $rs->api_version);
+                Log::error('RestService::expression_data - Unexpected rest service id ' . $rs_id);
+                throw new \Exception('Unexpected rest service_id ' . $rs_id);
             }
 
+
+            $rs_filters_json = self::generate_json_query(['cell_id' => $rs_cell_id_array], [], $rs_data->api_version);
+
             $t = [];
-            $t['rs'] = $rs;
-            $t['url'] = $rs->url . 'expression';
+            $t['rs'] = $rs_data;
+            $t['url'] = $rs_data->url . 'expression';
             $t['params'] = $rs_filters_json;
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
-            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . '-gex.json';
+            $t['file_path'] = $folder_path . '/' . str_slug($rs_data->display_name) . '-gex.json';
             $request_params[] = $t;
         }
 
@@ -2956,55 +2918,42 @@ class RestService extends Model
         return $final_response_list;
     }
 
-    public static function reactivity_data($filters, $folder_path, $username = '', $cell_response_list, $cell_id_list_by_rs = [])
+    public static function reactivity_data_from_cell_ids($cell_ids_by_rs, $folder_path, $username = '', $cell_response_list)
     {
-        // build list of services to query
+        // Build list of services to query from the original response
         $rs_list = [];
         foreach ($cell_response_list as $response) {
-            $rs_list[] = $response['rs'];
+            $rs_list[$response['rs']->id] = $response['rs'];
         }
 
-        // prepare request parameters for each service
+        // Initialize request parameters for each service
         $request_params = [];
 
-        foreach ($rs_list as $rs) {
-            $rs_filters = [];
-
-            // if we retrieve cells by cell_id
-            if (count($cell_id_list_by_rs) > 0) {
-                $query_parameters = [];
-                foreach ($cell_id_list_by_rs as $response) {
-                    if ($response['rs']->id == $rs->id) {
-                        $cell_id_list = $response['cell_id_list'];
-                        $rs_filters_json = self::generate_json_query(['cell_id' => $cell_id_list], $query_parameters);
-                        break;
-                    }
-                }
+        // Loop over the services and do a search for those specific cell ids
+        foreach ($cell_ids_by_rs as $rs_id=>$rs_cell_id_array) {
+            // Get the info about the rest service based on the ID.
+            if (array_key_exists($rs_id,$rs_list)) {
+                $rs_data = $rs_list[$rs_id];
             } else {
-                $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
-
-                // rename sample id filter for this service:
-                // ir_project_sample_id_list_2 -> repertoire_id
-                $rs_filters['repertoire_id'] = $filters[$sample_id_list_key];
-
-                $query_parameters = [];
-
-                // generate JSON query
-                $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters, $rs->api_version);
+                Log::error('RestService::reactivity_data - Unexpected rest service id ' . $rs_id);
+                throw new \Exception('Unexpected rest service_id ' . $rs_id);
             }
 
+            // Generate the JSON query.
+            $rs_filters_json = self::generate_json_query(['cell_id' => $rs_cell_id_array], [], $rs_data->api_version);
+
+            // Set up the query for this service
             $t = [];
-            $t['rs'] = $rs;
-            $t['url'] = $rs->url . 'reactivity';
+            $t['rs'] = $rs_data;
+            $t['url'] = $rs_data->url . 'reactivity';
             $t['params'] = $rs_filters_json;
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
-
-            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . '-reactivity.json';
+            $t['file_path'] = $folder_path . '/' . str_slug($rs_data->display_name) . '-reactivity.json';
             $request_params[] = $t;
         }
 
+        // Do requests, write data to files
         $final_response_list = [];
-        // do requests, write data to files
         if (count($request_params) > 0) {
             Log::info('Do download requests...');
             $final_response_list = self::doRequests($request_params);
