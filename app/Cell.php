@@ -11,7 +11,6 @@ use ZipArchive;
 
 class Cell
 {
-
     // Returns a complex object of the form:
     // rs_list - array of repositories and related info that were queried
     // rs_list_no_response - array of repositories that didn't respond
