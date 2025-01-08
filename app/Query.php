@@ -107,13 +107,19 @@ class Query extends Model
         unset($params['sample_query_id']);
         unset($params['cols']);
         unset($params['open_filter_panel_list']);
+        Log::debug('sequenceParamsSummary: params = ' . json_encode($params));
 
         // If there are parameters, then process them
         $s = '';
         $parameter_count = 0;
+        $repertoire_count = 0;
         foreach ($params as $k => $v) {
             // If the key indcates a repertoire field, then skip.
             if (strpos($k, 'ir_project_sample_id_list_') !== false) {
+                if (is_array($v) && count($v) == 1) {
+                    $repertoire_count = $repertoire_count + 1;
+                    $repertoire_id = $v[0];
+                }
                 continue;
             }
             // If the value is null, it isn't a filter.
@@ -128,6 +134,12 @@ class Query extends Model
             $s .= __('short.' . $k) . ': ' . $v . "\n";
             $parameter_count++;
         }
+        if ($repertoire_count == 1) {
+
+            $s .= __('short.' . 'repertoire_id') . ': ' . $repertoire_id . "\n";
+            $parameter_count++;
+        }
+
         // If nothing left, then say None
         if ($parameter_count == 0) {
             $s .= 'None' . "\n";
