@@ -2882,6 +2882,18 @@ class RestService extends Model
             $rs_list[$response['rs']->id] = $response['rs'];
         }
 
+        // count services in each service group
+        $group_list = [];
+        foreach ($rs_list as $rs_id => $rs) {
+            $group = $rs->rest_service_group_code;
+            if ($group) {
+                if (! isset($group_list[$group])) {
+                    $group_list[$group] = 0;
+                }
+                $group_list[$group] += 1;
+            }
+        }
+
         // prepare request parameters for each service
         $request_params = [];
 
@@ -2903,7 +2915,18 @@ class RestService extends Model
             $t['params'] = $rs_filters_json;
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
-            $t['file_path'] = $folder_path . '/' . str_slug($rs_data->display_name) . '-gex.json';
+            // add number suffix for rest services belonging to a group
+            $file_suffix = '';
+            $group = $rs_data->rest_service_group_code;
+            if ($group && $group_list[$group] > 1) {
+                if (! isset($group_list_count[$group])) {
+                    $group_list_count[$group] = 0;
+                }
+                $group_list_count[$group] += 1;
+                $file_suffix = '_part' . $group_list_count[$group];
+            }
+
+            $t['file_path'] = $folder_path . '/' . str_slug($rs_data->display_name) . $file_suffix . '-gex.json';
             $request_params[] = $t;
         }
 
@@ -2923,6 +2946,18 @@ class RestService extends Model
         $rs_list = [];
         foreach ($cell_response_list as $response) {
             $rs_list[$response['rs']->id] = $response['rs'];
+        }
+
+        // count services in each service group
+        $group_list = [];
+        foreach ($rs_list as $rs_id => $rs) {
+            $group = $rs->rest_service_group_code;
+            if ($group) {
+                if (! isset($group_list[$group])) {
+                    $group_list[$group] = 0;
+                }
+                $group_list[$group] += 1;
+            }
         }
 
         // Initialize request parameters for each service
@@ -2947,7 +2982,19 @@ class RestService extends Model
             $t['url'] = $rs_data->url . 'reactivity';
             $t['params'] = $rs_filters_json;
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
-            $t['file_path'] = $folder_path . '/' . str_slug($rs_data->display_name) . '-reactivity.json';
+
+            // add number suffix for rest services belonging to a group
+            $file_suffix = '';
+            $group = $rs_data->rest_service_group_code;
+            if ($group && $group_list[$group] > 1) {
+                if (! isset($group_list_count[$group])) {
+                    $group_list_count[$group] = 0;
+                }
+                $group_list_count[$group] += 1;
+                $file_suffix = '_part' . $group_list_count[$group];
+            }
+            $t['file_path'] = $folder_path . '/' . str_slug($rs_data->display_name) . $file_suffix . '-reactivity.json';
+
             $request_params[] = $t;
         }
 
