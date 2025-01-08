@@ -135,7 +135,6 @@ class Query extends Model
             $parameter_count++;
         }
         if ($repertoire_count == 1) {
-
             $s .= __('short.' . 'repertoire_id') . ': ' . $repertoire_id . "\n";
             $parameter_count++;
         }
