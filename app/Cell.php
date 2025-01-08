@@ -362,9 +362,6 @@ class Cell
         $sequence_response_list = [];
 
         if ($download_data) {
-            Log::debug('Cell::cellsTSVFolder cell_ids_by_rs');
-            Log::debug(print_r($cell_ids_by_rs, true));
-
             // cell data
             $cell_response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs);
 
