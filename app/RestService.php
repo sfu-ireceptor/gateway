@@ -1334,7 +1334,6 @@ class RestService extends Model
 
             $sample_id_list_by_rs[$response['rs']->id] = $sample_id_list_requested;
         }
-        Log::debug('RestService data_filters = ' . print_r($data_filters, true));
 
         // count objects for each requested sample
         if ($type == 'sequence' || $type == 'clone' || $type == 'cell') {
