@@ -353,7 +353,7 @@ class CellController extends Controller
                         $got_error = false;
                         if (property_exists($sample, $field)) {
                             // If the property exists and is a mismatch, disable app
-                            Log::debug('   found field ' . $field . ' = ' . $sample->$field);
+                            Log::debug('   found field ' . $field . ' = ' . json_encode($sample->$field));
                             if (! in_array($sample->$field, $value)) {
                                 Log::debug('   Requirement field is not in sample.');
                                 $got_error = true;
