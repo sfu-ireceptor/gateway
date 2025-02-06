@@ -49,13 +49,13 @@ class Sequence
     public static function summary($filters, $username)
     {
         // get sequences summary
-        $response_list_sequences_summary = RestService::sequences_summary($filters, $username, 'sequence');
+        $response_list_sequences_summary = RestService::data_summary($filters, $username, 'sequence');
 
         // generate stats
         $data = self::process_response($response_list_sequences_summary);
 
         // get a few sequences from each service
-        $response_list = RestService::sequence_list($filters, $response_list_sequences_summary, 10, 'sequence');
+        $response_list = RestService::data_subset($filters, $response_list_sequences_summary, 10, 'sequence');
 
         // merge responses
         $sequence_list = [];
@@ -164,7 +164,7 @@ class Sequence
         Log::debug('Sequence::sequencesTSVFolder: sample filters = ' . json_encode($sample_filters));
 
         // do extra sequence summary request
-        $response_list = RestService::sequences_summary($filters, $username, false, 'sequence');
+        $response_list = RestService::data_summary($filters, $username, false, 'sequence');
 
         // get expected number of sequences for sanity check after download
         $expected_nb_sequences_by_rs = self::expectedSequencesByRestSevice($response_list);
@@ -731,6 +731,9 @@ class Sequence
             }
             if (isset($t['expression_file_name'])) {
                 $dataset->expression_file = $t['expression_file_name'];
+            }
+            if (isset($t['reactivity_file_name'])) {
+                $dataset->reactivity_file = $t['reactivity_file_name'];
             }
 
             $manifest->DataSets[] = $dataset;

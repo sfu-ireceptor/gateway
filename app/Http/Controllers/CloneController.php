@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Bookmark;
+use App\Clones;
 use App\Download;
 use App\FieldName;
 use App\QueryLog;
 use App\Sample;
-use App\SequenceClone;
 use App\System;
 use App\Tapis;
 use Facades\App\Query;
@@ -38,7 +38,7 @@ class CloneController extends Controller
 
         // if request without query id, generate query id and redirect
         if (! $request->has('query_id')) {
-            $query_id = Query::saveParams($request->except(['_token']), 'sequences');
+            $query_id = Query::saveParams($request->except(['_token']), 'clones');
 
             return redirect('clones?query_id=' . $query_id)->withInput();
         }
@@ -49,7 +49,7 @@ class CloneController extends Controller
         }
 
         /*************************************************
-        * Get sequence data */
+        * Get clone data */
 
         // parameters
         $query_id = $request->input('query_id');
@@ -57,7 +57,7 @@ class CloneController extends Controller
         $username = auth()->user()->username;
 
         // retrieve data
-        $clone_data = SequenceClone::summary($filters, $username);
+        $clone_data = Clones::summary($filters, $username);
         // dd($clone_data);
 
         // store data size in user query log
@@ -71,7 +71,7 @@ class CloneController extends Controller
         /*************************************************
         * Prepare view data */
 
-        // sequence data
+        // clone data
         $data = [];
 
         $data['clone_list'] = $clone_data['items'];
@@ -388,15 +388,15 @@ class CloneController extends Controller
         return view('clone', $data);
     }
 
-    public function timeEstimate($nb_sequences)
+    public function timeEstimate($nb_clones)
     {
         $time_estimate_max = '24 hours';
 
-        if ($nb_sequences < 500000) {
+        if ($nb_clones < 500000) {
             $time_estimate_max = '20 min';
         }
 
-        if ($nb_sequences < 100000) {
+        if ($nb_clones < 100000) {
             $time_estimate_max = '';
         }
 
@@ -437,7 +437,7 @@ class CloneController extends Controller
             $new_filters = $filters;
         }
 
-        $new_query_id = Query::saveParams($new_filters, 'sequences');
+        $new_query_id = Query::saveParams($new_filters, 'clones');
 
         $uri = $request->route()->uri;
 

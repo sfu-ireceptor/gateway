@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Bookmark;
+use App\Cell;
 use App\Download;
 use App\FieldName;
 use App\QueryLog;
 use App\Sample;
-use App\SequenceCell;
 use App\System;
 use App\Tapis;
 use Facades\App\Query;
@@ -38,7 +38,7 @@ class CellController extends Controller
 
         // if request without query id, generate query id and redirect
         if (! $request->has('query_id')) {
-            $query_id = Query::saveParams($request->except(['_token']), 'sequences');
+            $query_id = Query::saveParams($request->except(['_token']), 'cells');
 
             return redirect('cells?query_id=' . $query_id)->withInput();
         }
@@ -56,20 +56,19 @@ class CellController extends Controller
         $filters = Query::getParams($query_id);
         $username = auth()->user()->username;
 
-        // allow only Cell filters, or only GEX filters, based on currently opened panel
-        if (isset($filters['open_filter_panel_list'])) {
-            $open_filter_panel_list = $filters['open_filter_panel_list'];
-            if ($open_filter_panel_list[0] == 0) {
-                unset($filters['property_expression']);
-                unset($filters['value_expression']);
-            } else {
-                unset($filters['expression_study_method_cell']);
-                unset($filters['virtual_pairing_cell']);
-            }
-        }
+        // Basic filters are of the form:
+        // - a set of service arrays, with keys of the form "ir_project_sample_id_list_N"
+        //   where N is the integer ID of the service. Each array is a set of repertoire_id's
+        //   that the service should query.
+        // - cols: a comma separated list if columnas
+        // - open_filter_panel_list: a list of which fitler panels are open
+        // - sample_query_id: the query ID of the query that was the source of this query
+        // - the fields from the form that are queryable, key the field name,
+        //   value the filter value.
+        //
 
-        // retrieve data
-        $cell_data = SequenceCell::summary($filters, $username);
+        // Retrieve cell data given the filters.
+        $cell_data = Cell::summary($filters, $username);
 
         // store data size in user query log
         $query_log_id = $request->get('query_log_id');
@@ -80,11 +79,11 @@ class CellController extends Controller
         }
 
         /*************************************************
-        * Prepare view data */
-
-        // sequence data
+        * Prepare Cell view data */
         $data = [];
 
+        // Get the relevant data that is displayed for each Cell in the UI table.
+        // This information is stored in the 'items' attribute of the the cell_data.
         $data['cell_list'] = $cell_data['items'];
 
         // Fields we want to graph. The UI/blade expects six fields
@@ -242,15 +241,14 @@ class CellController extends Controller
             $app_config = $app_info['config'];
             $app_ui_info = [];
             Log::debug('Processing app ' . $app_tag);
-            Log::debug('App config = ' . json_encode($app_config));
+            //Log::debug('App config = ' . json_encode($app_config));
+
             // Process the parameters.
             $parameter_list = [];
-            //foreach ($app_config['parameters'] as $parameter_info) {
             foreach ($app_config['jobAttributes']['parameterSet']['appArgs'] as $parameter_info) {
                 // We only want the visible parameters to be visible. The
                 // UI uses the Tapis ID as a label and the Tapis paramenter
                 // "label" as the human readable name of the parameter.
-                //if ($parameter_info['value']['visible']) {
                 if ($parameter_info['inputMode'] != 'FIXED') {
                     $parameter = [];
                     Log::debug('   Processing parameter - ' . $parameter_info['name']);
@@ -355,7 +353,7 @@ class CellController extends Controller
                         $got_error = false;
                         if (property_exists($sample, $field)) {
                             // If the property exists and is a mismatch, disable app
-                            Log::debug('   found field ' . $field . ' = ' . $sample->$field);
+                            Log::debug('   found field ' . $field . ' = ' . json_encode($sample->$field));
                             if (! in_array($sample->$field, $value)) {
                                 Log::debug('   Requirement field is not in sample.');
                                 $got_error = true;
@@ -401,15 +399,15 @@ class CellController extends Controller
         return view('cell', $data);
     }
 
-    public function timeEstimate($nb_sequences)
+    public function timeEstimate($nb_cells)
     {
         $time_estimate_max = '24 hours';
 
-        if ($nb_sequences < 500000) {
+        if ($nb_cells < 500000) {
             $time_estimate_max = '20 min';
         }
 
-        if ($nb_sequences < 100000) {
+        if ($nb_cells < 100000) {
             $time_estimate_max = '';
         }
 
@@ -450,7 +448,7 @@ class CellController extends Controller
             $new_filters = $filters;
         }
 
-        $new_query_id = Query::saveParams($new_filters, 'sequences');
+        $new_query_id = Query::saveParams($new_filters, 'cells');
 
         $uri = $request->route()->uri;
 

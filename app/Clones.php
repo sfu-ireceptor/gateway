@@ -9,18 +9,18 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
-class SequenceClone
+class Clones
 {
     public static function summary($filters, $username)
     {
         // get clones summary
-        $response_list_clones_summary = RestService::sequences_summary($filters, $username, true, 'clone');
+        $response_list_clones_summary = RestService::data_summary($filters, $username, true, 'clone');
 
         // generate stats
         $data = self::process_response($response_list_clones_summary);
 
         // get a few clones from each service
-        $response_list = RestService::sequence_list($filters, $response_list_clones_summary, 10, 'clone');
+        $response_list = RestService::data_subset($filters, $response_list_clones_summary, 10, 'clone');
 
         // merge responses
         $clone_list = [];
@@ -76,9 +76,9 @@ class SequenceClone
         return $data;
     }
 
-    public static function expectedSequenceClonesByRestSevice($filters, $username)
+    public static function expectedClonesByRestSevice($filters, $username)
     {
-        $response_list = RestService::sequences_summary($filters, $username, false, 'clone');
+        $response_list = RestService::data_summary($filters, $username, false, 'clone');
         $expected_nb_clones_by_rs = [];
         foreach ($response_list as $response) {
             $rest_service_id = $response['rs']->id;
@@ -128,11 +128,11 @@ class SequenceClone
         set_time_limit(config('ireceptor.gateway_file_request_timeout'));
 
         // do extra clone summary request
-        $response_list = RestService::sequences_summary($filters, $username, false, 'clone');
+        $response_list = RestService::data_summary($filters, $username, false, 'clone');
 
         // do extra clone summary request to get expected number of clones
         // for sanity check after download
-        $expected_nb_clones_by_rs = self::expectedSequenceClonesByRestSevice($filters, $username);
+        $expected_nb_clones_by_rs = self::expectedClonesByRestSevice($filters, $username);
 
         // get filtered list of repertoires ids
         $filtered_samples_by_rs = self::filteredSamplesByRestService($response_list);
@@ -168,7 +168,7 @@ class SequenceClone
         if ($download_data) {
             $clone_response_list = RestService::clones_data($filters, $folder_path, $username, $expected_nb_clones_by_rs);
         } else {
-            Log::debug('Sequence::sequencesTSVFolder - SKIPPING DOWNLOAD');
+            Log::debug('Clones::clonesTSVFolder - SKIPPING DOWNLOAD');
         }
 
         // Get a list of file information as a block of data.

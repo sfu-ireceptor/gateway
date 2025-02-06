@@ -145,7 +145,7 @@ function run_analysis()
     # Run the Conga pipeline within the singularity image on each rearrangement file provided.
     echo "IR-INFO: Running Conga on $cell_file"
     echo "IR-INFO: Mapping ${PWD} to /data"
-    echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
+    echo "IR-INFO: Asking for ${_tapisCoresPerNode} threads"
     echo "IR-INFO: Storing output in /data/${output_directory}"
 
     # Convert Rearrangement file to a 10X Contig file. This uses code in the container

@@ -47,16 +47,16 @@ class FieldNameSeeder extends CsvSeeder
                     0 => 'ir_id',
                     1 => 'ir_full',
                     2 => 'ir_short',
-                    15 => 'airr',
-                    16 => 'airr_full',
-                    19 => 'ir_class',
-                    20 => 'ir_subclass',
-                    21 => 'ir_adc_api_query',
-                    22 => 'ir_adc_api_response',
-                    24 => 'airr_type',
-                    25 => 'airr_description',
-                    30 => 'airr_example',
-                    42 => 'ir_api_input_type',
+                    23 => 'airr',
+                    24 => 'airr_full',
+                    27 => 'ir_class',
+                    28 => 'ir_subclass',
+                    29 => 'ir_adc_api_query',
+                    30 => 'ir_adc_api_response',
+                    32 => 'airr_type',
+                    33 => 'airr_description',
+                    38 => 'airr_example',
+                    50 => 'ir_api_input_type',
                 ];
             }
 
@@ -141,7 +141,7 @@ class FieldNameSeeder extends CsvSeeder
         // cell fields
         $l[] = [
             'ir_id' => 'chain1',
-            'ir_short' => 'Chain 1 (V Gene, CDR3)',
+            'ir_short' => 'Chain 1 (CDR3, V Gene)',
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
             'api_version' => $api_version,
@@ -149,7 +149,15 @@ class FieldNameSeeder extends CsvSeeder
 
         $l[] = [
             'ir_id' => 'chain2',
-            'ir_short' => 'Chain 2 (V Gene, CDR3)',
+            'ir_short' => 'Chain 2 (CDR3, V Gene)',
+            'ir_class' => 'Cell',
+            'ir_subclass' => 'Cell',
+            'api_version' => $api_version,
+        ];
+
+        $l[] = [
+            'ir_id' => 'reactivity_list',
+            'ir_short' => 'Reactivity',
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
             'api_version' => $api_version,
@@ -157,7 +165,7 @@ class FieldNameSeeder extends CsvSeeder
 
         $l[] = [
             'ir_id' => 'expression_label_list',
-            'ir_short' => 'Properties (top 4)',
+            'ir_short' => 'Expression (top 4)',
             'ir_class' => 'Cell',
             'ir_subclass' => 'Cell',
             'api_version' => $api_version,
@@ -221,8 +229,8 @@ class FieldNameSeeder extends CsvSeeder
         $l[] = ['id' => 'ir_cell_id_cell', 'visible' => true];
         $l[] = ['id' => 'chain1', 'visible' => true];
         $l[] = ['id' => 'chain2', 'visible' => true];
+        $l[] = ['id' => 'reactivity_list', 'visible' => true];
         $l[] = ['id' => 'expression_label_list', 'visible' => true];
-        $l[] = ['id' => 'cell_id_cell', 'visible' => true];
 
         foreach ($l as $i => $t) {
             FieldName::where('ir_id', $t['id'])->update(['default_order' => $i, 'default_visible' => $t['visible']]);
