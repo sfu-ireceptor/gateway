@@ -462,11 +462,6 @@ class RestService extends Model
         return $filter_object_json;
     }
 
-    // Method to remove gateway specific filters and leave only
-    // AIRR query relevant filter variables.
-    // Also handles the conversion of a VDJ call filter to the
-    // appropriate exact match filter on either the _call, _gene,
-    // or _family field.
     public static function clean_filters($filters)
     {
         // remove empty filters
@@ -508,22 +503,9 @@ class RestService extends Model
         return $filters;
     }
 
-    // Do samples request on specified services
-    // @param string filters - filters to use in the search
-    // @param string username - username of the user initiating the search
-    // @param boolean count_sequences - flag to indicate if sequences should be counted
-    // @param array int rest_service_id_list - list of service IDs to search, if null all are searched
-    // @param boolean grouped - flag to determine if response should be grouped by repository group (e.g. c19)
-    //
-    // @return array response_list - a list of response objects, each of the form:
-    //   - rs: Object that decribes the repository service
-    //   - status: Error status of the response
-    //   - error_message: The error message is status == 'error'
-    //   - data: A list of samples in the AIRR repertoire format
+    // do samples request to all enabled services
     public static function samples($filters, $username = '', $count_sequences = true, $rest_service_id_list = null, $grouped = true)
     {
-        // If there is no service list provided, process all enabled services.
-        // Build a list of the actual services based on their IDs.
         $rest_service_list = [];
         if ($rest_service_id_list === null) {
             $rest_service_list = self::findEnabled();
@@ -534,11 +516,9 @@ class RestService extends Model
             }
         }
 
-        // Clean filters for services
+        // clean filters for services
         $filters = self::clean_filters($filters);
 
-        // Note if the filters include MHC filters. V1.0 repositories
-        // can't handle these.
         $has_mhc_filters = false;
         foreach ($filters as $filter_name => $filter_value) {
             if (Str::startsWith($filter_name, 'genotype-mhc')) {
@@ -547,10 +527,10 @@ class RestService extends Model
             }
         }
 
-        // Prepare request parameters for all services
+        // prepare request parameters for all services
         $request_params_all = [];
         foreach ($rest_service_list as $rs) {
-            // If 1.0 repo, and there are MHC filters, don't query that repo
+            // if 1.0 repo, and there are MHC filters, don't query that repo
             if ($rs->api_version == '1.0' && $has_mhc_filters) {
                 continue;
             }
@@ -566,7 +546,7 @@ class RestService extends Model
             $request_params_all[] = $t;
         }
 
-        // Do requests to all services
+        // do requests to all services
         $response_list = self::doRequests($request_params_all);
 
         // tweak responses
@@ -598,8 +578,7 @@ class RestService extends Model
                 }
 
                 if ($count_sequences) {
-                    //$sequence_counts = self::sequence_count_from_cache($rs->id, $sample_id_list);
-                    $sequence_counts = self::object_count_from_cache('sequence', $rs->id, $sample_id_list);
+                    $sequence_counts = self::sequence_count_from_cache($rs->id, $sample_id_list);
 
                     foreach ($sample_list as $sample) {
                         $sample->ir_sequence_count = 0;
@@ -609,8 +588,7 @@ class RestService extends Model
                     }
 
                     // count clones
-                    //$clone_counts = self::clone_count_from_cache($rs->id, $sample_id_list);
-                    $clone_counts = self::object_count_from_cache('clone', $rs->id, $sample_id_list);
+                    $clone_counts = self::clone_count_from_cache($rs->id, $sample_id_list);
 
                     foreach ($sample_list as $sample) {
                         $sample->ir_clone_count = 0;
@@ -620,8 +598,7 @@ class RestService extends Model
                     }
 
                     // count cells
-                    //$cell_counts = self::cell_count_from_cache($rs->id, $sample_id_list);
-                    $cell_counts = self::object_count_from_cache('cell', $rs->id, $sample_id_list);
+                    $cell_counts = self::cell_count_from_cache($rs->id, $sample_id_list);
 
                     foreach ($sample_list as $sample) {
                         $sample->ir_cell_count = 0;
@@ -684,7 +661,6 @@ class RestService extends Model
         }
     }
 
-    /*
     public static function sequence_count_from_cache($rest_service_id, $sample_id_list = [])
     {
         $l = SequenceCount::where('rest_service_id', $rest_service_id)->orderBy('updated_at', 'desc')->take(1)->get();
@@ -709,239 +685,8 @@ class RestService extends Model
 
         return $sequence_counts;
     }
-     */
-
-    public static function object_count_from_cache($type, $rest_service_id, $sample_id_list = [])
-    {
-        // Search the appropriate cache based on type.
-        if ($type == 'sequence') {
-            $l = SequenceCount::where('rest_service_id', $rest_service_id)->orderBy('updated_at', 'desc')->take(1)->get();
-        } elseif ($type == 'clone') {
-            $l = CloneCount::where('rest_service_id', $rest_service_id)->orderBy('updated_at', 'desc')->take(1)->get();
-        } elseif ($type == 'cell') {
-            $l = CellCount::where('rest_service_id', $rest_service_id)->orderBy('updated_at', 'desc')->take(1)->get();
-        }
-
-        // If we got no data, return
-        if (count($l) == 0) {
-            return;
-        }
-
-        // Get all of the object counts base on the type.
-        if ($type == 'sequence') {
-            $all_object_counts = $l[0]->sequence_counts;
-        } elseif ($type == 'clone') {
-            $all_object_counts = $l[0]->clone_counts;
-        } elseif ($type == 'cell') {
-            $all_object_counts = $l[0]->cell_counts;
-        }
-        // If our sample ID list is of 0 length, we are not filtering on any
-        // sample IDs and we therefore return the full list.
-        if (count($sample_id_list) == 0) {
-            return $all_object_counts;
-        }
-
-        // If we get here, we need to could up the objects for only the
-        // samples in the cache that are provided in the sample_id_list.
-        $object_counts = [];
-        foreach ($sample_id_list as $sample_id) {
-            if (isset($all_object_counts[$sample_id])) {
-                $object_counts[$sample_id] = $all_object_counts[$sample_id];
-            } else {
-                $object_counts[$sample_id] = null;
-            }
-        }
-
-        return $object_counts;
-    }
 
     // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
-    public static function object_count($type, $sample_id_list_by_rs, $filters = [], $use_cache_if_possible = true)
-    {
-        // clean filters
-        $filters = self::clean_filters($filters);
-
-        // use cached total counts if there are no sequence filters
-        if (count($filters) == 0 && $use_cache_if_possible) {
-            $counts_by_rs = [];
-            foreach ($sample_id_list_by_rs as $rs_id => $sample_id_list) {
-                $object_count = self::object_count_from_cache($type, $rs_id, $sample_id_list);
-                $counts_by_rs[$rs_id]['samples'] = $object_count;
-            }
-
-            return $counts_by_rs;
-        }
-
-        // prepare request parameters for each service
-        $request_params = [];
-
-        foreach ($sample_id_list_by_rs as $rs_id => $sample_id_list) {
-            $service_filters = $filters;
-
-            // force all sample ids to string
-            foreach ($sample_id_list as $k => $v) {
-                $sample_id_list[$k] = (string) $v;
-            }
-
-            // generate JSON query
-            $service_filters['repertoire_id'] = $sample_id_list;
-
-            // set up the facet query on repertoire_id
-            $query_parameters = [];
-            $query_parameters['facets'] = 'repertoire_id';
-
-            // prepare parameters for each service
-            $t = [];
-
-            // Get the service info for the given service ID
-            $rs = self::find($rs_id);
-            $t['rs'] = $rs;
-
-            // Assign the query service endpoint based on the query type.
-            if ($type == 'sequence') {
-                $t['url'] = $rs->url . 'rearrangement';
-            } elseif ($type == 'clone') {
-                $t['url'] = $rs->url . 'clone';
-            } elseif ($type == 'cell') {
-                $t['url'] = $rs->url . 'cell';
-            }
-
-            // Generate the JSON query based on the filters and parameters.
-            $t['params'] = self::generate_json_query($service_filters, $query_parameters, $rs->api_version);
-            $t['timeout'] = config('ireceptor.service_request_timeout');
-
-            $request_params[] = $t;
-        }
-
-        // do requests
-        $response_list = self::doRequests($request_params);
-
-        // build list of sequence count for each sample grouped by repository id
-        $counts_by_rs = [];
-        foreach ($response_list as $response) {
-            $rest_service_id = $response['rs']->id;
-
-            // if it is an error make a note of it.
-            if ($response['status'] == 'error') {
-                $counts_by_rs[$rest_service_id]['samples'] = null;
-                $counts_by_rs[$rest_service_id]['error_type'] = $response['error_type'];
-                continue;
-            }
-
-            // Get the facet count list for the response.
-            $facet_list = data_get($response, 'data.Facet', []);
-            $object_count = [];
-            // Iterate over the list and get a count for each repertoire, keyed
-            // on repertoire_id
-            foreach ($facet_list as $facet) {
-                $object_count[$facet->repertoire_id] = $facet->count;
-            }
-
-            // TODO might not be needed because of IR-1484
-            // add count = 0
-            foreach ($sample_id_list_by_rs[$rest_service_id] as $sample_id) {
-                if (! isset($object_count[$sample_id])) {
-                    $object_count[$sample_id] = 0;
-                }
-            }
-
-            // Add the count list for this service to this services data.
-            $counts_by_rs[$rest_service_id]['samples'] = $object_count;
-        }
-
-        return $counts_by_rs;
-    }
-
-    // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
-    public static function object_list($type, $sample_id_list_by_rs, $filters = [], $field = '')
-    {
-        // Set up info that depends on the query type
-        if ($type == 'sequence') {
-            $endpoint = 'rearrangement';
-            $airr_object = 'Rearrangement';
-        } elseif ($type == 'clone') {
-            $endpoint = 'clone';
-            $airr_object = 'Clone';
-        } elseif ($type == 'cell') {
-            $endpoint = 'cell';
-            $airr_object = 'Cell';
-        } elseif ($type == 'expression') {
-            $endpoint = 'expression';
-            $airr_object = 'CellExpression';
-        } elseif ($type == 'reactivity') {
-            $endpoint = 'reactivity';
-            $airr_object = 'Reactivity';
-        } else {
-            Log::error('RestService::object_list - Unexpected query type ' . $type);
-            throw new \Exception('Unexpected query type ' . $type);
-        }
-
-        // clean filters
-        $filters = self::clean_filters($filters);
-
-        // prepare request parameters for each service
-        $request_params = [];
-
-        foreach ($sample_id_list_by_rs as $rs_id => $sample_id_list) {
-            $service_filters = $filters;
-
-            // force all sample ids to string
-            foreach ($sample_id_list as $k => $v) {
-                $sample_id_list[$k] = (string) $v;
-            }
-
-            // generate JSON query
-            $service_filters['repertoire_id'] = $sample_id_list;
-
-            $query_parameters = [];
-            $query_parameters['facets'] = $field;
-
-            // prepare parameters for each service
-            $t = [];
-
-            // Get the service information
-            $rs = self::find($rs_id);
-            $t['rs'] = $rs;
-
-            // Get the query URL based on the endpoint
-            $t['url'] = $rs->url . $endpoint;
-
-            $t['params'] = self::generate_json_query($service_filters, $query_parameters, $rs->api_version);
-            $t['timeout'] = config('ireceptor.service_request_timeout');
-
-            $request_params[] = $t;
-        }
-
-        // do requests
-        $response_list = self::doRequests($request_params);
-
-        // build list of sequence count for each sample grouped by repository id
-        $objects_by_rs = [];
-        foreach ($response_list as $response) {
-            $rest_service_id = $response['rs']->id;
-
-            if ($response['status'] == 'error') {
-                $objects_by_rs[$rest_service_id]['samples'] = null;
-                $objects_by_rs[$rest_service_id]['error_type'] = $response['error_type'];
-                continue;
-            }
-
-            $object_response = data_get($response, 'data.Facet', []);
-            $object_list = [];
-            foreach ($object_response as $object_data) {
-                if ($object_data->count > 0) {
-                    $object_list[] = $object_data->$field;
-                }
-            }
-
-            $objects_by_rs[$rest_service_id] = $object_list;
-        }
-
-        return $objects_by_rs;
-    }
-
-    // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
-    /*
     public static function sequence_count($sample_id_list_by_rs, $filters = [], $use_cache_if_possible = true)
     {
         // clean filters
@@ -1238,36 +983,12 @@ class RestService extends Model
 
         return $counts_by_rs;
     }
-*/
 
-    // Returns an array of services and the related repertoire metaddata based on a
-    // sequence/clone/cell level query.
-    //
-    // Parameters:
-    //
-    //   @param string $filters - the sequence level filters to apply. This includes gateway filter
-    //   fields as well as AIRR filters.
-    //   @param string $username - the username of the user making the query
-    //   @param boolean $group_by_rest_service - determines whether the responses is grouped by service
-    //          (e.g. c19 group) or individual repositories are returned as services.
-    //   @param type: the type of query to make (sequence, clone, cell).
-    //
-    // @return array List of objects that describe the data and which services it came from
-    //
-    // Return object is an array with each array element having the following fields:
-    //   rs: An object that describes the service (grouped or ungrouped by repository group (e.g. c19 group).
-    //   status: A string that describes the success/error state of the service repsonse.
-    //   data: A list of repertoires in the AIRR format from the query.
-    // The array is keyed either on the rest service group (e.g. "t1d" or "covid19") if
-    // $group_by_rest_service = true or by the individual repository name if not.
-    public static function data_summary($filters, $username = '', $group_by_rest_service = true, $type = 'sequence')
+    public static function sequences_summary($filters, $username = '', $group_by_rest_service = true, $type = 'sequence')
     {
-        Log::debug('RestService::data_summary()');
+        Log::debug('RestService::sequences_summary()');
 
-        // Build list of repository ids to query. For each enabled repository
-        // generate the internal key (ir_project_sample_id_list_). If that key
-        // is in the filters from the gateway, then we add it to the list of
-        // repositories to search.
+        // build list of repository ids to query
         $rest_service_id_list = [];
         foreach (self::findEnabled() as $rs) {
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
@@ -1275,31 +996,27 @@ class RestService extends Model
                 $rest_service_id_list[] = $rs->id;
             }
         }
+
         Log::debug('List of repositories (ids) to query:');
         Log::debug($rest_service_id_list);
 
-        // Get ALL samples from repositories. This is so we don't
-        // send a huge list to repositories. VDJServer in particular
-        // can't handle a search with all of its repertoires specified.
-        Log::debug('Before sample query');
+        // get ALL samples from repositories
+        // so we don't have to send the FULL list of samples ids
+        // because VDJServer can't handle it
         $response_list_all = self::samples([], $username, true, $rest_service_id_list, false);
-        Log::debug('After sample query');
-        //Log::debug('All samples from those repositories:');
-        //Log::debug($response_list_all);
+        Log::debug('All samples from those repositories:');
+        // Log::debug($response_list_all);
 
-        // Filter repository responses to only requested samples
+        // filter repositories responses to only requested samples
         $response_list_requested = [];
-        // We loop over the responses from all of the repositories
         foreach ($response_list_all as $response) {
             $rs = $response['rs'];
 
-            // Get the list of samples/repertoires for this repository from
-            // the filtered samples
+            // build requested list of sample ids for this repository
             $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
             $sample_id_list = $filters[$sample_id_list_key];
 
-            // For each sample in full repository listing, check to see if
-            // the repertoire_id is in the filter sample list.
+            // filter samples
             $sample_list_requested = [];
             foreach ($response['data'] as $sample) {
                 if (in_array($sample->repertoire_id, $sample_id_list)) {
@@ -1313,14 +1030,14 @@ class RestService extends Model
         }
 
         Log::debug('Filtered to requested samples only:');
-        //Log::debug($response_list_requested);
+        // Log::debug($response_list_requested);
 
-        // Build list of data filters only (remove sample id filters)
-        $data_filters = $filters;
-        unset($data_filters['project_id_list']);
-        foreach ($data_filters as $key => $value) {
+        // build list of sequence filters only (remove sample id filters)
+        $sequence_filters = $filters;
+        unset($sequence_filters['project_id_list']);
+        foreach ($sequence_filters as $key => $value) {
             if (starts_with($key, 'ir_project_sample_id_list_')) {
-                unset($data_filters[$key]);
+                unset($sequence_filters[$key]);
             }
         }
 
@@ -1335,30 +1052,27 @@ class RestService extends Model
             $sample_id_list_by_rs[$response['rs']->id] = $sample_id_list_requested;
         }
 
-        // count objects for each requested sample
-        if ($type == 'sequence' || $type == 'clone' || $type == 'cell') {
-            $counts_by_rs = self::object_count($type, $sample_id_list_by_rs, $data_filters);
+        // count sequences for each requested sample
+        if ($type == 'sequence') {
+            $counts_by_rs = self::sequence_count($sample_id_list_by_rs, $sequence_filters);
+        } elseif ($type == 'clone') {
+            $counts_by_rs = self::clone_count($sample_id_list_by_rs, $sequence_filters);
         } else {
-            Log::error('Unexpected query type ' . $type);
-            throw new \Exception('Unexpected query type ' . $type);
+            $counts_by_rs = self::cell_count($sample_id_list_by_rs, $sequence_filters);
         }
 
-        // add object counts to samples
+        // add sequences count to samples
         $response_list_filtered = [];
         foreach ($response_list_requested as $response) {
             $rs = $response['rs'];
 
-            // If there was an error with the repertoire query
+            // if there was an error with the repertoire query
             // include this response so the error is reported
             if ($response['status'] == 'error') {
                 $response_list_filtered[] = $response;
                 continue;
             }
 
-            // If there are no samples for the service, that is an
-            // error, check to see if the service generated an error
-            // and report it. Again, include the error response as we
-            // want to be able to report errors in downstream processing.
             if ($counts_by_rs[$rs->id]['samples'] == null) {
                 $response['status'] = 'error';
 
@@ -1374,10 +1088,6 @@ class RestService extends Model
                 continue;
             }
 
-            // Filter the samples based on whether they actually returned data
-            // or not. If data is returned, capture the count of the returned
-            // data in the appropriate ir_filtered count field for the type of
-            // query.
             $sample_list_filtered = [];
             foreach ($response['data'] as $sample) {
                 $sample_count = $counts_by_rs[$rs->id]['samples'][$sample->repertoire_id];
@@ -1394,7 +1104,7 @@ class RestService extends Model
                 }
             }
 
-            // Include repository only if it has samples with sequences matching the query
+            // include repository only if it has samples with sequences matching the query
             if (count($sample_list_filtered) > 0) {
                 $response['data'] = $sample_list_filtered;
                 $response_list_filtered[] = $response;
@@ -1403,28 +1113,25 @@ class RestService extends Model
 
         $response_list = $response_list_filtered;
 
-        // If we are gropuing individual services into service groups, then
-        // do that grouping here. We group based on rest services returned
-        // rest_service_group_code value.
         if ($group_by_rest_service) {
-            // Merge service responses belonging to the same group
+            // merge service responses belonging to the same group
             $response_list_grouped = [];
             foreach ($response_list as $response) {
                 $group = $response['rs']->rest_service_group_code;
 
-                // Service doesn't belong to a group -> just add response
+                // service doesn't belong to a group -> just add response
                 if ($group == '') {
                     $response_list_grouped[] = $response;
                 } else {
-                    // A response with that group already exists? -> merge
+                    // a response with that group already exists? -> merge
                     if (isset($response_list_grouped[$group])) {
                         $r1 = $response_list_grouped[$group];
                         $r2 = $response;
 
-                        // Merge data
+                        // merge data
                         $r1['data'] = array_merge($r1['data'], $r2['data']);
 
-                        // Merge response status
+                        // merge response status
                         if ($r2['status'] != 'success') {
                             $r1['status'] = $r2['status'];
                             if (isset($r2['error_message'])) {
@@ -1448,40 +1155,23 @@ class RestService extends Model
         return $response_list;
     }
 
-    // Retrieve a subset of data of size n of the specific type based on the provided filters.
-    // Parameters:
-    //
-    //   @param string $filters - the sequence level filters to apply. This includes gateway filter
-    //   fields as well as AIRR filters.
-    //   @param string $response_list_data_summary - a list of the services from which to search
-    //   @param integer $n - the number of data elements to retreive
-    //   @param string $type - the type of data/query to make (sequence, clone, cell).
-    //
-    // @return array List of objects that describe the data of the specific type (sequence, clone, cell)
-    //
-    // Return object is an array with each array element being specific to the type of query
-    public static function data_subset($filters, $response_list_data_summary, $n = 10, $type = 'sequence')
+    // retrieves n sequences
+    public static function sequence_list($filters, $response_list_sequences_summary, $n = 10, $type = 'sequence')
     {
-        //Log::debug($filters);
-        //blah;
         if ($type == 'sequence') {
             $base_uri = 'rearrangement';
         } elseif ($type == 'clone') {
             $base_uri = 'clone';
         } else {
-            //$query_type = 'cell';
-            //if (isset($filters['property_expression'])) {
-            //    $query_type = 'expression';
-            //} elseif (isset($filters['peptide_sequence_aa_reactivity'])) {
-            //    $query_type = 'reactivity';
-            //}
-
-            //$base_uri = $query_type;
-            $base_uri = 'cell';
+            $query_type = 'cell';
+            if (isset($filters['property_expression'])) {
+                $query_type = 'expression';
+            }
+            $base_uri = $query_type;
         }
 
         Log::debug('We have reponses for repos with id:');
-        foreach ($response_list_data_summary as $rl) {
+        foreach ($response_list_sequences_summary as $rl) {
             Log::debug($rl['rs']->id);
         }
 
@@ -1516,16 +1206,16 @@ class RestService extends Model
 
             // if no sequence filters, query only subset of repertoires
             if (count($service_filters) == 1) {
-                $rs_data_summary_response = null;
-                foreach ($response_list_data_summary as $response) {
+                $rs_sequences_summary_response = null;
+                foreach ($response_list_sequences_summary as $response) {
                     if ($response['rs']->id == $rs->id) {
-                        $rs_data_summary_response = $response;
+                        $rs_sequences_summary_response = $response;
                     }
                 }
 
-                if ($rs_data_summary_response != null) {
+                if ($rs_sequences_summary_response != null) {
                     $repertoire_id_list = [];
-                    $sample_list = $rs_data_summary_response['data'];
+                    $sample_list = $rs_sequences_summary_response['data'];
                     $i = 0;
                     foreach ($sample_list as $sample) {
                         if ($sample->{'ir_' . $type . '_count'} > 0) {
@@ -1557,30 +1247,25 @@ class RestService extends Model
             $request_params[] = $t;
         }
 
-        // Do requests
+        // do requests
         $response_list = self::doRequests($request_params);
 
-        // If we are processing Cell data, we actually need to handle both
-        // Cell, Expression, and Rearrangement data to build a response.
         if ($type == 'cell') {
             foreach ($response_list as $i => $response) {
                 $rs = $response['rs'];
 
-                // If our search was for Cell Expression data, we need to
-                // get the cell information as well.
                 if (isset($response['data']->CellExpression)) {
-                    // For each expression response, build a cell query for
-                    // the cell ID of interest.
+                    // add cell data
                     $request_params = [];
                     foreach ($response['data']->CellExpression as $t) {
                         $cell_id = $t->cell_id;
                         $data_processing_id = $t->data_processing_id;
 
                         $filters = [];
-                        //$filters['data_processing_id_cell'] = $data_processing_id;
-                        $filters['cell_id_cell'] = $cell_id;
+                        $filters['data_processing_id_cell'] = $data_processing_id;
+                        $filters['ir_cell_id_cell'] = $cell_id;
 
-                        // Prepare cell parameters for each service
+                        // prepare parameters for each service
                         $t = [];
 
                         $t['rs'] = $rs;
@@ -1592,120 +1277,83 @@ class RestService extends Model
                         $request_params[] = $t;
                     }
 
-                    // Do the cell query and get a list of cells. We now have
-                    // a list of expression data and a list of cell data.
                     $response_list_cells = self::doRequests($request_params);
 
-                    // We need to ensure that for each Expression value that
-                    // meets the criteria, we keep track of the Cells that are
-                    // associated with the expression data. These are the cells
-                    // that we care about.
-                    $new_cell_list = [];
-                    $cell_id_list = [];
+                    // add cell data to expression data
+                    $cell_list_merged = [];
                     foreach ($response['data']->CellExpression as $t) {
-                        $cell_id_expression = $t->cell_id;
+                        $cell_id = $t->cell_id;
                         $data_processing_id = $t->data_processing_id;
 
-                        // If the Cell ID for this expression entity we simple
-                        // continue as the cell is already in the list.
-                        if (array_search($cell_id_expression, $cell_id_list)) {
-                            continue;
-                        }
-
-                        // Iterate over the Cells to make sure we have the cell
                         foreach ($response_list_cells as $response_cell) {
                             $cell_list = $response_cell['data']->Cell;
 
-                            // Make sure the cell_list is not empty. Since the above query is
-                            // searching for a single cell (a cell_id), the array will either
-                            // have 0 or 1 elements. If there is one element that exists,
-                            // process it.
                             if (isset($cell_list[0])) {
                                 $cell_id_cell = $cell_list[0]->cell_id;
 
-                                // If the expression and the cell IDs are the same,
-                                // and we don't already have this cell in the list
-                                // (we can have multiple expression values from a single
-                                // cell) then need to add this cell to our list.
-                                // the Cell data into a single object and then break
-                                // out of the loop.
-                                if ($cell_id_expression == $cell_id_cell) {
-                                    $new_cell_list[] = $response_cell['data']->Cell[0];
-                                    $cell_id_list[] = $cell_id_expression;
-                                    // If we have added this cell we don't need to process
-                                    // more expression data for this cell.
-                                    break;
-                                    //$cell_data = $response_cell['data']->Cell[0];
-                                    //$t2 = (object) array_merge((array) $t, (array) $cell_data);
-                                    //$t = $t2;
+                                if ($cell_id == $cell_id_cell) {
+                                    $cell_data = $response_cell['data']->Cell[0];
+                                    $t2 = (object) array_merge((array) $t, (array) $cell_data);
+                                    $t = $t2;
 
-                                    //break;
+                                    break;
                                 }
                             }
                         }
+
+                        $cell_list_merged[] = $t;
                     }
 
-                    // Make our query response data to be the list of cells, not
-                    // the list of expression data.
-                    $response['data']->Cell = $new_cell_list;
+                    $response['data']->Cell = $cell_list_merged;
                 }
 
-                // If we have cell data, we need to add appropriate expression
-                // data that is related to that cell.
                 if (isset($response['data']->Cell)) {
-                    // Loop over each repository service to get the expression data.
+                    // add expression data
                     $request_params = [];
                     foreach ($response['data']->Cell as $t) {
-                        // Set up the query filters to get the expression data
                         $cell_id = $t->cell_id;
+                        $data_processing_id = $t->data_processing_id;
+
                         $filters = [];
                         $filters['cell_id_cell'] = $cell_id;
 
-                        // Prepare parameters for the query (there are none)
+                        // prepare parameters for each service
+                        $t = [];
+
+                        $t['rs'] = $rs;
+                        $t['url'] = $rs->url . 'expression';
+
                         $params = [];
+                        // $params['fields'] = ['cell_id', 'value', 'property_expression'];
 
-                        // Set up the actual request info
-                        $request = [];
-                        $request['rs'] = $rs;
-                        $request['url'] = $rs->url . 'expression';
-                        $request['params'] = self::generate_json_query($filters, $params, $rs->api_version);
+                        $t['params'] = self::generate_json_query($filters, $params, $rs->api_version);
 
-                        // Store it in the list of requests
-                        $request_params[] = $request;
+                        $request_params[] = $t;
                     }
 
-                    // Perform the requests to get the expression data.
                     $response_list_expressions = self::doRequests($request_params);
 
-                    // Add the expression data to cell data
-                    // Loop over each Cell in our original response
+                    // add expression data to cell data
                     $cell_list_merged = [];
-                    foreach ($response['data']->Cell as $cell_object) {
-                        $cell_id = $cell_object->cell_id;
-                        $data_processing_id = $cell_object->data_processing_id;
+                    foreach ($response['data']->Cell as $t) {
+                        $cell_id = $t->cell_id;
+                        $data_processing_id = $t->data_processing_id;
 
-                        // Loop over the expression data responses
                         foreach ($response_list_expressions as $response_expression) {
                             $expression_list = $response_expression['data']->CellExpression;
-                            // If there is expression data in the first element, process
                             if (isset($expression_list[0])) {
                                 $cell_id_expression = $expression_list[0]->cell_id;
 
-                                // If we have the same Cell ID in the cell and the expression,
-                                // add the expression data
                                 if ($cell_id == $cell_id_expression) {
-                                    // Expression data is an object that has a "value" key
-                                    // that stores the expression level. We want to display high
-                                    // levels of expression so we sort on the value key.
+                                    // sort by "value"
                                     $expression_list_sorted = $expression_list;
                                     $sort = 'value';
                                     usort($expression_list_sorted, function ($a, $b) use ($sort) {
                                         return $b->{$sort} >= $a->{$sort};
                                     });
-                                    // We only want the top 4 expression levels.
+
                                     $expression_list_sorted = array_slice($expression_list_sorted, 0, 4);
 
-                                    // We then get the labels for the top four, and add them to the label list
                                     $expression_label_list = [];
                                     foreach ($expression_list_sorted as $expression) {
                                         if (isset($expression->property)) {
@@ -1713,215 +1361,80 @@ class RestService extends Model
                                         }
                                     }
 
-                                    // Add it to our object
-                                    $cell_object->expression_label_list = $expression_label_list;
-                                    // Once we have the expression for a cell, we don't need
-                                    // to look any more, so break out of the loop.
+                                    $t->expression_label_list = $expression_label_list;
+
                                     break;
                                 }
                             }
                         }
-                        $cell_list_merged[] = $cell_object;
+                        $cell_list_merged[] = $t;
                     }
 
                     $response['data']->Cell = $cell_list_merged;
                 }
 
-                // If we have cell data, we need to add appropriate paired
-                // chain receptor data related to that cell
+                // add chain 1 and chain 2
                 if (isset($response['data']->Cell)) {
                     $request_params = [];
-                    // For each cell we need to get the paired chain data.
-                    foreach ($response['data']->Cell as $cell_object) {
-                        $cell_id = $cell_object->cell_id;
+                    foreach ($response['data']->Cell as $t) {
+                        $cell_id = $t->cell_id;
 
-                        // Set the filters to be the cell_id
                         $filters = [];
                         $filters['cell_id_cell'] = $cell_id;
 
-                        // Prepare request info for each service
-                        $request = [];
-                        $request['rs'] = $rs;
-                        $request['url'] = $rs->url . 'rearrangement';
-                        // We need to request specific fields that want to return
-                        // about each chain
-                        $params = [];
-                        $params['fields'] = ['v_call', 'd_call', 'j_calll', 'c_call',
-                            'junction_aa', 'cell_id', 'clone_id'];
-                        $request['params'] = self::generate_json_query($filters, $params, $rs->api_version);
+                        // prepare parameters for each service
+                        $t = [];
 
-                        // Add the request to the request list
-                        $request_params[] = $request;
+                        $t['rs'] = $rs;
+                        $t['url'] = $rs->url . 'rearrangement';
+
+                        $params = [];
+                        $params['fields'] = ['v_call', 'c_call', 'junction_aa', 'cell_id', 'clone_id'];
+
+                        $t['params'] = self::generate_json_query($filters, $params, $rs->api_version);
+
+                        $request_params[] = $t;
                     }
 
-                    // Perform the query to get the chain sequence data.
                     $response_list_sequences = self::doRequests($request_params);
 
-                    // Add the chain sequence data to cell data
-                    // Loop over each Cell in our original response
+                    // add sequence data to cell data
                     $cell_list_merged = [];
-                    foreach ($response['data']->Cell as $cell_object) {
-                        $cell_id = $cell_object->cell_id;
+                    foreach ($response['data']->Cell as $t) {
+                        $cell_id = $t->cell_id;
 
-                        // For each sequence repsonse...
                         foreach ($response_list_sequences as $response_sequence) {
-                            // If we got some sequence, process the data.
                             $sequence = $response_sequence['data']->Rearrangement;
                             if (count($sequence) > 0) {
                                 $cell_id_sequence = $sequence[0]->cell_id;
 
-                                // If the Cell ID matches the sequence Cell ID then
-                                // collect the data.
                                 if ($cell_id == $cell_id_sequence) {
-                                    // Get the V and Junction data.
                                     $v_call_1 = isset($sequence[0]->v_call) ? $sequence[0]->v_call : '';
                                     $junction_aa_1 = isset($sequence[0]->junction_aa) ? $sequence[0]->junction_aa : '';
                                     $v_call_2 = isset($sequence[1]->v_call) ? $sequence[1]->v_call : '';
                                     $junction_aa_2 = isset($sequence[1]->junction_aa) ? $sequence[1]->junction_aa : '';
 
-                                    // Combine the V and junction data. array_filter() removes any empty
-                                    // values from the array
-                                    $chain1 = implode(', ', array_filter([$junction_aa_1, $v_call_1]));
-                                    $chain2 = implode(', ', array_filter([$junction_aa_2, $v_call_2]));
+                                    // array_filter() removes any empty values from the array
+                                    $chain1 = implode(', ', array_filter([$v_call_1, $junction_aa_1]));
+                                    $chain2 = implode(', ', array_filter([$v_call_2, $junction_aa_2]));
 
-                                    // We group chain 1 as IGH/TRA/TRG locus
-                                    // We group chain 2 as IGK/IGL/TRB/TRD locus
-                                    // Swap if necessary
+                                    // chain 1 is always IGH/TRA/TRG locus
+                                    // chain 2  is always IGK/IGL/TRB/TRD locus
                                     if (Str::startsWith($v_call_2, ['IGH', 'TRA', 'TRG']) || Str::startsWith($v_call_1, ['IGK', 'IGL', 'TRB', 'TRD'])) {
                                         $tmp_chain = $chain1;
                                         $chain1 = $chain2;
                                         $chain2 = $tmp_chain;
                                     }
 
-                                    // Store the chain info in the cell object data
-                                    $cell_object->chain1 = $chain1;
-                                    $cell_object->chain2 = $chain2;
-                                    // If we have chain info for this cell we don't need to
-                                    // process any more rearrangement data.
+                                    $t->chain1 = $chain1;
+                                    $t->chain2 = $chain2;
+
                                     break;
                                 }
                             }
                         }
 
-                        $cell_list_merged[] = $cell_object;
-                    }
-
-                    $response['data']->Cell = $cell_list_merged;
-                }
-
-                // If we have cell data, we need to add appropriate reactivity
-                // data related to that cell
-                if (isset($response['data']->Cell)) {
-                    $request_params = [];
-                    // For each cell we need to get the reactivity data.
-                    foreach ($response['data']->Cell as $cell_object) {
-                        $cell_id = $cell_object->cell_id;
-
-                        // Set the filters to be the cell_id
-                        $filters = [];
-                        $filters['cell_id_cell'] = $cell_id;
-
-                        // Prepare request info for each service
-                        $request = [];
-                        $request['rs'] = $rs;
-                        $request['url'] = $rs->url . 'reactivity';
-                        // We need to request specific fields that want to return
-                        // about the reactivity
-                        // TODO (IR-3153): Param fields filter is not working when ontology fields are provided
-                        // For now, we don't need this as there are not many fields to return.
-                        $params = [];
-                        //$params['fields'] = ['cell_id', 'antigen', 'antigen_source_species', 'peptide_sequence_aa',
-                        //'reactivity_method', 'reactivity_readout', 'reactivity_value', 'reactivity_unit', 'reactivity_ref'];
-                        $request['params'] = self::generate_json_query($filters, $params, $rs->api_version);
-
-                        // Add the request to the request list
-                        $request_params[] = $request;
-                    }
-
-                    // Perform the query to get the reactivity data.
-                    $response_list_reactivity = self::doRequests($request_params);
-
-                    // Add the reactivity data to cell data
-                    // Loop over each Cell in our original response
-                    $cell_list_merged = [];
-                    foreach ($response['data']->Cell as $cell_object) {
-                        $cell_id = $cell_object->cell_id;
-
-                        // For each reactivity repsonse...
-                        // TODO: This should be optimized it is a O(nxm) operation (cell x reactivity)
-                        foreach ($response_list_reactivity as $response_reactivity) {
-                            // If there is an error response on reactivity, skip.
-                            if ($response_reactivity['status'] == 'error') {
-                                continue;
-                            }
-                            // If we got some reactivity data, process it.
-                            $reactivity = $response_reactivity['data']->Reactivity;
-                            if (count($reactivity) > 0) {
-                                // TODO: We are only handling the first reactivity record
-                                $cell_id_reactivity = $reactivity[0]->cell_id;
-
-                                // If the Cell ID matches the reactivity Cell ID then
-                                // collect the data.
-                                if ($cell_id == $cell_id_reactivity) {
-                                    // Get the antigen data
-                                    $antigen_label = isset($reactivity[0]->antigen->label) ? $reactivity[0]->antigen->label : '';
-                                    // Generate a URL if we have a known CURIE type
-                                    $antigen_url = '';
-                                    if (isset($reactivity[0]->antigen->id)) {
-                                        $antigen_curie_array = explode(':', $reactivity[0]->antigen->id);
-                                        // If we don't have two elements, it is an invalid curie, do nothing
-                                        if (count($antigen_curie_array) == 2) {
-                                            if ($antigen_curie_array[0] == 'NCBIPROTEIN' || $antigen_curie_array[0] == 'NCBI') {
-                                                $antigen_url = 'https://www.ncbi.nlm.nih.gov/protein/' . $antigen_curie_array[1];
-                                            } elseif ($antigen_curie_array[0] == 'UNIPROT') {
-                                                $antigen_url = 'https://www.uniprot.org/uniprotkb/' . $antigen_curie_array[1];
-                                            }
-                                        }
-                                    }
-                                    $antigen_species_label = isset($reactivity[0]->antigen_source_species->label) ? $reactivity[0]->antigen_source_species->label : '';
-                                    $peptide_sequence_aa = isset($reactivity[0]->peptide_sequence_aa) ? $reactivity[0]->peptide_sequence_aa : '';
-                                    // Generate an epitope URL if we have a "reactivity_ref"
-                                    $epitope_url = '';
-                                    if (isset($reactivity[0]->reactivity_ref)) {
-                                        // Handle the case if the repository responsds with either a
-                                        // string or an array.
-                                        if (is_array($reactivity[0]->reactivity_ref)) {
-                                            // TODO: For now we are only handling the first reactivity record
-                                            $epitope_curie_array = explode(':', $reactivity[0]->reactivity_ref[0]);
-                                        } else {
-                                            $epitope_curie_array = explode(':', $reactivity[0]->reactivity_ref);
-                                        }
-                                        // Only generate if we have a valid IEDB CURIE
-                                        if (count($epitope_curie_array) == 2) {
-                                            if ($epitope_curie_array[0] == 'IEDB_EPITOPE') {
-                                                $epitope_url = 'https://iedb.org/epitope/' . $epitope_curie_array[1];
-                                            }
-                                        }
-                                    }
-
-                                    $reactivity_method = isset($reactivity[0]->reactivity_method) ? $reactivity[0]->reactivity_method : '';
-                                    $reactivity_readout = isset($reactivity[0]->reactivity_readout) ? $reactivity[0]->reactivity_readout : '';
-                                    $reactivity_value = isset($reactivity[0]->reactivity_value) ? $reactivity[0]->reactivity_value : '';
-                                    $reactivity_unit = isset($reactivity[0]->reactivity_unit) ? $reactivity[0]->reactivity_unit : '';
-                                    // Store the chain info in the cell object data
-                                    $cell_object->antigen = $antigen_label;
-                                    $cell_object->antigen_url = $antigen_url;
-                                    $cell_object->antigen_source_species = $antigen_species_label;
-                                    $cell_object->peptide_sequence_aa = $peptide_sequence_aa;
-                                    $cell_object->epitope_url = $epitope_url;
-                                    $cell_object->reactivity_method = $reactivity_method;
-                                    $cell_object->reactivity_readout = $reactivity_readout;
-                                    $cell_object->reactivity_value = $reactivity_value;
-                                    $cell_object->reactivity_unit = $reactivity_unit;
-                                    $cell_object->reactivity_list = [$antigen_label, $antigen_species_label, $peptide_sequence_aa];
-                                    // If we have reactivity info for this cell we don't need to
-                                    // process any more reactivity data.
-                                    break;
-                                }
-                            }
-                        }
-
-                        $cell_list_merged[] = $cell_object;
+                        $cell_list_merged[] = $t;
                     }
 
                     $response['data']->Cell = $cell_list_merged;
@@ -1929,8 +1442,6 @@ class RestService extends Model
             }
         }
 
-        //Log::debug($response_list);
-        //blah;
         return $response_list;
     }
 
@@ -2717,7 +2228,7 @@ class RestService extends Model
         return $final_response_list;
     }
 
-    public static function sequences_data_from_cell_ids($cell_ids_by_rs, $folder_path, $username = '', $expected_nb_cells_by_rs)
+    public static function sequences_data_from_cell_ids($filters, $folder_path, $username = '', $expected_nb_cells_by_rs, $cell_id_list_by_rs)
     {
         $now = time();
 
@@ -2725,13 +2236,13 @@ class RestService extends Model
         $rs_list = [];
         foreach (self::findEnabled() as $rs) {
             if (isset($expected_nb_cells_by_rs[$rs->id]) && ($expected_nb_cells_by_rs[$rs->id] > 0)) {
-                $rs_list[$rs->id] = $rs;
+                $rs_list[] = $rs;
             }
         }
 
         // count services in each service group
         $group_list = [];
-        foreach ($rs_list as $rs_id => $rs) {
+        foreach ($rs_list as $rs) {
             $group = $rs->rest_service_group_code;
             if ($group) {
                 if (! isset($group_list[$group])) {
@@ -2747,17 +2258,20 @@ class RestService extends Model
         $query_parameters = [];
         $query_parameters['format'] = 'tsv';
 
-        foreach ($cell_ids_by_rs as $rs_id => $rs_cell_id_array) {
+        $group_list_count = [];
+        foreach ($rs_list as $rs) {
             $rs_filters = [];
 
-            if (array_key_exists($rs_id, $rs_list)) {
-                $rs_data = $rs_list[$rs_id];
-            } else {
-                Log::error('RestService::sequence_data - Unexpected rest service id ' . $rs_id);
-                throw new \Exception('Unexpected rest service_id ' . $rs_id);
+            foreach ($cell_id_list_by_rs as $response) {
+                if ($response['rs']->id != $rs->id) {
+                    continue;
+                }
+
+                $cell_id_list = $response['cell_id_list'];
+                $rs_filters_json = self::generate_json_query(['cell_id' => $cell_id_list], $query_parameters);
+                break;
             }
 
-            $rs_filters_json = self::generate_json_query(['cell_id' => $rs_cell_id_array], $query_parameters, $rs_data->api_version);
             $t = [];
             $t['rs'] = $rs;
             $t['url'] = $rs->url . 'rearrangement';
@@ -2873,59 +2387,50 @@ class RestService extends Model
         return $final_response_list;
     }
 
-    public static function expression_data_from_cell_ids($cell_ids_by_rs, $folder_path, $username = '', $cell_response_list)
+    public static function expression_data($filters, $folder_path, $username = '', $cell_response_list, $cell_id_list_by_rs = [])
     {
         // build list of services to query
         $rs_list = [];
         foreach ($cell_response_list as $response) {
-            $rs_list[$response['rs']->id] = $response['rs'];
-        }
-
-        // count services in each service group
-        $group_list = [];
-        foreach ($rs_list as $rs_id => $rs) {
-            $group = $rs->rest_service_group_code;
-            if ($group) {
-                if (! isset($group_list[$group])) {
-                    $group_list[$group] = 0;
-                }
-                $group_list[$group] += 1;
-            }
+            $rs_list[] = $response['rs'];
         }
 
         // prepare request parameters for each service
         $request_params = [];
 
-        foreach ($cell_ids_by_rs as $rs_id => $rs_cell_id_array) {
+        foreach ($rs_list as $rs) {
             $rs_filters = [];
 
-            if (array_key_exists($rs_id, $rs_list)) {
-                $rs_data = $rs_list[$rs_id];
+            // if we retrieve cells by cell_id
+            if (count($cell_id_list_by_rs) > 0) {
+                $query_parameters = [];
+                foreach ($cell_id_list_by_rs as $response) {
+                    if ($response['rs']->id == $rs->id) {
+                        $cell_id_list = $response['cell_id_list'];
+                        $rs_filters_json = self::generate_json_query(['cell_id' => $cell_id_list], $query_parameters);
+                        break;
+                    }
+                }
             } else {
-                Log::error('RestService::expression_data - Unexpected rest service id ' . $rs_id);
-                throw new \Exception('Unexpected rest service_id ' . $rs_id);
+                $sample_id_list_key = 'ir_project_sample_id_list_' . $rs->id;
+
+                // rename sample id filter for this service:
+                // ir_project_sample_id_list_2 -> repertoire_id
+                $rs_filters['repertoire_id'] = $filters[$sample_id_list_key];
+
+                $query_parameters = [];
+
+                // generate JSON query
+                $rs_filters_json = self::generate_json_query($rs_filters, $query_parameters, $rs->api_version);
             }
 
-            $rs_filters_json = self::generate_json_query(['cell_id' => $rs_cell_id_array], [], $rs_data->api_version);
-
             $t = [];
-            $t['rs'] = $rs_data;
-            $t['url'] = $rs_data->url . 'expression';
+            $t['rs'] = $rs;
+            $t['url'] = $rs->url . 'expression';
             $t['params'] = $rs_filters_json;
             $t['timeout'] = config('ireceptor.service_file_request_timeout');
 
-            // add number suffix for rest services belonging to a group
-            $file_suffix = '';
-            $group = $rs_data->rest_service_group_code;
-            if ($group && $group_list[$group] > 1) {
-                if (! isset($group_list_count[$group])) {
-                    $group_list_count[$group] = 0;
-                }
-                $group_list_count[$group] += 1;
-                $file_suffix = '_part' . $group_list_count[$group];
-            }
-
-            $t['file_path'] = $folder_path . '/' . str_slug($rs_data->display_name) . $file_suffix . '-gex.json';
+            $t['file_path'] = $folder_path . '/' . str_slug($rs->display_name) . '-gex.json';
             $request_params[] = $t;
         }
 
@@ -2939,85 +2444,10 @@ class RestService extends Model
         return $final_response_list;
     }
 
-    public static function reactivity_data_from_cell_ids($cell_ids_by_rs, $folder_path, $username = '', $cell_response_list)
-    {
-        // Build list of services to query from the original response
-        $rs_list = [];
-        foreach ($cell_response_list as $response) {
-            $rs_list[$response['rs']->id] = $response['rs'];
-        }
-
-        // count services in each service group
-        $group_list = [];
-        foreach ($rs_list as $rs_id => $rs) {
-            $group = $rs->rest_service_group_code;
-            if ($group) {
-                if (! isset($group_list[$group])) {
-                    $group_list[$group] = 0;
-                }
-                $group_list[$group] += 1;
-            }
-        }
-
-        // Initialize request parameters for each service
-        $request_params = [];
-
-        // Loop over the services and do a search for those specific cell ids
-        foreach ($cell_ids_by_rs as $rs_id => $rs_cell_id_array) {
-            // Get the info about the rest service based on the ID.
-            if (array_key_exists($rs_id, $rs_list)) {
-                $rs_data = $rs_list[$rs_id];
-            } else {
-                Log::error('RestService::reactivity_data - Unexpected rest service id ' . $rs_id);
-                throw new \Exception('Unexpected rest service_id ' . $rs_id);
-            }
-
-            // Generate the JSON query.
-            $rs_filters_json = self::generate_json_query(['cell_id' => $rs_cell_id_array], [], $rs_data->api_version);
-
-            // Set up the query for this service
-            $t = [];
-            $t['rs'] = $rs_data;
-            $t['url'] = $rs_data->url . 'reactivity';
-            $t['params'] = $rs_filters_json;
-            $t['timeout'] = config('ireceptor.service_file_request_timeout');
-
-            // add number suffix for rest services belonging to a group
-            $file_suffix = '';
-            $group = $rs_data->rest_service_group_code;
-            if ($group && $group_list[$group] > 1) {
-                if (! isset($group_list_count[$group])) {
-                    $group_list_count[$group] = 0;
-                }
-                $group_list_count[$group] += 1;
-                $file_suffix = '_part' . $group_list_count[$group];
-            }
-            $t['file_path'] = $folder_path . '/' . str_slug($rs_data->display_name) . $file_suffix . '-reactivity.json';
-
-            $request_params[] = $t;
-        }
-
-        // Do requests, write data to files
-        $final_response_list = [];
-        if (count($request_params) > 0) {
-            Log::info('Do download requests...');
-            $final_response_list = self::doRequests($request_params);
-        }
-
-        return $final_response_list;
-    }
-
-    // Do requests (in parallel)
-    // @param object request_params: Can have the following:
-    //   - url = array_get($t, 'url', []);
-    //   - file_path = array_get($t, 'file_path', '');
-    //   - returnArray = array_get($t, 'returnArray', false);
-    //   - rs = array_get($t, 'rs');
-    //   - timeout = array_get($t, 'timeout', config('ireceptor.service_request_timeout'));
-    //   - params_str = array_get($t, 'params', '{}');
+    // do requests (in parallel)
     public static function doRequests($request_params)
     {
-        // Create Guzzle client
+        // create Guzzle client
         $defaults = [];
         $defaults['verify'] = false;    // accept self-signed SSL certificates
         $client = new \GuzzleHttp\Client($defaults);

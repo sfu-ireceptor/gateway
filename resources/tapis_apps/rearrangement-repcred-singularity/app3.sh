@@ -118,7 +118,7 @@ function run_analysis()
     # Run Repcred on each rearrangement file provided.
     echo "IR-INFO: Running Repcred on $rearrangement_file"
     echo "IR-INFO: Mapping ${PWD} to /data"
-    echo "IR-INFO: Asking for ${_tapisCoresPerNode} threads"
+    echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
     echo "IR-INFO: Storing output in /data/${output_directory}"
 
     # Run Repcred on the file

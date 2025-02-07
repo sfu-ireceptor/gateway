@@ -134,7 +134,7 @@ function run_analysis()
     mkdir ${PWD}/${output_directory}/data
     for filename in "${array_of_files[@]}"; do
         echo "IR-INFO: Running ImmunArch on $filename"
-        echo "IR-INFO: Asking for ${_tapisCoresPerNode} threads"
+        echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
 	echo "IR-INFO: Mapping ${PWD} to /data"
         echo "IR-INFO: Input data = /data/${output_directory}/data"
 	echo "IR-INFO: Storing output in /data/${output_directory}"

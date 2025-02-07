@@ -660,7 +660,6 @@ class Tapis
         // Set up the container arguments. We want to mount external mount points.
         $t['parameterSet']['containerArgs'][] = ['name' => 'project_mount', 'arg' => '-B /project:/project'];
         $t['parameterSet']['containerArgs'][] = ['name' => 'scratch_mount', 'arg' => '-B /scratch:/scratch'];
-        $t['parameterSet']['containerArgs'][] = ['name' => 'localscratch_mount', 'arg' => '-B /localscratch:/localscratch'];
         $t['parameterSet']['containerArgs'][] = ['name' => 'gateway_app_mount', 'arg' => '-B ' . $exec_gateway_mount_dir . ':' . $container_gateway_mount_dir];
 
         // Set up the job parameters. We loop over the possible job parameters and
