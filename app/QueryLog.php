@@ -30,7 +30,7 @@ class QueryLog extends Model
 
     public static function start_job($page_url, $filters, $nb_sequences, $username)
     {
-        Log::debug('#### start job');
+        Log::debug('start job');
         $t = [];
 
         $now = Carbon::now();
@@ -76,12 +76,12 @@ class QueryLog extends Model
         }
 
         $ql->save();
-        Log::debug('#### end job');
+        Log::debug('end job query');
     }
 
     public static function start_gateway_query($request)
     {
-        Log::debug('#### start gateway query');
+        Log::debug('start gateway query');
         $t = [];
 
         $now = Carbon::now();
@@ -166,7 +166,7 @@ class QueryLog extends Model
         }
 
         $ql->save();
-        Log::debug('#### end gateway query');
+        Log::debug('end gateway query');
     }
 
     public static function set_gateway_query_status($query_log_id, $status = 'done', $message = null)

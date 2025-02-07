@@ -69,11 +69,6 @@ printf "IR-INFO: PROCS = ${_tapisCoresPerNode}\n"
 printf "IR-INFO: MEM = ${_tapisMemoryMB}\n"
 printf "IR-INFO: MAX RUNTIME = ${_tapisMaxMinutes}\n"
 printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
-printf "IR-INFO: SLURM TMPDIR = ${SLURM_TMPDIR}\n"
-echo -n "IR-INFO: SLURM TMPDIR size = "
-df -h ${SLURM_TMPDIR} | tr -s ' ' | cut -d' ' -f 2 | tail -n 1
-echo -n "IR-INFO: SLURM TMPDIR capacity = "
-df -h ${SLURM_TMPDIR} | tr -s ' ' | cut -d' ' -f 5 | tail -n 1
 printf "IR-INFO: ZIP FILE = ${ZIP_FILE}\n"
 printf "IR-INFO: "
 lscpu | grep "Model name"
@@ -127,7 +122,7 @@ function run_analysis()
     # Run TCRMatch on each rearrangement file provided.
     echo "IR-INFO: Running TCRMatch on $rearrangement_file"
     echo "IR-INFO: Mapping ${PWD} to /data"
-    echo "IR-INFO: Asking for ${_tapisCoresPerNode} threads"
+    echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
     echo "IR-INFO: Storing output in /data/${output_directory}"
 
     # Use a temporary file for output
@@ -146,8 +141,8 @@ function run_analysis()
     #fi
 
     # Use a temporary file for output
-    JUNCTION_FILE=${repertoire_id}_junction.tsv
-    rm -f ${output_directory}/${JUNCTION_FILE}
+    JUNCTION_FILE=${output_directory}/${repertoire_id}_junction.tsv
+    rm -f ${JUNCTION_FILE}
 
     # Extract junction_aa column if it exists
     #
@@ -163,141 +158,63 @@ function run_analysis()
     # sort -u - We only want to search once per CDR3
     #
     # egrep -v "\*" - Remove any CDR3s with special characters
-    echo -n "IR-INFO: Preprocessing Junction AAs"
-    date
     python3 ${IR_GATEWAY_UTIL_DIR}/preprocess.py ${output_directory}/${rearrangement_file} junction_aa \
         | grep -v nan \
         | sed '/^C.*[WF]$/ s/^.\(.*\).$/\1/' \
         | sort -u \
         | egrep "^[ABCDEFGHIKLMNPQRSTVWYZ]*$" \
-        >> ${output_directory}/$JUNCTION_FILE
+        >> $JUNCTION_FILE
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Unable to extract Junctions from ${output_directory}/${rearrangement_file}"
     fi
 
-    # Set up the DB file to use in the container
-    DB_FILE=IEDB_data.tsv
-    DB_PATH=/TCRMatch/data
-    cp $DB_PATH/$DB_FILE $SLURM_TMPDIR/$DB_FILE
-    cp ${output_directory}/$JUNCTION_FILE $SLURM_TMPDIR/$JUNCTION_FILE
-    
-    # Run TCRMatch on Junctions
-    echo -n "IR-INFO: Running TCRMatch on ${SLURM_TMPDIR}/${JUNCTION_FILE} - "
-    date
+    # Run TCRMatch on CDR3s
+    #echo -n "IR-INFO: Running TCRMatch on ${CDR3_FILE} - "
+    #date
+    #/TCRMatch/tcrmatch \
+    #    -i ${CDR3_FILE} \
+    #    -d /TCRMatch/data/IEDB_data.tsv -t 1\
+    #    >> ${output_directory}/${repertoire_id}_epitope.tsv
+    #if [ $? -ne 0 ]
+    #then
+    #    echo "IR-ERROR: TCRMatch failed on file ${CDR3_FILE}"
+    #fi
 
+    # Run TCRMatch on Junctions
+    echo -n "IR-INFO: Running TCRMatch on ${JUNCTION_FILE} - "
+    date
     /TCRMatch/tcrmatch \
-        -i ${SLURM_TMPDIR}/${JUNCTION_FILE} \
-        -d ${SLURM_TMPDIR}/${DB_FILE} -t 1\
+        -i ${JUNCTION_FILE} \
+        -d /TCRMatch/data/IEDB_data.tsv -t 1\
         -s ${TCR_MATCH_THRESHOLD} \
-        > ${SLURM_TMPDIR}/${repertoire_id}_epitope.tsv
+        > ${output_directory}/${repertoire_id}_epitope.tsv
     if [ $? -ne 0 ]
     then
-        echo "IR-ERROR: TCRMatch failed on file ${SLURM_TMPDIR}/${JUNCTION_FILE}"
+        echo "IR-ERROR: TCRMatch failed on file ${JUNCTION_FILE}"
     fi
-    echo -n "IR-INFO: Done running TCRMatch on ${SLURM_TMPDIR}/${JUNCTION_FILE} - "
+    echo -n "IR-INFO: Done running TCRMatch on ${JUNCTION_FILE} - "
     date
-    mv ${SLURM_TMPDIR}/${repertoire_id}_epitope.tsv ${output_directory}/${repertoire_id}_epitope.tsv
-    rm ${SLURM_TMPDIR}/${JUNCTION_FILE}
-    rm ${SLURM_TMPDIR}/${DB_FILE}
 
     # For each junction_aa found, extract the rearrangements that have that junction_aa
     # Loop through the input TSV file line by line
-    echo -n "IR-INFO: Generating TSV data for matched sequences at "
-    date
-    # We search the junction_aa field in the file and extract the sequence_id.
-    search_column_name="junction_aa"
-    search_column=$(head -1 "${output_directory}/${rearrangement_file}" | tr '\t' '\n' | awk -v header="$search_column_name" '{if ($1 == header) print NR}')
-    sequence_column_name="sequence_id"
-    sequence_column=$(head -1 "${output_directory}/${rearrangement_file}" | tr '\t' '\n' | awk -v header="$sequence_column_name" '{if ($1 == header) print NR}')
-    # Generate a header for the sequence/epitope file. This contains a line for
-    # each sequence that has been mapped to an epitope, containing the 
-    # sequence_id and the epitope information.
-    seq_epitope_file=${output_directory}/${repertoire_id}_sequence_epitope.tsv
-    printf "sequence_id\t" > $seq_epitope_file
-    head -n 1 ${output_directory}/${repertoire_id}_epitope.tsv >> $seq_epitope_file
+    search_column="junction_aa"
+    column_index=$(head -1 "${output_directory}/${rearrangement_file}" | tr '\t' '\n' | awk -v header="$search_column" '{if ($1 == header) print NR}')
     while IFS=$'\t' read -r column1 column2 column3 column4 column5 other_columns; do
 
-        # Set up the output string from the epitopes
-        epitope_str="$column1\t$column2\t$column3\t$column4\t$column5\t$other_columns"
         # Search for a match in the specific "junction_aa" column with the pattern "C<value>F" or "C<value>W"
-        awk -v FS="\t" -v search_col="$search_column" -v sequence_col="$sequence_column" -v search_val="$column1" -v outstr="$epitope_str" \
-            'NR > 1 && $search_col ~ "^C" search_val "(F|W)$" { printf("%s\t%s\n",$sequence_col, outstr); }' "${output_directory}/${rearrangement_file}" >> $seq_epitope_file
+        results=$(awk -v FS="\t" -v col="$column_index" -v value="$column1" \
+            'NR > 1 && $col ~ "^C" value "(F|W)$" { print }' "${output_directory}/${rearrangement_file}")
+
+        if [ -n "$results" ]; then
+            output_file="${output_directory}/${column1}_${column4}_${column5}.tsv"
+            echo "IR-INFO: Writing results for ${column1} to $output_file"
+            head -n 1 ${output_directory}/${rearrangement_file} > $output_file
+            echo "$results" >> "$output_file"
+        else
+            echo "IR-INFO: Warning, could not find ${column1} in ${output_directory}/${rearrangement_file}"
+        fi
     done < "${output_directory}/${repertoire_id}_epitope.tsv"
-
-    # Generate cdr3, epitope, antigen, and organism reports for the repertoire.
-    cdr3_report_file=${output_directory}/${repertoire_id}_cdr3_report.tsv
-    epitope_report_file=${output_directory}/${repertoire_id}_epitope_report.tsv
-    antigen_report_file=${output_directory}/${repertoire_id}_antigen_report.tsv
-    organism_report_file=${output_directory}/${repertoire_id}_organism_report.tsv
-    epitope_file_trimmed=${output_directory}/${repertoire_id}_epitope_trimmed.tsv
-    # Trim off the header line
-    tail +2 ${output_directory}/${repertoire_id}_epitope.tsv > $epitope_file_trimmed
-    # Assign a temp file
-    tmpfile=${output_directory}/${repertoire_id}_file.tmp
-
-    # Generate the cdr3 report
-    rm -f $tmpfile
-    touch $tmpfile
-    echo "IR-INFO: Generating cdr3 report"
-    # CDR3s are column 1 in TCRMatch report.
-    # TODO: the column number could be extracted from the TSV file
-    # We loop over each unique epitope and process it (seen variable tracks uniqueness).
-    awk -F'\t' '!seen[$5]++ {if (length($5) > 0) {print $0}}' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
-        # Count up the epitopes we have found in the sequence file. This is in
-        # column size of the sequence file as it has a sequence_id column in column 1
-        count=$(awk -F'\t' -v value="$epitope" '$6 == value {print $0}' "$seq_epitope_file" | wc -l)
-        if [ $count -gt 0 ]; then
-            printf "$count\t$trimmed_cdr3\t$match_cdr3\t$score\t$receptor_group\t$epitope\t$antigen\t$organism\n" >> $tmpfile
-        fi
-    done
-    # Generate the report file by writing a header and sorting the data in the tmp file
-    printf "sequence_count\ttrimmed_cdr3\tmatch_cdr3\tscore\treceptor_group\tepitope\tantigen\torganism\n" > $cdr3_report_file
-    sort -r -n $tmpfile >> $cdr3_report_file
-
-    # Generate the epitope report
-    rm -f $tmpfile
-    touch $tmpfile
-    echo "IR-INFO: Generating epitope report"
-    # Epitopes are column 5 in TCRMatch report.
-    # TODO: the column number could be extracted from the TSV file
-    # We loop over each unique epitope and process it (seen variable tracks uniqueness).
-    awk -F'\t' '!seen[$5]++ {if (length($5) > 0) {print $0}}' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
-        # Count up the epitopes we have found in the sequence file. This is in
-        # column size of the sequence file as it has a sequence_id column in column 1
-        count=$(awk -F'\t' -v value="$epitope" '$6 == value {print $0}' "$seq_epitope_file" | wc -l)
-        if [ $count -gt 0 ]; then
-            printf "$count\t$epitope\t$antigen\t$organism\t$receptor_group\n" >> $tmpfile
-        fi
-    done
-    # Generate the report file by writing a header and sorting the data in the tmp file
-    printf "sequence_count\tepitope\tantigen\torganism\treceptor_group\n" > $epitope_report_file
-    sort -r -n $tmpfile >> $epitope_report_file
-
-    rm -f $tmpfile
-    touch $tmpfile
-    echo "IR-INFO: Generating antigen report"
-    awk -F'\t' '!seen[$6]++ {if (length($6) > 0) {print $0}}' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
-        count=$(awk -F'\t' -v value="$antigen" '$7 == value {print $0}' "$seq_epitope_file" | wc -l)
-        if [ $count -gt 0 ]; then
-            printf "$count\t$antigen\t$organism\n" >> $tmpfile
-        fi
-    done
-    printf "sequence_count\tantigen\torganism\n" > $antigen_report_file
-    sort -r -n $tmpfile >> $antigen_report_file
-
-    rm -f $tmpfile
-    touch $tmpfile
-    echo "IR-INFO: Generating antigen report"
-    awk -F'\t' '!seen[$7]++ {if (length($7) > 0) {print $0}}' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
-        count=$(awk -F'\t' -v value="$organism" '$8 == value {print $0}' "$seq_epitope_file" | wc -l)
-        if [ $count -gt 0 ]; then
-            printf "$count\t$organism\n" >> $tmpfile
-        fi
-    done
-    printf "sequence_count\torganism\n" > $organism_report_file
-    sort -r -n $tmpfile >> $organism_report_file
-    rm -f $tmpfile
 
     # Generate a summary HTML file for the Gateway to present this info to the user
     html_file=${output_directory}/${repertoire_id}.html
@@ -322,22 +239,10 @@ function run_analysis()
     printf "<h2>Analysis</h2>\n" >> ${html_file}
     printf "<h3>TCRMatch Summary</h3>\n" >> ${html_file}
     
-    echo "<p><a href=\"https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2021.640725/full\" target=\"_blank\">TCRMatch</a> is an openly accessible tool that takes TCR β-chain CDR3 sequences as an input, identifies TCRs with a match in the <a href=\"http://iedb.org/\" target=\"_blank\">Immune Epitope Database (IEDB)</a>, and reports the specificity of each match. This iReceptor Analysis App uses TCRMatch to output TCR β-chain CDR3 that are found to have specificity in IEDB at the threshold provided.</p>" >> ${html_file}
-
     echo "<ul>" >> ${html_file}
 
-    echo "<li>TCRMatch threshold: $TCR_MATCH_THRESHOLD</li>" >> ${html_file}
-
-    echo -n "<li>Number of sequences: " >> ${html_file}
-    tail +2 ${output_directory}/${rearrangement_file} | wc -l | cut -f 1 -d " " >> ${html_file}
-    echo "</li>" >> ${html_file}
-
     echo -n "<li>Number of unique CDR3s: " >> ${html_file}
-    wc -l ${output_directory}/${JUNCTION_FILE} | cut -f 1 -d " " >> ${html_file}
-    echo "</li>" >> ${html_file}
-
-    echo -n "<li>Number of unique matched sequences: " >> ${html_file}
-    tail +2 ${seq_epitope_file} | cut -f 1  | sort -u | wc -l >> ${html_file}
+    wc -l ${JUNCTION_FILE} | cut -f 1 -d " " >> ${html_file}
     echo "</li>" >> ${html_file}
 
     echo -n "<li>Number of CDR3/epitope matches: " >> ${html_file}
@@ -352,30 +257,13 @@ function run_analysis()
 
     echo "</ul>" >> ${html_file}
 
-    echo "<p>Note: Organism (and antigen) lists with multiple organisms (or antigens), sometimes the same organism (or antigen), imply that a single CDR3 is known to have cross reactivity with multiple epitopes from that set of organisms (or antigens). Lists with differing numbers of organisms (or antigens) imply that the there are CDR3s that are cross reactive with different numbers of organisms (or antigens).</p>" >> ${html_file}
 
-    printf "<h3>%s - %s</h3>\n" "Organism Report" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=100 ${output_directory}/${repertoire_id}_organism_report.tsv >> ${html_file}
-    if [ $? -ne 0 ]
-    then
-        echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_organism_report.tsv"
-        echo "ERROR occurred generating HTML report" >> ${html_file}
-    fi
-
-    printf "<h3>%s - %s</h3>\n" "Antigen Report" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 ${output_directory}/${repertoire_id}_antigen_report.tsv >> ${html_file}
-    if [ $? -ne 0 ]
-    then
-        echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_antigen_report.tsv"
-        echo "ERROR occurred generating HTML report" >> ${html_file}
-    fi
-    
-    printf "<h3>%s - %s</h3>\n" "CDR3 Beta/Epitope Report" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=20 ${output_directory}/${repertoire_id}_cdr3_report.tsv >> ${html_file}
+    printf "<h3>%s</h3>\n" ${title_string} >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py ${output_directory}/${repertoire_id}_epitope.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_epitope.tsv"
-        echo "ERROR occurred generating HTML report" >> ${html_file}
+        echo "ERROR occurred generating HTML report generation" >> ${html_file}
     fi
 
     # End of main div container
@@ -396,22 +284,10 @@ function run_analysis()
     printf "<h2>Analysis</h2>\n" >> ${html_file}
     printf "<h3>TCRMatch Summary</h3>\n" >> ${html_file}
     
-    echo "<p><a href=\"https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2021.640725/full\" target=\"_blank\">TCRMatch</a> is an openly accessible tool that takes TCR β-chain CDR3 sequences as an input, identifies TCRs with a match in the <a href=\"http://iedb.org/\" target=\"_blank\">Immune Epitope Database (IEDB)</a>, and reports the specificity of each match. This iReceptor Analysis App uses TCRMatch to output TCR β-chain CDR3 that are found to have specificity in IEDB at the threshold provided.</p>" >> ${html_file}
-
     echo "<ul>" >> ${html_file}
 
-    echo "<li>TCRMatch threshold: $TCR_MATCH_THRESHOLD</li>" >> ${html_file}
-
-    echo -n "<li>Number of sequences: " >> ${html_file}
-    tail +2 ${output_directory}/${rearrangement_file} | wc -l | cut -f 1 -d " " >> ${html_file}
-    echo "</li>" >> ${html_file}
-
     echo -n "<li>Number of unique CDR3s: " >> ${html_file}
-    wc -l ${output_directory}/${JUNCTION_FILE} | cut -f 1 -d " " >> ${html_file}
-    echo "</li>" >> ${html_file}
-
-    echo -n "<li>Number of unique matched sequences: " >> ${html_file}
-    tail +2 ${seq_epitope_file} | cut -f 1  | sort -u | wc -l >> ${html_file}
+    wc -l ${JUNCTION_FILE} | cut -f 1 -d " " >> ${html_file}
     echo "</li>" >> ${html_file}
 
     echo -n "<li>Number of CDR3/epitope matches: " >> ${html_file}
@@ -426,32 +302,15 @@ function run_analysis()
 
     echo "</ul>" >> ${html_file}
 
-    echo "<p>Note: Organism (and antigen) lists with multiple organisms (or antigens), sometimes the same organism (or antigen), imply that a single CDR3 is known to have cross reactivity with multiple epitopes from that set of organisms (or antigens). Lists with differing numbers of organisms (or antigens) imply that the there are CDR3s that are cross reactive with different numbers of organisms (or antigens).</p>" >> ${html_file}
-    
-    printf "<h3>%s - %s</h3>\n" "Organism Report" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=100 ${output_directory}/${repertoire_id}_organism_report.tsv >> ${html_file}
-    if [ $? -ne 0 ]
-    then
-        echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_organism_report.tsv"
-        echo "ERROR occurred generating HTML report" >> ${html_file}
-    fi
 
-    printf "<h3>%s - %s</h3>\n" "Antigen Report" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 ${output_directory}/${repertoire_id}_antigen_report.tsv >> ${html_file}
-    if [ $? -ne 0 ]
-    then
-        echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_antigen_report.tsv"
-        echo "ERROR occurred generating HTML report" >> ${html_file}
-    fi
-    
-    printf "<h3>%s - %s</h3>\n" "CDR3 Beta/Epitope Report" ${title_string} >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=20 ${output_directory}/${repertoire_id}_cdr3_report.tsv >> ${html_file}
+    printf "<h3>%s</h3>\n" ${title_string} >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py ${output_directory}/${repertoire_id}_epitope.tsv >> ${html_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: TCRMatch could not generate HTML file for ${repertoire_id}_epitope.tsv"
-        echo "ERROR occurred generating HTML report" >> ${html_file}
+        echo "ERROR occurred generating HTML report generation" >> ${html_file}
     fi
-    
+
     # Add the required label file for the Gateway to present the results as a summary.
     label_file=${output_directory}/${repertoire_id}.txt
     echo "IR-INFO: Generating label file ${label_file}"

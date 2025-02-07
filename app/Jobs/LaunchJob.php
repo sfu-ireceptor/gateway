@@ -2,12 +2,12 @@
 
 namespace App\Jobs;
 
-use App\Cell;
-use App\Clones;
 use App\Job;
 use App\LocalJob;
 use App\Query;
 use App\Sequence;
+use App\SequenceCell;
+use App\SequenceClone;
 use App\System;
 use App\Tapis;
 use Illuminate\Bus\Queueable;
@@ -129,10 +129,10 @@ class LaunchJob implements ShouldQueue
                 $zip_info = Sequence::sequencesTSV($filters, $gw_username, $job->url,
                     $sample_filter_fields, $download_data);
             } elseif ($jobType == 'clone') {
-                $zip_info = Clones::clonesTSV($filters, $gw_username, $job->url,
+                $zip_info = SequenceClone::clonesTSV($filters, $gw_username, $job->url,
                     $sample_filter_fields, $download_data);
             } elseif ($jobType == 'cell') {
-                $zip_info = Cell::cellsTSV($filters, $gw_username, $job->url,
+                $zip_info = SequenceCell::cellsTSV($filters, $gw_username, $job->url,
                     $sample_filter_fields, $download_data);
             }
 

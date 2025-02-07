@@ -91,6 +91,27 @@
                         </div>
                     </div>
 
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingThree">
+                            <h4 class="panel-title">
+                                <a role="button" class="{{ in_array('2', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    Advanced filters
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseThree" class="panel-collapse collapse {{ in_array('2', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingThree">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    {{ Form::label('productive', __('short.productive')) }}
+                                    {{ Form::select('productive', $functional_list, '', array('class' => 'form-control')) }}
+                                </div>
+                                <p class="button_container">
+                                    {{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>        
 
             {{ Form::close() }}                
@@ -138,7 +159,7 @@
                                 </span>
                             @endforeach
                             @isset($sample_query_id)
-                                <a href="/samples/clone?query_id=@yield('sample_query_id', '')"class="remove_filters">
+                                <a href="/samples?query_id=@yield('sample_query_id', '')"class="remove_filters">
                                     Go back to Repertoire Metadata Search
                                 </a>
                             @endisset                        

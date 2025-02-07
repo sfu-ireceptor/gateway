@@ -4,7 +4,7 @@
     "description":"CellTypist",
     "containerImage":"ir_celltypist-1.1.0.sif",
     "jobAttributes": {
-      "description": "<p><a href=\"https://www.celltypist.org/\" target=\"_blank\">CellTypist</a> is an automated cell type annotation tool for scRNA-seq datasets using logistic regression classifiers allowing for cell prediction. It uses built-in cell models (with a current focus on immune sub-populations) to assist in the accurate classification of different cell types and subtypes. This iReceptor Analysis App uses CellTypist to perform cell classification for cells within a repertoire. The analysis will split the data by Repertoire and anlayse each repertoire individually.</p><p>Notes:<ul><li>CellTypist requires gene expression data to classify cells.</li><li>CellTypist uses build in <a href=\"https://www.celltypist.org/models\" target=\"_blank\">cell models</a> that are used for prediction. This Analysis App uses the Immune_All_Low model.</li><li>Although not visible in the summary output, the detailed analysis output tab on the job page provides accuracy estimates of each cell prediction.</ul></p>",
+      "description": "<p><a href=\"https://www.celltypist.org/\" target=\"_blank\">CellTypist</a> is an automated cell type annotation tool for scRNA-seq datasets using logistic regression classifiers allowing for cell prediction. It uses built-in cell models (with a current focus on immune sub-populations) to assist in the accurate classification of different cell types and subtypes. This iReceptor Analysis App uses CellTypist to perform cell classification for cells within a repertoire. The analysis will split the data by Repertoire and anlayse each repertoire individually.</p><p>Notes:<ul><li>CellTypist uses build in <a href=\"https://www.celltypist.org/models\" target=\"_blank\">cell models</a> that are used for prediction. This Analysis App uses the Immune_All_Low model.</li><li>Although not visible in the summary output, the detailed analysis output tab on the job page provides accuracy estimates of each cell prediction.</ul></p>",
       "parameterSet": {
         "appArgs": []
       }
@@ -12,7 +12,7 @@
     "notes": {
         "ir_hints":{
             "object":"Cell",
-            "requirements":{"Fields": {"keywords_study":["contains_schema_expression"]}},
+            "requirements":{"Fields":{}},
             "resources":{}
         }
     }

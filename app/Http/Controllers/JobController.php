@@ -602,7 +602,7 @@ class JobController extends Controller
             $s .= $sample_summary;
             $s .= "</p>\n";
 
-            $s .= "<p><strong>Data filters</strong></p>\n";
+            $s .= "<p><strong>Sequence filters</strong></p>\n";
             $s .= "<p>\n";
             // Replace each newline with a HTML <br> followed by the newline as
             // we want HTML here.
