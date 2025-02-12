@@ -345,20 +345,23 @@ class CellController extends Controller
 
             // Check the field requirements for the app.
             if (array_key_exists('requirements', $app_info) && array_key_exists('Fields', $app_info['requirements']) && count($app_info['requirements']['Fields']) > 0) {
-                foreach ($app_info['requirements']['Fields'] as $field => $value) {
-                    Log::debug('   checking requirement ' . $field . ' = ' . json_encode($value));
+                foreach ($app_info['requirements']['Fields'] as $field => $value_array) {
+                    Log::debug('   checking requirement ' . $field . ' = ' . json_encode($value_array));
                     // For each sample being processed, make sure the field values are valid.
                     foreach ($cell_data['summary'] as $sample) {
                         $error_string = '';
                         $got_error = false;
                         if (property_exists($sample, $field)) {
-                            // If the property exists and is a mismatch, disable app
                             Log::debug('   found field ' . $field . ' = ' . json_encode($sample->$field));
-                            if (! in_array($sample->$field, $value)) {
-                                Log::debug('   Requirement field is not in sample.');
-                                $got_error = true;
-                                $app_ui_info['runnable'] = false;
-                                $error_string = 'A required value is missing from the "' . $field . '" field in one of the repertoires. Please filter the data so that all repertoires have one of the following values (' . json_encode($value) . ') in the "' . $field . '" field.';
+                            foreach ($value_array as $value) {
+                                // If the property exists and is a mismatch, disable app
+                                Log::debug('       checking value ' . $value );
+                                if ((is_array($sample->$field) && !in_array($value, $sample->$field)) || (!is_array($sample->$field) && $value != $sample->$field)) {
+                                    Log::debug('       Requirement field is not in sample.');
+                                    $got_error = true;
+                                    $app_ui_info['runnable'] = false;
+                                    $error_string = 'A required value (one of ' . json_encode($value_array) . ') is missing from the "' . $field . '" field in one of the repertoires. Please filter the data so that all repertoires have one of the following values (' . json_encode($value_array) . ') in the "' . $field . '" field.';
+                                }
                             }
                         } else {
                             // If the property doesn't exist, disable the app
