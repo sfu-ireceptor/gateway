@@ -30,7 +30,7 @@ class QueryLog extends Model
 
     public static function start_job($page_url, $filters, $nb_sequences, $username)
     {
-        Log::debug('#### start job');
+        Log::debug('#### QueryLog::start_job');
         $t = [];
 
         $now = Carbon::now();
@@ -76,12 +76,12 @@ class QueryLog extends Model
         }
 
         $ql->save();
-        Log::debug('#### end job');
+        Log::debug('#### QueryLog::end_job');
     }
 
     public static function start_gateway_query($request)
     {
-        Log::debug('#### start gateway query');
+        Log::debug('#### QueryLog::start_gateway_query');
         $t = [];
 
         $now = Carbon::now();
@@ -166,7 +166,7 @@ class QueryLog extends Model
         }
 
         $ql->save();
-        Log::debug('#### end gateway query');
+        Log::debug('#### QueryLog::end_gateway_query');
     }
 
     public static function set_gateway_query_status($query_log_id, $status = 'done', $message = null)
@@ -242,15 +242,14 @@ class QueryLog extends Model
 
         $ql = self::create($t);
 
-        Log::debug('Start node query ' . $ql->id . ' to ' . $path . ' with POST params:');
-        Log::debug(Str::limit(json_encode($params), 250));
+        Log::debug('QueryLog::start_rest_service_query - Start node query ' . $ql->id . ' to ' . $path . ' with POST params: ' . Str::limit(json_encode($params), 250));
 
         return $ql->id;
     }
 
     public static function end_rest_service_query($query_log_id, $result_size = '', $status = 'done', $message = null)
     {
-        Log::debug('Finished node query: ' . $query_log_id . ' with status: ' . $status);
+        Log::debug('QueryLog::end_rest_service_query - Finished node query: ' . $query_log_id . ' with status: ' . $status);
         if ($message != null) {
             Log::debug($message);
         }
