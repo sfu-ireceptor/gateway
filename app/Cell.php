@@ -39,13 +39,13 @@ class Cell
         // are no filters for any of cell, expression, or reactivity, then we
         // simply search for all cells (there are no cell level filters). Because
         // cell IDs are globally unique, they can be searched for across repositories
-        // without conflict so we can gather them all together. This is inefficient 
+        // without conflict so we can gather them all together. This is inefficient
         // as it would be better to search a repository for only those cells that are
         // in that repository, but such a search is more complicated.
         // TODO: Optimize the search by service.
         $all_cell_ids = [];
-        $num_filters = count($object_filters['cell']) + 
-            count($object_filters['expression']) + 
+        $num_filters = count($object_filters['cell']) +
+            count($object_filters['expression']) +
             count($object_filters['reactivity']);
         Log::debug('Cell:summary - Getting Cell IDs, number of filters = ' . $num_filters);
 
@@ -53,7 +53,6 @@ class Cell
         // equivalent of searching with no cell id filters.
         $all_cell_ids = [];
         if ($num_filters > 0) {
-
             $cell_ids_by_rs = Cell::getCellIDByRS($service_repertoire_list,
                 $object_filters['cell'],
                 $object_filters['expression'],
@@ -231,7 +230,7 @@ class Cell
                 if (array_key_exists($rs, $cell_ids_by_rs)) {
                     $cell_ids_by_rs[$rs] = array_intersect($cell_ids_by_rs[$rs],
                         $expression_cell_ids_by_rs[$rs]);
-                } 
+                }
             }
         }
 
@@ -247,7 +246,7 @@ class Cell
                 if (array_key_exists($rs, $cell_ids_by_rs)) {
                     $cell_ids_by_rs[$rs] = array_intersect($cell_ids_by_rs[$rs],
                         $reactivity_cell_ids_by_rs[$rs]);
-                } 
+                }
             }
         }
         // We want a non associative array, the merge above maintains

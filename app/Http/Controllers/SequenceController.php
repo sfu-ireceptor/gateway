@@ -372,8 +372,8 @@ class SequenceController extends Controller
                             Log::debug('   found field ' . $field . ' = ' . json_encode($sample->$field));
                             foreach ($value_array as $value) {
                                 // If the property exists and is a mismatch, disable app
-                                Log::debug('       checking value ' . $value );
-                                if ((is_array($sample->$field) && !in_array($value, $sample->$field)) || (!is_array($sample->$field) && $value != $sample->$field)) {
+                                Log::debug('       checking value ' . $value);
+                                if ((is_array($sample->$field) && ! in_array($value, $sample->$field)) || (! is_array($sample->$field) && $value != $sample->$field)) {
                                     Log::debug('   Requirement field is not in sample.');
                                     $got_error = true;
                                     $app_ui_info['runnable'] = false;
