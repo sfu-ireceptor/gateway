@@ -754,7 +754,7 @@ class RestService extends Model
             $service_filters = $filters;
 
             // Force all repertoire ids to string - necessary for pre v1.2 repositories
-            // that might have integer IDs. 
+            // that might have integer IDs.
             foreach ($repertoire_id_list as $k => $v) {
                 $repertoire_id_list[$k] = (string) $v;
             }
@@ -790,7 +790,7 @@ class RestService extends Model
             $request_params[] = $t;
         }
 
-        // Perform the request for all the services. 
+        // Perform the request for all the services.
         Log::debug('RestService::object_count() - $request_params');
         Log::debug($request_params);
         $response_list = self::doRequests($request_params);
