@@ -337,7 +337,6 @@ class Cell
         // equivalent of searching with no cell id filters.
         $all_cell_ids = [];
         if ($num_filters > 0) {
-
             $cell_ids_by_rs = Cell::getCellIDByRS($service_repertoire_list,
                 $object_filters['cell'],
                 $object_filters['expression'],
