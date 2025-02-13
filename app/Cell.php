@@ -87,15 +87,14 @@ class Cell
         $response_list_cells_summary = [];
         if ($num_filters > 0 && count($all_cell_ids) > 0) {
             // If there are cell ID filters, set them.
-            //if (count($all_cell_ids) > 0) $filters['cell_id_cell'] = $all_cell_ids;
-            if ($num_filters > 0) $filters['cell_id_cell'] = $all_cell_ids;
-
-            // Get repertoire summary for the cells that meet the criteria.
-            $response_list_cells_summary = RestService::data_summary($filters, $username, true, 'cell');
-
-            // Get a few cells from each service
-            $response_list = RestService::data_subset($filters, $response_list_cells_summary, 10, 'cell');
+            $filters['cell_id_cell'] = $all_cell_ids;
         }
+
+        // Get repertoire summary for the cells that meet the criteria.
+        $response_list_cells_summary = RestService::data_summary($filters, $username, true, 'cell');
+
+        // Get a few cells from each service
+        $response_list = RestService::data_subset($filters, $response_list_cells_summary, 10, 'cell');
 
         // generate repertoire stats for the graphs
         $data = self::process_response($response_list_cells_summary);
@@ -320,19 +319,38 @@ class Cell
         // the generic filter list from the UI.
         $object_filters = Cell::getCellObjectFilters($filters);
 
-        // Get the list of Cell IDs from all of the services
-        // that meet the cell, expression, and reactivity filters.
-        $cell_ids_by_rs = Cell::getCellIDByRS($service_repertoire_list,
-            $object_filters['cell'],
-            $object_filters['expression'],
-            $object_filters['reactivity']);
-
-        // Because cell IDs are globally unique, they can be searched for across
-        // repositories without conflict.
+        // Get the list of Cell IDs from all of the services/repertoirs
+        // that meet the cell, expression, and reactivity filters. If there
+        // are no filters for any of cell, expression, or reactivity, then we
+        // simply search for all cells (there are no cell level filters). Because
+        // cell IDs are globally unique, they can be searched for across repositories
+        // without conflict so we can gather them all together. This is inefficient
+        // as it would be better to search a repository for only those cells that are
+        // in that repository, but such a search is more complicated.
+        // TODO: Optimize the search by service.
         $all_cell_ids = [];
-        foreach ($cell_ids_by_rs as $rs => $rs_cell_id_array) {
-            $all_cell_ids = array_merge($all_cell_ids, $rs_cell_id_array);
+        $num_filters = count($object_filters['cell']) +
+            count($object_filters['expression']) +
+            count($object_filters['reactivity']);
+        Log::debug('Cell:cellsTSVFolder - Getting Cell IDs, number of filters = ' . $num_filters);
+
+        // If we don't have any filters, then we want all cells - which is the
+        // equivalent of searching with no cell id filters.
+        $all_cell_ids = [];
+        if ($num_filters > 0) {
+
+            $cell_ids_by_rs = Cell::getCellIDByRS($service_repertoire_list,
+                $object_filters['cell'],
+                $object_filters['expression'],
+                $object_filters['reactivity']);
+
+            // Because cell IDs are globally unique, they can be searched for across
+            // repositories without conflict. So we combine them
+            foreach ($cell_ids_by_rs as $rs => $rs_cell_id_array) {
+                $all_cell_ids = array_merge($all_cell_ids, $rs_cell_id_array);
+            }
         }
+        Log::debug('Cell:cellsTSVFolder - Number of Cell IDs = ' . count($all_cell_ids));
 
         // Remove the cell specific filter fields from the UI.
         $orig_filters = $filters;
@@ -344,11 +362,23 @@ class Cell
         unset($filters['antigen_reactivity']);
         unset($filters['antigen_source_species_reactivity']);
         unset($filters['peptide_sequence_aa_reactivity']);
-        // Replace them with the computed cell_id filters.
-        $filters['cell_id_cell'] = $all_cell_ids;
 
-        // get repertoire summary for the cells that meet the criteria.
-        $response_list = RestService::data_summary($filters, $username, false, 'cell');
+        // If there were filters, and there are no cell ids, then we didn't
+        // find anything that matched our criteria so there are no results.
+        // If there are results (filters need to be applied) and we have some
+        // cell_ids then we process the data.
+        $response_list = [];
+        $response_list_cells_summary = [];
+        if ($num_filters > 0 && count($all_cell_ids) > 0) {
+            // If there are cell ID filters, set them.
+            $filters['cell_id_cell'] = $all_cell_ids;
+        }
+
+        // Get repertoire summary for the cells that meet the criteria.
+        $response_list_cells_summary = RestService::data_summary($filters, $username, false, 'cell');
+
+        // Get a few cells from each service
+        $response_list = RestService::data_subset($filters, $response_list_cells_summary, 10, 'cell');
 
         // do extra cell summary request to get expected number of cells
         // for sanity check after download
