@@ -407,7 +407,6 @@ class RestService extends Model
 
         // convert filter object to JSON
         $filter_object_json = json_encode($filter_object);
-        //Log::debug(json_encode($filter_object, JSON_PRETTY_PRINT));
 
         return $filter_object_json;
     }
@@ -791,18 +790,12 @@ class RestService extends Model
         }
 
         // Perform the request for all the services.
-        Log::debug('RestService::object_count() - $request_params');
-        Log::debug($request_params);
         $response_list = self::doRequests($request_params);
-        Log::debug('RestService::object_count() - $response_list');
-        Log::debug($response_list);
 
         // Build list of object counts for each repertoire grouped by repository id
         $counts_by_rs = [];
         foreach ($response_list as $response) {
             $rest_service_id = $response['rs']->id;
-            Log::debug('RestService::object_count() - $rest_service_id');
-            Log::debug($rest_service_id);
 
             // if it is an error make a note of it.
             if ($response['status'] == 'error') {
@@ -813,8 +806,6 @@ class RestService extends Model
 
             // Get the facet count list for the response.
             $facet_list = data_get($response, 'data.Facet', []);
-            Log::debug('RestService::object_count() - $facet_list');
-            Log::debug($facet_list);
             $object_count = [];
             // Iterate over the list and get a count for each repertoire, keyed
             // on repertoire_id
@@ -966,11 +957,7 @@ class RestService extends Model
         // Get ALL samples from repositories. This is so we don't
         // send a huge list to repositories. VDJServer in particular
         // can't handle a search with all of its repertoires specified.
-        //Log::debug('RestService::data_summary() - Before sample query');
         $response_list_all = self::samples([], $username, true, $rest_service_id_list, false);
-        //Log::debug('RestService::data_summary() - After sample query');
-        //Log::debug('RestService::data_summary() - All samples from those repositories:');
-        //Log::debug($response_list_all);
 
         // Filter repository responses to only requested samples
         $response_list_requested = [];
@@ -997,9 +984,6 @@ class RestService extends Model
             $response_list_requested[] = $response;
         }
 
-        //Log::debug('RestService::data_summary() - Filtered to requested samples only:');
-        //Log::debug($response_list_requested);
-
         // Build list of data filters only (remove sample id filters)
         $data_filters = $filters;
         unset($data_filters['project_id_list']);
@@ -1021,17 +1005,12 @@ class RestService extends Model
         }
 
         // count objects for each requested sample
-        //Log::debug('RestService::data_summary() - Before object_count');
-        //Log::debug($type);
-
         if ($type == 'sequence' || $type == 'clone' || $type == 'cell') {
             $counts_by_rs = self::object_count($type, $sample_id_list_by_rs, $data_filters, false);
         } else {
             Log::error('Unexpected query type ' . $type);
             throw new \Exception('Unexpected query type ' . $type);
         }
-        //Log::debug('RestService::data_summary() - After object_count');
-        //Log::debug($counts_by_rs);
 
         // add object counts to samples
         $response_list_filtered = [];
@@ -1083,8 +1062,6 @@ class RestService extends Model
                     $sample_list_filtered[] = $sample;
                 }
             }
-            //Log::debug('RestService::data_summary() - sample_list_filtered');
-            //Log::debug($sample_list_filtered);
 
             // Include repository only if it has samples with sequences matching the query
             if (count($sample_list_filtered) > 0) {
@@ -1163,7 +1140,7 @@ class RestService extends Model
             $base_uri = 'cell';
         }
 
-        Log::debug('We have reponses for repos with id:');
+        Log::debug('RestService::data_subset - We have reponses for repos with id:');
         foreach ($response_list_data_summary as $rl) {
             Log::debug($rl['rs']->id);
         }
@@ -1425,7 +1402,7 @@ class RestService extends Model
                         // We need to request specific fields that want to return
                         // about each chain
                         $params = [];
-                        $params['fields'] = ['v_call', 'd_call', 'j_calll', 'c_call',
+                        $params['fields'] = ['v_call', 'd_call', 'j_call', 'c_call',
                             'junction_aa', 'cell_id', 'clone_id'];
                         $request['params'] = self::generate_json_query($filters, $params, $rs->api_version);
 
@@ -1665,20 +1642,18 @@ class RestService extends Model
             Log::error('Unknown stat:' . $stat);
         }
 
-        Log::debug('Stats URL :' . $url);
+        Log::debug('RestService::stats - Stats URL :' . $url);
 
         $filter_object = new \stdClass();
         $filter_object->repertoires = $repertoire_list;
         $filter_object->statistics = $statistics_list;
 
         $filter_object_json = json_encode($filter_object);
-        // Log::debug('Stats JSON request: ' . json_encode($filter_object, JSON_PRETTY_PRINT));
 
         $response = $client->request('POST', $url, [
             'body' => $filter_object_json,
         ]);
 
-        // Log::debug('Stats JSON response: ' . $response->getBody());
 
         return $response->getBody();
     }
@@ -1739,7 +1714,7 @@ class RestService extends Model
         }
 
         // do requests, write tsv data to files
-        Log::debug('Do metadata files for TSV requests...');
+        Log::debug('RestService::sample_list_repertoire_data - Do metadata files for TSV requests...');
         $response_list = self::doRequests($request_params);
 
         return $response_list;
@@ -1808,7 +1783,7 @@ class RestService extends Model
         }
 
         // do requests, write tsv data to files
-        Log::debug('Do metadata files for TSV requests...');
+        Log::debug('RestService::repertoire_data - Do metadata files for TSV requests...');
         $response_list = self::doRequests($request_params);
 
         return $response_list;
@@ -1877,7 +1852,7 @@ class RestService extends Model
             $query_parameters = [];
             $query_parameters['format'] = 'tsv';
 
-            Log::debug('Peak memory usage:' . (memory_get_peak_usage(true) / 1024 / 1024) . " MiB\n\n");
+            Log::debug('RestService::sequences_data - Peak memory usage:' . (memory_get_peak_usage(true) / 1024 / 1024) . " MiB\n\n");
             if (isset($rs->chunk_size) && ($rs->chunk_size != null)) {
                 $chunk_size = $rs->chunk_size;
                 $nb_results = $expected_nb_sequences_by_rs[$rs->id];
@@ -1889,8 +1864,8 @@ class RestService extends Model
                     $query_parameters['size'] = $size;
 
                     // generate JSON query
-                    Log::debug('generating query for chunk ' . $i);
-                    Log::debug('Current memory usage:' . (memory_get_usage() / 1024 / 1024) . " MiB\n\n");
+                    Log::debug('RestService::sequences_data - generating query for chunk ' . $i);
+                    Log::debug('RestService::sequences_data - Current memory usage:' . (memory_get_usage() / 1024 / 1024) . " MiB\n\n");
 
                     $t = [];
                     $t['rs'] = $rs;
@@ -1967,7 +1942,7 @@ class RestService extends Model
                 // try each group of queries up to 3 times
                 for ($i = 1; $i <= 3; $i++) {
                     if ($i > 1) {
-                        Log::debug('Retrying chunk, attempt ' . $i);
+                        Log::debug('RestService::sequences_data - Retrying chunk, attempt ' . $i);
                     }
 
                     $response_list_chunk = self::doRequests($requests);
@@ -2067,11 +2042,11 @@ class RestService extends Model
         // if any async download, poll until ready then download
         foreach ($final_response_list as $response) {
             $rs = $response['rs'];
-            Log::debug('Processing download response from ' . $rs->name);
+            Log::debug('RestService::sequences_data - Processing download response from ' . $rs->name);
             if ($rs->async) {
                 if (isset($response['data']->query_id)) {
                     $query_id = $response['data']->query_id;
-                    Log::debug('Async query_id=' . $query_id);
+                    Log::debug('RestService::sequences_data - Async query_id=' . $query_id);
                 } else {
                     Log::error('No async query id found:');
                     Log::error($response['data']);
@@ -2095,7 +2070,7 @@ class RestService extends Model
                 $query_log_id = QueryLog::start_rest_service_query($rs->id, $rs->name, $polling_url, '', '');
 
                 while ($status != 'FINISHED' && $status != 'ERROR') {
-                    Log::debug('status for async query id ' . $query_id . ' -> ' . $status);
+                    Log::debug('RestService::sequences_data - status for async query id ' . $query_id . ' -> ' . $status);
 
                     try {
                         $response_polling = $client->get($query_id);
@@ -2126,7 +2101,7 @@ class RestService extends Model
                 QueryLog::end_rest_service_query($query_log_id);
 
                 if ($status == 'FINISHED') {
-                    Log::debug('download_url=' . $download_url);
+                    Log::debug('RestService::sequences_data - download_url=' . $download_url);
 
                     // download file
                     $file_path = $folder_path . '/' . str_slug($rs->display_name) . '.tsv';
@@ -2422,6 +2397,11 @@ class RestService extends Model
         $query_parameters['format'] = 'tsv';
 
         foreach ($cell_ids_by_rs as $rs_id => $rs_cell_id_array) {
+            // If a repository has no Cells then skip it.
+            if (count($rs_cell_id_array) == 0) {
+                continue;
+            }
+
             $rs_filters = [];
 
             if (array_key_exists($rs_id, $rs_list)) {
@@ -2571,6 +2551,10 @@ class RestService extends Model
         $request_params = [];
 
         foreach ($cell_ids_by_rs as $rs_id => $rs_cell_id_array) {
+            // If a repository has no Cells then skip it.
+            if (count($rs_cell_id_array) == 0) {
+                continue;
+            }
             $rs_filters = [];
 
             if (array_key_exists($rs_id, $rs_list)) {
@@ -2638,6 +2622,10 @@ class RestService extends Model
 
         // Loop over the services and do a search for those specific cell ids
         foreach ($cell_ids_by_rs as $rs_id => $rs_cell_id_array) {
+            // If a repository has no Cells then skip it.
+            if (count($rs_cell_id_array) == 0) {
+                continue;
+            }
             // Get the info about the rest service based on the ID.
             if (array_key_exists($rs_id, $rs_list)) {
                 $rs_data = $rs_list[$rs_id];
@@ -2744,7 +2732,6 @@ class RestService extends Model
 
                                 // return object generated from json response
                                 $json = $response->getBody();
-                                //Log::debug($json);
                                 $obj = json_decode($json, $returnArray);
                                 if ($obj == null) {
                                     $t['status'] = 'error';
