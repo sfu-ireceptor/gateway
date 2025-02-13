@@ -215,12 +215,10 @@ class Cell
         $reactivity_cell_ids_by_rs = [];
 
         // Get the initial set of cell ids from the cell filters.
-        Log::debug('Cell::getCellIDbyRS - searching cells');
         $cell_ids_by_rs = RestService::object_list('cell', $service_repertoire_list, $cell_filters, 'cell_id');
 
         // If we have expression filters apply them, get the list of cells, and
         // intersect them with the current list.
-        Log::debug('Cell::getCellIDbyRS - searching expression');
         if (count($expression_filters) > 0) {
             $expression_cell_ids_by_rs = RestService::object_list('expression', $service_repertoire_list,
                 $expression_filters, 'cell_id');
@@ -236,7 +234,6 @@ class Cell
 
         // If we have reactivity filters apply them, get the list of cells, and
         // intersect them with the current list.
-        Log::debug('Cell::getCellIDbyRS - searching reactivity');
         if (count($reactivity_filters) > 0) {
             $reactivity_cell_ids_by_rs = RestService::object_list('reactivity', $service_repertoire_list,
                 $reactivity_filters, 'cell_id');
@@ -253,7 +250,6 @@ class Cell
         // the associative keys from the original arrays.
         foreach ($cell_ids_by_rs as $rs_id => $cell_ids_for_rs) {
             $cell_ids_by_rs[$rs_id] = array_values($cell_ids_for_rs);
-            Log::debug('Cell::getCellIDbyRS - RS = ' . $rs_id . ' cell id count = ' . count($cell_ids_by_rs[$rs_id]));
         }
 
         // Return the array keyed by service id.
@@ -318,7 +314,7 @@ class Cell
         // the generic filter list from the UI.
         $object_filters = Cell::getCellObjectFilters($filters);
 
-        // Get the list of Cell IDs from all of the services/repertoirs
+        // Get the list of Cell IDs from all of the services/repertoires
         // that meet the cell, expression, and reactivity filters. If there
         // are no filters for any of cell, expression, or reactivity, then we
         // simply search for all cells (there are no cell level filters). Because
@@ -336,17 +332,15 @@ class Cell
         // If we don't have any filters, then we want all cells - which is the
         // equivalent of searching with no cell id filters.
         $all_cell_ids = [];
-        if ($num_filters > 0) {
-            $cell_ids_by_rs = Cell::getCellIDByRS($service_repertoire_list,
-                $object_filters['cell'],
-                $object_filters['expression'],
-                $object_filters['reactivity']);
+        $cell_ids_by_rs = Cell::getCellIDByRS($service_repertoire_list,
+            $object_filters['cell'],
+            $object_filters['expression'],
+            $object_filters['reactivity']);
 
-            // Because cell IDs are globally unique, they can be searched for across
-            // repositories without conflict. So we combine them
-            foreach ($cell_ids_by_rs as $rs => $rs_cell_id_array) {
-                $all_cell_ids = array_merge($all_cell_ids, $rs_cell_id_array);
-            }
+        // Because cell IDs are globally unique, they can be searched for across
+        // repositories without conflict. So we combine them
+        foreach ($cell_ids_by_rs as $rs => $rs_cell_id_array) {
+            $all_cell_ids = array_merge($all_cell_ids, $rs_cell_id_array);
         }
         Log::debug('Cell:cellsTSVFolder - Number of Cell IDs = ' . count($all_cell_ids));
 
@@ -373,10 +367,7 @@ class Cell
         }
 
         // Get repertoire summary for the cells that meet the criteria.
-        $response_list_cells_summary = RestService::data_summary($filters, $username, false, 'cell');
-
-        // Get a few cells from each service
-        $response_list = RestService::data_subset($filters, $response_list_cells_summary, 10, 'cell');
+        $response_list = RestService::data_summary($filters, $username, false, 'cell');
 
         // do extra cell summary request to get expected number of cells
         // for sanity check after download
@@ -422,12 +413,11 @@ class Cell
         if ($download_data) {
             // cell data
             $cell_response_list = RestService::cells_data($filters, $folder_path, $username, $expected_nb_cells_by_rs);
-
             // expression data
-            $expression_response_list = RestService::expression_data_from_cell_ids($cell_ids_by_rs, $folder_path, $username, $response_list);
+            $expression_response_list = RestService::expression_data_from_cell_ids($cell_ids_by_rs, $folder_path, $username, $cell_response_list);
 
             // reactivity data
-            $reactivity_response_list = RestService::reactivity_data_from_cell_ids($cell_ids_by_rs, $folder_path, $username, $response_list);
+            $reactivity_response_list = RestService::reactivity_data_from_cell_ids($cell_ids_by_rs, $folder_path, $username, $cell_response_list);
 
             // sequence data
             $sequence_response_list = RestService::sequences_data_from_cell_ids($cell_ids_by_rs, $folder_path, $username, $expected_nb_cells_by_rs);
