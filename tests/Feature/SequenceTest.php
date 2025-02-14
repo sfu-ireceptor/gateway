@@ -233,8 +233,8 @@ class SequenceTest extends TestCase
         Query::shouldReceive('getParams')->andReturn(self::$query_params);
 
         // mock RestService::sequences_summary()
-        RestService::shouldReceive('sequences_summary')->once()->andReturn($response_list);
-        RestService::shouldReceive('sequence_list')->once()->andReturn($sequence_list_response);
+        RestService::shouldReceive('data_summary')->once()->andReturn($response_list);
+        RestService::shouldReceive('data_subset')->once()->andReturn($sequence_list_response);
 
         // generate fake user
         $u = User::factory()->make();
@@ -281,8 +281,8 @@ class SequenceTest extends TestCase
             Query::shouldReceive('getParams')->andReturn(self::$query_params);
 
             // mock RestService::sequences_summary()
-            RestService::shouldReceive('sequences_summary')->once()->andReturn($response_list);
-            RestService::shouldReceive('sequence_list')->once()->andReturn($sequence_list_response);
+            RestService::shouldReceive('data_summary')->once()->andReturn($response_list);
+            RestService::shouldReceive('data_subset')->once()->andReturn($sequence_list_response);
 
             // test sequence page is working
             $this->actingAs($u)->get('/sequences?query_id=0')->assertOk();
