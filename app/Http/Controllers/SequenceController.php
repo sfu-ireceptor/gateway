@@ -303,10 +303,11 @@ class SequenceController extends Controller
             // Required is bytes per unit times the number of rearrangements in the
             // largest repertoire.
             if (array_key_exists('memory_byte_per_unit_repertoire', $app_info)) {
-                // Get the number of rearrangements in the larges repertoire
+                // Get the number of rearrangements in the largest repertoire
                 $repertoire_objects = 0;
                 foreach ($sequence_data['summary'] as $sample) {
-                    if ($sample->ir_filtered_sequence_count > $repertoire_objects) {
+                    if (property_exists($sample,'ir_filtered_sequence_count') &&
+                        $sample->ir_filtered_sequence_count > $repertoire_objects) {
                         $repertoire_objects = $sample->ir_filtered_sequence_count;
                     }
                 }
