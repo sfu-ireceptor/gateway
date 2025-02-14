@@ -1654,7 +1654,6 @@ class RestService extends Model
             'body' => $filter_object_json,
         ]);
 
-
         return $response->getBody();
     }
 
