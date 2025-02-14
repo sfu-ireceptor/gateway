@@ -825,8 +825,8 @@ class Sequence
                                       $expected_nb_sequences_by_rs, $download_data)
     {
         Log::debug('Get TSV files stats');
-        Log::debug('response_list = ' . json_encode($data_response_list));
-        Log::debug('metadata_response_list = ' . json_encode($metadata_response_list));
+        //Log::debug('response_list = ' . json_encode($data_response_list));
+        //Log::debug('metadata_response_list = ' . json_encode($metadata_response_list));
         // Process the correct response list, depending on if we are downloading
         // data or not.
         if ($download_data) {

@@ -1927,13 +1927,13 @@ class RestService extends Model
 
         // do standard requests
         if (count($request_params) > 0) {
-            Log::info('Do TSV requests... (not chunked)');
+            Log::info('RestService::sequences_data - Do TSV requests... (not chunked)');
             $final_response_list = self::doRequests($request_params);
         }
 
         // do chunked requests
         if (count($request_params_chunking) > 0) {
-            Log::info('Do TSV requests... (chunked)');
+            Log::info('RestService::sequences_data - Do TSV requests... (chunked)');
             $request_params_chunked = array_chunk($request_params_chunking, 4);
             $response_list = [];
             $failed = false;
@@ -2014,16 +2014,16 @@ class RestService extends Model
                 $output_files_str = implode(' ', $output_files);
                 $file_path_merged = $folder_path . '/' . str_slug($rs->display_name) . '.tsv';
 
-                Log::info('Merging chunked files...');
+                Log::info('RestService::sequences_data - Merging chunked files...');
                 $cmd = base_path() . '/util/scripts/airr-tsv-merge.py -i ' . $folder_path . '/' . str_slug($rs->display_name) . $file_suffix . '_*.tsv' . ' -o ' . $file_path_merged . ' 2>&1';
-                Log::info($cmd);
+                Log::info('RestService::sequences_data - ' . $cmd);
                 $process = new Process($cmd);
                 $process->setTimeout(3600 * 24);
                 $process->mustRun(function ($type, $buffer) {
                     Log::info($buffer);
                 });
 
-                Log::info('Deleting chunked files...');
+                Log::info('RestService::sequences_data - Deleting chunked files...');
                 foreach ($output_files as $output_file_path) {
                     if (File::exists($output_file_path)) {
                         File::delete($output_file_path);
@@ -2105,7 +2105,7 @@ class RestService extends Model
 
                     // download file
                     $file_path = $folder_path . '/' . str_slug($rs->display_name) . '.tsv';
-                    Log::info('Guzzle: saving to ' . $file_path);
+                    Log::info('RestService::sequences_data - Guzzle: saving to ' . $file_path);
 
                     $query_log_id = QueryLog::start_rest_service_query($rs->id, $rs->name, $download_url, '', $file_path);
 
@@ -2218,7 +2218,7 @@ class RestService extends Model
         $final_response_list = [];
         // do requests, write data to files
         if (count($request_params) > 0) {
-            Log::info('Do download requests...');
+            Log::info('RestService::clones_data - Do download requests...');
             $final_response_list = self::doRequests($request_params);
         }
 
@@ -2271,7 +2271,7 @@ class RestService extends Model
 
         // do requests, write data to files
         if (count($request_params) > 0) {
-            Log::info('Do download requests...');
+            Log::info('RestService::cell_id_list_from_expression_query - Do download requests...');
             $response_list = self::doRequests($request_params);
         }
 
@@ -2342,7 +2342,7 @@ class RestService extends Model
         $final_response_list = [];
 
         if (count($request_params) > 0) {
-            Log::info('Do cell_id_list() requests...');
+            Log::info('RestService::cell_id_list - Do cell_id_list() requests...');
             $final_response_list = self::doRequests($request_params);
         }
 
@@ -2437,7 +2437,7 @@ class RestService extends Model
         $final_response_list = [];
         // do requests, write data to files
         if (count($request_params) > 0) {
-            Log::info('Do download requests...');
+            Log::info('RestService::sequences_data_from_cell_ids - Do download requests...');
             $final_response_list = self::doRequests($request_params);
         }
 
@@ -2520,7 +2520,7 @@ class RestService extends Model
         $final_response_list = [];
         // do requests, write data to files
         if (count($request_params) > 0) {
-            Log::info('Do download requests...');
+            Log::info('RestService::cells_data - Do download requests...');
             $final_response_list = self::doRequests($request_params);
         }
 
@@ -2590,7 +2590,7 @@ class RestService extends Model
         $final_response_list = [];
         // do requests, write data to files
         if (count($request_params) > 0) {
-            Log::info('Do download requests...');
+            Log::info('RestService::expression_data_from_cell_ids - Do download requests...');
             $final_response_list = self::doRequests($request_params);
         }
 
@@ -2662,7 +2662,7 @@ class RestService extends Model
         // Do requests, write data to files
         $final_response_list = [];
         if (count($request_params) > 0) {
-            Log::info('Do download requests...');
+            Log::info('RestService::reactivity_data_from_cell_ids - Do download requests...');
             $final_response_list = self::doRequests($request_params);
         }
 
@@ -2707,12 +2707,12 @@ class RestService extends Model
                 if ($file_path != '') {
                     $dirPath = dirname($file_path);
                     if (! is_dir($dirPath)) {
-                        Log::info('doRequests: Creating directory ' . $dirPath);
+                        Log::info('RestService::doRequests: Creating directory ' . $dirPath);
                         mkdir($dirPath, 0755, true);
                     }
 
                     $options['sink'] = fopen($file_path, 'a');
-                    Log::info('doRequests: saving to ' . $file_path);
+                    Log::info('RestService::doRequests: saving to ' . $file_path);
                 }
 
                 $t = [];
