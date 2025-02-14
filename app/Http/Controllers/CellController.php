@@ -240,8 +240,7 @@ class CellController extends Controller
         foreach ($appTemplates as $app_tag => $app_info) {
             $app_config = $app_info['config'];
             $app_ui_info = [];
-            Log::debug('Processing app ' . $app_tag);
-            //Log::debug('App config = ' . json_encode($app_config));
+            Log::debug('CellController::index - Processing app ' . $app_tag);
 
             // Process the parameters.
             $parameter_list = [];
@@ -251,8 +250,8 @@ class CellController extends Controller
                 // "label" as the human readable name of the parameter.
                 if ($parameter_info['inputMode'] != 'FIXED') {
                     $parameter = [];
-                    Log::debug('   Processing parameter - ' . $parameter_info['name']);
-                    Log::debug('   Processing parameter - ' . $parameter_info['notes']['label']);
+                    Log::debug('CellController::index -   Processing parameter - ' . $parameter_info['name']);
+                    Log::debug('CellController::index -   Processing parameter - ' . $parameter_info['notes']['label']);
                     $parameter['label'] = $parameter_info['notes']['label'];
                     $parameter['name'] = $parameter_info['name'];
                     $parameter['description'] = $parameter_info['description'];
@@ -260,7 +259,7 @@ class CellController extends Controller
                     $parameter['default'] = $parameter_info['arg'];
                     $parameter_list[$parameter_info['name']] = $parameter;
                 } else {
-                    Log::debug('   Not displaying invisible parameter ' . $parameter_info['id']);
+                    Log::debug('CellController::index -   Not displaying invisible parameter ' . $parameter_info['id']);
                 }
             }
 
@@ -312,9 +311,9 @@ class CellController extends Controller
             // If required memory is more than node memory, disable the app and
             // generate an error message.
             if ($required_memory > $node_memory) {
-                Log::debug('   Memory exceeded');
-                Log::debug('      Required memory = ' . human_filesize($required_memory));
-                Log::debug('      Node memory = ' . human_filesize($node_memory));
+                Log::debug('CellController::index -   Memory exceeded');
+                Log::debug('CellController::index -      Required memory = ' . human_filesize($required_memory));
+                Log::debug('CellController::index -      Node memory = ' . human_filesize($node_memory));
                 $app_ui_info['runnable'] = false;
                 $app_ui_info['runnable_comment'] = 'Unable to run Analysis Job. It is estmated that "' . $app_ui_info['name'] . '" will require ' . human_filesize($required_memory) . ' of memory to process ' . human_number($num_objects) . ' rearrangements' . $added_string . '. Compute nodes are limited to ' . human_filesize($node_memory) . ' of memory.';
             }
@@ -329,9 +328,9 @@ class CellController extends Controller
                 $required_time_secs = ($num_objects / 1000000) * $app_info['time_secs_per_million'];
                 // If requried is greater than run time, disable the app.
                 if ($required_time_secs > $job_runtime_secs) {
-                    Log::debug('   Run time exceeded');
-                    Log::debug('      Required run time (s) = ' . human_number($required_time_secs));
-                    Log::debug('      Max run time (s) =  ' . human_number($job_runtime_secs));
+                    Log::debug('CellController::index -   Run time exceeded');
+                    Log::debug('CellController::index -      Required run time (s) = ' . human_number($required_time_secs));
+                    Log::debug('CellController::index -      Max run time (s) =  ' . human_number($job_runtime_secs));
                     $app_ui_info['runnable'] = false;
                     $error_string = 'It is estimated that "' . $app_ui_info['name'] . '" will require ' . human_number($required_time_secs / 60) . ' minutes to process ' . human_number($num_objects) . ' rearrangements. Current maximum job run time is ' . human_number($tapis->maxRunTimeMinutes()) . ' minutes.';
                     // If we have a comment already, then add to it, otherwise generate new comment.
@@ -346,18 +345,16 @@ class CellController extends Controller
             // Check the field requirements for the app.
             if (array_key_exists('requirements', $app_info) && array_key_exists('Fields', $app_info['requirements']) && count($app_info['requirements']['Fields']) > 0) {
                 foreach ($app_info['requirements']['Fields'] as $field => $value_array) {
-                    Log::debug('   checking requirement ' . $field . ' = ' . json_encode($value_array));
+                    Log::debug('CellController::index -   checking requirement ' . $field . ' = ' . json_encode($value_array));
                     // For each sample being processed, make sure the field values are valid.
                     foreach ($cell_data['summary'] as $sample) {
                         $error_string = '';
                         $got_error = false;
                         if (property_exists($sample, $field)) {
-                            Log::debug('   found field ' . $field . ' = ' . json_encode($sample->$field));
                             foreach ($value_array as $value) {
                                 // If the property exists and is a mismatch, disable app
-                                Log::debug('       checking value ' . $value);
                                 if ((is_array($sample->$field) && ! in_array($value, $sample->$field)) || (! is_array($sample->$field) && $value != $sample->$field)) {
-                                    Log::debug('       Requirement field is not in sample.');
+                                    Log::debug('CellController::index -       Requirement field is not in sample.');
                                     $got_error = true;
                                     $app_ui_info['runnable'] = false;
                                     $error_string = 'A required value (one of ' . json_encode($value_array) . ') is missing from the "' . $field . '" field in one of the repertoires. Please filter the data so that all repertoires have one of the following values (' . json_encode($value_array) . ') in the "' . $field . '" field.';
@@ -388,7 +385,6 @@ class CellController extends Controller
             // Save the info in the app list given to the UI.
             $app_list[$app_tag] = $app_ui_info;
         }
-        // Log::debug($app_list);
 
         // Add the app list to the data returned to the View.
         $data['app_list'] = $app_list;
