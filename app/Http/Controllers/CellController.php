@@ -291,7 +291,7 @@ class CellController extends Controller
                 // Get the number of rearrangements in the larges repertoire
                 $repertoire_objects = 0;
                 foreach ($cell_data['summary'] as $sample) {
-                    if (property_exists($sample, 'ir_filtered_cell_count') && 
+                    if (property_exists($sample, 'ir_filtered_cell_count') &&
                         $sample->ir_filtered_cell_count > $repertoire_objects) {
                         $repertoire_objects = $sample->ir_filtered_cell_count;
                     }

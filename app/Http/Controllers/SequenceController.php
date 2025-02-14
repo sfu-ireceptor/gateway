@@ -306,7 +306,7 @@ class SequenceController extends Controller
                 // Get the number of rearrangements in the largest repertoire
                 $repertoire_objects = 0;
                 foreach ($sequence_data['summary'] as $sample) {
-                    if (property_exists($sample,'ir_filtered_sequence_count') &&
+                    if (property_exists($sample, 'ir_filtered_sequence_count') &&
                         $sample->ir_filtered_sequence_count > $repertoire_objects) {
                         $repertoire_objects = $sample->ir_filtered_sequence_count;
                     }
