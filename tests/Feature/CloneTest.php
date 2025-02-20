@@ -8,7 +8,7 @@ use Facades\App\RestService;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
-class SequenceTest extends TestCase
+class CloneTest extends TestCase
 {
     protected static $rs = [
         'id' => 1,
@@ -22,7 +22,7 @@ class SequenceTest extends TestCase
     ];
 
     protected static $repertoire_data = [];
-    protected static $sequence_list = [];
+    protected static $clone_list = [];
 
     public static function setUpBeforeClass(): void
     {
@@ -125,7 +125,7 @@ class SequenceTest extends TestCase
             ],
         ];
 
-        self::$sequence_list = [
+        self::$clone_list = [
             [
                 'Info' => (object) [
                     'Title' => 'AIRR Data Commons API',
@@ -136,7 +136,7 @@ class SequenceTest extends TestCase
                         'url' => 'https://github.com/airr-community',
                     ],
                 ],
-                'Rearrangement' => [
+                'Clone' => [
                     0 => (object) [
                         'd_call' => 'IGHD4-11*01',
                         'junction_aa' => 'CARHLWTTTTFDYW',
@@ -204,13 +204,13 @@ class SequenceTest extends TestCase
 
     /*
     |--------------------------------------------------------------------------
-    | Simulate service returning sequence summary with 1 item,
-    | to test that sequence page works even if fields are missing
+    | Simulate service returning clone summary with 1 item,
+    | to test that clone page works even if fields are missing
     |--------------------------------------------------------------------------
     */
 
     /** @test */
-    public function full_sequence_summary()
+    public function full_clone_summary()
     {
         $response_list = [
             [
@@ -220,11 +220,11 @@ class SequenceTest extends TestCase
             ],
         ];
 
-        $sequence_list_response = [
+        $clone_list_response = [
             [
                 'rs' => (object) self::$rs,
                 'status' => 'success',
-                'data' => self::$sequence_list,
+                'data' => self::$clone_list,
                 'query_log_id' => '5da77e26a98320062425ad8a',
             ],
         ];
@@ -232,19 +232,19 @@ class SequenceTest extends TestCase
         // mock Query::getParams()
         Query::shouldReceive('getParams')->andReturn(self::$query_params);
 
-        // mock RestService::sequences_summary()
+        // mock RestService::data_summary()
         RestService::shouldReceive('data_summary')->once()->andReturn($response_list);
-        RestService::shouldReceive('data_subset')->once()->andReturn($sequence_list_response);
+        RestService::shouldReceive('data_subset')->once()->andReturn($clone_list_response);
 
         // generate fake user
         $u = User::factory()->make();
 
-        // test sequence page is working
-        $this->actingAs($u)->get('/sequences?query_id=0')->assertOk();
+        // test clone page is working
+        $this->actingAs($u)->get('/clones?query_id=0')->assertOk();
     }
 
     /** @test */
-    public function incomplete_sequence_data()
+    public function incomplete_clone_data()
     {
         // generate fake user
         $u = User::factory()->make();
@@ -268,11 +268,11 @@ class SequenceTest extends TestCase
                 ],
             ];
 
-            $sequence_list_response = [
+            $clone_list_response = [
                 [
                     'rs' => (object) self::$rs,
                     'status' => 'success',
-                    'data' => self::$sequence_list,
+                    'data' => self::$clone_list,
                     'query_log_id' => '5da77e26a98320062425ad8a',
                 ],
             ];
@@ -280,12 +280,12 @@ class SequenceTest extends TestCase
             // mock Query::getParams()
             Query::shouldReceive('getParams')->andReturn(self::$query_params);
 
-            // mock RestService::sequences_summary()
+            // mock RestService::data_summary()
             RestService::shouldReceive('data_summary')->once()->andReturn($response_list);
-            RestService::shouldReceive('data_subset')->once()->andReturn($sequence_list_response);
+            RestService::shouldReceive('data_subset')->once()->andReturn($clone_list_response);
 
-            // test sequence page is working
-            $this->actingAs($u)->get('/sequences?query_id=0')->assertOk();
+            // test clone page is working
+            $this->actingAs($u)->get('/clones?query_id=0')->assertOk();
         }
     }
 }

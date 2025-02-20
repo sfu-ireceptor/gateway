@@ -110,7 +110,6 @@ class System extends Model
             Log::info('System::createDefaulySystemForUser - updating system: ' . $systemStagingName);
             Log::info('System::createDefaulySystemForUser - rootDir: ' . $systemStagingRootDir);
             $response = $tapis->updateSystem($systemStagingName, $config);
-            Log::debug('staging update response: ' . json_encode($response, JSON_PRETTY_PRINT));
             $tapis->raiseExceptionIfTapisError($response);
             Log::info('System::createDefaulySystemForUser - system updated: ' . $systemStagingName);
         } else {

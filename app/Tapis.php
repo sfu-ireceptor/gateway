@@ -598,10 +598,8 @@ class Tapis
         $final_args = array_merge([$param], $orig_args);
         $app_config['jobAttributes']['parameterSet']['appArgs'] = $final_args;
 
-        //$app_config['deploymentSystem'] = $deploymentSystem;
-        //$app_config['deploymentPath'] = $deploymentPath;
-        Log::debug('Tapis::getAppConfig: App config:');
-        Log::debug($app_config);
+        //Log::debug('Tapis::getAppConfig: App config:');
+        //Log::debug($app_config);
 
         return $app_config;
     }

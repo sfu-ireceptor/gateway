@@ -257,17 +257,16 @@ class SequenceController extends Controller
             $app_config = $app_info['config'];
 
             $app_ui_info = [];
-            Log::debug('Processing app ' . $app_tag);
+            Log::debug('SequenceController::index - Processing app ' . $app_tag);
             // Process the parameters.
             $parameter_list = [];
-            // Log::debug('App config = ' . json_encode($app_config));
             foreach ($app_config['jobAttributes']['parameterSet']['appArgs'] as $parameter_info) {
                 // We only want the visible parameters to be visible. The
                 // UI uses the Tapis ID as a label and the Tapis paramenter
                 // "label" as the human readable name of the parameter.
                 if ($parameter_info['inputMode'] != 'FIXED') {
                     $parameter = [];
-                    Log::debug('   Processing parameter - ' . $parameter_info['name'] . ', ' . $parameter_info['notes']['label']);
+                    Log::debug('SequenceController::index -    Processing parameter - ' . $parameter_info['name'] . ', ' . $parameter_info['notes']['label']);
                     $parameter['label'] = $parameter_info['notes']['label'];
                     $parameter['name'] = $parameter_info['name'];
                     $parameter['description'] = $parameter_info['description'];
@@ -275,7 +274,7 @@ class SequenceController extends Controller
                     $parameter['default'] = $parameter_info['arg'];
                     $parameter_list[$parameter_info['name']] = $parameter;
                 } else {
-                    Log::debug('   Not displaying invisible parameter ' . $parameter_info['name']);
+                    Log::debug('SequenceController::index -    Not displaying invisible parameter ' . $parameter_info['name']);
                 }
             }
 
@@ -304,10 +303,11 @@ class SequenceController extends Controller
             // Required is bytes per unit times the number of rearrangements in the
             // largest repertoire.
             if (array_key_exists('memory_byte_per_unit_repertoire', $app_info)) {
-                // Get the number of rearrangements in the larges repertoire
+                // Get the number of rearrangements in the largest repertoire
                 $repertoire_objects = 0;
                 foreach ($sequence_data['summary'] as $sample) {
-                    if ($sample->ir_filtered_sequence_count > $repertoire_objects) {
+                    if (property_exists($sample, 'ir_filtered_sequence_count') &&
+                        $sample->ir_filtered_sequence_count > $repertoire_objects) {
                         $repertoire_objects = $sample->ir_filtered_sequence_count;
                     }
                 }
@@ -327,9 +327,9 @@ class SequenceController extends Controller
             // If required memory is more than node memory, disable the app and
             // generate an error message.
             if ($required_memory > $node_memory) {
-                Log::debug('   Memory exceeded');
-                Log::debug('      Required memory = ' . human_filesize($required_memory));
-                Log::debug('      Node memory = ' . human_filesize($node_memory));
+                Log::debug('SequenceController::index -    Memory exceeded');
+                Log::debug('SequenceController::index -       Required memory = ' . human_filesize($required_memory));
+                Log::debug('SequenceController::index -       Node memory = ' . human_filesize($node_memory));
                 $app_ui_info['runnable'] = false;
                 $app_ui_info['runnable_comment'] = 'Unable to run Analysis Job. It is estmated that "' . $app_ui_info['name'] . '" will require ' . human_filesize($required_memory) . ' of memory to process ' . human_number($num_objects) . ' rearrangements' . $added_string . '. Compute nodes are limited to ' . human_filesize($node_memory) . ' of memory.';
             }
@@ -344,9 +344,9 @@ class SequenceController extends Controller
                 $required_time_secs = ($num_objects / 1000000) * $app_info['time_secs_per_million'];
                 // If requried is greater than run time, disable the app.
                 if ($required_time_secs > $job_runtime_secs) {
-                    Log::debug('   Run time exceeded');
-                    Log::debug('      Required run time (s) = ' . human_number($required_time_secs));
-                    Log::debug('      Max run time (s) =  ' . human_number($job_runtime_secs));
+                    Log::debug('SequenceController::index -    Run time exceeded');
+                    Log::debug('SequenceController::index -       Required run time (s) = ' . human_number($required_time_secs));
+                    Log::debug('SequenceController::index -       Max run time (s) =  ' . human_number($job_runtime_secs));
                     $app_ui_info['runnable'] = false;
                     $error_string = 'It is estimated that "' . $app_ui_info['name'] . '" will require ' . human_number($required_time_secs / 60) . ' minutes to process ' . human_number($num_objects) . ' rearrangements. Current maximum job run time is ' . human_number($tapis->maxRunTimeMinutes()) . ' minutes.';
                     // If we have a comment already, then add to it, otherwise generate new comment.
@@ -360,22 +360,21 @@ class SequenceController extends Controller
 
             // Check the field requirements for the app.
             if (array_key_exists('requirements', $app_info) && array_key_exists('Fields', $app_info['requirements']) && count($app_info['requirements']['Fields']) > 0) {
-                //Log::debug('Sample info = ' . json_encode($sequence_data['summary']));
-                //Log::debug('Metadata info = ' . json_encode($metadata));
-                foreach ($app_info['requirements']['Fields'] as $field => $value) {
-                    Log::debug('   checking requirement ' . $field . ' = ' . json_encode($value));
+                foreach ($app_info['requirements']['Fields'] as $field => $value_array) {
+                    Log::debug('SequenceController::index -   checking requirement ' . $field . ' = ' . json_encode($value_array));
                     // For each sample being processed, make sure the field values are valid.
                     foreach ($sequence_data['summary'] as $sample) {
                         $error_string = '';
                         $got_error = false;
                         if (property_exists($sample, $field)) {
-                            // If the property exists and is a mismatch, disable app
-                            Log::debug('   found field ' . $field . ' = ' . $sample->$field);
-                            if (! in_array($sample->$field, $value)) {
-                                Log::debug('   Requirement field is not in sample.');
-                                $got_error = true;
-                                $app_ui_info['runnable'] = false;
-                                $error_string = 'A required value is missing from the "' . $field . '" field in one of the repertoires. Please filter the data so that all repertoires have one of the following values (' . json_encode($value) . ') in the "' . $field . '" field.';
+                            foreach ($value_array as $value) {
+                                // If the property exists and is a mismatch, disable app
+                                if ((is_array($sample->$field) && ! in_array($value, $sample->$field)) || (! is_array($sample->$field) && $value != $sample->$field)) {
+                                    Log::debug('SequenceController::index -   Requirement field is not in sample.');
+                                    $got_error = true;
+                                    $app_ui_info['runnable'] = false;
+                                    $error_string = 'A required value (one of ' . json_encode($value_array) . ') is missing from the "' . $field . '" field in one of the repertoires. Please filter the data so that all repertoires have one of the following values (' . json_encode($value_array) . ') in the "' . $field . '" field.';
+                                }
                             }
                         } else {
                             // If the property doesn't exist, disable the app
@@ -402,7 +401,6 @@ class SequenceController extends Controller
             // Save the info in the app list given to the UI.
             $app_list[$app_tag] = $app_ui_info;
         }
-        // Log::debug($app_list);
 
         // Add the app list to the data returned to the View.
         $data['app_list'] = $app_list;
@@ -436,7 +434,6 @@ class SequenceController extends Controller
     public function postQuickSearch(Request $request)
     {
         $query_id = Query::saveParams($request->except(['_token']), 'sequences');
-        Log::debug('Saving quickSearch params to query id ' . $query_id);
 
         return redirect('sequences-quick-search?query_id=' . $query_id)->withInput();
     }

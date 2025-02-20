@@ -15,9 +15,9 @@ class UtilController extends Controller
     // URL Controller function for receiving updates from Tapis
     public function updateJobStatus(Request $request)
     {
-        Log::info('Tapis job status update: job ' . json_encode($request));
+        //Log::info('Tapis job status update: job ' . json_encode($request));
         $content = json_decode($request->getContent());
-        Log::info('Tapis job status update: content = ' . json_encode($content));
+        //Log::info('Tapis job status update: content = ' . json_encode($content));
         $event = $content->event;
         $id = $content->event->subject;
         $data = json_decode($content->event->data);
