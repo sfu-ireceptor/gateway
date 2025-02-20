@@ -244,7 +244,7 @@ function run_analysis()
     fi
     echo "IR-INFO:     Using files ${array_of_files[@]}"
 
-    # Keep track of our base file string
+    # Keep track of our base file string, use repertoire_id
     file_string=${repertoire_id}
 
     # Check to see if we are processing a specific repertoire_id
