@@ -1006,7 +1006,7 @@ class RestService extends Model
 
         // count objects for each requested sample
         if ($type == 'sequence' || $type == 'clone' || $type == 'cell') {
-            $counts_by_rs = self::object_count($type, $sample_id_list_by_rs, $data_filters, false);
+            $counts_by_rs = self::object_count($type, $sample_id_list_by_rs, $data_filters, true);
         } else {
             Log::error('Unexpected query type ' . $type);
             throw new \Exception('Unexpected query type ' . $type);
