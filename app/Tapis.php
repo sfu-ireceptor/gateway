@@ -883,13 +883,13 @@ class Tapis
             return $response;
         } catch (\Exception $exception) {
             Log::debug('Tapis::doHTTPRequest: error on query ' . $url);
-            Log::debug('Tapis::doHTTPRequest: Error: ' . $e->getMessage());
+            Log::debug('Tapis::doHTTPRequest: Error: ' . $exception->getMessage());
 
             return null;
         }
 
-                // return response as object
-                $json = $response->getBody();
+        // return response as object
+        $json = $response->getBody();
         //Log::debug('json response -> ' . $json);
         if ($raw_json) {
             return $json;
