@@ -411,8 +411,6 @@
                         <div class="row">
                             <div class="col-md-6">
 
-                                <p>Note: an analysis job <strong>can take multiple hours</strong>, depending on the size of the data and the complexity of the analysis.</p>
-
                                 @if (count($app_list) > 0 && $total_filtered_objects <= config('ireceptor.cells_download_limit'))
 
                                     <div role="tabpanel" class="analysis_apps_tabpanel">
@@ -514,9 +512,11 @@
                                             Data is retrieved from the repositories, copied to a computational resource, and processed by the corresponding analysis app.
                                             This workflow can be monitored from <a href="/jobs">your jobs page</a>.
                                         </p>
+
                                         <p>
                                             More details and some screenshots: <a href="https://ireceptor.org/node/204" class="external" target="_blank">Data Analysis and Jobs</a>                                            
                                         </p>
+                                        <p>Note: an analysis job <strong>can take multiple hours</strong>, depending on the size of the data and the complexity of the analysis.</p>
                                       </div>
                                 </div>
                             </div>
