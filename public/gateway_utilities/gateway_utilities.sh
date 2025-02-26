@@ -576,8 +576,7 @@ function gateway_split_repertoire(){
 
                 # Provide some reporting
                 echo "GW-INFO: Input file = ${rearrangement_file}"
-                echo -n "GW-INFO: Output file = ${rearrangement_datafile} - number of lines = "
-                wc -l ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
+                printf "GW-INFO: Output file = %s (%d)\n" ${rearrangement_datafile} $(wc -l ${repository_name}/${repertoire_dirname}/${rearrangement_datafile})
         
                 # Create the repertoire manifest file. NOTE: We don't create the GEX file here, it
                 # is created at the same time as all of the GEX data for all of the repertoires, but
