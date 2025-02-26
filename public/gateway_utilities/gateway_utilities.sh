@@ -560,27 +560,31 @@ function gateway_split_repertoire(){
                 # Handle the rearrangement files. 
                 # First we get a set of unique linking field IDs from the Cell file, all on one line, space separated. 
                 # We expect only one of these per repertoire.
-                link_ids=( `python3 ${IR_GATEWAY_UTIL_DIR}/preprocess-json.py ${repository_name}/${repertoire_dirname}/${cell_datafile} Cell ${LINK_FIELD} | sort -u | awk '{printf("%s ",$0)}'` )
-                if [ ${#link_ids[@]} != 1 ]
-                then
-                    echo "GW-ERROR: Analysis expects a single ${LINK_FIELD} per Cell repertoire."
-                    echo "GW-ERROR: Link fields = ${link_ids[@]}."
-                    continue
-                fi
+                #link_ids=( `python3 ${IR_GATEWAY_UTIL_DIR}/preprocess-json.py ${repository_name}/${repertoire_dirname}/${cell_datafile} Cell ${LINK_FIELD} | sort -u | awk '{printf("%s ",$0)}'` )
+                cell_id_tmp=$(mktemp)
+                python3 ${IR_GATEWAY_UTIL_DIR}/preprocess-json.py ${repository_name}/${repertoire_dirname}/${cell_datafile} Cell cell_id | sort -u > $cell_id_tmp
+                grep -f $cell_id_tmp $rearrangement_file > ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
+
+                #if [ ${#link_ids[@]} != 1 ]
+                #then
+                    #echo "GW-ERROR: Analysis expects a single ${LINK_FIELD} per Cell repertoire."
+                    #echo "GW-ERROR: Link fields = ${link_ids[@]}."
+                    #continue
+                #fi
 
                 # Filter the rearrangement file based on the Link field and the link ID we got above.
-                link_id=${link_ids[0]}
-                echo "GW-INFO: Link ID = -${link_id}-"
-                echo "GW-INFO: Link Field = -${LINK_FIELD}-"
+                #link_id=${link_ids[0]}
+                #echo "GW-INFO: Link ID = -${link_id}-"
+                #echo "GW-INFO: Link Field = -${LINK_FIELD}-"
                 echo "GW-INFO: Input file = ${rearrangement_file}"
                 echo "GW-INFO: Output file = ${rearrangement_datafile}"
-                echo "GW-INFO: Splitting Rearrangement file ${rearrangement_file} by ${LINK_FIELD} ${link_id}"
-                python3 ${IR_GATEWAY_UTIL_DIR}/filter.py $rearrangement_file ${LINK_FIELD} ${link_id} ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
-                if [ $? -ne 0 ]
-                then
-                    echo "GW-ERROR: Could not filter Rearrangement data for ${link_id} from ${rearrangement_file}"
-                    continue
-                fi
+                #echo "GW-INFO: Splitting Rearrangement file ${rearrangement_file} by ${LINK_FIELD} ${link_id}"
+                #python3 ${IR_GATEWAY_UTIL_DIR}/filter.py $rearrangement_file ${LINK_FIELD} ${link_id} ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
+                #if [ $? -ne 0 ]
+                #then
+                    #echo "GW-ERROR: Could not filter Rearrangement data for ${link_id} from ${rearrangement_file}"
+                    #continue
+                #fi
         
                 # Create the repertoire manifest file. NOTE: We don't create the GEX file here, it
                 # is created at the same time as all of the GEX data for all of the repertoires, but
