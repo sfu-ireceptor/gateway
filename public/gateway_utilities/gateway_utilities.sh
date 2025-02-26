@@ -185,7 +185,6 @@ function gateway_run_analysis(){
     
     # We need a field on which to split the data.
     SPLIT_FIELD="repertoire_id"
-    LINK_FIELD="data_processing_id"
 
     # Move into the working directory to do work...
     pushd ${WORKING_DIR} > /dev/null
@@ -374,7 +373,6 @@ function gateway_split_repertoire(){
 
     # We need a field on which to split the data.
     SPLIT_FIELD="repertoire_id"
-    LINK_FIELD="data_processing_id"
 
     # Move into the working directory to do work...
     pushd ${WORKING_DIR} > /dev/null
@@ -557,34 +555,29 @@ function gateway_split_repertoire(){
                 # NOTE: Expression data is not split repertoire by repertoire. It is
                 # split into many repertoire files at one time (see below).
 
-                # Handle the rearrangement files. 
-                # First we get a set of unique linking field IDs from the Cell file, all on one line, space separated. 
-                # We expect only one of these per repertoire.
-                #link_ids=( `python3 ${IR_GATEWAY_UTIL_DIR}/preprocess-json.py ${repository_name}/${repertoire_dirname}/${cell_datafile} Cell ${LINK_FIELD} | sort -u | awk '{printf("%s ",$0)}'` )
+                # Handle the rearrangement files. We extract all rearrangements that are linked
+                # to the cell_ids in the Cell file.
+                #
+                # Write the cell IDs from the Cell file into a temporary file
+                # Alternative method using jq:
+                #     cat ${repository_name}/${repertoire_dirname}/${cell_datafile} | jq -r '.Cell[].cell_id'
                 cell_id_tmp=$(mktemp)
                 python3 ${IR_GATEWAY_UTIL_DIR}/preprocess-json.py ${repository_name}/${repertoire_dirname}/${cell_datafile} Cell cell_id | sort -u > $cell_id_tmp
-                grep -f $cell_id_tmp $rearrangement_file > ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
+                if [ $? -ne 0 ]
+                then
+                    echo "GW-ERROR: Could not extract cell_id from ${cell_datafile}"
+                    continue
+                fi
+                # Write the header to the file and extract any rearrangements that contain our cell_ids
+                head -1  $rearrangement_file > ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
+                grep -f $cell_id_tmp $rearrangement_file >> ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
+                # Remove the temporary file.
+                rm $cell_id_tmp
 
-                #if [ ${#link_ids[@]} != 1 ]
-                #then
-                    #echo "GW-ERROR: Analysis expects a single ${LINK_FIELD} per Cell repertoire."
-                    #echo "GW-ERROR: Link fields = ${link_ids[@]}."
-                    #continue
-                #fi
-
-                # Filter the rearrangement file based on the Link field and the link ID we got above.
-                #link_id=${link_ids[0]}
-                #echo "GW-INFO: Link ID = -${link_id}-"
-                #echo "GW-INFO: Link Field = -${LINK_FIELD}-"
+                # Provide some reporting
                 echo "GW-INFO: Input file = ${rearrangement_file}"
-                echo "GW-INFO: Output file = ${rearrangement_datafile}"
-                #echo "GW-INFO: Splitting Rearrangement file ${rearrangement_file} by ${LINK_FIELD} ${link_id}"
-                #python3 ${IR_GATEWAY_UTIL_DIR}/filter.py $rearrangement_file ${LINK_FIELD} ${link_id} ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
-                #if [ $? -ne 0 ]
-                #then
-                    #echo "GW-ERROR: Could not filter Rearrangement data for ${link_id} from ${rearrangement_file}"
-                    #continue
-                #fi
+                echo -n "GW-INFO: Output file = ${rearrangement_datafile} - number of lines = "
+                wc -l ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
         
                 # Create the repertoire manifest file. NOTE: We don't create the GEX file here, it
                 # is created at the same time as all of the GEX data for all of the repertoires, but
