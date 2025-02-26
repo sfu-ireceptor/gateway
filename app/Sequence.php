@@ -337,7 +337,7 @@ class Sequence
             $sam_query_params = Query::getParams($sam_query_id);
         }
         // Generate the repertoire query file based on repertoire query parameters.
-        $repertoire_query_file_path = self::generate_repertoire_query_file($folder_path, $sam_query_params);
+        $repertoire_query_file_path = self::generate_repertoire_query_file($folder_path, $sam_query_params, $filters);
         // Generate the rearrangement query file that got us to the sequence page.
         $rearrangement_query_file_path = self::generate_rearrangement_query_file($folder_path, $filters);
 
@@ -560,11 +560,35 @@ class Sequence
         return $data;
     }
 
-    public static function generate_repertoire_query_file($folder_path, $sample_filters)
+    public static function generate_repertoire_query_file($folder_path, $sample_filters, $sequence_filters)
     {
         // Save the info into the repertoire_query.json file.
         $repertoire_query_file_path = $folder_path . '/repertoire_query.json';
         Log::debug('generate_repertoire_query_file: writing ' . $repertoire_query_file_path);
+        // Loop through the sequence filters. If we have a special repertoire_id filter
+        // add it to the list here. We only do this if we have a single repertoire. This
+        // handles the case where the user has chosen a single repertoire from the samples
+        // page by clicking on the "number of sequences". This is not represente as as a 
+        // sample filter, but instead is a sequence filter. So we add this to the sample
+        // filter to ensure that only data from that repertoire is returned.
+        // Note: we can do this because repertoire_id's are globally unique, so we 
+        // are selecting only the repertoire of interest across all repositories.
+        $sample_filters['repertoire_id'] = [];
+        foreach ($sequence_filters as $key => $value) {
+            if (starts_with($key, 'ir_project_sample_id_list_')) {
+                // A repertoire ID is represented in a Gateway query encoded as an
+                // array with the tag ir_project_sample_id_list_ followed by rest
+                // service ID as a number (e.g. ir_project_sample_id_list_7).
+                $repertoire_list = $value;
+                if (count($repertoire_list) == 1) {
+                   array_push($sample_filters['repertoire_id'], $repertoire_list[0]);
+                }
+            }
+        }
+        // If we didn't add any repertoire_id filters, unset this array element
+        if (count($sample_filters['repertoire_id']) == 0) {
+            unset($sample_filters['repertoire_id']);
+        }
         $json_query = RestService::generate_json_query($sample_filters);
         Log::debug('generate_repertoire_query_file: contents: ' . $json_query);
         file_put_contents($repertoire_query_file_path, $json_query);
