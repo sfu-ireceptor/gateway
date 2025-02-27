@@ -317,7 +317,7 @@ class JobController extends Controller
                 $file_str = file($output_file_path);
                 // Prepare the data return to the view
                 $data = [];
-                $data['plain_file'] = str_replace('\n', '<br>\n', $file_str);
+                $data['plain_file'] = implode('', $file_str);
                 $data['job'] = $job;
                 $data['title'] = 'Output Log';
 
@@ -373,7 +373,7 @@ class JobController extends Controller
                 $data = [];
                 $data['title'] = 'Error Log';
                 $data['job'] = $job;
-                $data['plain_file'] = str_replace('\n', '<br>\n', $file_str);
+                $data['plain_file'] = implode('', $file_str);
 
                 // Return the data to the view.
                 return view('job/plain_file', $data);
@@ -477,7 +477,7 @@ class JobController extends Controller
         Log::debug('JobController::getShow: directory = ' . $directory);
         Log::debug('JobController::getShow: filename = ' . $filename);
 
-        return response()->file($path . '/' . $directory . '/' . $filename);
+        return response()->file($path . '/' . $directory . '/' . $filename, ['Content-Disposition' => 'inline; filename="' . $filename . '"']);
     }
 
     public function getView($id)
@@ -733,6 +733,7 @@ class JobController extends Controller
                     Log::debug('JobController::getView: job result = ' . $job_json);
                     $job_status = json_decode($job_json);
                     $s .= '<br><p><strong>TAPIS errors</strong></p>\n';
+                    $s .= '<p><em>NOTE: Tapis errors indicate a problem between the iReceptor Gateway and the compute resources being used to run anaylsis jobs. These are usually a result of either communication errors (the compute resource is not responding in a timely fashion) or run time errors such as the analysis job exceeding either memory or time constraints of the job. If the error appears to be a communication error (SSH, SFTP, MKDIR) this is likely an intermittent problem, please resubmit the job. If the problem persists please emial support@ireceptor.org. If the error is a memory or execution time error, either try to run the job an a smaller subset of the data or contact support@ireceptor.org for assitance.</em></p>';
                     $s .= strval($job_status->result->lastMessage) . '<br>\n';
                 }
             }
