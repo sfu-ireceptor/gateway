@@ -10,12 +10,8 @@
 	{{ $job->app . ': ' . $title }} (Job {{ $job->id }})
     </h2>
 
-    @if (count($plain_file) > 0)
-        @foreach ($plain_file as $line)
-            {!! $line !!}<br>
-        @endforeach
-    @else
-	File is empty
-    @endif
+<pre>
+{{$plain_file}}
+</pre>
 </div>
 @stop
