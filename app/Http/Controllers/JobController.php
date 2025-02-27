@@ -317,7 +317,7 @@ class JobController extends Controller
                 $file_str = file($output_file_path);
                 // Prepare the data return to the view
                 $data = [];
-                $data['plain_file'] = str_replace('\n', '<br>\n', $file_str);
+                $data['plain_file'] = implode('', $file_str);
                 $data['job'] = $job;
                 $data['title'] = 'Output Log';
 
@@ -373,7 +373,7 @@ class JobController extends Controller
                 $data = [];
                 $data['title'] = 'Error Log';
                 $data['job'] = $job;
-                $data['plain_file'] = str_replace('\n', '<br>\n', $file_str);
+                $data['plain_file'] = implode('', $file_str);
 
                 // Return the data to the view.
                 return view('job/plain_file', $data);
@@ -477,7 +477,7 @@ class JobController extends Controller
         Log::debug('JobController::getShow: directory = ' . $directory);
         Log::debug('JobController::getShow: filename = ' . $filename);
 
-        return response()->file($path . '/' . $directory . '/' . $filename);
+        return response()->file($path . '/' . $directory . '/' . $filename, ['Content-Disposition' => 'inline; filename="'.$filename.'"']);;
     }
 
     public function getView($id)
