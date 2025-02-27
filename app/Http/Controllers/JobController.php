@@ -477,7 +477,7 @@ class JobController extends Controller
         Log::debug('JobController::getShow: directory = ' . $directory);
         Log::debug('JobController::getShow: filename = ' . $filename);
 
-        return response()->file($path . '/' . $directory . '/' . $filename, ['Content-Disposition' => 'inline; filename="'.$filename.'"']);;
+        return response()->file($path . '/' . $directory . '/' . $filename, ['Content-Disposition' => 'inline; filename="' . $filename . '"']);
     }
 
     public function getView($id)
