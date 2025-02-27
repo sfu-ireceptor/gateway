@@ -568,10 +568,10 @@ class Sequence
         // Loop through the sequence filters. If we have a special repertoire_id filter
         // add it to the list here. We only do this if we have a single repertoire. This
         // handles the case where the user has chosen a single repertoire from the samples
-        // page by clicking on the "number of sequences". This is not represente as as a 
+        // page by clicking on the "number of sequences". This is not represente as as a
         // sample filter, but instead is a sequence filter. So we add this to the sample
         // filter to ensure that only data from that repertoire is returned.
-        // Note: we can do this because repertoire_id's are globally unique, so we 
+        // Note: we can do this because repertoire_id's are globally unique, so we
         // are selecting only the repertoire of interest across all repositories.
         $sample_filters['repertoire_id'] = [];
         foreach ($sequence_filters as $key => $value) {
@@ -581,7 +581,7 @@ class Sequence
                 // service ID as a number (e.g. ir_project_sample_id_list_7).
                 $repertoire_list = $value;
                 if (count($repertoire_list) == 1) {
-                   array_push($sample_filters['repertoire_id'], $repertoire_list[0]);
+                    array_push($sample_filters['repertoire_id'], $repertoire_list[0]);
                 }
             }
         }
