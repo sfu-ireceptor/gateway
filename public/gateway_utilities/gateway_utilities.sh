@@ -97,8 +97,9 @@ function gateway_cleanup(){
 #     $4 - Analysis type (optional - default = "rearrangement_file"
 
     echo "${GW_INFO} ========================================"
-    echo -n "${GW_INFO} Stating to clean up files at "
+    echo -n "${GW_INFO} Starting to clean up files at "
     date
+    GW_INFO="${GW_INFO}    "
     # The Gateway provides information about the download in the file info.txt and
     # an AIRR Manifest JSON file.
     local ZIP_FILE=$1
@@ -148,6 +149,8 @@ function gateway_cleanup(){
         echo "${GW_INFO} Removing ${f}"
         rm -f $f
     done
+    GW_INFO="${GW_INFO::-4}"
+    # The Gateway provides information about the download in the file info.txt and
     echo -n "${GW_INFO} Done cleaning up files at "
     date
     echo "${GW_INFO} ========================================"
@@ -165,6 +168,7 @@ function gateway_run_analysis(){
     echo "${GW_INFO} ========================================"
     echo -n "${GW_INFO} Running Analyses at "
     date
+    GW_INFO="${GW_INFO}    "
     # Keep track of timing and count of objects processed
     local start_seconds=$SECONDS
     local num_objects=0
@@ -236,6 +240,7 @@ function gateway_run_analysis(){
         repository_name=`echo "$repository_url" | awk -F/ '{print $3}'`
         echo "${GW_INFO}"
         echo "${GW_INFO} Processing data from repository ${repository_name}"
+        GW_INFO="${GW_INFO}    "
         echo "${GW_INFO} Repertoire file = ${repertoire_file}"
         echo "${GW_INFO} Data file = ${data_file}"
 
@@ -244,7 +249,7 @@ function gateway_run_analysis(){
             continue
         fi
                 # Get an array of unique repertoire_ids from the data file
-        echo "${GW_INFO}     Processing ${SPLIT_FIELD} from $data_file"
+        echo "${GW_INFO} Processing ${SPLIT_FIELD} from $data_file"
         if [ ${ANALYSIS_TYPE} = "rearrangement_file" ]
         then
             # preprocess.py dumps a field of interest from a TSV data file. We want
@@ -271,10 +276,12 @@ function gateway_run_analysis(){
             exit 1
         fi
 
+        GW_INFO="${GW_INFO}    "
         # For each repertoire_id, extract the data in a directory for that repertoire
         for repertoire_id in "${repertoire_ids[@]}"; do
             # Get a directory name and make the directory
-            echo "${GW_INFO} File $data_file has repertoire_id = ${repertoire_id}"
+            echo "${GW_INFO} Processing repertoire_id = ${repertoire_id} from file $data_file"
+            GW_INFO="${GW_INFO}    "
             repertoire_dirname=${repertoire_id}
             # Generate the manifest file name for this analysis unit
             REPERTOIRE_MANIFEST=${repository_name}/${repertoire_dirname}/manifest.json
@@ -289,14 +296,21 @@ function gateway_run_analysis(){
                 #     $3 repertoire id ("NULL" if not used)
                 #     $4 repertoire JSON file ["NULL" if not used, required if repertoire_id is specified]
                 #     $5 manifest file
-                echo "${GW_INFO} Inputs"
-                echo "${GW_INFO} ${repository_name}/${repertoire_dirname}"
-                echo "${GW_INFO} ${repository_name}"
-                echo "${GW_INFO} ${repertoire_id}"
-                echo "${GW_INFO} ${repertoire_file}"
-                echo "${GW_INFO} ${REPERTOIRE_MANIFEST}"
+                echo -n "${GW_INFO} Running Rearrangement analysis ${repository_name}/${repertoire_dirname} - "
+                date
+                echo "${GW_INFO} Inputs:"
+                echo "${GW_INFO}     Directory: ${repository_name}/${repertoire_dirname}"
+                echo "${GW_INFO}     Repository: ${repository_name}"
+                echo "${GW_INFO}     Repertoire ID: ${repertoire_id}"
+                echo "${GW_INFO}     Repertoire file: ${repertoire_file}"
+                echo "${GW_INFO}     Manifest: ${REPERTOIRE_MANIFEST}"
+                echo "${GW_INFO}" 
+                echo "${GW_INFO}" 
                 run_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST} ${ANALYSIS_TYPE}
-
+                echo "${GW_INFO}" 
+                echo "${GW_INFO}" 
+                echo -n "${GW_INFO} Done running Rearrangement analysis ${repository_name}/${repertoire_dirname} - "
+                date
             elif [ ${ANALYSIS_TYPE} = "clone_file" ]
             then
                 # Call the client supplied "run_analysis" callback function. Parameters:
@@ -305,7 +319,15 @@ function gateway_run_analysis(){
                 #     $3 repertoire id ("NULL" if not used)
                 #     $4 repertoire JSON file ["NULL" if not used, required if repertoire_id is specified]
                 #     $5 manifest file
+                echo -n "${GW_INFO} Running Clone analysis ${repository_name}/${repertoire_dirname} - "
+                date
+                echo "${GW_INFO}" 
+                echo "${GW_INFO}" 
                 run_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST} ${ANALYSIS_TYPE}
+                echo "${GW_INFO}" 
+                echo "${GW_INFO}" 
+                echo -n "${GW_INFO} Done running Clone analysis ${repository_name}/${repertoire_dirname} - "
+                date
             elif [ ${ANALYSIS_TYPE} = "cell_file" ]
             then
                 # Call the client supplied "run_analysis" callback function. Parameters:
@@ -316,18 +338,27 @@ function gateway_run_analysis(){
                 #     $5 manifest file
                 echo -n "${GW_INFO} Running Cell analysis ${repository_name}/${repertoire_dirname} - "
                 date
+                echo "${GW_INFO}" 
+                echo "${GW_INFO}" 
                 run_analysis ${repository_name}/${repertoire_dirname} ${repository_name} ${repertoire_id} ${repertoire_file} ${REPERTOIRE_MANIFEST} ${ANALYSIS_TYPE}
+                echo "${GW_INFO}" 
+                echo "${GW_INFO}" 
                 echo -n "${GW_INFO} Done running Cell analysis ${repository_name}/${repertoire_dirname} - "
                 date
             fi
 
             repertoire_count=$((repertoire_count+1))
+            GW_INFO="${GW_INFO::-4}"
+            echo "${GW_INFO} Done processing repertoire_id = ${repertoire_id} from file $data_file"
         done
-        echo "${GW_INFO}" 
+        GW_INFO="${GW_INFO::-4}"
+        GW_INFO="${GW_INFO::-4}"
+        echo "${GW_INFO} Done processing data from repository ${repository_name}"
         echo "${GW_INFO}" 
         repertoire_total=$((repertoire_total+repertoire_count))
         count=$((count+1))
     done
+    GW_INFO="${GW_INFO::-4}"
     popd > /dev/null
     echo -n "${GW_INFO} Done running analyses at " 
     date
@@ -412,6 +443,7 @@ function gateway_split_repertoire(){
     # For each repository, process the data from it.
     count=0
     repertoire_total=0
+    GW_INFO="${GW_INFO}    "
     for repository_url in "${repository_urls[@]}"; do
         # Get the files to process for each repository. This assumes that there is
         # one data file and repertoire file  per repository
@@ -422,11 +454,12 @@ function gateway_split_repertoire(){
         echo "${GW_INFO}"
         echo -n "${GW_INFO} Processing data from repository ${repository_name} at "
         date
+        GW_INFO="${GW_INFO}    "
         echo "${GW_INFO} Repertoire file = ${repertoire_file}"
         echo "${GW_INFO} Data file = ${data_file}"
 
         # Get an array of unique repertoire_ids from the data file
-        echo -n "${GW_INFO}     Extracting ${SPLIT_FIELD} from $data_file at "
+        echo -n "${GW_INFO} Extracting ${SPLIT_FIELD} from $data_file at "
         date
         if [ ${ANALYSIS_TYPE} = "rearrangement_file" ]
         then
@@ -464,9 +497,11 @@ function gateway_split_repertoire(){
         #
         repertoire_count=0
         # For each repertoire_id, extract the data in a directory for that repertoire
+        GW_INFO="${GW_INFO}    "
         for repertoire_id in "${repertoire_ids[@]}"; do
             echo -n "${GW_INFO} Starting processing ${repertoire_id} from file ${data_file} at "
             date
+            GW_INFO="${GW_INFO}    "
 
             # Get a directory name and make the directory
             repertoire_dirname=${repertoire_id}
@@ -593,9 +628,11 @@ function gateway_split_repertoire(){
             repertoire_count=$((repertoire_count+1))
 
             # Print out a done message
+            GW_INFO="${GW_INFO::-4}"
             echo -n "${GW_INFO} Done processing ${repertoire_id} from file ${data_file} at "
             date
         done
+        GW_INFO="${GW_INFO::-4}"
 
         #
         # Perform any bulk data transformation (data is split into repertoires in one step). Most
@@ -606,6 +643,7 @@ function gateway_split_repertoire(){
         if [ ${ANALYSIS_TYPE} = "cell_file" ]
         then
             echo "${GW_INFO} Splitting Expression file ${expression_file} by ${SPLIT_FIELD}"
+            GW_INFO="${GW_INFO}    "
 
             # Split the GEX input file into N files one per repertoire, converting the
             # data from JSON to h5ad for downstream processing. Output goes in the
@@ -636,6 +674,7 @@ function gateway_split_repertoire(){
                     continue
                 fi
             done
+            GW_INFO="${GW_INFO::-4}"
             echo -n "${GW_INFO} Done splitting Expression file - "
             date
 
@@ -650,6 +689,7 @@ function gateway_split_repertoire(){
         then
             echo -n "${GW_INFO} Splitting Rearrangement file ${data_file} by ${SPLIT_FIELD} - "
             date
+            GW_INFO="${GW_INFO}    "
             # Create a temporary directory to work in
             #TMP_DIR=${IR_JOB_DIR}/${WORKING_DIR}/tmp
             TMP_DIR=${PWD}/tmp
@@ -695,20 +735,23 @@ function gateway_split_repertoire(){
 
             # Remove the temporary files/directories that remain.
             rm -rf ${TMP_DIR}
+            GW_INFO="${GW_INFO::-4}"
             echo -n "${GW_INFO} Done splitting Rearrangement file ${data_file} - "
             date
         fi
-        echo "${GW_INFO}" 
-        echo "${GW_INFO}" 
         count=$((count+1))
+        GW_INFO="${GW_INFO::-4}"
+        echo -n "${GW_INFO} Done processing data from repository ${repository_name} at "
+        date
+        echo "${GW_INFO}" 
     done
+    GW_INFO="${GW_INFO::-4}"
 
     # Return to the directory we started from.
     popd > /dev/null
     echo -n "${GW_INFO} Done splitting AIRR Repertoires at "
     date
     echo "${GW_INFO} ========================================"
-
 }
 
 # Write a message saying loaded OK
