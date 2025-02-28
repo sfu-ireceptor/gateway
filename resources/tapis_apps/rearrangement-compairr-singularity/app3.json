@@ -1,0 +1,26 @@
+{
+    "id":"singularity-compairr",
+    "version":"0.1",
+    "description": "CompAIRR",
+    "containerImage":"ir_compairr-1.13.0.sif",
+    "jobAttributes": {
+      "description": "<p>CompAIRR (compairr) is a command line tool to compare two sets of adaptive immune receptor repertoires and compute their overlap. It can also identify which sequences are present in which repertoires.</p>",
+      "parameterSet": {
+        "appArgs": [
+             {"name":"split_repertoire",
+             "description": "Split overall data based on Repertoire ID?",
+             "notes":{"label":"Split Repertoire (True/False)?"},
+             "arg":"True", "inputMode":"REQUIRED"
+            }
+        ]
+
+      }
+    },
+    "notes": {
+        "ir_hints": {
+            "object":"Rearrangement",
+            "requirements":{},
+            "resources":{}
+        }
+    }
+}
