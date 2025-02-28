@@ -79,21 +79,91 @@ function run_analysis()
 # AIRR-manifest.json. We set these as we use them later.
 INFO_FILE="info.txt"
 AIRR_MANIFEST_FILE="AIRR-manifest.json"
+IR_INFO="IR-INFO:"
+
+# Unzip gateway file
+echo -n "${IR_INFO} Unzipping gateway download at "
+date
+gateway_unzip ${IR_DOWNLOAD_FILE} ${GATEWAY_ANALYSIS_DIR}
+
+# Determine the files to process. We extract the data files from the AIRR-manifest.json
+# and store them in an array. The type is one of rearrangement_file, cell_file, clone_file
+ANALYSIS_TYPE="rearrangement_file"
+data_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} ${ANALYSIS_TYPE}` )
+
+# Check to make sure we have some data files to process in the manifest file.
+echo "${IR_INFO} Data files = ${data_files[@]}"
+if [ ${#data_files[@]} -eq 0 ]; then
+    echo "IR-ERROR: Could not find any ${ANALYSIS_TYPE} in ${MANIFEST_FILE}"
+    exit $?
+fi
+
+# Get the repository from the manifest file.
+repository_urls=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "repository_url"` )
+echo "${IR_INFO} Repository URLs = ${repository_urls[@]}"
+
+# Get the Reperotire files from the manifest file.
+repertoire_files=( `python3 ${IR_GATEWAY_UTIL_DIR}/manifest_summary.py ${MANIFEST_FILE} "repertoire_file"` )
+echo "${IR_INFO} Repertoire files = ${repertoire_files[@]}"
+
+# Create a temporary file
+tmp_rearrangement_file=$(mktemp -p ${GATEWAY_ANALYSIS_DIR})
+echo "sequence_id\trepertoire_id\tduplicate_count\tv_call\tj_call\tjunction_aa" > $tmp_rearrangement_file
+
+# For each repository, process the data from it.
+count=0
+repertoire_total=0
+for repository_url in "${repository_urls[@]}"; do
+    repertoire_count=0
+    # Get the files to process for each repository. This assumes that there is
+    # one data file and repertoire file  per repository
+    data_file=${data_files[$count]}
+
+    repertoire_file=${repertoire_files[$count]}
+
+    # Get the repository name (FQDN) of the repository
+    repository_name=`echo "$repository_url" | awk -F/ '{print $3}'`
+    echo "${IR_INFO}"
+    echo "${IR_INFO} Processing data from repository ${repository_name}"
+    IR_INFO="${IR_INFO}    "
+    echo "${IR_INFO} Repertoire file = ${repertoire_file}"
+    echo "${IR_INFO} Data file = ${data_file}"
+
+    if [ ! -f ${data_file} ]; then
+        echo "GW-ERROR: Could not find data file ${data_file}"
+        continue
+    fi
+
+    # Get the columns required by compairr
+    repertoire_id_column=`head -n 1 ${data_file} | awk -F"\t" -v label=repertoire_id '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+    sequence_id_column=`head -n 1 ${data_file} | awk -F"\t" -v label=sequence_id '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+    duplicate_count_column=`head -n 1 ${data_file} | awk -F"\t" -v label=duplicate_count '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+    v_call_column=`head -n 1 ${data_file} | awk -F"\t" -v label=v_call '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+    j_call_column=`head -n 1 ${data_file} | awk -F"\t" -v label=j_call '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+    junction_aa_column=`head -n 1 ${data_file} | awk -F"\t" -v label=junction_aa '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
+
+    # Add the columns to a single output file
+    cut -f $repertoire_id_column,$sequence_id_column,$duplicate_count_column,$v_call_column,$j_call_column,$junction_aa_column >> $tmp_rearrangement_file
+
+done
+
+# Run compairr on the result
+compairr -e -u --matrix ${data_file} --out ${GATEWAY_ANALYSIS_DIR}/compairr_matrix.tsv
 
 # Split the repertoires into the directory structure
-echo -n "IR-INFO: Splitting repertoires at "
-date
-gateway_split_repertoire ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${IR_DOWNLOAD_FILE} ${GATEWAY_ANALYSIS_DIR}
+#echo -n "IR-INFO: Splitting repertoires at "
+#date
+#gateway_split_repertoire ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${IR_DOWNLOAD_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 # Run the run_analysis function on every repertoire in the directory structure
-echo -n "IR-INFO: Running the analysis at "
-date
-gateway_run_analysis ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+#echo -n "IR-INFO: Running the analysis at "
+#date
+#gateway_run_analysis ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 # Cleanup the data files in the directory stucture
-echo -n "IR-INFO: Cleaning up the data at "
-date
-gateway_cleanup ${IR_DOWNLOAD_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+#echo -n "IR-INFO: Cleaning up the data at "
+#date
+#gateway_cleanup ${IR_DOWNLOAD_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
 ###############################################################################
 # Do some housekeeping.
