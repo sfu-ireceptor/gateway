@@ -14,8 +14,16 @@ IR_JOB_DIR=${_tapisExecSystemExecDir}
 echo "IR-INFO: Job execution director = ${IR_JOB_DIR}"
 
 ###############################################################################
-# Parameter processing - there aren't any for this App.
+# Parameter processing.
 ###############################################################################
+
+# The similarity method used, one of 'Count', 'Morisita-Horn', or 'Jaccard'
+SIMILARITY_METHOD=$1
+
+if [[ "$SIMILARITY_METHOD" != "Count" && "$SIMILARITY_METHOD" != "Morisita-Horn" && "$Jaccard" != "Jaccard" ]]; then
+    echo "IR-ERROR: Similarity method must be one of 'Count', 'Morisita-Horn', or 'Jaccard'" 
+    exit 1
+fi
 
 ###############################################################################
 # Gateway Utilities set up

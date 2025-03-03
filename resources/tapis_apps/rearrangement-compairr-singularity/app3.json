@@ -7,10 +7,10 @@
       "description": "<p>CompAIRR (compairr) is a command line tool to compare two sets of adaptive immune receptor repertoires and compute their overlap. It can also identify which sequences are present in which repertoires.</p>",
       "parameterSet": {
         "appArgs": [
-             {"name":"split_repertoire",
-             "description": "Split overall data based on Repertoire ID?",
-             "notes":{"label":"Split Repertoire (True/False)?"},
-             "arg":"True", "inputMode":"REQUIRED"
+             {"name":"similarity_method",
+             "description": "Similarity method to use, one of overlap 'Count', 'Morisita-Horn', or 'Jaccard'",
+             "notes":{"label":"Similarity Method ('Count', 'Morisita-Horn', or 'Jaccard')?"},
+             "arg":"Count", "inputMode":"REQUIRED"
             }
         ]
 
