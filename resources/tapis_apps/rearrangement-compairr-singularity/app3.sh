@@ -20,8 +20,8 @@ echo "IR-INFO: Job execution director = ${IR_JOB_DIR}"
 # The similarity method used, one of 'Count', 'Morisita-Horn', or 'Jaccard'
 SIMILARITY_METHOD=$1
 
-if [[ "$SIMILARITY_METHOD" != "Count" && "$SIMILARITY_METHOD" != "Morisita-Horn" && "$Jaccard" != "Jaccard" ]]; then
-    echo "IR-ERROR: Similarity method must be one of 'Count', 'Morisita-Horn', or 'Jaccard'" 
+if [[ "$SIMILARITY_METHOD" != "Count" && "$SIMILARITY_METHOD" != "Morisita-Horn" && "$SIMILARITY_METHOD" != "Jaccard" ]]; then
+    echo "IR-ERROR: Invalid similarity method '${SIMILARITY_METHOD}', must be one of 'Count', 'Morisita-Horn', or 'Jaccard'" 
     exit 1
 fi
 
@@ -169,11 +169,24 @@ repertoire_id="Summary"
 working_path=${IR_JOB_DIR}/${GATEWAY_ANALYSIS_DIR}/${working_directory}
 mkdir $working_path
 
+if [[ "$SIMILARITY_METHOD" == "Count" ]]; then
+    SIMILARITY_ARG=""
+elif [[ "$SIMILARITY_METHOD" == "Morisita-Horn" ]]; then
+    SIMILARITY_ARG="-s MH"
+elif [[ "$SIMILARITY_METHOD" == "Jaccard" ]]; then
+    SIMILARITY_ARG="-s Jaccard"
+fi
+
+
 # Run compairr on the result
 echo "${IR_INFO}"
 echo -n "${IR_INFO} Running compairr at "
 date
-compairr -e -u --matrix ${tmp_rearrangement_file} --out ${working_path}/compairr_matrix.tsv
+# -f = ignore counts
+# -u = ignore unknown
+# -e = ignore empty
+# Use SIMILARITY_ARG to choose the correct similarity method.
+compairr -f -e -u $SIMILARITY_ARG --matrix ${tmp_rearrangement_file} --out ${working_path}/compairr_matrix.tsv
 if [ $? -ne 0 ]
 then
     echo "IR-ERROR: CompAIRR failed"
@@ -193,7 +206,9 @@ title_string="Summary"
 echo "${title_string}" > ${working_path}/${repertoire_id}.txt
 
 # Add a header line to the Gateway rendered HTML file.
-echo "<h2>CompAIRR - Repertoire Overlap</h2>" > ${working_path}/${repertoire_id}-gateway.html
+echo "<h2>CompAIRR - Repertoire Overlap - ${SIMILARITY_METHOD}</h2>" > ${working_path}/${repertoire_id}-gateway.html
+
+# Use the tcrmatch table generator to generate a nice table.
 python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=100 ${working_path}/compairr_matrix.tsv >> ${working_path}/${repertoire_id}-gateway.html
 
 ###############################################################################
