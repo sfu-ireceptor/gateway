@@ -2,12 +2,12 @@
 
 namespace App\Jobs;
 
+use App\Cell;
+use App\Clones;
 use App\Job;
 use App\LocalJob;
 use App\Query;
 use App\Sequence;
-use App\SequenceCell;
-use App\SequenceClone;
 use App\System;
 use App\Tapis;
 use Illuminate\Bus\Queueable;
@@ -129,10 +129,10 @@ class LaunchJob implements ShouldQueue
                 $zip_info = Sequence::sequencesTSV($filters, $gw_username, $job->url,
                     $sample_filter_fields, $download_data);
             } elseif ($jobType == 'clone') {
-                $zip_info = SequenceClone::clonesTSV($filters, $gw_username, $job->url,
+                $zip_info = Clones::clonesTSV($filters, $gw_username, $job->url,
                     $sample_filter_fields, $download_data);
             } elseif ($jobType == 'cell') {
-                $zip_info = SequenceCell::cellsTSV($filters, $gw_username, $job->url,
+                $zip_info = Cell::cellsTSV($filters, $gw_username, $job->url,
                     $sample_filter_fields, $download_data);
             }
 
@@ -190,7 +190,7 @@ class LaunchJob implements ShouldQueue
             $appConfig = $tapis->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
             // Try to get the App if it already exists.
             $appResponse = $tapis->getApp($appName);
-            Log::debug('LaunchJob::handle - App info = ' . json_encode($appResponse));
+            //Log::debug('LaunchJob::handle - App info = ' . json_encode($appResponse));
             if ($appResponse->status == 'success') {
                 // If it exists, update it in case the config has changed, throw
                 // an error of the update fails.
@@ -253,7 +253,7 @@ class LaunchJob implements ShouldQueue
             $job->updateStatus('SENDING JOB FOR ANALYSIS');
             $job_config = $tapis->getJobConfig($this->jobId, 'ireceptor-' . $this->jobId, $appName, $zip_info['zip_name'], $systemStaging, $notificationUrl, $archive_folder, $params, $inputs, $job_params);
             $response = $tapis->createJob($job_config);
-            Log::debug('LaunchJob::handle submit response = ' . json_encode($response));
+            //Log::debug('LaunchJob::handle submit response = ' . json_encode($response));
             $job->agave_id = $response->result->uuid;
             $job->updateStatus('JOB ACCEPTED FOR ANALYSIS. PENDING.');
 

@@ -210,20 +210,6 @@ class RestServiceSeeder extends Seeder
                 'rest_service_group_code' => 't1d',
             ],
             [
-                'url' => 'https://t1d-3.ireceptor.org/airr/v1/',
-                'name' => 'T1D-3',
-                'country' => 'Canada',
-                'logo' => 'ireceptor.png',
-                'rest_service_group_code' => 't1d',
-            ],
-            [
-                'url' => 'https://greifflab-1.ireceptor.org/airr/v1/',
-                'name' => 'Greiff Lab 1',
-                'country' => 'Canada',
-                'logo' => 'ireceptor.png',
-                'rest_service_group_code' => 'greiff',
-            ],
-            [
                 'url' => 'https://repository-staging.ireceptor.org/airr/v1/',
                 'name' => 'Staging Repository',
             ],
@@ -241,6 +227,17 @@ class RestServiceSeeder extends Seeder
                 'url' => 'https://hpap.ireceptor.org/airr/v1/',
                 'name' => 'HPAP',
                 'country' => 'Canada',
+            ],
+            [
+                'url' => 'https://turnkey-test2.ireceptor.org/airr/v1/',
+                'name' => 'Turnkey Test 2',
+                'country' => 'Canada',
+            ],
+            [
+                'url' => 'https://greifflab-1.ireceptor.org/airr/v1/',
+                'name' => 'Greiff Lab 1',
+                'country' => 'Canada',
+                'rest_service_group_code' => 'greiff',
             ],
         ];
 

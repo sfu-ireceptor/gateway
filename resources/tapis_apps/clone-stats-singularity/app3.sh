@@ -236,14 +236,12 @@ function run_analysis()
     fi
     filename=${array_of_files[0]}
 
+    # Keep track of our base file string, use repertoire_id
+    file_string=${repertoire_id}
+
 	# Check to see if we are processing a specific repertoire_id
+    # If so generate a reasonable title.
 	if [ "${repertoire_id}" != "Total" ]; then
-	    file_string=`python3 ${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
-        if [ $? -ne 0 ]
-        then
-            echo "IR-ERROR: Could not generate repertoire summary from ${repertoire_file}"
-            return 
-        fi
         title_string="$(python3 ${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
         if [ $? -ne 0 ]
         then
@@ -256,7 +254,7 @@ function run_analysis()
 	fi
 
     # Clean up special characters in file and title strings.
-    file_string=`echo ${repository_name}_${file_string} | sed "s/[!@#$%^&*() :/-]/_/g"`
+    file_string=$(echo ${repository_name}_${file_string} | tr -dc "[:alnum:]._-")
     # TODO: Fix this, it should not be required.
     title_string=`echo ${title_string} | sed "s/[ ]//g"`
 

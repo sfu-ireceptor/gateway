@@ -65,14 +65,48 @@
                     </div>
 
                     <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingOne">
+                        <div class="panel-heading" role="tab" id="headingTwo">
                             <h4 class="panel-title">
                                 <a role="button" class="{{ in_array('1', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    Filter by Cell Reactivity
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwo" class="panel-collapse collapse {{ in_array('1', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingTwo">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    {{ Form::label('antigen_reactivity',  'Antigen') }}
+                                    @include('help', ['id' => 'antigen_reactivity'])
+                                    {{ Form::text('antigen_reactivity', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ Form::label('antigen_source_species_reactivity', 'Antigen Species') }}
+                                    @include('help', ['id' => 'antigen_source_species_reactivity'])
+                                    {{ Form::text('antigen_source_species_reactivity', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ Form::label('peptide_sequence_aa_reactivity', 'Epitope AA sequence') }}
+                                    @include('help', ['id' => 'peptide_sequence_aa_reactivity'])
+                                    {{ Form::text('peptide_sequence_aa_reactivity', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
+                                </div>
+
+                                <p class="button_container">
+                                    {{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingThree">
+                            <h4 class="panel-title">
+                                <a role="button" class="{{ in_array('2', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                     Filter by Cell Expression
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseTwo" class="panel-collapse collapse {{ in_array('1', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingOne">
+                        <div id="collapseThree" class="panel-collapse collapse {{ in_array('2', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingThree">
                             <div class="panel-body">
                                 <div class="form-group">
                                     {{ Form::label('property_expression',  'Property Label') }}
@@ -139,7 +173,7 @@
                                 </span>
                             @endforeach
                             @isset($sample_query_id)
-                                <a href="/samples?query_id=@yield('sample_query_id', '')"class="remove_filters">
+                                <a href="/samples/cell?query_id=@yield('sample_query_id', '')"class="remove_filters">
                                     Go back to Repertoire Metadata Search
                                 </a>
                             @endisset                        
@@ -294,12 +328,12 @@
                                             @else
                                                 @if(is_object($s->{$field['ir_id']}))
                                                     <span title="{{ json_encode($s->{$field['ir_id']}) }}">
-                                                        {{ json_encode($s->{$field['ir_id']}) }}                                                
+                                                        {{ json_encode($s->{$field['ir_id']}) }}
                                                     </span>
                                                 @elseif (is_array($s->{$field['ir_id']}))
                                                     @if( $field['ir_id'] == 'expression_label_list' )
                                                         @foreach ($s->{$field['ir_id']} as $property)
-                                                            @if (str_contains($property->id,'ENSG'))
+                                                            @if ( isset($property->id) && str_contains($property->id,'ENSG'))
                                                                 <a href="http://www.ensembl.org/Search/Results?q={{$property->label}}" title="{{ $property->label }}" target="_blank">
                                                                     {{ $property->label }}
                                                                 </a>
@@ -309,9 +343,45 @@
                                                                 {{ $loop->last ? '' : ', ' }}
                                                             @endif
                                                         @endforeach
+                                                    @elseif( $field['ir_id'] == 'reactivity_list' )
+
+                                                        @if( $s->antigen != '' )
+                                                            <span title="{{$s->antigen}}">
+                                                            @if( $s->antigen_url != '' )
+                                                                <a href="{{$s->antigen_url}}" target="_blank">{{ str_limit( $s->antigen, $limit = 20, $end = '‥') }}</a>
+                                                            @else
+                                                                {{ str_limit( $s->antigen, $limit = 20, $end = '‥') }}
+                                                            @endif
+                                                            </span>
+                                                        @endif
+                                                        @if( $s->peptide_sequence_aa != '' )
+                                                            <span>
+                                                            @if( $s->antigen_source_species != '' )
+                                                                (
+                                                            @endif
+                                                            @if( $s->epitope_url != '' )
+                                                                <a href="{{$s->epitope_url}}" target="_blank">{{$s->peptide_sequence_aa}}</a>
+                                                            @else
+                                                                {{$s->peptide_sequence_aa}} 
+                                                            @endif
+                                                            @if( $s->antigen_source_species != '' )
+                                                                )
+                                                            @endif
+                                                            </span>
+                                                        @endif
+                                                        @if( $s->antigen != '' && $s->antigen_source_species != '' )
+                                                                <span class="badge badge-cells" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$s->antigen_source_species}}</p>" data-trigger="hover">S</span>
+                                                        @elseif( $s->antigen_source_species != '' )
+                                                            <span title="{{$s->antigen_source_species}}">
+                                                            {{ str_limit( $s->antigen_source_species, $limit = 20, $end = '‥') }}
+                                                            </span>
+                                                        @endif
+                                                        @if( ($s->antigen_source_species != '' || $s->peptide_sequence_aa != '' || $s->antigen != '') && $s->reactivity_method != '' )
+                                                            <span class="badge badge-cells" data-container="body" data-toggle="popover_form_field" data-placement="right" data-content="<p>{{$s->reactivity_method}}, {{$s->reactivity_readout}}, {{$s->reactivity_value}}, {{$s->reactivity_unit}}</p>" data-trigger="hover">i</span>
+                                                        @endif
                                                     @else
                                                         <span title="{{ implode(', ', $s->{$field['ir_id']}) }}">
-                                                            {{ str_limit(implode(', ', $s->{$field['ir_id']}), $limit = 40, $end = '‥') }}
+                                                            {{ str_limit(implode(', ', $s->{$field['ir_id']}), $limit = 30, $end = '‥') }}
                                                         </span>
                                                     @endif
                                                 @else
@@ -319,7 +389,7 @@
                                                         @if (is_bool($s->{$field['ir_id']}))
                                                             {{ $s->{$field['ir_id']} ? 'Yes' : 'No' }}
                                                         @else
-                                                            {{ $s->{$field['ir_id']} }}
+                                                            {{ str_limit( $s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
                                                         @endif
                                                     </span>
                                                 @endif                                                
@@ -340,8 +410,6 @@
                         
                         <div class="row">
                             <div class="col-md-6">
-
-                                <p>Note: an analysis job <strong>can take multiple hours</strong>, depending on the size of the data and the complexity of the analysis.</p>
 
                                 @if (count($app_list) > 0 && $total_filtered_objects <= config('ireceptor.cells_download_limit'))
 
@@ -444,9 +512,11 @@
                                             Data is retrieved from the repositories, copied to a computational resource, and processed by the corresponding analysis app.
                                             This workflow can be monitored from <a href="/jobs">your jobs page</a>.
                                         </p>
+
                                         <p>
                                             More details and some screenshots: <a href="https://ireceptor.org/node/204" class="external" target="_blank">Data Analysis and Jobs</a>                                            
                                         </p>
+                                        <p>Note: an analysis job <strong>can take multiple hours</strong>, depending on the size of the data and the complexity of the analysis.</p>
                                       </div>
                                 </div>
                             </div>

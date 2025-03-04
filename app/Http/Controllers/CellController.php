@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Bookmark;
+use App\Cell;
 use App\Download;
 use App\FieldName;
 use App\QueryLog;
 use App\Sample;
-use App\SequenceCell;
 use App\System;
 use App\Tapis;
 use Facades\App\Query;
@@ -38,7 +38,7 @@ class CellController extends Controller
 
         // if request without query id, generate query id and redirect
         if (! $request->has('query_id')) {
-            $query_id = Query::saveParams($request->except(['_token']), 'sequences');
+            $query_id = Query::saveParams($request->except(['_token']), 'cells');
 
             return redirect('cells?query_id=' . $query_id)->withInput();
         }
@@ -56,20 +56,19 @@ class CellController extends Controller
         $filters = Query::getParams($query_id);
         $username = auth()->user()->username;
 
-        // allow only Cell filters, or only GEX filters, based on currently opened panel
-        if (isset($filters['open_filter_panel_list'])) {
-            $open_filter_panel_list = $filters['open_filter_panel_list'];
-            if ($open_filter_panel_list[0] == 0) {
-                unset($filters['property_expression']);
-                unset($filters['value_expression']);
-            } else {
-                unset($filters['expression_study_method_cell']);
-                unset($filters['virtual_pairing_cell']);
-            }
-        }
+        // Basic filters are of the form:
+        // - a set of service arrays, with keys of the form "ir_project_sample_id_list_N"
+        //   where N is the integer ID of the service. Each array is a set of repertoire_id's
+        //   that the service should query.
+        // - cols: a comma separated list if columnas
+        // - open_filter_panel_list: a list of which fitler panels are open
+        // - sample_query_id: the query ID of the query that was the source of this query
+        // - the fields from the form that are queryable, key the field name,
+        //   value the filter value.
+        //
 
-        // retrieve data
-        $cell_data = SequenceCell::summary($filters, $username);
+        // Retrieve cell data given the filters.
+        $cell_data = Cell::summary($filters, $username);
 
         // store data size in user query log
         $query_log_id = $request->get('query_log_id');
@@ -80,11 +79,11 @@ class CellController extends Controller
         }
 
         /*************************************************
-        * Prepare view data */
-
-        // sequence data
+        * Prepare Cell view data */
         $data = [];
 
+        // Get the relevant data that is displayed for each Cell in the UI table.
+        // This information is stored in the 'items' attribute of the the cell_data.
         $data['cell_list'] = $cell_data['items'];
 
         // Fields we want to graph. The UI/blade expects six fields
@@ -241,20 +240,18 @@ class CellController extends Controller
         foreach ($appTemplates as $app_tag => $app_info) {
             $app_config = $app_info['config'];
             $app_ui_info = [];
-            Log::debug('Processing app ' . $app_tag);
-            Log::debug('App config = ' . json_encode($app_config));
+            Log::debug('CellController::index - Processing app ' . $app_tag);
+
             // Process the parameters.
             $parameter_list = [];
-            //foreach ($app_config['parameters'] as $parameter_info) {
             foreach ($app_config['jobAttributes']['parameterSet']['appArgs'] as $parameter_info) {
                 // We only want the visible parameters to be visible. The
                 // UI uses the Tapis ID as a label and the Tapis paramenter
                 // "label" as the human readable name of the parameter.
-                //if ($parameter_info['value']['visible']) {
                 if ($parameter_info['inputMode'] != 'FIXED') {
                     $parameter = [];
-                    Log::debug('   Processing parameter - ' . $parameter_info['name']);
-                    Log::debug('   Processing parameter - ' . $parameter_info['notes']['label']);
+                    Log::debug('CellController::index -   Processing parameter - ' . $parameter_info['name']);
+                    Log::debug('CellController::index -   Processing parameter - ' . $parameter_info['notes']['label']);
                     $parameter['label'] = $parameter_info['notes']['label'];
                     $parameter['name'] = $parameter_info['name'];
                     $parameter['description'] = $parameter_info['description'];
@@ -262,7 +259,7 @@ class CellController extends Controller
                     $parameter['default'] = $parameter_info['arg'];
                     $parameter_list[$parameter_info['name']] = $parameter;
                 } else {
-                    Log::debug('   Not displaying invisible parameter ' . $parameter_info['id']);
+                    Log::debug('CellController::index -   Not displaying invisible parameter ' . $parameter_info['id']);
                 }
             }
 
@@ -294,7 +291,8 @@ class CellController extends Controller
                 // Get the number of rearrangements in the larges repertoire
                 $repertoire_objects = 0;
                 foreach ($cell_data['summary'] as $sample) {
-                    if ($sample->ir_filtered_cell_count > $repertoire_objects) {
+                    if (property_exists($sample, 'ir_filtered_cell_count') &&
+                        $sample->ir_filtered_cell_count > $repertoire_objects) {
                         $repertoire_objects = $sample->ir_filtered_cell_count;
                     }
                 }
@@ -314,9 +312,9 @@ class CellController extends Controller
             // If required memory is more than node memory, disable the app and
             // generate an error message.
             if ($required_memory > $node_memory) {
-                Log::debug('   Memory exceeded');
-                Log::debug('      Required memory = ' . human_filesize($required_memory));
-                Log::debug('      Node memory = ' . human_filesize($node_memory));
+                Log::debug('CellController::index -   Memory exceeded');
+                Log::debug('CellController::index -      Required memory = ' . human_filesize($required_memory));
+                Log::debug('CellController::index -      Node memory = ' . human_filesize($node_memory));
                 $app_ui_info['runnable'] = false;
                 $app_ui_info['runnable_comment'] = 'Unable to run Analysis Job. It is estmated that "' . $app_ui_info['name'] . '" will require ' . human_filesize($required_memory) . ' of memory to process ' . human_number($num_objects) . ' rearrangements' . $added_string . '. Compute nodes are limited to ' . human_filesize($node_memory) . ' of memory.';
             }
@@ -331,9 +329,9 @@ class CellController extends Controller
                 $required_time_secs = ($num_objects / 1000000) * $app_info['time_secs_per_million'];
                 // If requried is greater than run time, disable the app.
                 if ($required_time_secs > $job_runtime_secs) {
-                    Log::debug('   Run time exceeded');
-                    Log::debug('      Required run time (s) = ' . human_number($required_time_secs));
-                    Log::debug('      Max run time (s) =  ' . human_number($job_runtime_secs));
+                    Log::debug('CellController::index -   Run time exceeded');
+                    Log::debug('CellController::index -      Required run time (s) = ' . human_number($required_time_secs));
+                    Log::debug('CellController::index -      Max run time (s) =  ' . human_number($job_runtime_secs));
                     $app_ui_info['runnable'] = false;
                     $error_string = 'It is estimated that "' . $app_ui_info['name'] . '" will require ' . human_number($required_time_secs / 60) . ' minutes to process ' . human_number($num_objects) . ' rearrangements. Current maximum job run time is ' . human_number($tapis->maxRunTimeMinutes()) . ' minutes.';
                     // If we have a comment already, then add to it, otherwise generate new comment.
@@ -347,20 +345,21 @@ class CellController extends Controller
 
             // Check the field requirements for the app.
             if (array_key_exists('requirements', $app_info) && array_key_exists('Fields', $app_info['requirements']) && count($app_info['requirements']['Fields']) > 0) {
-                foreach ($app_info['requirements']['Fields'] as $field => $value) {
-                    Log::debug('   checking requirement ' . $field . ' = ' . json_encode($value));
+                foreach ($app_info['requirements']['Fields'] as $field => $value_array) {
+                    Log::debug('CellController::index -   checking requirement ' . $field . ' = ' . json_encode($value_array));
                     // For each sample being processed, make sure the field values are valid.
                     foreach ($cell_data['summary'] as $sample) {
                         $error_string = '';
                         $got_error = false;
                         if (property_exists($sample, $field)) {
-                            // If the property exists and is a mismatch, disable app
-                            Log::debug('   found field ' . $field . ' = ' . $sample->$field);
-                            if (! in_array($sample->$field, $value)) {
-                                Log::debug('   Requirement field is not in sample.');
-                                $got_error = true;
-                                $app_ui_info['runnable'] = false;
-                                $error_string = 'A required value is missing from the "' . $field . '" field in one of the repertoires. Please filter the data so that all repertoires have one of the following values (' . json_encode($value) . ') in the "' . $field . '" field.';
+                            foreach ($value_array as $value) {
+                                // If the property exists and is a mismatch, disable app
+                                if ((is_array($sample->$field) && ! in_array($value, $sample->$field)) || (! is_array($sample->$field) && $value != $sample->$field)) {
+                                    Log::debug('CellController::index -       Requirement field is not in sample.');
+                                    $got_error = true;
+                                    $app_ui_info['runnable'] = false;
+                                    $error_string = 'A required value (one of ' . json_encode($value_array) . ') is missing from the "' . $field . '" field in one of the repertoires. Please filter the data so that all repertoires have one of the following values (' . json_encode($value_array) . ') in the "' . $field . '" field.';
+                                }
                             }
                         } else {
                             // If the property doesn't exist, disable the app
@@ -387,7 +386,6 @@ class CellController extends Controller
             // Save the info in the app list given to the UI.
             $app_list[$app_tag] = $app_ui_info;
         }
-        // Log::debug($app_list);
 
         // Add the app list to the data returned to the View.
         $data['app_list'] = $app_list;
@@ -401,15 +399,15 @@ class CellController extends Controller
         return view('cell', $data);
     }
 
-    public function timeEstimate($nb_sequences)
+    public function timeEstimate($nb_cells)
     {
         $time_estimate_max = '24 hours';
 
-        if ($nb_sequences < 500000) {
+        if ($nb_cells < 500000) {
             $time_estimate_max = '20 min';
         }
 
-        if ($nb_sequences < 100000) {
+        if ($nb_cells < 100000) {
             $time_estimate_max = '';
         }
 
@@ -450,7 +448,7 @@ class CellController extends Controller
             $new_filters = $filters;
         }
 
-        $new_query_id = Query::saveParams($new_filters, 'sequences');
+        $new_query_id = Query::saveParams($new_filters, 'cells');
 
         $uri = $request->route()->uri;
 

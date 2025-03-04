@@ -598,10 +598,8 @@ class Tapis
         $final_args = array_merge([$param], $orig_args);
         $app_config['jobAttributes']['parameterSet']['appArgs'] = $final_args;
 
-        //$app_config['deploymentSystem'] = $deploymentSystem;
-        //$app_config['deploymentPath'] = $deploymentPath;
-        Log::debug('Tapis::getAppConfig: App config:');
-        Log::debug($app_config);
+        //Log::debug('Tapis::getAppConfig: App config:');
+        //Log::debug($app_config);
 
         return $app_config;
     }
@@ -660,6 +658,7 @@ class Tapis
         // Set up the container arguments. We want to mount external mount points.
         $t['parameterSet']['containerArgs'][] = ['name' => 'project_mount', 'arg' => '-B /project:/project'];
         $t['parameterSet']['containerArgs'][] = ['name' => 'scratch_mount', 'arg' => '-B /scratch:/scratch'];
+        $t['parameterSet']['containerArgs'][] = ['name' => 'localscratch_mount', 'arg' => '-B /localscratch:/localscratch'];
         $t['parameterSet']['containerArgs'][] = ['name' => 'gateway_app_mount', 'arg' => '-B ' . $exec_gateway_mount_dir . ':' . $container_gateway_mount_dir];
 
         // Set up the job parameters. We loop over the possible job parameters and
@@ -884,13 +883,13 @@ class Tapis
             return $response;
         } catch (\Exception $exception) {
             Log::debug('Tapis::doHTTPRequest: error on query ' . $url);
-            Log::debug('Tapis::doHTTPRequest: Error: ' . $e->getMessage());
+            Log::debug('Tapis::doHTTPRequest: Error: ' . $exception->getMessage());
 
             return null;
         }
 
-                // return response as object
-                $json = $response->getBody();
+        // return response as object
+        $json = $response->getBody();
         //Log::debug('json response -> ' . $json);
         if ($raw_json) {
             return $json;

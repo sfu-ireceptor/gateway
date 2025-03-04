@@ -154,15 +154,21 @@ class FieldName extends Model
         $l['PCRTarget'] = 'PCR Target';
 
         $l['Genotype'] = 'Receptor Genotype';
-        $l['MHCGenotype'] = 'MHC Genotype';
         $l['GenotypeSet'] = 'Receptor Genotype Set';
+        $l['DeletedGene'] = 'Receptor Genotype Deleted Gene';
+        $l['DocumentedAllele'] = 'Receptor Genotype Documented Allele';
+        $l['UndocumentedAllele'] = 'Receptor Genotype Undocumented Allele';
+
+        $l['MHCGenotype'] = 'MHC Genotype';
         $l['MHCGenotypeSet'] = 'MHC Genotype Set';
+        $l['MHCAllele'] = 'MHC Allele';
 
         $l['Rearrangement'] = 'Rearrangement';
 
         $l['Clone'] = 'Clone';
         $l['Cell'] = 'Cell';
 
+        $l['IR_Repertoire'] = 'iReceptor Repertoire';
         $l['ir_metadata'] = 'iReceptor Metadata';
         $l['IR_Parameter'] = 'iReceptor Parameter';
         $l['IR_API'] = 'iReceptor API';
@@ -191,7 +197,11 @@ class FieldName extends Model
             foreach ($l as $t) {
                 // if ir_subclass is not known, log warning and override it to 'other'
                 if (! isset($groups[$t['ir_subclass']])) {
-                    Log::warning($t['ir_subclass'] . ' ir_subclass needs to be defined as a group in ' . static::class);
+                    if ($t['ir_subclass'] == '') {
+                        Log::warning($t['ir_id'] . ' does not have an ir_subclass value');
+                    } else {
+                        Log::warning($t['ir_subclass'] . ' ir_subclass needs to be defined as a group in ' . static::class);
+                    }
                     $t['ir_subclass'] = 'other';
                 }
 

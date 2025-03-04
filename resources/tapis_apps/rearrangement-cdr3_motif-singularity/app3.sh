@@ -131,7 +131,8 @@ function run_analysis()
 	title_string="${repertoire_id}"
 
     # Clean up special characters in file and title strings.
-    file_string=`echo ${repository_name}_${file_string} | sed "s/[!@#$%^&*() :/-]/_/g"`
+    file_string=$(echo ${repository_name}_${file_string} | tr -dc "[:alnum:]._-")
+
     # TODO: Fix this, it should not be required.
     title_string=`echo ${title_string} | sed "s/[ ]//g"`
 

@@ -101,9 +101,12 @@ function run_analysis()
     local rearrangement_file=${rearrangement_files[0]}
     echo "IR-INFO:     Using rearrangement file ${rearrangement_file}"
 
+    # Keep track of our base file string, use repertoire_id
+    file_string=${repertoire_id}
+
     # Check to see if we are processing a specific repertoire_id
+    # If so generate an appropriate title
     if [ "${repertoire_id}" != "NULL" ]; then
-        file_string=`python3 ${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
         title_string="$(python3 ${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
     else
         file_string="total"
@@ -111,14 +114,15 @@ function run_analysis()
     fi
 
     # Clean up special characters in file and title strings.
-    file_string=`echo ${repository_name}_${file_string} | sed "s/[!@#$%^&*() :/-]/_/g"`
+    file_string=$(echo ${repository_name}_${file_string} | tr -dc "[:alnum:]._-")
+
     # TODO: Fix this, it should not be required.
     title_string=`echo ${title_string} | sed "s/[ ]//g"`
 
     # Run Repcred on each rearrangement file provided.
     echo "IR-INFO: Running Repcred on $rearrangement_file"
     echo "IR-INFO: Mapping ${PWD} to /data"
-    echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
+    echo "IR-INFO: Asking for ${_tapisCoresPerNode} threads"
     echo "IR-INFO: Storing output in /data/${output_directory}"
 
     # Run Repcred on the file

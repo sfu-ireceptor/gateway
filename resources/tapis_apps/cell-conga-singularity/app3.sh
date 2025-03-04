@@ -128,9 +128,12 @@ function run_analysis()
     local rearrangement_file=${rearrangement_files[0]}
     echo "IR-INFO:     Using rearrangement file ${rearrangement_files}"
 
+    # Keep track of our base file string, use repertoire_id
+    file_string=${repertoire_id}
+
     # Check to see if we are processing a specific repertoire_id
+    # If so generate an appropriate title
     if [ "${repertoire_id}" != "NULL" ]; then
-        file_string=`python3 ${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id} --separator "_"`
         title_string="$(python3 ${GATEWAY_UTIL_DIR}/repertoire_summary.py ${repertoire_file} ${repertoire_id})"
     else
         file_string="total"
@@ -138,14 +141,15 @@ function run_analysis()
     fi
 
     # Clean up special characters in file and title strings.
-    file_string=`echo ${repository_name}_${file_string} | sed "s/[!@#$%^&*() :/-]/_/g"`
+    file_string=$(echo ${repository_name}_${file_string} | tr -dc "[:alnum:]._-")
+
     # TODO: Fix this, it should not be required.
     title_string=`echo ${title_string} | sed "s/[ ]//g"`
 
     # Run the Conga pipeline within the singularity image on each rearrangement file provided.
     echo "IR-INFO: Running Conga on $cell_file"
     echo "IR-INFO: Mapping ${PWD} to /data"
-    echo "IR-INFO: Asking for ${AGAVE_JOB_PROCESSORS_PER_NODE} threads"
+    echo "IR-INFO: Asking for ${_tapisCoresPerNode} threads"
     echo "IR-INFO: Storing output in /data/${output_directory}"
 
     # Convert Rearrangement file to a 10X Contig file. This uses code in the container
@@ -205,6 +209,8 @@ function run_analysis()
         echo "IR-ERROR: Processing for repertoire ${repertoire_id} (${title_string}) not completed."
         return
     fi
+
+
     echo "IR-INFO: Column header = ${column_header}"
     echo "IR-INFO: Column number = ${column_number}"
     echo "IR-INFO: Locus = ${repertoire_locus[@]}"
@@ -212,17 +218,24 @@ function run_analysis()
     echo "IR-INFO: Conga analysis type = ${conga_type}"
 
     # Run Conga setup for processing.
-    #singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/setup_10x_for_conga.py --filtered_contig_annotations_csvfile /data/${output_directory}/${CONTIG_PREFIX}.csv --organism ${conga_type}
     python3 /gitrepos/conga/scripts/setup_10x_for_conga.py --filtered_contig_annotations_csvfile ${PWD}/${output_directory}/${CONTIG_PREFIX}.csv --organism ${conga_type}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Conga setup_10x_for_conga failed on ${output_directory}/${CONTIG_PREFIX}.csv"
+        echo "IR-ERROR: Check to see if repertoire has clonotype assignment (clone_id) in rearrangements"
+        echo "IR-ERROR: Processing for repertoire ${repertoire_id} (${title_string}) not completed."
+        return
+    fi
+
+    # Check to see if the conga pre-processing has found clone data. If not return
+    if [[ $(wc -l ${PWD}/${output_directory}/${CONTIG_PREFIX}_tcrdist_clones.tsv) -le 1 ]]
+    then
+        echo "IR-ERROR: No clone data found from rearrangements"
         echo "IR-ERROR: Processing for repertoire ${repertoire_id} (${title_string}) not completed."
         return
     fi
 
     # Run Conga proper on the data.
-    #singularity exec --cleanenv --env PYTHONNOUSERSITE=1 -B ${PWD}:/data ${SCRIPT_DIR}/${singularity_image} python3 /gitrepos/conga/scripts/run_conga.py --all --organism ${conga_type} --clones_file /data/${output_directory}/${CONTIG_PREFIX}_tcrdist_clones.tsv --gex_data /data/${output_directory}/${gex_file} --gex_data_type h5ad --outfile_prefix /data/${output_directory}/${file_string}
     python3 /gitrepos/conga/scripts/run_conga.py --all --organism ${conga_type} --clones_file ${PWD}/${output_directory}/${CONTIG_PREFIX}_tcrdist_clones.tsv --gex_data ${PWD}/${output_directory}/${gex_file} --gex_data_type h5ad --outfile_prefix ${PWD}/${output_directory}/${file_string}
     if [ $? -ne 0 ]
     then

@@ -8,7 +8,7 @@ use Facades\App\RestService;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
-class SequenceTest extends TestCase
+class CellTest extends TestCase
 {
     protected static $rs = [
         'id' => 1,
@@ -22,7 +22,7 @@ class SequenceTest extends TestCase
     ];
 
     protected static $repertoire_data = [];
-    protected static $sequence_list = [];
+    protected static $cell_list = [];
 
     public static function setUpBeforeClass(): void
     {
@@ -125,7 +125,7 @@ class SequenceTest extends TestCase
             ],
         ];
 
-        self::$sequence_list = [
+        self::$cell_list = [
             [
                 'Info' => (object) [
                     'Title' => 'AIRR Data Commons API',
@@ -136,66 +136,31 @@ class SequenceTest extends TestCase
                         'url' => 'https://github.com/airr-community',
                     ],
                 ],
-                'Rearrangement' => [
+                'Cell' => [
                     0 => (object) [
-                        'd_call' => 'IGHD4-11*01',
-                        'junction_aa' => 'CARHLWTTTTFDYW',
-                        'j_call' => 'IGHJ4*02',
-                        'v_call' => 'IGHV4-39*01',
+                        'cell_id' => '641e1abd42e3dd9c961f2d8b',
+                        'repertoire_id' => '6765d7e8df6ad6ba72c5a379',
+                        'virtual_pairing' => false,
                     ],
                     1 => (object) [
-                        'd_call' => 'IGHD4-11*01',
-                        'junction_aa' => 'CARHLWTTTTFDYW',
-                        'j_call' => 'IGHJ4*02',
-                        'v_call' => 'IGHV4-39*05, or IGHV4-39*01',
+                        'cell_id' => '641e1abd42e3dd9c961f2d8c',
+                        'repertoire_id' => '6765d7e8df6ad6ba72c5a379',
+                        'virtual_pairing' => false,
                     ],
                     2 => (object) [
-                        'd_call' => 'IGHD4-11*01',
-                        'junction_aa' => 'CARHLWTTTTFDYW',
-                        'j_call' => 'IGHJ4*02',
-                        'v_call' => 'IGHV4-39*01',
+                        'cell_id' => '641e1abd42e3dd9c961f2d8d',
+                        'repertoire_id' => '6765d7e8df6ad6ba72c5a379',
+                        'virtual_pairing' => false,
                     ],
                     3 => (object) [
-                        'd_call' => 'IGHD4-11*01',
-                        'junction_aa' => 'CARHLWTTTTFDYW',
-                        'j_call' => 'IGHJ4*02',
-                        'v_call' => 'IGHV4-39*01',
+                        'cell_id' => '641e1abd42e3dd9c961f2d8e',
+                        'repertoire_id' => '6765d7e8df6ad6ba72c5a379',
+                        'virtual_pairing' => false,
                     ],
                     4 => (object) [
-                        'd_call' => 'IGHD4-11*01',
-                        'junction_aa' => 'CARHLWTTTTFDYW',
-                        'j_call' => 'IGHJ4*02',
-                        'v_call' => 'IGHV4-39*01',
-                    ],
-                    5 => (object) [
-                        'd_call' => 'IGHD4-11*01',
-                        'junction_aa' => 'CARHLWTTTTFDYW',
-                        'j_call' => 'IGHJ4*02',
-                        'v_call' => 'IGHV4-39*01',
-                    ],
-                    6 => (object) [
-                        'd_call' => 'IGHD4-11*01',
-                        'junction_aa' => 'CARHLWTTTTFDYW',
-                        'j_call' => 'IGHJ4*02',
-                        'v_call' => 'IGHV4-39*01',
-                    ],
-                    7 => (object) [
-                        'd_call' => 'IGHD4-11*01',
-                        'junction_aa' => 'CARHLWTTTTFDYW',
-                        'j_call' => 'IGHJ4*02',
-                        'v_call' => 'IGHV4-39*01',
-                    ],
-                    8 => (object) [
-                        'd_call' => 'IGHD4-11*01',
-                        'junction_aa' => 'CARHLWTTTTFDYW',
-                        'j_call' => 'IGHJ4*02',
-                        'v_call' => 'IGHV4-39*01',
-                    ],
-                    9 => (object) [
-                        'd_call' => 'IGHD4-11*01',
-                        'junction_aa' => 'CARHLWTTTTFDYW',
-                        'j_call' => 'IGHJ4*02',
-                        'v_call' => 'IGHV4-39*01',
+                        'cell_id' => '641e1abd42e3dd9c961f2d8f',
+                        'repertoire_id' => '6765d7e8df6ad6ba72c5a379',
+                        'virtual_pairing' => false,
                     ],
                 ],
             ],
@@ -204,13 +169,13 @@ class SequenceTest extends TestCase
 
     /*
     |--------------------------------------------------------------------------
-    | Simulate service returning sequence summary with 1 item,
-    | to test that sequence page works even if fields are missing
+    | Simulate service returning cell summary with 1 item,
+    | to test that cell page works even if fields are missing
     |--------------------------------------------------------------------------
     */
 
     /** @test */
-    public function full_sequence_summary()
+    public function full_cell_summary()
     {
         $response_list = [
             [
@@ -220,11 +185,11 @@ class SequenceTest extends TestCase
             ],
         ];
 
-        $sequence_list_response = [
+        $cell_list_response = [
             [
                 'rs' => (object) self::$rs,
                 'status' => 'success',
-                'data' => self::$sequence_list,
+                'data' => self::$cell_list,
                 'query_log_id' => '5da77e26a98320062425ad8a',
             ],
         ];
@@ -232,19 +197,19 @@ class SequenceTest extends TestCase
         // mock Query::getParams()
         Query::shouldReceive('getParams')->andReturn(self::$query_params);
 
-        // mock RestService::sequences_summary()
+        // mock RestService::data_summary()
         RestService::shouldReceive('data_summary')->once()->andReturn($response_list);
-        RestService::shouldReceive('data_subset')->once()->andReturn($sequence_list_response);
+        RestService::shouldReceive('data_subset')->once()->andReturn($cell_list_response);
 
         // generate fake user
         $u = User::factory()->make();
 
-        // test sequence page is working
-        $this->actingAs($u)->get('/sequences?query_id=0')->assertOk();
+        // test cell page is working
+        $this->actingAs($u)->get('/cells?query_id=0')->assertOk();
     }
 
     /** @test */
-    public function incomplete_sequence_data()
+    public function incomplete_cell_data()
     {
         // generate fake user
         $u = User::factory()->make();
@@ -268,11 +233,11 @@ class SequenceTest extends TestCase
                 ],
             ];
 
-            $sequence_list_response = [
+            $cell_list_response = [
                 [
                     'rs' => (object) self::$rs,
                     'status' => 'success',
-                    'data' => self::$sequence_list,
+                    'data' => self::$cell_list,
                     'query_log_id' => '5da77e26a98320062425ad8a',
                 ],
             ];
@@ -280,12 +245,12 @@ class SequenceTest extends TestCase
             // mock Query::getParams()
             Query::shouldReceive('getParams')->andReturn(self::$query_params);
 
-            // mock RestService::sequences_summary()
+            // mock RestService::data_summary()
             RestService::shouldReceive('data_summary')->once()->andReturn($response_list);
-            RestService::shouldReceive('data_subset')->once()->andReturn($sequence_list_response);
+            RestService::shouldReceive('data_subset')->once()->andReturn($cell_list_response);
 
-            // test sequence page is working
-            $this->actingAs($u)->get('/sequences?query_id=0')->assertOk();
+            // test cell page is working
+            $this->actingAs($u)->get('/cells?query_id=0')->assertOk();
         }
     }
 }
