@@ -893,7 +893,7 @@ class JobController extends Controller
                         // Create a list of files a baseline to display
                         $data['filesHTML'] = dir_to_html($analysis_folder, $job->id);
                         // Log::debug('JobController::getView: filesHTML = ' . $data['filesHTML']);
- 
+
                         foreach (scandir($analysis_folder) as $file) {
                             // Look at each file and if it is a folder, process it.
                             if ($file !== '.' && $file !== '..' && is_dir($analysis_folder . '/' . $file)) {
