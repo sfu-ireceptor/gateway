@@ -1,0 +1,29 @@
+{
+    "id":"rearrangement-olga-singularity",
+    "version":"1.0",
+    "description":"Olga",
+    "containerImage":"ir_olga-1.0.sif",
+    "jobAttributes": {
+      "description": "<p>OLGA (Optimized Likelihood estimate of immunoGlobulin Amino-acid sequences) is a python 2.7/3.6 software developed to compute the generation probability of amino acid and in-frame nucleotide CDR3 sequences from a generative model of V(D)J recombination.</p>",
+      "parameterSet": {
+        "appArgs": [
+            {"name":"split_repertoire",
+             "description": "Split overall data based on Repertoire ID?",
+             "notes":{"label":"Split Repertoire (True/False)?"},
+             "arg":"True", "inputMode":"REQUIRED"},
+            {"name":"num_values",
+             "description": "Number of values to return, -1 implies return all values (sorted, return the largest N).",
+             "notes":{"label":"Number of Values"},
+             "arg":"-1", "inputMode":"REQUIRED"}
+        ]
+      }
+    },
+    "notes": {
+        "ir_hints": {
+            "object":"Rearrangement",
+            "requirements":{},
+            "resources":{}
+        }
+    }
+}
+
