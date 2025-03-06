@@ -70,6 +70,7 @@ return [
             'rearrangement-cdr3_motif-singularity',
             'rearrangement-base-app-singularity',
             'rearrangement-compairr-singularity',
+            'rearrangement-olga-singularity',
             'clone-stats-singularity',
             'cell-conga-singularity',
             'cell-celltypist-singularity',

@@ -104,16 +104,16 @@ function run_olga()
 
     # preprocess input files -> tmp.csv
     echo "IR-INFO: "
-    echo "IR-INFO: Histogram started at: `date`"
+    echo "IR-INFO: Olga started at: `date`"
     echo -n "IR-INFO: Working from directory: "
     pwd
     echo "IR-INFO: Output directory ${output_dir}"
     echo "IR-INFO: Extracting from ${array_of_files[@]}"
     echo "IR-INFO: Extracting into $TMP_FILE"
-    echo ${variable_name} > $TMP_FILE
     rm -f $TMP_FILE
     touch $TMP_FILE
     for data_file in "${array_of_files[@]}"; do
+        echo "IR-INFO: Processing ${data_file}"
         # Get the columns required by compairr
         junction_column=$(head -n 1 ${data_file} | awk -F"\t" -v label=junction '{for(i=1;i<=NF;i++){if ($i == label){print i}}}')
         junction_aa_column=$(head -n 1 ${data_file} | awk -F"\t" -v label=junction_aa '{for(i=1;i<=NF;i++){if ($i == label){print i}}}')
