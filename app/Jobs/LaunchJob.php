@@ -253,7 +253,7 @@ class LaunchJob implements ShouldQueue
 
             // submit Tapis job
             $job->updateStatus('SENDING JOB FOR ANALYSIS');
-            $job_config = $tapis->getJobConfig($this->jobId, 'ireceptor-' . $this->jobId, $appName,  $appVersion, $zip_info['zip_name'], $systemStaging, $notificationUrl, $archive_folder, $params, $inputs, $job_params);
+            $job_config = $tapis->getJobConfig($this->jobId, 'ireceptor-' . $this->jobId, $appName, $appVersion, $zip_info['zip_name'], $systemStaging, $notificationUrl, $archive_folder, $params, $inputs, $job_params);
             $response = $tapis->createJob($job_config);
             //Log::debug('LaunchJob::handle submit response = ' . json_encode($response));
             $job->agave_id = $response->result->uuid;
