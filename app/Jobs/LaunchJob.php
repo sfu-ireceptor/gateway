@@ -188,9 +188,11 @@ class LaunchJob implements ShouldQueue
 
             // Based on the above, create the Tapis App.
             $appConfig = $tapis->getAppConfig($appId, $appName, $appExecutionSystem, $appDeploymentSystem, $appDeploymentPath);
+            //Log::debug('LaunchJob::handle - App config = ' . json_encode($appConfig));
+            $appVersion = $appConfig['version'];
             // Try to get the App if it already exists.
             $appResponse = $tapis->getApp($appName);
-            //Log::debug('LaunchJob::handle - App info = ' . json_encode($appResponse));
+            //Log::debug('LaunchJob::handle - App response = ' . json_encode($appResponse));
             if ($appResponse->status == 'success') {
                 // If it exists, update it in case the config has changed, throw
                 // an error of the update fails.
@@ -251,7 +253,7 @@ class LaunchJob implements ShouldQueue
 
             // submit Tapis job
             $job->updateStatus('SENDING JOB FOR ANALYSIS');
-            $job_config = $tapis->getJobConfig($this->jobId, 'ireceptor-' . $this->jobId, $appName, $zip_info['zip_name'], $systemStaging, $notificationUrl, $archive_folder, $params, $inputs, $job_params);
+            $job_config = $tapis->getJobConfig($this->jobId, 'ireceptor-' . $this->jobId, $appName,  $appVersion, $zip_info['zip_name'], $systemStaging, $notificationUrl, $archive_folder, $params, $inputs, $job_params);
             $response = $tapis->createJob($job_config);
             //Log::debug('LaunchJob::handle submit response = ' . json_encode($response));
             $job->agave_id = $response->result->uuid;
