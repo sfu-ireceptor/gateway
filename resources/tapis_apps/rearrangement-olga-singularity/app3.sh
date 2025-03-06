@@ -112,7 +112,8 @@ function run_olga()
     echo "IR-INFO: Extracting into $TMP_FILE"
     rm -f $TMP_FILE
     touch $TMP_FILE
-    for data_file in "${array_of_files[@]}"; do
+    for file in "${array_of_files[@]}"; do
+        data_file=${output_dir}/${file}
         echo "IR-INFO: Processing ${data_file}"
         # Get the columns required by compairr
         junction_column=$(head -n 1 ${data_file} | awk -F"\t" -v label=junction '{for(i=1;i<=NF;i++){if ($i == label){print i}}}')
@@ -145,19 +146,22 @@ function run_olga()
     # Generate the image file name.
     OFILE_BASE="${file_tag}"
     PGEN_OFILE=${output_dir}/${OFILE_BASE}-pgen.tsv
+    PGEN_TMP_FILE=${output_dir}/${OFILE_BASE}-tmp-pgen.tsv
 
     # Debugging output
     echo "IR-INFO: Input file = $TMP_FILE"
     echo "IR-INFO: Output file = $PGEN_OFILE"
 
     # Run the python histogram command
-    olga-compute_pgen --humanTRA -i ${TMP_FILE} -o ${PGEN_FILE}
+    olga-compute_pgen --humanTRB -i ${TMP_FILE} -o ${PGEN_TMP_FILE}
     #python3 /ireceptor/airr_histogram.py ${variable_name} $TMP_FILE $PNG_OFILE $TSV_OFILE ${SORT_VALUES} ${NUM_VALUES} "${title},${variable_name}"
     if [ $? -ne 0 ]
     then
-        echo "IR-ERROR: Could not generate histogram for ${title}"
-        exit $?
+        echo "IR-ERROR: Olga run for ${title} failed"
     fi
+    echo -e "Junction NT sequence\tJunction NT PGEN\tJunction AA sequence\tJunction AA PGEN" > ${PGEN_OFILE}
+    cat ${PGEN_TMP_FILE} >> ${PGEN_OFILE}
+    rm ${PGEN_TMP_FILE}
 
     # change permissions
     chmod 644 $PGEN_OFILE
@@ -248,7 +252,7 @@ function run_analysis()
     # Generate a normal looking iReceptor header
     printf '<head>\n' >>  ${html_file}
     cat ${output_directory}/assets/head-template.html >> ${html_file}
-    printf "<title>Histogram: %s</title>\n" ${title_string} >> ${html_file}
+    printf "<title>Olga: %s</title>\n" ${title_string} >> ${html_file}
     printf '</head>\n' >>  ${html_file}
 
     # Generate an iReceptor top bar for the page
@@ -257,9 +261,9 @@ function run_analysis()
     # Generate a normal looking iReceptor header
     printf '<div class="container job_container">'  >> ${html_file}
 
-    printf "<h2>Histogram: %s</h2>\n" ${title_string} >> ${html_file}
+    printf "<h2>Olga: %s</h2>\n" ${title_string} >> ${html_file}
     printf "<h2>Analysis</h2>\n" >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=100 ${working_path}/${file_str}-pgen.tsv  >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=100 ${output_directory}/${file_string}-pgen.tsv  >> ${html_file}
     #printf '<img src="%s-%s-histogram.png" width="800">\n' ${file_string} ${VARNAME} >> ${html_file}
 
     # End of main div container
@@ -274,10 +278,10 @@ function run_analysis()
 
     # Generate a summary HTML file for the Gateway to present this info to the user
     html_file=${output_directory}/${repertoire_id}-gateway.html
-    printf "<h2>Histogram: %s</h2>\n" ${title_string} >> ${html_file}
+    printf "<h2>Olga: %s</h2>\n" ${title_string} >> ${html_file}
     printf "<h2>Analysis</h2>\n" >> ${html_file}
     # Use the tcrmatch table generator to generate a nice table.
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=100 ${working_path}/${file_str}-pgen.tsv  >> ${html_file}
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=100 ${output_directory}/${file_string}-pgen.tsv  >> ${html_file}
 
     #printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-%s-histogram.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} ${VARNAME} >> ${html_file}
 }
@@ -363,5 +367,5 @@ echo "IR-INFO: Removing original ZIP file $ZIP_FILE"
 rm -f $ZIP_FILE
 
 # Debugging output, print data/time when shell command is finished.
-echo "IR-INFO: Histogram finished at: `date`"
+echo "IR-INFO: Olga finished at: `date`"
 
