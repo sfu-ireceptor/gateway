@@ -1,4 +1,4 @@
-#
+titlu
 # Wrapper script for running app through the iReceptor Gateway.
 #
 
@@ -101,6 +101,8 @@ function run_olga()
 
     # Use a temporary file for output
     TMP_FILE=${output_dir}/tmp.tsv
+    rm -f $TMP_FILE
+    touch $TMP_FILE
 
     # preprocess input files -> tmp.csv
     echo "IR-INFO: "
@@ -110,8 +112,10 @@ function run_olga()
     echo "IR-INFO: Output directory ${output_dir}"
     echo "IR-INFO: Extracting from ${array_of_files[@]}"
     echo "IR-INFO: Extracting into $TMP_FILE"
-    rm -f $TMP_FILE
-    touch $TMP_FILE
+    # Set a default repertoire locus
+    germline_set="humanTRB"
+
+    # Loop over each file
     for data_file in "${array_of_files[@]}"; do
         echo "IR-INFO: Processing ${data_file}"
         # Get the columns required by compairr
@@ -137,6 +141,43 @@ function run_olga()
             continue
         fi
     
+        # Check the rearrangement file and extract the list
+        # of loci in the data (IGH or TRA or TRB)
+        repertoire_locus=( `cat $data_file | cut -f ${v_call_column} | tail --lines=+2 | awk '{printf("%s\n", substr($1,0,3))}' | sort -u | awk '{printf("%s  ",$0)}'` )
+        if [ $? -ne 0 ]
+        then
+            echo "IR-ERROR: Could not get a locus for repertoire ${repertoire_id}"
+            echo "IR-ERROR: Processing for repertoire ${repertoire_id} (${title}) not completed."
+            continue
+        fi
+
+        # Check to see if there is only one cell type in the data.
+        if [ ${#repertoire_locus[@]} != 1 ]
+        then
+            echo "IR-ERROR: Olga analysis requires a single locus (repertoire_id = ${repertoire_id}, loci = ${repertoire_locus[@]})."
+            echo "IR-ERROR: Processing for repertoire ${repertoire_id} (${title}) not completed."
+            continue
+        fi
+
+        # If there is only one, check to see if it is TR cell type, if so then we are good,
+        # if not it is an error.
+        repertoire_locus=${repertoire_locus[0]}
+
+        if [ "${repertoire_locus}" == "TRB" ]
+        then
+            germline_set="humanTRB"
+        elif [ "${repertoire_locus}" == "TRA" ]
+        then
+            germline_set="humanTRA"
+        elif [ "${repertoire_locus}" == "IGH" ]
+        then
+            germline_set="humanIGH"
+        else
+            echo "IR-ERROR: Olga analysis can only run on TRA, TRB, or IGH repertoires (repertoire_id = ${repertoire_id}, locus type = ${repertoire_locus})."
+            echo "IR-ERROR: Processing for repertoire ${repertoire_id} (${title}) not completed."
+            return
+        fi
+
         echo "IR-INFO:     Extracting from $data_file"
         tail -n +2 ${data_file} | awk -F"\t" -v junction_column=${junction_column} -v junction_aa_column=${junction_aa_column} -v v_call_column=${v_call_column} -v j_call_column=${j_call_column} '{printf("%s\t%s\t%s\t%s\n",$junction_column,$junction_aa_column,"",$v_call_column,$j_call_column)}' >> $TMP_FILE
 
@@ -151,11 +192,10 @@ function run_olga()
     echo "IR-INFO: Output file = $PGEN_OFILE"
 
     # Run the python histogram command
-    olga-compute_pgen --humanTRA -i ${TMP_FILE} -o ${PGEN_FILE}
-    #python3 /ireceptor/airr_histogram.py ${variable_name} $TMP_FILE $PNG_OFILE $TSV_OFILE ${SORT_VALUES} ${NUM_VALUES} "${title},${variable_name}"
+    olga-compute_pgen --${germline_set} -i ${TMP_FILE} -o ${PGEN_FILE}
     if [ $? -ne 0 ]
     then
-        echo "IR-ERROR: Could not generate histogram for ${title}"
+        echo "IR-ERROR: Could not generate Olga PGEN for ${title}"
         exit $?
     fi
 
