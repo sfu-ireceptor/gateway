@@ -879,9 +879,6 @@ class JobController extends Controller
                 // If we have a folder with files in it...
                 $data['files'] = File::allFiles($folder);
                 if (count($data['files']) > 0) {
-                    // Create a list of files a baseline to display
-                    $data['filesHTML'] = dir_to_html($analysis_folder, $job->id);
-                    // Log::debug('JobController::getView: filesHTML = ' . $data['filesHTML']);
                     // We want to have specific info for the error and output files.
                     $data['error_log_url'] = $analysis_folder . '/' . $error_file;
                     $data['output_log_url'] = $analysis_folder . '/' . $output_file;
@@ -893,6 +890,10 @@ class JobController extends Controller
                     // Currently, the only analysis unit supported is repertoire_id.
                     $analysis_summary = [];
                     if (File::exists($analysis_folder) && is_dir($analysis_folder)) {
+                        // Create a list of files a baseline to display
+                        $data['filesHTML'] = dir_to_html($analysis_folder, $job->id);
+                        // Log::debug('JobController::getView: filesHTML = ' . $data['filesHTML']);
+
                         foreach (scandir($analysis_folder) as $file) {
                             // Look at each file and if it is a folder, process it.
                             if ($file !== '.' && $file !== '..' && is_dir($analysis_folder . '/' . $file)) {

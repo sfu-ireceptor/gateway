@@ -1,0 +1,26 @@
+{
+    "id":"singularity-compairr",
+    "version":"0.1",
+    "description": "CompAIRR",
+    "containerImage":"ir_compairr-1.13.0.sif",
+    "jobAttributes": {
+      "description": "<p>CompAIRR (compairr) is a command line tool to compare two sets of adaptive immune receptor repertoires and compute their overlap. It can also identify which sequences are present in which repertoires.</p>",
+      "parameterSet": {
+        "appArgs": [
+             {"name":"similarity_method",
+             "description": "Similarity method to use, one of overlap 'Count', 'Morisita-Horn', or 'Jaccard'",
+             "notes":{"label":"Similarity Method ('Count', 'Morisita-Horn', or 'Jaccard')?"},
+             "arg":"Count", "inputMode":"REQUIRED"
+            }
+        ]
+
+      }
+    },
+    "notes": {
+        "ir_hints": {
+            "object":"Rearrangement",
+            "requirements":{},
+            "resources":{}
+        }
+    }
+}

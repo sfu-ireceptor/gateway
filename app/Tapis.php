@@ -409,7 +409,7 @@ class Tapis
 
     public function updateApp($app, $config)
     {
-        $version = '0.1';
+        $version = $config['version'];
         $token = self::getAnalysisToken();
         $url = '/v3/apps/' . $app . '/' . $version;
 
@@ -604,7 +604,7 @@ class Tapis
         return $app_config;
     }
 
-    public function getJobConfig($gateway_jobid, $name, $app_id, $download_file, $gateway_system, $gateway_notification_url, $gateway_dir, $params, $inputs, $job_params)
+    public function getJobConfig($gateway_jobid, $name, $app_id, $app_version, $download_file, $gateway_system, $gateway_notification_url, $gateway_dir, $params, $inputs, $job_params)
     {
         // Get the gateway environment stuff required
         $gateway_url = config('app.url');
@@ -621,7 +621,7 @@ class Tapis
         $t = [
             'name' => $name,
             'appId' => $app_id,
-            'appVersion' => '0.1',
+            'appVersion' => $app_version,
             'archiveSystemId' => $gateway_system,
             'archiveSystemDir' => $gateway_dir,
             'parameterSet' => [
