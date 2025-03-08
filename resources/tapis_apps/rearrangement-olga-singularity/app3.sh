@@ -1,4 +1,3 @@
-titlu
 # Wrapper script for running app through the iReceptor Gateway.
 #
 
@@ -22,8 +21,8 @@ ZIP_FILE=${IR_DOWNLOAD_FILE}
 # Tapis App Parameters: Will be subsituted by Tapis on the command line to the singularity
 # command that is executed in the order specified in the App JSON file
 #
-SPLIT_REPERTOIRE=$1
-NUM_VALUES=$2
+# No arguements, always split repertoire
+SPLIT_REPERTOIRE=True
 
 ##############################################
 # Set up Gateway Utilities
@@ -67,7 +66,6 @@ printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
 printf "IR-INFO: ZIP FILE = ${ZIP_FILE}\n"
 printf "IR-INFO: SPLIT_REPERTOIRE = ${SPLIT_REPERTOIRE}\n"
 printf "IR-INFO: IR_GATEWAY_JOBID = ${IR_GATEWAY_JOBID}\n"
-printf "IR-INFO: NUM_VALUES = ${NUM_VALUES}\n"
 printf "IR-INFO: "
 lscpu | grep "Model name"
 printf "IR-INFO: \nIR-INFO: \n"
@@ -93,11 +91,7 @@ function run_olga()
     shift
     shift
     # Remaining variable are the files to process
-    echo "IR-INFO:     File tag = $file_tag" 
-    echo "IR-INFO:     title = $title" 
-    echo "IR-INFO:     Using files $@"
     local array_of_files=( $@ )
-    echo "IR-INFO:     Using files ${array_of_files[@]}"
 
     # Use a temporary file for output
     TMP_FILE=${output_dir}/tmp.tsv
@@ -106,18 +100,15 @@ function run_olga()
 
     # preprocess input files -> tmp.csv
     echo "IR-INFO: "
-    echo "IR-INFO: Olga started at: `date`"
-    echo -n "IR-INFO: Working from directory: "
-    pwd
-    echo "IR-INFO: Output directory ${output_dir}"
-    echo "IR-INFO: Extracting from ${array_of_files[@]}"
-    echo "IR-INFO: Extracting into $TMP_FILE"
+    echo "IR-INFO:     Olga started at: `date`"
+
     # Set a default repertoire locus
     germline_set="humanTRB"
 
     # Loop over each file
-    for data_file in "${array_of_files[@]}"; do
-        echo "IR-INFO: Processing ${data_file}"
+    for file in "${array_of_files[@]}"; do
+        data_file=${output_dir}/${file}
+        echo "IR-INFO:         Processing ${data_file}"
         # Get the columns required by compairr
         junction_column=$(head -n 1 ${data_file} | awk -F"\t" -v label=junction '{for(i=1;i<=NF;i++){if ($i == label){print i}}}')
         junction_aa_column=$(head -n 1 ${data_file} | awk -F"\t" -v label=junction_aa '{for(i=1;i<=NF;i++){if ($i == label){print i}}}')
@@ -172,13 +163,18 @@ function run_olga()
         elif [ "${repertoire_locus}" == "IGH" ]
         then
             germline_set="humanIGH"
+        elif [ "${repertoire_locus}" == "IGK" ]
+        then
+            germline_set="humanIGK"
+        elif [ "${repertoire_locus}" == "IGL" ]
+        then
+            germline_set="humanIGL"
         else
-            echo "IR-ERROR: Olga analysis can only run on TRA, TRB, or IGH repertoires (repertoire_id = ${repertoire_id}, locus type = ${repertoire_locus})."
+            echo "IR-ERROR: Olga analysis can only run on TRA, TRB, IGH, IGH, or IGL repertoires (repertoire_id = ${repertoire_id}, locus type = ${repertoire_locus})."
             echo "IR-ERROR: Processing for repertoire ${repertoire_id} (${title}) not completed."
-            return
+            continue
         fi
 
-        echo "IR-INFO:     Extracting from $data_file"
         tail -n +2 ${data_file} | awk -F"\t" -v junction_column=${junction_column} -v junction_aa_column=${junction_aa_column} -v v_call_column=${v_call_column} -v j_call_column=${j_call_column} '{printf("%s\t%s\t%s\t%s\n",$junction_column,$junction_aa_column,"",$v_call_column,$j_call_column)}' >> $TMP_FILE
 
     done
@@ -189,17 +185,17 @@ function run_olga()
     PGEN_TMP_FILE=${output_dir}/${OFILE_BASE}-tmp-pgen.tsv
 
     # Debugging output
-    echo "IR-INFO: Input file = $TMP_FILE"
-    echo "IR-INFO: Output file = $PGEN_OFILE"
+    echo "IR-INFO:             Input file = $TMP_FILE"
+    echo "IR-INFO:             Output file = $PGEN_OFILE"
+    echo "IR-INFO:             Germline set = $germline_set"
 
     # Run the python histogram command
-    olga-compute_pgen --${germline_set} -i ${TMP_FILE} -o ${PGEN_FILE}
+    echo -e "Junction NT sequence\tJunction NT PGEN\tJunction AA sequence\tJunction AA PGEN" > ${PGEN_OFILE}
+    olga-compute_pgen --display_off --time_updates_off --${germline_set} -i ${TMP_FILE} -o ${PGEN_TMP_FILE} >&2
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not generate Olga PGEN for ${title}"
-        exit $?
     fi
-    echo -e "Junction NT sequence\tJunction NT PGEN\tJunction AA sequence\tJunction AA PGEN" > ${PGEN_OFILE}
     cat ${PGEN_TMP_FILE} >> ${PGEN_OFILE}
     rm ${PGEN_TMP_FILE}
 
@@ -208,6 +204,8 @@ function run_olga()
 
     # Remove the temporary file.
     rm -f $TMP_FILE
+    echo "IR-INFO:     Olga finished at: `date`"
+    echo "IR-INFO: "
 }
 
 function run_analysis()
@@ -265,16 +263,13 @@ function run_analysis()
 
     # TODO: Fix this, it should not be required.
     title_string=`echo ${title_string} | sed "s/[ ]//g"`
-    echo "IR-INFO:     file_string = ${file_string}"
-    echo "IR-INFO:     title_string = ${title_string}"
 
     # Generate the histogram
-    echo "IR-INFO:     Using files ${array_of_files[@]}"
     run_olga $output_directory $file_string $title_string ${array_of_files[@]}
 
     # Remove the TSV files, we don't want to return them
     for filename in "${array_of_files[@]}"; do
-        echo "IR_INFO: Removing file $output_directory/$filename"
+        echo "IR_INFO:     Removing file $output_directory/$filename"
         rm -f $output_directory/$filename
     done
 
@@ -302,9 +297,14 @@ function run_analysis()
     printf '<div class="container job_container">'  >> ${html_file}
 
     printf "<h2>Olga: %s</h2>\n" ${title_string} >> ${html_file}
+    # Use the tcrmatch table generator to generate a nice table for the first N values.
     printf "<h2>Analysis</h2>\n" >> ${html_file}
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=100 ${output_directory}/${file_string}-pgen.tsv  >> ${html_file}
-    #printf '<img src="%s-%s-histogram.png" width="800">\n' ${file_string} ${VARNAME} >> ${html_file}
+    NUM_VALUES=100
+    printf "<p>First %d generation probabilities for junction NT and AA sequences. For all generation probabilties please refer to the PGEN TSV file in the 'Analysis Details' output</p>\n" $NUM_VALUES >> ${html_file}
+    pgen_subset_tmp=$(mktemp)
+    head -${NUM_VALUES} ${output_directory}/${file_string}-pgen.tsv > $pgen_subset_tmp
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=50 $pgen_subset_tmp >> ${html_file}
+    rm $pgen_subset_tmp
 
     # End of main div container
     printf '</div>' >> ${html_file}
@@ -319,11 +319,15 @@ function run_analysis()
     # Generate a summary HTML file for the Gateway to present this info to the user
     html_file=${output_directory}/${repertoire_id}-gateway.html
     printf "<h2>Olga: %s</h2>\n" ${title_string} >> ${html_file}
+    # Use the tcrmatch table generator to generate a nice table for the first N values.
     printf "<h2>Analysis</h2>\n" >> ${html_file}
-    # Use the tcrmatch table generator to generate a nice table.
-    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=100 ${output_directory}/${file_string}-pgen.tsv  >> ${html_file}
+    NUM_VALUES=100
+    printf "<p>First %d generation probabilities for junction NT and AA sequences. For all generation probabilties please refer to the PGEN TSV file in the 'Analysis Details' output\n" $NUM_VALUES >> ${html_file}
+    pgen_subset_tmp=$(mktemp)
+    head -${NUM_VALUES} ${output_directory}/${file_string}-pgen.tsv > $pgen_subset_tmp
+    python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=50 $pgen_subset_tmp >> ${html_file}
+    rm $pgen_subset_tmp
 
-    #printf '<img src="/jobs/view/show?jobid=%s&directory=%s&filename=%s-%s-histogram.png" width="800">\n' ${IR_GATEWAY_JOBID} ${output_directory} ${file_string} ${VARNAME} >> ${html_file}
 }
 
 # Set up the required variables. An iReceptor Gateway download consists
