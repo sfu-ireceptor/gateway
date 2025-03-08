@@ -348,7 +348,7 @@ class SequenceController extends Controller
                     Log::debug('SequenceController::index -       Required run time (s) = ' . human_number($required_time_secs));
                     Log::debug('SequenceController::index -       Max run time (s) =  ' . human_number($job_runtime_secs));
                     $app_ui_info['runnable'] = false;
-                    $error_string = 'It is estimated that "' . $app_ui_info['name'] . '" will require ' . secondsToTime($required_time_secs) . ' to process ' . human_number($num_objects) . ' rearrangements. Current maximum job run time is ' . secondsToTime($tapis->maxRunTimeMinutes()*60) . '. Please limit the amount of data used for this analysis.';
+                    $error_string = 'It is estimated that "' . $app_ui_info['name'] . '" will require ' . secondsToTime($required_time_secs) . ' to process ' . human_number($num_objects) . ' rearrangements. Current maximum job run time is ' . secondsToTime($tapis->maxRunTimeMinutes() * 60) . '. Please limit the amount of data used for this analysis.';
                     // If we have a comment already, then add to it, otherwise generate new comment.
                     if (strlen($app_ui_info['runnable_comment']) > 0) {
                         $app_ui_info['runnable_comment'] = $app_ui_info['runnable_comment'] . ' ' . $error_string;
