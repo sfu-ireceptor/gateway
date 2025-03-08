@@ -14,7 +14,7 @@
         "ir_hints": {
             "object":"Rearrangement",
             "requirements":{"Fields": {"organism_id":["NCBITAXON:9606"]}},
-            "resources":{}
+            "resources":{"time_secs_per_million":200000}
         }
     }
 }
