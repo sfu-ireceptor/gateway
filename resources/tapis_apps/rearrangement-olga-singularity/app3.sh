@@ -109,7 +109,7 @@ function run_olga()
     for file in "${array_of_files[@]}"; do
         data_file=${output_dir}/${file}
         echo "IR-INFO:         Processing ${data_file}"
-        # Get the columns required by compairr
+        # Get the columns required by olga
         junction_column=$(head -n 1 ${data_file} | awk -F"\t" -v label=junction '{for(i=1;i<=NF;i++){if ($i == label){print i}}}')
         junction_aa_column=$(head -n 1 ${data_file} | awk -F"\t" -v label=junction_aa '{for(i=1;i<=NF;i++){if ($i == label){print i}}}')
         v_call_column=$(head -n 1 ${data_file} | awk -F"\t" -v label=v_call '{for(i=1;i<=NF;i++){if ($i == label){print i}}}')
@@ -133,7 +133,7 @@ function run_olga()
         fi
     
         # Check the rearrangement file and extract the list
-        # of loci in the data (IGH or TRA or TRB)
+        # of loci in the data 
         repertoire_locus=( `cat $data_file | cut -f ${v_call_column} | tail --lines=+2 | awk '{printf("%s\n", substr($1,0,3))}' | sort -u | awk '{printf("%s  ",$0)}'` )
         if [ $? -ne 0 ]
         then
@@ -142,7 +142,7 @@ function run_olga()
             continue
         fi
 
-        # Check to see if there is only one cell type in the data.
+        # Check to see if there is only one locus in the data.
         if [ ${#repertoire_locus[@]} != 1 ]
         then
             echo "IR-ERROR: Olga analysis requires a single locus (repertoire_id = ${repertoire_id}, loci = ${repertoire_locus[@]})."
@@ -150,8 +150,8 @@ function run_olga()
             continue
         fi
 
-        # If there is only one, check to see if it is TR cell type, if so then we are good,
-        # if not it is an error.
+        # If there is only one, check to see if it is one we have a germline
+        # for, if so then we are good, if not it is an error.
         repertoire_locus=${repertoire_locus[0]}
 
         if [ "${repertoire_locus}" == "TRB" ]
