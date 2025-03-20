@@ -1,0 +1,21 @@
+{
+    "id":"rearrangement-olga-singularity",
+    "version":"1.0",
+    "description":"Olga",
+    "containerImage":"ir_olga-1.0.sif",
+    "jobAttributes": {
+      "description": "<p>OLGA (Optimized Likelihood estimate of immunoGlobulin Amino-acid sequences) is a python software developed to compute the generation probability of amino acid and in-frame nucleotide CDR3 sequences from a generative model of V(D)J recombination. This iReceptor Analysis App splits the data into repertoires and then runs Olga on each repertoire, generating a PGEN score for each junction NT and AA sequence in the repertoire.</p><p>Notes:<ul><li>Olga only computes generation probabilities for TRB, TRA, IGH, IGK, and IGL data, data from other loci will be ignored</li><li>The iReceptor implementaion of Olga only computes generation probabilities for Human samples, data from other species will be ignored</li></ul></p>",
+      "parameterSet": {
+        "appArgs": [
+        ]
+      }
+    },
+    "notes": {
+        "ir_hints": {
+            "object":"Rearrangement",
+            "requirements":{"Fields": {"organism_id":["NCBITAXON:9606"]}},
+            "resources":{"time_secs_per_million":200000}
+        }
+    }
+}
+

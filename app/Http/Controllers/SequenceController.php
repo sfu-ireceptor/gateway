@@ -348,7 +348,7 @@ class SequenceController extends Controller
                     Log::debug('SequenceController::index -       Required run time (s) = ' . human_number($required_time_secs));
                     Log::debug('SequenceController::index -       Max run time (s) =  ' . human_number($job_runtime_secs));
                     $app_ui_info['runnable'] = false;
-                    $error_string = 'It is estimated that "' . $app_ui_info['name'] . '" will require ' . human_number($required_time_secs / 60) . ' minutes to process ' . human_number($num_objects) . ' rearrangements. Current maximum job run time is ' . human_number($tapis->maxRunTimeMinutes()) . ' minutes.';
+                    $error_string = 'It is estimated that "' . $app_ui_info['name'] . '" will require ' . secondsToTime($required_time_secs) . ' to process ' . human_number($num_objects) . ' rearrangements. Current maximum job run time is ' . secondsToTime($tapis->maxRunTimeMinutes() * 60) . '. Please limit the amount of data used for this analysis.';
                     // If we have a comment already, then add to it, otherwise generate new comment.
                     if (strlen($app_ui_info['runnable_comment']) > 0) {
                         $app_ui_info['runnable_comment'] = $app_ui_info['runnable_comment'] . ' ' . $error_string;
@@ -380,7 +380,7 @@ class SequenceController extends Controller
                             // If the property doesn't exist, disable the app
                             $got_error = true;
                             $app_ui_info['runnable'] = false;
-                            $error_string = 'A required value is missing from the "' . $field . '" field in one of the repertoires. Please filter the data so that all repertoires have one of the following values (' . json_encode($value) . ') in the "' . $field . '" field.';
+                            $error_string = 'A required field "' . $field . '" is missing from one of the repertoires. Please filter the data so that repertoires have a valid "' . $field . '" field.';
                         }
                         // If we have a comment already, then add to it, otherwise generate new comment.
                         if (strlen($app_ui_info['runnable_comment']) > 0) {

@@ -181,7 +181,7 @@ if (! function_exists('secondsToTime')) {
         // Format and return
         $timeParts = [];
         $sections = [
-            ' days' => (int) $days,
+            ' day' => (int) $days,
             'h' => (int) $hours,
             'min' => (int) $minutes,
             's' => (int) $seconds,
@@ -189,7 +189,11 @@ if (! function_exists('secondsToTime')) {
 
         foreach ($sections as $name => $value) {
             if ($value > 0) {
-                $timeParts[] = $value . '' . $name;
+                if ($name == ' day' && $value > 1) {
+                    $timeParts[] = $value . '' . $name . 's';
+                } else {
+                    $timeParts[] = $value . '' . $name;
+                }
             }
         }
 

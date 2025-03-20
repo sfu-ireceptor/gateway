@@ -98,7 +98,7 @@ class Job extends Model
             case 'STAGING_JOB':
                 $progress = 50;
                 break;
-            case 'SUBMITTING':
+            case 'SUBMITTING_JOB':
                 $progress = 55;
                 break;
             case 'QUEUED':
