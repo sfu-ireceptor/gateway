@@ -234,8 +234,8 @@ zip -r ${GATEWAY_ANALYSIS_DIR}.zip ${GATEWAY_ANALYSIS_DIR}
 mv ${GATEWAY_ANALYSIS_DIR}.zip output/
 
 # We don't want the analysis files to remain - they are in the ZIP file
-#rm -rf ${GATEWAY_ANALYSIS_DIR}
+rm -rf ${GATEWAY_ANALYSIS_DIR}
 
 # Cleanup the input data files, don't want to return them as part of the
 # resulting analysis
-#rm -f $IR_DOWNLOAD_FILE
+rm -f $IR_DOWNLOAD_FILE
