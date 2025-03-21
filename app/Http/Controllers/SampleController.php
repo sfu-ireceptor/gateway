@@ -300,6 +300,17 @@ class SampleController extends Controller
         }
 
         $sample_list = $sample_data['items'];
+        // Add a repository URL field to the sample
+        foreach ($sample_list as $key => $sample) {
+            // NOTE: We use the real_rest_service_id, which is the repository service
+            // id. rest_service_id is the repository group id - we want the real
+            // repository.
+            if (isset($sample->real_rest_service_id)) {
+                $rs = RestService::find($sample->real_rest_service_id);
+                $sample_list[$key]->rest_service_info_url = $rs->url . 'info';
+                $sample_list[$key]->rest_service_base_url = $rs->baseURL();
+            }
+        }
         $samples_with_sequences = Sample::sort_sample_list($sample_list, $sort_column, $sort_order);
 
         // Fields we want to graph. The UI/blade expects six fields

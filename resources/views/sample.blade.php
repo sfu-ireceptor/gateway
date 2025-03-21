@@ -531,6 +531,14 @@
 																	{{ $sample->{$field['ir_id']} }}
 																</span>							
 															@endisset
+														@elseif($field['ir_id'] == 'rest_service_name')
+															@isset($sample->rest_service_base_url)
+															    <a href="{{ $sample->rest_service_base_url }}" title="{{ $sample->rest_service_base_url }}" target="_blank">
+													                {{ $sample->{$field['ir_id']} }}
+                                                                </a>
+															@else
+													            {{ $sample->{$field['ir_id']} }}
+															@endisset
 														@else
 															@if (is_bool($sample->{$field['ir_id']}))
 																{{ $sample->{$field['ir_id']} ? 'Yes' : 'No' }}
@@ -545,7 +553,7 @@
 																	</span>			
 																@else
 																	<span title="{{ $sample->{$field['ir_id']} }}">
-																		{{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
+                                                                        {{ str_limit($sample->{$field['ir_id']}, $limit = 20, $end = '‥') }}
 																	</span>
 																@endif
 															@endif
@@ -766,6 +774,14 @@
 																	{{ $sample->{$field['ir_id']} }}
 																</span>							
 															@endisset
+                                                        @elseif($field['ir_id'] == 'rest_service_name')
+                                                            @isset($sample->rest_service_base_url)
+                                                                <a href="{{ $sample->rest_service_base_url }}" title="{{ $sample->rest_service_base_url }}" target="_blank">
+                                                                    {{ $sample->{$field['ir_id']} }}
+                                                                </a>
+                                                            @else
+                                                                {{ $sample->{$field['ir_id']} }}
+                                                            @endisset
 														@else
 															@if (is_bool($sample->{$field['ir_id']}))
 																{{ $sample->{$field['ir_id']} ? 'Yes' : 'No' }}
@@ -1002,6 +1018,14 @@
 																	{{ $sample->{$field['ir_id']} }}
 																</span>							
 															@endisset
+                                                        @elseif($field['ir_id'] == 'rest_service_name')
+                                                            @isset($sample->rest_service_base_url)
+                                                                <a href="{{ $sample->rest_service_base_url }}" title="{{ $sample->rest_service_base_url }}" target="_blank">
+                                                                    {{ $sample->{$field['ir_id']} }}
+                                                                </a>
+                                                            @else
+                                                                {{ $sample->{$field['ir_id']} }}
+                                                            @endisset
 														@else
 															@if (is_bool($sample->{$field['ir_id']}))
 																{{ $sample->{$field['ir_id']} ? 'Yes' : 'No' }}
