@@ -13,7 +13,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Throwable;
 
 class ProcessJobNotification implements ShouldQueue
 {
@@ -69,9 +68,8 @@ class ProcessJobNotification implements ShouldQueue
 
         // If the status is CANCELLED the job has been halted by the user. We need to send an emal.
         // If new status is FINISHED and the old status isn't FINISHED (we are transitioning
-        // to FINISHED) then send an email. Same for the transition to FAILED 
+        // to FINISHED) then send an email. Same for the transition to FAILED
         if ($this->status == 'CANCELLED') {
-
             // Send the user a STOPPED email if we can
             if ($user != null && $user->email != '') {
                 $email = $user->email;
@@ -89,9 +87,7 @@ class ProcessJobNotification implements ShouldQueue
             } else {
                 Log::error('Error email not send. Could not find email for user ' . $user->username);
             }
-        }
-        elseif ($this->status == 'FAILED' && $job->agave_status != 'FAILED') {
-
+        } elseif ($this->status == 'FAILED' && $job->agave_status != 'FAILED') {
             // Send the user a FAILED email if we can
             if ($user != null && $user->email != '') {
                 $email = $user->email;
@@ -121,9 +117,7 @@ class ProcessJobNotification implements ShouldQueue
                 Log::error('ProcessJobNotifications::handle - Support email delivery failed');
                 Log::error('ProcessJobNotifications::handle - ' . $e->getMessage());
             }
-
-        }
-        elseif ($this->status == 'FINISHED' && $job->agave_status != 'FINISHED') {
+        } elseif ($this->status == 'FINISHED' && $job->agave_status != 'FINISHED') {
             // Send the user a FINISHED email if we can
             if ($user != null && $user->email != '') {
                 $email = $user->email;
