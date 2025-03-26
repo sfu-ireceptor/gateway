@@ -43,15 +43,15 @@
                                 </div>
 
                                 <div class="form-group">
-                                    {{ Form::label('j_call', __('short.j_call')) }}
-                                    @include('help', ['id' => 'j_call'])
-                                    {{ Form::text('j_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
-                                </div>
-
-                                <div class="form-group">
                                     {{ Form::label('d_call', __('short.d_call')) }}
                                     @include('help', ['id' => 'd_call'])
                                     {{ Form::text('d_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ Form::label('j_call', __('short.j_call')) }}
+                                    @include('help', ['id' => 'j_call'])
+                                    {{ Form::text('j_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match on either family, gene, or allele. A complete family, gene, or allele must be entered or the search will return no results. Will take a long time if millions of sequences are found.', 'data-placement' => 'bottom')) }}
                                 </div>
 
                                 <p class="button_container">

@@ -248,7 +248,7 @@ function gateway_run_analysis(){
             echo "GW-ERROR: Could not find data file ${data_file}"
             continue
         fi
-                # Get an array of unique repertoire_ids from the data file
+        # Get an array of unique repertoire_ids from the data file
         echo "${GW_INFO} Processing ${SPLIT_FIELD} from $data_file"
         if [ ${ANALYSIS_TYPE} = "rearrangement_file" ]
         then
