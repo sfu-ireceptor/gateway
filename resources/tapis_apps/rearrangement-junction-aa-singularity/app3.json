@@ -4,13 +4,25 @@
     "description": "Junction AA List Search",
     "containerImage":"ir_junction_aa_motif_search.sif",
     "jobAttributes": {
-      "description": "<p>The iReceptor Junction AA list search Analysis App searches the junction_aa field of the sequences selected for the provided list of Junction AA sequences.</p><p>Notes:<ul><li>The list of Junction AA sequences should be provided on a single, comma separated line.</li><li>The Junction AA search is an exact match for the entire junction. Substring searches are not supported (e.g. 'CASSYSDTGELFF, CASSDSDTGELFF, CASSYGDTGELFF, CASSDGDTGELFF').</li><li><b>Important:</b> Sequence queries performed on the sequence page are ignored, since they can conflict with each other. The analysis App will run on all sequence data and ignore sequence filters if they have been applied, applying only the Junction AA filters required by the list provided.</li></ul></p>",
+      "description": "<p>The iReceptor Junction AA list search Analysis App searches the junction_aa field of the sequences selected for the provided list of Junction AA sequences. You can request that the analysis be split by both Repertoire and Junction AA sequence. Split by Repertoire will give counts on a per Repertoire basis. Split by Junction will give counts per Junction AA sequence. If both are 'True', you will get a single count for each Junction AA sequence (J) per Repertoire (R), possibly resulting in a very large number (J*R) counts.</p><p>Notes:<ul><li>The list of Junction AA sequences should be provided on a single, comma separated line (e.g. 'CASSYSDTGELFF, CASSDSDTGELFF, CASSYGDTGELFF, CASSDGDTGELFF').</li><li>The Junction AA search is an exact match for the entire junction. Substring searches are not supported.</li><li><b>Important:</b> Sequence queries performed on the sequence page are ignored, since they can conflict with each other. The analysis App will run on all sequence data and ignore sequence filters if they have been applied, applying only the Junction AA filters required by the list provided.</li></ul></p>",
       "parameterSet": {
         "appArgs": [
             {
+             "name":"split_by_repertoire",
+             "description": "Perform a separate count for each Repertoire.",
+             "notes":{"label":"Split by Repertoire (True/False)"},
+             "arg":"True", "inputMode":"REQUIRED"
+            },
+            {
+             "name":"split_by_junction",
+             "description": "Perform a separate count for each Junction.",
+             "notes":{"label":"Split by Junction (True/False)"},
+             "arg":"False", "inputMode":"REQUIRED"
+            },
+            {
              "name":"junction_aa_list",
              "description": "The list of Junction AA sequences to use (single line, comma separated), for example 'CASSYSDTGELFF, CASSDSDTGELFF, CASSYGDTGELFF, CASSDGDTGELFF'.",
-             "notes":{"label":"Junction AA List"},
+             "notes":{"label":"Junction AA List (Maximum 100)"},
              "arg":null, "inputMode":"REQUIRED"
             }
         ]

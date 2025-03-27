@@ -20,11 +20,14 @@ echo "IR-INFO: Running job from ${IR_JOB_DIR}"
 # Tapis App Parameters: Will be on the singularity command line to
 # the App in the order specified in the App JSON file.
 #
-# First parameter is the REGEX string
-JUNCTION_AA_LIST="${1}"
-# Commons parameter is SPLIT_REPERTOIRE. This App does not do this, so
-# set to False
-SPLIT_REPERTOIRE="False"
+# SPLIT_REPERTOIRE flag (True or False)
+SPLIT_REPERTOIRE="${1}"
+
+# SPLIT_JUNCTION flag (True or False)
+SPLIT_JUNCTION="${2}"
+
+# Next parameter is the comma separated list of Juncion AA sequences
+JUNCTION_AA_LIST="${3}"
 
 # Environment variable IR_GATEWAY_URL contains the URL of the source gateway. Use
 # this to gather iReceptor Gateway specific resources if needed.
