@@ -136,13 +136,36 @@ function run_analysis()
     # TODO: Fix this, it should not be required.
     title_string=`echo ${title_string} | sed "s/[ ]//g"`
 
-    # Create the motif query using the local code in the container.
+    # Create the motif query 
     local motif_file=${output_directory}/${repertoire_id}_motif.json
-    echo "${JUNCTION_AA_LIST}" | jq -R --arg field "$fieldname" --arg facet "$facetname" '
-            split(",") |
-            map({op: "=", content: {field: $field, value: .}}) |
-            {filters: {op: "or", content: .}, facets: $facet}
-        ' >> ${motif_file}
+    local fieldname="junction_aa"
+    local facetname="repertoire_id"
+    
+    # Convert the input string into a JSON array of junction filters
+    json='{"filters": {"op": "or", "content": ['
+
+    # Loop over the string and create a clause in the or array for each junction
+    first_entry=true
+    IFS=',' read -ra values <<< "$JUNCTION_AA_LIST"
+    for value in "${values[@]}"; do
+        if [ "$first_entry" = true ]; then
+            first_entry=false
+        else
+            json+=','
+        fi
+        json+='{"op": "=", "content": {"field": "'"$fieldname"'", "value": "'"$value"'"}}'
+    done
+    
+    # Do a facet on repertoire_id to count per repertoire.
+    json+=']},"facets": "'"$facetname"'"}'
+
+    # Print the final JSON output
+    echo "$json" > ${motif_file}
+    #echo "${JUNCTION_AA_LIST}" | jq -R --arg field "$fieldname" --arg facet "$facetname" '
+    #        split(",") |
+    #        map({op: "=", content: {field: $field, value: .}}) |
+    #        {filters: {op: "or", content: .}, facets: $facet}
+    #    ' >> ${motif_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not generate JSON query from ${JUNCTION_AA_LIST}"
