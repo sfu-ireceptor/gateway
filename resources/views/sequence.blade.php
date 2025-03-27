@@ -419,7 +419,7 @@
                                                             @if ( ! empty($parameter['choices']) )
                                                                 {{ Form::select($parameter['name'], $parameter['choices'], '', array('class' => 'form-control')) }}
                                                             @else
-                                                                {{ Form::text($parameter['name'], $parameter['default'], array('class' => 'form-control')) }}
+                                                                {{ Form::textarea($parameter['name'], $parameter['default'], array('class' => 'form-control','rows'=>'1')) }}
                                                             @endif
                                                         </div> </div> </div>
                                                     @endforeach
