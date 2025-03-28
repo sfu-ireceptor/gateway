@@ -258,20 +258,20 @@ INFO_FILE="info.txt"
 AIRR_MANIFEST_FILE="AIRR-manifest.json"
 
 
-if [ "${SPLIT_REPERTOIRE}" = "True" ]; then
-    echo -e "IR-INFO:\nIR-INFO: Splitting data by Repertoire"
-    echo "IR-INFO:"
-    # Split the download into single repertoire files, with a directory per
-    # repository and within that a directory per repertoire. This expects the
-    # user to define a function called run_analysis() that will be
-    # called for each repertoire. See the docs in the gateway_utilities.sh file
-    # for parameters to this function.
-    gateway_split_repertoire ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${IR_DOWNLOAD_FILE} ${GATEWAY_ANALYSIS_DIR}
-    gateway_run_analysis ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
-    gateway_cleanup ${IR_DOWNLOAD_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+#if [ "${SPLIT_REPERTOIRE}" = "True" ]; then
+#    echo -e "IR-INFO:\nIR-INFO: Splitting data by Repertoire"
+#    echo "IR-INFO:"
+#    # Split the download into single repertoire files, with a directory per
+#    # repository and within that a directory per repertoire. This expects the
+#    # user to define a function called run_analysis() that will be
+#    # called for each repertoire. See the docs in the gateway_utilities.sh file
+#    # for parameters to this function.
+#    gateway_split_repertoire ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${IR_DOWNLOAD_FILE} ${GATEWAY_ANALYSIS_DIR}
+#    gateway_run_analysis ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+#    gateway_cleanup ${IR_DOWNLOAD_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
-elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
-    echo -e "IR-INFO:\nIR-INFO: Running app on entire data set"
+if [ "${SPLIT_REPERTOIRE}" = "True" ]; then
+    echo -e "IR-INFO:\nIR-INFO: Splitting based on repertoire"
     echo "IR-INFO:"
 
     # Run the analysis with a token repository name of "ADC" since the
