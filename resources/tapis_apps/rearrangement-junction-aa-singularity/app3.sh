@@ -75,6 +75,7 @@ printf "IR-INFO: MAX RUNTIME = ${_tapisMaxMinutes}\n"
 printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
 printf "IR-INFO: ZIP FILE = ${IR_DOWNLOAD_FILE}\n"
 printf "IR-INFO: SPLIT_REPERTOIRE = ${SPLIT_REPERTOIRE}\n"
+printf "IR-INFO: SPLIT_JUNCTION = ${SPLIT_JUNCTION}\n"
 printf "IR-INFO: IR_GATEWAY_JOBID = ${IR_GATEWAY_JOBID}\n"
 printf "IR-INFO: "
 lscpu | grep "Model name"
@@ -110,7 +111,7 @@ function run_analysis()
     echo "IR-INFO:     Repertoire id = ${repertoire_id}"
     echo "IR-INFO:     Repertoire file = ${repertoire_file}"
     echo "IR-INFO:     Manifest file = ${manifest_file}"
-    echo "IR-INFO:     Regular expression = ${JUNCTION_AA_LIST}"
+    echo "IR-INFO:     Junction list = ${JUNCTION_AA_LIST}"
     echo -n "IR-INFO:     Current diretory = "
     pwd
 
@@ -139,43 +140,52 @@ function run_analysis()
     # TODO: Fix this, it should not be required.
     title_string=`echo ${title_string} | sed "s/[ ]//g"`
 
-    # Create the motif query 
-    local motif_file=${output_directory}/${repertoire_id}_motif.json
+    # Generate the query files. There is either one or N where N is
+    # the number of junction_aa sequences provided.
+    local junction_query_file=${output_directory}/${repertoire_id}_junction.json
     local fieldname="junction_aa"
     local facetname="repertoire_id"
-    
-    # Convert the input string into a JSON array of junction filters
-    json='{"filters": {"op": "or", "content": ['
+    if [ "${SPLIT_JUNCTION}" = "True" ]; then
+        # We loop over the junctions and create a query file per junction.
+        IFS=',' read -ra values <<< "$JUNCTION_AA_LIST"
+        for value in "${values[@]}"; do
+            junction_query_file="${output_directory}/junction_query_${value}.json"
+            json='{"filters": {"op": "or", "content": ['
+            json+='{"op": "=", "content": {"field": "'"$fieldname"'", "value": "'"$value"'"}}'
+            json+=']},"facets": "'"$facetname"'"}'
+            # Print the final JSON output
+            echo "$json" > ${junction_query_file}
+        done
+    elif [ "${SPLIT_JUNCTION}" = "False" ]; then
+        # We have one junction query file.
+        junction_query_file="junction_query_all.json"
 
-    # Loop over the string and create a clause in the or array for each junction
-    first_entry=true
-    IFS=',' read -ra values <<< "$JUNCTION_AA_LIST"
-    for value in "${values[@]}"; do
-        if [ "$first_entry" = true ]; then
-            first_entry=false
-        else
-            json+=','
-        fi
-        json+='{"op": "=", "content": {"field": "'"$fieldname"'", "value": "'"$value"'"}}'
-    done
-    
-    # Do a facet on repertoire_id to count per repertoire.
-    json+=']},"facets": "'"$facetname"'"}'
+        # Convert the input string into a JSON array of junction filters
+        json='{"filters": {"op": "or", "content": ['
 
-    # Print the final JSON output
-    echo "$json" > ${motif_file}
-    #echo "${JUNCTION_AA_LIST}" | jq -R --arg field "$fieldname" --arg facet "$facetname" '
-    #        split(",") |
-    #        map({op: "=", content: {field: $field, value: .}}) |
-    #        {filters: {op: "or", content: .}, facets: $facet}
-    #    ' >> ${motif_file}
-    if [ $? -ne 0 ]
-    then
-        echo "IR-ERROR: Could not generate JSON query from ${JUNCTION_AA_LIST}"
-        return 
+        # Loop over the string and create a clause in the or array for each junction
+        first_entry=true
+        IFS=',' read -ra values <<< "$JUNCTION_AA_LIST"
+        for value in "${values[@]}"; do
+            if [ "$first_entry" = true ]; then
+                first_entry=false
+            else
+                json+=','
+            fi
+            json+='{"op": "=", "content": {"field": "'"$fieldname"'", "value": "'"$value"'"}}'
+        done
+    
+        # Do a facet on repertoire_id to count per repertoire.
+        json+=']},"facets": "'"$facetname"'"}'
+
+        # Print the final JSON output
+        echo "$json" > ${junction_query_file}
+    elif
+        echo "IR_ERROR: Unknown junction split flag ${SPLIT_JUNCTION}"
+        return
     fi
-    echo "IR-INFO: Motif query = "
-    cat ${motif_file} 
+    echo "IR-INFO: Junction query = "
+    cat ${junction_query_file} 
     echo "IR-INFO:"
 
     local output_file=${output_directory}/${repertoire_id}_output.json
@@ -196,7 +206,7 @@ function run_analysis()
     echo "sample.cell_subset.label" >> ${field_file}
     echo "sample.cell_phenotype" >> ${field_file}
 
-    python3 /ireceptor/adc-search.py ${url_file} ${repertoire_query_file} ${motif_file} --field_file=${field_file} --output_file=${output_file}
+    python3 /ireceptor/adc-search.py ${url_file} ${repertoire_query_file} ${junction_query_file} --field_file=${field_file} --output_file=${output_file}
     if [ $? -ne 0 ]
     then
         echo "IR-ERROR: Could not complete search for Junction AA Motif"
