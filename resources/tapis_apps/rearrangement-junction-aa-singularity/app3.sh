@@ -150,15 +150,15 @@ function run_analysis()
         IFS=',' read -ra values <<< "$JUNCTION_AA_LIST"
         for value in "${values[@]}"; do
             junction_query_file="${output_directory}/junction_query_${value}.json"
-            json='{"filters": {"op": "or", "content": ['
+            json='{"filters": '
             json+='{"op": "=", "content": {"field": "'"$fieldname"'", "value": "'"$value"'"}}'
-            json+=']},"facets": "'"$facetname"'"}'
+            json+=',"facets": "'"$facetname"'"}'
             # Print the final JSON output
             echo "$json" > ${junction_query_file}
         done
     elif [ "${SPLIT_JUNCTION}" = "False" ]; then
         # We have one junction query file.
-        junction_query_file="junction_query_all.json"
+        junction_query_file=${output_directory}/"junction_query_all.json"
 
         # Convert the input string into a JSON array of junction filters
         json='{"filters": {"op": "or", "content": ['
@@ -180,7 +180,7 @@ function run_analysis()
 
         # Print the final JSON output
         echo "$json" > ${junction_query_file}
-    elif
+    else
         echo "IR_ERROR: Unknown junction split flag ${SPLIT_JUNCTION}"
         return
     fi
@@ -209,7 +209,7 @@ function run_analysis()
     python3 /ireceptor/adc-search.py ${url_file} ${repertoire_query_file} ${junction_query_file} --field_file=${field_file} --output_file=${output_file}
     if [ $? -ne 0 ]
     then
-        echo "IR-ERROR: Could not complete search for Junction AA Motif"
+        echo "IR-ERROR: Could not complete search for Junction AA"
         return 
     fi
 
@@ -343,6 +343,6 @@ mv ${GATEWAY_ANALYSIS_DIR}.zip output/
 #rm -f $IR_DOWNLOAD_FILE
 
 # Debugging output, print data/time when shell command is finished.
-echo "IR-INFO: Junction AA Motif Search finished at: `date`"
+echo "IR-INFO: Junction AA Search finished at: `date`"
 
 
