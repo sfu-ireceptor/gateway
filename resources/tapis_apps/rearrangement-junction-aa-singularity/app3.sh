@@ -149,7 +149,7 @@ function run_analysis()
         # We loop over the junctions and create a query file per junction.
         IFS=',' read -ra values <<< "$JUNCTION_AA_LIST"
         for value in "${values[@]}"; do
-            junction_query_file="${output_directory}/junction_query_${value}.json"
+            junction_query_file="${output_directory}/${repertoire_id}_junction_query_${value}.json"
             json='{"filters": {"op": "or", "content": ['
             json+='{"op": "=", "content": {"field": "'"$fieldname"'", "value": "'"$value"'"}}'
             json+=']},"facets": "'"$facetname"'"}'
@@ -158,7 +158,7 @@ function run_analysis()
         done
     elif [ "${SPLIT_JUNCTION}" = "False" ]; then
         # We have one junction query file.
-        junction_query_file="junction_query_all.json"
+        junction_query_file="${output_directory}/${repertoire_id}_junction_query_all.json"
 
         # Convert the input string into a JSON array of junction filters
         json='{"filters": {"op": "or", "content": ['
@@ -184,9 +184,6 @@ function run_analysis()
         echo "IR_ERROR: Unknown junction split flag ${SPLIT_JUNCTION}"
         return
     fi
-    echo "IR-INFO: Junction query = "
-    cat ${junction_query_file} 
-    echo "IR-INFO:"
 
     local output_file=${output_directory}/${repertoire_id}_output.json
     local repertoire_query_file=${output_directory}/repertoire_query.json
@@ -206,30 +203,11 @@ function run_analysis()
     echo "sample.cell_subset.label" >> ${field_file}
     echo "sample.cell_phenotype" >> ${field_file}
 
-    python3 /ireceptor/adc-search.py ${url_file} ${repertoire_query_file} ${junction_query_file} --field_file=${field_file} --output_file=${output_file}
-    if [ $? -ne 0 ]
-    then
-        echo "IR-ERROR: Could not complete search for Junction AA Motif"
-        return 
-    fi
-
-    # Change JSON to TSV file
-    local tsv_output_file=${output_directory}/${repertoire_id}_output.tsv
-    python3 /ireceptor/facet-to-tsv.py ${output_file} --output_file=$tsv_output_file
-
-    # Generate a label file for the Gateway to use to present this info to the user
-    label_file=${output_directory}/${repertoire_id}.txt
-    echo "${title_string}" > ${label_file}
-
     # Generate a summary HTML file for the Gateway to present this info to the user
     gateway_file=${output_directory}/${repertoire_id}-gateway.html
     echo "<h2>Junction AA counts</h2>" > $gateway_file
-    echo '<table style="table-layout:fixed; width=100%; border-collapse:collapse">' >> $gateway_file
-    head -1 $tsv_output_file | sed -e 's/\t/<\/th><th style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/g' -e 's/^/<tr><th style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/' -e 's/$/<\/th><\/tr>/' >> $gateway_file
-cat $tsv_output_file | sed -e 1d -e 's/\t/<\/td><td style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/g' -e 's/^/<tr><td style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/' -e 's/$/<\/td><\/tr>/' >> $gateway_file
-    echo "</table>" >> $gateway_file
 
-    # Generate a summary HTML file for the Gateway to present this info to the user
+    # Generate an offline HTML file for the user to download to present this info to the user
     html_file=${output_directory}/${repertoire_id}.html
 
     # Generate the HTML main block
@@ -239,7 +217,7 @@ cat $tsv_output_file | sed -e 1d -e 's/\t/<\/td><td style="width:150px;max-width
     # Generate a normal looking iReceptor header
     printf '<head>\n' >>  ${html_file}
     cat ${output_directory}/assets/head-template.html >> ${html_file}
-    printf "<title>Stats: %s</title>\n" ${title_string} >> ${html_file}
+    echo "<title>Junction AA counts</title>" >> ${html_file}
     printf '</head>\n' >>  ${html_file}
 
     # Generate an iReceptor top bar for the page
@@ -248,8 +226,47 @@ cat $tsv_output_file | sed -e 1d -e 's/\t/<\/td><td style="width:150px;max-width
     # Generate a normal looking iReceptor header
     printf '<div class="container job_container">'  >> ${html_file}
 
-	printf "<h2>Stats: %s</h2>\n" ${title_string} >> ${html_file}
-    # End of main div container
+    # Generate the header for the tables
+	printf "<h2>Junction AA counts</h2>\n" ${title_string} >> ${html_file}
+
+    tsv_ouput_file=""
+    for junction_query_file in ${output_directory}/*junction_query*.json; do
+        if [ -f "$junction_query_file" ]; then  # Check if it's a file
+           echo "IR-INFO: Processing $junction_query_file = "
+           cat ${junction_query_file} 
+           echo "IR-INFO:"
+           base_filename=$(basename $junction_query_file .json)
+           output_file=${output_directory}/${base_filename}_output.json
+           python3 /ireceptor/adc-search.py ${url_file} ${repertoire_query_file} ${junction_query_file} --field_file=${field_file} --output_file=${output_file}
+           if [ $? -ne 0 ]
+           then
+               echo "IR-ERROR: Could not complete search for ${junction_query_file}"
+               return 
+           fi
+
+           # Change JSON to TSV file
+           tsv_output_file=${output_directory}/${base_filename}_output.tsv
+           python3 /ireceptor/facet-to-tsv.py ${output_file} --output_file=$tsv_output_file
+           if [ $? -ne 0 ]
+           then
+               echo "IR-ERROR: Could not convert JSON to TSV from ${output_file}"
+               return 
+           fi
+
+           # Add the table to the offline/download HTML file
+           python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 $tsv_output_file >> ${html_file}
+
+           # Add the table to the gateway HTML file
+           python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 $tsv_output_file >> ${gateway_file}
+
+           #echo '<table style="table-layout:fixed; width=100%; border-collapse:collapse">' >> $gateway_file
+           #head -1 $tsv_output_file | sed -e 's/\t/<\/th><th style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/g' -e 's/^/<tr><th style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/' -e 's/$/<\/th><\/tr>/' >> $gateway_file
+           #cat $tsv_output_file | sed -e 1d -e 's/\t/<\/td><td style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/g' -e 's/^/<tr><td style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/' -e 's/$/<\/td><\/tr>/' >> $gateway_file
+           #echo "</table>" >> $gateway_file
+        fi          
+    done
+
+    # Write the remainder of the offline/download HTML file
     printf '</div>' >> ${html_file}
 
     # Use the normal iReceptor footer.
@@ -258,6 +275,10 @@ cat $tsv_output_file | sed -e 1d -e 's/\t/<\/td><td style="width:150px;max-width
     # Generate end body end HTML
     printf '</body>' >> ${html_file}
     printf '</html>' >> ${html_file}
+
+    # Generate a label file for the Gateway to use to present this info to the user
+    label_file=${output_directory}/${repertoire_id}.txt
+    echo "${title_string}" > ${label_file}
 }
 
 # Set up the required variables. An iReceptor Gateway download consists
