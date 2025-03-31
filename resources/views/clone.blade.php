@@ -229,10 +229,12 @@
                     </div>
                 @endif 
                 
-                <a href="#analysis" class="btn btn-warning pull-right download_sequences">
-                    <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
-                    <span class="text">Run analysis</span>
-                </a>
+                @if (config('services.tapis.enabled'))
+                    <a href="#analysis" class="btn btn-warning pull-right download_sequences">
+                        <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
+                        <span class="text">Run analysis</span>
+                    </a>
+                @endif
 
                 @if (! empty($clone_list))
                     @if ($total_filtered_objects > config('ireceptor.clones_download_limit'))
