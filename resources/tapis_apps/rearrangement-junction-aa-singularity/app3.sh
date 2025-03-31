@@ -152,7 +152,7 @@ function run_analysis()
             junction_query_file="${output_directory}/${repertoire_id}_junction_query_${value}.json"
             json='{"filters": {"op": "or", "content": ['
             json+='{"op": "=", "content": {"field": "'"$fieldname"'", "value": "'"$value"'"}}'
-            json+=']},"facets": "'"$facetname"'"}'
+            json+=',"facets": "'"$facetname"'"}'
             # Print the final JSON output
             echo "$json" > ${junction_query_file}
         done
@@ -180,7 +180,7 @@ function run_analysis()
 
         # Print the final JSON output
         echo "$json" > ${junction_query_file}
-    elif
+    else
         echo "IR_ERROR: Unknown junction split flag ${SPLIT_JUNCTION}"
         return
     fi
@@ -364,6 +364,6 @@ mv ${GATEWAY_ANALYSIS_DIR}.zip output/
 #rm -f $IR_DOWNLOAD_FILE
 
 # Debugging output, print data/time when shell command is finished.
-echo "IR-INFO: Junction AA Motif Search finished at: `date`"
+echo "IR-INFO: Junction AA Search finished at: `date`"
 
 
