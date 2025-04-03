@@ -210,6 +210,20 @@ class RestServiceSeeder extends Seeder
                 'rest_service_group_code' => 't1d',
             ],
             [
+                'url' => 'https://t1d-3.ireceptor.org/airr/v1/',
+                'name' => 'T1D-3',
+                'country' => 'Canada',
+                'logo' => 'ireceptor.png',
+                'rest_service_group_code' => 't1d',
+            ],
+            [
+                'url' => 'https://t1d-2-accp.ireceptor.org/airr/v1/',
+                'name' => 'T1D-2-ACCP',
+                'country' => 'Canada',
+                'logo' => 'ireceptor.png',
+                'rest_service_group_code' => 't1d',
+            ],
+            [
                 'url' => 'https://repository-staging.ireceptor.org/airr/v1/',
                 'name' => 'Staging Repository',
             ],
