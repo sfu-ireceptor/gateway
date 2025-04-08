@@ -8,12 +8,6 @@
       "parameterSet": {
         "appArgs": [
             {
-             "name":"split_by_repertoire",
-             "description": "Perform a separate count for each Repertoire.",
-             "notes":{"label":"Split by Repertoire (True/False)"},
-             "arg":"True", "inputMode":"REQUIRED"
-            },
-            {
              "name":"split_by_junction",
              "description": "Perform a separate count for each Junction.",
              "notes":{"label":"Split by Junction (True/False)"},
