@@ -20,14 +20,11 @@ echo "IR-INFO: Running job from ${IR_JOB_DIR}"
 # Tapis App Parameters: Will be on the singularity command line to
 # the App in the order specified in the App JSON file.
 #
-# SPLIT_REPERTOIRE flag (True or False)
-SPLIT_REPERTOIRE="${1}"
-
 # SPLIT_JUNCTION flag (True or False)
-SPLIT_JUNCTION="${2}"
+SPLIT_JUNCTION="${1}"
 
 # Next parameter is the comma separated list of Juncion AA sequences
-JUNCTION_AA_LIST="${3}"
+JUNCTION_AA_LIST="${2}"
 
 # Environment variable IR_GATEWAY_URL contains the URL of the source gateway. Use
 # this to gather iReceptor Gateway specific resources if needed.
@@ -74,7 +71,6 @@ printf "IR-INFO: MEM = ${_tapisMemoryMB}\n"
 printf "IR-INFO: MAX RUNTIME = ${_tapisMaxMinutes}\n"
 printf "IR-INFO: SLURM JOB ID = ${SLURM_JOB_ID}\n"
 printf "IR-INFO: ZIP FILE = ${IR_DOWNLOAD_FILE}\n"
-printf "IR-INFO: SPLIT_REPERTOIRE = ${SPLIT_REPERTOIRE}\n"
 printf "IR-INFO: SPLIT_JUNCTION = ${SPLIT_JUNCTION}\n"
 printf "IR-INFO: IR_GATEWAY_JOBID = ${IR_GATEWAY_JOBID}\n"
 printf "IR-INFO: "
@@ -140,6 +136,9 @@ function run_analysis()
     # TODO: Fix this, it should not be required.
     title_string=`echo ${title_string} | sed "s/[ ]//g"`
 
+    # Generate a CSV file with the junctions searched.
+    echo $JUNCTION_AA_LIST >> ${output_directory}/${repertoire_id}_junction_list.csv
+
     # Generate the query files. There is either one or N where N is
     # the number of junction_aa sequences provided.
     local junction_query_file=${output_directory}/${repertoire_id}_junction.json
@@ -150,7 +149,7 @@ function run_analysis()
         IFS=',' read -ra values <<< "$JUNCTION_AA_LIST"
         for value in "${values[@]}"; do
             junction_query_file="${output_directory}/${repertoire_id}_junction_query_${value}.json"
-            json='{"filters": {"op": "or", "content": ['
+            json='{"filters":'
             json+='{"op": "=", "content": {"field": "'"$fieldname"'", "value": "'"$value"'"}}'
             json+=',"facets": "'"$facetname"'"}'
             # Print the final JSON output
@@ -230,6 +229,7 @@ function run_analysis()
 	printf "<h2>Junction AA counts</h2>\n" ${title_string} >> ${html_file}
 
     tsv_ouput_file=""
+    counter=0
     for junction_query_file in ${output_directory}/*junction_query*.json; do
         if [ -f "$junction_query_file" ]; then  # Check if it's a file
            echo "IR-INFO: Processing $junction_query_file = "
@@ -254,15 +254,25 @@ function run_analysis()
            fi
 
            # Add the table to the offline/download HTML file
+           IFS=',' read -ra values <<< "$JUNCTION_AA_LIST"
+           if [ "${SPLIT_JUNCTION}" = "True" ]; then
+               echo "<h3>Report for ${values[$counter]}</h3>" >> ${html_file}
+           fi
            python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 $tsv_output_file >> ${html_file}
 
            # Add the table to the gateway HTML file
+           if [ "${SPLIT_JUNCTION}" = "True" ]; then
+               echo "<h3>Report for ${values[$counter]}</h3>" >> ${gateway_file}
+           fi
            python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 $tsv_output_file >> ${gateway_file}
 
            #echo '<table style="table-layout:fixed; width=100%; border-collapse:collapse">' >> $gateway_file
            #head -1 $tsv_output_file | sed -e 's/\t/<\/th><th style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/g' -e 's/^/<tr><th style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/' -e 's/$/<\/th><\/tr>/' >> $gateway_file
            #cat $tsv_output_file | sed -e 1d -e 's/\t/<\/td><td style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/g' -e 's/^/<tr><td style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/' -e 's/$/<\/td><\/tr>/' >> $gateway_file
            #echo "</table>" >> $gateway_file
+
+           # Increment the counter
+           counter=$[$counter +1]
         fi          
     done
 
@@ -301,10 +311,6 @@ AIRR_MANIFEST_FILE="AIRR-manifest.json"
 #    gateway_run_analysis ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 #    gateway_cleanup ${IR_DOWNLOAD_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 
-if [ "${SPLIT_REPERTOIRE}" = "True" ]; then
-    echo -e "IR-INFO:\nIR-INFO: Splitting based on repertoire"
-    echo "IR-INFO:"
-
     # Run the analysis with a token repository name of "ADC" since the
     # analysis is being run on data from the entire ADC.
     # repertoire_id is "Total" since it isn't a repertoire analysis.
@@ -334,10 +340,6 @@ if [ "${SPLIT_REPERTOIRE}" = "True" ]; then
     # Clean up after doing the analysis. We don't want to leave behind all of the
     # large TSV and zip files etc.
     gateway_cleanup ${IR_DOWNLOAD_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
-else
-    echo "IR-ERROR: Unknown repertoire operation ${SPLIT_REPERTOIRE}" >&2
-    exit 1
-fi
 
 # Make sure we are back where we started, although the gateway functions should
 # not change the working directory that we are in.
