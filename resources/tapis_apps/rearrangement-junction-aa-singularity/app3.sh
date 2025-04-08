@@ -184,8 +184,10 @@ function run_analysis()
         return
     fi
 
+    # Set up the files we want to use.
     local output_file=${output_directory}/${repertoire_id}_output.json
     local repertoire_query_file=${output_directory}/repertoire_query.json
+    # Generate the list of fields we want to the query to return.
     local field_file=${IR_JOB_DIR}/repertoire_fields.tsv
     echo "Fields" > ${field_file}
     echo "repertoire_id" >> ${field_file}
@@ -202,9 +204,53 @@ function run_analysis()
     echo "sample.cell_subset.label" >> ${field_file}
     echo "sample.cell_phenotype" >> ${field_file}
 
+    # For each query file, perform the required query and generate a TSV file
+    # storing the results.
+    tsv_ouput_file=""
+    total_count=0
+    for junction_query_file in ${output_directory}/*junction_query*.json; do
+        if [ -f "$junction_query_file" ]; then  # Check if it's a file
+           echo "IR-INFO: Processing $junction_query_file = "
+           cat ${junction_query_file} 
+           echo "IR-INFO:"
+
+           # Do the query and store the output.
+           base_filename=$(basename $junction_query_file .json)
+           output_file=${output_directory}/${base_filename}_output.json
+           python3 /ireceptor/adc-search.py ${url_file} ${repertoire_query_file} ${junction_query_file} --field_file=${field_file} --output_file=${output_file}
+           if [ $? -ne 0 ]
+           then
+               echo "IR-ERROR: Could not complete search for ${junction_query_file}"
+               return 
+           fi
+
+           # Change JSON to TSV file
+           temp_counts=$(mktemp)
+           tsv_output_file=${output_directory}/${base_filename}_output.tsv
+           python3 /ireceptor/facet-to-tsv.py ${output_file} --output_file=$temp_counts
+           if [ $? -ne 0 ]
+           then
+               echo "IR-ERROR: Could not convert JSON to TSV from ${output_file}"
+               return 
+           fi
+           # Extract only those counts that are greater than 0. Count are in column 3
+           head -1 ${temp_counts} > $tsv_output_file
+           tail +2 ${temp_counts} | awk -F'\t' '$3 > 0' | sort -k 3 -n -r >> ${tsv_output_file}
+           rm ${temp_counts}
+
+           # Get a count for this Junction and add it to the overall total
+           file_count=$(awk 'BEGIN {sum = 0} FNR > 1 {sum += $3} END {print sum}' ${tsv_output_file})
+           total_count=$[$total_count + $file_count]
+       fi
+    done
+
     # Generate a summary HTML file for the Gateway to present this info to the user
     gateway_file=${output_directory}/${repertoire_id}-gateway.html
     echo "<h2>Junction AA counts</h2>" > $gateway_file
+    printf "<h3>Analysis data summary</h3>\n" >> ${gateway_file}
+    # Output the query summary used for the repertoires. Everything after the string
+    # "Sequence filters" in the info file is not relevant so we don't display it.
+    awk '/Sequence filters/ {exit} {print}' ${output_directory}/info.txt >> ${gateway_file}
 
     # Generate an offline HTML file for the user to download to present this info to the user
     html_file=${output_directory}/${repertoire_id}.html
@@ -227,49 +273,69 @@ function run_analysis()
 
     # Generate the header for the tables
 	printf "<h2>Junction AA counts</h2>\n" ${title_string} >> ${html_file}
+    printf "<h3>Analysis data summary</h3>\n" >> ${html_file}
+    # Output the query summary used for the repertoires.
+    awk '/Sequence filters/ {exit} {print}' ${output_directory}/info.txt >> ${html_file}
 
-    tsv_ouput_file=""
+    # For each query output generate a table.
     counter=0
-    for junction_query_file in ${output_directory}/*junction_query*.json; do
+    for tsv_output_file in ${output_directory}/*junction_query*_output.tsv; do
         if [ -f "$junction_query_file" ]; then  # Check if it's a file
-           echo "IR-INFO: Processing $junction_query_file = "
-           cat ${junction_query_file} 
-           echo "IR-INFO:"
-           base_filename=$(basename $junction_query_file .json)
-           output_file=${output_directory}/${base_filename}_output.json
-           python3 /ireceptor/adc-search.py ${url_file} ${repertoire_query_file} ${junction_query_file} --field_file=${field_file} --output_file=${output_file}
-           if [ $? -ne 0 ]
-           then
-               echo "IR-ERROR: Could not complete search for ${junction_query_file}"
-               return 
-           fi
-
-           # Change JSON to TSV file
-           tsv_output_file=${output_directory}/${base_filename}_output.tsv
-           python3 /ireceptor/facet-to-tsv.py ${output_file} --output_file=$tsv_output_file
-           if [ $? -ne 0 ]
-           then
-               echo "IR-ERROR: Could not convert JSON to TSV from ${output_file}"
-               return 
-           fi
+           # Get a count for this Junction. The counts are in column 3
+           file_count=$(awk 'BEGIN {sum=0} FNR > 1 {sum += $3} END {print sum}' ${tsv_output_file})
+           file_min=$(awk 'BEGIN {min_value=0} FNR > 1 {if (FNR==2) {min_value = $3} else if ($3 < min_value) {min_value = $3}} END {print min_value}' ${tsv_output_file})
+           file_max=$(awk 'BEGIN {max_value=0} FNR > 1 {if (FNR==2) {max_value = $3} else if ($3 > max_value) {max_value = $3}} END {print max_value}' ${tsv_output_file})
 
            # Add the table to the offline/download HTML file
            IFS=',' read -ra values <<< "$JUNCTION_AA_LIST"
            if [ "${SPLIT_JUNCTION}" = "True" ]; then
                echo "<h3>Report for ${values[$counter]}</h3>" >> ${html_file}
+           else
+               echo "<h3>Report for $JUNCTION_AA_LIST</h3>" >> ${html_file}
            fi
+
+           # Extract some counts based on the various fields in the output file.
+           num_repositories=$(tail +2 $tsv_output_file | cut -f 1 | sort -u | wc -l)
+           num_repertoires=$(tail +2 $tsv_output_file | cut -f 2 | sort -u | wc -l)
+           num_studies=$(tail +2 $tsv_output_file | cut -f 4 | sort -u | wc -l)
+           num_diseases=$(tail +2 $tsv_output_file | cut -f 6 | sort -u | wc -l)
+           num_subjects=$(tail +2 $tsv_output_file | cut -f 7 | sort -u | wc -l)
+           num_samples=$(tail +2 $tsv_output_file | cut -f 8 | sort -u | wc -l)
+           num_tissues=$(tail +2 $tsv_output_file | cut -f 9 | sort -u | wc -l)
+           # Output to the offline HTML file.
+           echo "<ul>" >> ${html_file}
+           echo "<li>Number of rearrangement matches = $file_count (repertoire min = ${file_min}, repertoire max = ${file_max})</li>" >> ${html_file}
+           echo "<li>Number of repertoires = $num_repertoires</li>" >> ${html_file}
+           echo "</ul>" >> ${html_file}
+           echo "<ul>" >> ${html_file}
+           echo "<li>Number of repositories = $num_repositories</li>" >> ${html_file}
+           echo "<li>Number of studies = $num_studies</li>" >> ${html_file}
+           echo "<li>Number of subjects = $num_subjects</li>" >> ${html_file}
+           echo "<li>Number of diseases = $num_diseases</li>" >> ${html_file}
+           echo "<li>Number of samples = $num_samples</li>" >> ${html_file}
+           echo "<li>Number of tissues = $num_tissues</li>" >> ${html_file}
+           echo "</ul>" >> ${html_file}
            python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 $tsv_output_file >> ${html_file}
 
-           # Add the table to the gateway HTML file
+           # Outout to the gateway HTML file
            if [ "${SPLIT_JUNCTION}" = "True" ]; then
                echo "<h3>Report for ${values[$counter]}</h3>" >> ${gateway_file}
+           else
+               echo "<h3>Report for $JUNCTION_AA_LIST</h3>" >> ${gateway_file}
            fi
+           echo "<ul>" >> ${gateway_file}
+           echo "<li>Number of rearrangement matches = $file_count (repertoire min = ${file_min}, repertoire max = ${file_max})</li>" >> ${gateway_file}
+           echo "<li>Number of repertoires = $num_repertoires</li>" >> ${gateway_file}
+           echo "</ul>" >> ${gateway_file}
+           echo "<ul>" >> ${gateway_file}
+           echo "<li>Number of repositories = $num_repositories</li>" >> ${gateway_file}
+           echo "<li>Number of studies = $num_studies</li>" >> ${gateway_file}
+           echo "<li>Number of subjects = $num_subjects</li>" >> ${gateway_file}
+           echo "<li>Number of diseases = $num_diseases</li>" >> ${gateway_file}
+           echo "<li>Number of samples = $num_samples</li>" >> ${gateway_file}
+           echo "<li>Number of tissues = $num_tissues</li>" >> ${gateway_file}
+           echo "</ul>" >> ${gateway_file}
            python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 $tsv_output_file >> ${gateway_file}
-
-           #echo '<table style="table-layout:fixed; width=100%; border-collapse:collapse">' >> $gateway_file
-           #head -1 $tsv_output_file | sed -e 's/\t/<\/th><th style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/g' -e 's/^/<tr><th style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/' -e 's/$/<\/th><\/tr>/' >> $gateway_file
-           #cat $tsv_output_file | sed -e 1d -e 's/\t/<\/td><td style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/g' -e 's/^/<tr><td style="width:150px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid black;padding:10px">/' -e 's/$/<\/td><\/tr>/' >> $gateway_file
-           #echo "</table>" >> $gateway_file
 
            # Increment the counter
            counter=$[$counter +1]
