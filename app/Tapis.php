@@ -673,7 +673,7 @@ class Tapis
                 if ($job_parameter_info['type'] == 'integer') {
                     $t[$job_parameter_info['label']] = intval($job_params[$job_parameter_info['label']]);
                 } else {
-                    // In Tapis 
+                    // In Tapis
                     $t[$job_parameter_info['label']] = preg_replace('/\s+/', '', $job_params[$job_parameter_info['label']]);
                 }
                 Log::debug('   getJobConfig: Parameter value = ' . $t[$job_parameter_info['label']]);
