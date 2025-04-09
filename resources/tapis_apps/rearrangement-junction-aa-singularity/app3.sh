@@ -207,7 +207,11 @@ function run_analysis()
     # For each query file, perform the required query and generate a TSV file
     # storing the results.
     tsv_ouput_file=""
+    junction_summary_file="${output_directory}/junction_summary.tsv"
+    echo -e "junction_aa\tcount" > $junction_summary_file
     total_count=0
+    counter=0
+    IFS=',' read -ra values <<< "$JUNCTION_AA_LIST"
     for junction_query_file in ${output_directory}/*junction_query*.json; do
         if [ -f "$junction_query_file" ]; then  # Check if it's a file
            echo "IR-INFO: Processing $junction_query_file = "
@@ -240,9 +244,21 @@ function run_analysis()
 
            # Get a count for this Junction and add it to the overall total
            file_count=$(awk 'BEGIN {sum = 0} FNR > 1 {sum += $3} END {print sum}' ${tsv_output_file})
+           if [ "$file_count" -gt "0" ]; then
+               echo -e "${values[$counter]}\t${file_count}" >> $junction_summary_file
+           fi
            total_count=$[$total_count + $file_count]
        fi
+       # Increment the counter
+       counter=$[$counter +1]
     done
+    # Sort the junction file based on the count.
+    mv $junction_summary_file "${junction_summary_file}.tmp"
+    head -1 "${junction_summary_file}.tmp" > $junction_summary_file
+    tail +2 "${junction_summary_file}.tmp" | sort -k 2 -n -r >> $junction_summary_file 
+
+    # Get the number of junctions that were found.
+    num_junctions=$(tail +2 $junction_summary_file | wc -l) 
 
     # Generate a summary HTML file for the Gateway to present this info to the user
     gateway_file=${output_directory}/${repertoire_id}-gateway.html
@@ -251,6 +267,14 @@ function run_analysis()
     # Output the query summary used for the repertoires. Everything after the string
     # "Sequence filters" in the info file is not relevant so we don't display it.
     awk '/Sequence filters/ {exit} {print}' ${output_directory}/info.txt >> ${gateway_file}
+
+    # Generate a summary table for each Junction if we split the data.
+    if [ "${SPLIT_JUNCTION}" = "True" ]; then
+        printf "<h3>Junction AA Count Summary</h3>\n" >> ${gateway_file}
+        echo "<p>Searching for ${#values[@]} Junction AA sequences</p>" >> ${gateway_file}
+        echo "<p>Found $num_junctions Junction AA sequences in repertoire data</p>" >> ${gateway_file}
+        python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 $junction_summary_file >> ${gateway_file}
+    fi
 
     # Generate an offline HTML file for the user to download to present this info to the user
     html_file=${output_directory}/${repertoire_id}.html
@@ -277,8 +301,17 @@ function run_analysis()
     # Output the query summary used for the repertoires.
     awk '/Sequence filters/ {exit} {print}' ${output_directory}/info.txt >> ${html_file}
 
+    # Generate a summary table for each Junction if we split the data.
+    if [ "${SPLIT_JUNCTION}" = "True" ]; then
+        printf "<h3>Junction AA Count Summary</h3>\n" >> ${html_file}
+        echo "<p>Searching for ${#values[@]} Junction AA sequences</p>" >> ${html_file}
+        echo "<p>Found $num_junctions Junction AA sequences in repertoire data</p>" >> ${html_file}
+        python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 $junction_summary_file >> ${html_file}
+    fi
+
     # For each query output generate a table.
     counter=0
+    IFS=',' read -ra values <<< "$JUNCTION_AA_LIST"
     for tsv_output_file in ${output_directory}/*junction_query*_output.tsv; do
         if [ -f "$junction_query_file" ]; then  # Check if it's a file
            # Get a count for this Junction. The counts are in column 3
@@ -286,60 +319,58 @@ function run_analysis()
            file_min=$(awk 'BEGIN {min_value=0} FNR > 1 {if (FNR==2) {min_value = $3} else if ($3 < min_value) {min_value = $3}} END {print min_value}' ${tsv_output_file})
            file_max=$(awk 'BEGIN {max_value=0} FNR > 1 {if (FNR==2) {max_value = $3} else if ($3 > max_value) {max_value = $3}} END {print max_value}' ${tsv_output_file})
 
-           # Add the table to the offline/download HTML file
-           IFS=',' read -ra values <<< "$JUNCTION_AA_LIST"
-           if [ "${SPLIT_JUNCTION}" = "True" ]; then
-               echo "<h3>Report for ${values[$counter]}</h3>" >> ${html_file}
-           else
-               echo "<h3>Report for $JUNCTION_AA_LIST</h3>" >> ${html_file}
-           fi
+           if [ "$file_count" -gt "0" ]; then
+               # Extract some counts based on the various fields in the output file.
+               num_repositories=$(tail +2 $tsv_output_file | cut -f 1 | sort -u | wc -l)
+               num_repertoires=$(tail +2 $tsv_output_file | cut -f 2 | sort -u | wc -l)
+               num_studies=$(tail +2 $tsv_output_file | cut -f 4 | sort -u | wc -l)
+               num_diseases=$(tail +2 $tsv_output_file | cut -f 6 | sort -u | wc -l)
+               num_subjects=$(tail +2 $tsv_output_file | cut -f 7 | sort -u | wc -l)
+               num_samples=$(tail +2 $tsv_output_file | cut -f 8 | sort -u | wc -l)
+               num_tissues=$(tail +2 $tsv_output_file | cut -f 9 | sort -u | wc -l)
+               # Output to the offline HTML file.
+               if [ "${SPLIT_JUNCTION}" = "True" ]; then
+                   echo "<h3>Report for ${values[$counter]}</h3>" >> ${html_file}
+               else
+                   echo "<h3>Report for $JUNCTION_AA_LIST</h3>" >> ${html_file}
+               fi
+               echo "<ul>" >> ${html_file}
+               echo "<li>Number of rearrangement matches = $file_count (repertoire min = ${file_min}, repertoire max = ${file_max})</li>" >> ${html_file}
+               echo "<li>Number of repertoires = $num_repertoires</li>" >> ${html_file}
+               echo "</ul>" >> ${html_file}
+               echo "<ul>" >> ${html_file}
+               echo "<li>Number of repositories = $num_repositories</li>" >> ${html_file}
+               echo "<li>Number of studies = $num_studies</li>" >> ${html_file}
+               echo "<li>Number of subjects = $num_subjects</li>" >> ${html_file}
+               echo "<li>Number of diseases = $num_diseases</li>" >> ${html_file}
+               echo "<li>Number of samples = $num_samples</li>" >> ${html_file}
+               echo "<li>Number of tissues = $num_tissues</li>" >> ${html_file}
+               echo "</ul>" >> ${html_file}
+               python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 $tsv_output_file >> ${html_file}
 
-           # Extract some counts based on the various fields in the output file.
-           num_repositories=$(tail +2 $tsv_output_file | cut -f 1 | sort -u | wc -l)
-           num_repertoires=$(tail +2 $tsv_output_file | cut -f 2 | sort -u | wc -l)
-           num_studies=$(tail +2 $tsv_output_file | cut -f 4 | sort -u | wc -l)
-           num_diseases=$(tail +2 $tsv_output_file | cut -f 6 | sort -u | wc -l)
-           num_subjects=$(tail +2 $tsv_output_file | cut -f 7 | sort -u | wc -l)
-           num_samples=$(tail +2 $tsv_output_file | cut -f 8 | sort -u | wc -l)
-           num_tissues=$(tail +2 $tsv_output_file | cut -f 9 | sort -u | wc -l)
-           # Output to the offline HTML file.
-           echo "<ul>" >> ${html_file}
-           echo "<li>Number of rearrangement matches = $file_count (repertoire min = ${file_min}, repertoire max = ${file_max})</li>" >> ${html_file}
-           echo "<li>Number of repertoires = $num_repertoires</li>" >> ${html_file}
-           echo "</ul>" >> ${html_file}
-           echo "<ul>" >> ${html_file}
-           echo "<li>Number of repositories = $num_repositories</li>" >> ${html_file}
-           echo "<li>Number of studies = $num_studies</li>" >> ${html_file}
-           echo "<li>Number of subjects = $num_subjects</li>" >> ${html_file}
-           echo "<li>Number of diseases = $num_diseases</li>" >> ${html_file}
-           echo "<li>Number of samples = $num_samples</li>" >> ${html_file}
-           echo "<li>Number of tissues = $num_tissues</li>" >> ${html_file}
-           echo "</ul>" >> ${html_file}
-           python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 $tsv_output_file >> ${html_file}
-
-           # Outout to the gateway HTML file
-           if [ "${SPLIT_JUNCTION}" = "True" ]; then
-               echo "<h3>Report for ${values[$counter]}</h3>" >> ${gateway_file}
-           else
-               echo "<h3>Report for $JUNCTION_AA_LIST</h3>" >> ${gateway_file}
-           fi
-           echo "<ul>" >> ${gateway_file}
-           echo "<li>Number of rearrangement matches = $file_count (repertoire min = ${file_min}, repertoire max = ${file_max})</li>" >> ${gateway_file}
-           echo "<li>Number of repertoires = $num_repertoires</li>" >> ${gateway_file}
-           echo "</ul>" >> ${gateway_file}
-           echo "<ul>" >> ${gateway_file}
-           echo "<li>Number of repositories = $num_repositories</li>" >> ${gateway_file}
-           echo "<li>Number of studies = $num_studies</li>" >> ${gateway_file}
-           echo "<li>Number of subjects = $num_subjects</li>" >> ${gateway_file}
-           echo "<li>Number of diseases = $num_diseases</li>" >> ${gateway_file}
-           echo "<li>Number of samples = $num_samples</li>" >> ${gateway_file}
-           echo "<li>Number of tissues = $num_tissues</li>" >> ${gateway_file}
-           echo "</ul>" >> ${gateway_file}
-           python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 $tsv_output_file >> ${gateway_file}
-
-           # Increment the counter
-           counter=$[$counter +1]
+               # Outout to the gateway HTML file
+               if [ "${SPLIT_JUNCTION}" = "True" ]; then
+                   echo "<h3>Report for ${values[$counter]}</h3>" >> ${gateway_file}
+               else
+                   echo "<h3>Report for $JUNCTION_AA_LIST</h3>" >> ${gateway_file}
+               fi
+               echo "<ul>" >> ${gateway_file}
+               echo "<li>Number of rearrangement matches = $file_count (repertoire min = ${file_min}, repertoire max = ${file_max})</li>" >> ${gateway_file}
+               echo "<li>Number of repertoires = $num_repertoires</li>" >> ${gateway_file}
+               echo "</ul>" >> ${gateway_file}
+               echo "<ul>" >> ${gateway_file}
+               echo "<li>Number of repositories = $num_repositories</li>" >> ${gateway_file}
+               echo "<li>Number of studies = $num_studies</li>" >> ${gateway_file}
+               echo "<li>Number of subjects = $num_subjects</li>" >> ${gateway_file}
+               echo "<li>Number of diseases = $num_diseases</li>" >> ${gateway_file}
+               echo "<li>Number of samples = $num_samples</li>" >> ${gateway_file}
+               echo "<li>Number of tissues = $num_tissues</li>" >> ${gateway_file}
+               echo "</ul>" >> ${gateway_file}
+               python3 ${IR_GATEWAY_UTIL_DIR}/tcrmatch-to-html.py --max_width=80 $tsv_output_file >> ${gateway_file}
+          fi
         fi          
+        # Increment the counter
+        counter=$[$counter +1]
     done
 
     # Write the remainder of the offline/download HTML file
