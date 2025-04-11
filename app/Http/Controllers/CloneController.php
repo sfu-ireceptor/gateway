@@ -264,6 +264,8 @@ class CloneController extends Controller
             $app_ui_info['app_tag'] = $app_tag;
             $app_ui_info['runnable'] = true;
             $app_ui_info['runnable_comment'] = '';
+            $app_ui_info['required_time_secs'] = 0; // Unknown by default
+            $app_ui_info['max_time_secs'] = $tapis->maxRunTimeMinutes() * 60;
 
             // Get the required memory depending on whether the App proceses data per
             // repertoire or in total
@@ -317,6 +319,7 @@ class CloneController extends Controller
                 $num_objects = $data['total_filtered_objects'];
                 // Get the required time based on the apps ms performance per unit
                 $required_time_secs = ($num_objects / 1000000) * $app_info['time_secs_per_million'];
+                $app_ui_info['required_time_secs'] = $required_time_secs;
                 // If requried is greater than run time, disable the app.
                 if ($required_time_secs > $job_runtime_secs) {
                     Log::debug('CloneController::index -    Run time exceeded');

@@ -20,7 +20,7 @@
         "ir_hints": {
             "object":"Rearrangement",
             "requirements":{"Download":"FALSE"},
-            "resources":{}
+            "resources":{"time_secs_per_million":100}
         }
     }
 }

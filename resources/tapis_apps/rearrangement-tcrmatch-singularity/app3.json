@@ -19,7 +19,7 @@
         "ir_hints":{
             "object":"Rearrangement",
             "requirements":{"Fields": {"pcr_target_locus":["TRB"]}},
-            "resources":{}
+            "resources":{"time_secs_per_million":50000}
         }
     }
 }
