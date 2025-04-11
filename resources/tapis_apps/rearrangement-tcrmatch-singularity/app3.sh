@@ -218,6 +218,9 @@ function run_analysis()
     # each sequence that has been mapped to an epitope, containing the 
     # sequence_id and the epitope information.
     seq_epitope_file=${output_directory}/${repertoire_id}_sequence_epitope.tsv
+    #seq_epitope_file=${SLURM_TMPDIR}/${repertoire_id}_sequence_epitope.tsv
+    echo "IR-INFO: Generating sequence/epitope file"
+    date
     printf "sequence_id\t" > $seq_epitope_file
     head -n 1 ${output_directory}/${repertoire_id}_epitope.tsv >> $seq_epitope_file
     while IFS=$'\t' read -r column1 column2 column3 column4 column5 other_columns; do
@@ -244,6 +247,7 @@ function run_analysis()
     rm -f $tmpfile
     touch $tmpfile
     echo "IR-INFO: Generating cdr3 report"
+    date
     # CDR3s are column 1 in TCRMatch report.
     # TODO: the column number could be extracted from the TSV file
     # We loop over each unique epitope and process it (seen variable tracks uniqueness).
@@ -263,6 +267,7 @@ function run_analysis()
     rm -f $tmpfile
     touch $tmpfile
     echo "IR-INFO: Generating epitope report"
+    date
     # Epitopes are column 5 in TCRMatch report.
     # TODO: the column number could be extracted from the TSV file
     # We loop over each unique epitope and process it (seen variable tracks uniqueness).
@@ -281,6 +286,7 @@ function run_analysis()
     rm -f $tmpfile
     touch $tmpfile
     echo "IR-INFO: Generating antigen report"
+    date
     awk -F'\t' '!seen[$6]++ {if (length($6) > 0) {print $0}}' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
         count=$(awk -F'\t' -v value="$antigen" '$7 == value {print $0}' "$seq_epitope_file" | wc -l)
         if [ $count -gt 0 ]; then
@@ -292,7 +298,8 @@ function run_analysis()
 
     rm -f $tmpfile
     touch $tmpfile
-    echo "IR-INFO: Generating antigen report"
+    echo "IR-INFO: Generating organism report"
+    date
     awk -F'\t' '!seen[$7]++ {if (length($7) > 0) {print $0}}' "$epitope_file_trimmed" | while IFS=$'\t' read -r trimmed_cdr3 match_cdr3 score receptor_group epitope antigen organism; do
         count=$(awk -F'\t' -v value="$organism" '$8 == value {print $0}' "$seq_epitope_file" | wc -l)
         if [ $count -gt 0 ]; then
@@ -302,6 +309,8 @@ function run_analysis()
     printf "sequence_count\torganism\n" > $organism_report_file
     sort -r -n $tmpfile >> $organism_report_file
     rm -f $tmpfile
+    echo "IR-INFO: Done generating reports"
+    date
 
     # Generate a summary HTML file for the Gateway to present this info to the user
     html_file=${output_directory}/${repertoire_id}.html

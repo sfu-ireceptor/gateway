@@ -226,9 +226,10 @@ class LaunchJob implements ShouldQueue
                 if ($parameter_info['inputMode'] != 'FIXED') {
                     $param = new \stdClass();
                     $param->name = $parameter_info['name'];
-                    $param->arg = $this->request_data[$parameter_info['name']];
+                    // Tapis needs string with non whitespace on a single line (no new lines).
+                    $param->arg = preg_replace('/\s+/', '', $this->request_data[$parameter_info['name']]);
                     $params[] = $param;
-                    Log::debug('   Parameter value = ' . $this->request_data[$parameter_info['name']]);
+                    Log::debug('   Parameter value = ' . $param->arg);
                 }
             }
 
