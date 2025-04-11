@@ -73,7 +73,7 @@ return [
             'rearrangement-olga-singularity',
             'rearrangement-junction-aa-singularity',
             'clone-stats-singularity',
-            'cell-conga-singularity',
+            'cell-conga-singularity', 
             'cell-celltypist-singularity',
         ],
         'system_execution' => [
