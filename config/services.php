@@ -88,7 +88,7 @@ return [
             // Memory per core for a job
             'memory_per_core' => env('TAPIS_JOB_MEMORY_PER_CORE', intval(7999)),
             //
-            // Directory structure for jobs. There are three important directories
+            // Directory structure for jobs.  There are three important directories
             // for Tapis jobs. These directories are full paths:
             //   - exec_job_working_dir: is where jobs are run from on the exec host.
             //     This is a path on cedar.
