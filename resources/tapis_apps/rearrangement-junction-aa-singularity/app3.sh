@@ -225,7 +225,7 @@ function run_analysis()
            if [ $? -ne 0 ]
            then
                echo "IR-ERROR: Could not complete search for ${junction_query_file}"
-               return 
+               continue 
            fi
 
            # Change JSON to TSV file
@@ -235,7 +235,7 @@ function run_analysis()
            if [ $? -ne 0 ]
            then
                echo "IR-ERROR: Could not convert JSON to TSV from ${output_file}"
-               return 
+               continue 
            fi
            # Extract only those counts that are greater than 0. Count are in column 3
            head -1 ${temp_counts} > $tsv_output_file
