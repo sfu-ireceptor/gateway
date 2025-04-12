@@ -5,7 +5,14 @@ echo "${GW_INFO} iReceptor Gateway Utilities"
 
 # Define the directory to use for Gateway analysis output.
 export GATEWAY_ANALYSIS_DIR="gateway_analysis"
+# Track performance statistics
+export GATEWAY_REPERTOIRE_COUNT=0
 export GATEWAY_OBJECT_COUNT=0
+export GATEWAY_START_SECONDS=${SECONDS}
+export GATEWAY_UNZIP_SECONDS=0
+export GATEWAY_CLEANUP_SECONDS=0
+export GATEWAY_SPLIT_SECONDS=0
+export GATEWAY_ANALYSIS_SECONDS=0
 
 function gateway_get_singularity() {
 # Parameters
@@ -46,6 +53,7 @@ function gateway_unzip() {
 #   $1 - iReceptor ZIP file
 #   $2 - Working directory to unzip into
 
+    local start_seconds=$SECONDS
     # The data, including the info and manifest files, are in the ZIP file.
     local ZIP_FILE=$1
 
@@ -80,10 +88,13 @@ function gateway_unzip() {
         exit 1
     fi
 
-    echo "${GW_INFO} Extracting files finished at: `date`" 
-
     # Remove the copied ZIP file.
     rm -f ${ZIP_FILE} 
+
+    echo "${GW_INFO} Extracting files finished at: `date`" 
+    local end_seconds=$SECONDS
+    GATEWAY_UNZIP_SECONDS=$((end_seconds-start_seconds))
+    echo "${GW_INFO} Total gateway unzip time (s) = $GATEWAY_UNZIP_SECONDS" 
 
     # Go back to where we started
     popd > /dev/null
@@ -96,6 +107,7 @@ function gateway_cleanup(){
 #     $3 - Working directory
 #     $4 - Analysis type (optional - default = "rearrangement_file"
 
+    local start_seconds=$SECONDS
     echo "${GW_INFO} ========================================"
     echo -n "${GW_INFO} Starting to clean up files at "
     date
@@ -153,6 +165,9 @@ function gateway_cleanup(){
     # The Gateway provides information about the download in the file info.txt and
     echo -n "${GW_INFO} Done cleaning up files at "
     date
+    local end_seconds=$SECONDS
+    GATEWAY_CLEANUP_SECONDS=$((end_seconds-start_seconds))
+    echo "${GW_INFO} Total gateway cleanup time (s) = $GATEWAY_CLEANUP_SECONDS" 
     echo "${GW_INFO} ========================================"
 
     popd > /dev/null
@@ -363,9 +378,9 @@ function gateway_run_analysis(){
     echo -n "${GW_INFO} Done running analyses at " 
     date
     end_seconds=$SECONDS
-    total_seconds=$((end_seconds-start_seconds))
-    object_per_second=$((GATEWAY_OBJECT_COUNT/total_seconds))
-    echo "${GW_INFO} Total analysis time (s) = $total_seconds" 
+    GATEWAY_ANALYSIS_SECONDS=$((end_seconds-start_seconds))
+    object_per_second=$((GATEWAY_OBJECT_COUNT/GATEWAY_ANALYSIS_SECONDS))
+    echo "${GW_INFO} Total analysis time (s) = $GATEWAY_ANALYSIS_SECONDS" 
     echo "${GW_INFO} Total repertoires =  $repertoire_total" 
     echo "${GW_INFO} Total objects processed = $GATEWAY_OBJECT_COUNT"
     echo "${GW_INFO} Total objects/second = $object_per_second"
@@ -379,6 +394,9 @@ function gateway_split_repertoire(){
 #     $3 - iReceptor ZIP file
 #     $4 - Working directory
 #     $5 - Type of analysis from the manifest (rearrangement_file, clone_file, cell_file)
+
+    local split_start_seconds=$SECONDS
+    local split_num_objects=0
 
     echo "${GW_INFO} ========================================"
     echo -n "${GW_INFO} Splitting AIRR Repertoires at "
@@ -751,6 +769,42 @@ function gateway_split_repertoire(){
     popd > /dev/null
     echo -n "${GW_INFO} Done splitting AIRR Repertoires at "
     date
+    local end_seconds=$SECONDS
+    GATEWAY_SPLIT_SECONDS=$((end_seconds-start_seconds))
+    GATEWAY_REPERTOIRE_COUNT=${repertoire_total}
+    object_per_second=$((GATEWAY_OBJECT_COUNT/GATEWAY_SPLIT_SECONDS))
+    echo "${GW_INFO} Total split repertoire time (s) = $GATEWAY_SPLIT_SECONDS" 
+    echo "${GW_INFO} Total repertoires =  $repertoire_total" 
+    echo "${GW_INFO} Total objects processed = $GATEWAY_OBJECT_COUNT"
+    echo "${GW_INFO} Total objects/second = $object_per_second"
+    echo "${GW_INFO} ========================================"
+}
+
+
+function gateway_summary() {
+    echo "${GW_INFO} ========================================"
+    echo "${GW_INFO} Gateway analysis completed, analysis summary:" 
+    echo "${GW_INFO}     Total unzip time (s) = $GATEWAY_UNZIP_SECONDS" 
+    echo "${GW_INFO}     Total split repertoire time (s) = $GATEWAY_SPLIT_SECONDS" 
+    echo "${GW_INFO}     Total analysis time (s) = $GATEWAY_ANALYSIS_SECONDS" 
+    echo "${GW_INFO}     Total cleanup time (s) = $GATEWAY_CLEANUP_SECONDS" 
+    echo "${GW_INFO}"
+    echo "${GW_INFO}     Total repertoires processed = $GATEWAY_REPERTOIRE_COUNT" 
+    echo "${GW_INFO}     Total objects processed = $GATEWAY_OBJECT_COUNT"
+    echo "${GW_INFO}"
+    if (( GATEWAY_SPLIT_SECONDS > 0 )); then
+        split_object_per_second=$((GATEWAY_OBJECT_COUNT/GATEWAY_SPLIT_SECONDS))
+        echo "${GW_INFO}     Total split objects/second = $split_object_per_second"
+    else
+        echo "${GW_INFO}     Gateway split took 0 seconds"
+    fi
+    
+    if (( GATEWAY_SPLIT_SECONDS > 0 )); then
+        analysis_object_per_second=$((GATEWAY_OBJECT_COUNT/GATEWAY_ANALYSIS_SECONDS))
+        echo "${GW_INFO}     Total analysis  objects/second = $analysis_object_per_second"
+    else
+        echo "${GW_INFO}     Gateway analysis took 0 seconds"
+    fi
     echo "${GW_INFO} ========================================"
 }
 
