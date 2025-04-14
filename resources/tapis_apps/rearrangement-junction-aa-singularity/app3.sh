@@ -437,6 +437,7 @@ AIRR_MANIFEST_FILE="AIRR-manifest.json"
     # Clean up after doing the analysis. We don't want to leave behind all of the
     # large TSV and zip files etc.
     gateway_cleanup ${IR_DOWNLOAD_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_summary
 
 # Make sure we are back where we started, although the gateway functions should
 # not change the working directory that we are in.

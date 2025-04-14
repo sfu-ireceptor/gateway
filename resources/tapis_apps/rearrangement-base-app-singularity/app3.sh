@@ -94,6 +94,7 @@ gateway_run_analysis ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
 echo -n "IR-INFO: Cleaning up the data at "
 date
 gateway_cleanup ${IR_DOWNLOAD_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+gateway_summary
 
 ###############################################################################
 # Do some housekeeping.
