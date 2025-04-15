@@ -644,6 +644,7 @@ function gateway_split_repertoire(){
 
             # Increase our count so we loop through the repertoires correctly.
             repertoire_count=$((repertoire_count+1))
+            repertoire_total=$((repertoire_total+1))
 
             # Print out a done message
             GW_INFO="${GW_INFO::-4}"
@@ -740,7 +741,7 @@ function gateway_split_repertoire(){
             for split_file in ${TMP_DIR}/*; do
                 line_count=`wc -l $split_file | cut -d ' ' -f 1`
                 echo "${GW_INFO}     $line_count $split_file"
-                GATEWAY_OBJECT_COUNT=$((GATEWAY_OBJECT_COUNT+line_count))
+                GATEWAY_OBJECT_COUNT=$((GATEWAY_OBJECT_COUNT+line_count-1))
             done
             echo "${GW_INFO}     Total = $GATEWAY_OBJECT_COUNT"
 
@@ -782,6 +783,9 @@ function gateway_split_repertoire(){
 
 
 function gateway_summary() {
+    local end_seconds=$SECONDS
+    GATEWAY_TOTAL_SECONDS=$((end_seconds-GATEWAY_START_SECONDS))
+
     echo "${GW_INFO} ========================================"
     echo "${GW_INFO} Gateway analysis completed, analysis summary:" 
     echo "${GW_INFO}     Total unzip time (s) = $GATEWAY_UNZIP_SECONDS" 
@@ -789,21 +793,39 @@ function gateway_summary() {
     echo "${GW_INFO}     Total analysis time (s) = $GATEWAY_ANALYSIS_SECONDS" 
     echo "${GW_INFO}     Total cleanup time (s) = $GATEWAY_CLEANUP_SECONDS" 
     echo "${GW_INFO}"
+    echo "${GW_INFO}     Total job run time (s) = $GATEWAY_TOTAL_SECONDS" 
+    echo "${GW_INFO}"
     echo "${GW_INFO}     Total repertoires processed = $GATEWAY_REPERTOIRE_COUNT" 
     echo "${GW_INFO}     Total objects processed = $GATEWAY_OBJECT_COUNT"
     echo "${GW_INFO}"
     if (( GATEWAY_SPLIT_SECONDS > 0 )); then
-        split_object_per_second=$((GATEWAY_OBJECT_COUNT/GATEWAY_SPLIT_SECONDS))
-        echo "${GW_INFO}     Total split objects/second = $split_object_per_second"
+        split_object_per_second=$(awk "BEGIN {printf \"%.2f\",${GATEWAY_OBJECT_COUNT}/${GATEWAY_SPLIT_SECONDS}}")
+        split_repertoire_per_second=$(awk "BEGIN {printf \"%.2f\",${GATEWAY_REPERTOIRE_COUNT}/${GATEWAY_SPLIT_SECONDS}}")
+        #split_repertoire_per_second=$(echo "scale 2; $GATEWAY_REPERTOIRE_COUNT/$GATEWAY_SPLIT_SECONDS" | bc )
+        echo "${GW_INFO}     Split objects/second = $split_object_per_second"
+        echo "${GW_INFO}     Split repertoires/second = $split_repertoire_per_second"
     else
         echo "${GW_INFO}     Gateway split took 0 seconds"
     fi
     
-    if (( GATEWAY_SPLIT_SECONDS > 0 )); then
-        analysis_object_per_second=$((GATEWAY_OBJECT_COUNT/GATEWAY_ANALYSIS_SECONDS))
-        echo "${GW_INFO}     Total analysis  objects/second = $analysis_object_per_second"
+    if (( GATEWAY_ANALYSIS_SECONDS > 0 )); then
+        analysis_object_per_second=$(awk "BEGIN {printf \"%.2f\",${GATEWAY_OBJECT_COUNT}/${GATEWAY_ANALYSIS_SECONDS}}")
+        analysis_repertoire_per_second=$(awk "BEGIN {printf \"%.2f\",${GATEWAY_REPERTOIRE_COUNT}/${GATEWAY_ANALYSIS_SECONDS}}")
+        #analysis_object_per_second=$(echo "scale 2; $GATEWAY_OBJECT_COUNT/$GATEWAY_ANALYSIS_SECONDS" | bc)
+        #analysis_repertoire_per_second=$(echo "scale 2; $GATEWAY_REPERTOIRE_COUNT/$GATEWAY_ANALYSIS_SECONDS" | bc)
+        echo "${GW_INFO}     Analysis objects/second = $analysis_object_per_second"
+        echo "${GW_INFO}     Analysis repertoires/second = $analysis_repertoire_per_second"
     else
         echo "${GW_INFO}     Gateway analysis took 0 seconds"
+    fi
+
+    if (( GATEWAY_TOTAL_SECONDS > 0 )); then
+        total_object_per_second=$(awk "BEGIN {printf \"%.2f\",${GATEWAY_OBJECT_COUNT}/${GATEWAY_TOTAL_SECONDS}}")
+        total_repertoire_per_second=$(awk "BEGIN {printf \"%.2f\",${GATEWAY_REPERTOIRE_COUNT}/${GATEWAY_TOTAL_SECONDS}}")
+        echo "${GW_INFO}     Total objects/second = $total_object_per_second"
+        echo "${GW_INFO}     Total repertoires/second = $total_repertoire_per_second"
+    else
+        echo "${GW_INFO}     Gateway total analysis took 0 seconds"
     fi
     echo "${GW_INFO} ========================================"
 }
