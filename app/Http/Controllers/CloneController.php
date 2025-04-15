@@ -326,7 +326,7 @@ class CloneController extends Controller
                     Log::debug('CloneController::index -       Required run time (s) = ' . human_number($required_time_secs));
                     Log::debug('CloneController::index -       Max run time (s) =  ' . human_number($job_runtime_secs));
                     $app_ui_info['runnable'] = false;
-                    $error_string = 'It is estimated that "' . $app_ui_info['name'] . '" will require ' . human_number($required_time_secs / 60) . ' minutes to process ' . human_number($num_objects) . ' clones. Current maximum job run time is ' . human_number($tapis->maxRunTimeMinutes()) . ' minutes.';
+                    $error_string = 'It is estimated that "' . $app_ui_info['name'] . '" will require ' . secondsToTime($required_time_secs,2) . ' to process ' . human_number($num_objects) . ' clones. Current maximum job run time is ' . secondsToTime($tapis->maxRunTimeMinutes() * 60) . '. Please limit the amount of data used for this analysis.';
                     // If we have a comment already, then add to it, otherwise generate new comment.
                     if (strlen($app_ui_info['runnable_comment']) > 0) {
                         $app_ui_info['runnable_comment'] = $app_ui_info['runnable_comment'] . ' ' . $error_string;
