@@ -197,7 +197,11 @@ if (! function_exists('secondsToTime')) {
             }
         }
 
-        return implode(' ', array_slice($timeParts, 0, $section_limit));
+        if (count($timeParts) > 0) {
+            return implode(' ', array_slice($timeParts, 0, $section_limit));
+        } else {
+            return "0 s";
+        }
     }
 }
 

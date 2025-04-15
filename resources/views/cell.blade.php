@@ -488,6 +488,10 @@
                                                             <div><p><em>
                                                                 Estimated run time = {!! secondsToTime($app['required_time_secs']) !!} (not including data federation and queue time)</br>
                                                             </em></p></div>
+                                                        @else
+                                                            <div><p><em>
+                                                                No run time estimate available for this anlaysis.</br>
+                                                            </em></p></div>
                                                         @endif
 
                                                         {{ Form::submit('Submit ' . $app['name'] . ' Analysis Job', array('class' => 'btn btn-primary btn-cells')) }}

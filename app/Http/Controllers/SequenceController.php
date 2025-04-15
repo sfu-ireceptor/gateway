@@ -289,7 +289,7 @@ class SequenceController extends Controller
             $app_ui_info['app_tag'] = $app_tag;
             $app_ui_info['runnable'] = true;
             $app_ui_info['runnable_comment'] = '';
-            $app_ui_info['required_time_secs'] = 0; // Unknown by default
+            $app_ui_info['required_time_secs'] = 0; // 0 implies unknown.
             $app_ui_info['max_time_secs'] = $tapis->maxRunTimeMinutes() * 60;
 
             // Get the required memory depending on whether the App proceses data per
@@ -344,6 +344,10 @@ class SequenceController extends Controller
                 $num_objects = $data['total_filtered_objects'];
                 // Get the required time based on the apps ms performance per unit
                 $required_time_secs = ($num_objects / 1000000) * $app_info['time_secs_per_million'];
+                // An analysis app always takes a minimum of 5 seconds with run time overhead.
+                if ($required_time_secs < 5) {
+                    $required_time_secs = 5;
+                }
                 $app_ui_info['required_time_secs'] = $required_time_secs;
                 // If requried is greater than run time, disable the app.
                 if ($required_time_secs > $job_runtime_secs) {
