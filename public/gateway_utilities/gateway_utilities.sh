@@ -572,11 +572,12 @@ function gateway_split_repertoire(){
                     echo "GW-ERROR: Could not filter Clone data for ${repertoire_id} from ${data_file}"
                     continue
                 fi
-                #wc -l ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
-                line_count=`wc -l ${repository_name}/${repertoire_dirname}/${repertoire_datafile} | cut -d ' ' -f 1`
-                echo "${GW_INFO} Clone file ${repository_name}/${repertoire_dirname}/${repertoire_datafile} contains ${line_count} clones"
+                clone_count=(`cat ${repository_name}/${repertoire_dirname}/${repertoire_datafile} | grep "clone_id" | wc -l`)
+                # If jq was installed in the singularity image we could use a more rigorous test.
+                #clone_count=`jq '.Clone | length' ${repository_name}/${repertoire_dirname}/${repertoire_datafile}`
+                echo "${GW_INFO} Clone file ${repository_name}/${repertoire_dirname}/${repertoire_datafile} contains ${clone_count} clones"
                 # Keep track of how many clones we are processing.
-                GATEWAY_OBJECT_COUNT=$((GATEWAY_OBJECT_COUNT+line_count-1))
+                GATEWAY_OBJECT_COUNT=$((GATEWAY_OBJECT_COUNT+clone_count))
         
                 # Create the repertoire manifest file
                 echo '{"Info":{},"DataSets":[' > $REPERTOIRE_MANIFEST
@@ -624,6 +625,11 @@ function gateway_split_repertoire(){
                     echo "GW-ERROR: Could not extract cell_id from ${cell_datafile}"
                     continue
                 fi
+                cell_count=`wc -l ${cell_id_tmp} | cut -d ' ' -f 1`
+                echo "${GW_INFO} Cell file ${repository_name}/${repertoire_dirname}/${cell_datafile} contains ${cell_count} cells"
+                # Keep track of how many clones we are processing.
+                GATEWAY_OBJECT_COUNT=$((GATEWAY_OBJECT_COUNT+cell_count))
+        
                 # Write the header to the file and extract any rearrangements that contain our cell_ids
                 head -1  $rearrangement_file > ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
                 grep -f $cell_id_tmp $rearrangement_file >> ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}

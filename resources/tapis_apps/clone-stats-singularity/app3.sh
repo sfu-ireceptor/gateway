@@ -351,6 +351,7 @@ if [ "${SPLIT_REPERTOIRE}" = "True" ]; then
     gateway_split_repertoire ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${ZIP_FILE} ${GATEWAY_ANALYSIS_DIR} "clone_file"
     gateway_run_analysis ${INFO_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR} "clone_file"
     gateway_cleanup ${ZIP_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_summary
 
 
 elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
@@ -386,6 +387,7 @@ elif [ "${SPLIT_REPERTOIRE}" = "False" ]; then
     # Clean up after doing the analysis. We don't want to leave behind all of the
     # large TSV and zip files etc.
     gateway_cleanup ${ZIP_FILE} ${AIRR_MANIFEST_FILE} ${GATEWAY_ANALYSIS_DIR}
+    gateway_summary
 else
     echo "IR-ERROR: Unknown repertoire operation ${SPLIT_REPERTOIRE}" >&2
     exit 1
