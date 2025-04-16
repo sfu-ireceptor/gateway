@@ -5,7 +5,14 @@ echo "${GW_INFO} iReceptor Gateway Utilities"
 
 # Define the directory to use for Gateway analysis output.
 export GATEWAY_ANALYSIS_DIR="gateway_analysis"
+# Track performance statistics
+export GATEWAY_REPERTOIRE_COUNT=0
 export GATEWAY_OBJECT_COUNT=0
+export GATEWAY_START_SECONDS=${SECONDS}
+export GATEWAY_UNZIP_SECONDS=0
+export GATEWAY_CLEANUP_SECONDS=0
+export GATEWAY_SPLIT_SECONDS=0
+export GATEWAY_ANALYSIS_SECONDS=0
 
 function gateway_get_singularity() {
 # Parameters
@@ -46,6 +53,7 @@ function gateway_unzip() {
 #   $1 - iReceptor ZIP file
 #   $2 - Working directory to unzip into
 
+    local start_seconds=$SECONDS
     # The data, including the info and manifest files, are in the ZIP file.
     local ZIP_FILE=$1
 
@@ -80,10 +88,13 @@ function gateway_unzip() {
         exit 1
     fi
 
-    echo "${GW_INFO} Extracting files finished at: `date`" 
-
     # Remove the copied ZIP file.
     rm -f ${ZIP_FILE} 
+
+    echo "${GW_INFO} Extracting files finished at: `date`" 
+    local end_seconds=$SECONDS
+    GATEWAY_UNZIP_SECONDS=$((end_seconds-start_seconds))
+    echo "${GW_INFO} Total gateway unzip time (s) = $GATEWAY_UNZIP_SECONDS" 
 
     # Go back to where we started
     popd > /dev/null
@@ -96,6 +107,7 @@ function gateway_cleanup(){
 #     $3 - Working directory
 #     $4 - Analysis type (optional - default = "rearrangement_file"
 
+    local start_seconds=$SECONDS
     echo "${GW_INFO} ========================================"
     echo -n "${GW_INFO} Starting to clean up files at "
     date
@@ -153,6 +165,9 @@ function gateway_cleanup(){
     # The Gateway provides information about the download in the file info.txt and
     echo -n "${GW_INFO} Done cleaning up files at "
     date
+    local end_seconds=$SECONDS
+    GATEWAY_CLEANUP_SECONDS=$((end_seconds-start_seconds))
+    echo "${GW_INFO} Total gateway cleanup time (s) = $GATEWAY_CLEANUP_SECONDS" 
     echo "${GW_INFO} ========================================"
 
     popd > /dev/null
@@ -363,9 +378,9 @@ function gateway_run_analysis(){
     echo -n "${GW_INFO} Done running analyses at " 
     date
     end_seconds=$SECONDS
-    total_seconds=$((end_seconds-start_seconds))
-    object_per_second=$((GATEWAY_OBJECT_COUNT/total_seconds))
-    echo "${GW_INFO} Total analysis time (s) = $total_seconds" 
+    GATEWAY_ANALYSIS_SECONDS=$((end_seconds-start_seconds))
+    object_per_second=$((GATEWAY_OBJECT_COUNT/GATEWAY_ANALYSIS_SECONDS))
+    echo "${GW_INFO} Total analysis time (s) = $GATEWAY_ANALYSIS_SECONDS" 
     echo "${GW_INFO} Total repertoires =  $repertoire_total" 
     echo "${GW_INFO} Total objects processed = $GATEWAY_OBJECT_COUNT"
     echo "${GW_INFO} Total objects/second = $object_per_second"
@@ -379,6 +394,9 @@ function gateway_split_repertoire(){
 #     $3 - iReceptor ZIP file
 #     $4 - Working directory
 #     $5 - Type of analysis from the manifest (rearrangement_file, clone_file, cell_file)
+
+    local split_start_seconds=$SECONDS
+    local split_num_objects=0
 
     echo "${GW_INFO} ========================================"
     echo -n "${GW_INFO} Splitting AIRR Repertoires at "
@@ -463,11 +481,10 @@ function gateway_split_repertoire(){
         date
         if [ ${ANALYSIS_TYPE} = "rearrangement_file" ]
         then
-            # preprocess.py dumps a field of interest from a TSV data file. We want
-            # all of the reperotire_ids - we sort them to get unique ids and then
-            # use awk to print them all on the same line to create an array
-            # of repertoire_ids
-            repertoire_ids=( `python3 ${IR_GATEWAY_UTIL_DIR}/preprocess.py $data_file $SPLIT_FIELD | sort -u | awk '{printf("%s ",$0)}'` )
+            # Get column for repertoire_id and extract. We sort them to get unique ids and then
+            # use awk to print them all on the same line to create an array of repertoire_ids
+            column_number=(`awk -F'\t' '{for (i = 1; i <= NF; i++) if ($i == "repertoire_id") print i; exit}' ${data_file}`)
+            repertoire_ids=( `tail +2 $data_file | cut -f $column_number |  sort -u | awk '{printf("%s ",$0)}'` )
         elif [ ${ANALYSIS_TYPE} = "cell_file" ]
         then
             # preprocess-json.py dumps a field of interest from a JSON data file. We want
@@ -555,8 +572,12 @@ function gateway_split_repertoire(){
                     echo "GW-ERROR: Could not filter Clone data for ${repertoire_id} from ${data_file}"
                     continue
                 fi
-                echo -n "${GW_INFO} Clone file contains: "
-                wc -l ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
+                clone_count=(`cat ${repository_name}/${repertoire_dirname}/${repertoire_datafile} | grep "clone_id" | wc -l`)
+                # If jq was installed in the singularity image we could use a more rigorous test.
+                #clone_count=`jq '.Clone | length' ${repository_name}/${repertoire_dirname}/${repertoire_datafile}`
+                echo "${GW_INFO} Clone file ${repository_name}/${repertoire_dirname}/${repertoire_datafile} contains ${clone_count} clones"
+                # Keep track of how many clones we are processing.
+                GATEWAY_OBJECT_COUNT=$((GATEWAY_OBJECT_COUNT+clone_count))
         
                 # Create the repertoire manifest file
                 echo '{"Info":{},"DataSets":[' > $REPERTOIRE_MANIFEST
@@ -604,6 +625,11 @@ function gateway_split_repertoire(){
                     echo "GW-ERROR: Could not extract cell_id from ${cell_datafile}"
                     continue
                 fi
+                cell_count=`wc -l ${cell_id_tmp} | cut -d ' ' -f 1`
+                echo "${GW_INFO} Cell file ${repository_name}/${repertoire_dirname}/${cell_datafile} contains ${cell_count} cells"
+                # Keep track of how many clones we are processing.
+                GATEWAY_OBJECT_COUNT=$((GATEWAY_OBJECT_COUNT+cell_count))
+        
                 # Write the header to the file and extract any rearrangements that contain our cell_ids
                 head -1  $rearrangement_file > ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
                 grep -f $cell_id_tmp $rearrangement_file >> ${repository_name}/${repertoire_dirname}/${rearrangement_datafile}
@@ -626,6 +652,7 @@ function gateway_split_repertoire(){
 
             # Increase our count so we loop through the repertoires correctly.
             repertoire_count=$((repertoire_count+1))
+            repertoire_total=$((repertoire_total+1))
 
             # Print out a done message
             GW_INFO="${GW_INFO::-4}"
@@ -695,12 +722,6 @@ function gateway_split_repertoire(){
             TMP_DIR=${PWD}/tmp
             mkdir ${TMP_DIR}
 
-            # Create a header line for each repertoire based rearrangement file.
-            for repertoire_id in "${repertoire_ids[@]}"; do
-                echo "${GW_INFO} Creating ${TMP_DIR}/${repertoire_id}.tsv"
-                head -n 1 ${data_file} > ${TMP_DIR}/${repertoire_id}.tsv
-            done
-
             # Get the column for the SPLIT_FIELD
             repertoire_id_column=`head -n 1 ${data_file} | awk -F"\t" -v label=${SPLIT_FIELD} '{for(i=1;i<=NF;i++){if ($i == label){print i}}}'`
             if [ $? -ne 0 ]
@@ -712,26 +733,44 @@ function gateway_split_repertoire(){
 
             # Split the file into N files based on SPLIT_FIELD.
             # AWK is pretty efficient at this
-            awk -F '\t' -v tmpdir=${TMP_DIR} -v column=${repertoire_id_column} '{if (NR>1) {print $0 >> tmpdir"/"$column".tsv"}}' ${data_file}
-            if [ $? -ne 0 ]
+            if [ ${#repertoire_ids[@]} -eq 1 ]
             then
-                echo "GW-ERROR: Could not split ${data_file} on field ${SPLIT_FIELD}"
-                continue
-            fi
-            echo "${GW_INFO} Files generated by split:"
-            for split_file in ${TMP_DIR}/*; do
-                line_count=`wc -l $split_file | cut -d ' ' -f 1`
-                echo "${GW_INFO}     $line_count $split_file"
-                GATEWAY_OBJECT_COUNT=$((GATEWAY_OBJECT_COUNT+line_count))
-            done
-            echo "${GW_INFO}     Total = $GATEWAY_OBJECT_COUNT"
+                repertoire_id=${repertoire_ids[0]}
+                echo "${GW_INFO} Only one repertoire, copying ${data_file} to ${repository_name}/${repertoire_id}/${repertoire_id}.tsv"
+                #cp ${TMP_DIR}/${repertoire_id}.tsv ${repository_name}/${repertoire_id}/
+                time cp ${data_file} ${repository_name}/${repertoire_id}/${repertoire_id}.tsv
+                line_count=`wc -l ${data_file} | cut -d ' ' -f 1`
+                echo "${GW_INFO}     $line_count ${data_file}"
+                GATEWAY_OBJECT_COUNT=$((GATEWAY_OBJECT_COUNT+line_count-1))
+            else
+                # Create a header line for each repertoire based rearrangement file.
+                for repertoire_id in "${repertoire_ids[@]}"; do
+                    echo "${GW_INFO} Creating ${TMP_DIR}/${repertoire_id}.tsv"
+                    head -n 1 ${data_file} > ${TMP_DIR}/${repertoire_id}.tsv
+                done
 
-            # Move the file from its temp location to its final location.
-            for repertoire_id in "${repertoire_ids[@]}"; do
-                echo "${GW_INFO} Moving ${TMP_DIR}/${repertoire_id}.tsv to ${repository_name}/${repertoire_id}/"
-                #mv ${TMP_DIR}/${repertoire_id}.tsv ${repository_name}/${repertoire_id}/
-                cp ${TMP_DIR}/${repertoire_id}.tsv ${repository_name}/${repertoire_id}/
-            done
+                awk -F '\t' -v tmpdir=${TMP_DIR} -v column=${repertoire_id_column} '{if (NR>1) {print $0 >> tmpdir"/"$column".tsv"}}' ${data_file}
+                if [ $? -ne 0 ]
+                then
+                    echo "GW-ERROR: Could not split ${data_file} on field ${SPLIT_FIELD}"
+                    continue
+                fi
+
+                echo "${GW_INFO} Files generated by split:"
+                for split_file in ${TMP_DIR}/*; do
+                    line_count=`wc -l $split_file | cut -d ' ' -f 1`
+                    echo "${GW_INFO}     $line_count $split_file"
+                    GATEWAY_OBJECT_COUNT=$((GATEWAY_OBJECT_COUNT+line_count-1))
+                done
+                echo "${GW_INFO}     Total = $GATEWAY_OBJECT_COUNT"
+
+                # Move the file from its temp location to its final location.
+                for repertoire_id in "${repertoire_ids[@]}"; do
+                    echo "${GW_INFO} Moving ${TMP_DIR}/${repertoire_id}.tsv to ${repository_name}/${repertoire_id}/"
+                    #mv ${TMP_DIR}/${repertoire_id}.tsv ${repository_name}/${repertoire_id}/
+                    cp ${TMP_DIR}/${repertoire_id}.tsv ${repository_name}/${repertoire_id}/
+                done
+            fi
 
             # Remove the temporary files/directories that remain.
             rm -rf ${TMP_DIR}
@@ -751,6 +790,63 @@ function gateway_split_repertoire(){
     popd > /dev/null
     echo -n "${GW_INFO} Done splitting AIRR Repertoires at "
     date
+    local end_seconds=$SECONDS
+    GATEWAY_SPLIT_SECONDS=$((end_seconds-start_seconds))
+    GATEWAY_REPERTOIRE_COUNT=${repertoire_total}
+    object_per_second=$((GATEWAY_OBJECT_COUNT/GATEWAY_SPLIT_SECONDS))
+    echo "${GW_INFO} Total split repertoire time (s) = $GATEWAY_SPLIT_SECONDS" 
+    echo "${GW_INFO} Total repertoires =  $repertoire_total" 
+    echo "${GW_INFO} Total objects processed = $GATEWAY_OBJECT_COUNT"
+    echo "${GW_INFO} Total objects/second = $object_per_second"
+    echo "${GW_INFO} ========================================"
+}
+
+
+function gateway_summary() {
+    local end_seconds=$SECONDS
+    GATEWAY_TOTAL_SECONDS=$((end_seconds-GATEWAY_START_SECONDS))
+
+    echo "${GW_INFO} ========================================"
+    echo "${GW_INFO} Gateway analysis completed, analysis summary:" 
+    echo "${GW_INFO}     Total unzip time (s) = $GATEWAY_UNZIP_SECONDS" 
+    echo "${GW_INFO}     Total split repertoire time (s) = $GATEWAY_SPLIT_SECONDS" 
+    echo "${GW_INFO}     Total analysis time (s) = $GATEWAY_ANALYSIS_SECONDS" 
+    echo "${GW_INFO}     Total cleanup time (s) = $GATEWAY_CLEANUP_SECONDS" 
+    echo "${GW_INFO}"
+    echo "${GW_INFO}     Total job run time (s) = $GATEWAY_TOTAL_SECONDS" 
+    echo "${GW_INFO}"
+    echo "${GW_INFO}     Total repertoires processed = $GATEWAY_REPERTOIRE_COUNT" 
+    echo "${GW_INFO}     Total objects processed = $GATEWAY_OBJECT_COUNT"
+    echo "${GW_INFO}"
+    if (( GATEWAY_SPLIT_SECONDS > 0 )); then
+        split_object_per_second=$(awk "BEGIN {printf \"%.2f\",${GATEWAY_OBJECT_COUNT}/${GATEWAY_SPLIT_SECONDS}}")
+        split_repertoire_per_second=$(awk "BEGIN {printf \"%.2f\",${GATEWAY_REPERTOIRE_COUNT}/${GATEWAY_SPLIT_SECONDS}}")
+        #split_repertoire_per_second=$(echo "scale 2; $GATEWAY_REPERTOIRE_COUNT/$GATEWAY_SPLIT_SECONDS" | bc )
+        echo "${GW_INFO}     Split objects/second = $split_object_per_second"
+        echo "${GW_INFO}     Split repertoires/second = $split_repertoire_per_second"
+    else
+        echo "${GW_INFO}     Gateway split took 0 seconds"
+    fi
+    
+    if (( GATEWAY_ANALYSIS_SECONDS > 0 )); then
+        analysis_object_per_second=$(awk "BEGIN {printf \"%.2f\",${GATEWAY_OBJECT_COUNT}/${GATEWAY_ANALYSIS_SECONDS}}")
+        analysis_repertoire_per_second=$(awk "BEGIN {printf \"%.2f\",${GATEWAY_REPERTOIRE_COUNT}/${GATEWAY_ANALYSIS_SECONDS}}")
+        #analysis_object_per_second=$(echo "scale 2; $GATEWAY_OBJECT_COUNT/$GATEWAY_ANALYSIS_SECONDS" | bc)
+        #analysis_repertoire_per_second=$(echo "scale 2; $GATEWAY_REPERTOIRE_COUNT/$GATEWAY_ANALYSIS_SECONDS" | bc)
+        echo "${GW_INFO}     Analysis objects/second = $analysis_object_per_second"
+        echo "${GW_INFO}     Analysis repertoires/second = $analysis_repertoire_per_second"
+    else
+        echo "${GW_INFO}     Gateway analysis took 0 seconds"
+    fi
+
+    if (( GATEWAY_TOTAL_SECONDS > 0 )); then
+        total_object_per_second=$(awk "BEGIN {printf \"%.2f\",${GATEWAY_OBJECT_COUNT}/${GATEWAY_TOTAL_SECONDS}}")
+        total_repertoire_per_second=$(awk "BEGIN {printf \"%.2f\",${GATEWAY_REPERTOIRE_COUNT}/${GATEWAY_TOTAL_SECONDS}}")
+        echo "${GW_INFO}     Total objects/second = $total_object_per_second"
+        echo "${GW_INFO}     Total repertoires/second = $total_repertoire_per_second"
+    else
+        echo "${GW_INFO}     Gateway total analysis took 0 seconds"
+    fi
     echo "${GW_INFO} ========================================"
 }
 

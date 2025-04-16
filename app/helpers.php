@@ -157,7 +157,7 @@ if (! function_exists('human_number')) {
 // convert to human-friendly time duration
 // ex: 65 -> 1min 5s
 if (! function_exists('secondsToTime')) {
-    function secondsToTime($inputSeconds)
+    function secondsToTime($inputSeconds, $section_limit = 4)
     {
         $secondsInAMinute = 60;
         $secondsInAnHour = 60 * $secondsInAMinute;
@@ -197,7 +197,11 @@ if (! function_exists('secondsToTime')) {
             }
         }
 
-        return implode(' ', $timeParts);
+        if (count($timeParts) > 0) {
+            return implode(' ', array_slice($timeParts, 0, $section_limit));
+        } else {
+            return '0 s';
+        }
     }
 }
 
