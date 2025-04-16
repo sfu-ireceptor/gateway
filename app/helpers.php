@@ -200,7 +200,7 @@ if (! function_exists('secondsToTime')) {
         if (count($timeParts) > 0) {
             return implode(' ', array_slice($timeParts, 0, $section_limit));
         } else {
-            return "0 s";
+            return '0 s';
         }
     }
 }
