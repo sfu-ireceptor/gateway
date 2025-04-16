@@ -572,8 +572,11 @@ function gateway_split_repertoire(){
                     echo "GW-ERROR: Could not filter Clone data for ${repertoire_id} from ${data_file}"
                     continue
                 fi
-                echo -n "${GW_INFO} Clone file contains: "
-                wc -l ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
+                #wc -l ${repository_name}/${repertoire_dirname}/${repertoire_datafile}
+                line_count=`wc -l ${repository_name}/${repertoire_dirname}/${repertoire_datafile} | cut -d ' ' -f 1`
+                echo "${GW_INFO} Clone file ${repository_name}/${repertoire_dirname}/${repertoire_datafile} contains ${line_count} clones"
+                # Keep track of how many clones we are processing.
+                GATEWAY_OBJECT_COUNT=$((GATEWAY_OBJECT_COUNT+line_count-1))
         
                 # Create the repertoire manifest file
                 echo '{"Info":{},"DataSets":[' > $REPERTOIRE_MANIFEST
