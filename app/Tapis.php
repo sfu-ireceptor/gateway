@@ -667,15 +667,16 @@ class Tapis
             Log::debug('   getJobConfig: Processing job parameter ' . $job_parameter_info['label']);
             // If the parameter is provided by the caller, process it.
             if (isset($job_params[$job_parameter_info['label']])) {
-                Log::debug('   getJobConfig: Parameter value = ' . $job_params[$job_parameter_info['label']]);
                 // We need to make sure the type is correct or the JSON will fail.
                 // Once convereted, we set the parameter based on the label. The label
                 // in the config MUST be the correct Tapis label for that field.
                 if ($job_parameter_info['type'] == 'integer') {
                     $t[$job_parameter_info['label']] = intval($job_params[$job_parameter_info['label']]);
                 } else {
-                    $t[$job_parameter_info['label']] = $job_params[$job_parameter_info['label']];
+                    // In Tapis
+                    $t[$job_parameter_info['label']] = preg_replace('/\s+/', '', $job_params[$job_parameter_info['label']]);
                 }
+                Log::debug('   getJobConfig: Parameter value = ' . $t[$job_parameter_info['label']]);
             } else {
                 Log::debug('   getJobConfig: default value = ' . $job_parameter_info['default']);
                 $t[$job_parameter_info['label']] = $job_parameter_info['default'];

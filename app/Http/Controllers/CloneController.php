@@ -264,6 +264,8 @@ class CloneController extends Controller
             $app_ui_info['app_tag'] = $app_tag;
             $app_ui_info['runnable'] = true;
             $app_ui_info['runnable_comment'] = '';
+            $app_ui_info['required_time_secs'] = 0; // Unknown by default
+            $app_ui_info['max_time_secs'] = $tapis->maxRunTimeMinutes() * 60;
 
             // Get the required memory depending on whether the App proceses data per
             // repertoire or in total
@@ -317,13 +319,14 @@ class CloneController extends Controller
                 $num_objects = $data['total_filtered_objects'];
                 // Get the required time based on the apps ms performance per unit
                 $required_time_secs = ($num_objects / 1000000) * $app_info['time_secs_per_million'];
+                $app_ui_info['required_time_secs'] = $required_time_secs;
                 // If requried is greater than run time, disable the app.
                 if ($required_time_secs > $job_runtime_secs) {
                     Log::debug('CloneController::index -    Run time exceeded');
                     Log::debug('CloneController::index -       Required run time (s) = ' . human_number($required_time_secs));
                     Log::debug('CloneController::index -       Max run time (s) =  ' . human_number($job_runtime_secs));
                     $app_ui_info['runnable'] = false;
-                    $error_string = 'It is estimated that "' . $app_ui_info['name'] . '" will require ' . human_number($required_time_secs / 60) . ' minutes to process ' . human_number($num_objects) . ' clones. Current maximum job run time is ' . human_number($tapis->maxRunTimeMinutes()) . ' minutes.';
+                    $error_string = 'It is estimated that "' . $app_ui_info['name'] . '" will require ' . secondsToTime($required_time_secs, 2) . ' to process ' . human_number($num_objects) . ' clones. Current maximum job run time is ' . secondsToTime($tapis->maxRunTimeMinutes() * 60) . '. Please limit the amount of data used for this analysis.';
                     // If we have a comment already, then add to it, otherwise generate new comment.
                     if (strlen($app_ui_info['runnable_comment']) > 0) {
                         $app_ui_info['runnable_comment'] = $app_ui_info['runnable_comment'] . ' ' . $error_string;

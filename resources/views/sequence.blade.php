@@ -282,10 +282,12 @@
                     </div>
                 @endif 
                 
-                <a href="#analysis" class="btn btn-warning pull-right download_sequences">
-                    <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
-                    <span class="text">Run analysis</span>
-                </a>
+                @if(config('services.tapis.enabled'))
+                    <a href="#analysis" class="btn btn-warning pull-right download_sequences">
+                        <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
+                            <span class="text">Run analysis</span>
+                    </a>
+                @endif
 
                 @if ($total_filtered_objects > 0)
                     @if ($total_filtered_objects > config('ireceptor.sequences_download_limit'))
@@ -419,7 +421,7 @@
                                                             @if ( ! empty($parameter['choices']) )
                                                                 {{ Form::select($parameter['name'], $parameter['choices'], '', array('class' => 'form-control')) }}
                                                             @else
-                                                                {{ Form::text($parameter['name'], $parameter['default'], array('class' => 'form-control')) }}
+                                                                {{ Form::textarea($parameter['name'], $parameter['default'], array('class' => 'form-control','rows'=>'1')) }}
                                                             @endif
                                                         </div> </div> </div>
                                                     @endforeach
@@ -448,6 +450,15 @@
                                                     @endforeach
                                                     -->
                                                     @if ( $app['runnable'] )
+                                                        @if ( $app['required_time_secs'] > 0 ) 
+                                                            <div><p><em>
+                                                                Estimated run time = {!! secondsToTime($app['required_time_secs'],2) !!} (not including data federation and queue time)</br>
+                                                            </em></p></div>
+                                                        @else
+                                                            <div><p><em>
+                                                                No run time estimate available for this anlaysis.</br>
+                                                            </em></p></div>
+                                                        @endif
                                                         {{ Form::submit('Submit ' . $app['name'] . ' Analysis Job', array('class' => 'btn btn-primary btn-sequences')) }}
                                                         {{ Form::close() }}
                                                     @else
@@ -478,7 +489,7 @@
                                             More details and some screenshots: <a href="https://ireceptor.org/node/204" class="external" target="_blank">Data Analysis and Jobs</a>                                            
                                         </p>
 
-                                        <p>Note: an analysis job <strong>can take multiple hours</strong>, depending on the size of the data and the complexity of the analysis.</p>
+                                        <p>Note: An analysis job <strong>can take multiple hours</strong>, depending on the size of the data and the complexity of the analysis. <strong>Maximum job run time is {!! secondsToTime($app['max_time_secs']) !!}.</strong> Run time estimates are based on benchmarked worse case performance, analyses with small numbers of large repertoires may complete significantly faster.</p>
 
                                       </div>
                                 </div>
