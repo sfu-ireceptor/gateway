@@ -422,7 +422,7 @@
                                         </div>
                                     </div>
                                 @elseif ($total_filtered_objects > config('ireceptor.clones_download_limit'))
-                                    <p>Sorry, analyses of more than {{ number_format(config('ireceptor.clones_download_limit')) }} clones will be possible in the near future.</p>
+                                    <p>Sorry, analyses of more than {{ number_format(config('ireceptor.clones_download_limit')) }} clones are not permitted.</p>
                                                         @else
                                                                 <p>No Analysis Apps for Clones available</p>
                                 @endif
@@ -442,7 +442,7 @@
                                         <p>
                                             More details and some screenshots: <a href="https://ireceptor.org/node/204" class="external" target="_blank">Data Analysis and Jobs</a>                                            
                                         </p>
-                                        <p>Note: an analysis job <strong>can take multiple hours</strong>, depending on the size of the data and the complexity of the analysis. <strong>Maximum job run time is {!! secondsToTime($app['max_time_secs']) !!}.</strong> Run time estimates are based on benchmarked worse case performance, analyses with small numbers of large repertoires may complete significantly faster.</p>
+                                        <p>Note: an analysis job <strong>can take multiple hours</strong>, depending on the size of the data and the complexity of the analysis. <strong>Maximum job run time is {!! secondsToTime($max_job_time_secs) !!}.</strong> Run time estimates are based on benchmarked worse case performance, analyses with small numbers of large repertoires may complete significantly faster.</p>
 
                                       </div>
                                 </div>
