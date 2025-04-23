@@ -246,6 +246,7 @@ class SequenceController extends Controller
         // Get information about all of the Apps for the AIRR "Rearrangement" object
         $tapis = new Tapis;
         $appTemplates = $tapis->getAppTemplates('Rearrangement');
+        $data['max_job_time_secs'] = $tapis->maxRunTimeMinutes() * 60;
         $app_list = [];
 
         // Store the normal job contorl parameters for the UI. The same parameters are used
@@ -290,7 +291,6 @@ class SequenceController extends Controller
             $app_ui_info['runnable'] = true;
             $app_ui_info['runnable_comment'] = '';
             $app_ui_info['required_time_secs'] = 0; // 0 implies unknown.
-            $app_ui_info['max_time_secs'] = $tapis->maxRunTimeMinutes() * 60;
 
             // Get the required memory depending on whether the App proceses data per
             // repertoire or in total
