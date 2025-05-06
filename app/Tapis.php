@@ -134,14 +134,22 @@ class Tapis
     {
         // Get the tapis admin token from the config and return it.
         $tapis_admin_token = config('services.tapis.tapis_admin_token');
-        return $tapis_admin_token;
+        if (strlen($tapis_admin_token) == 0) {
+            return null;
+        } else {
+            return $tapis_admin_token;
+        }
     }
 
     public static function getAnalysisToken()
     {
         // Get the tapis user token from the config and return it.
         $tapis_user_token = config('services.tapis.tapis_user_token');
-        return $tapis_user_token;
+        if (strlen($tapis_user_token) == 0) {
+            return null;
+        } else {
+            return $tapis_user_token;
+        }
     }
 
     public function updateAppTemplates()
