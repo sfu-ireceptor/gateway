@@ -18,7 +18,6 @@ class Tapis
     private $coresPerNode;
     private $memoryMBPerNode;
     private $memoryMBPerCore;
-    public static $analysisTokenData = null;
 
     public function __construct()
     {
@@ -37,7 +36,7 @@ class Tapis
         // Amount of memory per processor (in MB)
         $this->memoryMBPerCore = intval(config('services.tapis.system_execution.memory_per_core'));
 
-        // Set up the default job contorl parameters used by TAPIS
+        // Set up the default job control parameters used by TAPIS
         $this->jobParameters = [];
         // Run time parameter
         $job_parameter = [];
@@ -100,7 +99,7 @@ class Tapis
         $password = config('services.tapis.analysis_password');
 
         // try to get token
-        $t = self::getTokenForUser($username, $password);
+        $t = $this->listSystems();
 
         return $t != null;
     }
@@ -133,86 +132,16 @@ class Tapis
 
     public function getAdminToken()
     {
-        // admin user allowed to create user accounts
-        $username = config('services.tapis.admin_username');
-        $password = config('services.tapis.admin_password');
-        $t = self::getTokenForUser($username, $password);
-
-        return $t->access_token;
+        // Get the tapis admin token from the config and return it.
+        $tapis_admin_token = config('services.tapis.tapis_admin_token');
+        return $tapis_admin_token;
     }
 
     public static function getAnalysisToken()
     {
-        // Renew the token. This actually does nothing if the token doesn't
-        // need to be renewed
-        //Log::debug('Tapis::getAnalysisToken: renewing');
-        self::renewToken();
-
-        // If we have an analsis token, return the access token. If not
-        // then something went wrong in the renewal so we return null.
-        //Log::debug('Tapis::getAnalysisToken: returning');
-        if (self::$analysisTokenData != null) {
-            return self::$analysisTokenData->access_token;
-        } else {
-            return null;
-        }
-    }
-
-    /* Stores a token object as per that provide by Tapis 3, which looks like this:
-    ** {"access_token":"JWT TOKEN INFO DELETED","expires_at":"2023-03-25T21:13:31.081319+00:00",
-    **  "expires_in":14400,"jti":"38a395a2-7496-4349-89ef-afff5c5f69ad"}
-    */
-    public static function renewToken()
-    {
-        // Check to see if we are close to token expiry
-        // Expiry threshold is 30 minutes
-        $expiry_threshold_min = 30;
-        $now = Carbon::now();
-        $expiry_threshold = Carbon::now()->addMinutes($expiry_threshold_min);
-        //Log::debug('Tapis::renewToken: now = ' . $now);
-        //Log::debug('Tapis::renewToken: expiry threshold = ' . $expiry_threshold);
-        if (self::$analysisTokenData != null) {
-            //Log::debug('Tapis::renewToken: token expiration = ' . self::$analysisTokenData->expires_at);
-        } else {
-            //Log::debug('Tapis::renewToken: token is null');
-        }
-
-        // If we are not close to expiry (within threshold), just return the
-        // current token.
-        if (self::$analysisTokenData != null &&
-            self::$analysisTokenData->expires_at != null &&
-            Carbon::parse(self::$analysisTokenData->expires_at)->gt($expiry_threshold)) {
-            //Log::debug('Tapis::renewToken: token expiration = ' . self::$analysisTokenData->expires_at);
-            Log::debug('Tapis::renewToken: No refresh required');
-
-            return;
-        }
-
-        // If we get here we need to renew the token as we are getting close to expiry
-        // Get the analysis username and password.
-        $analysisUser = config('services.tapis.analysis_username');
-        $password = config('services.tapis.analysis_password');
-        //Log::debug('Tapis::renewToken - analysis user = ' . $analysisUser);
-
-        $tokendata = self::getTokenForUser($analysisUser, $password);
-        if ($tokendata != null && isset($tokendata->access_token)) {
-            //Log::debug('Tapis::renewToken: token data = ' . json_encode($tokendata));
-            self::$analysisTokenData = $tokendata;
-            //Log::debug('Tapis::renewToken - setting token');
-            Log::debug('Tapis::renewToken: New token expiration = ' . self::$analysisTokenData->expires_at);
-            if (Carbon::parse(self::$analysisTokenData->expires_at)->gt($expiry_threshold)) {
-                //Log::debug('Tapis::renewToken: New token expires after threshold!!!');
-            }
-        } else {
-            Log::debug('Tapis::renewToken - Could not generate Analysis Token for ' . $analysisUser);
-            self::$analysisTokenData = null;
-        }
-
-        if (self::$analysisTokenData != null) {
-            //Log::debug('Tapis::renewToken: Final token expiration = ' . self::$analysisTokenData->expires_at);
-        } else {
-            //Log::debug('Tapis::renewToken: Final token is null');
-        }
+        // Get the tapis user token from the config and return it.
+        $tapis_user_token = config('services.tapis.tapis_user_token');
+        return $tapis_user_token;
     }
 
     public function updateAppTemplates()
