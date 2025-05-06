@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Carbon\Carbon;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\Log;
 use phpseclib\Crypt\RSA;
@@ -134,6 +133,7 @@ class Tapis
     {
         // Get the tapis admin token from the config and return it.
         $tapis_admin_token = config('services.tapis.tapis_admin_token');
+
         return $tapis_admin_token;
     }
 
@@ -141,6 +141,7 @@ class Tapis
     {
         // Get the tapis user token from the config and return it.
         $tapis_user_token = config('services.tapis.tapis_user_token');
+
         return $tapis_user_token;
     }
 
