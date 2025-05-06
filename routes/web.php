@@ -50,6 +50,9 @@ Route::get('/samples/stats/{rest_service_id}/{repertoire_id}/{stat}', 'SampleCon
 */
 
 Route::middleware('auth')->group(function () {
+    // Test controller for testing functionality - should not be used in production.
+    //Route::get('/test', 'TestController@getIndex');
+
     Route::get('/home', 'HomeController@index')->name('home');
 
     Route::get('/samples/json', 'SampleController@json')->name('samples-json')->middleware('log_query');
