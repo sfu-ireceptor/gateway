@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Carbon\Carbon;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\Log;
 use phpseclib\Crypt\RSA;
