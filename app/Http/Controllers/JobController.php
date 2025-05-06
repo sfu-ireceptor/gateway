@@ -38,7 +38,8 @@ class JobController extends Controller
             return;
         }
 
-        Log::debug('JobController::getJobData: job = ' . json_encode($job, JSON_PRETTY_PRINT));
+        //Log::debug('JobController::getJobData: job = ' . json_encode($job, JSON_PRETTY_PRINT));
+        Log::debug('JobController::getJobData: status = ' . $job->agave_status);
         $data = [];
 
         // These variables are used to update the state of the web page. They
