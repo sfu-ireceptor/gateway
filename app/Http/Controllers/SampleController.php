@@ -7,6 +7,7 @@ use App\FieldName;
 use App\Query;
 use App\QueryLog;
 use App\RestService;
+use App\RestServiceGroup;
 use App\Sample;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -382,14 +383,21 @@ class SampleController extends Controller
         $data['nb_samples_with_clones'] = $sample_data['nb_samples_with_clones'];
         $data['nb_samples_with_cells'] = $sample_data['nb_samples_with_cells'];
 
-        // list of repositories that didn't respond
+        // List of repositories that didn't respond. Note we list repository group not
+        // individual repositories here.
         $rs_list_no_response = $sample_data['rs_list_no_response'];
         $rs_list_no_response_names = [];
         foreach ($rs_list_no_response as $rs) {
-            $rs_list_no_response_names[] = $rs->name;
+            // If the service has a group, get the group name, otherwise use repository name.
+            if ($rs->rest_service_group_code == null) {
+                $name = $rs->name;
+            } else {
+                $name = RestServiceGroup::nameForCode($rs->rest_service_group_code);
+            }
+            $rs_list_no_response_names[] = $name;
         }
         if (! empty($rs_list_no_response_names)) {
-            $data['rs_list_no_response_str'] = 'No response was received from <strong>' . implode(', ', $rs_list_no_response_names) . '</strong>.';
+            $data['rs_list_no_response_str'] = 'Incomplete response was received from <strong>' . implode(', ', $rs_list_no_response_names) . '</strong>.';
         } else {
             $data['rs_list_no_response_str'] = '';
         }
