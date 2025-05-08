@@ -35,29 +35,9 @@ class TestController extends Controller
         // Generate password
         // echo Hash::make('foobar');die();
 
-        /*
-        $token = Tapis::getAnalysisToken();
-        if ($token != null) {
-            echo 'Token generated successfully';
-        } else {
-            echo 'ERROR: Token not generated successfully';
-        }
-        Tapis::renewToken();
-        Tapis::renewToken();
-        Tapis::renewToken();
-        echo 'getAnalyisToken()';
-        $token = Tapis::getAnalysisToken();
-        Tapis::renewToken();
-        Tapis::renewToken();
-        echo 'new Tapis';
-        $tapis = new Tapis;
-        Tapis::renewToken();
-        Tapis::renewToken();
-        exit;
-         */
-
         // Test Tapis
         $tapis = new Tapis;
+        $tapis->isUp();
 
         $systems = $tapis->listSystems();
         echo '<p>';

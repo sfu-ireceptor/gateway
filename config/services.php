@@ -43,6 +43,9 @@ return [
         'api_key' => env('TAPIS_API_KEY'),
         'api_token' => env('TAPIS_API_TOKEN'),
 
+        'tapis_user_token' => env('TAPIS_USER_TOKEN'),
+        'tapis_admin_token' => env('TAPIS_ADMIN_TOKEN'),
+
         'admin_username' => env('TAPIS_ADMIN_USERNAME', 'irec_admin'),
         'admin_password' => env('TAPIS_ADMIN_PASSWORD'),
 

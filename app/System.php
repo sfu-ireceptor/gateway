@@ -50,7 +50,7 @@ class System extends Model
         $config = $tapis->getExecutionSystemConfig($systemExecutionName, $defaultExecutionSystemHost,
             $defaultExecutionSystemPort, $defaultExecutionSystemUsername);
         $sysResponse = $tapis->getSystem($systemExecutionName);
-        if ($sysResponse->status == 'success') {
+        if ($sysResponse != null && property_exists($sysResponse, 'status') && $sysResponse->status == 'success') {
             $response = $tapis->updateSystem($systemExecutionName, $config);
             $tapis->raiseExceptionIfTapisError($response);
             Log::info('System::createDefaulySystemForUser - system updated: ' . $systemExecutionName);
