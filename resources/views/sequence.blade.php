@@ -367,7 +367,6 @@
                                                     <span title="{{ $s->{$field['ir_id']} }}">
                                                         @if( explode(':', $s->{$field['ir_id']})[0] == 'NCBITaxon')
                                                            <a href="http://purl.obolibrary.org/obo/NCBITaxon_{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ $s->{$field['ir_id']} }}</a> 
-{{ json_encode($s) }}
 
                                                         @else
                                                             {{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
