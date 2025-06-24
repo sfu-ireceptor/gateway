@@ -861,14 +861,17 @@ class RestService extends Model
         foreach ($repertoire_id_list_by_rs as $rs_id => $repertoire_id_list) {
             $service_filters = $filters;
 
-            // force all repertoire ids to string
-            foreach ($repertoire_id_list as $k => $v) {
-                $repertoire_id_list[$k] = (string) $v;
+            if ($repertoire_id_list != null) {
+                // force all repertoire ids to string
+                foreach ($repertoire_id_list as $k => $v) {
+                    $repertoire_id_list[$k] = (string) $v;
+                }
+
+                // add to JSON query
+                $service_filters['repertoire_id'] = $repertoire_id_list;
             }
 
-            // generate JSON query
-            $service_filters['repertoire_id'] = $repertoire_id_list;
-
+            // add the facet field
             $query_parameters = [];
             $query_parameters['facets'] = $field;
 
