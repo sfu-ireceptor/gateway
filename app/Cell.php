@@ -88,9 +88,9 @@ class Cell
         //Log::debug('Cell::summary - filters = ' . json_encode($filters));
 
         // If there were filters add the cell_id_cell filter. This may have
-        // data or may be empty, but that is fine. 
+        // data or may be empty, but that is fine.
         // If there are no filters then we of course don't add any special
-        // cell_id filters as there are none to add. 
+        // cell_id filters as there are none to add.
         $cell_list = [];
         $response_list = [];
         $response_list_cells_summary = [];
@@ -208,27 +208,26 @@ class Cell
         unset($filters['v_call_rearrangement']);
         unset($filters['j_call_rearrangement']);
              */
-            if ($value != null)
-            {
+            if ($value != null) {
                 if ($key == 'cell_id_cell' ||
                     $key == 'expression_study_method_cell' ||
                     $key == 'virtual_pairing_cell') {
                     $cell_filters[$key] = $value;
-                    Log::debug('Cell::getCellObjectFilters - Cell filter '.$key.'='.json_encode($value));
-                } elseif ($key == 'property_expression' || 
+                    Log::debug('Cell::getCellObjectFilters - Cell filter ' . $key . '=' . json_encode($value));
+                } elseif ($key == 'property_expression' ||
                     $key == 'value_expression') {
                     $expression_filters[$key] = $value;
-                    Log::debug('Cell::getCellObjectFilters - Expression filter '.$key.'='.json_encode($value));
-                } elseif ($key == 'antigen_reactivity' || 
+                    Log::debug('Cell::getCellObjectFilters - Expression filter ' . $key . '=' . json_encode($value));
+                } elseif ($key == 'antigen_reactivity' ||
                     $key == 'antigen_source_species_reactivity' ||
                     $key == 'peptide_sequence_aa_reactivity') {
                     $reactivity_filters[$key] = $value;
-                    Log::debug('Cell::getCellObjectFilters - Reactivity filter '.$key.'='.json_encode($value));
+                    Log::debug('Cell::getCellObjectFilters - Reactivity filter ' . $key . '=' . json_encode($value));
                 } elseif ($key == 'junction_aa' ||
                     $key == 'v_call' ||
                     $key == 'j_call') {
                     $rearrangement_filters[$key] = $value;
-                    Log::debug('Cell::getCellObjectFilters - Rearrangement filter '.$key.'='.json_encode($value));
+                    Log::debug('Cell::getCellObjectFilters - Rearrangement filter ' . $key . '=' . json_encode($value));
                 }
             }
 
@@ -250,7 +249,7 @@ class Cell
                     } elseif ($filter_type == 'rearrangement' && $value != null) {
                         $rearrangement_filters[$key] = $value;
                         Log::debug('Cell::getCellObjectFilters - ' . $filter_type .' '.$key.'='.json_encode($value));
-                    } 
+                    }
                 }
             }
              */
@@ -317,16 +316,16 @@ class Cell
             foreach ($service_repertoire_list as $rs_id => $repertoire_id_list) {
                 $empty_repertoire_list[$rs_id] = null;
             }
-            #$rearrangement_repertoire_list = RestService::object_list('sequence',
-            #    $empty_repertoire_list,
-            #    $rearrangement_filters, 'repertoire_id');
-            #Log::debug('Cell::getCellIDByRS - rearrangement repertoires ' . json_encode($rearrangement_repertoire_list));
-            #$rearrangement_repertoire_list = getRepertoires($rearrangement_filters);
-            #$rearrangement_cell_ids_by_rs = RestService::object_list('sequence', $service_repertoire_list,
-            #    $rearrangement_filters, 'cell_id');
-            #$rearrangement_cell_ids_by_rs = RestService::object_list('sequence',
-            #    $rearrangement_repertoire_list,
-            #    $rearrangement_filters, 'cell_id');
+            //$rearrangement_repertoire_list = RestService::object_list('sequence',
+            //    $empty_repertoire_list,
+            //    $rearrangement_filters, 'repertoire_id');
+            //Log::debug('Cell::getCellIDByRS - rearrangement repertoires ' . json_encode($rearrangement_repertoire_list));
+            //$rearrangement_repertoire_list = getRepertoires($rearrangement_filters);
+            //$rearrangement_cell_ids_by_rs = RestService::object_list('sequence', $service_repertoire_list,
+            //    $rearrangement_filters, 'cell_id');
+            //$rearrangement_cell_ids_by_rs = RestService::object_list('sequence',
+            //    $rearrangement_repertoire_list,
+            //    $rearrangement_filters, 'cell_id');
             $rearrangement_cell_ids_by_rs = RestService::object_list('sequence',
                 $empty_repertoire_list,
                 $rearrangement_filters, 'cell_id');

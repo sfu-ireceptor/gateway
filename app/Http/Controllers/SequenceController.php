@@ -80,13 +80,12 @@ class SequenceController extends Controller
         $data['sequence_list'] = $sequence_data['items'];
         foreach ($data['sequence_list'] as $sequence) {
             if (property_exists($sequence, 'ir_epitope_ref')) {
-                $sequence->ir_epitope_ref_display = self::getIEDBEpitope($sequence->ir_epitope_ref); 
+                $sequence->ir_epitope_ref_display = self::getIEDBEpitope($sequence->ir_epitope_ref);
             }
             if (property_exists($sequence, 'ir_antigen_ref')) {
-                $sequence->ir_antigen_ref_display = self::getAntigen($sequence->ir_antigen_ref); 
+                $sequence->ir_antigen_ref_display = self::getAntigen($sequence->ir_antigen_ref);
             }
         }
-
 
         // Fields we want to graph. The UI/blade expects six fields
         $charts_fields = ['study_title', 'subject_id', 'sample_id', 'disease_diagnosis_id', 'tissue_id', 'pcr_target_locus'];
@@ -674,7 +673,8 @@ class SequenceController extends Controller
         return view('sequenceQuickSearch', $data);
     }
 
-    public function getAntigen($antigen_id) {
+    public function getAntigen($antigen_id)
+    {
         $data = [];
         $antigen_str = null;
 
@@ -690,7 +690,6 @@ class SequenceController extends Controller
             $body = $response->getBody();
             $t = json_decode($body);
             if (property_exists($t, 'results')) {
-
                 // For each return element
                 foreach ($t as $antigen_data) {
                     if (strlen($epitope_str) == 0) {
@@ -709,7 +708,8 @@ class SequenceController extends Controller
         return $antigen_str;
     }
 
-    public function getIEDBEpitope($epitope_id) {
+    public function getIEDBEpitope($epitope_id)
+    {
         $data = [];
         $epitope_str = null;
 
