@@ -46,8 +46,10 @@ class Cell
         $all_cell_ids = [];
         $num_filters = count($object_filters['cell']) +
             count($object_filters['expression']) +
-            count($object_filters['reactivity']);
+            count($object_filters['reactivity']) +
+            count($object_filters['rearrangement']);
         Log::debug('Cell:summary - Getting Cell IDs, number of filters = ' . $num_filters);
+        Log::debug('Cell:summary - filters = ' . json_encode($object_filters));
 
         // If we don't have any filters, then we want all cells - which is the
         // equivalent of searching with no cell id filters.
@@ -56,12 +58,14 @@ class Cell
             $cell_ids_by_rs = Cell::getCellIDByRS($service_repertoire_list,
                 $object_filters['cell'],
                 $object_filters['expression'],
-                $object_filters['reactivity']);
+                $object_filters['reactivity'],
+                $object_filters['rearrangement']);
 
             // Because cell IDs are globally unique, they can be searched for across
             // repositories without conflict. So we combine them
             foreach ($cell_ids_by_rs as $rs => $rs_cell_id_array) {
                 $all_cell_ids = array_merge($all_cell_ids, $rs_cell_id_array);
+                Log::debug('Cell:summary - ' . count($rs_cell_id_array));
             }
         }
         Log::debug('Cell:summary - Number of Cell IDs = ' . count($all_cell_ids));
@@ -69,6 +73,7 @@ class Cell
         // Remove the cell specific filter fields from the UI.
         // TODO: This may be unnecessary, we should be able to just create
         // a clean new filter list.
+        //Log::debug('Cell::summary - filters = ' . json_encode($filters));
         unset($filters['cell_id_cell']);
         unset($filters['expression_study_method_cell']);
         unset($filters['virtual_pairing_cell']);
@@ -77,14 +82,19 @@ class Cell
         unset($filters['antigen_reactivity']);
         unset($filters['antigen_source_species_reactivity']);
         unset($filters['peptide_sequence_aa_reactivity']);
+        unset($filters['junction_aa']);
+        unset($filters['v_call']);
+        unset($filters['j_call']);
+        //Log::debug('Cell::summary - filters = ' . json_encode($filters));
 
-        // If there were filters, and there are no cell ids, then we didn't
-        // find anything that matched our criteria so there are no results.
-        // If there are results (filters need to be applied) and we have some
-        // cell_ids then we process the data.
+        // If there were filters add the cell_id_cell filter. This may have
+        // data or may be empty, but that is fine. 
+        // If there are no filters then we of course don't add any special
+        // cell_id filters as there are none to add. 
+        $cell_list = [];
         $response_list = [];
         $response_list_cells_summary = [];
-        if ($num_filters > 0 && count($all_cell_ids) > 0) {
+        if ($num_filters > 0) {
             // If there are cell ID filters, set them.
             $filters['cell_id_cell'] = $all_cell_ids;
         }
@@ -99,7 +109,6 @@ class Cell
         $data = self::process_response($response_list_cells_summary);
 
         // Merge responses into a single list of Cells
-        $cell_list = [];
         foreach ($response_list as $response) {
             $rs = $response['rs'];
 
@@ -139,11 +148,13 @@ class Cell
         $data['rs_list_no_response_timeout'] = [];
         $data['rs_list_no_response_error'] = [];
 
-        foreach ($data['rs_list_no_response'] as $rs) {
-            if ($rs->error_type == 'timeout') {
-                $data['rs_list_no_response_timeout'][] = $rs;
-            } else {
-                $data['rs_list_no_response_error'][] = $rs;
+        if (array_key_exists('rs_list_no_response', $data)) {
+            foreach ($data['rs_list_no_response'] as $rs) {
+                if ($rs->error_type == 'timeout') {
+                    $data['rs_list_no_response_timeout'][] = $rs;
+                } else {
+                    $data['rs_list_no_response_error'][] = $rs;
+                }
             }
         }
 
@@ -180,24 +191,73 @@ class Cell
         $cell_filters = [];
         $expression_filters = [];
         $reactivity_filters = [];
+        $rearrangement_filters = [];
         foreach ($filters as $key => $value) {
             // Each key has the filter type encoded in the name after the last "_", as in
             // virtual_pairing_cell is a virtual_pairing filter of type cell
+            /*
+        unset($filters['cell_id_cell']);
+        unset($filters['expression_study_method_cell']);
+        unset($filters['virtual_pairing_cell']);
+        unset($filters['property_expression']);
+        unset($filters['value_expression']);
+        unset($filters['antigen_reactivity']);
+        unset($filters['antigen_source_species_reactivity']);
+        unset($filters['peptide_sequence_aa_reactivity']);
+        unset($filters['junction_aa_rearrangement']);
+        unset($filters['v_call_rearrangement']);
+        unset($filters['j_call_rearrangement']);
+             */
+            if ($value != null)
+            {
+                if ($key == 'cell_id_cell' ||
+                    $key == 'expression_study_method_cell' ||
+                    $key == 'virtual_pairing_cell') {
+                    $cell_filters[$key] = $value;
+                    Log::debug('Cell::getCellObjectFilters - Cell filter '.$key.'='.json_encode($value));
+                } elseif ($key == 'property_expression' || 
+                    $key == 'value_expression') {
+                    $expression_filters[$key] = $value;
+                    Log::debug('Cell::getCellObjectFilters - Expression filter '.$key.'='.json_encode($value));
+                } elseif ($key == 'antigen_reactivity' || 
+                    $key == 'antigen_source_species_reactivity' ||
+                    $key == 'peptide_sequence_aa_reactivity') {
+                    $reactivity_filters[$key] = $value;
+                    Log::debug('Cell::getCellObjectFilters - Reactivity filter '.$key.'='.json_encode($value));
+                } elseif ($key == 'junction_aa' ||
+                    $key == 'v_call' ||
+                    $key == 'j_call') {
+                    $rearrangement_filters[$key] = $value;
+                    Log::debug('Cell::getCellObjectFilters - Rearrangement filter '.$key.'='.json_encode($value));
+                }
+            }
+
+            /*
             $sep_location = strrpos($key, '_');
             // For each type of filter, add it to the filter list
             if ($sep_location !== false) {
                 $filter_type = substr($key, $sep_location + 1);
-                if ($filter_type == 'cell' && $value != null) {
-                    $cell_filters[$key] = $value;
-                } elseif ($filter_type == 'expression' && $value != null) {
-                    $expression_filters[$key] = $value;
-                } elseif ($filter_type == 'reactivity' && $value != null) {
-                    $reactivity_filters[$key] = $value;
+                if ($value != null) {
+                    if ($filter_type == 'cell' && $value != null) {
+                        $cell_filters[$key] = $value;
+                        Log::debug('Cell::getCellObjectFilters - ' . $filter_type .' '.$key.'='.json_encode($value));
+                    } elseif ($filter_type == 'expression' && $value != null) {
+                        $expression_filters[$key] = $value;
+                        Log::debug('Cell::getCellObjectFilters - ' . $filter_type .' '.$key.'='.json_encode($value));
+                    } elseif ($filter_type == 'reactivity' && $value != null) {
+                        $reactivity_filters[$key] = $value;
+                        Log::debug('Cell::getCellObjectFilters - ' . $filter_type .' '.$key.'='.json_encode($value));
+                    } elseif ($filter_type == 'rearrangement' && $value != null) {
+                        $rearrangement_filters[$key] = $value;
+                        Log::debug('Cell::getCellObjectFilters - ' . $filter_type .' '.$key.'='.json_encode($value));
+                    } 
                 }
             }
+             */
         }
         // Create an associative array for each type of filter.
         $object_filters = [];
+        $object_filters['rearrangement'] = $rearrangement_filters;
         $object_filters['reactivity'] = $reactivity_filters;
         $object_filters['expression'] = $expression_filters;
         $object_filters['cell'] = $cell_filters;
@@ -206,13 +266,14 @@ class Cell
     }
 
     public static function getCellIDByRS($service_repertoire_list, $cell_filters,
-        $expression_filters, $reactivity_filters)
+        $expression_filters, $reactivity_filters, $rearrangement_filters)
     {
         // Create arrays of cell ids (keyed by service id) that are retrieved from
         // each of the cell, expression, and reactivity filters.
         $cell_ids_by_rs = [];
         $expression_cell_ids_by_rs = [];
         $reactivity_cell_ids_by_rs = [];
+        $rearrangement_cell_ids_by_rs = [];
 
         // Get the initial set of cell ids from the cell filters.
         $cell_ids_by_rs = RestService::object_list('cell', $service_repertoire_list, $cell_filters, 'cell_id');
@@ -243,6 +304,39 @@ class Cell
                 if (array_key_exists($rs, $cell_ids_by_rs)) {
                     $cell_ids_by_rs[$rs] = array_intersect($cell_ids_by_rs[$rs],
                         $reactivity_cell_ids_by_rs[$rs]);
+                }
+            }
+        }
+
+        // If we have rearrangement filters apply them, get the list of cells, and
+        // intersect them with the current list.
+        if (count($rearrangement_filters) > 0) {
+            Log::debug('Cell::getCellIDByRS - cell repertoires ' . json_encode($service_repertoire_list));
+
+            $empty_repertoire_list = $service_repertoire_list;
+            foreach ($service_repertoire_list as $rs_id => $repertoire_id_list) {
+                $empty_repertoire_list[$rs_id] = null;
+            }
+            #$rearrangement_repertoire_list = RestService::object_list('sequence',
+            #    $empty_repertoire_list,
+            #    $rearrangement_filters, 'repertoire_id');
+            #Log::debug('Cell::getCellIDByRS - rearrangement repertoires ' . json_encode($rearrangement_repertoire_list));
+            #$rearrangement_repertoire_list = getRepertoires($rearrangement_filters);
+            #$rearrangement_cell_ids_by_rs = RestService::object_list('sequence', $service_repertoire_list,
+            #    $rearrangement_filters, 'cell_id');
+            #$rearrangement_cell_ids_by_rs = RestService::object_list('sequence',
+            #    $rearrangement_repertoire_list,
+            #    $rearrangement_filters, 'cell_id');
+            $rearrangement_cell_ids_by_rs = RestService::object_list('sequence',
+                $empty_repertoire_list,
+                $rearrangement_filters, 'cell_id');
+            Log::debug('Cell::getCellIDByRS - rearrangement cell_ids ' . json_encode($rearrangement_cell_ids_by_rs));
+            // We need to loop over each service and merge cell_ids per service
+            foreach ($rearrangement_cell_ids_by_rs as $rs => $cell_array) {
+                // If this service already has data, intersect, otherwise just add
+                if (array_key_exists($rs, $cell_ids_by_rs)) {
+                    $cell_ids_by_rs[$rs] = array_intersect($cell_ids_by_rs[$rs],
+                        $rearrangement_cell_ids_by_rs[$rs]);
                 }
             }
         }
@@ -326,8 +420,10 @@ class Cell
         $all_cell_ids = [];
         $num_filters = count($object_filters['cell']) +
             count($object_filters['expression']) +
-            count($object_filters['reactivity']);
+            count($object_filters['reactivity']) +
+            count($object_filters['rearrangement']);
         Log::debug('Cell:cellsTSVFolder - Getting Cell IDs, number of filters = ' . $num_filters);
+        //Log::debug('Cell:cellsTSVFolder - filters = ' . json_encode($object_filters));
 
         // If we don't have any filters, then we want all cells - which is the
         // equivalent of searching with no cell id filters.
@@ -335,7 +431,8 @@ class Cell
         $cell_ids_by_rs = Cell::getCellIDByRS($service_repertoire_list,
             $object_filters['cell'],
             $object_filters['expression'],
-            $object_filters['reactivity']);
+            $object_filters['reactivity'],
+            $object_filters['rearrangement']);
 
         // Because cell IDs are globally unique, they can be searched for across
         // repositories without conflict. So we combine them
@@ -354,6 +451,9 @@ class Cell
         unset($filters['antigen_reactivity']);
         unset($filters['antigen_source_species_reactivity']);
         unset($filters['peptide_sequence_aa_reactivity']);
+        unset($filters['junction_aa']);
+        unset($filters['v_call']);
+        unset($filters['j_call']);
 
         // If there were filters, and there are no cell ids, then we didn't
         // find anything that matched our criteria so there are no results.
