@@ -78,6 +78,15 @@ class SequenceController extends Controller
         $metadata = Sample::metadata($username);
 
         $data['sequence_list'] = $sequence_data['items'];
+        foreach ($data['sequence_list'] as $sequence) {
+            if (property_exists($sequence, 'ir_epitope_ref')) {
+                $sequence->ir_epitope_ref_display = self::getIEDBEpitope($sequence->ir_epitope_ref); 
+            }
+            if (property_exists($sequence, 'ir_antigen_ref')) {
+                $sequence->ir_antigen_ref_display = self::getAntigen($sequence->ir_antigen_ref); 
+            }
+        }
+
 
         // Fields we want to graph. The UI/blade expects six fields
         $charts_fields = ['study_title', 'subject_id', 'sample_id', 'disease_diagnosis_id', 'tissue_id', 'pcr_target_locus'];
@@ -663,6 +672,73 @@ class SequenceController extends Controller
 
         // display view
         return view('sequenceQuickSearch', $data);
+    }
+
+    public function getAntigen($antigen_id) {
+        $data = [];
+        $antigen_str = null;
+
+        try {
+            $defaults = [];
+            $defaults['base_uri'] = 'https://rest.uniprot.org/uniprotkb/';
+            $defaults['verify'] = false;    // accept self-signed SSL certificates
+
+            $antigen_value = explode(':', $antigen_id)[1];
+            $client = new \GuzzleHttp\Client($defaults);
+            $query = 'search?query=accession:' . $antigen_value;
+            $response = $client->get($query);
+            $body = $response->getBody();
+            $t = json_decode($body);
+            if (property_exists($t, 'results')) {
+
+                // For each return element
+                foreach ($t as $antigen_data) {
+                    if (strlen($epitope_str) == 0) {
+                        $antigen_str = $antigen_data->proteinDescription->recommendedName->fullName->value;
+                    } else {
+                        $antigen_str = $antigen_str . ',' . $antigen_data->proteinDescription->recommendedName->fullName->value;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            $error_message = $e->getMessage();
+            Log::error('Request failed: ' . $error_message);
+            $antigen_str = null;
+        }
+
+        return $antigen_str;
+    }
+
+    public function getIEDBEpitope($epitope_id) {
+        $data = [];
+        $epitope_str = null;
+
+        try {
+            $defaults = [];
+            $defaults['base_uri'] = 'https://query-api.iedb.org/';
+            $defaults['verify'] = false;    // accept self-signed SSL certificates
+
+            $client = new \GuzzleHttp\Client($defaults);
+            $query = 'epitope_search?structure_iri=eq.' . $epitope_id;
+            $response = $client->get($query);
+            $body = $response->getBody();
+            $t = json_decode($body);
+
+            // For each return element
+            foreach ($t as $iedb_epitope_data) {
+                if (strlen($epitope_str) == 0) {
+                    $epitope_str = $iedb_epitope_data->linear_sequence;
+                } else {
+                    $epitope_str = $epitope_str . ',' . $iedb_epitope_data->linear_sequence;
+                }
+            }
+        } catch (\Exception $e) {
+            $error_message = $e->getMessage();
+            Log::error('IEDB request failed: ' . $error_message);
+            $epitope_str = null;
+        }
+
+        return $epitope_str;
     }
 
     public function getIEDBInfo($val)
