@@ -137,6 +137,22 @@
                                     {{ Form::label('productive', __('short.productive')) }}
                                     {{ Form::select('productive', $functional_list, '', array('class' => 'form-control')) }}
                                 </div>
+                                <div class="form-group">
+                                    {{ Form::label('ir_epitope_ref', __('short.ir_epitope_ref')) }}
+                                    {{ Form::text('ir_epitope_ref', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match, IEDB CURIE required', 'data-placement' => 'bottom')) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ Form::label('ir_antigen_ref', __('short.ir_antigen_ref')) }}
+                                    {{ Form::text('ir_antigen_ref', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match, IEDB CURIE required', 'data-placement' => 'bottom')) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ Form::label('ir_species_ref', __('short.ir_species_ref')) }}
+                                    {{ Form::text('ir_species_ref', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match, IEDB CURIE required', 'data-placement' => 'bottom')) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ Form::label('reactivity_ref_rearrangement', __('short.reactivity_ref_rearrangement')) }}
+                                    {{ Form::text('reactivity_ref_rearrangement', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match, IEDB CURIE required', 'data-placement' => 'bottom')) }}
+                                </div>
                                 <p class="button_container">
                                     {{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
                                 </p>
@@ -170,7 +186,7 @@
                             <p>An unexpected error occurred when querying the following repositories:</p>
                             <ul>
                                 @foreach ($rest_service_list_no_response_error as $rs)
-                                        <li>{{ $rs->display_name }}</li>
+                                        <li>{{ $rs->name }}</li>
                                 @endforeach
                             </ul>
                             <p>Please try again later.</p>
@@ -343,9 +359,45 @@
                                             @isset($s->{$field['ir_id']})
                                                 @if($field['ir_id'] == 'functional')
                                                     {{ $s->functional ? 'Yes' : 'No' }}
-                                                @elseif($field['ir_id'] == 'v_call' || $field['ir_id'] == 'v_call' || $field['ir_id'] == 'd_call' )
+                                                @elseif($field['ir_id'] == 'v_call' || $field['ir_id'] == 'j_call' || $field['ir_id'] == 'd_call' )
                                                     <span title="{{ $s->{$field['ir_id']} }}">
                                                         {{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
+                                                    </span>
+                                                @elseif($field['ir_id'] == 'ir_species_ref' )
+                                                    <span title="{{ $s->{$field['ir_id']} }}">
+                                                        @if( explode(':', $s->{$field['ir_id']})[0] == 'NCBITaxon')
+                                                           <a href="http://purl.obolibrary.org/obo/NCBITaxon_{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ $s->{$field['ir_id']} }}</a> 
+{{ json_encode($s) }}
+
+                                                        @else
+                                                            {{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
+                                                        @endif
+                                                    </span>
+                                                @elseif($field['ir_id'] == 'ir_antigen_ref' )
+                                                    <span title="{{ $s->{$field['ir_id']} }}">
+                                                        @if( explode(':', $s->{$field['ir_id']})[0] == 'UNIPROT')
+                                                           <a href="https://www.uniprot.org/uniprotkb/{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ $s->{$field['ir_id']} }} {{ $s->ir_antigen_ref_display }}</a> 
+                                                        @elseif(explode(':', $s->{$field['ir_id']})[0] == 'NCBIPROTEIN')
+                                                           <a href="https://www.ncbi.nlm.nih.gov/protein/{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ $s->{$field['ir_id']} }}</a> 
+                                                        @else
+                                                            {{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
+                                                        @endif
+                                                    </span>
+                                                @elseif($field['ir_id'] == 'ir_epitope_ref' )
+                                                    <span title="{{ $s->{$field['ir_id']} }}">
+                                                        @if( explode(':', $s->{$field['ir_id']})[0] == 'IEDB_EPITOPE')
+                                                           <a href="https://iedb.org/epitope/{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ $s->ir_epitope_ref_display }}</a> 
+                                                        @else
+                                                            {{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
+                                                        @endif
+                                                    </span>
+                                                @elseif($field['ir_id'] == 'reactivity_ref_rearrangement' )
+                                                    <span title="{{ $s->{$field['ir_id']} }}">
+                                                        @if( explode(':', $s->{$field['ir_id']})[0] == 'IEDB_RECEPTOR')
+                                                           <a href="https://iedb.org/receptor/{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ $s->{$field['ir_id']} }}</a> 
+                                                        @else
+                                                            {{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
+                                                        @endif
                                                     </span>
                                                 @else
                                                     @if(is_object($s->{$field['ir_id']}))
