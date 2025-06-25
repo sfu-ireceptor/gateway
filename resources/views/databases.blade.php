@@ -76,6 +76,12 @@
 												Refresh cached <strong>cell</strong> counts
 											</a>
 										</li>
+										<li>
+											<a href="/admin/samples/update-epitopes/{{ $rs->id }}">
+												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+												Refresh cached <strong>epitopes</strong>
+											</a>
+										</li>
 										<li role="separator" class="divider"></li>
 										<li>
 											<a href="/admin/update-chunk-size/{{ $rs->id }}">

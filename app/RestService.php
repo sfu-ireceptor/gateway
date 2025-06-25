@@ -828,7 +828,10 @@ class RestService extends Model
         return $counts_by_rs;
     }
 
+    // $type: type of query to use (sequence/clone/cell)
     // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
+    // $filters: array of filters to use in the query
+    // $field: the field in the repository to get the counts for
     public static function object_list($type, $repertoire_id_list_by_rs, $filters = [], $field = '')
     {
         // Set up info that depends on the query type

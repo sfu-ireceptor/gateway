@@ -151,6 +151,7 @@ Route::middleware('auth')->group(function () {
         Route::get('samples/update-sequence_count/{rest_service_id}', 'AdminController@getUpdateSequenceCount');
         Route::get('samples/update-clone_count/{rest_service_id}', 'AdminController@getUpdateCloneCount');
         Route::get('samples/update-cell_count/{rest_service_id}', 'AdminController@getUpdateCellCount');
+        Route::get('samples/update-epitopes/{rest_service_id}', 'AdminController@getUpdateEpitopes');
         Route::get('field-names/{api_version?}', 'AdminController@getFieldNames');
         Route::get('queries', 'AdminController@queries');
         Route::get('downloads', 'AdminController@downloads');

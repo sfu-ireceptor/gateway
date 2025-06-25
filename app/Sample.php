@@ -172,6 +172,84 @@ class Sample
         }
     }
 
+    public static function cache_epitope_counts($username, $rest_service_id = null)
+    {
+        $response_list = RestService::samples([], $username, false, [$rest_service_id]);
+        foreach ($response_list as $i => $response) {
+            $rest_service_id = $response['rs']->id;
+            $sample_list = $response['data'];
+            // Get a list of repertoire_ids
+            $repertoire_list = [];
+            foreach ($sample_list as $sample) {
+                array_push($repertoire_list, $sample->repertoire_id);
+            }
+            //
+            // Get a list of unique ir_species_ref values.
+            $species_array = RestService::object_list('sequence', [$rest_service_id => $repertoire_list], [], 'ir_species_ref');
+            Log::debug('species array = ' . json_encode($species_array[$rest_service_id]));
+            foreach ($species_array[$rest_service_id] as $species_list) {
+                if ($species_list != null) {
+                    foreach ($species_list as $species_id) {
+                        Log::debug('species = ' . $species_id);
+                        $t = [];
+                        $t['species_id'] = $species_id;
+                        $t['species_name'] = 'test';
+                        $existing_species = Species::where('species_id', $species_id)->take(1)->get();
+                        Log::debug('existing species = ' . $existing_species);
+                        if (count($existing_species) == 0) {
+                            Species::create($t);
+                        }
+                    }
+                }
+            }
+            // Get a list of unique ir_antigen_ref values.
+            $antigen_array = RestService::object_list('sequence', [$rest_service_id => $repertoire_list], [], 'ir_antigen_ref');
+            Log::debug('antigen array = ' . json_encode($antigen_array[$rest_service_id]));
+            foreach ($antigen_array[$rest_service_id] as $antigen_list) {
+                if ($antigen_list != null) {
+                    foreach ($antigen_list as $antigen_id) {
+                        Log::debug('antigen = ' . $antigen_id);
+                        $t = [];
+                        $t['antigen_id'] = $antigen_id;
+                        $t['antigen_name'] = 'test';
+                        $existing_antigen = Antigens::where('antigen_id', $antigen_id)->take(1)->get();
+                        Log::debug('existing antigen = ' . $existing_antigen);
+                        if (count($existing_antigen) == 0) {
+                            Antigens::create($t);
+                        }
+                    }
+                }
+            }
+
+            $epitope_data = [];
+            /*
+            $total_cell_count = 0;
+            foreach ($sample_list as $sample) {
+                $sample_id = $sample->repertoire_id;
+                //$cell_count_array = RestService::cell_count([$rest_service_id => [$sample_id]], [], false);
+                $cell_count_array = RestService::object_count('cell', [$rest_service_id => [$sample_id]], [], false);
+                $cell_count = $cell_count_array[$rest_service_id]['samples'][$sample_id];
+                $t['cell_counts'][$sample_id] = $cell_count;
+                $total_cell_count += $cell_count;
+                Log::debug('Total cell count = ' . $total_cell_count);
+
+                // HACK: to avoid hitting throttling limits
+                sleep(1);
+            }
+             */
+
+
+            // cache total counts
+            /*
+            $rs = RestService::find($rest_service_id);
+            $rs->nb_samples = count($sample_list);
+            $rs->nb_cells = $total_cell_count;
+            $rs->last_cached = new Carbon('now');
+            $rs->save();
+             */
+        }
+    }
+
     public static function find_sample_id_list($filters, $username)
     {
         // get samples
