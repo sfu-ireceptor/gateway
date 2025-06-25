@@ -238,7 +238,6 @@ class Sample
             }
              */
 
-
             // cache total counts
             /*
             $rs = RestService::find($rest_service_id);
