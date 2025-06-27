@@ -177,7 +177,7 @@ class Sample
         Log::debug('Sample::cache_epitope_counts: Caching epitope data');
         // Get a list of samples for the rest service
         $response_list = RestService::samples([], $username, false, [$rest_service_id]);
-        // For each respsone, process it. 
+        // For each respsone, process it.
         foreach ($response_list as $i => $response) {
             $rest_service_id = $response['rs']->id;
             $sample_list = $response['data'];
@@ -186,7 +186,7 @@ class Sample
             foreach ($sample_list as $sample) {
                 array_push($repertoire_list, $sample->repertoire_id);
             }
-            
+
             // Get a list of unique ir_species_ref values for our service and its repertoires.
             $species_array = RestService::object_list('sequence', [$rest_service_id => $repertoire_list], [], 'ir_species_ref');
             // Loop over the species that we got for the service
@@ -217,7 +217,7 @@ class Sample
                             // Log a warning, as a changing name is suspicious.
                             if ($existing_species[0]['species_name'] != $t['species_name']) {
                                 Log::debug('Updating species = ' . $species_id);
-                                Log::warning('Species name for ' . $species_id . ' changing: '.$existing_species[0]['species_name'].' => '.$t['species_name']);
+                                Log::warning('Species name for ' . $species_id . ' changing: ' . $existing_species[0]['species_name'] . ' => ' . $t['species_name']);
                                 Species::where('_id', $existing_species[0]->_id)->update($t);
                             }
                         }
@@ -251,7 +251,7 @@ class Sample
                             // Log a warning, as a changing name is suspicious.
                             if ($existing_antigen[0]['antigen_name'] != $t['antigen_name']) {
                                 Log::debug('Updating antigen = ' . $antigen_id);
-                                Log::warning('Antigen name for ' . $antigen_id . ' changing: '.$existing_antigen[0]['antigen_name'].' => '.$t['antigen_name']);
+                                Log::warning('Antigen name for ' . $antigen_id . ' changing: ' . $existing_antigen[0]['antigen_name'] . ' => ' . $t['antigen_name']);
                                 Antigens::where('_id', $existing_antigen[0]->_id)->update($t);
                             }
                         }

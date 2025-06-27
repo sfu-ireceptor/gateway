@@ -11,7 +11,8 @@ class Species extends Model
     protected $collection = 'species';
     protected $guarded = [];
 
-    public static function lookup_species_name($species_id) {
+    public static function lookup_species_name($species_id)
+    {
         $species_name = '';
         try {
             $defaults = [];
@@ -39,5 +40,4 @@ class Species extends Model
 
         return $species_name;
     }
-
 }

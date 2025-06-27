@@ -2,9 +2,8 @@
 
 namespace App;
 
-use Jenssegers\Mongodb\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
-
+use Jenssegers\Mongodb\Eloquent\Model;
 
 class Antigens extends Model
 {
@@ -23,7 +22,7 @@ class Antigens extends Model
             if (count($antigen_array) == 2) {
                 $defaults['base_uri'] = 'https://rest.uniprot.org/uniprotkb/';
                 $client = new \GuzzleHttp\Client($defaults);
-                $response = $client->get($antigen_array[1].'.json');
+                $response = $client->get($antigen_array[1] . '.json');
                 $body = $response->getBody();
                 $t = json_decode($body);
                 // TODO: Check that these keys exist for object $t
@@ -37,5 +36,4 @@ class Antigens extends Model
 
         return $antigen_name;
     }
-
 }
