@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Antigens;
 use App\Bookmark;
 use App\Download;
 use App\FieldName;
 use App\QueryLog;
 use App\Sample;
 use App\Sequence;
+use App\Species;
 use App\System;
 use App\Tapis;
 use Facades\App\Query;
@@ -82,10 +84,34 @@ class SequenceController extends Controller
             if (property_exists($sequence, 'ir_epitope_ref')) {
                 $sequence->ir_epitope_ref_display = self::getIEDBEpitope($sequence->ir_epitope_ref);
             }
+            if (property_exists($sequence, 'ir_species_ref')) {
+                $sequence->ir_species_ref_display = self::getSpecies($sequence->ir_species_ref);
+            }
             if (property_exists($sequence, 'ir_antigen_ref')) {
                 $sequence->ir_antigen_ref_display = self::getAntigen($sequence->ir_antigen_ref);
             }
         }
+
+        // Get cached antigen data
+        $cached_antigens = Antigens::all();
+        // Build a list of the CURIE/Ontology info
+        $ir_antigen_ref_ontology_list = [];
+        foreach ($cached_antigens as $antigen){
+            $ir_antigen_ref_ontology_list[$antigen->antigen_id] =  $antigen->antigen_name . ' (' . $antigen->antigen_id . ')';
+        }
+        // Sort the array and store it.
+        asort($ir_antigen_ref_ontology_list);
+        $data['ir_antigen_ref_ontology_list'] = $ir_antigen_ref_ontology_list;
+      
+        // Get cached species data
+        $cached_species = Species::all();
+        // Build a list of the CURIE/Ontology info
+        $ir_species_ref_ontology_list = [];
+        foreach ($cached_species as $species){
+            $ir_species_ref_ontology_list[$species->species_id] = $species->species_name . ' (' . $species->species_id . ')';
+        }
+        asort($ir_species_ref_ontology_list);
+        $data['ir_species_ref_ontology_list'] = $ir_species_ref_ontology_list;
 
         // Fields we want to graph. The UI/blade expects six fields
         $charts_fields = ['study_title', 'subject_id', 'sample_id', 'disease_diagnosis_id', 'tissue_id', 'pcr_target_locus'];
@@ -673,52 +699,48 @@ class SequenceController extends Controller
         return view('sequenceQuickSearch', $data);
     }
 
+    public function getSpecies($species_id)
+    {
+        $species_str = null;
+
+        $existing_species = Species::where('species_id', $species_id)->take(1)->get();
+        // Use the name if we found one
+        if (count($existing_species) > 0) {
+            $species_str = $existing_species[0]['species_name'];
+        } else {
+            $species_str = $species_id;
+        }
+        return $species_str;
+    }
+
     public function getAntigen($antigen_id)
     {
-        $data = [];
         $antigen_str = null;
 
-        try {
-            $defaults = [];
-            $defaults['base_uri'] = 'https://rest.uniprot.org/uniprotkb/';
-            $defaults['verify'] = false;    // accept self-signed SSL certificates
-
-            $antigen_value = explode(':', $antigen_id)[1];
-            $client = new \GuzzleHttp\Client($defaults);
-            $query = 'search?query=accession:' . $antigen_value;
-            $response = $client->get($query);
-            $body = $response->getBody();
-            $t = json_decode($body);
-            if (property_exists($t, 'results')) {
-                // For each return element
-                foreach ($t as $antigen_data) {
-                    if (strlen($epitope_str) == 0) {
-                        $antigen_str = $antigen_data->proteinDescription->recommendedName->fullName->value;
-                    } else {
-                        $antigen_str = $antigen_str . ',' . $antigen_data->proteinDescription->recommendedName->fullName->value;
-                    }
-                }
-            }
-        } catch (\Exception $e) {
-            $error_message = $e->getMessage();
-            Log::error('Request failed: ' . $error_message);
-            $antigen_str = null;
+        // Look up the antigen_id
+        $existing_antigen = Antigens::where('antigen_id', $antigen_id)->take(1)->get();
+        // Use the name if we found one
+        if (count($existing_antigen) > 0) {
+            $antigen_str = $existing_antigen[0]['antigen_name'];
+        } else {
+            $antigen_str = $antigen_id;
         }
-
         return $antigen_str;
     }
 
     public function getIEDBEpitope($epitope_id)
     {
-        $data = [];
         $epitope_str = null;
 
         try {
+            // Look up the Epitope using the IEDB query API
+            // TODO: We probably want to store this so we don't have to look it up.
             $defaults = [];
             $defaults['base_uri'] = 'https://query-api.iedb.org/';
             $defaults['verify'] = false;    // accept self-signed SSL certificates
 
             $client = new \GuzzleHttp\Client($defaults);
+            // The structure_iri field contains the IEDB CURIE of the form IEDB_EPITOPE:42
             $query = 'epitope_search?structure_iri=eq.' . $epitope_id;
             $response = $client->get($query);
             $body = $response->getBody();
@@ -726,6 +748,9 @@ class SequenceController extends Controller
 
             // For each return element
             foreach ($t as $iedb_epitope_data) {
+                // Generate a comma separated list of epitopes from IEDB repsonse.
+                // IEDB docs are here: https://help.iedb.org/hc/en-us/articles/4402872882189-Immune-Epitope-Database-Query-API-IQ-API
+                // Epitope endpoint returns the AA sequence in the "linear_sequence" field in the JSON response.
                 if (strlen($epitope_str) == 0) {
                     $epitope_str = $iedb_epitope_data->linear_sequence;
                 } else {
