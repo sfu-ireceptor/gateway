@@ -143,11 +143,12 @@
                                 </div>
                                 <div class="form-group">
                                     {{ Form::label('ir_antigen_ref', __('short.ir_antigen_ref')) }}
-                                    {{ Form::text('ir_antigen_ref', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match, IEDB CURIE required', 'data-placement' => 'bottom')) }}
+                                    @include('help', ['id' => 'ir_antigen_ref'])
+                                    {{ Form::select('ir_antigen_ref[]', $ir_antigen_ref_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
                                 </div>
                                 <div class="form-group">
                                     {{ Form::label('ir_species_ref', __('short.ir_species_ref')) }}
-                                    {{ Form::text('ir_species_ref', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match, IEDB CURIE required', 'data-placement' => 'bottom')) }}
+                                    {{ Form::select('ir_species_ref[]', $ir_species_ref_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
                                 </div>
                                 <div class="form-group">
                                     {{ Form::label('reactivity_ref_rearrangement', __('short.reactivity_ref_rearrangement')) }}
@@ -364,18 +365,18 @@
                                                         {{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
                                                     </span>
                                                 @elseif($field['ir_id'] == 'ir_species_ref' )
-                                                    <span title="{{ $s->{$field['ir_id']} }}">
+                                                    <span title="{{ $s->ir_species_ref_display }}">
                                                         @if( explode(':', $s->{$field['ir_id']})[0] == 'NCBITaxon')
-                                                           <a href="http://purl.obolibrary.org/obo/NCBITaxon_{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ $s->{$field['ir_id']} }}</a> 
+                                                           <a href="http://purl.obolibrary.org/obo/NCBITaxon_{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ str_limit($s->ir_species_ref_display, $limit = 30, $end = '‥') }}</a> 
 
                                                         @else
                                                             {{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
                                                         @endif
                                                     </span>
                                                 @elseif($field['ir_id'] == 'ir_antigen_ref' )
-                                                    <span title="{{ $s->{$field['ir_id']} }}">
+                                                    <span title="{{ $s->ir_antigen_ref_display }}">
                                                         @if( explode(':', $s->{$field['ir_id']})[0] == 'UNIPROT')
-                                                           <a href="https://www.uniprot.org/uniprotkb/{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ $s->{$field['ir_id']} }} {{ $s->ir_antigen_ref_display }}</a> 
+                                                           <a href="https://www.uniprot.org/uniprotkb/{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ str_limit($s->ir_antigen_ref_display, $limit = 30, $end = '‥') }}</a> 
                                                         @elseif(explode(':', $s->{$field['ir_id']})[0] == 'NCBIPROTEIN')
                                                            <a href="https://www.ncbi.nlm.nih.gov/protein/{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ $s->{$field['ir_id']} }}</a> 
                                                         @else
