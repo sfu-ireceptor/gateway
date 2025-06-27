@@ -174,79 +174,92 @@ class Sample
 
     public static function cache_epitope_counts($username, $rest_service_id = null)
     {
+        Log::debug('Sample::cache_epitope_counts: Caching epitope data');
+        // Get a list of samples for the rest service
         $response_list = RestService::samples([], $username, false, [$rest_service_id]);
+        // For each respsone, process it. 
         foreach ($response_list as $i => $response) {
             $rest_service_id = $response['rs']->id;
             $sample_list = $response['data'];
-            // Get a list of repertoire_ids
+            // Get a list of repertoire_ids from the repetoires returned
             $repertoire_list = [];
             foreach ($sample_list as $sample) {
                 array_push($repertoire_list, $sample->repertoire_id);
             }
-            //
-            // Get a list of unique ir_species_ref values.
+            
+            // Get a list of unique ir_species_ref values for our service and its repertoires.
             $species_array = RestService::object_list('sequence', [$rest_service_id => $repertoire_list], [], 'ir_species_ref');
-            Log::debug('species array = ' . json_encode($species_array[$rest_service_id]));
+            // Loop over the species that we got for the service
             foreach ($species_array[$rest_service_id] as $species_list) {
+                // The query will return null in the list if there are Rearrangements
+                // with no species, so we need to handle this.
                 if ($species_list != null) {
+                    // The species are returned as a list, so we need to handle them all
                     foreach ($species_list as $species_id) {
-                        Log::debug('species = ' . $species_id);
+                        // Set up our data to store in the DB
                         $t = [];
                         $t['species_id'] = $species_id;
-                        $t['species_name'] = 'test';
+                        $t['species_name'] = Species::lookup_species_name($species_id);
+
+                        // Get the existing value for the record if it exists in the DB
                         $existing_species = Species::where('species_id', $species_id)->take(1)->get();
-                        Log::debug('existing species = ' . $existing_species);
+
+                        // If there is no record, create one, otherwise update the record.
                         if (count($existing_species) == 0) {
+                            Log::debug('Creating species = ' . $species_id);
                             Species::create($t);
+                        } else {
+                            // Warn if there is more than one record for this species.
+                            if (count($existing_species) > 1) {
+                                Log::warning('More than one species for ' . $species_id);
+                            }
+                            // If the names don't match, update the record. We only update the first record
+                            // Log a warning, as a changing name is suspicious.
+                            if ($existing_species[0]['species_name'] != $t['species_name']) {
+                                Log::debug('Updating species = ' . $species_id);
+                                Log::warning('Species name for ' . $species_id . ' changing: '.$existing_species[0]['species_name'].' => '.$t['species_name']);
+                                Species::where('_id', $existing_species[0]->_id)->update($t);
+                            }
                         }
                     }
                 }
             }
-            // Get a list of unique ir_antigen_ref values.
+
+            // Get a list of unique ir_antigen_ref values for our service and its repertoires.
             $antigen_array = RestService::object_list('sequence', [$rest_service_id => $repertoire_list], [], 'ir_antigen_ref');
-            Log::debug('antigen array = ' . json_encode($antigen_array[$rest_service_id]));
             foreach ($antigen_array[$rest_service_id] as $antigen_list) {
+                // The query will return null in the list if there are Rearrangements
+                // with no antigens, so we need to handle this.
                 if ($antigen_list != null) {
+                    // The antigens are returned as a list, so we need to handle them all
                     foreach ($antigen_list as $antigen_id) {
-                        Log::debug('antigen = ' . $antigen_id);
+                        // Set up our data to store in the DB
                         $t = [];
                         $t['antigen_id'] = $antigen_id;
-                        $t['antigen_name'] = 'test';
+                        $t['antigen_name'] = Antigens::lookup_antigen_name($antigen_id);
                         $existing_antigen = Antigens::where('antigen_id', $antigen_id)->take(1)->get();
-                        Log::debug('existing antigen = ' . $existing_antigen);
+                        // If there is no record, create one, otherwise update the record.
                         if (count($existing_antigen) == 0) {
+                            Log::debug('Creating antigen = ' . $antigen_id);
                             Antigens::create($t);
+                        } else {
+                            // Warn if there is more than one record for this antigen.
+                            if (count($existing_antigen) > 1) {
+                                Log::warning('More than one antigen for ' . $antigen_id);
+                            }
+                            // If the names don't match, update the record. We only update the first record
+                            // Log a warning, as a changing name is suspicious.
+                            if ($existing_antigen[0]['antigen_name'] != $t['antigen_name']) {
+                                Log::debug('Updating antigen = ' . $antigen_id);
+                                Log::warning('Antigen name for ' . $antigen_id . ' changing: '.$existing_antigen[0]['antigen_name'].' => '.$t['antigen_name']);
+                                Antigens::where('_id', $existing_antigen[0]->_id)->update($t);
+                            }
                         }
                     }
                 }
             }
-
-            $epitope_data = [];
-            /*
-            $total_cell_count = 0;
-            foreach ($sample_list as $sample) {
-                $sample_id = $sample->repertoire_id;
-                //$cell_count_array = RestService::cell_count([$rest_service_id => [$sample_id]], [], false);
-                $cell_count_array = RestService::object_count('cell', [$rest_service_id => [$sample_id]], [], false);
-                $cell_count = $cell_count_array[$rest_service_id]['samples'][$sample_id];
-                $t['cell_counts'][$sample_id] = $cell_count;
-                $total_cell_count += $cell_count;
-                Log::debug('Total cell count = ' . $total_cell_count);
-
-                // HACK: to avoid hitting throttling limits
-                sleep(1);
-            }
-             */
-
-            // cache total counts
-            /*
-            $rs = RestService::find($rest_service_id);
-            $rs->nb_samples = count($sample_list);
-            $rs->nb_cells = $total_cell_count;
-            $rs->last_cached = new Carbon('now');
-            $rs->save();
-             */
         }
+        Log::debug('Sample::cache_epitope_counts: Done caching epitope data');
     }
 
     public static function find_sample_id_list($filters, $username)
