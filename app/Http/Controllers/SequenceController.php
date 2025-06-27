@@ -96,18 +96,18 @@ class SequenceController extends Controller
         $cached_antigens = Antigens::all();
         // Build a list of the CURIE/Ontology info
         $ir_antigen_ref_ontology_list = [];
-        foreach ($cached_antigens as $antigen){
-            $ir_antigen_ref_ontology_list[$antigen->antigen_id] =  $antigen->antigen_name . ' (' . $antigen->antigen_id . ')';
+        foreach ($cached_antigens as $antigen) {
+            $ir_antigen_ref_ontology_list[$antigen->antigen_id] = $antigen->antigen_name . ' (' . $antigen->antigen_id . ')';
         }
         // Sort the array and store it.
         asort($ir_antigen_ref_ontology_list);
         $data['ir_antigen_ref_ontology_list'] = $ir_antigen_ref_ontology_list;
-      
+
         // Get cached species data
         $cached_species = Species::all();
         // Build a list of the CURIE/Ontology info
         $ir_species_ref_ontology_list = [];
-        foreach ($cached_species as $species){
+        foreach ($cached_species as $species) {
             $ir_species_ref_ontology_list[$species->species_id] = $species->species_name . ' (' . $species->species_id . ')';
         }
         asort($ir_species_ref_ontology_list);
@@ -710,6 +710,7 @@ class SequenceController extends Controller
         } else {
             $species_str = $species_id;
         }
+
         return $species_str;
     }
 
@@ -725,6 +726,7 @@ class SequenceController extends Controller
         } else {
             $antigen_str = $antigen_id;
         }
+
         return $antigen_str;
     }
 
