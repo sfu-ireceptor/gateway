@@ -28,6 +28,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Enable home page banner message.
+    |--------------------------------------------------------------------------
+    |
+    | If true, display banner message on home page
+    | Ex: false
+    |
+    */
+
+    'home_banner_display' => env('IRECEPTOR_HOME_BANNER_DISPLAY', false),
+    'home_banner_text' => env('IRECEPTOR_HOME_BANNER_TEXT', ''),
+
+    /*
+    |--------------------------------------------------------------------------
     | Email addresses
     |--------------------------------------------------------------------------
     */
