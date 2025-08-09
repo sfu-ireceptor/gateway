@@ -109,6 +109,10 @@ class HomeController extends Controller
         }
         $data['subject_organism_ontology_list'] = $subject_organism_ontology_list;
 
+        // Check for a banner message for the home page.
+        $data['home_banner_display'] = config('ireceptor.home_banner_display');
+        $data['home_banner_text'] = config('ireceptor.home_banner_text');
+
         // clear any lingering form data
         $request->session()->forget('_old_input');
 
