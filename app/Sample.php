@@ -242,44 +242,44 @@ class Sample
 
             $count = 0;
             foreach ($repertoire_list as $repertoire_id) {
-              // Get a list of unique ir_antigen_ref values for our service and its repertoires.
-              //$antigen_array = RestService::object_list('sequence', [$rest_service_id => $repertoire_list], [], 'ir_antigen_ref');
-              Log::debug('Processing antigens for repertoire ' . $count . ' of ' . $num_repertoires);
-              $count = $count + 1;
-              $antigen_array = RestService::object_list('sequence', [$rest_service_id => [$repertoire_id]], [], 'ir_antigen_ref');
-              foreach ($antigen_array[$rest_service_id] as $antigen_list) {
-                // The query will return null in the list if there are Rearrangements
-                // with no antigens, so we need to handle this.
-                if ($antigen_list != null) {
-                    // The antigens are returned as a list, so we need to handle them all
-                    foreach ($antigen_list as $antigen_id) {
-                        // Set up our data to store in the DB
-                        $t = [];
-                        $t['antigen_id'] = $antigen_id;
-                        $existing_antigen = Antigens::where('antigen_id', $antigen_id)->take(1)->get();
-                        // If there is no record, create one, otherwise update the record.
-                        if (count($existing_antigen) == 0) {
-                            Log::debug('Creating antigen = ' . $antigen_id);
-                            $t['antigen_name'] = Antigens::lookup_antigen_name($antigen_id);
-                            Antigens::create($t);
-                        } else {
-                            // Warn if there is more than one record for this antigen.
-                            if (count($existing_antigen) > 1) {
-                                Log::warning('More than one antigen for ' . $antigen_id);
+                // Get a list of unique ir_antigen_ref values for our service and its repertoires.
+                //$antigen_array = RestService::object_list('sequence', [$rest_service_id => $repertoire_list], [], 'ir_antigen_ref');
+                Log::debug('Processing antigens for repertoire ' . $count . ' of ' . $num_repertoires);
+                $count = $count + 1;
+                $antigen_array = RestService::object_list('sequence', [$rest_service_id => [$repertoire_id]], [], 'ir_antigen_ref');
+                foreach ($antigen_array[$rest_service_id] as $antigen_list) {
+                    // The query will return null in the list if there are Rearrangements
+                    // with no antigens, so we need to handle this.
+                    if ($antigen_list != null) {
+                        // The antigens are returned as a list, so we need to handle them all
+                        foreach ($antigen_list as $antigen_id) {
+                            // Set up our data to store in the DB
+                            $t = [];
+                            $t['antigen_id'] = $antigen_id;
+                            $existing_antigen = Antigens::where('antigen_id', $antigen_id)->take(1)->get();
+                            // If there is no record, create one, otherwise update the record.
+                            if (count($existing_antigen) == 0) {
+                                Log::debug('Creating antigen = ' . $antigen_id);
+                                $t['antigen_name'] = Antigens::lookup_antigen_name($antigen_id);
+                                Antigens::create($t);
+                            } else {
+                                // Warn if there is more than one record for this antigen.
+                                if (count($existing_antigen) > 1) {
+                                    Log::warning('More than one antigen for ' . $antigen_id);
+                                }
+                                // If the names don't match, update the record. We only update the first record
+                                // Log a warning, as a changing name is suspicious.
+                                /*
+                                if ($existing_antigen[0]['antigen_name'] != $t['antigen_name']) {
+                                    Log::debug('Updating antigen = ' . $antigen_id);
+                                    Log::warning('Antigen name for ' . $antigen_id . ' changing: ' . $existing_antigen[0]['antigen_name'] . ' => ' . $t['antigen_name']);
+                                    Antigens::where('_id', $existing_antigen[0]->_id)->update($t);
+                                }
+                                 */
                             }
-                            // If the names don't match, update the record. We only update the first record
-                            // Log a warning, as a changing name is suspicious.
-                            /*
-                            if ($existing_antigen[0]['antigen_name'] != $t['antigen_name']) {
-                                Log::debug('Updating antigen = ' . $antigen_id);
-                                Log::warning('Antigen name for ' . $antigen_id . ' changing: ' . $existing_antigen[0]['antigen_name'] . ' => ' . $t['antigen_name']);
-                                Antigens::where('_id', $existing_antigen[0]->_id)->update($t);
-                            }
-                             */
                         }
                     }
                 }
-              }
             }
         }
         Log::debug('Sample::cache_epitope_counts: Done caching epitope data');
