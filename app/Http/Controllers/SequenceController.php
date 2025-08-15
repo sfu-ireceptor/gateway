@@ -102,6 +102,7 @@ class SequenceController extends Controller
         // Sort the array and store it.
         asort($ir_antigen_ref_ontology_list);
         $data['ir_antigen_ref_ontology_list'] = $ir_antigen_ref_ontology_list;
+        $data['ir_antigen_ref_ontology_data'] = $cached_antigens;
 
         // Get cached species data
         $cached_species = Species::all();
