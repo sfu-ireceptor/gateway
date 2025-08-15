@@ -728,7 +728,8 @@ class RestService extends Model
     }
 
     // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
-    public static function object_count($type, $repertoire_id_list_by_rs, $filters = [], $use_cache_if_possible = true)
+    public static function object_count($type, $repertoire_id_list_by_rs, $filters = [],
+                                        $use_cache_if_possible = true, $timeout_scale = 1)
     {
         // Clean filters for services - removes all Gateway specific URL based filters.
         $filters = self::clean_filters($filters);
@@ -783,7 +784,7 @@ class RestService extends Model
 
             // Generate the JSON query based on the filters and parameters.
             $t['params'] = self::generate_json_query($service_filters, $query_parameters, $rs->api_version);
-            $t['timeout'] = config('ireceptor.service_request_timeout');
+            $t['timeout'] = config('ireceptor.service_request_timeout') * $timeout_scale;
 
             // Add this to the list of requests.
             $request_params[] = $t;
@@ -832,7 +833,7 @@ class RestService extends Model
     // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
     // $filters: array of filters to use in the query
     // $field: the field in the repository to get the counts for
-    public static function object_list($type, $repertoire_id_list_by_rs, $filters = [], $field = '')
+    public static function object_list($type, $repertoire_id_list_by_rs, $filters = [], $field = '', $timeout_scale = 1)
     {
         // Set up info that depends on the query type
         if ($type == 'sequence') {
@@ -889,12 +890,13 @@ class RestService extends Model
             $t['url'] = $rs->url . $endpoint;
 
             $t['params'] = self::generate_json_query($service_filters, $query_parameters, $rs->api_version);
-            $t['timeout'] = config('ireceptor.service_request_timeout');
+            $t['timeout'] = config('ireceptor.service_request_timeout') * $timeout_scale;
 
             $request_params[] = $t;
         }
 
         // do requests
+        Log::debug('RestService::object_list - query = ' . json_encode($request_params));
         $response_list = self::doRequests($request_params);
 
         // build list of object counts for each repertoire grouped by repository id
