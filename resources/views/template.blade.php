@@ -245,6 +245,8 @@
 		<script src="/js/main.js?v=85"></script>
 		<script src="/js/admin.js?v=1"></script>
 		<script src="/js/visualization.js?v=22"></script>
+        <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 	</body>
 
 </html>
