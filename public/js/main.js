@@ -26,7 +26,7 @@ $(document).ready(function() {
 
 	// multiselect
 	$('.multiselect-ui').multiselect({
-        includeSelectAllOption: false,
+        includeSelectAllOption: true,
         buttonWidth: '100%',
         enableHTML: true,
         nonSelectedText: 'Any',
