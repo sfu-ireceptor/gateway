@@ -123,50 +123,37 @@
                         <div class="panel-heading" role="tab" id="headingThree">
                             <h4 class="panel-title">
                                 <a role="button" class="{{ in_array('2', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    Advanced filters
+                                    Filter by Reactivity
                                 </a>
                             </h4>
                         </div>
                         <div id="collapseThree" class="panel-collapse collapse {{ in_array('2', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingThree">
                             <div class="panel-body">
                                 <div class="form-group">
-                                    {{ Form::label('cell_id', __('short.cell_id')) }}
-                                    {{ Form::text('cell_id', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match - no substrings allowed', 'data-placement' => 'bottom')) }}
-                                </div>
-                                <div class="form-group">
-                                    {{ Form::label('productive', __('short.productive')) }}
-                                    {{ Form::select('productive', $functional_list, '', array('class' => 'form-control')) }}
-                                </div>
-                                <div class="form-group">
                                     {{ Form::label('ir_epitope_ref', __('short.ir_epitope_ref')) }}
                                     {{ Form::text('ir_epitope_ref', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match, IEDB CURIE required', 'data-placement' => 'bottom')) }}
                                 </div>
                                 <div class="form-group">
 
-                                <form>
-                                    @csrf
-                                    <label for="ir_antigen_ref">{{ __('short.ir_antigen_ref')}}</label>
-                                    <select name="ir_antigen_ref[]" id="ir_antigen_ref" multiple>
-                                        @foreach($ir_antigen_ref_ontology_data as $antigen)
-
-                                            @php
-                                                $selected = "";
-                                                if (array_key_exists("ir_antigen_ref", $filter_fields)) {
-                                                    $ir_antigen_filters = $filter_fields["ir_antigen_ref"];
-                                                    if (in_array($antigen->antigen_id,  explode(", ",$ir_antigen_filters))) {
-                                                        $selected = "selected";
+                                    <form>
+                                        @csrf
+                                        <label for="ir_antigen_ref">{{ __('short.ir_antigen_ref')}}</label>
+                                        <select name="ir_antigen_ref[]" id="ir_antigen_ref" multiple>
+                                            @foreach($ir_antigen_ref_ontology_data as $antigen)
+    
+                                                @php
+                                                    $selected = "";
+                                                    if (array_key_exists("ir_antigen_ref", $filter_fields)) {
+                                                        $ir_antigen_filters = $filter_fields["ir_antigen_ref"];
+                                                        if (in_array($antigen->antigen_id,  explode(", ",$ir_antigen_filters))) {
+                                                            $selected = "selected";
+                                                        }
                                                     }
-                                                }
-                                            @endphp
-                                            <option value="{{ $antigen->antigen_id }}" {{$selected}} >{{ $antigen->antigen_name }} ({{$antigen->antigen_id}})</option>
-                                        @endforeach
-                                    </select>
-                                </form>
-<!--
-                                    {{ Form::label('ir_antigen_ref', __('short.ir_antigen_ref')) }}
-                                    @include('help', ['id' => 'ir_antigen_ref'])
-                                    {{ Form::select('ir_antigen_ref[]', $ir_antigen_ref_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
--->
+                                                @endphp
+                                                <option value="{{ $antigen->antigen_id }}" {{$selected}} >{{ $antigen->antigen_name }} ({{$antigen->antigen_id}})</option>
+                                            @endforeach
+                                        </select>
+                                    </form>
                                 </div>
                                 <div class="form-group">
                                     {{ Form::label('ir_species_ref', __('short.ir_species_ref')) }}
@@ -175,6 +162,30 @@
                                 <div class="form-group">
                                     {{ Form::label('reactivity_ref_rearrangement', __('short.reactivity_ref_rearrangement')) }}
                                     {{ Form::text('reactivity_ref_rearrangement', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match, IEDB CURIE required', 'data-placement' => 'bottom')) }}
+                                </div>
+                                <p class="button_container">
+                                    {{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingFour">
+                            <h4 class="panel-title">
+                                <a role="button" class="{{ in_array('3', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    Other filters
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseFour" class="panel-collapse collapse {{ in_array('3', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingFour">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    {{ Form::label('cell_id', __('short.cell_id')) }}
+                                    {{ Form::text('cell_id', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match - no substrings allowed', 'data-placement' => 'bottom')) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ Form::label('productive', __('short.productive')) }}
+                                    {{ Form::select('productive', $functional_list, '', array('class' => 'form-control')) }}
                                 </div>
                                 <p class="button_container">
                                     {{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
