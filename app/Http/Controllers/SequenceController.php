@@ -80,15 +80,76 @@ class SequenceController extends Controller
         $metadata = Sample::metadata($username);
 
         $data['sequence_list'] = $sequence_data['items'];
+        // get a display for each set of references for a sequqnce.
+        // handle the case where the reference is a comma separated list.
         foreach ($data['sequence_list'] as $sequence) {
+            // Handle epitopes
             if (property_exists($sequence, 'ir_epitope_ref')) {
-                $sequence->ir_epitope_ref_display = self::getIEDBEpitope($sequence->ir_epitope_ref);
+                //$sequence->ir_epitope_ref_display = self::getIEDBEpitope($sequence->ir_epitope_ref);
+                $ref_list = explode(',',$sequence->ir_epitope_ref);
+                $name_list = [];
+                $info_list = [];
+                foreach($ref_list as $ref_id) {
+                    // Build the info structure for this object
+                    $info = [];
+                    $info['label'] = self::getIEDBEpitope($ref_id);
+                    $info['id'] = $ref_id;
+                    $object_list = explode(':',$ref_id);
+                    if ($object_list[0] == 'IEDB_EPITOPE') {
+                        $info['url'] = 'https://iedb.org/epitope/' . $object_list[1];
+                    }
+                    $info_list[] = $info;
+                    // Get the name for the name list
+                    $name_list[] = $info['label'];
+                }
+                $sequence->ir_epitope_ref_display = implode(', ', $name_list);
+                $sequence->ir_epitope_info = $info_list;
             }
+            // Handle species
             if (property_exists($sequence, 'ir_species_ref')) {
-                $sequence->ir_species_ref_display = self::getSpecies($sequence->ir_species_ref);
+                $ref_list = explode(',',$sequence->ir_species_ref);
+                $name_list = [];
+                $info_list = [];
+                foreach($ref_list as $ref_id) {
+                    // Build the info structure for this object
+                    $info = [];
+                    $info['label'] = self::getSpecies($ref_id);
+                    $info['id'] = $ref_id;
+                    $info['url'] = "";
+                    $object_list = explode(':',$ref_id);
+                    if ($object_list[0] == 'NCBITaxon') {
+                        $info['url'] = 'http://purl.obolibrary.org/obo/NCBITaxon_' . $object_list[1];
+                    }
+                    $info_list[] = $info;
+                    // Get the name for the name list
+                    $name_list[] = $info['label'];
+                }
+                $sequence->ir_species_ref_display = implode(', ', $name_list);
+                $sequence->ir_species_info = $info_list;
             }
+            // Handle antigens
             if (property_exists($sequence, 'ir_antigen_ref')) {
-                $sequence->ir_antigen_ref_display = self::getAntigen($sequence->ir_antigen_ref);
+                $ref_list = explode(',',$sequence->ir_antigen_ref);
+                $name_list = [];
+                $info_list = [];
+                foreach($ref_list as $ref_id) {
+                    // Build the info structure for this object
+                    $info = [];
+                    $info['label'] = self::getAntigen($ref_id);
+                    $info['id'] = $ref_id;
+                    $info['url'] = "";
+                    $object_list = explode(':',$ref_id);
+                    if ($object_list[0] == 'UNIPROT') {
+                        $info['url'] = 'https://www.uniprot.org/uniprotkb/' . $object_list[1];
+                    } else if ($object_list[0] == 'NCBIPROTEIN') {
+                        $info['url'] = 'https://www.ncbi.nlm.nih.gov/protein/' . $object_list[1];
+                    }
+                    $info_list[] = $info;
+                    // Get the name for the name list
+                    $name_list[] = $info['label'];
+                }
+                $sequence->ir_antigen_ref_display = implode(', ', $name_list);
+                $sequence->ir_antigen_info = $info_list;
             }
         }
 

@@ -415,30 +415,31 @@
                                                     </span>
                                                 @elseif($field['ir_id'] == 'ir_species_ref' )
                                                     <span title="{{ $s->ir_species_ref_display }}">
-                                                        @if( explode(':', $s->{$field['ir_id']})[0] == 'NCBITaxon')
-                                                           <a href="http://purl.obolibrary.org/obo/NCBITaxon_{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ str_limit($s->ir_species_ref_display, $limit = 30, $end = '‥') }}</a> 
-
-                                                        @else
-                                                            {{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
-                                                        @endif
+                                                        @foreach( $s->ir_species_info as $index => $info)
+                                                            <a href="{{$info['url']}}" target="_blank">{{str_limit($info['label'], $limit = 30, $end = '‥')}}</a>
+                                                            @if ($index < count($s->ir_species_info)-1)
+                                                                </br>
+                                                            @endif
+                                                        @endforeach
                                                     </span>
                                                 @elseif($field['ir_id'] == 'ir_antigen_ref' )
                                                     <span title="{{ $s->ir_antigen_ref_display }}">
-                                                        @if( explode(':', $s->{$field['ir_id']})[0] == 'UNIPROT')
-                                                           <a href="https://www.uniprot.org/uniprotkb/{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ str_limit($s->ir_antigen_ref_display, $limit = 30, $end = '‥') }}</a> 
-                                                        @elseif(explode(':', $s->{$field['ir_id']})[0] == 'NCBIPROTEIN')
-                                                           <a href="https://www.ncbi.nlm.nih.gov/protein/{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ $s->{$field['ir_id']} }}</a> 
-                                                        @else
-                                                            {{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
-                                                        @endif
+                                                        @foreach( $s->ir_antigen_info as $index => $info)
+                                                            <a href="{{$info['url']}}" target="_blank">{{str_limit($info['label'], $limit = 30, $end = '‥')}}</a>
+                                                            @if ($index < count($s->ir_antigen_info)-1)
+                                                                </br>
+                                                            @endif
+                                                        @endforeach
                                                     </span>
                                                 @elseif($field['ir_id'] == 'ir_epitope_ref' )
+
                                                     <span title="{{ $s->{$field['ir_id']} }}">
-                                                        @if( explode(':', $s->{$field['ir_id']})[0] == 'IEDB_EPITOPE')
-                                                           <a href="https://iedb.org/epitope/{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ $s->ir_epitope_ref_display }}</a> 
-                                                        @else
-                                                            {{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
-                                                        @endif
+                                                        @foreach( $s->ir_epitope_info as $index => $info)
+                                                            <a href="{{$info['url']}}" target="_blank">{{str_limit($info['label'], $limit = 30, $end = '‥')}}</a>
+                                                            @if ($index < count($s->ir_epitope_info)-1)
+                                                                </br>
+                                                            @endif
+                                                        @endforeach
                                                     </span>
                                                 @elseif($field['ir_id'] == 'reactivity_ref_rearrangement' )
                                                     <span title="{{ $s->{$field['ir_id']} }}">
