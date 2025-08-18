@@ -113,6 +113,7 @@ class SequenceController extends Controller
         }
         asort($ir_species_ref_ontology_list);
         $data['ir_species_ref_ontology_list'] = $ir_species_ref_ontology_list;
+        $data['ir_species_ref_ontology_data'] = $cached_species;
 
         // Fields we want to graph. The UI/blade expects six fields
         $charts_fields = ['study_title', 'subject_id', 'sample_id', 'disease_diagnosis_id', 'tissue_id', 'pcr_target_locus'];
@@ -258,15 +259,35 @@ class SequenceController extends Controller
 
         // create copy of filters for display
         $filter_fields = [];
+        $filter_fields_display = [];
         foreach ($filters as $k => $v) {
             if ($v) {
                 if (is_array($v)) {
                     // don't show sample id filters
+                    // handle ontology based fields, we want to display name and ID
                     if (! starts_with($k, 'ir_project_sample_id_list_')) {
-                        $filter_fields[$k] = implode(', ', $v);
+                        if ($k == 'ir_antigen_ref') {
+                            $ontology_filters = [];
+                            foreach ($v as $ontology_id) {
+                                $ontology_filters[] = self::getAntigen($ontology_id) . ' (' . $ontology_id . ')';
+                            }
+                            $filter_fields[$k] = implode(', ', $v);
+                            $filter_fields_display[$k] = implode(', ', $ontology_filters);
+                        } else if ($k == 'ir_species_ref') {
+                            $ontology_filters = [];
+                            foreach ($v as $ontology_id) {
+                                $ontology_filters[] = self::getSpecies($ontology_id) . ' (' . $ontology_id . ')';
+                            }
+                            $filter_fields[$k] = implode(', ', $v);
+                            $filter_fields_display[$k] = implode(', ', $ontology_filters);
+                        } else {
+                            $filter_fields[$k] = implode(', ', $v);
+                            $filter_fields_display[$k] = implode(', ', $v);
+                        }
                     }
                 } else {
                     $filter_fields[$k] = $v;
+                    $filter_fields_display[$k] = $v;
                 }
             }
         }
@@ -276,7 +297,13 @@ class SequenceController extends Controller
         unset($filter_fields['filters_order']);
         unset($filter_fields['sample_query_id']);
         unset($filter_fields['open_filter_panel_list']);
+        unset($filter_fields_display['cols']);
+        unset($filter_fields_display['filters_order']);
+        unset($filter_fields_display['sample_query_id']);
+        unset($filter_fields_display['open_filter_panel_list']);
+        // set up the data for the blade.
         $data['filter_fields'] = $filter_fields;
+        $data['filter_fields_display'] = $filter_fields_display;
 
         // Get information about all of the Apps for the AIRR "Rearrangement" object
         $tapis = new Tapis;

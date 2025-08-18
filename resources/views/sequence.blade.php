@@ -134,8 +134,29 @@
                                     {{ Form::text('ir_epitope_ref', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match, IEDB CURIE required', 'data-placement' => 'bottom')) }}
                                 </div>
                                 <div class="form-group">
-
-                                    <form>
+                                        @csrf
+                                        <label for="ir_species_ref">{{ __('short.ir_species_ref')}}</label>
+                                        <select name="ir_species_ref[]" id="ir_species_ref" multiple>
+                                            @foreach($ir_species_ref_ontology_data as $species)
+    
+                                                @php
+                                                    $selected = "";
+                                                    if (array_key_exists("ir_species_ref", $filter_fields)) {
+                                                        $ir_species_filters = $filter_fields["ir_species_ref"];
+                                                        if (in_array($species->species_id,  explode(", ",$ir_species_filters))) {
+                                                            $selected = "selected";
+                                                        }
+                                                    }
+                                                @endphp
+                                                <option value="{{ $species->species_id }}" {{$selected}} >{{ $species->species_name }} ({{$species->species_id}})</option>
+                                            @endforeach
+                                        </select>
+<!--
+                                    {{ Form::label('ir_species_ref', __('short.ir_species_ref')) }}
+                                    {{ Form::select('ir_species_ref[]', $ir_species_ref_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+-->
+                                </div>
+                                <div class="form-group">
                                         @csrf
                                         <label for="ir_antigen_ref">{{ __('short.ir_antigen_ref')}}</label>
                                         <select name="ir_antigen_ref[]" id="ir_antigen_ref" multiple>
@@ -153,11 +174,6 @@
                                                 <option value="{{ $antigen->antigen_id }}" {{$selected}} >{{ $antigen->antigen_name }} ({{$antigen->antigen_id}})</option>
                                             @endforeach
                                         </select>
-                                    </form>
-                                </div>
-                                <div class="form-group">
-                                    {{ Form::label('ir_species_ref', __('short.ir_species_ref')) }}
-                                    {{ Form::select('ir_species_ref[]', $ir_species_ref_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
                                 </div>
                                 <div class="form-group">
                                     {{ Form::label('reactivity_ref_rearrangement', __('short.reactivity_ref_rearrangement')) }}
@@ -248,9 +264,9 @@
                             <br>
                         @endif
 
-                        @if ( ! empty($filter_fields))
+                        @if ( ! empty($filter_fields_display))
                             <h4>Sequence filters:</h4>
-                            @foreach($filter_fields as $filter_key => $filter_value)
+                            @foreach($filter_fields_display as $filter_key => $filter_value)
                                 <a title= "@lang('short.' . $filter_key): {{ $filter_value }}" href="/sequences?query_id={{ $query_id }}&amp;remove_filter={{ $filter_key }}" class="label label-primary">
                                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                     @lang('short.' . $filter_key): <span class="value">{{ $filter_value }}</span>
@@ -596,6 +612,13 @@ document.addEventListener('DOMContentLoaded', function() {
     new TomSelect('#ir_antigen_ref', {
         create: false,
         placeholder: 'Select antigens',
+        sortField: {field: "text"}
+    });
+});
+document.addEventListener('DOMContentLoaded', function() {
+    new TomSelect('#ir_species_ref', {
+        create: false,
+        placeholder: 'Select species',
         sortField: {field: "text"}
     });
 });
