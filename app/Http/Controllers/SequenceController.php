@@ -334,7 +334,7 @@ class SequenceController extends Controller
                             }
                             $filter_fields[$k] = implode(', ', $v);
                             $filter_fields_display[$k] = implode(', ', $ontology_filters);
-                        } else if ($k == 'ir_species_ref') {
+                        } elseif ($k == 'ir_species_ref') {
                             $ontology_filters = [];
                             foreach ($v as $ontology_id) {
                                 $ontology_filters[] = self::getSpecies($ontology_id) . ' (' . $ontology_id . ')';
