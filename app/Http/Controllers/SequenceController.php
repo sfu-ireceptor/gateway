@@ -86,15 +86,15 @@ class SequenceController extends Controller
             // Handle epitopes
             if (property_exists($sequence, 'ir_epitope_ref')) {
                 //$sequence->ir_epitope_ref_display = self::getIEDBEpitope($sequence->ir_epitope_ref);
-                $ref_list = explode(',',$sequence->ir_epitope_ref);
+                $ref_list = explode(',', $sequence->ir_epitope_ref);
                 $name_list = [];
                 $info_list = [];
-                foreach($ref_list as $ref_id) {
+                foreach ($ref_list as $ref_id) {
                     // Build the info structure for this object
                     $info = [];
                     $info['label'] = self::getIEDBEpitope($ref_id);
                     $info['id'] = $ref_id;
-                    $object_list = explode(':',$ref_id);
+                    $object_list = explode(':', $ref_id);
                     if ($object_list[0] == 'IEDB_EPITOPE') {
                         $info['url'] = 'https://iedb.org/epitope/' . $object_list[1];
                     }
@@ -107,16 +107,16 @@ class SequenceController extends Controller
             }
             // Handle species
             if (property_exists($sequence, 'ir_species_ref')) {
-                $ref_list = explode(',',$sequence->ir_species_ref);
+                $ref_list = explode(',', $sequence->ir_species_ref);
                 $name_list = [];
                 $info_list = [];
-                foreach($ref_list as $ref_id) {
+                foreach ($ref_list as $ref_id) {
                     // Build the info structure for this object
                     $info = [];
                     $info['label'] = self::getSpecies($ref_id);
                     $info['id'] = $ref_id;
-                    $info['url'] = "";
-                    $object_list = explode(':',$ref_id);
+                    $info['url'] = '';
+                    $object_list = explode(':', $ref_id);
                     if ($object_list[0] == 'NCBITaxon') {
                         $info['url'] = 'http://purl.obolibrary.org/obo/NCBITaxon_' . $object_list[1];
                     }
@@ -129,19 +129,19 @@ class SequenceController extends Controller
             }
             // Handle antigens
             if (property_exists($sequence, 'ir_antigen_ref')) {
-                $ref_list = explode(',',$sequence->ir_antigen_ref);
+                $ref_list = explode(',', $sequence->ir_antigen_ref);
                 $name_list = [];
                 $info_list = [];
-                foreach($ref_list as $ref_id) {
+                foreach ($ref_list as $ref_id) {
                     // Build the info structure for this object
                     $info = [];
                     $info['label'] = self::getAntigen($ref_id);
                     $info['id'] = $ref_id;
-                    $info['url'] = "";
-                    $object_list = explode(':',$ref_id);
+                    $info['url'] = '';
+                    $object_list = explode(':', $ref_id);
                     if ($object_list[0] == 'UNIPROT') {
                         $info['url'] = 'https://www.uniprot.org/uniprotkb/' . $object_list[1];
-                    } else if ($object_list[0] == 'NCBIPROTEIN') {
+                    } elseif ($object_list[0] == 'NCBIPROTEIN') {
                         $info['url'] = 'https://www.ncbi.nlm.nih.gov/protein/' . $object_list[1];
                     }
                     $info_list[] = $info;
