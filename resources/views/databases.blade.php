@@ -77,6 +77,18 @@
 											</a>
 										</li>
 										<li>
+											<a href="/admin/samples/update-antigens/{{ $rs->id }}">
+												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+												Refresh cached <strong>antigens</strong>
+											</a>
+										</li>
+										<li>
+											<a href="/admin/samples/update-species/{{ $rs->id }}">
+												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+												Refresh cached <strong>species</strong>
+											</a>
+										</li>
+										<li>
 											<a href="/admin/samples/update-epitopes/{{ $rs->id }}">
 												<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
 												Refresh cached <strong>epitopes</strong>

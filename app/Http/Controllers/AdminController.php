@@ -9,6 +9,8 @@ use App\Job;
 use App\Jobs\CountCells;
 use App\Jobs\CountClones;
 use App\Jobs\CountEpitopes;
+use App\Jobs\CountAntigens;
+use App\Jobs\CountSpecies;
 use App\Jobs\CountSequences;
 use App\LocalJob;
 use App\News;
@@ -491,6 +493,33 @@ class AdminController extends Controller
         return redirect('admin/databases')->with('notification', $message);
     }
 
+    public function getUpdateAntigens($rest_service_id)
+    {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
+        $rs = RestService::find($rest_service_id);
+        $username = auth()->user()->username;
+
+        $queue = 'admin';
+        $lj = new LocalJob($queue);
+        $lj->user = $username;
+        $lj->queue = 'admin';
+        $lj->description = 'Antigen cache for  ' . $rs->name;
+        $lj->save();
+
+        // queue as a job
+        $localJobId = $lj->id;
+        CountAntigens::dispatch($username, $rest_service_id, $localJobId)->onQueue('admin');
+
+        $message = 'Antigen cache job for  ' . $rs->name . ' has been <a href="/admin/queues">queued</a>';
+
+        return redirect('admin/databases')->with('notification', $message);
+    }
+
     public function getUpdateEpitopes($rest_service_id)
     {
         // Check to see if user is Admin, if not return unautorized message.
@@ -506,14 +535,41 @@ class AdminController extends Controller
         $lj = new LocalJob($queue);
         $lj->user = $username;
         $lj->queue = 'admin';
-        $lj->description = 'Epitope count for  ' . $rs->name;
+        $lj->description = 'Epitope cache for  ' . $rs->name;
         $lj->save();
 
         // queue as a job
         $localJobId = $lj->id;
         CountEpitopes::dispatch($username, $rest_service_id, $localJobId)->onQueue('admin');
 
-        $message = 'Epitope count job for  ' . $rs->name . ' has been <a href="/admin/queues">queued</a>';
+        $message = 'Epitope cache job for  ' . $rs->name . ' has been <a href="/admin/queues">queued</a>';
+
+        return redirect('admin/databases')->with('notification', $message);
+    }
+
+    public function getUpdateSpecies($rest_service_id)
+    {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
+        $rs = RestService::find($rest_service_id);
+        $username = auth()->user()->username;
+
+        $queue = 'admin';
+        $lj = new LocalJob($queue);
+        $lj->user = $username;
+        $lj->queue = 'admin';
+        $lj->description = 'Species cache for  ' . $rs->name;
+        $lj->save();
+
+        // queue as a job
+        $localJobId = $lj->id;
+        CountSpecies::dispatch($username, $rest_service_id, $localJobId)->onQueue('admin');
+
+        $message = 'Species cache job for  ' . $rs->name . ' has been <a href="/admin/queues">queued</a>';
 
         return redirect('admin/databases')->with('notification', $message);
     }

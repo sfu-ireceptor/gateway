@@ -830,6 +830,80 @@ class RestService extends Model
     }
 
     // $type: type of query to use (sequence/clone/cell)
+    // $rs_list: array of rest_service_ids 
+    // $field: the field in the repository to get the distinct values for
+    public static function distinct($type, $rs_list, $field = '', $timeout_scale = 1)
+    {
+        // Set up info that depends on the query type
+        if ($type == 'sequence') {
+            $endpoint = 'rearrangement';
+            $airr_object = 'Rearrangement';
+        } elseif ($type == 'clone') {
+            $endpoint = 'clone';
+            $airr_object = 'Clone';
+        } elseif ($type == 'cell') {
+            $endpoint = 'cell';
+            $airr_object = 'Cell';
+        } elseif ($type == 'expression') {
+            $endpoint = 'expression';
+            $airr_object = 'CellExpression';
+        } elseif ($type == 'reactivity') {
+            $endpoint = 'reactivity';
+            $airr_object = 'Reactivity';
+        } else {
+            Log::error('RestService::object_list - Unexpected query type ' . $type);
+            throw new \Exception('Unexpected query type ' . $type);
+        }
+
+        // prepare request parameters for each service
+        $request_params = [];
+        // loop over each rest service ID and process it.
+        foreach ($rs_list as $rs_id) {
+            // no filters for a distinct query
+            $service_filters = [];
+
+            // add the facet field
+            $query_parameters = [];
+            $query_parameters['distinct'] = $field;
+
+            // prepare parameters for each service
+            $t = [];
+
+            // Get the service information
+            $rs = self::find($rs_id);
+            $t['rs'] = $rs;
+
+            // Get the query URL based on the endpoint
+            $t['url'] = $rs->url . $endpoint;
+
+            $t['params'] = self::generate_json_query($service_filters, $query_parameters, $rs->api_version);
+            $t['timeout'] = config('ireceptor.service_request_timeout') * $timeout_scale;
+
+            $request_params[] = $t;
+        }
+
+        // do requests
+        $response_list = self::doRequests($request_params);
+
+        // build list of objects for each repertoire grouped by repository id
+        $objects_by_rs = [];
+        foreach ($response_list as $response) {
+            $rest_service_id = $response['rs']->id;
+
+            if ($response['status'] == 'error') {
+                $objects_by_rs[$rest_service_id]['samples'] = null;
+                $objects_by_rs[$rest_service_id]['error_type'] = $response['error_type'];
+                continue;
+            }
+
+            $object_response = data_get($response, 'data.Distinct', []);
+            $objects_by_rs[$rest_service_id] = $object_response;
+        }
+
+        return $objects_by_rs;
+    }
+
+    // $type: type of query to use (sequence/clone/cell)
     // $sample_id_list_by_rs: array of rest_service_id => [list of samples ids]
     // $filters: array of filters to use in the query
     // $field: the field in the repository to get the counts for

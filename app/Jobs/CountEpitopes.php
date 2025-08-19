@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\LocalJob;
-use App\Sample;
+use App\Epitopes;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -39,7 +39,7 @@ class CountEpitopes implements ShouldQueue
         $localJob = LocalJob::find($this->localJobId);
         $localJob->setRunning();
 
-        Sample::cache_epitope_counts($this->username, $this->rest_service_id);
+        Epitopes::cache_epitopes($this->username, $this->rest_service_id);
 
         $localJob->setFinished();
     }
