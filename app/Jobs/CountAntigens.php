@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\LocalJob;
 use App\Antigens;
+use App\LocalJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
