@@ -24,7 +24,6 @@ class Epitopes extends Model
                 // The query will return null in the list if there are Rearrangements
                 // with no epitopes, so we ignore the null response
                 if ($epitope_id != null) {
-
                     // Set up our data to store in the DB
                     $t = [];
                     $t['epitope_id'] = $epitope_id;
@@ -66,11 +65,11 @@ class Epitopes extends Model
 
             $defaults['base_uri'] = 'https://query-api.iedb.org/';
             $client = new \GuzzleHttp\Client($defaults);
-            $response = $client->get('epitope_search?structure_iri=eq.'.$epitope_id);
+            $response = $client->get('epitope_search?structure_iri=eq.' . $epitope_id);
             $body = $response->getBody();
             $t = json_decode($body);
             if (count($t) != 1) {
-                Log::warn('Epitope - Could not find exactly one sequence for eptipope ID '. $epitope_id);
+                Log::warn('Epitope - Could not find exactly one sequence for eptipope ID ' . $epitope_id);
             }
             // TODO: Check that keys exist for object $t
             $epitope_sequence = $t[0]->linear_sequence;

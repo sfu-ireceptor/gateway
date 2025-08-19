@@ -24,7 +24,6 @@ class Species extends Model
                 // The query will return null in the list if there are Rearrangements
                 // with no species, so we ignore the null response
                 if ($species_id != null) {
-
                     // Set up our data to store in the DB
                     $t = [];
                     $t['species_id'] = $species_id;
@@ -56,7 +55,6 @@ class Species extends Model
             }
         }
     }
-
 
     public static function lookup_species_name($species_id)
     {

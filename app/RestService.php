@@ -830,7 +830,7 @@ class RestService extends Model
     }
 
     // $type: type of query to use (sequence/clone/cell)
-    // $rs_list: array of rest_service_ids 
+    // $rs_list: array of rest_service_ids
     // $field: the field in the repository to get the distinct values for
     public static function distinct($type, $rs_list, $field = '', $timeout_scale = 1)
     {

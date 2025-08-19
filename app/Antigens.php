@@ -11,7 +11,6 @@ class Antigens extends Model
     protected $collection = 'antigens';
     protected $guarded = [];
 
-
     public static function cache_antigens($username, $rest_service_id = null)
     {
         Log::debug('Antigen::cache_antigens: Caching antigen data');
@@ -25,7 +24,6 @@ class Antigens extends Model
                 // The query will return null in the list if there are Rearrangements
                 // with no antigens, so we ignore the null response
                 if ($antigen_id != null) {
-
                     // Set up our data to store in the DB
                     $t = [];
                     $t['antigen_id'] = $antigen_id;
