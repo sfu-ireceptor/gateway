@@ -22,8 +22,10 @@ class Epitopes extends Model
         foreach ($response_list as $rest_service_id => $epitope_array) {
             foreach ($epitope_array as $epitope_id) {
                 // The query will return null in the list if there are Rearrangements
-                // with no epitopes, so we ignore the null response
-                if ($epitope_id != null) {
+                // with no species, so we ignore the null response. We also sometimes
+                // get an object response with {$undefined:true} which we want to ignore.
+                // So essentially we throw out anything that isn't a string.
+                if (is_string($epitope_id)) {
                     // Set up our data to store in the DB
                     $t = [];
                     $t['epitope_id'] = $epitope_id;

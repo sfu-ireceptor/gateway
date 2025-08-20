@@ -22,8 +22,10 @@ class Antigens extends Model
         foreach ($response_list as $rest_service_id => $antigen_array) {
             foreach ($antigen_array as $antigen_id) {
                 // The query will return null in the list if there are Rearrangements
-                // with no antigens, so we ignore the null response
-                if ($antigen_id != null) {
+                // with no species, so we ignore the null response. We also sometimes
+                // get an object response with {$undefined:true} which we want to ignore.
+                // So essentially we throw out anything that isn't a string.
+                if (is_string($antigen_id)) {
                     // Set up our data to store in the DB
                     $t = [];
                     $t['antigen_id'] = $antigen_id;
@@ -65,13 +67,28 @@ class Antigens extends Model
 
             $antigen_array = explode(':', $antigen_id);
             if (count($antigen_array) == 2) {
-                $defaults['base_uri'] = 'https://rest.uniprot.org/uniprotkb/';
-                $client = new \GuzzleHttp\Client($defaults);
-                $response = $client->get($antigen_array[1] . '.json');
-                $body = $response->getBody();
-                $t = json_decode($body);
-                // TODO: Check that these keys exist for object $t
-                $antigen_name = $t->proteinDescription->recommendedName->fullName->value;
+                if ($antigen_array[0] == 'UNIPROT') {
+                    $defaults['base_uri'] = 'https://rest.uniprot.org/uniprotkb/';
+                    $client = new \GuzzleHttp\Client($defaults);
+                    $response = $client->get($antigen_array[1] . '.json');
+                    $body = $response->getBody();
+                    $t = json_decode($body);
+                    // TODO: Check that these keys exist for object $t
+                    if (property_exists($t->proteinDescription,'recommendedName')) {
+                        $antigen_name = $t->proteinDescription->recommendedName->fullName->value;
+                    }
+                    else if (property_exists($t->proteinDescription,'submissionNames')) {
+                        $antigen_name = $t->proteinDescription->submissionNames[0]->fullName->value;
+                    } else if (property_exists($t, 'label')) {
+                        $antigen_name = $t->label;
+                    } else {
+                        Log::debug('XXXX ' . json_encode($t,JSON_PRETTY_PRINT));
+                        Log::error('Antigens: Could not get name for ' . $antigen_id);
+                    }
+                } else {
+                    Log::error('Antigens: Unknown protein provider ' . $antigen_array[0]);
+                }
+
             }
         } catch (\Exception $e) {
             $error_message = $e->getMessage();
