@@ -74,21 +74,19 @@ class Antigens extends Model
                     $body = $response->getBody();
                     $t = json_decode($body);
                     // TODO: Check that these keys exist for object $t
-                    if (property_exists($t->proteinDescription,'recommendedName')) {
+                    if (property_exists($t->proteinDescription, 'recommendedName')) {
                         $antigen_name = $t->proteinDescription->recommendedName->fullName->value;
-                    }
-                    else if (property_exists($t->proteinDescription,'submissionNames')) {
+                    } elseif (property_exists($t->proteinDescription, 'submissionNames')) {
                         $antigen_name = $t->proteinDescription->submissionNames[0]->fullName->value;
-                    } else if (property_exists($t, 'label')) {
+                    } elseif (property_exists($t, 'label')) {
                         $antigen_name = $t->label;
                     } else {
-                        Log::debug('XXXX ' . json_encode($t,JSON_PRETTY_PRINT));
+                        Log::debug('XXXX ' . json_encode($t, JSON_PRETTY_PRINT));
                         Log::error('Antigens: Could not get name for ' . $antigen_id);
                     }
                 } else {
                     Log::error('Antigens: Unknown protein provider ' . $antigen_array[0]);
                 }
-
             }
         } catch (\Exception $e) {
             $error_message = $e->getMessage();
