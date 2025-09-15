@@ -210,6 +210,7 @@ function run_analysis()
     junction_summary_file="${output_directory}/junction_summary.tsv"
     echo -e "junction_aa\tcount" > $junction_summary_file
     total_count=0
+    num_junctions=0
     counter=0
     IFS=',' read -ra values <<< "$JUNCTION_AA_LIST"
     for junction_query_file in ${output_directory}/*junction_query*.json; do
@@ -237,15 +238,19 @@ function run_analysis()
                echo "IR-ERROR: Could not convert JSON to TSV from ${output_file}"
                continue 
            fi
-           # Extract only those counts that are greater than 0. Count are in column 3
+           # Sort the counts
            head -1 ${temp_counts} > $tsv_output_file
-           tail +2 ${temp_counts} | awk -F'\t' '$3 > 0' | sort -k 3 -n -r >> ${tsv_output_file}
+           #tail +2 ${temp_counts} | awk -F'\t' '$3 > 0' | sort -k 3 -n -r >> ${tsv_output_file}
+           tail +2 ${temp_counts} | sort -k 3 -n -r >> ${tsv_output_file}
            rm ${temp_counts}
 
            # Get a count for this Junction and add it to the overall total
            file_count=$(awk 'BEGIN {sum = 0} FNR > 1 {sum += $3} END {print sum}' ${tsv_output_file})
+           echo -e "${values[$counter]}\t${file_count}" >> $junction_summary_file
+
+           # Track the number of junctions that were found.
            if [ "$file_count" -gt "0" ]; then
-               echo -e "${values[$counter]}\t${file_count}" >> $junction_summary_file
+               num_junctions=$[$num_junctions +1]
            fi
            total_count=$[$total_count + $file_count]
        fi
@@ -256,9 +261,6 @@ function run_analysis()
     mv $junction_summary_file "${junction_summary_file}.tmp"
     head -1 "${junction_summary_file}.tmp" > $junction_summary_file
     tail +2 "${junction_summary_file}.tmp" | sort -k 2 -n -r >> $junction_summary_file 
-
-    # Get the number of junctions that were found.
-    num_junctions=$(tail +2 $junction_summary_file | wc -l) 
 
     # Generate a summary HTML file for the Gateway to present this info to the user
     gateway_file=${output_directory}/${repertoire_id}-gateway.html
