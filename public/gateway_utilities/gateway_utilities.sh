@@ -793,7 +793,11 @@ function gateway_split_repertoire(){
     local end_seconds=$SECONDS
     GATEWAY_SPLIT_SECONDS=$((end_seconds-start_seconds))
     GATEWAY_REPERTOIRE_COUNT=${repertoire_total}
-    object_per_second=$((GATEWAY_OBJECT_COUNT/GATEWAY_SPLIT_SECONDS))
+    if [ "$GATEWAY_SPLIT_SECONDS" -gt 0 ]; then
+        object_per_second=$((GATEWAY_OBJECT_COUNT/GATEWAY_SPLIT_SECONDS))
+    else
+        object_per_second=$GATEWAY_OBJECT_COUNT
+    fi
     echo "${GW_INFO} Total split repertoire time (s) = $GATEWAY_SPLIT_SECONDS" 
     echo "${GW_INFO} Total repertoires =  $repertoire_total" 
     echo "${GW_INFO} Total objects processed = $GATEWAY_OBJECT_COUNT"
