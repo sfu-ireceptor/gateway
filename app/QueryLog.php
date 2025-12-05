@@ -287,10 +287,10 @@ class QueryLog extends Model
     public static function find_gateway_queries($nb_months = null)
     {
         if ($nb_months == null) {
-            $l = static::where('level', '=', 'gateway')->where('start_time', '>', new \DateTime('-7 days'))->orderBy('_id', 'desc')->get();
+            $l = static::where('level', '=', 'gateway')->where('start_time', '>', new \DateTime('-7 days'))->orderBy('start_time', 'desc')->get();
         } else {
             // $l = static::where('level', '=', 'gateway')->orderBy('start_time', 'desc')->get();
-            $l = static::where('level', '=', 'gateway')->where('start_time', '>', new \DateTime('-' . $nb_months . ' months'))->orderBy('_id', 'desc')->get();
+            $l = static::where('level', '=', 'gateway')->where('start_time', '>', new \DateTime('-' . $nb_months . ' months'))->orderBy('start_time', 'desc')->get();
         }
 
         return $l;
