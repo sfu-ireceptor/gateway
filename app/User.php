@@ -19,7 +19,7 @@ class User extends Authenticatable
     // be removed from the database at some point. Leaving for now in case need to
     // revisit this need.
     protected $fillable = [
-        'name', 'email', 'password', 'username', 'admin', 'galaxy_url', 'galaxy_tool_id', 'stats_popup_count', 'token',
+        'name', 'email', 'password', 'username', 'admin', 'galaxy_url', 'galaxy_tool_id', 'stats_popup_count', 'token','status'
     ];
 
     // attributes that should be hidden for arrays.
@@ -34,6 +34,12 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return $this->admin;
+    }
+
+    public function getStatus()
+    {
+        if ($this->status == null) return 'Standard';
+        else return $this->status;
     }
 
     public static function exists($username)
@@ -81,6 +87,7 @@ class User extends Authenticatable
         $user->country = $country;
         $user->institution = $institution;
         $user->notes = $notes;
+        $user->status = 'Standard';
 
         $user->username = $user->generateUsername();
         $user->password = Hash::make($password);
