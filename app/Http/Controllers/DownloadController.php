@@ -52,7 +52,11 @@ class DownloadController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        //$d->save();
+        // Code to limit downloads to other than "Standard" users.
+        //if ($user->getStatus() == 'Standard') {
+        //    return redirect('downloads')->with('notification', $user->getStatus() . ' users are not able to download data.');
+        //}
+
         Log::debug('Download file = ' . $d->file_url);
         if (File::exists($d->file_url)) {
             return response()->download($d->file_url);
