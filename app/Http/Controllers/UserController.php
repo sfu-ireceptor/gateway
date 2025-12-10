@@ -117,9 +117,9 @@ class UserController extends Controller
         $credentials = $request->only('username', 'password');
         Log::debug('UserController::postLogin: login attempt from user ' . $credentials['username']);
 
-
         if (! Auth::attempt($credentials)) {
             Log::debug('UserController::postLogin: invalid credentials for user ' . $credentials['username']);
+
             return redirect()->back()->withErrors(['Invalid credentials']);
         }
 
@@ -127,9 +127,9 @@ class UserController extends Controller
 
         $user = Auth::user();
         $status = $user->getStatus();
-        if ($status != 'Standard')
-        {
+        if ($status != 'Standard') {
             Log::debug('UserController::postLogin: user access for ' . $credentials['username'] . ' denied, status = ' . $status);
+
             return redirect()->back()->withErrors(['Login not allowed for user ' . $credentials['username'] . ' (status = ' . $status . '), contact support@ireceptor.org']);
         }
 
@@ -138,6 +138,7 @@ class UserController extends Controller
         }
 
         Log::debug('UserController::postLogin: successful login from user ' . $credentials['username']);
+
         return redirect()->intended('home');
     }
 
@@ -370,7 +371,7 @@ class UserController extends Controller
             return redirect()->back()->withErrors($validator);
         }
 
-        // Get the email the user provided 
+        // Get the email the user provided
         $email = $request->input('email');
 
         // Get the user - generate an error and redirect if the email is not for
@@ -382,11 +383,11 @@ class UserController extends Controller
             return redirect()->back()->withErrors(['email' => 'Sorry, there\'s no user with this email address. Make sure to enter the email you registered with.']);
         }
 
-        // Check the status of the user. If they are not allowed to log in, 
+        // Check the status of the user. If they are not allowed to log in,
         // redirect and generate an error.
-        if ($user->getStatus() != 'Standard')
-        {
+        if ($user->getStatus() != 'Standard') {
             Log::debug('UserController::postForgotPassword: User with email ' . $email . ' has status ' . $user->getStatus() . ', can not change password');
+
             return redirect()->back()->withErrors(['email' => 'User with email ' . $email . ' has status ' . $user->getStatus() . ', can not change password, contact support@ireceptor.org']);
         }
 
@@ -404,7 +405,7 @@ class UserController extends Controller
             'created_at' => Carbon::now(),
         ]);
 
-        // Email reset link to the user. If the email fails, notify the user and 
+        // Email reset link to the user. If the email fails, notify the user and
         // ask them to try later.
         $t = [];
         $t['reset_link'] = config('app.url') . '/user/reset-password/' . $token;
@@ -420,7 +421,7 @@ class UserController extends Controller
             return redirect()->back()->withErrors(['email' => 'Sorry, we were unable to send the password reset email. Please try again later.']);
         }
 
-        // Make sure we are logged out after password reset. 
+        // Make sure we are logged out after password reset.
         auth()->logout();
 
         // Redirect to the email sent page.
@@ -431,6 +432,7 @@ class UserController extends Controller
     {
         // Inform the user that the reset email has been sent.
         Log::debug('UserContorller::getForgotPasswordEmailSent');
+
         return view('user/forgotPasswordEmailSent');
     }
 
@@ -479,7 +481,7 @@ class UserController extends Controller
         // Disable/remove reset token
         DB::table($table)->where('token', $reset_token)->delete();
 
-        // Make sure we are logged out after password reset. 
+        // Make sure we are logged out after password reset.
         auth()->logout();
 
         return redirect('/user/reset-password-confirmation');
@@ -489,6 +491,7 @@ class UserController extends Controller
     {
         // Inform the user that there password was reset.
         Log::debug('UserContorller::getResetPasswordConfirmation');
+
         return view('user/resetPasswordConfirmation');
     }
 }
