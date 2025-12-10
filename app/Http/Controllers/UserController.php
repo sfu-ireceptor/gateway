@@ -115,18 +115,29 @@ class UserController extends Controller
     public function postLogin(Request $request)
     {
         $credentials = $request->only('username', 'password');
+        Log::debug('UserController::postLogin: login attempt from user ' . $credentials['username']);
+
 
         if (! Auth::attempt($credentials)) {
+            Log::debug('UserController::postLogin: invalid credentials for user ' . $credentials['username']);
             return redirect()->back()->withErrors(['Invalid credentials']);
         }
 
         $request->session()->regenerate();
 
         $user = Auth::user();
+        $status = $user->getStatus();
+        if ($status != 'Standard')
+        {
+            Log::debug('UserController::postLogin: user access for ' . $credentials['username'] . ' denied, status = ' . $status);
+            return redirect()->back()->withErrors(['Login not allowed for user ' . $credentials['username'] . ' (status = ' . $status . '), contact support@ireceptor.org']);
+        }
+
         if (! $user->did_survey) {
             return redirect('/ireceptor-survey');
         }
 
+        Log::debug('UserController::postLogin: successful login from user ' . $credentials['username']);
         return redirect()->intended('home');
     }
 
@@ -246,7 +257,7 @@ class UserController extends Controller
 
     public function postRegister(Request $request)
     {
-        // validate form
+        // Validate form to make sure we have required fields.
         $rules = [
             'first_name' => 'required',
             'last_name' => 'required',
@@ -266,6 +277,7 @@ class UserController extends Controller
             return redirect('/register')->withErrors($validator);
         }
 
+        // Get the data from the form
         $first_name = $request->get('first_name');
         $last_name = $request->get('last_name');
         $email = $request->get('email2');
@@ -273,17 +285,20 @@ class UserController extends Controller
         $institution = $request->get('institution');
         $notes = $request->get('notes');
 
-        // check it's not a bot
+        // Check it's not a bot
         $honey_pot_email = $request->get('email');
         if (Str::length($honey_pot_email) != 0) {
             Log::info('Bot account creation prevented: ' . $first_name . ' ' . $last_name . ' - ' . $email . ' - ' . $country . ' - ' . $institution);
             abort(403, 'Sorry, registration is not allowed to bots.');
         }
 
+        // Generate a random string for a password
         $password = str_random(24);
 
+        // Add the user information to the user database
         $u = User::add($first_name, $last_name, $email, $password, $country, $institution, $notes);
 
+        // Send an email to the user about account creation
         $t = [];
         $t['app_url'] = config('app.url');
         $t['first_name'] = $u->first_name;
@@ -295,7 +310,7 @@ class UserController extends Controller
         $t['country'] = $u->country;
         $t['institution'] = $institution;
 
-        // email credentials
+        // Email credentials
         try {
             Mail::send(['text' => 'emails.auth.accountCreated'], $t, function ($message) use ($u) {
                 $message->to($u->email)->subject('iReceptor account');
@@ -305,7 +320,7 @@ class UserController extends Controller
             Log::error('UserController::postRegister - ' . $e->getMessage());
         }
 
-        // admin notification email
+        // Send an admin notification email about the new user.
         try {
             Mail::send(['text' => 'emails.auth.newUser'], $t, function ($message) use ($u) {
                 $message->to(config('ireceptor.email_support'))->subject('New account - ' . $u->first_name . ' ' . $u->last_name);
@@ -315,8 +330,10 @@ class UserController extends Controller
             Log::error('UserController::postRegister - ' . $e->getMessage());
         }
 
+        // Log the user in.
         Auth::login($u);
 
+        // Take them to the welcome page.
         return redirect('/user/welcome');
     }
 
@@ -327,6 +344,7 @@ class UserController extends Controller
 
     public function getForgotPassword($email = '')
     {
+        Log::debug('UserContorller::getForgotPassword');
         $data['email'] = $email;
 
         return view('user/forgotPassword', $data);
@@ -334,7 +352,9 @@ class UserController extends Controller
 
     public function postForgotPassword(Request $request)
     {
-        // validate form
+        Log::debug('UserContorller::postForgotPassword');
+
+        // Validate form to ensure that the email id filled out
         $rules = [
             'email' => 'required|email',
         ];
@@ -350,8 +370,11 @@ class UserController extends Controller
             return redirect()->back()->withErrors($validator);
         }
 
+        // Get the email the user provided 
         $email = $request->input('email');
 
+        // Get the user - generate an error and redirect if the email is not for
+        // a valid user.
         $user = User::where('email', $email)->first();
         if ($user == null) {
             $request->flash();
@@ -359,12 +382,20 @@ class UserController extends Controller
             return redirect()->back()->withErrors(['email' => 'Sorry, there\'s no user with this email address. Make sure to enter the email you registered with.']);
         }
 
-        // generate token
+        // Check the status of the user. If they are not allowed to log in, 
+        // redirect and generate an error.
+        if ($user->getStatus() != 'Standard')
+        {
+            Log::debug('UserController::postForgotPassword: User with email ' . $email . ' has status ' . $user->getStatus() . ', can not change password');
+            return redirect()->back()->withErrors(['email' => 'User with email ' . $email . ' has status ' . $user->getStatus() . ', can not change password, contact support@ireceptor.org']);
+        }
+
+        // Generate token for this password reset.
         $hashKey = config('app.key');
         $token = hash_hmac('sha256', Str::random(40), $hashKey);
-        Log::debug('Forgotten password token: ' . $token);
+        Log::debug('Forgotten password for ' . $user->username . ', token: ' . $token);
 
-        // add token to DB
+        // Add token to DB so that we can track it.
         $table = 'password_resets';
         DB::table($table)->where('email', $email)->delete();
         DB::table($table)->insert([
@@ -373,7 +404,8 @@ class UserController extends Controller
             'created_at' => Carbon::now(),
         ]);
 
-        // email reset link
+        // Email reset link to the user. If the email fails, notify the user and 
+        // ask them to try later.
         $t = [];
         $t['reset_link'] = config('app.url') . '/user/reset-password/' . $token;
         $t['first_name'] = $user->first_name;
@@ -388,19 +420,27 @@ class UserController extends Controller
             return redirect()->back()->withErrors(['email' => 'Sorry, we were unable to send the password reset email. Please try again later.']);
         }
 
+        // Make sure we are logged out after password reset. 
+        auth()->logout();
+
+        // Redirect to the email sent page.
         return redirect('/user/forgot-password-email-sent');
     }
 
     public function getForgotPasswordEmailSent()
     {
+        // Inform the user that the reset email has been sent.
+        Log::debug('UserContorller::getForgotPasswordEmailSent');
         return view('user/forgotPasswordEmailSent');
     }
 
     public function getResetPassword($reset_token)
     {
-        Log::debug('Token from email: ' . $reset_token);
+        // This handles when a user clicks on the token link
+        // to generate a new password.
+        Log::debug('UserContorller::getResetPassword - Token from email: ' . $reset_token);
 
-        // check token
+        // Check token to make sure it is a valid reset token in the DB
         $table = 'password_resets';
         $entry = DB::table($table)->where('token', $reset_token)->first();
         if ($entry == null) {
@@ -410,40 +450,45 @@ class UserController extends Controller
 
             return response()->view('error', $data, 401);
         }
-
+        // Get the user that is associated with the token.
         $user = User::where('email', $entry->email)->first();
 
+        // Assign a new random password and save it in the user DB as a hash
         $new_password = str_random(24);
         $user->password = Hash::make($new_password);
         $user->save();
 
-        // log user in
-        auth()->login($user);
-
-        // email new password
+        // Email new temporary credential information to the user.
         $email = $user->email;
         $t = [];
         $t['first_name'] = $user->first_name;
         $t['username'] = $user->username;
         $t['password'] = $new_password;
         $t['login_link'] = config('app.url') . '/login';
+        $t['reset_link'] = config('app.url') . '/user/change-password';
         try {
             Mail::send(['text' => 'emails.auth.newPassword'], $t, function ($message) use ($email) {
-                $message->to($email)->subject('Your new password');
+                $message->to($email)->subject('Your new iReceptor credentials');
             });
         } catch (\Exception $e) {
             Log::error('UserController::getResetPassword - User new password email delivery failed');
             Log::error('UserController::getResetPassword - ' . $e->getMessage());
         }
+        Log::debug('UserContorller::getResetPassword - New credentials sent for user ' . $user->username);
 
-        // disable reset token
+        // Disable/remove reset token
         DB::table($table)->where('token', $reset_token)->delete();
+
+        // Make sure we are logged out after password reset. 
+        auth()->logout();
 
         return redirect('/user/reset-password-confirmation');
     }
 
     public function getResetPasswordConfirmation()
     {
+        // Inform the user that there password was reset.
+        Log::debug('UserContorller::getResetPasswordConfirmation');
         return view('user/resetPasswordConfirmation');
     }
 }
