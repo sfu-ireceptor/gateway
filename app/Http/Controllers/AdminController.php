@@ -667,7 +667,12 @@ class AdminController extends Controller
         $new_list = [];
         foreach ($job_list as $job) {
             $new_job = $job;
-            $new_job['username'] = User::where('id', $job->user_id)->first()->username;
+            $user = User::where('id', $job->user_id)->first();
+            if ($user == null) {
+                $new_job['username'] = 'NA';
+            } else {
+                $new_job['username'] = User::where('id', $job->user_id)->first()->username;
+            }
             $new_list[] = $new_job;
         }
 
