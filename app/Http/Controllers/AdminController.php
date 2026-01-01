@@ -399,11 +399,15 @@ class AdminController extends Controller
             abort(401, 'Not authorized.');
         }
 
+        // We temporarily need more memory for the cache operation.
+        ini_set('memory_limit', '1024M');
+
+        // Build the sample cache.
         $n = CachedSample::cache();
 
         $message = "$n samples have been retrieved and cached.";
 
-        // delete cached sata
+        // Delete cached data
         Cache::flush();
 
         return redirect('admin/databases')->with('notification', $message);
