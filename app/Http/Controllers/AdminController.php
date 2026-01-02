@@ -399,9 +399,6 @@ class AdminController extends Controller
             abort(401, 'Not authorized.');
         }
 
-        // We temporarily need more memory for the cache operation.
-        ini_set('memory_limit', '1024M');
-
         // Build the sample cache.
         $n = CachedSample::cache();
 
