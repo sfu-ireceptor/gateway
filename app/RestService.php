@@ -2687,7 +2687,6 @@ class RestService extends Model
         // TODO: This should probably be optimized, all data is probably not needed
         ini_set('memory_limit', '2048M');
 
-
         // prepare requests
         $iterator = function () use ($client, $request_params) {
             foreach ($request_params as $t) {
