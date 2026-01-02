@@ -2684,7 +2684,6 @@ class RestService extends Model
         $client = new \GuzzleHttp\Client($defaults);
         ini_set('memory_limit', '2048M');
 
-
         // prepare requests
         $iterator = function () use ($client, $request_params) {
             foreach ($request_params as $t) {
