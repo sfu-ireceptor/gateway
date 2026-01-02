@@ -2682,6 +2682,9 @@ class RestService extends Model
         $defaults = [];
         $defaults['verify'] = false;    // accept self-signed SSL certificates
         $client = new \GuzzleHttp\Client($defaults);
+        // ADC is getting very large, repertoire queries for all data require alot
+        // of memory. 
+        // TODO: This should probably be optimized, all data is probably not needed
         ini_set('memory_limit', '2048M');
 
 
