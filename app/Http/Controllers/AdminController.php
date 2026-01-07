@@ -402,11 +402,12 @@ class AdminController extends Controller
             abort(401, 'Not authorized.');
         }
 
+        // Build the sample cache.
         $n = CachedSample::cache();
 
         $message = "$n samples have been retrieved and cached.";
 
-        // delete cached sata
+        // Delete cached data
         Cache::flush();
 
         return redirect('admin/databases')->with('notification', $message);

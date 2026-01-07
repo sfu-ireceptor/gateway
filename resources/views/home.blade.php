@@ -3,8 +3,14 @@
 @section('title', 'Home')
 
 @section('content')
+@if ( $home_banner_display)
 <div class="container home_container">
-
+  <div class="intro_home">
+    {!! $home_banner_text !!}
+  </div>
+</div>
+@endif
+<div class="container home_container">
 	<div class="row">
 
 		<div class="col-md-8">
