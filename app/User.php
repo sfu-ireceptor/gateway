@@ -46,7 +46,7 @@ class User extends Authenticatable
     }
 
     // Check to see if the given user has access to a specific resource type.
-    // Essentially, ACLs are encoded in this function. This is based on the 
+    // Essentially, ACLs are encoded in this function. This is based on the
     // the User's status ($this->status) and the type of resource. Examples of
     // the resource types would be "login", "sequence" (for sequence queries),
     // "download", and "job" etc.
@@ -66,11 +66,13 @@ class User extends Authenticatable
             // If user is Standard can log in
             if ($status_level == 'Standard') {
                 Log::debug('User::hasAccess: login Standard allowed');
+
                 return true;
             }
             // If no other clauses asses to true, return false, user
             // can't log in.
             Log::debug('User::hasAccess: login denied');
+
             return false;
         }
         if ($resource_type == 'samples') {
@@ -91,11 +93,12 @@ class User extends Authenticatable
         // If we are asked for access to an unknown resource, err on
         // the side of not providing access.
         Log::error('User::hasAccess: Invalid resource type ' . $resource_type);
+
         return false;
     }
 
     // Check to see if the given user has access to a specific resource type.
-    // Essentially, ACLs are encoded in this function. This is based on the 
+    // Essentially, ACLs are encoded in this function. This is based on the
     // the User's status ($this->status) and the type of resource. Examples of
     // the resource types would be "login", "sequence" (for sequence queries),
     // "download", and "job" etc.
@@ -105,7 +108,7 @@ class User extends Authenticatable
         if (! $this->hasAccess($resource_type)) {
             return false;
         }
-        // 
+        //
         // Get info about the query from the logs based on the gateway URL
         // query_id
         $query_info = QueryLog::find_gateway_query_url_query_id($resource_type, $gateway_query_id);
@@ -127,7 +130,7 @@ class User extends Authenticatable
         // If no access granted at this point, we return false
         return false;
     }
-    
+
     public static function exists($username)
     {
         $user = self::where('username', $username)->first();

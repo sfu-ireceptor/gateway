@@ -61,8 +61,8 @@ class SequenceController extends Controller
         // User object for current user
         $user = Auth::user();
 
-        // Check to see if the user is has access to a sequences resource 
-        // with the query_id they are requesting. 
+        // Check to see if the user is has access to a sequences resource
+        // with the query_id they are requesting.
         // This should not happen in normal functioning of the Gateway, but
         // is necessary to prevent users changing the query_id in the URL.
         if ($query_id != null && ! $user->hasAccessQueryID('sequences', $query_id)) {
@@ -476,7 +476,7 @@ class SequenceController extends Controller
 
         /*************************************************
         * Check access control */
-        
+
         // Get query_id parameter from the query
         $query_id = $request->input('query_id');
         Log::debug('SequenceController::quickSearch - query_id = ' . $query_id);
