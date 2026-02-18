@@ -62,7 +62,7 @@ class CloneController extends Controller
         // with the query_id they are requesting.
         // This should not happen in normal functioning of the Gateway, but
         // is necessary to prevent users changing the query_id in the URL.
-        if (! $user->hasAccessQueryID('clones', $query_id)) {
+        if ($query_id != null && ! $user->hasAccessQueryID('clones', $query_id)) {
             abort(401, 'Not authorized.');
         }
 
