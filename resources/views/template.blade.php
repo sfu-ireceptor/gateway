@@ -198,6 +198,11 @@
 			    </div><!-- /.navbar-collapse -->
 			  </div><!-- /.container-fluid -->
 			</nav>
+<!--
+              <div class="banner_title samples">
+                   Sponsors
+			  </div>
+-->
 		@endif
 
 
