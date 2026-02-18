@@ -12,7 +12,9 @@ use App\System;
 use App\Tapis;
 use Facades\App\Query;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+
 
 class CellController extends Controller
 {
@@ -46,6 +48,24 @@ class CellController extends Controller
         // if "remove filter" request, generate new query_id and redirect
         if ($request->has('remove_filter')) {
             return self::removeFilter($request);
+        }
+
+        /*************************************************
+        * Check access control */
+
+        // Get query_id parameter from the query
+        $query_id = $request->input('query_id');
+        Log::debug('CellController::index - query_id = ' . $query_id);
+
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user is has access to a cells resource
+        // with the query_id they are requesting.
+        // This should not happen in normal functioning of the Gateway, but
+        // is necessary to prevent users changing the query_id in the URL.
+        if (! $user->hasAccessQueryID('cells', $query_id)) {
+            abort(401, 'Not authorized.');
         }
 
         /*************************************************

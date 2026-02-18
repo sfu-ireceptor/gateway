@@ -125,12 +125,12 @@ class UserController extends Controller
 
         $request->session()->regenerate();
 
+        // Check to make sure user is allowed to login
         $user = Auth::user();
-        $status = $user->getStatus();
-        if ($status != 'Standard') {
-            Log::debug('UserController::postLogin: user access for ' . $credentials['username'] . ' denied, status = ' . $status);
+        if (! $user->hasAccess('login')) {
+            Log::debug('UserController::postLogin: user access for ' . $credentials['username'] . ' denied, status = ' . $user->getStatus());
 
-            return redirect()->back()->withErrors(['Login not allowed for user ' . $credentials['username'] . ' (status = ' . $status . '), contact support@ireceptor.org']);
+            return redirect()->back()->withErrors(['Login not allowed for user ' . $credentials['username'] . ' (status = ' . $user->getStatus() . '), contact support@ireceptor.org']);
         }
 
         if (! $user->did_survey) {
@@ -385,7 +385,7 @@ class UserController extends Controller
 
         // Check the status of the user. If they are not allowed to log in,
         // redirect and generate an error.
-        if ($user->getStatus() != 'Standard') {
+        if (! $user->hasAccess('login')) {
             Log::debug('UserController::postForgotPassword: User with email ' . $email . ' has status ' . $user->getStatus() . ', can not change password');
 
             return redirect()->back()->withErrors(['email' => 'User with email ' . $email . ' has status ' . $user->getStatus() . ', can not change password, contact support@ireceptor.org']);
