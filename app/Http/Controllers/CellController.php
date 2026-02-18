@@ -64,7 +64,7 @@ class CellController extends Controller
         // with the query_id they are requesting.
         // This should not happen in normal functioning of the Gateway, but
         // is necessary to prevent users changing the query_id in the URL.
-        if (! $user->hasAccessQueryID('cells', $query_id)) {
+        if ($query_id != null && ! $user->hasAccessQueryID('cells', $query_id)) {
             abort(401, 'Not authorized.');
         }
 
