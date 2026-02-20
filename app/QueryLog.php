@@ -307,7 +307,10 @@ class QueryLog extends Model
     {
         // Gateway queries look like this: /sequences?query_id=3720
         // 'sequences' is the resource type and query_id is 3720 in this case.
-        $query_info = static::where('url', 'LIKE', '%' . $resource_type . '?query_id=' . $query_id . '%')->first();
+        // We only return successful queries (status == done)
+        $query_str = $resource_type . '?query_id=' . $query_id;
+        $query_info = static::where('url', 'LIKE', '%' . $query_str . '%')
+                              ->where('status','=','done')->first();
 
         return $query_info;
     }
