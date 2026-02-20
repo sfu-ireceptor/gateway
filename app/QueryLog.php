@@ -310,7 +310,7 @@ class QueryLog extends Model
         // We only return successful queries (status == done)
         $query_str = $resource_type . '?query_id=' . $query_id;
         $query_info = static::where('url', 'LIKE', '%' . $query_str . '%')
-                              ->where('status','=','done')->first();
+                              ->where('status', '=', 'done')->first();
 
         return $query_info;
     }

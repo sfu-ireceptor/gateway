@@ -114,6 +114,7 @@ class User extends Authenticatable
         $query_info = QueryLog::find_gateway_query_url_query_id($resource_type, $gateway_query_id);
         if ($query_info == null) {
             Log::debug('User::hasAccessQueryID - could not find ' . $resource_type . ' query ' . $gateway_query_id);
+
             return false;
         }
         Log::debug('User::hasAccessQueryID - query_info = ' . $query_info->url);
