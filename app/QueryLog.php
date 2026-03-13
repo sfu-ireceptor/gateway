@@ -303,7 +303,7 @@ class QueryLog extends Model
         return $l;
     }
 
-    public static function find_gateway_query_url_query_id($resource_type, $query_id)
+    public static function find_gateway_query_url_query_id($resource_type, $query_id, $status = 'done')
     {
         // Gateway queries look like this: /sequences?query_id=3720
         // 'sequences' is the resource type and query_id is 3720 in this case.

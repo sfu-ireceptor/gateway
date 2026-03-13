@@ -104,18 +104,27 @@ class User extends Authenticatable
     // "download", and "job" etc.
     public function hasAccessQueryID($resource_type, $gateway_query_id)
     {
-        // Check first if the user has access to the resourece type
+        // Check first if the user has access to the resource type
         if (! $this->hasAccess($resource_type)) {
             return false;
         }
         //
-        // Get info about the query from the logs based on the gateway URL
-        // query_id
-        $query_info = QueryLog::find_gateway_query_url_query_id($resource_type, $gateway_query_id);
+        // Get info about the query it it has a "done" status from the
+        // logs based on the gateway URL query_id. We don't care about
+        // queries that are not of "done" status, because there can be
+        // many queries attemted that failed as we log failed query
+        // attempts
+        $query_info = QueryLog::find_gateway_query_url_query_id($resource_type, $gateway_query_id, 'done');
+        // If there is no query in the database that has a done status,
+        // then there is no conflict for this resource. We only have an ACL
+        // problem if there is a query with done status and it is not
+        // issued by the current user. We get the missing query with done 
+        // status case if the query is issued for the first time, and it
+        // has not yet been stored in the query DB.
         if ($query_info == null) {
             Log::debug('User::hasAccessQueryID - could not find ' . $resource_type . ' query ' . $gateway_query_id);
 
-            return false;
+            return true;
         }
         Log::debug('User::hasAccessQueryID - query_info = ' . $query_info->url);
 
