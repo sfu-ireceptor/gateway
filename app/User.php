@@ -118,7 +118,7 @@ class User extends Authenticatable
         // If there is no query in the database that has a done status,
         // then there is no conflict for this resource. We only have an ACL
         // problem if there is a query with done status and it is not
-        // issued by the current user. We get the missing query with done 
+        // issued by the current user. We get the missing query with done
         // status case if the query is issued for the first time, and it
         // has not yet been stored in the query DB.
         if ($query_info == null) {
