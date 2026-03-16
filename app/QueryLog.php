@@ -308,6 +308,7 @@ class QueryLog extends Model
         // Map an ACL resource_type to the type in the DB collection
         $resource_to_type_map = [
             'sequences'=>'sequence',
+            'sequences-quick-search'=>'combined',
             'clones'=>'clone',
             'cells'=>'cell',
             'samples'=>'sample'
