@@ -59,13 +59,22 @@ class CellController extends Controller
         // User object for current user
         $user = Auth::user();
 
-        // Check to see if the user is has access to a cells resource
-        // with the query_id they are requesting.
-        // This should not happen in normal functioning of the Gateway, but
-        // is necessary to prevent users changing the query_id in the URL.
-        if ($query_id != null && ! $user->hasAccessQueryID('cells', $query_id)) {
-            abort(401, 'Not authorized.');
+        if ($query_id != null) {
+            // Check to see if this query has been executed before.
+            $query_array = QueryLog::find_gateway_query_url_query_id('cells', $query_id, 'done');
+            // If it has been executed before, check to make sure that this user
+            // is allowed to access that query.
+            if (count($query_array) > 0) {
+                // Check to see if the user is has access to a cells resource
+                // with the query_id they are requesting.
+                // This should not happen in normal functioning of the Gateway, but
+                // is necessary to prevent users changing the query_id in the URL.
+                if (! $user->hasAccessQueryID('cells', $query_id)) {
+                    abort(401, 'Not authorized.');
+                }
+            }
         }
+
 
         /*************************************************
         * Get cell data */

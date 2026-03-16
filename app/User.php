@@ -114,32 +114,49 @@ class User extends Authenticatable
         // queries that are not of "done" status, because there can be
         // many queries attemted that failed as we log failed query
         // attempts
-        $query_info = QueryLog::find_gateway_query_url_query_id($resource_type, $gateway_query_id, 'done');
+        $query_array = QueryLog::find_gateway_query_url_query_id($resource_type, $gateway_query_id, 'done');
         // If there is no query in the database that has a done status,
-        // then there is no conflict for this resource. We only have an ACL
-        // problem if there is a query with done status and it is not
-        // issued by the current user. We get the missing query with done 
-        // status case if the query is issued for the first time, and it
-        // has not yet been stored in the query DB.
-        if ($query_info == null) {
+        // then providing access to the query makes no sense, so we
+        // return false (no access). 
+        $query_count = count($query_array);
+        if ($query_count == 0) {
             Log::debug('User::hasAccessQueryID - could not find ' . $resource_type . ' query ' . $gateway_query_id);
 
-            return true;
+            return false;
         }
-        Log::debug('User::hasAccessQueryID - query_info = ' . $query_info->url);
-
-        // Username that issued the query
-        $query_user = $query_info->username;
+        // If there is more than one query, then we have an ambigous 
+        // query. This should not happen for "done" queries. We return no
+        // access for this case.
+        //if ($query_count > 1) {
+            //Log::debug('User::hasAccessQueryID - found multiple queries for ' . $resource_type . ' query ' . $gateway_query_id);
+            //return false;
+        //}
+        
         // Username of the current user
         $username = $this->username;
         Log::debug('User::hasAccessQueryID - user = ' . $username);
-        Log::debug('User::hasAccessQueryID - query user = ' . $query_user);
-        // If the user is correct or the user is admin, then provide access.
-        if ($username == $query_user || $this->isAdmin()) {
+        
+        // If we are an Admin user, we are allowed to access the query.
+        if ($this->isAdmin()) {
+            Log::debug('User::hasAccessQueryID - access allowed for admin user ' . $username);
             return true;
         }
 
-        // If no access granted at this point, we return false
+        // Loop over each query
+        foreach($query_array as $query_info) {
+            Log::debug('User::hasAccessQueryID - query_info = ' . $query_info->url);
+
+            // Username that issued the query
+            $query_user = $query_info->username;
+            Log::debug('User::hasAccessQueryID - query owner = ' . $query_user);
+            // If the user has accessed this query in the past, then it is allowed
+            if ($username == $query_user) {
+                Log::debug('User::hasAccessQueryID - access allowed for ' . $username);
+                return true;
+            }
+        }
+
+        // If we get here, then the user is not on the done list, deny access
         return false;
     }
 

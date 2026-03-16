@@ -10,6 +10,7 @@ use App\RestService;
 use App\RestServiceGroup;
 use App\Sample;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -58,8 +59,6 @@ class SampleController extends Controller
         if ($type != '') {
             $type_full = $type;
         }
-
-        $username = auth()->user()->username;
 
         // if "remove one filter" request, generate new query_id and redirect to it
         if ($request->has('remove_filter')) {
@@ -128,6 +127,33 @@ class SampleController extends Controller
             $new_query_id = Query::saveParams($filters, 'samples');
 
             return redirect($page_uri . '?query_id=' . $new_query_id);
+        }
+
+        /*************************************************
+        * Check access control */
+
+        // Get query_id parameter from the query
+        $query_id = $request->input('query_id');
+        Log::debug('SampleController::index - query_id = ' . $query_id);
+
+        // User object for current user
+        $user = Auth::user();
+        $username = $user->username;
+
+        if ($query_id != null) {
+            // Check to see if this query has been executed before.
+            $query_array = QueryLog::find_gateway_query_url_query_id('samples', $query_id, 'done');
+            // If it has been executed before, check to make sure that this user
+            // is allowed to access that query.
+            if (count($query_array) > 0) {
+                // Check to see if the user is has access to a sequences resource
+                // with the query_id they are requesting.
+                // This should not happen in normal functioning of the Gateway, but
+                // is necessary to prevent users changing the query_id in the URL.
+                if (! $user->hasAccessQueryID('samples', $query_id)) {
+                    abort(401, 'Not authorized.');
+                }
+            }
         }
 
         // if no filters and there's cached data, immediately return cached data
