@@ -75,7 +75,6 @@ class CellController extends Controller
             }
         }
 
-
         /*************************************************
         * Get cell data */
 
