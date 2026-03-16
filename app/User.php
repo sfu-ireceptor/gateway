@@ -117,33 +117,34 @@ class User extends Authenticatable
         $query_array = QueryLog::find_gateway_query_url_query_id($resource_type, $gateway_query_id, 'done');
         // If there is no query in the database that has a done status,
         // then providing access to the query makes no sense, so we
-        // return false (no access). 
+        // return false (no access).
         $query_count = count($query_array);
         if ($query_count == 0) {
             Log::debug('User::hasAccessQueryID - could not find ' . $resource_type . ' query ' . $gateway_query_id);
 
             return false;
         }
-        // If there is more than one query, then we have an ambigous 
+        // If there is more than one query, then we have an ambigous
         // query. This should not happen for "done" queries. We return no
         // access for this case.
         //if ($query_count > 1) {
-            //Log::debug('User::hasAccessQueryID - found multiple queries for ' . $resource_type . ' query ' . $gateway_query_id);
-            //return false;
+        //Log::debug('User::hasAccessQueryID - found multiple queries for ' . $resource_type . ' query ' . $gateway_query_id);
+        //return false;
         //}
-        
+
         // Username of the current user
         $username = $this->username;
         Log::debug('User::hasAccessQueryID - user = ' . $username);
-        
+
         // If we are an Admin user, we are allowed to access the query.
         if ($this->isAdmin()) {
             Log::debug('User::hasAccessQueryID - access allowed for admin user ' . $username);
+
             return true;
         }
 
         // Loop over each query
-        foreach($query_array as $query_info) {
+        foreach ($query_array as $query_info) {
             Log::debug('User::hasAccessQueryID - query_info = ' . $query_info->url);
 
             // Username that issued the query
@@ -152,6 +153,7 @@ class User extends Authenticatable
             // If the user has accessed this query in the past, then it is allowed
             if ($username == $query_user) {
                 Log::debug('User::hasAccessQueryID - access allowed for ' . $username);
+
                 return true;
             }
         }

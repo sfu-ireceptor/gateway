@@ -508,7 +508,6 @@ class SequenceController extends Controller
             }
         }
 
-
         /*************************************************
         * Get sequence data */
 

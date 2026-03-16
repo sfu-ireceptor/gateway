@@ -307,11 +307,11 @@ class QueryLog extends Model
     {
         // Map an ACL resource_type to the type in the DB collection
         $resource_to_type_map = [
-            'sequences'=>'sequence',
-            'sequences-quick-search'=>'combined',
-            'clones'=>'clone',
-            'cells'=>'cell',
-            'samples'=>'sample'
+            'sequences' => 'sequence',
+            'sequences-quick-search' => 'combined',
+            'clones' => 'clone',
+            'cells' => 'cell',
+            'samples' => 'sample',
         ];
         // This function always searches for gateway level queries
         $level = 'gateway';
@@ -322,6 +322,7 @@ class QueryLog extends Model
             $type = $resource_to_type_map[$resource_type];
         } else {
             Log::debug('QueryLog::find_gateway_query_url_query_id - Could not find mapping for ' . $resource_type);
+
             return [];
         }
 
@@ -345,7 +346,7 @@ class QueryLog extends Model
                 where('status', '=', $status)
                 ->get();
         }
-        Log::debug('QueryLog::find_gateway_query_url_query_id returns '.substr(strval($query_info),0, 20));
+        Log::debug('QueryLog::find_gateway_query_url_query_id returns ' . substr(strval($query_info), 0, 20));
 
         return $query_info;
     }
