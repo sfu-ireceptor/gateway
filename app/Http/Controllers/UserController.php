@@ -123,15 +123,16 @@ class UserController extends Controller
             return redirect()->back()->withErrors(['Invalid credentials']);
         }
 
-        $request->session()->regenerate();
-
         // Check to make sure user is allowed to login
         $user = Auth::user();
         if (! $user->hasAccess('login')) {
             Log::debug('UserController::postLogin: user access for ' . $credentials['username'] . ' denied, status = ' . $user->getStatus());
+            auth()->logout();
 
             return redirect()->back()->withErrors(['Login not allowed for user ' . $credentials['username'] . ' (status = ' . $user->getStatus() . '), contact support@ireceptor.org']);
         }
+
+        $request->session()->regenerate();
 
         if (! $user->did_survey) {
             return redirect('/ireceptor-survey');
