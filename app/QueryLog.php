@@ -350,5 +350,4 @@ class QueryLog extends Model
 
         return $query_info;
     }
-
 }
