@@ -63,12 +63,14 @@ class User extends Authenticatable
 
         // Handle login ACL checks
         if ($resource_type == 'login') {
-            // If user is Standard can log in
+            // Check user status levels for login access
             if ($status_level == 'Standard') {
                 Log::debug('User::hasAccess: login Standard allowed');
-
                 return true;
-            }
+            } else if ($status_level == 'Commercial'){
+                Log::debug('User::hasAccess: login Commercial allowed');
+                return true;
+            } 
             // If no other clauses asses to true, return false, user
             // can't log in.
             Log::debug('User::hasAccess: login denied');

@@ -157,12 +157,14 @@ class SampleController extends Controller
         }
 
         // if no filters and there's cached data, immediately return cached data
+        /*
         if (! $request->has('query_id')) {
             $cached_data = Cache::get('samples-no-filters-data');
             if ($cached_data != null) {
                 return view('sample', $cached_data);
             }
         }
+         */
 
         /*************************************************
         * prepare form data */
