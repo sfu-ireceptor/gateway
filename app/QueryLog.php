@@ -303,14 +303,50 @@ class QueryLog extends Model
         return $l;
     }
 
-    public static function find_gateway_query_url_query_id($resource_type, $query_id)
+    public static function find_gateway_query_url_query_id($resource_type, $query_id, $status = null)
     {
+        // Map an ACL resource_type to the type in the DB collection
+        $resource_to_type_map = [
+            'sequences' => 'sequence',
+            'sequences-quick-search' => 'combined',
+            'clones' => 'clone',
+            'cells' => 'cell',
+            'samples' => 'sample',
+        ];
+        // This function always searches for gateway level queries
+        $level = 'gateway';
+        // Determine the type in the DB based on the resource map. If there
+        // is no map, return nothing.
+        $type = null;
+        if (array_key_exists($resource_type, $resource_to_type_map)) {
+            $type = $resource_to_type_map[$resource_type];
+        } else {
+            Log::debug('QueryLog::find_gateway_query_url_query_id - Could not find mapping for ' . $resource_type);
+
+            return [];
+        }
+
         // Gateway queries look like this: /sequences?query_id=3720
         // 'sequences' is the resource type and query_id is 3720 in this case.
         // We only return successful queries (status == done)
-        $query_str = $resource_type . '?query_id=' . $query_id;
-        $query_info = static::where('url', 'LIKE', '%' . $query_str . '%')
-                              ->where('status', '=', 'done')->first();
+        $url_query_str = $resource_type . '?query_id=' . $query_id;
+        Log::debug('QueryLog::find_gateway_query_url_query_id - level = ' . $level);
+        Log::debug('QueryLog::find_gateway_query_url_query_id - type = ' . $type);
+        Log::debug('QueryLog::find_gateway_query_url_query_id - url = ' . $url_query_str);
+        Log::debug('QueryLog::find_gateway_query_url_query_id - status = ' . $status);
+        if ($status == null) {
+            $query_info = static::where('level', '=', $level)->
+                where('type', '=', $type)->
+                where('url', 'LIKE', '%' . $url_query_str . '%')
+                ->get();
+        } else {
+            $query_info = static::where('level', '=', $level)->
+                where('type', '=', $type)->
+                where('url', 'LIKE', '%' . $url_query_str . '%')->
+                where('status', '=', $status)
+                ->get();
+        }
+        Log::debug('QueryLog::find_gateway_query_url_query_id returns ' . substr(strval($query_info), 0, 20));
 
         return $query_info;
     }
