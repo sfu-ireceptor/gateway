@@ -158,6 +158,10 @@ class SampleController extends Controller
 
         // if no filters and there's cached data, immediately return cached data
         /*
+         * TODO: Temporarily removed caching. Caching causes a problem with ACLs
+         * as the cache caches a query_id for sequence/clone/cell searches which
+         * doesn't work when ACLs are applied. The cached query_id is actually wrong
+         * but before ACLs were introduced it didn't matter. Now it does.
         if (! $request->has('query_id')) {
             $cached_data = Cache::get('samples-no-filters-data');
             if ($cached_data != null) {
