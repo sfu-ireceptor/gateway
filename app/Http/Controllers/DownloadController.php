@@ -19,9 +19,8 @@ class DownloadController extends Controller
 
         // Check to see if the user can access samples.
         if (! $user->hasAccess('downloads')) {
-           abort(401, 'You user account is not authorized to perform downloads, contact support@ireceptor.org');
+            abort(401, 'You user account is not authorized to perform downloads, contact support@ireceptor.org');
         }
-
 
         // if there are galaxy parameters, save them and redirect
         if ($request->has('GALAXY_URL') && $request->has('tool_id')) {

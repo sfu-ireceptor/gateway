@@ -140,9 +140,9 @@ class SampleController extends Controller
         $user = Auth::user();
         $username = $user->username;
 
-        // Check to see if the user can access samples. 
+        // Check to see if the user can access samples.
         if (! $user->hasAccess('samples')) {
-           abort(401, 'You user account is not authorized to access Repertoire Metadata, contact support@ireceptor.org');
+            abort(401, 'You user account is not authorized to access Repertoire Metadata, contact support@ireceptor.org');
         }
 
         if ($query_id != null) {
@@ -608,15 +608,15 @@ class SampleController extends Controller
         $user = Auth::user();
         $username = $user->username;
 
-        // Check to see if the user can access samples. 
+        // Check to see if the user can access samples.
         if (! $user->hasAccess('samples')) {
-           abort(401, 'You user account is not authorized to access Repertoire Metadata, contact support@ireceptor.org');
+            abort(401, 'You user account is not authorized to access Repertoire Metadata, contact support@ireceptor.org');
         }
 
         // This is a sample download capability, check if the user is
         // allowed to samples and to download data.
-        if (!$user->hasAccess('downloads')) {
-           abort(401, 'You user account is not authorized to download Repertoire Metadata JSON files, contact support@ireceptor.org');
+        if (! $user->hasAccess('downloads')) {
+            abort(401, 'You user account is not authorized to download Repertoire Metadata JSON files, contact support@ireceptor.org');
         }
 
         // Get query_id parameter from the query
@@ -670,15 +670,15 @@ class SampleController extends Controller
         $user = Auth::user();
         $username = $user->username;
 
-        // Check to see if the user can access samples. 
+        // Check to see if the user can access samples.
         if (! $user->hasAccess('samples')) {
-           abort(401, 'You user account is not authorized to access Repertoire Metadata, contact support@ireceptor.org');
+            abort(401, 'You user account is not authorized to access Repertoire Metadata, contact support@ireceptor.org');
         }
 
         // This is a sample download capability, check if the user is
         // allowed to samples and to download data.
-        if (!$user->hasAccess('downloads')) {
-           abort(401, 'You user account is not authorized to download Repertoire Metadata TSV files, contact support@ireceptor.org');
+        if (! $user->hasAccess('downloads')) {
+            abort(401, 'You user account is not authorized to download Repertoire Metadata TSV files, contact support@ireceptor.org');
         }
 
         // Get query_id parameter from the query
