@@ -65,18 +65,11 @@ class CellController extends Controller
         }
 
         if ($query_id != null) {
-            // Check to see if this query has been executed before.
-            $query_array = QueryLog::find_gateway_query_url_query_id('cells', $query_id, 'done');
-            // If it has been executed before, check to make sure that this user
-            // is allowed to access that query.
-            if (count($query_array) > 0) {
-                // Check to see if the user is has access to a cells resource
-                // with the query_id they are requesting.
-                // This should not happen in normal functioning of the Gateway, but
-                // is necessary to prevent users changing the query_id in the URL.
-                if (! $user->hasAccessQueryID('cells', $query_id)) {
-                    abort(401, 'You are not permitted to access the specified Cell query.');
-                }
+            // Check to see if the user has access to cells with the query_id
+            // This should not be necessary in normal functioning of the Gateway,
+            // but is necessary to prevent users changing the query_id in the URL.
+            if (! $user->hasAccessQueryID('cells', $query_id)) {
+                abort(401, 'Your user account is not permitted to access the specified Cell query.');
             }
         }
 

@@ -142,22 +142,16 @@ class SampleController extends Controller
 
         // Check to see if the user can access samples.
         if (! $user->hasAccess('samples')) {
-            abort(401, 'You user account is not authorized to access Repertoire Metadata, contact support@ireceptor.org');
+            abort(401, 'Your user account is not authorized to access Repertoire Metadata, contact support@ireceptor.org');
         }
 
         if ($query_id != null) {
-            // Check to see if this query has been executed before.
-            $query_array = QueryLog::find_gateway_query_url_query_id('samples', $query_id, 'done');
-            // If it has been executed before, check to make sure that this user
-            // is allowed to access that query.
-            if (count($query_array) > 0) {
-                // Check to see if the user is has access to a sequences resource
-                // with the query_id they are requesting.
-                // This should not happen in normal functioning of the Gateway, but
-                // is necessary to prevent users changing the query_id in the URL.
-                if (! $user->hasAccessQueryID('samples', $query_id)) {
-                    abort(401, 'You are not permitted to access the specified Repertoire Metadata query.');
-                }
+            // Check to see if the user is has access to samples 
+            // with the query_id they are requesting.
+            // This should not happen in normal functioning of the Gateway, but
+            // is necessary to prevent users changing the query_id in the URL.
+            if (! $user->hasAccessQueryID($page_uri, $query_id)) {
+                abort(401, 'Your user account is not permitted to access the specified Repertoire Metadata query.');
             }
         }
 
@@ -624,18 +618,12 @@ class SampleController extends Controller
         Log::debug('SampleController::json - query_id = ' . $query_id);
 
         if ($query_id != null) {
-            // Check to see if this query has been executed before.
-            $query_array = QueryLog::find_gateway_query_url_query_id('samples', $query_id, 'done');
-            // If it has been executed before, check to make sure that this user
-            // is allowed to access that query.
-            if (count($query_array) > 0) {
-                // Check to see if the user is has access to a sequences resource
-                // with the query_id they are requesting.
-                // This should not happen in normal functioning of the Gateway, but
-                // is necessary to prevent users changing the query_id in the URL.
-                if (! $user->hasAccessQueryID('samples', $query_id)) {
-                    abort(401, 'You are not permitted to access the specified Repertoire Metadata query.');
-                }
+            // Check to see if the user is has access to samples 
+            // with the query_id they are requesting.
+            // This should not happen in normal functioning of the Gateway, but
+            // is necessary to prevent users changing the query_id in the URL.
+            if (! $user->hasAccessQueryID('samples', $query_id)) {
+                abort(401, 'Your user account is not permitted to access the specified Repertoire Metadata query.');
             }
         }
 
@@ -685,19 +673,13 @@ class SampleController extends Controller
         $query_id = $request->input('query_id');
         Log::debug('SampleController::tsv - query_id = ' . $query_id);
 
-        if ($query_id != null) {
-            // Check to see if this query has been executed before.
-            $query_array = QueryLog::find_gateway_query_url_query_id('samples', $query_id, 'done');
-            // If it has been executed before, check to make sure that this user
-            // is allowed to access that query.
-            if (count($query_array) > 0) {
-                // Check to see if the user is has access to a sequences resource
-                // with the query_id they are requesting.
-                // This should not happen in normal functioning of the Gateway, but
-                // is necessary to prevent users changing the query_id in the URL.
-                if (! $user->hasAccessQueryID('samples', $query_id)) {
-                    abort(401, 'You are not permitted to access the specified Repertoire Metadata query.');
-                }
+        if ($query_id != null) {  
+            // Check to see if the user is has access to samples 
+            // with the query_id they are requesting.
+            // This should not happen in normal functioning of the Gateway, but
+            // is necessary to prevent users changing the query_id in the URL.
+            if (! $user->hasAccessQueryID('samples', $query_id)) {
+                abort(401, 'Your user account is not permitted to access the specified Repertoire Metadata query.');
             }
         }
 
