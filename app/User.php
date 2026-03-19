@@ -93,6 +93,12 @@ class User extends Authenticatable
         if ($resource_type == 'samples') {
             return true;
         }
+        if ($resource_type == 'samples/cell') {
+            return true;
+        }
+        if ($resource_type == 'samples/clone') {
+            return true;
+        }
         if ($resource_type == 'sequences') {
             return true;
         }
@@ -119,25 +125,45 @@ class User extends Authenticatable
     // "download", and "job" etc.
     public function hasAccessQueryID($resource_type, $gateway_query_id)
     {
-        // Check first if the user has access to the resource type
+        // If we are an Admin user, we are allowed to access the query.
+        if ($this->isAdmin()) {
+            Log::debug('User::hasAccessQueryID - access allowed for admin user ' . $this->username);
+            return true;
+        }
+
+        // Check if the user has access to the resource type
         if (! $this->hasAccess($resource_type)) {
             return false;
         }
-        //
-        // Get info about the query it it has a "done" status from the
+
+        // Get info about the query if it has a "done" status from the
         // logs based on the gateway URL query_id. We don't care about
         // queries that are not of "done" status, because there can be
         // many queries attemted that failed as we log failed query
         // attempts
-        $query_array = QueryLog::find_gateway_query_url_query_id($resource_type, $gateway_query_id, 'done');
+        $query_array = QueryLog::find_gateway_query_url_query_id($gateway_query_id, $resource_type, 'done');
+
         // If there is no query in the database that has a done status,
         // then providing access to the query makes no sense, so we
         // return false (no access).
         $query_count = count($query_array);
         if ($query_count == 0) {
-            Log::debug('User::hasAccessQueryID - could not find ' . $resource_type . ' query ' . $gateway_query_id);
-
-            return false;
+            // Check to see if the query_id is used in more than one
+            // resource type (e.g. samples and sequences). This should
+            // never happen and indicates a buggy/corrupt query, so we 
+            // disallow access to such a query. We get the full list of
+            // queries for all resource types, and then get the list of
+            // queries from the requested resource type. If the size is
+            // not the same, then this indicates a bad query_id.
+            $query_array = QueryLog::find_gateway_query_url_query_id($gateway_query_id);
+            $resource_query_array = QueryLog::find_gateway_query_url_query_id($gateway_query_id, $resource_type);
+            if (count($query_array) != count($resource_query_array)) {
+                Log::debug('User::hasAccessQueryID - corrupt query_id = ' . $gateway_query_id . ', spans different resource types.');
+                Log::debug('User::hasAccessQueryID - return lengths = ' . count($query_array) . ',' . count($resource_query_array));
+                return false;
+            }
+            Log::debug('User::hasAccessQueryID - could not find ' . $resource_type . ' query ' . $gateway_query_id . ', new gateway query allowed');
+            return true;
         }
         // If there is more than one query, then we have an ambigous
         // query. This should not happen for "done" queries. We return no
@@ -150,13 +176,6 @@ class User extends Authenticatable
         // Username of the current user
         $username = $this->username;
         Log::debug('User::hasAccessQueryID - user = ' . $username);
-
-        // If we are an Admin user, we are allowed to access the query.
-        if ($this->isAdmin()) {
-            Log::debug('User::hasAccessQueryID - access allowed for admin user ' . $username);
-
-            return true;
-        }
 
         // Loop over each query
         foreach ($query_array as $query_info) {
