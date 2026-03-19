@@ -146,7 +146,7 @@ class SampleController extends Controller
         }
 
         if ($query_id != null) {
-            // Check to see if the user is has access to samples 
+            // Check to see if the user is has access to samples
             // with the query_id they are requesting.
             // This should not happen in normal functioning of the Gateway, but
             // is necessary to prevent users changing the query_id in the URL.
@@ -618,7 +618,7 @@ class SampleController extends Controller
         Log::debug('SampleController::json - query_id = ' . $query_id);
 
         if ($query_id != null) {
-            // Check to see if the user is has access to samples 
+            // Check to see if the user is has access to samples
             // with the query_id they are requesting.
             // This should not happen in normal functioning of the Gateway, but
             // is necessary to prevent users changing the query_id in the URL.
@@ -673,8 +673,8 @@ class SampleController extends Controller
         $query_id = $request->input('query_id');
         Log::debug('SampleController::tsv - query_id = ' . $query_id);
 
-        if ($query_id != null) {  
-            // Check to see if the user is has access to samples 
+        if ($query_id != null) {
+            // Check to see if the user is has access to samples
             // with the query_id they are requesting.
             // This should not happen in normal functioning of the Gateway, but
             // is necessary to prevent users changing the query_id in the URL.

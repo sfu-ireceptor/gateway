@@ -128,6 +128,7 @@ class User extends Authenticatable
         // If we are an Admin user, we are allowed to access the query.
         if ($this->isAdmin()) {
             Log::debug('User::hasAccessQueryID - access allowed for admin user ' . $this->username);
+
             return true;
         }
 
@@ -150,7 +151,7 @@ class User extends Authenticatable
         if ($query_count == 0) {
             // Check to see if the query_id is used in more than one
             // resource type (e.g. samples and sequences). This should
-            // never happen and indicates a buggy/corrupt query, so we 
+            // never happen and indicates a buggy/corrupt query, so we
             // disallow access to such a query. We get the full list of
             // queries for all resource types, and then get the list of
             // queries from the requested resource type. If the size is
@@ -160,9 +161,11 @@ class User extends Authenticatable
             if (count($query_array) != count($resource_query_array)) {
                 Log::debug('User::hasAccessQueryID - corrupt query_id = ' . $gateway_query_id . ', spans different resource types.');
                 Log::debug('User::hasAccessQueryID - return lengths = ' . count($query_array) . ',' . count($resource_query_array));
+
                 return false;
             }
             Log::debug('User::hasAccessQueryID - could not find ' . $resource_type . ' query ' . $gateway_query_id . ', new gateway query allowed');
+
             return true;
         }
         // If there is more than one query, then we have an ambigous
