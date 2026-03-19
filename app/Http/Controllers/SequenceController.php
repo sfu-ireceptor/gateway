@@ -61,6 +61,11 @@ class SequenceController extends Controller
         // User object for current user
         $user = Auth::user();
 
+        // Check to see if the user can access sequences.
+        if (! $user->hasAccess('sequences')) {
+            abort(401, 'You user account is not authorized to access Sequence data, contact support@ireceptor.org');
+        }
+
         if ($query_id != null) {
             // Check to see if this query has been executed before.
             $query_array = QueryLog::find_gateway_query_url_query_id('sequences', $query_id, 'done');
@@ -491,6 +496,11 @@ class SequenceController extends Controller
 
         // User object for current user
         $user = Auth::user();
+
+        // Check to see if the user can access sequences.
+        if (! $user->hasAccess('sequences')) {
+            abort(401, 'You user account is not authorized to access Sequence data, contact support@ireceptor.org');
+        }
 
         if ($query_id != null) {
             // Check to see if this query has been executed before.

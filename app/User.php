@@ -52,6 +52,11 @@ class User extends Authenticatable
     // "download", and "job" etc.
     public function hasAccess($resource_type)
     {
+        // If the user is an Admin user then can access all resources.
+        if ($this->isAdmin()) {
+            return true;
+        }
+
         // Handle the case where the User doesn't have a status.
         // In the future this should probably return a very limited
         // status, but for now we want to be permissive as we transition
@@ -78,6 +83,12 @@ class User extends Authenticatable
             Log::debug('User::hasAccess: login denied');
 
             return false;
+        }
+        if ($resource_type == 'downloads') {
+            return true;
+        }
+        if ($resource_type == 'jobs') {
+            return true;
         }
         if ($resource_type == 'samples') {
             return true;

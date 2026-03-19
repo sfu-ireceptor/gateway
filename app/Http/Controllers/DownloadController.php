@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Bookmark;
 use App\Download;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
@@ -12,7 +13,14 @@ class DownloadController extends Controller
 {
     public function getIndex(Request $request)
     {
-        $user = auth()->user();
+        // User object for current user
+        $user = Auth::user();
+        $username = $user->username;
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('downloads')) {
+            abort(401, 'You user account is not authorized to perform downloads, contact support@ireceptor.org');
+        }
 
         // if there are galaxy parameters, save them and redirect
         if ($request->has('GALAXY_URL') && $request->has('tool_id')) {
