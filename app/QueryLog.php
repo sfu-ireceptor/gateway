@@ -328,6 +328,7 @@ class QueryLog extends Model
                 $type = $resource_to_type_map[$resource_type];
             } else {
                 Log::debug('QueryLog::find_gateway_query_url_query_id - Could not find mapping for ' . $resource_type);
+
                 return [];
             }
         }
@@ -378,5 +379,4 @@ class QueryLog extends Model
 
         return $query_info;
     }
-
 }
