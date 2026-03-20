@@ -60,7 +60,7 @@ class CloneController extends Controller
 
         // Check to see if the user can access clones.
         if (! $user->hasAccess('clones')) {
-            abort(401, 'You user account is not authorized to access Clone data, contact support@ireceptor.org');
+            abort(401, 'You user account is not authorized to access Clone data.');
         }
 
         if ($query_id != null) {
@@ -442,13 +442,13 @@ class CloneController extends Controller
 
         // Check to see if the user can access clones.
         if (! $user->hasAccess('clones')) {
-            abort(401, 'You user account is not authorized to download Clone data, contact support@ireceptor.org');
+            abort(401, 'You user account is not authorized to download Clone data.');
         }
 
         // This is a clone download capability, check if the user is
         // allowed to download data.
         if (! $user->hasAccess('downloads')) {
-            abort(401, 'You user account is not authorized to download Clone data, contact support@ireceptor.org');
+            abort(401, 'You user account is not authorized to download Clone data.');
         }
 
         $page = $request->input('page');

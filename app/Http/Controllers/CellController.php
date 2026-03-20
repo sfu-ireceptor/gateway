@@ -61,7 +61,7 @@ class CellController extends Controller
 
         // Check to see if the user can access cells.
         if (! $user->hasAccess('cells')) {
-            abort(401, 'You user account is not authorized to access Cell data, contact support@ireceptor.org');
+            abort(401, 'You user account is not authorized to access Cell data.');
         }
 
         if ($query_id != null) {
@@ -452,13 +452,13 @@ class CellController extends Controller
 
         // Check to see if the user can access cells.
         if (! $user->hasAccess('cells')) {
-            abort(401, 'You user account is not authorized to download Cell data, contact support@ireceptor.org');
+            abort(401, 'You user account is not authorized to download Cell data.');
         }
 
         // This is a cell download capability, check if the user is
         // allowed to download data.
         if (! $user->hasAccess('downloads')) {
-            abort(401, 'You user account is not authorized to download Cell data, contact support@ireceptor.org');
+            abort(401, 'You user account is not authorized to download Cell data.');
         }
 
         $page = $request->input('page');

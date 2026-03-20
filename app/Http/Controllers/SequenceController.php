@@ -63,7 +63,7 @@ class SequenceController extends Controller
 
         // Check to see if the user can access sequences.
         if (! $user->hasAccess('sequences')) {
-            abort(401, 'You user account is not authorized to access Sequence data, contact support@ireceptor.org');
+            abort(401, 'You user account is not authorized to access Sequence data.');
         }
 
         if ($query_id != null) {
@@ -492,7 +492,7 @@ class SequenceController extends Controller
 
         // Check to see if the user can access sequences.
         if (! $user->hasAccess('sequences')) {
-            abort(401, 'Your user account is not authorized to access Sequence data, contact support@ireceptor.org');
+            abort(401, 'Your user account is not authorized to access Sequence data.');
         }
 
         if ($query_id != null) {
