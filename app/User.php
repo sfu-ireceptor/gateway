@@ -166,7 +166,7 @@ class User extends Authenticatable
 
                 return false;
             }
-            // If we get here, there is no "done" query for this query_id, 
+            // If we get here, there is no "done" query for this query_id,
             // which means it is a valid query_id to use.
             Log::debug('User::hasAccessQueryID - could not find ' . $resource_type . ' query ' . $gateway_query_id . ', new gateway query allowed');
 
