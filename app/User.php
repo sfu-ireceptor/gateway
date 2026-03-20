@@ -118,11 +118,11 @@ class User extends Authenticatable
         return false;
     }
 
-    // Check to see if the given user has access to a specific resource type.
-    // Essentially, ACLs are encoded in this function. This is based on the
-    // the User's status ($this->status) and the type of resource. Examples of
-    // the resource types would be "login", "sequence" (for sequence queries),
-    // "download", and "job" etc.
+    // Check to see if the given user has access to based on query ID.
+    // Essentially, ACLs for access to specific queries based on user
+    // ID and type of user (admin vs normal) are encoded in this function.
+    // This primarily checks if a user made a query, and if so, grants
+    // access, while denying access to other users.
     public function hasAccessQueryID($resource_type, $gateway_query_id)
     {
         // If we are an Admin user, we are allowed to access the query.
@@ -145,8 +145,10 @@ class User extends Authenticatable
         $query_array = QueryLog::find_gateway_query_url_query_id($gateway_query_id, $resource_type, 'done');
 
         // If there is no query in the database that has a done status,
-        // then providing access to the query makes no sense, so we
-        // return false (no access).
+        // then providing access to the query makes no sense. We need
+        // to check for the special case that the query doesn't exist
+        // at all as a 'done' query, which means that the query_id can
+        // be used in a new query.
         $query_count = count($query_array);
         if ($query_count == 0) {
             // Check to see if the query_id is used in more than one
@@ -164,18 +166,15 @@ class User extends Authenticatable
 
                 return false;
             }
+            // If we get here, there is no "done" query for this query_id, 
+            // which means it is a valid query_id to use.
             Log::debug('User::hasAccessQueryID - could not find ' . $resource_type . ' query ' . $gateway_query_id . ', new gateway query allowed');
 
             return true;
         }
-        // If there is more than one query, then we have an ambigous
-        // query. This should not happen for "done" queries. We return no
-        // access for this case.
-        //if ($query_count > 1) {
-        //Log::debug('User::hasAccessQueryID - found multiple queries for ' . $resource_type . ' query ' . $gateway_query_id);
-        //return false;
-        //}
 
+        // We now need to check if the user has access. This is indicated by the
+        // query having a done state issued by the current user.
         // Username of the current user
         $username = $this->username;
         Log::debug('User::hasAccessQueryID - user = ' . $username);
