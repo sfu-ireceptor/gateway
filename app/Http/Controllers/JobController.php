@@ -290,7 +290,7 @@ class JobController extends Controller
         }
         // If the job is still null, then we are not authorized.
         if ($job == null) {
-            abort(401, 'Not authorized.');
+            abort(401, 'You user account is not authorized to manage this analysis job.');
         }
 
         // Get the folder where this job is stored.
@@ -340,7 +340,7 @@ class JobController extends Controller
         }
         // If the job is still null, then we are not authorized.
         if ($job == null) {
-            abort(401, 'Not authorized.');
+            abort(401, 'You user account is not authorized to manage this analysis job.');
         }
 
         // Get the outout file name.
@@ -402,7 +402,7 @@ class JobController extends Controller
         }
         // If the job is still null, then we are not authorized.
         if ($job == null) {
-            abort(401, 'Not authorized.');
+            abort(401, 'You user account is not authorized to manage this analysis job.');
         }
 
         // Get the outout file name.
@@ -465,7 +465,7 @@ class JobController extends Controller
         }
         // If the job is still null, then we are not authorized.
         if ($job == null) {
-            abort(401, 'Not authorized.');
+            abort(401, 'You user account is not authorized to manage this analysis job.');
         }
 
         $folder = storage_path() . '/' . $download_folder . '/' . $job['input_folder'] . '/' . $analysis_base;
@@ -507,7 +507,7 @@ class JobController extends Controller
         // Check to see if the three required parameters are present.
         // If missing, respond with a Not authorized response.
         if (! $request->has('filename') || ! $request->has('directory') || ! $request->has('jobid')) {
-            abort(401, 'Not authorized.');
+            abort(401, 'You user account is not authorized to manage this analysis job.');
         }
 
         // Get the three expected request parameters.
@@ -528,7 +528,7 @@ class JobController extends Controller
         }
         // If the job is still null, then we are not authorized.
         if ($job == null) {
-            abort(401, 'Not authorized.');
+            abort(401, 'You user account is not authorized to manage this analysis job.');
         }
         // Get the base directory information.
         $download_folder = config('ireceptor.downloads_data_folder');
@@ -575,7 +575,7 @@ class JobController extends Controller
         }
         // If the job is still null, then we are not authorized.
         if ($job == null) {
-            abort(401, 'Not authorized.');
+            abort(401, 'You user account is not authorized to manage this analysis job.');
         }
 
         $data = [];
