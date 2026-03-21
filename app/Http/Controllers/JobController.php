@@ -11,6 +11,7 @@ use App\Query;
 use App\Tapis;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -20,6 +21,14 @@ class JobController extends Controller
 {
     public function getIndex()
     {
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('jobs')) {
+            abort(401, 'You user account is not authorized to perform analysis jobs, contact support@ireceptor.org');
+        }
+
         $job_list = Job::findJobsGroupByMonthForUser(auth()->user()->id);
 
         $data = [];
@@ -126,6 +135,14 @@ class JobController extends Controller
 
     public function getJobListGroupedByMonth()
     {
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('jobs')) {
+            abort(401, 'You user account is not authorized to manage analysis jobs, contact support@ireceptor.org');
+        }
+
         $job_list = Job::findJobsGroupByMonthForUser(auth()->user()->id);
 
         $data = [];
@@ -136,6 +153,14 @@ class JobController extends Controller
 
     public function postLaunchApp(Request $request)
     {
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('jobs')) {
+            abort(401, 'You user account is not authorized to perform analysis jobs, contact support@ireceptor.org');
+        }
+
         // Get the data for this request.
         $request_data = $request->all();
         Log::debug('JobController::PostLaunchApp - request_data = ' . json_encode($request_data));
@@ -236,6 +261,14 @@ class JobController extends Controller
 
     public function getDownloadAnalysis($id)
     {
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('jobs')) {
+            abort(401, 'You user account is not authorized to manage analysis jobs, contact support@ireceptor.org');
+        }
+
         // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
@@ -278,6 +311,14 @@ class JobController extends Controller
 
     public function getDownloadOutput($id)
     {
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('jobs')) {
+            abort(401, 'You user account is not authorized to manage analysis jobs, contact support@ireceptor.org');
+        }
+
         // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
@@ -332,6 +373,14 @@ class JobController extends Controller
 
     public function getDownloadError($id)
     {
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('jobs')) {
+            abort(401, 'You user account is not authorized to manage analysis jobs, contact support@ireceptor.org');
+        }
+
         // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 
@@ -386,6 +435,14 @@ class JobController extends Controller
 
     public function getViewJobFile(Request $request, string $id)
     {
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('jobs')) {
+            abort(401, 'You user account is not authorized to manage analysis jobs, contact support@ireceptor.org');
+        }
+
         Log::debug('JobController::getViewJobFile: job id = ' . $id);
         // Get the download folder (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
@@ -439,6 +496,14 @@ class JobController extends Controller
 
     public function getShow(Request $request)
     {
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('jobs')) {
+            abort(401, 'You user account is not authorized to perform analysis jobs, contact support@ireceptor.org');
+        }
+
         // Check to see if the three required parameters are present.
         // If missing, respond with a Not authorized response.
         if (! $request->has('filename') || ! $request->has('directory') || ! $request->has('jobid')) {
@@ -483,6 +548,14 @@ class JobController extends Controller
 
     public function getView($id)
     {
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('jobs')) {
+            abort(401, 'You user account is not authorized to perform analysis jobs, contact support@ireceptor.org');
+        }
+
         // Set info file name
         $info_file = 'info.txt';
 
@@ -1086,6 +1159,14 @@ class JobController extends Controller
 
     public function getCancel($id)
     {
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('jobs')) {
+            abort(401, 'You user account is not authorized to manage analysis jobs, contact support@ireceptor.org');
+        }
+
         // Get user and job info
         $userId = auth()->user()->id;
         $job = Job::get($id, $userId);
@@ -1107,6 +1188,14 @@ class JobController extends Controller
 
     public function getDelete($id)
     {
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('jobs')) {
+            abort(401, 'You user account is not authorized to manage analysis jobs, contact support@ireceptor.org');
+        }
+
         // Get the folder where we store the downloads (relative to storage_path())
         $download_folder = config('ireceptor.downloads_data_folder');
 

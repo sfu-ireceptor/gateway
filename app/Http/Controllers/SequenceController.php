@@ -10,8 +10,10 @@ use App\Sample;
 use App\Sequence;
 use App\System;
 use App\Tapis;
+use App\User;
 use Facades\App\Query;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -50,14 +52,44 @@ class SequenceController extends Controller
         }
 
         /*************************************************
+        * Check access control */
+
+        // Get query_id parameter from the query
+        $query_id = $request->input('query_id');
+        Log::debug('SequenceController::index - query_id = ' . $query_id);
+
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user can access sequences.
+        if (! $user->hasAccess('sequences')) {
+            abort(401, 'You user account is not authorized to access Sequence data, contact support@ireceptor.org');
+        }
+
+        if ($query_id != null) {
+            // Check to see if this query has been executed before.
+            $query_array = QueryLog::find_gateway_query_url_query_id('sequences', $query_id, 'done');
+            // If it has been executed before, check to make sure that this user
+            // is allowed to access that query.
+            if (count($query_array) > 0) {
+                // Check to see if the user is has access to a sequences resource
+                // with the query_id they are requesting.
+                // This should not happen in normal functioning of the Gateway, but
+                // is necessary to prevent users changing the query_id in the URL.
+                if (! $user->hasAccessQueryID('sequences', $query_id)) {
+                    abort(401, 'Not authorized.');
+                }
+            }
+        }
+
+        /*************************************************
         * Get sequence data */
 
-        // parameters
-        $query_id = $request->input('query_id');
+        // Get the parameters for the query
         $filters = Query::getParams($query_id);
-        $username = auth()->user()->username;
 
-        // retrieve data
+        // Retrieve data
+        $username = $user->username;
         $sequence_data = Sequence::summary($filters, $username);
 
         // store data size in user query log
@@ -453,6 +485,37 @@ class SequenceController extends Controller
         // if "remove filter" request, generate new query_id and redirect
         if ($request->has('remove_filter')) {
             return self::removeFilter($request);
+        }
+
+        /*************************************************
+        * Check access control */
+
+        // Get query_id parameter from the query
+        $query_id = $request->input('query_id');
+        Log::debug('SequenceController::quickSearch - query_id = ' . $query_id);
+
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user can access sequences.
+        if (! $user->hasAccess('sequences')) {
+            abort(401, 'You user account is not authorized to access Sequence data, contact support@ireceptor.org');
+        }
+
+        if ($query_id != null) {
+            // Check to see if this query has been executed before.
+            $query_array = QueryLog::find_gateway_query_url_query_id('sequences-quick-search', $query_id, 'done');
+            // If it has been executed before, check to make sure that this user
+            // is allowed to access that query.
+            if (count($query_array) > 0) {
+                // Check to see if the user is has access to a sequences quick
+                // search resource with the query_id they are requesting.
+                // This should not happen in normal functioning of the Gateway, but
+                // is necessary to prevent users changing the query_id in the URL.
+                if (! $user->hasAccessQueryID('sequences-quick-search', $query_id)) {
+                    abort(401, 'Not authorized.');
+                }
+            }
         }
 
         /*************************************************

@@ -16,6 +16,11 @@
 
 			<h3 class="first">Filters</h3>
 
+@if(session()->has('message'))
+    <div class="alert alert-message">
+        {{ session()->get('message') }}
+    </div>
+@endif
 
 			{{ Form::open(array('url' => $page_uri, 'role' => 'form', 'method' => 'post', 'class' => 'sample_search show_reloading_message')) }}
 				<input type="hidden" name="project_id_list" />

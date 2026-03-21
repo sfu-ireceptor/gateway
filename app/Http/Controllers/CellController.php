@@ -12,6 +12,7 @@ use App\System;
 use App\Tapis;
 use Facades\App\Query;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class CellController extends Controller
@@ -46,6 +47,37 @@ class CellController extends Controller
         // if "remove filter" request, generate new query_id and redirect
         if ($request->has('remove_filter')) {
             return self::removeFilter($request);
+        }
+
+        /*************************************************
+        * Check access control */
+
+        // Get query_id parameter from the query
+        $query_id = $request->input('query_id');
+        Log::debug('CellController::index - query_id = ' . $query_id);
+
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user can access cells.
+        if (! $user->hasAccess('cells')) {
+            abort(401, 'You user account is not authorized to access Cell data, contact support@ireceptor.org');
+        }
+
+        if ($query_id != null) {
+            // Check to see if this query has been executed before.
+            $query_array = QueryLog::find_gateway_query_url_query_id('cells', $query_id, 'done');
+            // If it has been executed before, check to make sure that this user
+            // is allowed to access that query.
+            if (count($query_array) > 0) {
+                // Check to see if the user is has access to a cells resource
+                // with the query_id they are requesting.
+                // This should not happen in normal functioning of the Gateway, but
+                // is necessary to prevent users changing the query_id in the URL.
+                if (! $user->hasAccessQueryID('cells', $query_id)) {
+                    abort(401, 'You are not permitted to access the specified Cell query.');
+                }
+            }
         }
 
         /*************************************************
@@ -421,7 +453,20 @@ class CellController extends Controller
     public function download(Request $request)
     {
         $query_id = $request->input('query_id');
-        $username = auth()->user()->username;
+        // User object for current user
+        $user = Auth::user();
+        $username = $user->username;
+
+        // Check to see if the user can access cells.
+        if (! $user->hasAccess('cells')) {
+            abort(401, 'You user account is not authorized to download Cell data, contact support@ireceptor.org');
+        }
+
+        // This is a cell download capability, check if the user is
+        // allowed to download data.
+        if (! $user->hasAccess('downloads')) {
+            abort(401, 'You user account is not authorized to download Cell data, contact support@ireceptor.org');
+        }
 
         $page = $request->input('page');
         $page_url = route($page, ['query_id' => $query_id], false);

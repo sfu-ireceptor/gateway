@@ -45,6 +45,138 @@ class User extends Authenticatable
         }
     }
 
+    // Check to see if the given user has access to a specific resource type.
+    // Essentially, ACLs are encoded in this function. This is based on the
+    // the User's status ($this->status) and the type of resource. Examples of
+    // the resource types would be "login", "sequence" (for sequence queries),
+    // "download", and "job" etc.
+    public function hasAccess($resource_type)
+    {
+        // If the user is an Admin user then can access all resources.
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        // Handle the case where the User doesn't have a status.
+        // In the future this should probably return a very limited
+        // status, but for now we want to be permissive as we transition
+        $status_level = $this->getStatus();
+        Log::debug('User::hasAccess: username = ' . $this->username);
+        Log::debug('User::hasAccess: is admin = ' . $this->admin);
+        Log::debug('User::hasAccess: status level = ' . $status_level);
+        Log::debug('User::hasAccess: resource type = ' . $resource_type);
+
+        // Handle login ACL checks
+        if ($resource_type == 'login') {
+            // Check user status levels for login access
+            if ($status_level == 'Standard') {
+                Log::debug('User::hasAccess: login Standard allowed');
+
+                return true;
+            } elseif ($status_level == 'Commercial') {
+                Log::debug('User::hasAccess: login Commercial allowed');
+
+                return true;
+            }
+            // If no other clauses asses to true, return false, user
+            // can't log in.
+            Log::debug('User::hasAccess: login denied');
+
+            return false;
+        }
+        if ($resource_type == 'downloads') {
+            return true;
+        }
+        if ($resource_type == 'jobs') {
+            return true;
+        }
+        if ($resource_type == 'samples') {
+            return true;
+        }
+        if ($resource_type == 'sequences') {
+            return true;
+        }
+        if ($resource_type == 'clones') {
+            return true;
+        }
+        if ($resource_type == 'cells') {
+            return true;
+        }
+        if ($resource_type == 'sequences-quick-search') {
+            return true;
+        }
+        // If we are asked for access to an unknown resource, err on
+        // the side of not providing access.
+        Log::error('User::hasAccess: Invalid resource type ' . $resource_type);
+
+        return false;
+    }
+
+    // Check to see if the given user has access to a specific resource type.
+    // Essentially, ACLs are encoded in this function. This is based on the
+    // the User's status ($this->status) and the type of resource. Examples of
+    // the resource types would be "login", "sequence" (for sequence queries),
+    // "download", and "job" etc.
+    public function hasAccessQueryID($resource_type, $gateway_query_id)
+    {
+        // Check first if the user has access to the resource type
+        if (! $this->hasAccess($resource_type)) {
+            return false;
+        }
+        //
+        // Get info about the query it it has a "done" status from the
+        // logs based on the gateway URL query_id. We don't care about
+        // queries that are not of "done" status, because there can be
+        // many queries attemted that failed as we log failed query
+        // attempts
+        $query_array = QueryLog::find_gateway_query_url_query_id($resource_type, $gateway_query_id, 'done');
+        // If there is no query in the database that has a done status,
+        // then providing access to the query makes no sense, so we
+        // return false (no access).
+        $query_count = count($query_array);
+        if ($query_count == 0) {
+            Log::debug('User::hasAccessQueryID - could not find ' . $resource_type . ' query ' . $gateway_query_id);
+
+            return false;
+        }
+        // If there is more than one query, then we have an ambigous
+        // query. This should not happen for "done" queries. We return no
+        // access for this case.
+        //if ($query_count > 1) {
+        //Log::debug('User::hasAccessQueryID - found multiple queries for ' . $resource_type . ' query ' . $gateway_query_id);
+        //return false;
+        //}
+
+        // Username of the current user
+        $username = $this->username;
+        Log::debug('User::hasAccessQueryID - user = ' . $username);
+
+        // If we are an Admin user, we are allowed to access the query.
+        if ($this->isAdmin()) {
+            Log::debug('User::hasAccessQueryID - access allowed for admin user ' . $username);
+
+            return true;
+        }
+
+        // Loop over each query
+        foreach ($query_array as $query_info) {
+            Log::debug('User::hasAccessQueryID - query_info = ' . $query_info->url);
+
+            // Username that issued the query
+            $query_user = $query_info->username;
+            Log::debug('User::hasAccessQueryID - query owner = ' . $query_user);
+            // If the user has accessed this query in the past, then it is allowed
+            if ($username == $query_user) {
+                Log::debug('User::hasAccessQueryID - access allowed for ' . $username);
+
+                return true;
+            }
+        }
+
+        // If we get here, then the user is not on the done list, deny access
+        return false;
+    }
+
     public static function exists($username)
     {
         $user = self::where('username', $username)->first();
