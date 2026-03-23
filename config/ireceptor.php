@@ -4,6 +4,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | ACL levels for different account types.
+    |--------------------------------------------------------------------------
+    |
+    | A JSON string that provides access levels for each account type for each
+    | of the possible resources accessible on the Gateway.
+    | Ex: '{"Standard":["login"]}'
+    |
+    */
+
+    'acl_levels_to_resources' => env('IRECEPTOR_ACL_LEVELS_TO_RESOURCES', '{"Standard":["login","downloads","jobs","samples","samples/cell","samples/clone","sequences","cells","clones","sequences_quick_search"],"Commercial":["login","samples","samples/cell","samples/clone"]}'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Enable authentication
     |--------------------------------------------------------------------------
     |
