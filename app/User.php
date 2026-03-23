@@ -66,51 +66,42 @@ class User extends Authenticatable
         Log::debug('User::hasAccess: status level = ' . $status_level);
         Log::debug('User::hasAccess: resource type = ' . $resource_type);
 
-        // Handle login ACL checks
-        if ($resource_type == 'login') {
-            // Check user status levels for login access
-            if ($status_level == 'Standard') {
-                Log::debug('User::hasAccess: login Standard allowed');
+        // Get the ACL user level to resource map
+        $level_to_resource_map = json_decode(config('ireceptor.acl_levels_to_resources'));
 
-                return true;
-            } elseif ($status_level == 'Commercial') {
-                Log::debug('User::hasAccess: login Commercial allowed');
-
-                return true;
-            }
-            // If no other clauses asses to true, return false, user
-            // can't log in.
-            Log::debug('User::hasAccess: login denied');
+        // Get the list of resources this user's status level has access to
+        if (property_exists($level_to_resource_map, $status_level)) {
+            $resources = $level_to_resource_map->$status_level;
+        } else {
+            Log::debug('User::hasAccess: Access denied, invalid status level ' . $status_level);
 
             return false;
         }
-        if ($resource_type == 'downloads') {
-            return true;
+        Log::debug('User::hasAccess: ACL map for level ' . $status_level . ' = ' . json_encode($resources));
+
+        // Handle login ACL checks
+        if ($resource_type == 'login') {
+            // Check user status levels for login access
+            if (in_array($resource_type, $resources)) {
+                return true;
+                Log::debug('User::hasAccess: login for ' . $status_level . ' allowed');
+            }
+            // If no other clauses asses to true, return false, user
+            // can't log in.
+            Log::debug('User::hasAccess: login for status level ' . $status_level . ' denied');
+
+            return false;
         }
-        if ($resource_type == 'jobs') {
+        // Handle all other resource ACL checks. If the resource type is in the
+        // resource array for this user, we allow acces, otherwise deny access.
+        if (in_array($resource_type, $resources)) {
             return true;
+        } else {
+            Log::debug('User::hasAccess: Access denied for resource ' . $resource_type);
+
+            return false;
         }
-        if ($resource_type == 'samples') {
-            return true;
-        }
-        if ($resource_type == 'samples/cell') {
-            return true;
-        }
-        if ($resource_type == 'samples/clone') {
-            return true;
-        }
-        if ($resource_type == 'sequences') {
-            return true;
-        }
-        if ($resource_type == 'clones') {
-            return true;
-        }
-        if ($resource_type == 'cells') {
-            return true;
-        }
-        if ($resource_type == 'sequences-quick-search') {
-            return true;
-        }
+
         // If we are asked for access to an unknown resource, err on
         // the side of not providing access.
         Log::error('User::hasAccess: Invalid resource type ' . $resource_type);
