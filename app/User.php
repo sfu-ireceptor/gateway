@@ -73,7 +73,8 @@ class User extends Authenticatable
         if (property_exists($level_to_resource_map, $status_level)) {
             $resources = $level_to_resource_map->$status_level;
         } else {
-            Log::debug('User::hasAccess: Access denied, invalid status level '. $status_level);
+            Log::debug('User::hasAccess: Access denied, invalid status level ' . $status_level);
+
             return false;
         }
         Log::debug('User::hasAccess: ACL map for level ' . $status_level . ' = ' . json_encode($resources));
@@ -88,6 +89,7 @@ class User extends Authenticatable
             // If no other clauses asses to true, return false, user
             // can't log in.
             Log::debug('User::hasAccess: login for status level ' . $status_level . ' denied');
+
             return false;
         }
         // Handle all other resource ACL checks. If the resource type is in the
@@ -96,6 +98,7 @@ class User extends Authenticatable
             return true;
         } else {
             Log::debug('User::hasAccess: Access denied for resource ' . $resource_type);
+
             return false;
         }
 
