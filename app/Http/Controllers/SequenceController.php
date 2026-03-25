@@ -796,7 +796,35 @@ class SequenceController extends Controller
     public function download(Request $request)
     {
         $query_id = $request->input('query_id');
-        $username = auth()->user()->username;
+        Log::debug('SequenceController::download - query_id = ' . $query_id);
+
+        /*************************************************
+        * Check access control */
+
+        // Get query_id parameter from the query
+        $query_id = $request->input('query_id');
+
+        // User object for current user
+        $user = Auth::user();
+        $username = $user->username;
+
+        // Check to see if the user can access sequences.
+        if (! $user->hasAccess('sequences')) {
+            abort(401, 'Your user account is not authorized to access Sequence data.');
+        }
+        // Check to see if the user can do downloads.
+        if (! $user->hasAccess('downloads')) {
+            abort(401, 'Your user account is not authorized to download Sequence data.');
+        }
+
+        if ($query_id != null) {
+            // Check to see if the user has access to sequences with the query_id
+            // This should not be necessary in normal functioning of the Gateway,
+            // but is necessary to prevent users changing the query_id in the URL.
+            if (! $user->hasAccessQueryID('sequences', $query_id)) {
+                abort(401, 'Your user account is not permitted to access the specified Sequence query.');
+            }
+        }
 
         $page = $request->input('page');
         $page_query_id = $request->input('page_query_id');
