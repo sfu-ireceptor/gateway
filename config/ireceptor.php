@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'acl_levels_to_resources' => env('IRECEPTOR_ACL_LEVELS_TO_RESOURCES', '{"Standard":["login","downloads","jobs","samples","samples/cell","samples/clone","sequences","cells","clones","sequences_quick_search"],"Commercial":["login","samples","samples/cell","samples/clone"]}'),
+    'acl_levels_to_resources' => env('IRECEPTOR_ACL_LEVELS_TO_RESOURCES', '{"Standard":["login","downloads","jobs","samples","samples/cell","samples/clone","sequences","cells","clones","sequences-quick-search"],"Commercial":["login","samples","samples/cell","samples/clone"]}'),
 
     /*
     |--------------------------------------------------------------------------
