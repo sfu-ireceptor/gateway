@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Bookmark;
 use App\Download;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
@@ -12,7 +13,14 @@ class DownloadController extends Controller
 {
     public function getIndex(Request $request)
     {
-        $user = auth()->user();
+        // User object for current user
+        $user = Auth::user();
+        $username = $user->username;
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('downloads')) {
+            abort(401, 'Your user account is not authorized to perform downloads.');
+        }
 
         // if there are galaxy parameters, save them and redirect
         if ($request->has('GALAXY_URL') && $request->has('tool_id')) {
@@ -47,9 +55,18 @@ class DownloadController extends Controller
     {
         $d = Download::find($id);
 
-        $user = auth()->user();
+        // User object for current user
+        $user = Auth::user();
+        $username = $user->username;
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('downloads')) {
+            abort(401, 'Your user account is not authorized to perform downloads.');
+        }
+
+        // Check to make sure this is the user's download
         if (($d->username != $user->username) && (! $user->isAdmin())) {
-            abort(403, 'Unauthorized action.');
+            abort(403, 'Your user account is not authorized to access that download.');
         }
 
         // Code to limit downloads to other than "Standard" users.
@@ -68,15 +85,23 @@ class DownloadController extends Controller
 
     public function getCancel($id)
     {
+        // User object for current user
+        $user = Auth::user();
+        $username = $user->username;
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('downloads')) {
+            abort(401, 'Your user account is not authorized to perform downloads.');
+        }
+
         $d = Download::find($id);
 
-        $user = auth()->user();
         if (($d->username != $user->username) && (! $user->isAdmin())) {
-            abort(403, 'Unauthorized action.');
+            abort(403, 'Your user account is not authorized to access that download.');
         }
 
         if ($d->status != Download::STATUS_QUEUED) {
-            abort(403, 'Unauthorized action.');
+            abort(403, 'You are unable to cancel a download that is queued.');
         }
 
         $d->setCanceled();
@@ -87,11 +112,18 @@ class DownloadController extends Controller
 
     public function getDelete($id)
     {
-        $d = Download::find($id);
+        // User object for current user
+        $user = Auth::user();
+        $username = $user->username;
 
-        $username = auth()->user()->username;
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('downloads')) {
+            abort(401, 'Your user account is not authorized to perform downloads.');
+        }
+
+        $d = Download::find($id);
         if ($d->username != $username) {
-            abort(403, 'Unauthorized action.');
+            abort(403, 'Your user account is not authorized to access that download.');
         }
 
         $d->hidden = 1;
@@ -102,11 +134,18 @@ class DownloadController extends Controller
 
     public function getUndoDelete($id)
     {
-        $d = Download::find($id);
+        // User object for current user
+        $user = Auth::user();
+        $username = $user->username;
 
-        $username = auth()->user()->username;
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('downloads')) {
+            abort(401, 'Your user account is not authorized to perform downloads.');
+        }
+
+        $d = Download::find($id);
         if ($d->username != $username) {
-            abort(403, 'Unauthorized action.');
+            abort(403, 'Your user account is not authorized to access that download.');
         }
 
         $d->hidden = 0;
@@ -117,11 +156,18 @@ class DownloadController extends Controller
 
     public function getBookmark($id)
     {
-        $d = Download::find($id);
+        // User object for current user
+        $user = Auth::user();
+        $username = $user->username;
 
-        $username = auth()->user()->username;
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('downloads')) {
+            abort(401, 'Your user account is not authorized to perform downloads.');
+        }
+
+        $d = Download::find($id);
         if ($d->username != $username) {
-            abort(403, 'Unauthorized action.');
+            abort(403, 'Your user account is not authorized to access that download.');
         }
 
         $b = new Bookmark;

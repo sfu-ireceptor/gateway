@@ -12,6 +12,7 @@ use App\System;
 use App\Tapis;
 use Facades\App\Query;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class CloneController extends Controller
@@ -46,6 +47,29 @@ class CloneController extends Controller
         // if "remove filter" request, generate new query_id and redirect
         if ($request->has('remove_filter')) {
             return self::removeFilter($request);
+        }
+        /*************************************************
+        * Check access control */
+
+        // Get query_id parameter from the query
+        $query_id = $request->input('query_id');
+        Log::debug('CloneController::index - query_id = ' . $query_id);
+
+        // User object for current user
+        $user = Auth::user();
+
+        // Check to see if the user can access clones.
+        if (! $user->hasAccess('clones')) {
+            abort(401, 'You user account is not authorized to access Clone data.');
+        }
+
+        if ($query_id != null) {
+            // Check to see if the user has access to clones with the query_id
+            // This should be necessary in normal functioning of the Gateway,
+            // but is necessary to prevent users changing the query_id in the URL.
+            if (! $user->hasAccessQueryID('clones', $query_id)) {
+                abort(401, 'Your user account is not permitted to access the specified Clone query.');
+            }
         }
 
         /*************************************************
@@ -411,7 +435,21 @@ class CloneController extends Controller
     public function download(Request $request)
     {
         $query_id = $request->input('query_id');
-        $username = auth()->user()->username;
+
+        // User object for current user
+        $user = Auth::user();
+        $username = $user->username;
+
+        // Check to see if the user can access clones.
+        if (! $user->hasAccess('clones')) {
+            abort(401, 'You user account is not authorized to download Clone data.');
+        }
+
+        // This is a clone download capability, check if the user is
+        // allowed to download data.
+        if (! $user->hasAccess('downloads')) {
+            abort(401, 'You user account is not authorized to download Clone data.');
+        }
 
         $page = $request->input('page');
         $page_url = route($page, ['query_id' => $query_id], false);

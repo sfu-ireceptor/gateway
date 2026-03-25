@@ -10,6 +10,7 @@ use App\RestService;
 use App\RestServiceGroup;
 use App\Sample;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -58,8 +59,6 @@ class SampleController extends Controller
         if ($type != '') {
             $type_full = $type;
         }
-
-        $username = auth()->user()->username;
 
         // if "remove one filter" request, generate new query_id and redirect to it
         if ($request->has('remove_filter')) {
@@ -130,13 +129,45 @@ class SampleController extends Controller
             return redirect($page_uri . '?query_id=' . $new_query_id);
         }
 
+        /*************************************************
+        * Check access control */
+
+        // Get query_id parameter from the query
+        $query_id = $request->input('query_id');
+        Log::debug('SampleController::index - query_id = ' . $query_id);
+
+        // User object for current user
+        $user = Auth::user();
+        $username = $user->username;
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess($page_uri)) {
+            abort(401, 'Your user account is not authorized to access Repertoire Metadata.');
+        }
+
+        if ($query_id != null) {
+            // Check to see if the user is has access to samples
+            // with the query_id they are requesting.
+            // This should not happen in normal functioning of the Gateway, but
+            // is necessary to prevent users changing the query_id in the URL.
+            if (! $user->hasAccessQueryID($page_uri, $query_id)) {
+                abort(401, 'Your user account is not permitted to access the specified Repertoire Metadata query.');
+            }
+        }
+
         // if no filters and there's cached data, immediately return cached data
+        /*
+         * TODO: Temporarily removed caching. Caching causes a problem with ACLs
+         * as the cache caches a query_id for sequence/clone/cell searches which
+         * doesn't work when ACLs are applied. The cached query_id is actually wrong
+         * but before ACLs were introduced it didn't matter. Now it does.
         if (! $request->has('query_id')) {
             $cached_data = Cache::get('samples-no-filters-data');
             if ($cached_data != null) {
                 return view('sample', $cached_data);
             }
         }
+         */
 
         /*************************************************
         * prepare form data */
@@ -564,11 +595,39 @@ class SampleController extends Controller
 
     public function json(Request $request)
     {
-        $username = auth()->user()->username;
+        /*************************************************
+        * Check access control */
 
-        $query_id = '';
+        // User object for current user
+        $user = Auth::user();
+        $username = $user->username;
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('samples')) {
+            abort(401, 'You user account is not authorized to access Repertoire Metadata.');
+        }
+
+        // This is a sample download capability, check if the user is
+        // allowed to samples and to download data.
+        if (! $user->hasAccess('downloads')) {
+            abort(401, 'You user account is not authorized to download Repertoire Metadata JSON files.');
+        }
+
+        // Get query_id parameter from the query
+        $query_id = $request->input('query_id');
+        Log::debug('SampleController::json - query_id = ' . $query_id);
+
+        if ($query_id != null) {
+            // Check to see if the user is has access to samples
+            // with the query_id they are requesting.
+            // This should not happen in normal functioning of the Gateway, but
+            // is necessary to prevent users changing the query_id in the URL.
+            if (! $user->hasAccessQueryID('samples', $query_id)) {
+                abort(401, 'Your user account is not permitted to access the specified Repertoire Metadata query.');
+            }
+        }
+
         $params = [];
-
         if ($request->has('query_id')) {
             $query_id = $request->input('query_id');
             $params = Query::getParams($query_id);
@@ -592,9 +651,38 @@ class SampleController extends Controller
 
     public function tsv(Request $request)
     {
-        $username = auth()->user()->username;
+        /*************************************************
+        * Check access control */
 
-        $query_id = '';
+        // User object for current user
+        $user = Auth::user();
+        $username = $user->username;
+
+        // Check to see if the user can access samples.
+        if (! $user->hasAccess('samples')) {
+            abort(401, 'You user account is not authorized to access Repertoire Metadata.');
+        }
+
+        // This is a sample download capability, check if the user is
+        // allowed to samples and to download data.
+        if (! $user->hasAccess('downloads')) {
+            abort(401, 'You user account is not authorized to download Repertoire Metadata TSV files.');
+        }
+
+        // Get query_id parameter from the query
+        $query_id = $request->input('query_id');
+        Log::debug('SampleController::tsv - query_id = ' . $query_id);
+
+        if ($query_id != null) {
+            // Check to see if the user is has access to samples
+            // with the query_id they are requesting.
+            // This should not happen in normal functioning of the Gateway, but
+            // is necessary to prevent users changing the query_id in the URL.
+            if (! $user->hasAccessQueryID('samples', $query_id)) {
+                abort(401, 'Your user account is not permitted to access the specified Repertoire Metadata query.');
+            }
+        }
+
         $params = [];
 
         if ($request->has('query_id')) {
