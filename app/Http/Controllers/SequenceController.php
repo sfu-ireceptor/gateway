@@ -491,7 +491,7 @@ class SequenceController extends Controller
         $user = Auth::user();
 
         // Check to see if the user can access sequences.
-        if (! $user->hasAccess('sequences')) {
+        if (! $user->hasAccess('sequences-quick-search')) {
             abort(401, 'Your user account is not authorized to access Sequence Quick Search data.');
         }
 
@@ -499,7 +499,7 @@ class SequenceController extends Controller
             // Check to see if the user has access to sequences with the query_id
             // This should not be necessary in normal functioning of the Gateway,
             // but is necessary to prevent users changing the query_id in the URL.
-            if (! $user->hasAccessQueryID('sequences', $query_id)) {
+            if (! $user->hasAccessQueryID('sequences-quick-search', $query_id)) {
                 abort(401, 'Your user account is not permitted to access the specified Sequence Quick Search query.');
             }
         }
