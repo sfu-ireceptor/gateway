@@ -342,11 +342,11 @@ class QueryLog extends Model
         // We need to treat these all like sample queries when searching for
         // query_ids in the QueryLog DB.
         if ($resource_type == null) {
-            $url_query_str = '%' . '?query_id=' . $query_id . '%';
+            $url_query_str = '%' . '?query_id=' . $query_id;
         } elseif (str_contains($resource_type, 'samples')) {
-            $url_query_str = '%' . 'samples%' . '?query_id=' . $query_id . '%';
+            $url_query_str = '%' . 'samples%' . '?query_id=' . $query_id;
         } else {
-            $url_query_str = '%' . $resource_type . '?query_id=' . $query_id . '%';
+            $url_query_str = '%' . $resource_type . '?query_id=' . $query_id;
         }
         Log::debug('QueryLog::find_gateway_query_url_query_id - level = ' . $level);
         Log::debug('QueryLog::find_gateway_query_url_query_id - type = ' . $type);
