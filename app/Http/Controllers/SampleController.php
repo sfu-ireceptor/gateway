@@ -156,18 +156,20 @@ class SampleController extends Controller
         }
 
         // if no filters and there's cached data, immediately return cached data
-        /*
-         * TODO: Temporarily removed caching. Caching causes a problem with ACLs
-         * as the cache caches a query_id for sequence/clone/cell searches which
-         * doesn't work when ACLs are applied. The cached query_id is actually wrong
-         * but before ACLs were introduced it didn't matter. Now it does.
         if (! $request->has('query_id')) {
             $cached_data = Cache::get('samples-no-filters-data');
             if ($cached_data != null) {
+                // Generate a new query_id for the sequences, as the cached query_id
+                // will be incorrect for the current user. We need cached sequence_filters
+                // for this to work.
+                if (key_exists('sequence_filters', $cached_data)) {
+                    $sequences_query_id = Query::saveParams($cached_data['sequence_filters'], 'sequences');
+                    $cached_data['sequences_query_id'] = $sequences_query_id;
+                }
+
                 return view('sample', $cached_data);
             }
         }
-         */
 
         /*************************************************
         * prepare form data */
@@ -384,6 +386,8 @@ class SampleController extends Controller
             $sequence_filters[$rs_param][] = $sample->repertoire_id;
         }
         $sequences_query_id = Query::saveParams($sequence_filters, 'sequences');
+        $data['sequences_query_id'] = $sequences_query_id;
+        $data['sequence_filters'] = $sequence_filters;
 
         // prepare view data
         $data['samples_with_sequences'] = $samples_with_sequences;
@@ -401,7 +405,6 @@ class SampleController extends Controller
 
         $data['sort_column'] = $sort_column;
         $data['sort_order'] = $sort_order;
-        $data['sequences_query_id'] = $sequences_query_id;
         $data['rest_service_list'] = $sample_data['rs_list'];
 
         $data['total_filtered_repositories'] = $sample_data['total_filtered_repositories'];
