@@ -253,6 +253,62 @@ class RestServiceSeeder extends Seeder
                 'country' => 'Canada',
                 'rest_service_group_code' => 'greiff',
             ],
+            [
+                'url' => 'https://ipa1-new.ireceptor.org/airr/v1/',
+                'name' => 'IPA1 New',
+            ],
+            [
+                'url' => 'https://ipa2-new.ireceptor.org/airr/v1/',
+                'name' => 'IPA2 New',
+            ],
+            [
+                'url' => 'https://ipa3-new.ireceptor.org/airr/v1/',
+                'name' => 'IPA3 New',
+            ],
+            [
+                'url' => 'https://ipa4-new.ireceptor.org/airr/v1/',
+                'name' => 'IPA4 New',
+            ],
+            [
+                'url' => 'https://ipa5-new.ireceptor.org/airr/v1/',
+                'name' => 'IPA5 New',
+            ],
+            [
+                'url' => 'https://ipa6-new.ireceptor.org/airr/v1/',
+                'name' => 'IPA6 New',
+            ],
+            [
+                'url' => 'https://covid19-1-new.ireceptor.org/airr/v1/',
+                'name' => 'COVID19-1 New',
+            ],
+            [
+                'url' => 'https://covid19-2-new.ireceptor.org/airr/v1/',
+                'name' => 'COVID19-2 New',
+            ],
+            [
+                'url' => 'https://covid19-3-new.ireceptor.org/airr/v1/',
+                'name' => 'COVID19-3 New',
+            ],
+            [
+                'url' => 'https://covid19-4-new.ireceptor.org/airr/v1/',
+                'name' => 'COVID19-4 New',
+            ],
+            [
+                'url' => 'https://t1d-1-new.ireceptor.org/airr/v1/',
+                'name' => 'T1D-1 New',
+            ],
+            [
+                'url' => 'https://t1d-2-new.ireceptor.org/airr/v1/',
+                'name' => 'T1D-2 New',
+            ],
+            [
+                'url' => 'https://t1d-3-new.ireceptor.org/airr/v1/',
+                'name' => 'T1D-3 New',
+            ],
+            [
+                'url' => 'https://greifflab-1-new.ireceptor.org/airr/v1/',
+                'name' => 'Greiff Lab 1 New',
+            ],
         ];
 
         // if grouping is disabled, remove group code
