@@ -292,7 +292,7 @@ class AdminController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required|email|unique:user,username',
-	    'institution' => 'required',
+            'institution' => 'required',
             'country' => 'required',
             'status' => 'required',
 
@@ -314,7 +314,7 @@ class AdminController extends Controller
         $email = $request->get('email');
         $country = $request->get('country');
         $institution = $request->get('institution');
-	$notes = NULL;
+        $notes = null;
         $status = $request->get('status');
         $password = str_random(24);
 

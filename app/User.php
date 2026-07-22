@@ -222,7 +222,7 @@ class User extends Authenticatable
         return $username;
     }
 
-    public static function add($first_name, $last_name, $email, $password, $country, $institution, $notes, $status='Academic-Approval Pending')
+    public static function add($first_name, $last_name, $email, $password, $country, $institution, $notes, $status = 'Academic-Approval Pending')
     {
         $user = new User();
 
