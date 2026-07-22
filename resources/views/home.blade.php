@@ -16,7 +16,7 @@
 		<div class="col-md-8">
 			<div class="intro_home">
 
-			<p>
+			 <p>
                     <strong>{{ human_number($total_sequences) }} annotated sequences</strong>
                     from  
 					{{ $total_samples_sequences }} repertoires, 
