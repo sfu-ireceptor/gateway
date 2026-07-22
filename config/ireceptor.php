@@ -17,6 +17,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Enable commercial mode
+    |--------------------------------------------------------------------------
+    |
+    | If true, we are running in commercial mode.
+    | Ex: false
+    |
+    */
+
+    'commercial' => env('IRECEPTOR_COMMERCIAL', false),
+    'commercial_text' => env('IRECEPTOR_COMMERCIAL_TEXT', ''),
+    'academic_text' => env('IRECEPTOR_ACADEMIC_TEXT', ''),
+    /*
+    |--------------------------------------------------------------------------
     | Enable authentication
     |--------------------------------------------------------------------------
     |
