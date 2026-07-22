@@ -39,7 +39,7 @@ class User extends Authenticatable
     public function getStatus()
     {
         if ($this->status == null) {
-            return 'Standard';
+            return 'Unknown';
         } else {
             return $this->status;
         }
@@ -57,9 +57,7 @@ class User extends Authenticatable
             return true;
         }
 
-        // Handle the case where the User doesn't have a status.
-        // In the future this should probably return a very limited
-        // status, but for now we want to be permissive as we transition
+        // Get the status of the user
         $status_level = $this->getStatus();
         Log::debug('User::hasAccess: username = ' . $this->username);
         Log::debug('User::hasAccess: is admin = ' . $this->admin);
@@ -234,7 +232,7 @@ class User extends Authenticatable
         $user->country = $country;
         $user->institution = $institution;
         $user->notes = $notes;
-        $user->status = 'Standard';
+        $user->status = 'Academic-Approval Pending';
 
         $user->username = $user->generateUsername();
         $user->password = Hash::make($password);
