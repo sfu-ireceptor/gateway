@@ -209,6 +209,7 @@ class UserController extends Controller
         $data['email'] = $user->email;
         $data['country'] = $user->country;
         $data['institution'] = $user->institution;
+        $data['status'] = $user->status;
         $data['notification'] = session('notification');
 
         return view('user/changePersonalInfo', $data);
