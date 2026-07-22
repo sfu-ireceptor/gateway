@@ -265,6 +265,8 @@ class UserController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'email2' => 'required|email|unique:user,email',
+            'institution' => 'required',
+            'country' => 'required',
         ];
 
         $messages = [
@@ -311,7 +313,8 @@ class UserController extends Controller
         $t['email'] = $u->email;
         $t['notes'] = $u->notes;
         $t['country'] = $u->country;
-        $t['institution'] = $institution;
+        $t['institution'] = $u->institution;
+        $t['status'] = $u->status;
 
         // Email credentials
         try {

@@ -292,6 +292,10 @@ class AdminController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required|email|unique:user,username',
+	    'institution' => 'required',
+            'country' => 'required',
+            'status' => 'required',
+
         ];
 
         $messages = [
@@ -308,9 +312,13 @@ class AdminController extends Controller
         $firstName = $request->get('first_name');
         $lastName = $request->get('last_name');
         $email = $request->get('email');
+        $country = $request->get('country');
+        $institution = $request->get('institution');
+	$notes = NULL;
+        $status = $request->get('status');
         $password = str_random(24);
 
-        $u = User::add($firstName, $lastName, $email, $password);
+        $u = User::add($firstName, $lastName, $email, $password, $country, $institution, $notes, $status);
 
         $t = [];
         $t['login_link'] = config('app.url') . '/login';

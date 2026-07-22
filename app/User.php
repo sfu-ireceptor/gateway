@@ -222,7 +222,7 @@ class User extends Authenticatable
         return $username;
     }
 
-    public static function add($first_name, $last_name, $email, $password, $country, $institution, $notes)
+    public static function add($first_name, $last_name, $email, $password, $country, $institution, $notes, $status='Academic-Approval Pending')
     {
         $user = new User();
 
@@ -232,7 +232,7 @@ class User extends Authenticatable
         $user->country = $country;
         $user->institution = $institution;
         $user->notes = $notes;
-        $user->status = 'Academic-Approval Pending';
+        $user->status = $status;
 
         $user->username = $user->generateUsername();
         $user->password = Hash::make($password);
