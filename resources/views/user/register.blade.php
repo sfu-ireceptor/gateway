@@ -3,11 +3,36 @@
 @section('title', 'Register')
  
 @section('content')
+
+
+@if (config('ireceptor.commercial'))
+  <div class="container">
+    <div class="row">
+
+<h2>Subscribe as a Commercial User</h2>
+
+{!! config('ireceptor.commercial_text') !!}
+
+<script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+<stripe-pricing-table pricing-table-id="prctbl_1Tw5ogRy2LaOcFw53xL12gao"
+publishable-key="pk_live_51TuHHfRy2LaOcFw5VMzBOcUOzpbmBEEOX2TNnRCkHpXgvz4r0PY6s6WNnkDPPl651HF86iAKBzXA1XruOg2dZh0j00h3ipoGQl">
+</stripe-pricing-table>
+
+      <div class="col-md-6">
+      </div>
+    </div>
+  </div>
+@endif
+
 <div class="container">
 	
-	<h1>Create an account</h1>
+@if (config('ireceptor.commercial'))
+	<h2>Create a free Academic Account</h2>
+@else
+	<h2>Create an Account</h2>
+@endif
 
-	@if (isset($notification))
+        @if (isset($notification))
 	<div class="alert alert-warning alert-dismissible" role="alert">
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 		{!! $notification !!}
@@ -23,7 +48,11 @@
 					<label for="email">Do no fill this field, it's used to prevent spam</label>
 					<input name="email" type="text" value="" id="email">
 				</div>
-
+@if (config('ireceptor.commercial'))
+                                <div>
+{!! config('ireceptor.academic_text') !!}
+                                </div>
+@endif
 				<div class="panel panel-default">
 					<div class="panel-body">
 					    <div class="form-group {{ $errors->first('first_name') ? 'has-error' : ''}}">
@@ -37,11 +66,25 @@
 						</div>
 
 					    <div class="form-group {{ $errors->first('email') ? 'has-error' : ''}}">
-							{{ Form::label('email2', 'Email (institution/company preferred)') }} <span class="error">{{ $errors->first('email2') }}</span>
+@if (config('ireceptor.commercial'))
+							{{ Form::label('email2', 'Email (Academic Institutional Email required)') }} <span class="error">{{ $errors->first('email2') }}</span>
+@else
+							{{ Form::label('email2', 'Email (Academic Institutional Email recommended if available)') }} <span class="error">{{ $errors->first('email2') }}</span>
+@endif
+
 							{{ Form::text('email2', '', array('class' => 'form-control')) }}
 							@if ($errors->first('email2') == 'This account already exists')
 								<a href="/user/forgot-password/{{ old('email2') }}">Forgot your password?</a>
 							@endif
+						</div>
+					    <div class="form-group {{ $errors->first('country') ? 'has-error' : ''}}">
+							{{ Form::label('country', 'Country') }} <span class="error">{{ $errors->first('country') }}</span>
+							{{ Form::text('country', $country, array('class' => 'form-control')) }}
+						</div>
+
+					    <div class="form-group {{ $errors->first('institution') ? 'has-error' : ''}}">
+							{{ Form::label('institution', 'Institution') }} <span class="error">{{ $errors->first('institution') }}</span>
+							{{ Form::text('institution', '', array('class' => 'form-control')) }}
 						</div>
 
 					    <div class="form-group {{ $errors->first('notes') ? 'has-error' : ''}}">
@@ -52,24 +95,11 @@
 					</div>
 				</div>
 
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">Required by our funders</h3>
-					</div>
-					<div class="panel-body">
-					    <div class="form-group {{ $errors->first('country') ? 'has-error' : ''}}">
-							{{ Form::label('country', 'Country') }} <span class="error">{{ $errors->first('country') }}</span>
-							{{ Form::text('country', $country, array('class' => 'form-control')) }}
-						</div>
-
-					    <div class="form-group {{ $errors->first('institution') ? 'has-error' : ''}}">
-							{{ Form::label('institution', 'Institution') }} <span class="error">{{ $errors->first('institution') }}</span>
-							{{ Form::text('institution', '', array('class' => 'form-control')) }}
-						</div>
-					</div>
-				</div>
-
-				{{ Form::submit('Create an account', array('class' => 'btn btn-primary')) }}
+@if (config('ireceptor.commercial'))
+				{{ Form::submit('Create your free Academic Account', array('class' => 'btn btn-primary')) }}
+@else
+				{{ Form::submit('Create Account', array('class' => 'btn btn-primary')) }}
+@endif
 
 			{{ Form::close() }}
 		</div>
