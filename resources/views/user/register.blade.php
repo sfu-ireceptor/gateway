@@ -5,32 +5,39 @@
 @section('content')
 
 
-@if (config('ireceptor.commercial'))
   <div class="container">
+@if (config('ireceptor.commercial'))
     <div class="row">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <h2>Subscribe as a Commercial User</h2>
+          <div class="col-md-6">
 
-<h2>Subscribe as a Commercial User</h2>
-
-{!! config('ireceptor.commercial_text') !!}
-
-<script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-<stripe-pricing-table pricing-table-id="prctbl_1Tw5ogRy2LaOcFw53xL12gao"
+            <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+            <stripe-pricing-table pricing-table-id="prctbl_1Tw5ogRy2LaOcFw53xL12gao"
 publishable-key="pk_live_51TuHHfRy2LaOcFw5VMzBOcUOzpbmBEEOX2TNnRCkHpXgvz4r0PY6s6WNnkDPPl651HF86iAKBzXA1XruOg2dZh0j00h3ipoGQl">
-</stripe-pricing-table>
+            </stripe-pricing-table>
 
-      <div class="col-md-6">
+          </div>
+
+          <div class="col-md-6">
+            {!! config('ireceptor.commercial_text') !!}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 @endif
 
-<div class="container">
-	
+    <div class="row">
+      <div class="panel panel-default">
+        <div class="panel-body">
 @if (config('ireceptor.commercial'))
-	<h2>Create a free Academic Account</h2>
+      <h2>Create a free Academic Subscription</h2>
 @else
-	<h2>Create an Account</h2>
+      <h2>Create an Account</h2>
 @endif
+
+      <div class="col-md-6">
 
         @if (isset($notification))
 	<div class="alert alert-warning alert-dismissible" role="alert">
@@ -42,17 +49,11 @@ publishable-key="pk_live_51TuHHfRy2LaOcFw5VMzBOcUOzpbmBEEOX2TNnRCkHpXgvz4r0PY6s6
 
 	<div class="row">
 
-		<div class="col-md-6">
 			{{ Form::open(array('url' => 'register', 'role' => 'form')) }}
 				<div class="honey-pot">
 					<label for="email">Do no fill this field, it's used to prevent spam</label>
 					<input name="email" type="text" value="" id="email">
 				</div>
-@if (config('ireceptor.commercial'))
-                                <div>
-{!! config('ireceptor.academic_text') !!}
-                                </div>
-@endif
 				<div class="panel panel-default">
 					<div class="panel-body">
 					    <div class="form-group {{ $errors->first('first_name') ? 'has-error' : ''}}">
@@ -94,6 +95,7 @@ publishable-key="pk_live_51TuHHfRy2LaOcFw5VMzBOcUOzpbmBEEOX2TNnRCkHpXgvz4r0PY6s6
 
 					</div>
 				</div>
+</div>
 
 @if (config('ireceptor.commercial'))
 				{{ Form::submit('Create your free Academic Account', array('class' => 'btn btn-primary')) }}
@@ -103,8 +105,13 @@ publishable-key="pk_live_51TuHHfRy2LaOcFw5VMzBOcUOzpbmBEEOX2TNnRCkHpXgvz4r0PY6s6
 
 			{{ Form::close() }}
 		</div>
-
-	</div>
-
+@if (config('ireceptor.commercial'))
+        <div class="col-md-6">
+{!! config('ireceptor.academic_text') !!}
+        </div>
+@endif
+      </div>
+    </div>
+  </div>
 </div>
 @stop 
