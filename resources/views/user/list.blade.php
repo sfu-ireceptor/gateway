@@ -32,8 +32,9 @@
 						<th class="text-nowrap">Email</th>
 						<th class="text-nowrap">Country</th>
 						<th class="text-nowrap">Institution</th>
+						<th class="text-nowrap">Status</th>
 						<th class="text-nowrap">Last Login</th>
-						<th class="text-nowrap">Stats Pop-up Usage</th>
+						<th class="text-nowrap">Stats Usage</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -63,6 +64,9 @@
 							</td>
 							<td class="text-nowrap">
 								{{ $t->institution }}
+							</td>
+							<td class="text-nowrap">
+								{{ $t->status }}
 							</td>
 							<td class="text-muted text-nowrap">
 								{{ human_date_time($t->last_login, 'M d, Y') }}

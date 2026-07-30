@@ -209,6 +209,7 @@ class UserController extends Controller
         $data['email'] = $user->email;
         $data['country'] = $user->country;
         $data['institution'] = $user->institution;
+        $data['status'] = $user->status;
         $data['notification'] = session('notification');
 
         return view('user/changePersonalInfo', $data);
@@ -264,6 +265,8 @@ class UserController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'email2' => 'required|email|unique:user,email',
+            'institution' => 'required',
+            'country' => 'required',
         ];
 
         $messages = [
@@ -310,7 +313,8 @@ class UserController extends Controller
         $t['email'] = $u->email;
         $t['notes'] = $u->notes;
         $t['country'] = $u->country;
-        $t['institution'] = $institution;
+        $t['institution'] = $u->institution;
+        $t['status'] = $u->status;
 
         // Email credentials
         try {
