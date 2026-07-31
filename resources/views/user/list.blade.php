@@ -34,7 +34,7 @@
 						<th class="text-nowrap">Institution</th>
 						<th class="text-nowrap">Status</th>
 						<th class="text-nowrap">Last Login</th>
-						<th class="text-nowrap">Stats Usage</th>
+						<th class="text-nowrap">Action</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -72,7 +72,9 @@
 								{{ human_date_time($t->last_login, 'M d, Y') }}
 							</td>
 							<td class="text-nowrap">
-								{{ $t->stats_popup_count > 0 ? $t->stats_popup_count : '' }}
+                                @if(str_contains($t->status, '-Approval Pending'))
+                                   <a href="/admin/approve-user/{{ $t->id }}" title="Approve">Approve</a>
+                                @endif
 							</td>
 						</tr>
 					@endforeach
