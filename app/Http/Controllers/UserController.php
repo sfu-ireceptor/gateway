@@ -254,11 +254,11 @@ class UserController extends Controller
         Log::info('UserController::postChangePersonalInfo - User information updated for ' . $user->username);
 
         // Perform approval process steps if email is changed and the user
-        // has an academic subscription. This doesn't apply to non academic 
+        // has an academic subscription. This doesn't apply to non academic
         // or admin users.
         $message = 'Your personal information was successfully changed.';
-        if ($email_changed && ($user->getStatus() === 'Academic' || $user->getStatus() === 'Academic-Approval Pending') && !$user->isAdmin()) {
-            Log::info('UserController::postChangePersonalInfo - Email changed for ' . $user->username . ' from ' . $old_email . ' to ' . $user->email . ', status = ' . $user->status); 
+        if ($email_changed && ($user->getStatus() === 'Academic' || $user->getStatus() === 'Academic-Approval Pending') && ! $user->isAdmin()) {
+            Log::info('UserController::postChangePersonalInfo - Email changed for ' . $user->username . ' from ' . $old_email . ' to ' . $user->email . ', status = ' . $user->status);
             // Change the user's status - we need to approve
             // whether the new email is appropriate for an
             // academic account.
