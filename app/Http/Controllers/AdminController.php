@@ -423,7 +423,7 @@ class AdminController extends Controller
         $data['country'] = $user->country;
         $data['institution'] = $user->institution;
         $data['status'] = $user->status;
-        $data['new_status'] = substr($user->status,0,stripos($user->status,'-Approval Pending'));
+        $data['new_status'] = substr($user->status, 0, stripos($user->status, '-Approval Pending'));
 
         // Redirect to the view with the data.
         return view('user/approve', $data);
@@ -437,7 +437,7 @@ class AdminController extends Controller
             abort(401, 'Not authorized.');
         }
 
-        // Get the user id and the status from the form 
+        // Get the user id and the status from the form
         $user = User::find($request->get('id'));
         $user->status = $request->get('status');
 
@@ -447,7 +447,6 @@ class AdminController extends Controller
 
         return redirect('admin/users')->with('notification', 'Status change for ' . $user->username . ' to ' . $user->status . ' completed.');
     }
-
 
     public function getUpdateSampleCache()
     {
