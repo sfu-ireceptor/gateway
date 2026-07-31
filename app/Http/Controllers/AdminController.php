@@ -410,8 +410,10 @@ class AdminController extends Controller
             abort(401, 'Not authorized.');
         }
 
+        // Get the user
         $user = User::find($id);
 
+        // Provide the data to the view
         $data = [];
         $data['id'] = $id;
         $data['first_name'] = $user->first_name;
@@ -423,6 +425,7 @@ class AdminController extends Controller
         $data['status'] = $user->status;
         $data['new_status'] = substr($user->status,0,stripos($user->status,'-Approval Pending'));
 
+        // Redirect to the view with the data.
         return view('user/approve', $data);
     }
 
@@ -434,9 +437,13 @@ class AdminController extends Controller
             abort(401, 'Not authorized.');
         }
 
+        // Get the user id and the status from the form 
         $user = User::find($request->get('id'));
         $user->status = $request->get('status');
+
+        // Save the new status.
         $user->save();
+        Log::debug('AdminController::postApproveUser - Updated user ' . $user->username . ' status to ' . $user->status);
 
         return redirect('admin/users')->with('notification', 'Status change for ' . $user->username . ' to ' . $user->status . ' completed.');
     }
