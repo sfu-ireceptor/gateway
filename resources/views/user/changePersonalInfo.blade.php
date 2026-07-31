@@ -33,6 +33,11 @@
 			    <div class="form-group {{ $errors->first('email') ? 'has-error' : ''}}">
 					{{ Form::label('email', 'Email') }} <span class="error">{{ $errors->first('email') }}</span>
 					{{ Form::text('email', $email, array('class' => 'form-control')) }}
+                    <p><strong>Note:</strong> If your subscription is an Academic subscription, 
+                    changing your email will trigger an account approval process
+                    to ensure that your new email is still eligible for that Academic subscription. This will
+                    temporarily disable access to most of the functionality of the iReceptor Gateway until the
+                    subscription is approved.</p>
 				</div>
 
 			    <div class="form-group {{ $errors->first('country') ? 'has-error' : ''}}">
