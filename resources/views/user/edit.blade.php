@@ -46,6 +46,11 @@
 					{{ Form::text('institution', $institution, array('class' => 'form-control')) }}
 				</div>
 				
+			    <div class="form-group {{ $errors->first('status') ? 'has-error' : ''}}">
+					{{ Form::label('status', 'Status') }} <span class="error">{{ $errors->first('status') }}</span>
+					{{ Form::text('status', $status, array('class' => 'form-control')) }}
+				</div>
+				
 				{{ Form::submit('Save', array('class' => 'btn btn-primary')) }}
 
 			{{ Form::close() }}

@@ -17,6 +17,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Enable commercial mode
+    |--------------------------------------------------------------------------
+    |
+    | If true, we are running in commercial mode.
+    | Ex: false
+    |
+    */
+
+    'commercial' => env('IRECEPTOR_COMMERCIAL', false),
+    'commercial_text' => env('IRECEPTOR_COMMERCIAL_TEXT', ''),
+    'academic_text' => env('IRECEPTOR_ACADEMIC_TEXT', ''),
+    /*
+    |--------------------------------------------------------------------------
     | Enable authentication
     |--------------------------------------------------------------------------
     |
@@ -49,6 +62,7 @@ return [
     */
 
     'message_401_error' => env('IRECEPTOR_MESSAGE_401_ERROR', 'Please contact support@ireceptor.org'),
+    'message_503_error' => env('IRECEPTOR_MESSAGE_503_ERROR', 'The iReceptor Gateway is currently down for maintenance.'),
 
     /*
     |--------------------------------------------------------------------------

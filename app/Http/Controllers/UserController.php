@@ -209,6 +209,7 @@ class UserController extends Controller
         $data['email'] = $user->email;
         $data['country'] = $user->country;
         $data['institution'] = $user->institution;
+        $data['status'] = $user->status;
         $data['notification'] = session('notification');
 
         return view('user/changePersonalInfo', $data);
@@ -235,14 +236,61 @@ class UserController extends Controller
         }
 
         $user = Auth::user();
+        // Check to see if the email has changed.
+        $email_changed = false;
+        $old_email = $user->email;
+        if ($user->email != $request->input('email')) {
+            $email_changed = true;
+        }
+
+        // Copy the form data from the form into the user object
         $user->first_name = $request->input('first_name');
         $user->last_name = $request->input('last_name');
         $user->email = $request->input('email');
         $user->country = $request->input('country');
         $user->institution = $request->input('institution');
+        // Save the new user info
         $user->save();
+        Log::info('UserController::postChangePersonalInfo - User information updated for ' . $user->username);
 
-        return redirect('/user/account')->with('notification', 'Personal information was successfully chaged.');
+        // Perform approval process steps if email is changed and the user
+        // has an academic subscription. This doesn't apply to non academic
+        // or admin users.
+        $message = 'Your personal information was successfully changed.';
+        if ($email_changed && ($user->getStatus() === 'Academic' || $user->getStatus() === 'Academic-Approval Pending') && ! $user->isAdmin()) {
+            Log::info('UserController::postChangePersonalInfo - Email changed for ' . $user->username . ' from ' . $old_email . ' to ' . $user->email . ', status = ' . $user->status);
+            // Change the user's status - we need to approve
+            // whether the new email is appropriate for an
+            // academic account.
+            $user->status = 'Academic-Approval Pending';
+            // Save the new user info
+            $user->save();
+
+            // Send an admin notification email about the new user.
+            // Set up the data structure for the mail template
+            $t = [];
+            $t['app_url'] = config('app.url');
+            $t['first_name'] = $user->first_name;
+            $t['username'] = $user->username;
+            $t['last_name'] = $user->last_name;
+            $t['email'] = $user->email;
+            $t['notes'] = $user->notes;
+            $t['country'] = $user->country;
+            $t['institution'] = $user->institution;
+            $t['status'] = $user->status;
+            // Send the email to the iReceptor support account.
+            try {
+                Mail::send(['text' => 'emails.auth.emailChanged'], $t, function ($message) use ($user) {
+                    $message->to(config('ireceptor.email_support'))->subject('Approval required - Email changed: ' . $user->first_name . ' ' . $user->last_name . ' (' . $user->email . ')');
+                });
+            } catch (\Exception $e) {
+                Log::error('UserController::postChangePersonalInfo - Support email delivery failed');
+                Log::error('UserController::postChangePersonalInfo - ' . $e->getMessage());
+            }
+            $message = $message . ' Your account has been suspended pending appoval.';
+        }
+
+        return redirect('/user/account')->with('notification', $message);
     }
 
     public function getRegister(Request $request)
@@ -264,6 +312,8 @@ class UserController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'email2' => 'required|email|unique:user,email',
+            'institution' => 'required',
+            'country' => 'required',
         ];
 
         $messages = [
@@ -310,7 +360,8 @@ class UserController extends Controller
         $t['email'] = $u->email;
         $t['notes'] = $u->notes;
         $t['country'] = $u->country;
-        $t['institution'] = $institution;
+        $t['institution'] = $u->institution;
+        $t['status'] = $u->status;
 
         // Email credentials
         try {

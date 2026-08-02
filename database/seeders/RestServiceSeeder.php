@@ -305,6 +305,10 @@ class RestServiceSeeder extends Seeder
                 'url' => 'https://t1d-3-new.ireceptor.org/airr/v1/',
                 'name' => 'T1D-3 New',
             ],
+            [
+                'url' => 'https://greifflab-1-new.ireceptor.org/airr/v1/',
+                'name' => 'Greiff Lab 1 New',
+            ],
         ];
 
         // if grouping is disabled, remove group code

@@ -295,6 +295,10 @@ class AdminController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required|email|unique:user,username',
+            'institution' => 'required',
+            'country' => 'required',
+            'status' => 'required',
+
         ];
 
         $messages = [
@@ -311,9 +315,13 @@ class AdminController extends Controller
         $firstName = $request->get('first_name');
         $lastName = $request->get('last_name');
         $email = $request->get('email');
+        $country = $request->get('country');
+        $institution = $request->get('institution');
+        $notes = null;
+        $status = $request->get('status');
         $password = str_random(24);
 
-        $u = User::add($firstName, $lastName, $email, $password);
+        $u = User::add($firstName, $lastName, $email, $password, $country, $institution, $notes, $status);
 
         $t = [];
         $t['login_link'] = config('app.url') . '/login';
@@ -351,6 +359,7 @@ class AdminController extends Controller
         $data['email'] = $user->email;
         $data['country'] = $user->country;
         $data['institution'] = $user->institution;
+        $data['status'] = $user->status;
 
         return view('user/edit', $data);
     }
@@ -369,6 +378,7 @@ class AdminController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required|email|unique:user,username',
+            'status' => 'required',
         ];
 
         $messages = [
@@ -389,9 +399,56 @@ class AdminController extends Controller
         $user->email = $request->get('email');
         $user->country = $request->get('country');
         $user->institution = $request->get('institution');
+        $user->status = $request->get('status');
         $user->save();
 
         return redirect('admin/users')->with('notification', 'Modifications for ' . $user->first_name . ' ' . $user->lastName . ' were successfully saved.');
+    }
+
+    public function getApproveUser($id)
+    {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
+        // Get the user
+        $user = User::find($id);
+
+        // Provide the data to the view
+        $data = [];
+        $data['id'] = $id;
+        $data['first_name'] = $user->first_name;
+        $data['last_name'] = $user->last_name;
+        $data['username'] = $user->username;
+        $data['email'] = $user->email;
+        $data['country'] = $user->country;
+        $data['institution'] = $user->institution;
+        $data['status'] = $user->status;
+        $data['new_status'] = substr($user->status, 0, stripos($user->status, '-Approval Pending'));
+
+        // Redirect to the view with the data.
+        return view('user/approve', $data);
+    }
+
+    public function postApproveUser(Request $request)
+    {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
+        // Get the user id and the status from the form
+        $user = User::find($request->get('id'));
+        $user->status = $request->get('status');
+
+        // Save the new status.
+        $user->save();
+        Log::debug('AdminController::postApproveUser - Updated user ' . $user->username . ' status to ' . $user->status);
+
+        return redirect('admin/users')->with('notification', 'Status change for ' . $user->username . ' to ' . $user->status . ' completed.');
     }
 
     public function getUpdateSampleCache()
