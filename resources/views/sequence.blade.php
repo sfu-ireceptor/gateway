@@ -123,11 +123,77 @@
                         <div class="panel-heading" role="tab" id="headingThree">
                             <h4 class="panel-title">
                                 <a role="button" class="{{ in_array('2', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    Advanced filters
+                                    Filter by Reactivity
                                 </a>
                             </h4>
                         </div>
                         <div id="collapseThree" class="panel-collapse collapse {{ in_array('2', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingThree">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    {{ Form::label('ir_epitope_ref', __('short.ir_epitope_ref')) }}
+                                    {{ Form::text('ir_epitope_ref', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match, IEDB CURIE required', 'data-placement' => 'bottom')) }}
+                                </div>
+                                <div class="form-group">
+                                        @csrf
+                                        <label for="ir_species_ref">{{ __('short.ir_species_ref')}}</label>
+                                        <select name="ir_species_ref[]" id="ir_species_ref" multiple>
+                                            @foreach($ir_species_ref_ontology_data as $species)
+    
+                                                @php
+                                                    $selected = "";
+                                                    if (array_key_exists("ir_species_ref", $filter_fields)) {
+                                                        $ir_species_filters = $filter_fields["ir_species_ref"];
+                                                        if (in_array($species->species_id,  explode(", ",$ir_species_filters))) {
+                                                            $selected = "selected";
+                                                        }
+                                                    }
+                                                @endphp
+                                                <option value="{{ $species->species_id }}" {{$selected}} >{{ $species->species_name }} ({{$species->species_id}})</option>
+                                            @endforeach
+                                        </select>
+<!--
+                                    {{ Form::label('ir_species_ref', __('short.ir_species_ref')) }}
+                                    {{ Form::select('ir_species_ref[]', $ir_species_ref_ontology_list, '', array('class' => 'form-control multiselect-ui', 'multiple' => 'multiple')) }}
+-->
+                                </div>
+                                <div class="form-group">
+                                        @csrf
+                                        <label for="ir_antigen_ref">{{ __('short.ir_antigen_ref')}}</label>
+                                        <select name="ir_antigen_ref[]" id="ir_antigen_ref" multiple>
+                                            @foreach($ir_antigen_ref_ontology_data as $antigen)
+    
+                                                @php
+                                                    $selected = "";
+                                                    if (array_key_exists("ir_antigen_ref", $filter_fields)) {
+                                                        $ir_antigen_filters = $filter_fields["ir_antigen_ref"];
+                                                        if (in_array($antigen->antigen_id,  explode(", ",$ir_antigen_filters))) {
+                                                            $selected = "selected";
+                                                        }
+                                                    }
+                                                @endphp
+                                                <option value="{{ $antigen->antigen_id }}" {{$selected}} >{{ $antigen->antigen_name }} ({{$antigen->antigen_id}})</option>
+                                            @endforeach
+                                        </select>
+                                </div>
+                                <div class="form-group">
+                                    {{ Form::label('reactivity_ref_rearrangement', __('short.reactivity_ref_rearrangement')) }}
+                                    {{ Form::text('reactivity_ref_rearrangement', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'title' => 'Exact match, IEDB CURIE required', 'data-placement' => 'bottom')) }}
+                                </div>
+                                <p class="button_container">
+                                    {{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingFour">
+                            <h4 class="panel-title">
+                                <a role="button" class="{{ in_array('3', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    Other filters
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseFour" class="panel-collapse collapse {{ in_array('3', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingFour">
                             <div class="panel-body">
                                 <div class="form-group">
                                     {{ Form::label('cell_id', __('short.cell_id')) }}
@@ -170,7 +236,7 @@
                             <p>An unexpected error occurred when querying the following repositories:</p>
                             <ul>
                                 @foreach ($rest_service_list_no_response_error as $rs)
-                                        <li>{{ $rs->display_name }}</li>
+                                        <li>{{ $rs->name }}</li>
                                 @endforeach
                             </ul>
                             <p>Please try again later.</p>
@@ -198,9 +264,9 @@
                             <br>
                         @endif
 
-                        @if ( ! empty($filter_fields))
+                        @if ( ! empty($filter_fields_display))
                             <h4>Sequence filters:</h4>
-                            @foreach($filter_fields as $filter_key => $filter_value)
+                            @foreach($filter_fields_display as $filter_key => $filter_value)
                                 <a title= "@lang('short.' . $filter_key): {{ $filter_value }}" href="/sequences?query_id={{ $query_id }}&amp;remove_filter={{ $filter_key }}" class="label label-primary">
                                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                     @lang('short.' . $filter_key): <span class="value">{{ $filter_value }}</span>
@@ -343,9 +409,45 @@
                                             @isset($s->{$field['ir_id']})
                                                 @if($field['ir_id'] == 'functional')
                                                     {{ $s->functional ? 'Yes' : 'No' }}
-                                                @elseif($field['ir_id'] == 'v_call' || $field['ir_id'] == 'v_call' || $field['ir_id'] == 'd_call' )
+                                                @elseif($field['ir_id'] == 'v_call' || $field['ir_id'] == 'j_call' || $field['ir_id'] == 'd_call' )
                                                     <span title="{{ $s->{$field['ir_id']} }}">
                                                         {{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
+                                                    </span>
+                                                @elseif($field['ir_id'] == 'ir_species_ref' )
+                                                    <span title="{{ $s->ir_species_ref_display }}">
+                                                        @foreach( $s->ir_species_info as $index => $info)
+                                                            <a href="{{$info['url']}}" target="_blank">{{str_limit($info['label'], $limit = 30, $end = '‥')}}</a>
+                                                            @if ($index < count($s->ir_species_info)-1)
+                                                                </br>
+                                                            @endif
+                                                        @endforeach
+                                                    </span>
+                                                @elseif($field['ir_id'] == 'ir_antigen_ref' )
+                                                    <span title="{{ $s->ir_antigen_ref_display }}">
+                                                        @foreach( $s->ir_antigen_info as $index => $info)
+                                                            <a href="{{$info['url']}}" target="_blank">{{str_limit($info['label'], $limit = 30, $end = '‥')}}</a>
+                                                            @if ($index < count($s->ir_antigen_info)-1)
+                                                                </br>
+                                                            @endif
+                                                        @endforeach
+                                                    </span>
+                                                @elseif($field['ir_id'] == 'ir_epitope_ref' )
+
+                                                    <span title="{{ $s->{$field['ir_id']} }}">
+                                                        @foreach( $s->ir_epitope_info as $index => $info)
+                                                            <a href="{{$info['url']}}" target="_blank">{{str_limit($info['label'], $limit = 30, $end = '‥')}}</a>
+                                                            @if ($index < count($s->ir_epitope_info)-1)
+                                                                </br>
+                                                            @endif
+                                                        @endforeach
+                                                    </span>
+                                                @elseif($field['ir_id'] == 'reactivity_ref_rearrangement' )
+                                                    <span title="{{ $s->{$field['ir_id']} }}">
+                                                        @if( explode(':', $s->{$field['ir_id']})[0] == 'IEDB_RECEPTOR')
+                                                           <a href="https://iedb.org/receptor/{{explode(':', $s->{$field['ir_id']})[1] }}" target="_blank">{{ $s->{$field['ir_id']} }}</a> 
+                                                        @else
+                                                            {{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
+                                                        @endif
                                                     </span>
                                                 @else
                                                     @if(is_object($s->{$field['ir_id']}))
@@ -505,5 +607,22 @@
 
 @include('reloadingMessage')
 @include('loadingMessage')
+<script>
+// Use TomSelect to handle multiselect UI with searching.
+document.addEventListener('DOMContentLoaded', function() {
+    new TomSelect('#ir_antigen_ref', {
+        create: false,
+        placeholder: 'Select antigens',
+        sortField: {field: "text"}
+    });
+});
+document.addEventListener('DOMContentLoaded', function() {
+    new TomSelect('#ir_species_ref', {
+        create: false,
+        placeholder: 'Select species',
+        sortField: {field: "text"}
+    });
+});
+</script>
 
 @stop

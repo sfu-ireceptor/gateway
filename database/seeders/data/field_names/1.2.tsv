@@ -624,8 +624,8 @@ ir_cell_id_rearrangement	Cell ID from Annotation Tool	Tool Cell ID		adc_annotati
 reactivity_ref_rearrangement	Reactivity Reference	Reactivity Reference		reactivity_ref	string	TRUE	TRUE																					IR_Rearrangement	IR_RearrangementDB	reactivity_ref	reactivity_ref	FALSE	string															reactivity_ref_rearrangement									
 ir_epitope_ref	Reactivity Epitope	Reactivity Epitope		ir_epitope_ref	string	TRUE	TRUE																					IR_Rearrangement	IR_RearrangementDB	ir_epitope_ref	ir_epitope_ref	FALSE	string															ir_epitope_ref									
 ir_antigen_ref	Reactivity Antigen	Reactivity Antigen		ir_antigen_ref	string	TRUE	TRUE																					IR_Rearrangement	IR_RearrangementDB	ir_antigen_ref	ir_antigen_ref	FALSE	string															ir_antigen_ref									
-ir_species_ref	Reactivity Speciies	Reactivity Speciies		ir_species_ref	string	TRUE	TRUE																					IR_Rearrangement	IR_RearrangementDB	ir_species_ref	ir_species_ref	FALSE	string															ir_species_ref									
-ir_reactivity_method	Reacitivity Method	Reacitivity Method		ir_reactivity_method	string	FALSE	TRUE																					IR_Rearrangement	IR_RearrangementDB	ir_reactivity_method	ir_reactivity_method	FALSE	string															ir_reactivity_method									
+ir_species_ref	Reactivity Species	Reactivity Species		ir_species_ref	string	TRUE	TRUE																					IR_Rearrangement	IR_RearrangementDB	ir_species_ref	ir_species_ref	FALSE	string															ir_species_ref									
+ir_reactivity_method	Reactivity Method	Reactivity Method		ir_reactivity_method	string	FALSE	TRUE																					IR_Rearrangement	IR_RearrangementDB	ir_reactivity_method	ir_reactivity_method	FALSE	string															ir_reactivity_method									
 																		Planned Process										AKC_Metadata	AKC_Planned Process																												
 																		Planned Process										AKC_Metadata	AKC_Planned Process																												
 																		Planned Process										AKC_Metadata	AKC_Planned Process																												
