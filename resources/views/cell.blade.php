@@ -126,6 +126,40 @@
                             </div>
                         </div>
                     </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingFour">
+                            <h4 class="panel-title">
+                                <a role="button" class="{{ in_array('4', $open_filter_panel_list) ? '' : 'collapsed' }}" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    Filter by Chain
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseFour" class="panel-collapse collapse {{ in_array('4', $open_filter_panel_list) ? 'in' : '' }}" role="tabpanel" aria-labelledby="headingFour">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    {{ Form::label('junction_aa',  __('short.junction_aa')) }}
+                                    @include('help', ['id' => 'junction_aa'])
+                                    {{ Form::text('junction_aa', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ Form::label('v_call',  __('short.v_call')) }}
+                                    @include('help', ['id' => 'v_call'])
+                                    {{ Form::text('v_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ Form::label('j_call', __('short.j_call')) }}
+                                    @include('help', ['id' => 'j_call'])
+                                    {{ Form::text('j_call', '', array('class' => 'form-control', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom')) }}
+                                </div>
+
+                                <p class="button_container">
+                                    {{ Form::submit('Apply filters →', array('class' => 'btn btn-primary search_samples')) }}
+                                </p>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>        
 
             {{ Form::close() }}                
@@ -323,7 +357,7 @@
                                         @isset($s->{$field['ir_id']})
                                             @if($field['ir_id'] == 'functional')
                                                 {{ $s->functional ? 'Yes' : 'No' }}                                            
-                                            @elseif($field['ir_id'] == 'v_call' || $field['ir_id'] == 'v_call' || $field['ir_id'] == 'd_call' )
+                                            @elseif($field['ir_id'] == 'v_call' || $field['ir_id'] == 'j_call' || $field['ir_id'] == 'd_call' )
                                                 <span title="{{ $s->{$field['ir_id']} }}">
                                                     {{ str_limit($s->{$field['ir_id']}, $limit = 30, $end = '‥') }}
                                                 </span>
