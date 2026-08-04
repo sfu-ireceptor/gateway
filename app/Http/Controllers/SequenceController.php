@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Antigens;
 use App\Bookmark;
 use App\Download;
 use App\FieldName;
 use App\QueryLog;
 use App\Sample;
 use App\Sequence;
+use App\Species;
 use App\System;
 use App\Tapis;
 use App\User;
@@ -103,6 +105,101 @@ class SequenceController extends Controller
         $metadata = Sample::metadata($username);
 
         $data['sequence_list'] = $sequence_data['items'];
+        // get a display for each set of references for a sequqnce.
+        // handle the case where the reference is a comma separated list.
+        foreach ($data['sequence_list'] as $sequence) {
+            // Handle epitopes
+            if (property_exists($sequence, 'ir_epitope_ref')) {
+                //$sequence->ir_epitope_ref_display = self::getIEDBEpitope($sequence->ir_epitope_ref);
+                $ref_list = explode(',', $sequence->ir_epitope_ref);
+                $name_list = [];
+                $info_list = [];
+                foreach ($ref_list as $ref_id) {
+                    // Build the info structure for this object
+                    $info = [];
+                    $info['label'] = self::getIEDBEpitope($ref_id);
+                    $info['id'] = $ref_id;
+                    $object_list = explode(':', $ref_id);
+                    if ($object_list[0] == 'IEDB_EPITOPE') {
+                        $info['url'] = 'https://iedb.org/epitope/' . $object_list[1];
+                    }
+                    $info_list[] = $info;
+                    // Get the name for the name list
+                    $name_list[] = $info['label'];
+                }
+                $sequence->ir_epitope_ref_display = implode(', ', $name_list);
+                $sequence->ir_epitope_info = $info_list;
+            }
+            // Handle species
+            if (property_exists($sequence, 'ir_species_ref')) {
+                $ref_list = explode(',', $sequence->ir_species_ref);
+                $name_list = [];
+                $info_list = [];
+                foreach ($ref_list as $ref_id) {
+                    // Build the info structure for this object
+                    $info = [];
+                    $info['label'] = self::getSpecies($ref_id);
+                    $info['id'] = $ref_id;
+                    $info['url'] = '';
+                    $object_list = explode(':', $ref_id);
+                    if ($object_list[0] == 'NCBITaxon') {
+                        $info['url'] = 'http://purl.obolibrary.org/obo/NCBITaxon_' . $object_list[1];
+                    }
+                    $info_list[] = $info;
+                    // Get the name for the name list
+                    $name_list[] = $info['label'];
+                }
+                $sequence->ir_species_ref_display = implode(', ', $name_list);
+                $sequence->ir_species_info = $info_list;
+            }
+            // Handle antigens
+            if (property_exists($sequence, 'ir_antigen_ref')) {
+                $ref_list = explode(',', $sequence->ir_antigen_ref);
+                $name_list = [];
+                $info_list = [];
+                foreach ($ref_list as $ref_id) {
+                    // Build the info structure for this object
+                    $info = [];
+                    $info['label'] = self::getAntigen($ref_id);
+                    $info['id'] = $ref_id;
+                    $info['url'] = '';
+                    $object_list = explode(':', $ref_id);
+                    if ($object_list[0] == 'UNIPROT') {
+                        $info['url'] = 'https://www.uniprot.org/uniprotkb/' . $object_list[1];
+                    } elseif ($object_list[0] == 'NCBIPROTEIN') {
+                        $info['url'] = 'https://www.ncbi.nlm.nih.gov/protein/' . $object_list[1];
+                    }
+                    $info_list[] = $info;
+                    // Get the name for the name list
+                    $name_list[] = $info['label'];
+                }
+                $sequence->ir_antigen_ref_display = implode(', ', $name_list);
+                $sequence->ir_antigen_info = $info_list;
+            }
+        }
+
+        // Get cached antigen data
+        $cached_antigens = Antigens::all();
+        // Build a list of the CURIE/Ontology info
+        $ir_antigen_ref_ontology_list = [];
+        foreach ($cached_antigens as $antigen) {
+            $ir_antigen_ref_ontology_list[$antigen->antigen_id] = $antigen->antigen_name . ' (' . $antigen->antigen_id . ')';
+        }
+        // Sort the array and store it.
+        asort($ir_antigen_ref_ontology_list);
+        $data['ir_antigen_ref_ontology_list'] = $ir_antigen_ref_ontology_list;
+        $data['ir_antigen_ref_ontology_data'] = $cached_antigens;
+
+        // Get cached species data
+        $cached_species = Species::all();
+        // Build a list of the CURIE/Ontology info
+        $ir_species_ref_ontology_list = [];
+        foreach ($cached_species as $species) {
+            $ir_species_ref_ontology_list[$species->species_id] = $species->species_name . ' (' . $species->species_id . ')';
+        }
+        asort($ir_species_ref_ontology_list);
+        $data['ir_species_ref_ontology_list'] = $ir_species_ref_ontology_list;
+        $data['ir_species_ref_ontology_data'] = $cached_species;
 
         // Fields we want to graph. The UI/blade expects six fields
         $charts_fields = ['study_title', 'subject_id', 'sample_id', 'disease_diagnosis_id', 'tissue_id', 'pcr_target_locus'];
@@ -248,15 +345,35 @@ class SequenceController extends Controller
 
         // create copy of filters for display
         $filter_fields = [];
+        $filter_fields_display = [];
         foreach ($filters as $k => $v) {
             if ($v) {
                 if (is_array($v)) {
                     // don't show sample id filters
+                    // handle ontology based fields, we want to display name and ID
                     if (! starts_with($k, 'ir_project_sample_id_list_')) {
-                        $filter_fields[$k] = implode(', ', $v);
+                        if ($k == 'ir_antigen_ref') {
+                            $ontology_filters = [];
+                            foreach ($v as $ontology_id) {
+                                $ontology_filters[] = self::getAntigen($ontology_id) . ' (' . $ontology_id . ')';
+                            }
+                            $filter_fields[$k] = implode(', ', $v);
+                            $filter_fields_display[$k] = implode(', ', $ontology_filters);
+                        } elseif ($k == 'ir_species_ref') {
+                            $ontology_filters = [];
+                            foreach ($v as $ontology_id) {
+                                $ontology_filters[] = self::getSpecies($ontology_id) . ' (' . $ontology_id . ')';
+                            }
+                            $filter_fields[$k] = implode(', ', $v);
+                            $filter_fields_display[$k] = implode(', ', $ontology_filters);
+                        } else {
+                            $filter_fields[$k] = implode(', ', $v);
+                            $filter_fields_display[$k] = implode(', ', $v);
+                        }
                     }
                 } else {
                     $filter_fields[$k] = $v;
+                    $filter_fields_display[$k] = $v;
                 }
             }
         }
@@ -266,7 +383,13 @@ class SequenceController extends Controller
         unset($filter_fields['filters_order']);
         unset($filter_fields['sample_query_id']);
         unset($filter_fields['open_filter_panel_list']);
+        unset($filter_fields_display['cols']);
+        unset($filter_fields_display['filters_order']);
+        unset($filter_fields_display['sample_query_id']);
+        unset($filter_fields_display['open_filter_panel_list']);
+        // set up the data for the blade.
         $data['filter_fields'] = $filter_fields;
+        $data['filter_fields_display'] = $filter_fields_display;
 
         // Get information about all of the Apps for the AIRR "Rearrangement" object
         $tapis = new Tapis;
@@ -712,6 +835,75 @@ class SequenceController extends Controller
 
         // display view
         return view('sequenceQuickSearch', $data);
+    }
+
+    public function getSpecies($species_id)
+    {
+        $species_str = null;
+
+        $existing_species = Species::where('species_id', $species_id)->take(1)->get();
+        // Use the name if we found one
+        if (count($existing_species) > 0) {
+            $species_str = $existing_species[0]['species_name'];
+        } else {
+            $species_str = $species_id;
+        }
+
+        return $species_str;
+    }
+
+    public function getAntigen($antigen_id)
+    {
+        $antigen_str = null;
+
+        // Look up the antigen_id
+        $existing_antigen = Antigens::where('antigen_id', $antigen_id)->take(1)->get();
+        // Use the name if we found one
+        if (count($existing_antigen) > 0) {
+            $antigen_str = $existing_antigen[0]['antigen_name'];
+        } else {
+            $antigen_str = $antigen_id;
+        }
+
+        return $antigen_str;
+    }
+
+    public function getIEDBEpitope($epitope_id)
+    {
+        $epitope_str = null;
+
+        try {
+            // Look up the Epitope using the IEDB query API
+            // TODO: We probably want to store this so we don't have to look it up.
+            $defaults = [];
+            $defaults['base_uri'] = 'https://query-api.iedb.org/';
+            $defaults['verify'] = false;    // accept self-signed SSL certificates
+
+            $client = new \GuzzleHttp\Client($defaults);
+            // The structure_iri field contains the IEDB CURIE of the form IEDB_EPITOPE:42
+            $query = 'epitope_search?structure_iri=eq.' . $epitope_id;
+            $response = $client->get($query);
+            $body = $response->getBody();
+            $t = json_decode($body);
+
+            // For each return element
+            foreach ($t as $iedb_epitope_data) {
+                // Generate a comma separated list of epitopes from IEDB repsonse.
+                // IEDB docs are here: https://help.iedb.org/hc/en-us/articles/4402872882189-Immune-Epitope-Database-Query-API-IQ-API
+                // Epitope endpoint returns the AA sequence in the "linear_sequence" field in the JSON response.
+                if (strlen($epitope_str) == 0) {
+                    $epitope_str = $iedb_epitope_data->linear_sequence;
+                } else {
+                    $epitope_str = $epitope_str . ',' . $iedb_epitope_data->linear_sequence;
+                }
+            }
+        } catch (\Exception $e) {
+            $error_message = $e->getMessage();
+            Log::error('IEDB request failed: ' . $error_message);
+            $epitope_str = null;
+        }
+
+        return $epitope_str;
     }
 
     public function getIEDBInfo($val)
