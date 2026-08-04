@@ -35,6 +35,19 @@
 					{{ Form::text('email', Request::old('email'), array('class' => 'form-control')) }}
 				</div>
 
+			    <div class="form-group {{ $errors->first('institution') ? 'has-error' : ''}}">
+					{{ Form::label('institution', 'Institution') }} <span class="error">{{ $errors->first('institution') }}</span>
+					{{ Form::text('institution', Request::old('institution'), array('class' => 'form-control')) }}
+				</div>
+			    <div class="form-group {{ $errors->first('country') ? 'has-error' : ''}}">
+					{{ Form::label('country', 'Country') }} <span class="error">{{ $errors->first('country') }}</span>
+					{{ Form::text('country', Request::old('country'), array('class' => 'form-control')) }}
+				</div>
+			    <div class="form-group {{ $errors->first('status') ? 'has-error' : ''}}">
+					{{ Form::label('status', 'Status') }} <span class="error">{{ $errors->first('status') }}</span>
+					{{ Form::text('status', Request::old('status'), array('class' => 'form-control')) }}
+				</div>
+
 				{{ Form::submit('Add User', array('class' => 'btn btn-primary')) }}
 
 			{{ Form::close() }}
