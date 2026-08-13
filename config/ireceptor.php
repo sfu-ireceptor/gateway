@@ -49,6 +49,7 @@ return [
     */
 
     'message_401_error' => env('IRECEPTOR_MESSAGE_401_ERROR', 'Please contact support@ireceptor.org'),
+    'message_503_error' => env('IRECEPTOR_MESSAGE_503_ERROR', 'The iReceptor Gateway is currently down for maintenance.'),
 
     /*
     |--------------------------------------------------------------------------
