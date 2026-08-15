@@ -134,7 +134,7 @@ class UserController extends Controller
 
         $request->session()->regenerate();
 
-        if (! $user->did_survey) {
+        if (config('ireceptor.survey_active') && !$user->did_survey) {
             return redirect('/ireceptor-survey');
         }
 
@@ -382,9 +382,6 @@ class UserController extends Controller
             Log::error('UserController::postRegister - Support email delivery failed');
             Log::error('UserController::postRegister - ' . $e->getMessage());
         }
-
-        // Log the user in.
-        Auth::login($u);
 
         // Take them to the welcome page.
         return redirect('/user/welcome');
