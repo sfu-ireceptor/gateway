@@ -383,9 +383,6 @@ class UserController extends Controller
             Log::error('UserController::postRegister - ' . $e->getMessage());
         }
 
-        // Log the user in.
-        Auth::login($u);
-
         // Take them to the welcome page.
         return redirect('/user/welcome');
     }

@@ -19,6 +19,7 @@ Route::get('logout', 'UserController@getLogout');
 
 Route::get('register', 'UserController@getRegister')->name('register');
 Route::post('register', 'UserController@postRegister');
+Route::get('user/welcome', 'UserController@getWelcome');
 
 Route::get('user/forgot-password/{email?}', 'UserController@getForgotPassword');
 Route::post('user/forgot-password', 'UserController@postForgotPassword');
@@ -85,8 +86,6 @@ Route::middleware('auth')->group(function () {
 
         Route::get('change-personal-info', 'UserController@getChangePersonalInfo');
         Route::post('change-personal-info', 'UserController@postChangePersonalInfo');
-
-        Route::get('welcome', 'UserController@getWelcome');
     });
 
     Route::prefix('bookmarks')->group(function () {
@@ -148,6 +147,7 @@ Route::middleware('auth')->group(function () {
         Route::get('edit-user/{id}', 'AdminController@getEditUser');
         Route::post('edit-user', 'AdminController@postEditUser');
         Route::get('approve-user/{id}', 'AdminController@getApproveUser');
+        Route::get('reset-password/{id}', 'AdminController@getResetPassword');
         Route::post('approve-user', 'AdminController@postApproveUser');
         Route::get('samples/update-cache', 'AdminController@getUpdateSampleCache');
         Route::get('samples/update-sequence_count/{rest_service_id}', 'AdminController@getUpdateSequenceCount');
