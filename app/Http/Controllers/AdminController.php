@@ -28,7 +28,6 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-
 class AdminController extends Controller
 {
     public function getQueues()
@@ -481,7 +480,7 @@ class AdminController extends Controller
             'token' => $token,
             'created_at' => Carbon::now(),
         ]);
-        
+
         // Assign a new random password and save it in the user DB as a hash
         // We are forcing a password reset by the admin, so we don't want to
         // leave the old password, we want them to reset it after email
@@ -505,8 +504,7 @@ class AdminController extends Controller
             return redirect('admin/users')->withErrors(['notification' => 'Sorry, we were unable to send the password reset email. Please try again later.']);
         }
 
-
-        return redirect('admin/users')->with('notification', 'Password reset message sent to user ' . $user->username );
+        return redirect('admin/users')->with('notification', 'Password reset message sent to user ' . $user->username);
     }
 
     public function getUpdateSampleCache()

@@ -86,7 +86,6 @@ Route::middleware('auth')->group(function () {
 
         Route::get('change-personal-info', 'UserController@getChangePersonalInfo');
         Route::post('change-personal-info', 'UserController@postChangePersonalInfo');
-
     });
 
     Route::prefix('bookmarks')->group(function () {
