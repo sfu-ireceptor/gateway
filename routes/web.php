@@ -148,6 +148,7 @@ Route::middleware('auth')->group(function () {
         Route::get('edit-user/{id}', 'AdminController@getEditUser');
         Route::post('edit-user', 'AdminController@postEditUser');
         Route::get('approve-user/{id}', 'AdminController@getApproveUser');
+        Route::get('reset-password/{id}', 'AdminController@getResetPassword');
         Route::post('approve-user', 'AdminController@postApproveUser');
         Route::get('samples/update-cache', 'AdminController@getUpdateSampleCache');
         Route::get('samples/update-sequence_count/{rest_service_id}', 'AdminController@getUpdateSequenceCount');

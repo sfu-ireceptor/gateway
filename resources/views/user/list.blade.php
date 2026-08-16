@@ -75,6 +75,7 @@
                                 @if(str_contains($t->status, '-Approval Pending'))
                                    <a href="/admin/approve-user/{{ $t->id }}" title="Approve">Approve</a>
                                 @endif
+                                <a href="/admin/reset-password/{{ $t->id }}" title="Reset Password">Reset Password</a>
 							</td>
 						</tr>
 					@endforeach

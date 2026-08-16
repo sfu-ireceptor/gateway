@@ -18,11 +18,16 @@ use App\QueryLog;
 use App\RestService;
 use App\Sample;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+
 
 class AdminController extends Controller
 {
@@ -449,6 +454,59 @@ class AdminController extends Controller
         Log::debug('AdminController::postApproveUser - Updated user ' . $user->username . ' status to ' . $user->status);
 
         return redirect('admin/users')->with('notification', 'Status change for ' . $user->username . ' to ' . $user->status . ' completed.');
+    }
+
+    public function getResetPassword($id)
+    {
+        // Check to see if user is Admin, if not return unautorized message.
+        $user = User::where('username', auth()->user()->username)->first();
+        if ($user == null || ! $user->isAdmin()) {
+            abort(401, 'Not authorized.');
+        }
+
+        // Get the user
+        $user = User::find($id);
+        $email = $user->email;
+
+        // Generate token for this password reset.
+        $hashKey = config('app.key');
+        $token = hash_hmac('sha256', Str::random(40), $hashKey);
+        Log::debug('AdminController::getPasswordReset: Admin reset of password for ' . $user->username . ', token: ' . $token);
+
+        // Add token to DB so that we can track it.
+        $table = 'password_resets';
+        DB::table($table)->where('email', $email)->delete();
+        DB::table($table)->insert([
+            'email' => $email,
+            'token' => $token,
+            'created_at' => Carbon::now(),
+        ]);
+        
+        // Assign a new random password and save it in the user DB as a hash
+        // We are forcing a password reset by the admin, so we don't want to
+        // leave the old password, we want them to reset it after email
+        // confirmation.
+        $new_password = str_random(24);
+        $user->password = Hash::make($new_password);
+        $user->save();
+
+        // Email reset link to the user.
+        $t = [];
+        $t['reset_link'] = config('app.url') . '/user/reset-password/' . $token;
+        $t['first_name'] = $user->first_name;
+        try {
+            Mail::send(['text' => 'emails.auth.resetPasswordLinkAdmin'], $t, function ($message) use ($email) {
+                $message->to($email)->subject('iReceptor admin password reset request');
+            });
+        } catch (\Exception $e) {
+            Log::error('AdminController::getPasswordReset - Admin user reset password email delivery failed');
+            Log::error('AdminController::getPasswordReset - ' . $e->getMessage());
+
+            return redirect('admin/users')->withErrors(['notification' => 'Sorry, we were unable to send the password reset email. Please try again later.']);
+        }
+
+
+        return redirect('admin/users')->with('notification', 'Password reset message sent to user ' . $user->username );
     }
 
     public function getUpdateSampleCache()
