@@ -134,7 +134,7 @@ class UserController extends Controller
 
         $request->session()->regenerate();
 
-        if (config('ireceptor.survey_active') && !$user->did_survey) {
+        if (config('ireceptor.survey_active') && ! $user->did_survey) {
             return redirect('/ireceptor-survey');
         }
 
