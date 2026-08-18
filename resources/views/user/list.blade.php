@@ -30,9 +30,9 @@
 						<th class="text-nowrap">Added</th>
 						<th class="text-nowrap">Name / Username</th>
 						<th class="text-nowrap">Email</th>
+						<th class="text-nowrap">Status</th>
 						<th class="text-nowrap">Country</th>
 						<th class="text-nowrap">Institution</th>
-						<th class="text-nowrap">Status</th>
 						<th class="text-nowrap">Last Login</th>
 						<th class="text-nowrap">Action</th>
 					</tr>
@@ -44,7 +44,7 @@
 								{{ human_date_time($t->created_at, 'M Y') }}
 							</td>			
 							<td class="text-nowrap">
-								<a href="/admin/edit-user/{{ $t->id }}">{{ $t->first_name }} {{ $t->last_name }}</a>
+								<a href="/admin/edit-user/{{ $t->id }}">{{ str_limit($t->first_name . " " . $t->last_name , $limit = 20, $end = '‥') }}</a>
 								/
 								{{ $t->username }}
 								@if ($t->admin)
@@ -60,13 +60,13 @@
 								</a>-->
 							</td>
 							<td class="text-nowrap">
+								{{ $t->status }}
+							</td>
+							<td class="text-nowrap">
 								{{ $t->country }}
 							</td>
 							<td class="text-nowrap">
-								{{ $t->institution }}
-							</td>
-							<td class="text-nowrap">
-								{{ $t->status }}
+                                {{str_limit($t->institution, $limit = 30, $end = '‥')}}
 							</td>
 							<td class="text-muted text-nowrap">
 								{{ human_date_time($t->last_login, 'M d, Y') }}
