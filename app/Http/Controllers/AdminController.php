@@ -446,12 +446,29 @@ class AdminController extends Controller
 
         // Get the user id and the status from the form
         $user = User::find($request->get('id'));
+        $old_status = $user->status;
         $user->status = $request->get('status');
 
         // Save the new status.
         $user->save();
         Log::debug('AdminController::postApproveUser - Updated user ' . $user->username . ' status to ' . $user->status);
 
+        // Email reset link to the user.
+        $email = $user->email;
+        $t = [];
+        $t['first_name'] = $user->first_name;
+        $t['status'] = $user->status;
+        $t['old_status'] = $old_status;
+        try {
+            Mail::send(['text' => 'emails.auth.statusChanged'], $t, function ($message) use ($email) {
+                $message->to($email)->subject('iReceptor subscription status changed');
+            });
+        } catch (\Exception $e) {
+            Log::error('AdminController::postApproveUser - User status change email failed');
+            Log::error('AdminController::postApproveUser - ' . $e->getMessage());
+
+            return redirect('admin/users')->withErrors(['notification' => 'Unable to send the status change email. Status has been changed, user email not sent.']);
+        }
         return redirect('admin/users')->with('notification', 'Status change for ' . $user->username . ' to ' . $user->status . ' completed.');
     }
 
