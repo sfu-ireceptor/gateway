@@ -34,6 +34,15 @@ Route::get('about', 'HomeController@about')->name('about');
 // news
 Route::get('news', 'HomeController@news')->name('news');
 
+// terms
+Route::get('terms', 'HomeController@terms')->name('terms');
+
+// privacy policy
+Route::get('privacy-policy', 'HomeController@privacyPolicy')->name('privacy-policy');
+
+// subscriptions
+Route::get('subscriptions', 'HomeController@subscriptions')->name('subscriptions');
+
 // fields definitions
 Route::get('/fields-definitions', 'HomeController@fieldsDefinitions')->name('fields-definitions');
 
