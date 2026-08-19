@@ -469,6 +469,7 @@ class AdminController extends Controller
 
             return redirect('admin/users')->withErrors(['notification' => 'Unable to send the status change email. Status has been changed, user email not sent.']);
         }
+
         return redirect('admin/users')->with('notification', 'Status change for ' . $user->username . ' to ' . $user->status . ' completed.');
     }
 
