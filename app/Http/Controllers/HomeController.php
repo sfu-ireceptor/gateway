@@ -136,6 +136,27 @@ class HomeController extends Controller
         return view('news', $data);
     }
 
+    public function terms()
+    {
+        $data = [];
+
+        return view('terms', $data);
+    }
+
+    public function privacyPolicy()
+    {
+        $data = [];
+
+        return view('privacyPolicy', $data);
+    }
+
+    public function subscriptions()
+    {
+        $data = [];
+
+        return view('subscriptions', $data);
+    }
+
     public function fieldsDefinitions()
     {
         $data = [];
