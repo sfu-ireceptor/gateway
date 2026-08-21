@@ -78,6 +78,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Enable confirmation of user info
+    |--------------------------------------------------------------------------
+    |
+    | If true, display the page that confirms info about users. This is used
+    | when the T&C, privacy policy, or user email needs to be acknowledged.
+    | Ex: true
+    |
+    */
+
+    'confirm_info' => env('IRECEPTOR_CONFIRM_INFO', true),
+    'confirm_info_data' => env('IRECEPTOR_CONFIRM_INFO_DATE', ''),
+
+    /*
+    |--------------------------------------------------------------------------
     | Enable home page banner message.
     |--------------------------------------------------------------------------
     |

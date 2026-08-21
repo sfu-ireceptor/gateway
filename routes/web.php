@@ -28,11 +28,23 @@ Route::get('user/forgot-password-email-sent', 'UserController@getForgotPasswordE
 Route::get('user/reset-password/{token}', 'UserController@getResetPassword');
 Route::get('user/reset-password-confirmation', 'UserController@getResetPasswordConfirmation');
 
+Route::get('user/confirm-info/{token}', 'UserController@getConfirmInfo');
+Route::get('user/confirm-info-confirmation', 'UserController@getConfirmInfoConfirmation');
+
 // about
 Route::get('about', 'HomeController@about')->name('about');
 
 // news
 Route::get('news', 'HomeController@news')->name('news');
+
+// terms
+Route::get('terms', 'HomeController@terms')->name('terms');
+
+// privacy policy
+Route::get('privacy-policy', 'HomeController@privacyPolicy')->name('privacy-policy');
+
+// subscriptions
+Route::get('subscriptions', 'HomeController@subscriptions')->name('subscriptions');
 
 // fields definitions
 Route::get('/fields-definitions', 'HomeController@fieldsDefinitions')->name('fields-definitions');
@@ -166,6 +178,10 @@ Route::middleware('auth')->group(function () {
         Route::get('queries2/months/{n}', 'AdminController@queriesMonths2');
         Route::get('queries/{id}', 'AdminController@query');
     });
+
+    // confirm T&C + email
+    Route::get('/confirm-info', 'HomeController@confirmInfo')->name('confirmInfo');
+    Route::get('/confirm-info-ok', 'HomeController@confirmInfoOK')->name('confirmInfoOK');
 
     // other
     Route::get('/ireceptor-survey', 'HomeController@survey')->name('survey');

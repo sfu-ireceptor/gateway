@@ -4,6 +4,14 @@
 @section('title', 'Home')
 
 @section('content')
+
+@if ( session('notification') )
+    <div class="alert alert-warning alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        {{ session('notification') }}
+    </div>
+@endif
+
 @if ( $home_banner_display)
 <div class="container home_container">
   <div class="intro_home">
