@@ -134,8 +134,26 @@ class UserController extends Controller
 
         $request->session()->regenerate();
 
+        // Check to see if we are doing a survey, and whether the user
+        // has already completed the survey or not. If not, send them
+        // to the survey
         if (config('ireceptor.survey_active') && ! $user->did_survey) {
             return redirect('/ireceptor-survey');
+        }
+
+        // Check to see if we are looking to update user info such as
+        // T&C, privacy policy, and user email. We only want to do this 
+        // if the user has not already confirmed this info.
+        if (config('ireceptor.confirm_info') && $user->email_confirmed_date == null) {
+            // Change the status before redirect to ensure that the 
+            // user won't get access if they don't click OK.
+            $email_tag = '-Email Unconfirmed';
+            if (!str_contains($user->status, $email_tag)) {
+                $user->status = $user->status . $email_tag;
+            }
+            $user->save();
+
+            return redirect('/confirm-info');
         }
 
         Log::debug('UserController::postLogin: successful login from user ' . $credentials['username']);
@@ -542,5 +560,58 @@ class UserController extends Controller
         Log::debug('UserContorller::getResetPasswordConfirmation');
 
         return view('user/resetPasswordConfirmation');
+    }
+
+    public function getConfirmInfo($confirm_token)
+    {
+        // This handles when a user clicks on the token link
+        // to confirm their email.
+        Log::debug('UserContorller::getConfirmInfo - Token from email: ' . $confirm_token);
+
+        // Check token to make sure it is a valid confirm token in the DB
+        $table = 'confirm_info';
+        $entry = DB::table($table)->where('token', $confirm_token)->first();
+        if ($entry == null) {
+            $data = [];
+            $data['message'] = 'Sorry, your confirmation link is invalid.';
+            $data['message2'] = 'Note: Microsoft Defender for Office 365 pre-visits links in emails by default, so your new password may have been sent to you by email already.';
+
+            return response()->view('error', $data, 401);
+        }
+        // Get the user that is associated with the token.
+        $user = User::where('email', $entry->email)->first();
+
+        // Set the date on the user DB info that was confirmed
+        $current_date = Carbon::now();
+        $user->email_confirmed_date = $current_date;
+        $user->terms_accepted_date = $current_date;
+        $user->privacy_policy_accepted_date = $current_date;
+
+        // Set the status of the user so that there is no longer a
+        // "Email Unconfirmed" status.
+        $confirm_tag = '-Email Unconfirmed';
+        $old_status = $user->status;
+        if (str_contains($old_status, $confirm_tag)) {
+            $user->status = str_replace($confirm_tag, '', $old_status);
+        } else {
+            Log::debug('UserContorller::getConfirmInfo - Warning, user status '.$old_status.' does not contain '.$confirm_tag);
+        }
+
+        // Save user info in DB
+        Log::debug('UserContorller::getConfirmInfo - Updating user info for ' . $user->username . ' (' . $user->email . '), status changing from ' . $old_status . ' to ' . $user->status); 
+        $user->save();
+
+        // Disable/remove confirm token
+        DB::table($table)->where('token', $confirm_token)->delete();
+
+        return redirect('/user/confirm-info-confirmation');
+    }
+
+    public function getConfirmInfoConfirmation()
+    {
+        // Inform the user that there password was reset.
+        Log::debug('UserContorller::getConfirmInfoConfirmation');
+
+        return view('user/confirmInfoConfirmation');
     }
 }

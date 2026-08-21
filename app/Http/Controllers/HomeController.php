@@ -6,9 +6,15 @@ use App\FieldName;
 use App\News;
 use App\RestService;
 use App\Sample;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
@@ -193,6 +199,67 @@ class HomeController extends Controller
         $data['rs_list'] = $rs_list;
 
         return view('repositories', $data);
+    }
+
+    public function confirmInfo()
+    {
+        return view('confirmInfo');
+    }
+
+    public function confirmInfoOK()
+    {
+        $user = Auth::user();
+        // Set the user info dates to null, indicating they have not been
+        // accepted/confirmed.
+        $user->email_confirmed_date = null;
+        $user->terms_accepted_date = null;
+        $user->privacy_policy_accepted_date = null;
+        // Update the user status to denote there Email is unconfirmed.
+        $old_status = $user->status;
+        $email_tag = '-Email Unconfirmed';
+        if (!str_contains($user->status, $email_tag)) {
+           $user->status = $user->status . $email_tag;
+        }
+        // Save the user info in the DB
+        $user->save();
+
+        // Send an email to the user with the confirmation token
+        $t = [];
+        $t['app_url'] = config('app.url');
+        $t['first_name'] = $user->first_name;
+        $t['username'] = $user->username;
+        $t['last_name'] = $user->last_name;
+        $t['email'] = $user->email;
+        $t['notes'] = $user->notes;
+        $t['country'] = $user->country;
+        $t['institution'] = $user->institution;
+        $t['status'] = $user->status;
+        $hashKey = config('app.key');
+        $token = hash_hmac('sha256', Str::random(40), $hashKey);
+        $t['confirm_link'] = config('app.url') . '/user/confirm-info/' . $token;
+
+
+        // Add token to DB so that we can track it. We delete previous
+        // ones as we only want to track active confirmation requests.
+        $table = 'confirm_info';
+        DB::table($table)->where('email', $user->email)->delete();
+        DB::table($table)->insert([
+            'email' => $user->email,
+            'token' => $token,
+            'created_at' => Carbon::now(),
+        ]);
+
+        // Email confirmation link
+        try {
+            Mail::send(['text' => 'emails.auth.emailConfirmation'], $t, function ($message) use ($user) {
+                $message->to($user->email)->subject('Confirmation of iReceptor account email');
+            });
+        } catch (\Exception $e) {
+            Log::error('HomeController::confirmInfoOK - User info confirmation email delivery failed.');
+            Log::error('HomeController::confirmInfoOK - ' . $e->getMessage());
+        }
+
+        return redirect('home')->with('notification', 'You have been emailed a link to confirm the validity of your email. Your account has temporarily been reduced to limited access until the confirmation link has been activated.');
     }
 
     public function survey()
