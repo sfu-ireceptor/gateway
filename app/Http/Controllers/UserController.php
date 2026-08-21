@@ -142,13 +142,13 @@ class UserController extends Controller
         }
 
         // Check to see if we are looking to update user info such as
-        // T&C, privacy policy, and user email. We only want to do this 
+        // T&C, privacy policy, and user email. We only want to do this
         // if the user has not already confirmed this info.
         if (config('ireceptor.confirm_info') && $user->email_confirmed_date == null) {
-            // Change the status before redirect to ensure that the 
+            // Change the status before redirect to ensure that the
             // user won't get access if they don't click OK.
             $email_tag = '-Email Unconfirmed';
-            if (!str_contains($user->status, $email_tag)) {
+            if (! str_contains($user->status, $email_tag)) {
                 $user->status = $user->status . $email_tag;
             }
             $user->save();
@@ -594,11 +594,11 @@ class UserController extends Controller
         if (str_contains($old_status, $confirm_tag)) {
             $user->status = str_replace($confirm_tag, '', $old_status);
         } else {
-            Log::debug('UserContorller::getConfirmInfo - Warning, user status '.$old_status.' does not contain '.$confirm_tag);
+            Log::debug('UserContorller::getConfirmInfo - Warning, user status ' . $old_status . ' does not contain ' . $confirm_tag);
         }
 
         // Save user info in DB
-        Log::debug('UserContorller::getConfirmInfo - Updating user info for ' . $user->username . ' (' . $user->email . '), status changing from ' . $old_status . ' to ' . $user->status); 
+        Log::debug('UserContorller::getConfirmInfo - Updating user info for ' . $user->username . ' (' . $user->email . '), status changing from ' . $old_status . ' to ' . $user->status);
         $user->save();
 
         // Disable/remove confirm token

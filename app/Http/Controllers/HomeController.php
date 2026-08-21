@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -217,8 +216,8 @@ class HomeController extends Controller
         // Update the user status to denote there Email is unconfirmed.
         $old_status = $user->status;
         $email_tag = '-Email Unconfirmed';
-        if (!str_contains($user->status, $email_tag)) {
-           $user->status = $user->status . $email_tag;
+        if (! str_contains($user->status, $email_tag)) {
+            $user->status = $user->status . $email_tag;
         }
         // Save the user info in the DB
         $user->save();
@@ -237,7 +236,6 @@ class HomeController extends Controller
         $hashKey = config('app.key');
         $token = hash_hmac('sha256', Str::random(40), $hashKey);
         $t['confirm_link'] = config('app.url') . '/user/confirm-info/' . $token;
-
 
         // Add token to DB so that we can track it. We delete previous
         // ones as we only want to track active confirmation requests.
