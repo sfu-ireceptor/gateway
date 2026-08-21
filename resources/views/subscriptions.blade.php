@@ -23,8 +23,8 @@ pages.
 		<div class="col-md-6 commercial">
            <h2>Commercial Subscription</h2>
 <p>
-A paid subscription for commercial users, charged monthly, for either
-the term of either a year or a month. This includes access to:
+A paid subscription (monthly or yearly) for commercial users, charged monthly.
+This includes access to:
 </p>
 <ul>
 <li>Study/subject/sample metadata queries and downloads</li>
@@ -55,6 +55,20 @@ This includes access to:
 		<div class="col-md-12">
             <h2>Subscription Status</h2>
             <p>
+Users that have a Limited subscription are users that had accounts on
+the iReceptor Gateway previous to our transition to commercial subscriptions,
+do not have a confirmed Academic subscription (do not have a confirmed
+academic email registered with their account), and have not yet purchased
+a Commercial subscription. If you are such a user and are from an academic 
+institution, please log in, go to your
+<a href="/user/account">User Account page</a>
+and change the email to use your academic email. This will trigger a
+confirmation process for your Academic subscription. If you are not an
+academic research, it will be necessary for you to purchase a Commercial
+subscription from the <a href="/register">Registration page</a> to access
+the iReceptor Gateway.
+</p>
+<p>
 For both Commercial and Academic subscriptions, the subscription may 
 temporarily only provide limited access to the iReceptor Gateway. This
 would be the result of a pending approval of a change to a subscription

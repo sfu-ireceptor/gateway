@@ -203,7 +203,10 @@ class HomeController extends Controller
 
     public function confirmInfo()
     {
-        return view('confirmInfo');
+        $user = Auth::user();
+        $data = [];
+        $data['status'] = $user->status;
+        return view('confirmInfo', $data);
     }
 
     public function confirmInfoOK()

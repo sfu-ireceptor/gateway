@@ -37,6 +37,7 @@
 							</p>					
 						{{ Form::close() }}
 						<p><a href="/register"><strong>Create an account</strong></a></p>
+						<p><a href="/subscriptions"><strong>View subscription types</strong></a></p>
 					</div>
 				</div>
 

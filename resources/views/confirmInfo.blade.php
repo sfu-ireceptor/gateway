@@ -21,7 +21,12 @@ that link to enable your account on the iReceptor Gateway.
 </p>
 
 <p>
-Your account has temporarily been assigned reduced access on the iReceptor Gateway. Once you have clicked on the confirmation link, you will be given access according to the status of your iReceptor Gateway subscription. You can find your subscription level at your <a href=/user/account>user account page</a>.
+Your account has temporarily been assigned reduced access on the
+iReceptor Gateway. Your current subscription status is: <b>{{ $status }}</b>.
+Once you have clicked on the confirmation link, you will be given
+access according to the status of your iReceptor Gateway subscription.
+Please refer to the <a href='/subscriptions'>iReceptor Subscriptions</a>
+page for more information on types of subscriptions. 
 </p>
 
 <p>
