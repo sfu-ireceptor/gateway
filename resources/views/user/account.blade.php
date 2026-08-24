@@ -25,7 +25,11 @@
 			  <div class="panel-body">
 					<p><strong>Username</strong><br /> {{ $user->username}}</p>
 			  		<p><strong>Password</strong><br /> <a href="/user/change-password">Change password</a></p>
-					<p><strong>Subscription</strong><br /> {{ $user->status}}</p>
+					<p>
+                        <strong>Subscription</strong>
+                        <br /> {{ $user->status}}
+                        (<a href="/user/request-academic-upgrade">Request Academic Upgrade</a>)
+                    </p>
 			  </div>
 			</div>
 		</div>

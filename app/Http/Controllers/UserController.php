@@ -311,6 +311,42 @@ class UserController extends Controller
         return redirect('/user/account')->with('notification', $message);
     }
 
+    public function getRequestAcademicUpgrade()
+    {
+        $user = Auth::user();
+        // Set the status to academic pending approval
+        // Ensure user confirms email and accepts T&C
+        // Save the info in the DB
+        $user->status = 'Academic-Approval Pending';
+        $user->email_confirmed_date = null;
+        $user->save();
+
+        // Send an admin notification about the user request
+        $t = [];
+        $t['app_url'] = config('app.url');
+        $t['first_name'] = $user->first_name;
+        $t['username'] = $user->username;
+        $t['last_name'] = $user->last_name;
+        $t['email'] = $user->email;
+        $t['notes'] = $user->notes;
+        $t['country'] = $user->country;
+        $t['institution'] = $user->institution;
+        $t['status'] = $user->status;
+        // Send the email to the iReceptor support account.
+        try {
+            Mail::send(['text' => 'emails.auth.requestAcademic'], $t, function ($message) use ($user) {
+                $message->to(config('ireceptor.email_support'))->subject('Approval required - Academic account request: ' . $user->first_name . ' ' . $user->last_name . ' (' . $user->email . ')');
+            });
+        } catch (\Exception $e) {
+            Log::error('UserController::getRequestAcademicUpgrade - Support email delivery failed');
+            Log::error('UserController::getRequestAcademicUpgrade - ' . $e->getMessage());
+        }
+
+        $message = 'Your request for an Academic subscription has been sent to the iReceptor team. You will be notified when the assessment is complete';
+
+        return redirect('/user/account')->with('notification', $message);
+    }
+
     public function getRegister(Request $request)
     {
         $ip = $request->getClientIp();
