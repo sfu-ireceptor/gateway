@@ -275,7 +275,7 @@ class UserController extends Controller
         // has an academic subscription. This doesn't apply to non academic
         // or admin users.
         $message = 'Your personal information was successfully changed.';
-        if ($email_changed && (str_contains($user->getStatus(),'Academic') || str_contains($user->getStatus(),'Limited')) && ! $user->isAdmin()) {
+        if ($email_changed && (str_contains($user->getStatus(), 'Academic') || str_contains($user->getStatus(), 'Limited')) && ! $user->isAdmin()) {
             Log::info('UserController::postChangePersonalInfo - Email changed for ' . $user->username . ' from ' . $old_email . ' to ' . $user->email . ', status = ' . $user->status);
             // Change the user's status - we need to approve
             // whether the new email is appropriate for an
