@@ -205,6 +205,7 @@ class HomeController extends Controller
         $user = Auth::user();
         $data = [];
         $data['status'] = $user->status;
+
         return view('confirmInfo', $data);
     }
 
