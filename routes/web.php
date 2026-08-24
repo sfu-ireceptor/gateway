@@ -42,7 +42,6 @@ Route::get('privacy-policy', 'HomeController@privacyPolicy')->name('privacy-poli
 // subscriptions
 Route::get('subscriptions', 'HomeController@subscriptions')->name('subscriptions');
 
-
 // fields definitions
 Route::get('/fields-definitions', 'HomeController@fieldsDefinitions')->name('fields-definitions');
 
