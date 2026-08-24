@@ -335,7 +335,7 @@ class UserController extends Controller
         // Send the email to the iReceptor support account.
         try {
             Mail::send(['text' => 'emails.auth.requestAcademic'], $t, function ($message) use ($user) {
-            $message->to(config('ireceptor.email_support'))->subject('Approval required - Academic account request: ' . $user->first_name . ' ' . $user->last_name . ' (' . $user->email . ')');
+                $message->to(config('ireceptor.email_support'))->subject('Approval required - Academic account request: ' . $user->first_name . ' ' . $user->last_name . ' (' . $user->email . ')');
             });
         } catch (\Exception $e) {
             Log::error('UserController::getRequestAcademicUpgrade - Support email delivery failed');
@@ -343,6 +343,7 @@ class UserController extends Controller
         }
 
         $message = 'Your request for an Academic subscription has been sent to the iReceptor team. You will be notified when the assessment is complete';
+
         return redirect('/user/account')->with('notification', $message);
     }
 
