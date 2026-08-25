@@ -14,3 +14,6 @@ Route::any('job/update-status', 'UtilController@updateJobStatus');
 
 // Deployment trigger for GitHub hook
 Route::any('deploy', 'UtilController@deploy');
+
+// Deployment trigger for GitHub hook
+Route::any('subscription-customer-update', 'UtilController@subscriptionCustomerUpdate');
