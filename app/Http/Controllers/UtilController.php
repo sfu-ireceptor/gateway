@@ -5,15 +5,11 @@ namespace App\Http\Controllers;
 use App\Deployment;
 use App\Jobs\ProcessJobNotification;
 use App\LocalJob;
-
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 
 class UtilController extends Controller
@@ -61,7 +57,7 @@ class UtilController extends Controller
         // Track duration of processing
         $start_time = Carbon::now();
 
-        // Get the stripe payload - docs here: 
+        // Get the stripe payload - docs here:
         //     https://docs.stripe.com/api/customers/object
         //     https://docs.stripe.com/webhooks
         // We use stripe to confirm it is a valid event objec.
@@ -74,12 +70,13 @@ class UtilController extends Controller
         } catch(\UnexpectedValueException $e) {
             // Invalid payload
             http_response_code(400);
+
             return;
         }
 
         // Get the secret for the webhook
         $stripeWebhookSecret = config('services.stripe.webhook_secret');
-        #Log::debug('UtilController::subscriptionCustomerUpdate: web hook secret = '.$stripeWebhookSecret);
+        //Log::debug('UtilController::subscriptionCustomerUpdate: web hook secret = '.$stripeWebhookSecret);
 
         // Get the webhook signature
         // In the docs they use this:
@@ -88,7 +85,7 @@ class UtilController extends Controller
         //     $stripeSignature = $request->header('Stripe-Signature');
         // Get the Stripe API signature for this endpoint
         $stripeSignature = $request->header('Stripe-Signature');
-        #Log::debug('UtilController::subscriptionCustomerUpdate: stripe signature = '.$stripeSignature);
+        //Log::debug('UtilController::subscriptionCustomerUpdate: stripe signature = '.$stripeSignature);
         // Construct the data confirming a valid signature.
         try {
             $stripeData = \Stripe\Webhook::constructEvent(
@@ -98,6 +95,7 @@ class UtilController extends Controller
             // Invalid signature
             Log::error('UtilController::subscriptionCustomerUpdate: Webhook error while validating signature.');
             http_response_code(400);
+
             return;
         }
 
@@ -119,7 +117,7 @@ class UtilController extends Controller
 
                 $names = explode(' ', $customerData->name, 2);
                 // Add the user information to the user database
-                $user = User::add($names[0], $names[1], $email, $password, "", "", "", "Commercial");
+                $user = User::add($names[0], $names[1], $email, $password, '', '', '', 'Commercial');
                 $user->stripe_customer = $customerID;
                 $user->save();
 
@@ -158,13 +156,13 @@ class UtilController extends Controller
             } else {
                 if ($user->stripe_customer == null) {
                     // If this is a new assignment of customer, save the ID
-                    Log::info('UtilController::subscriptionCustomerUpdate: Updating customer ID for '.$user->username.' ('.$user->email.')');
+                    Log::info('UtilController::subscriptionCustomerUpdate: Updating customer ID for ' . $user->username . ' (' . $user->email . ')');
                     $user->stripe_customer = $customerID;
                     $user->save();
                 } else {
                     // This shouldn't happen, as we should only ever get one customer create
                     // for a given email. If it happens, log it and do nothing.
-                    Log::error('UtilController::subscriptionCustomerUpdate: Customer with email ' . $user->email . ' already has customerID ' . $user->stripe_customer . ' ignoring new ID '. $customerID);
+                    Log::error('UtilController::subscriptionCustomerUpdate: Customer with email ' . $user->email . ' already has customerID ' . $user->stripe_customer . ' ignoring new ID ' . $customerID);
                 }
             }
         }
