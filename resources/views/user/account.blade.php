@@ -28,9 +28,18 @@
 					<p>
                         <strong>Subscription</strong>
                         <br /> {{ $user->status}}
+	                    @if (str_contains($user->status, "Commercial"))
+                            (<a href="https://billing.stripe.com/p/login/bJecN7bpo0oObx6alBbfO00">Manage your subscription</a>)
+                        @endif
 	                    @if (str_contains($user->status, "Limited"))
-                            <p>Note: iReceptor uses subscriptions to manage access to the iReceptor Gateway. You have a "Limited" account because you have either not confirmed your Academic email or have not paid for a Commercial subscription. If you are an academic user, please change the email you are using to your academic email in your personal information. If you are an academic user and for some reason your academic email is not currently approved (or you can not use your academic email), you can request an Academic Upgrade below. If you choose this option, the iReceptor team will contact you to determine your eligibility for an Academic subscription. If you are a Commercial user, please go to the <a href="/register">Subscribe</a> page and choose a commercial subscription package.
-                            <p><a href="/user/request-academic-upgrade">Request Academic Upgrade</a>
+<p>Note: iReceptor uses subscriptions to manage access to the iReceptor Gateway. You have a "Limited" account because you have either not confirmed your Academic email or have not paid for a Commercial subscription.
+
+<p> If you are an academic user, please change the email you are using to your academic email in your personal information.
+
+<p> If you are using an academic email and still have a limited account, this is because your academic email is not from an easily identified academic domain name. Please can request an Academic Approval below. If you choose this option, the iReceptor team will contact you to determine your eligibility for an Academic subscription.
+<br><a href="/user/request-academic-upgrade">Request Academic Approval</a>
+
+<p> If you are a Commercial user, please go to the <a href="/register">Subscribe</a> page and choose a commercial subscription package.
                         @endif
                     </p>
 			  </div>
