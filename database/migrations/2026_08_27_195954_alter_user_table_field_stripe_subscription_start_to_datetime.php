@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -10,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::table('user', function ($table) {
-            $table->text('stripe_customer')->nullable();
+        Schema::table('user', function (Blueprint $table) {
+            $table->datetime('stripe_subscription_start')->change();
         });
     }
 
@@ -21,9 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Drop the field.
-        Schema::table('user', function ($table) {
-            $table->text('stripe_customer')->nullable();
+        Schema::table('user', function (Blueprint $table) {
+            $table->date('stripe_subscription_start')->change();
         });
     }
 };
