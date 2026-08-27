@@ -118,8 +118,9 @@ class UtilController extends Controller
                 $password = str_random(24);
 
                 $names = explode(' ', $customerData->name, 2);
+                $country =  $customerData->address->country;
                 // Add the user information to the user database
-                $user = User::add($names[0], $names[1], $email, $password, "", "", "", "Commercial");
+                $user = User::add($names[0], $names[1], $email, $password, $country, "", "", "Commercial");
                 $user->stripe_customer = $customerID;
                 $user->save();
 
@@ -167,12 +168,63 @@ class UtilController extends Controller
                     Log::error('UtilController::subscriptionCustomerUpdate: Customer with email ' . $user->email . ' already has customerID ' . $user->stripe_customer . ' ignoring new ID '. $customerID);
                 }
             }
-        }
+        } else if ($stripeData->type == 'customer.updated') {
+            #Log::info('UtilController::subscriptionCustomerUpdate - Customer subscription = ' . json_encode($stripeData,JSON_PRETTY_PRINT));
+            // Get the customer data
+            $customerData = $stripeData->data->object;
+            $customerID = $customerData->id;
 
+            // Look up the iRecpetor user based on the customer ID
+            // If we can't find it log an error message.
+            $user = User::where('stripe_customer', $customerID)->first();
+            if ($user == null) {
+                Log::error('UtilController::subscriptionCustomerUpdate: Could not find user with stripe customer id ' . $customerID);
+                return;
+            }
+
+            // Update the data we extract from the stripe record
+            $names = explode(' ', $customerData->name, 2);
+            $country =  $customerData->address->country;
+            $user->first_name = $names[0];
+            $user->last_name = $names[1];
+            $user->country = $country;
+            Log::debug('UtilController::subscriptionCustomerUpdate: Updating ' . $customerID . ', name = ' . $names[0] . ' ' . $names[1] . ', country = ' . $country);
+
+            // Update the user info in the DB
+            $user->save();
+
+        } else if ($stripeData->type == 'customer.subscription.created') {
+            Log::info('UtilController::subscriptionCustomerUpdate - Customer subscription = ' . json_encode($stripeData,JSON_PRETTY_PRINT));
+            $subscriptionData = $stripeData->data->object;
+            // Get the user based on their email.
+            $customerID = $subscriptionData->customer;
+            $user = User::where('stripe_customer', $customerID)->first();
+            if ($user == null) {
+                Log::error('UtilController::subscriptionCustomerUpdate: Could not find user with stripe customer id ' . $customerID);
+                return; 
+            }
+            if ($user->stripe_customer != $customerID) {
+                Log::error('UtilController::subscriptionCustomerUpdate: Customer with email ' . $user->email . ' has customerID ' . $user->stripe_customer . ', does not match '. $customerID.' from stripe payload');
+                return; 
+            }
+
+            // Check the list of subscription items. We expect only one,
+            // print a warning if there is more than one.
+            if ($subscriptionData->items->total_count > 1) {
+                Log::warn('UtilController::subscriptionCustomerUpdate: subscription has more than one item');
+            }
+
+            // Get the first subscription item, we ignore if there is more than one
+            $subscriptionItem = $subscriptionData->items->data[0];
+            $user->stripe_subscription_start = Carbon::createFromTimestamp($subscriptionItem->current_period_start);
+            $user->stripe_subscription_end = Carbon::createFromTimestamp($subscriptionItem->current_period_end);
+            $user->save();
+
+        }
         // Compute duration of processing
         $end_time = Carbon::now();
         $duration = $end_time->diffForHumans($start_time);
-        Log::info('UtilController::subscriptionCustomerUpdate - Processing duration: ' . $duration);
+        #Log::info('UtilController::subscriptionCustomerUpdate - Processing duration: ' . $duration);
     }
 
     // called by GitHub hook
