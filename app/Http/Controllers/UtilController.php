@@ -254,7 +254,7 @@ class UtilController extends Controller
         // Get the payload from the request, convert it to an object, and extract
         // the payload branch that the push request was on.
         $payload_json = $request->input('payload');
-        $payload_obj = json_decode($payload_json); 
+        $payload_obj = json_decode($payload_json);
         //Log::debug('Type is: ' . gettype($payload_json));
         //Log::debug('githubPayload=' . json_encode($payload_obj, JSON_PRETTY_PRINT));
 
