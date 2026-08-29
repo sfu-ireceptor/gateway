@@ -364,6 +364,7 @@ class SampleController extends Controller
         $samples_with_sequences = array_slice($samples_with_sequences, ($page - 1) * $max_per_page, $max_per_page);
 
         // add flag to first sample with stats for stats info popup
+        /* Disable this for now
         if (auth()->user()->stats_popup_count <= 0) {
             Log::debug('stat popup notification will show for ' . auth()->user()->username);
             foreach ($samples_with_sequences as $sample) {
@@ -373,6 +374,7 @@ class SampleController extends Controller
                 }
             }
         }
+         */
 
         // generate query id for sequences page
         $sequence_filters = [];

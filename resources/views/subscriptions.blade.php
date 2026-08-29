@@ -7,9 +7,11 @@
 
 	<h1>iReceptor Subscription Classes</h1>
 
+    <p>
+Sustainable funding to support <a href="https://globalbiodata.org/" class="external" target="_blank">global biodata resources</a> is challenging, in particular in <a href="https://grants.nih.gov/grants/guide/notice-files/NOT-OD-25-104.html" class="external" target="_blank">today's difficult international funding environment.</a> In order to sustain the iReceptor Gateway as a resource to the community, it is necessary for us start charging commercial users for access. Charging for commercial access will start on August 31st, 2026. <strong> Access will remain free for academic users at this time.</strong> If you are an academic user, and want to help iReceptor support open science and remain accessible to all researchers at no cost please consider donating to our <a href="https://www.gofundme.com/f/help-ireceptor-continue-lifesaving-research" class="external" target="_blank">GoFundMe initiative</a>. If you are an industry user and are interested in being a sponsor of the iReceptor mission, please reach out to iReceptor Support (support@ireceptor.org)
+</p>
 	<p class="subscription_intro">
-The iReceptor Gateway uses subscriptions to manage access to the
-capabilities of the gateway. You can create an iReceptor Subscription on the
+You can create an iReceptor Subscription on the
 <a href="/register">Register page</a>.
 For more information on using
 the iReceptor Gateway please refer to the
@@ -64,7 +66,7 @@ institution, please log in, go to your
 <a href="/user/account">User Account page</a>
 and change the email to use your academic email. This will trigger a
 confirmation process for your Academic subscription. If you are not an
-academic research, it will be necessary for you to purchase a Commercial
+academic researcher, it will be necessary for you to purchase a Commercial
 subscription from the <a href="/register">Registration page</a> to access
 the iReceptor Gateway.
 </p>

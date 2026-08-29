@@ -17,6 +17,7 @@
         "laravel/tinker": "^2.7",
         "laravelcollective/html": "6.*",
         "pda/pheanstalk": "^4.0",
+        "stripe/stripe-php": "^21.2",
         "symfony/http-client": "^6.2",
         "symfony/mailgun-mailer": "^6.2"
     },
