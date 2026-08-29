@@ -13,16 +13,17 @@ levels to control access to the services provided by the gateway. See our
 <a ref="/subscriptions">Subscriptions page</a> for more details on why
 subscriptions are necessary.
 
-There are currently two levels of subscription, a free Academic subscription and
-a paid Commercial subscription. If the email you use for your account is from
+There are currently two levels of subscription, a free <b>Academic</b> subscription and
+a paid <b>Commercial</b> subscription. If the email you use for your iReceptor account 
+(<b>{{$email}}</b>) is from
 a recognized academic institution, you will automatically be granted
 an <b>Academic</b> subscription.
 If the email associated with your iReceptor Gateway account is incorrect, you can go to your <a href=/user/account>user account page</a> to change the email. 
 If you have a paid subscription your subscription status will be <b>Commercial</b>.
 If neither of these apply to you, you will temporarily be
-assigned a <b>Limited</b> subscription, allowing you to either apply for an Academic
+assigned a <b>Limited</b> subscription, allowing you to either apply for an <b>Academic</b>
 subscription (by changing your account email to use your academic email)
-or pay for a Commercial subscription using the <a href="/register">Registration page</a>.
+or pay for a <b>Commercial</b> subscription using the <a href="/register">Registration page</a>.
 <p>
 Your current subscription level is: <b>{{ $status }}</b>
 <p>
