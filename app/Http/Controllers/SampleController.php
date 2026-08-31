@@ -167,12 +167,19 @@ class SampleController extends Controller
                     $cached_data['sequences_query_id'] = $sequences_query_id;
                 }
 
+                Log::debug('SampleController::index - returning cached data');
+
                 return view('sample', $cached_data);
             }
         }
 
         /*************************************************
         * prepare form data */
+
+        // We want to use the larger time out for this entire operation
+        // not just the queries (which the timeout is already used for).
+        $timeout = config('ireceptor.gateway_request_timeout_samples');
+        set_time_limit($timeout);
 
         // get data
         $metadata = Sample::metadata($username);
@@ -565,7 +572,10 @@ class SampleController extends Controller
         $current_columns_str = implode(',', $current_columns);
         $data['current_columns_str'] = $current_columns_str;
 
+        // Cache sample data so we don't have to search if there
+        // is no filter.
         if (! $request->has('query_id')) {
+            Log::debug('SampleController::index - caching data');
             Cache::put('samples-no-filters-data', $data);
         }
 
