@@ -178,7 +178,7 @@ class SampleController extends Controller
 
         // We want to use the larger time out for this entire operation
         // not just the queries (which the timeout is already used for).
-        $timeout = config('ireceptor.gateway_request_timeout_samples');
+        $timeout = config('ireceptor.gateway_request_timeout');
         set_time_limit($timeout);
 
         // get data

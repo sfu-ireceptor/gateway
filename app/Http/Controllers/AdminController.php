@@ -533,6 +533,10 @@ class AdminController extends Controller
             abort(401, 'Not authorized.');
         }
 
+        // Long running operation
+        $timeout = config('ireceptor.gateway_request_timeout');
+        set_time_limit($timeout);
+
         // Build the sample cache.
         $n = CachedSample::cache();
 
