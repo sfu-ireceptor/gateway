@@ -15,6 +15,7 @@
 @if ( $home_banner_display)
 <div class="container home_container">
   <div class="intro_home">
+xxx
     {!! $home_banner_text !!}
   </div>
 </div>
