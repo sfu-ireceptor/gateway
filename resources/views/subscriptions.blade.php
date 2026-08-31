@@ -5,7 +5,7 @@
 @section('content')
 <div class="container">
 
-	<h1>iReceptor Subscription Classes</h1>
+	<h1>iReceptor Subscription Classes</h1> 
 
     <p>
 Sustainable funding to support <a href="https://globalbiodata.org/" class="external" target="_blank">global biodata resources</a> is challenging, in particular in <a href="https://grants.nih.gov/grants/guide/notice-files/NOT-OD-25-104.html" class="external" target="_blank">today's difficult international funding environment.</a> In order to sustain the iReceptor Gateway as a resource to the community, it is necessary for us start charging commercial users for access. Charging for commercial access will start on August 31st, 2026. <strong> Access will remain free for academic users at this time.</strong> If you are an academic user, and want to help iReceptor support open science and remain accessible to all researchers at no cost please consider donating to our <a href="https://www.gofundme.com/f/help-ireceptor-continue-lifesaving-research" class="external" target="_blank">GoFundMe initiative</a>. If you are an industry user and are interested in being a sponsor of the iReceptor mission, please reach out to iReceptor Support (support@ireceptor.org)
