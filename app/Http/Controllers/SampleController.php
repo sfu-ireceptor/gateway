@@ -168,6 +168,7 @@ class SampleController extends Controller
                 }
 
                 Log::debug('SampleController::index - returning cached data');
+
                 return view('sample', $cached_data);
             }
         }
