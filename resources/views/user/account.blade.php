@@ -36,7 +36,7 @@
 
 <p> If you are an academic user, please change the email you are using to your academic email in your personal information.
 
-<p> If you are using an academic email and still have a limited account, this is because your academic email is not from an easily identified academic domain name. Please can request an Academic Approval below. If you choose this option, the iReceptor team will contact you to determine your eligibility for an Academic subscription.
+<p> If you are using an academic email and still have a limited account, this is because your academic email is not from an easily identified academic domain name. You can request an Academic Approval below. If you choose this option, the iReceptor team will contact you to determine your eligibility for an Academic subscription.
 <br><a href="/user/request-academic-upgrade">Request Academic Approval</a>
 
 <p> If you are a Commercial user, please go to the <a href="/register">Subscribe</a> page and choose a commercial subscription package.
