@@ -76,7 +76,7 @@
 							</td>
 							<td class="text-nowrap">
                                 {{str_limit($t->institution, $limit = 15, $end = '‥')}}
-							</td>
+							</td> 
 							<td class="text-nowrap">
                                 @if(str_contains($t->status, '-Approval Pending'))
                                    <a href="/admin/approve-user/{{ $t->id }}" title="Approve">Approve</a>
