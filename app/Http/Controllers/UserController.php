@@ -404,7 +404,7 @@ class UserController extends Controller
         // Determine the status. By default it is 'Academic-Approval Pending'
         // but if it is a known academic email it should be academic.
         $status = 'Academic-Approval Pending';
-        // Pattern matches string that has an @ as part of the email, 
+        // Pattern matches string that has an @ as part of the email,
         // has either a .edu.xxx or .ac.xxx compontent, where xxx is a
         // country domain such as edu.au. It also recognizes a .edu email
         // with no country at the end for the US case.
