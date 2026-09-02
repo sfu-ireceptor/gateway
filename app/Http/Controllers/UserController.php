@@ -401,8 +401,22 @@ class UserController extends Controller
         // Generate a random string for a password
         $password = str_random(24);
 
+        // Determine the status. By default it is 'Academic-Approval Pending'
+        // but if it is a known academic email it should be academic.
+        $status = 'Academic-Approval Pending';
+        // Pattern matches string that has an @ as part of the email, 
+        // has either a .edu.xxx or .ac.xxx compontent, where xxx is a
+        // country domain such as edu.au. It also recognizes a .edu email
+        // with no country at the end for the US case.
+        // This does not recognize academic domains in countries that do
+        // not use the .edu. or .ac. format, such as Canada and Germany
+        $edu_regex = '/@[^@]*\.(edu|ac)(\.[a-z]{2,})?$/i';
+        if (preg_match($edu_regex, $email)) {
+            $status = 'Academic';
+        }
+
         // Add the user information to the user database
-        $u = User::add($first_name, $last_name, $email, $password, $country, $institution, $notes);
+        $u = User::add($first_name, $last_name, $email, $password, $country, $institution, $notes, $status);
 
         // Send an email to the user about account creation
         $t = [];
