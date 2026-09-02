@@ -5,6 +5,7 @@ Log in at {{ $app_url }}/login
 
 Your username: {{ $username }}
 Your password: {{ $password }}
+Your status: {{ $status }}
 
 You can change your password at {{ $app_url }}/user/change-password
 

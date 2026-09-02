@@ -3,7 +3,7 @@
 @section('title', 'Users')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
 	<h1>Users</h1>
 
 	@if (isset($notification))
@@ -23,7 +23,7 @@
 	</p>
 
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-10">
 
 			<table class="table table-bordered table-striped rs_list">
 				<thead>
@@ -76,7 +76,7 @@
 							</td>
 							<td class="text-nowrap">
                                 {{str_limit($t->institution, $limit = 15, $end = '‥')}}
-							</td>
+							</td> 
 							<td class="text-nowrap">
                                 @if(str_contains($t->status, '-Approval Pending'))
                                    <a href="/admin/approve-user/{{ $t->id }}" title="Approve">Approve</a>
