@@ -624,7 +624,7 @@ class UserController extends Controller
         if ($entry == null) {
             $data = [];
             $data['message'] = 'Sorry, your confirmation link is invalid.';
-            $data['message2'] = 'Note: Microsoft Defender for Office 365 pre-visits links in emails by default, so your new password may have been sent to you by email already.';
+            $data['message2'] = 'Note: Microsoft Defender for Office 365 pre-visits links in emails by default. If you are using Office 365 for email, your email may be already confirmed due to this link being pre-visited. Please check your account to confirm';
 
             return response()->view('error', $data, 401);
         }
