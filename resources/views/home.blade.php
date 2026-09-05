@@ -15,7 +15,7 @@
 @if ( $home_banner_display)
 <div class="container home_container">
   <div class="intro_home">
-    {!! $home_banner_text !!}
+    {!! $home_banner_text !!} 
   </div>
 </div>
 @endif
