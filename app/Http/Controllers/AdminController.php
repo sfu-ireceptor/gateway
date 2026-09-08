@@ -240,7 +240,7 @@ class AdminController extends Controller
         return redirect('admin/news')->with('notification', 'News was successfully deleted.');
     }
 
-    public function getUsers($sort = 'created_at')
+    public function getUsers(Request $request, $sort = 'last_login', $sort_order = 'desc')
     {
         // Check to see if user is Admin, if not return unautorized message.
         $user = User::where('username', auth()->user()->username)->first();
@@ -248,7 +248,17 @@ class AdminController extends Controller
             abort(401, 'Not authorized.');
         }
 
-        $l = User::orderByDesc('created_at')->get();
+        // Get a sort field if one was provided
+        if ($request->has('sort')) {
+            $sort = $request->input('sort');
+        }
+        // Get a sort order if one was provided
+        if ($request->has('sort_order')) {
+            $sort_order = $request->input('sort_order');
+        }
+
+        // Sort the users as required.
+        $l = User::orderBy($sort, $sort_order)->get();
 
         $data = [];
         $data['notification'] = session()->get('notification');
