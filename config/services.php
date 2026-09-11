@@ -72,7 +72,7 @@ return [
             'rearrangement-tcrmatch-singularity',
             'rearrangement-cdr3_motif-singularity',
             'rearrangement-junction-aa-singularity',
-            //'rearrangement-repcred-singularity',
+            'rearrangement-repcred-singularity',
             //'rearrangement-compairr-singularity',
             //'rearrangement-olga-singularity',
             //'rearrangement-base-app-singularity',
