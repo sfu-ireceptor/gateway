@@ -240,16 +240,15 @@ function run_analysis()
            fi
            # Sort the counts
            head -1 ${temp_counts} > $tsv_output_file
-           #tail +2 ${temp_counts} | awk -F'\t' '$3 > 0' | sort -k 3 -n -r >> ${tsv_output_file}
-           tail +2 ${temp_counts} | sort -k 3 -n -r >> ${tsv_output_file}
+           tail +2 ${temp_counts} | awk -F'\t' '$3 > 0' | sort -k 3 -n -r >> ${tsv_output_file}
            rm ${temp_counts}
 
            # Get a count for this Junction and add it to the overall total
            file_count=$(awk 'BEGIN {sum = 0} FNR > 1 {sum += $3} END {print sum}' ${tsv_output_file})
-           echo -e "${values[$counter]}\t${file_count}" >> $junction_summary_file
 
            # Track the number of junctions that were found.
            if [ "$file_count" -gt "0" ]; then
+               echo -e "${values[$counter]}\t${file_count}" >> $junction_summary_file
                num_junctions=$[$num_junctions +1]
            fi
            total_count=$[$total_count + $file_count]
