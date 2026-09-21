@@ -27,11 +27,19 @@
 			  		<p><strong>Password</strong><br /> <a href="/user/change-password">Change password</a></p>
 					<p>
                         <strong>Subscription</strong>
-                        <br /> {{ $user->status}}
 	                    @if (str_contains($user->status, "Commercial"))
-                            (<a href="https://billing.stripe.com/p/login/bJecN7bpo0oObx6alBbfO00">Manage your subscription</a>)
-                        @endif
-	                    @if (str_contains($user->status, "Limited"))
+                            <br />
+                            @if( $now > $user->stripe_subscription_end ) 
+                                {{ $user->status}} (expired):
+                            @else
+                                {{ $user->status}}:
+                            @endif
+                            <br />
+                            {{ $user->stripe_subscription_start }} - {{  $user->stripe_subscription_end }}
+                            <br />
+                            <a href="https://billing.stripe.com/p/login/bJecN7bpo0oObx6alBbfO00">Manage your subscription</a>
+                        @elseif (str_contains($user->status, "Limited"))
+                            <br /> {{ $user->status}}
 <p>Note: iReceptor uses subscriptions to manage access to the iReceptor Gateway. You have a "Limited" account because you have either not confirmed your Academic email or have not paid for a Commercial subscription.
 
 <p> If you are an academic user, please change the email you are using to your academic email in your personal information.
@@ -40,6 +48,8 @@
 <br><a href="/user/request-academic-upgrade">Request Academic Approval</a>
 
 <p> If you are a Commercial user, please go to the <a href="/register">Subscribe</a> page and choose a commercial subscription package.
+                        @else 
+                            <br /> {{ $user->status}}
                         @endif
                     </p>
 			  </div>

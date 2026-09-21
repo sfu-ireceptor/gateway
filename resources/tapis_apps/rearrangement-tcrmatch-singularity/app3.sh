@@ -167,7 +167,7 @@ function run_analysis()
     # sort -u - We only want to search once per CDR3
     #
     # egrep -v "\*" - Remove any CDR3s with special characters
-    echo -n "IR-INFO: Preprocessing Junction AAs"
+    echo -n "IR-INFO: Preprocessing Junction AAs "
     date
     python3 ${IR_GATEWAY_UTIL_DIR}/preprocess.py ${output_directory}/${rearrangement_file} junction_aa \
         | grep -v nan \
@@ -185,6 +185,8 @@ function run_analysis()
     DB_PATH=/TCRMatch/data
     cp $DB_PATH/$DB_FILE $SLURM_TMPDIR/$DB_FILE
     cp ${output_directory}/$JUNCTION_FILE $SLURM_TMPDIR/$JUNCTION_FILE
+    ls -l $SLURM_TMPDIR/$DB_FILE
+    ls -l $SLURM_TMPDIR/$JUNCTION_FILE
     
     # Run TCRMatch on Junctions
     echo -n "IR-INFO: Running TCRMatch on ${SLURM_TMPDIR}/${JUNCTION_FILE} - "
@@ -199,6 +201,7 @@ function run_analysis()
     then
         echo "IR-ERROR: TCRMatch failed on file ${SLURM_TMPDIR}/${JUNCTION_FILE}"
     fi
+    ls -l ${SLURM_TMPDIR}/${repertoire_id}_epitope.tsv
     echo -n "IR-INFO: Done running TCRMatch on ${SLURM_TMPDIR}/${JUNCTION_FILE} - "
     date
     mv ${SLURM_TMPDIR}/${repertoire_id}_epitope.tsv ${output_directory}/${repertoire_id}_epitope.tsv
