@@ -94,11 +94,11 @@ class User extends Authenticatable
 
         // Handle commercial subscription outside of subscription start/end
         $now = Carbon::now();
-        if ($status_level == 'Commercial' && 
-            ($now > $this->stripe_subscription_end || $now < $this->stripe_subscription_start))
-        {
+        if ($status_level == 'Commercial' &&
+            ($now > $this->stripe_subscription_end || $now < $this->stripe_subscription_start)) {
             Log::debug('User::hasAccess: Access denied for resource ' . $resource_type);
             Log::debug('User::hasAccess: Commercial subscription range ' . $this->stripe_subscription_start . ' to ' . $this->stripe_subscription_end);
+
             return false;
         }
 
