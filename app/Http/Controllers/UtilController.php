@@ -219,6 +219,31 @@ class UtilController extends Controller
             $user->stripe_subscription_start = Carbon::createFromTimestamp($subscriptionItem->current_period_start);
             $user->stripe_subscription_end = Carbon::createFromTimestamp($subscriptionItem->current_period_end);
             $user->save();
+        } elseif ($stripeData->type == 'customer.subscription.updated') {
+            Log::info('UtilController::subscriptionCustomerUpdate - Customer subscription = ' . json_encode($stripeData, JSON_PRETTY_PRINT));
+            $subscriptionData = $stripeData->data->object;
+
+            // Get the user based on their stripe customer ID.
+            $customerID = $subscriptionData->customer;
+            $user = User::where('stripe_customer', $customerID)->first();
+            if ($user == null) {
+                Log::error('UtilController::subscriptionCustomerUpdate: Could not find user with stripe customer id ' . $customerID);
+
+                return;
+            }
+
+            // Check the list of subscription items. We expect only one,
+            // print a warning if there is more than one.
+            if ($subscriptionData->items->total_count > 1) {
+                Log::warn('UtilController::subscriptionCustomerUpdate: subscription has more than one item');
+            }
+
+            // Get the first subscription item, we ignore if there is more than one
+            $subscriptionItem = $subscriptionData->items->data[0];
+            $user->stripe_subscription_start = Carbon::createFromTimestamp($subscriptionItem->current_period_start);
+            $user->stripe_subscription_end = Carbon::createFromTimestamp($subscriptionItem->current_period_end);
+            Log::info('UtilController::subscriptionCustomerUpdate - updating subscription for user ' . $user->username . ' from ' . $user->stripe_subscription_start . ' to ' . $user->stripe_subscription_end);
+            $user->save();
         }
         // Compute duration of processing
         $end_time = Carbon::now();

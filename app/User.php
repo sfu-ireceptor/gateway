@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -90,6 +91,17 @@ class User extends Authenticatable
 
             return false;
         }
+
+        // Handle commercial subscription outside of subscription start/end
+        $now = Carbon::now();
+        if ($status_level == 'Commercial' && 
+            ($now > $this->stripe_subscription_end || $now < $this->stripe_subscription_start))
+        {
+            Log::debug('User::hasAccess: Access denied for resource ' . $resource_type);
+            Log::debug('User::hasAccess: Commercial subscription range ' . $this->stripe_subscription_start . ' to ' . $this->stripe_subscription_end);
+            return false;
+        }
+
         // Handle all other resource ACL checks. If the resource type is in the
         // resource array for this user, we allow acces, otherwise deny access.
         if (in_array($resource_type, $resources)) {
