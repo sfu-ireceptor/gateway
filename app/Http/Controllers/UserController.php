@@ -212,6 +212,7 @@ class UserController extends Controller
 
         $data = [];
         $data['user'] = $user;
+        $data['now'] = Carbon::now();
         $data['notification'] = session('notification');
 
         return view('user/account', $data);

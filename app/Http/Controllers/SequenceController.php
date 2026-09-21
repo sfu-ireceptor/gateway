@@ -655,7 +655,9 @@ class SequenceController extends Controller
         }
 
         // retrieve data
+        Log::debug('SequenceController::quickSearch - start Sequence::full_search');
         $sequence_data = Sequence::full_search($sample_filters, $sequence_filters, $username);
+        Log::debug('SequenceController::quickSearch - done Sequence::full_search');
         // dd($sequence_data);
 
         // store data size in user query log
@@ -672,7 +674,9 @@ class SequenceController extends Controller
         $data = [];
 
         // get cached sample metadata
+        Log::debug('SequenceController::quickSearch - start Sample::metadata');
         $metadata = Sample::metadata($username);
+        Log::debug('SequenceController::quickSearch - done Sample::metadata');
 
         // cell type
         $cell_type_ontology_list = [];
@@ -689,7 +693,9 @@ class SequenceController extends Controller
         $data['subject_organism_ontology_list'] = $subject_organism_ontology_list;
 
         // generate query id for download link
+        Log::debug('SequenceController::quickSearch - start Sample::find_sample_id_list');
         $sample_id_list = Sample::find_sample_id_list($sample_filters, $username);
+        Log::debug('SequenceController::quickSearch - done Sample::find_sample_id_list');
         $download_filters = array_merge($sequence_filters, $sample_id_list);
 
         // add sample_query_id to keep track of sample filters for info file
@@ -708,7 +714,9 @@ class SequenceController extends Controller
         // to aggregate on the ontology ID but display the ontology label.
         $field_map = ['disease_diagnosis_id' => 'disease_diagnosis',
             'tissue_id' => 'tissue', ];
+        Log::debug('SequenceController::quickSearch - start Sample::generateChartsData');
         $data['charts_data'] = Sample::generateChartsData($sequence_data['summary'], $charts_fields, $field_map, 'ir_filtered_sequence_count');
+        Log::debug('SequenceController::quickSearch - done Sample::generateChartsData');
 
         $data['rest_service_list'] = $sequence_data['rs_list'];
         $data['rest_service_list_no_response'] = $sequence_data['rs_list_no_response'];
