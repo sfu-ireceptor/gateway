@@ -217,6 +217,8 @@
 							@section('footer')
 								<div class="mini_footer">
 									<p class="text-right">
+										<a href="/terms" class="external" target="_blank">Terms and Conditions</a> |
+										<a href="/privacy-policy" class="external" target="_blank">Privacy Policy</a> |
 										<a href="http://ireceptor.org/" class="external" target="_blank">iReceptor public website</a> |
 										<a href="/news">News</a> |
 										<a href="/fields-definitions">Data elements definitions</a> |								
