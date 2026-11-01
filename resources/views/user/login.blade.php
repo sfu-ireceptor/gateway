@@ -64,10 +64,10 @@
 				<p class="tagline">
 					A <strong>science gateway</strong>
                     that enables the
-                    <a href="http://www.ireceptor.org/node/108" class="external">discovery</a>,
-                    <a href="http://www.ireceptor.org/node/204" class="external">analysis</a>,
+                    <a href="http://www.ireceptor.org/docs/discovery" class="external">discovery</a>,
+                    <a href="http://www.ireceptor.org/docs/analysis" class="external">analysis</a>,
                     and
-                    <a href="http://www.ireceptor.org/node/97" class="external">download</a>
+                    <a href="http://www.ireceptor.org/docs/downloads" class="external">download</a>
                     of
                     <a href="https://www.antibodysociety.org/the-airr-community/" class="external"> AIRR-seq data</a>
                     (antibody/B-cell and T-cell receptor repertoires)
