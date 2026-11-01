@@ -103,7 +103,7 @@ Suggested wording for an attribution for data reuse would be "Study data was que
 	<div class="col-md-4">
 		<h4>Developed and Run by</h4>
 		<a href="http://ireceptor-gs.com" class="irgs">
-			<img src="/images/logos/iReceptorGS-Logo.png">
+			<img src="/images/logos/iReceptorGS-Logo-Trans.png">
 		</a>
 	</div>
 	<div class="col-md-4">
