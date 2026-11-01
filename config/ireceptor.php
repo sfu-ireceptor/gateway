@@ -27,6 +27,8 @@ return [
 
     'commercial' => env('IRECEPTOR_COMMERCIAL', false),
     'commercial_text' => env('IRECEPTOR_COMMERCIAL_TEXT', ''),
+    'stripe_pricing_table' => env('IRECEPTOR_STRIPE_PRICING_TABLE', ''),
+    'academic' => env('IRECEPTOR_ACADEMIC', true),
     'academic_text' => env('IRECEPTOR_ACADEMIC_TEXT', ''),
     /*
     |--------------------------------------------------------------------------
