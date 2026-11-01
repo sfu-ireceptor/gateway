@@ -52,6 +52,12 @@ Suggested wording for an attribution for data reuse would be "Study data was que
 
 		<h3>Getting Started</h3>
 			<ul class="small_padding">
+                <li><a href="http://www.ireceptor.org/docs/discovery" class="external" target="_blank">Data Discovery</a></li>
+                <li><a href="http://www.ireceptor.org/docs/analysis" class="external" target="_blank">Data Analysis</a></li>
+                <li><a href="http://www.ireceptor.org/docs/downloads" class="external" target="_blank">Data Download</a></li>
+
+<!--
+				<li><a href="https://ireceptor.org/docs/faq" class="external" target="_blank">Frequently Asked Questions</a></li>
 				<li><a href="https://ireceptor.org/node/201" class="external" target="_blank">Exploring single-cell data</a></li>
 				<li><a href="https://ireceptor.org/node/204" class="external" target="_blank">Running analysis jobs</a></li>
 				<li><a href="https://ireceptor.org/node/203" class="external" target="_blank">Looking for antigen specific CDR3s</a></li>
@@ -61,8 +67,9 @@ Suggested wording for an attribution for data reuse would be "Study data was que
 				<li><a href="https://ireceptor.org/node/154" class="external" target="_blank">Finding sequences using a specific V-Gene</a></li>
 				<li><a href="https://ireceptor.org/node/97" class="external" target="_blank">Downloading sequences</a></li>
 				<li><a href="https://ireceptor.org/node/99" class="external" target="_blank">Frequently Asked Questions</a></li>
+-->
 			</ul>
-			<p>See the <a href="https://ireceptor.org/platform/doc" class="external" target="_blank">iReceptor Gateway documentation</a> for more.</p>
+			<p>See the <a href="https://ireceptor.org/docs" class="external" target="_blank">iReceptor Gateway documentation</a> for more.</p>
 
 		<h3>Contact</h3>
 		<p>
@@ -95,14 +102,14 @@ Suggested wording for an attribution for data reuse would be "Study data was que
 	</div>
 	<div class="col-md-4">
 		<h4>Developed and Run by</h4>
-		<a href="http://www.sfu.ca/irmacs-archive/irmacs/index.html" class="irmacs">
-			<img src="/images/logos/irmacs.png">
+		<a href="http://ireceptor-gs.com" class="irgs">
+			<img src="/images/logos/iReceptorGS-Logo.png">
 		</a>
 	</div>
 	<div class="col-md-4">
 		<h4 class="powered">Powered by</h4>
 		<a href="https://www.alliancecan.ca/" class="alliance">
-			<img src="https://alliancecan.ca/themes/custom/site_theme/logo.svg">
+			<img src="/images/logos/alliance.png">
 		</a>
 		<a href="https://tapis-project.org/" class="tapis">
 			<img src="/images/logos/tapis.png">
