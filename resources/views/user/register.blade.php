@@ -14,7 +14,7 @@
           <div class="col-md-6">
 
 <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-<stripe-pricing-table pricing-table-id="prctbl_1UWO95Ry2LaOcFw5oyVYGt68"
+<stripe-pricing-table pricing-table-id="{!! config('ireceptor.stripe_pricing_table') !!}"
 publishable-key="pk_live_51TuHHfRy2LaOcFw5VMzBOcUOzpbmBEEOX2TNnRCkHpXgvz4r0PY6s6WNnkDPPl651HF86iAKBzXA1XruOg2dZh0j00h3ipoGQl">
 </stripe-pricing-table>
 
