@@ -8,15 +8,15 @@
   <div class="container">
 @if (config('ireceptor.commercial'))
     <div class="row">
+          <h2>Subscribe to the iReceptor Gateway</h2>
       <div class="panel panel-default">
         <div class="panel-body">
-          <h2>Subscribe as a Commercial User</h2>
           <div class="col-md-6">
 
-            <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-            <stripe-pricing-table pricing-table-id="prctbl_1Tw5ogRy2LaOcFw53xL12gao"
+<script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+<stripe-pricing-table pricing-table-id="prctbl_1UWO95Ry2LaOcFw5oyVYGt68"
 publishable-key="pk_live_51TuHHfRy2LaOcFw5VMzBOcUOzpbmBEEOX2TNnRCkHpXgvz4r0PY6s6WNnkDPPl651HF86iAKBzXA1XruOg2dZh0j00h3ipoGQl">
-            </stripe-pricing-table>
+</stripe-pricing-table>
 
           </div>
 
@@ -28,6 +28,7 @@ publishable-key="pk_live_51TuHHfRy2LaOcFw5VMzBOcUOzpbmBEEOX2TNnRCkHpXgvz4r0PY6s6
     </div>
 @endif
 
+@if (config('ireceptor.academic'))
     <div class="row">
       <div class="panel panel-default">
         <div class="panel-body">
@@ -113,5 +114,6 @@ publishable-key="pk_live_51TuHHfRy2LaOcFw5VMzBOcUOzpbmBEEOX2TNnRCkHpXgvz4r0PY6s6
       </div>
     </div>
   </div>
+@endif 
 </div>
 @stop 
