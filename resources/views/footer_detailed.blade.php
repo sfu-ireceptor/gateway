@@ -28,7 +28,7 @@ Following the AIRR Data Commons standards we are the only public resource that i
 				<li><strong>Download Sequences, Clones, Cells</strong> and their related Repertoire metadata in AIRR compliant file formats, easily importable to other AIRR-seq analysis tools</li>
 			    <li><strong>Analyze Sequences, Clones, Cells</strong> and their related Repertoire metadata using <strong>community built analysis tools</strong>.</li>
 			</ul>
-            <p>iReceptor is a collaborator in the <a href="https://airr-knowledge.org/">AIRR Knowledge Commons</a>, funded by a U24 (U24AI177622) from the <a href="http://www.niaid.nih.gov/">National Institute of Allergy and Infectious Diseases</a>, a component of the US <a href="https://www.nih.gov/">National Institutes of Health.</a></p>
+            <p>iReceptor was a participant in the <a href="https://airr-knowledge.org/">AIRR Knowledge Commons</a>, funded by a U24 (U24AI177622) from the <a href="http://www.niaid.nih.gov/">National Institute of Allergy and Infectious Diseases</a>, a component of the US <a href="https://www.nih.gov/">National Institutes of Health.</a></p>
 			<p>iReceptor was a leading member of the CIHR/EU Horizon 2020 funded <a href="http://www.ireceptor-plus.com/">iReceptor Plus Consortium</a>.</p>
 
 			<p>For more information, see the <a href="http://www.ireceptor.org/">iReceptor public website</a> or refer to the paper <a href="http://doi.org/10.1111/imr.12666">iReceptor: a platform for querying and analyzing antibody/B-cell and T-cell receptor repertoire data across federated repositories</a>.  If you are interested in hosting a data repository or if you want to provide feedback on this developing community resource, email <a href="mailto:support@ireceptor.org">support@ireceptor.org</a>.</p>
