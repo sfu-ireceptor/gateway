@@ -69,9 +69,7 @@ class UtilController extends Controller
             );
         } catch(\UnexpectedValueException $e) {
             // Invalid payload
-            http_response_code(400);
-
-            return;
+            abort(400,'Invalid payload');
         }
 
         // Get the secret for the webhook
@@ -94,9 +92,7 @@ class UtilController extends Controller
         } catch(\Stripe\Exception\SignatureVerificationException $e) {
             // Invalid signature
             Log::error('UtilController::subscriptionCustomerUpdate: Webhook error while validating signature.');
-            http_response_code(400);
-
-            return;
+            abort(400, 'Webhook error while validating signature');
         }
 
         // Are we processing a customer create?
@@ -104,9 +100,20 @@ class UtilController extends Controller
         if ($stripeData->type == 'customer.created') {
             $customerData = $stripeData->data->object;
             Log::info('UtilController::subscriptionCustomerUpdate - Customer create = ' . json_encode($customerData));
+            
+            // Get the stripe customer ID
+            $customerID = $customerData->id;
+
             // Get the user based on their email.
             $email = $customerData->email;
-            $customerID = $customerData->id;
+            // If there is no email, then we can not create a user. 
+            // Stripe should never provide a customer without an email.
+            if ($email == null) {
+                Log::error('UtilController::subscriptionCustomerUpdate: Stripe email not provided for customer id ' . $customerID);
+                abort(400,'Email not provided for customer id');
+            }
+            
+            // Get associated iReceptor user based on email.
             $user = User::where('email', $email)->first();
             if ($user == null) {
                 // If the user doesn't exist, we need to create them an account
@@ -115,10 +122,22 @@ class UtilController extends Controller
                 // Generate a random string for a password
                 $password = str_random(24);
 
-                $names = explode(' ', $customerData->name, 2);
-                $country = $customerData->address->country;
+                // Get the name, handle edge case when name not provided
+                if ($customerData->name != null) {
+                    $names = explode(' ', $customerData->name, 2);
+                } else {
+                    $names[0] = "";
+                    $names[1] = "";
+                }
+
+                // Get the address, handle the edge case when the address is not provided
+                if ($customerData->address != null) {
+                    $country = $customerData->address->country;
+                } else {
+                    $country = "";
+                }
                 // Add the user information to the user database
-                $user = User::add($names[0], $names[1], $email, $password, $country, '', '', 'Commercial');
+                $user = User::add($names[0], $names[1], $email, $password, $country, '', '', 'Limited');
                 $user->stripe_customer = $customerID;
                 $user->save();
 
@@ -156,9 +175,17 @@ class UtilController extends Controller
                 }
             } else {
                 if ($user->stripe_customer == null) {
-                    // If this is a new assignment of customer, save the ID
-                    Log::info('UtilController::subscriptionCustomerUpdate: Updating customer ID for ' . $user->username . ' (' . $user->email . ')');
+                    // If this is a new assignment of customer subscription, save the ID
+                    Log::info('UtilController::subscriptionCustomerUpdate: Setting customer ID for ' . $user->username . ' (' . $user->email . ')');
                     $user->stripe_customer = $customerID;
+                    // Set the user status to Limited - customer.created event doesn't provide
+                    // any subscription information.
+                    $user->status = "Limited";
+                    // Ensure that the user re-confirms their email when they log in. 
+                    // Stripe ensures email is valid, need to ensure that the email
+                    // on the gateway is the same and also valid. Otherwise we could
+                    // be giving a subscription to the wrong user.
+                    $user->email_confirmed_date = null;
                     $user->save();
                 } else {
                     // This shouldn't happen, as we should only ever get one customer create
@@ -167,6 +194,8 @@ class UtilController extends Controller
                 }
             }
         } elseif ($stripeData->type == 'customer.updated') {
+            // We have received a customer update call back
+
             //Log::info('UtilController::subscriptionCustomerUpdate - Customer subscription = ' . json_encode($stripeData,JSON_PRETTY_PRINT));
             // Get the customer data
             $customerData = $stripeData->data->object;
@@ -177,13 +206,24 @@ class UtilController extends Controller
             $user = User::where('stripe_customer', $customerID)->first();
             if ($user == null) {
                 Log::error('UtilController::subscriptionCustomerUpdate: Could not find user with stripe customer id ' . $customerID);
-
-                return;
+                abort(400,'Could not find user using customer id');
             }
 
             // Update the data we extract from the stripe record
-            $names = explode(' ', $customerData->name, 2);
-            $country = $customerData->address->country;
+            // Get the name, handle edge case when name not provided
+            if ($customerData->name != null) {
+                $names = explode(' ', $customerData->name, 2);
+            } else {
+                $names[0] = "";
+                $names[1] = "";
+            }
+
+            // Get the address, handle the edge case when the address is not provided
+            if ($customerData->address != null) {
+                $country = $customerData->address->country;
+            } else {
+                $country = "";
+            }
             $user->first_name = $names[0];
             $user->last_name = $names[1];
             $user->country = $country;
@@ -199,13 +239,11 @@ class UtilController extends Controller
             $user = User::where('stripe_customer', $customerID)->first();
             if ($user == null) {
                 Log::error('UtilController::subscriptionCustomerUpdate: Could not find user with stripe customer id ' . $customerID);
-
-                return;
+                abort(400,'Could not find user using customer id');
             }
             if ($user->stripe_customer != $customerID) {
                 Log::error('UtilController::subscriptionCustomerUpdate: Customer with email ' . $user->email . ' has customerID ' . $user->stripe_customer . ', does not match ' . $customerID . ' from stripe payload');
-
-                return;
+                abort(400, 'Email/Customer ID does not match');
             }
 
             // Check the list of subscription items. We expect only one,
@@ -216,8 +254,47 @@ class UtilController extends Controller
 
             // Get the first subscription item, we ignore if there is more than one
             $subscriptionItem = $subscriptionData->items->data[0];
+            // Get the subscription product being updated
+            $stripeProduct = $subscriptionItem->plan->product;
+            Log::info('UtilController::subscriptionCustomerUpdate - Stripe product = ' . $stripeProduct);
+            // Get the stripe product list as JSON string into a dictionary
+            $stripeDictionary = json_decode(config('services.stripe.products'));
+            Log::info('UtilController::subscriptionCustomerUpdate - Stripe dictionary = ' . json_encode($stripeDictionary));
+
+            // Update the user access status based on their product. Product
+            // list is defined in the environment file for the App.
+            if (property_exists($stripeDictionary, $stripeProduct)) {
+                $user->status = $stripeDictionary->$stripeProduct;
+            } else {
+                $user->status = 'Limited-Approval Pending';
+                Log::error('UtilController::subscriptionCustomerUpdate: Unknown Stripe product ' . $stripeProduct);
+            }
+
+            // If the account is an academic account, check to see if the email
+            // is a known/computable academic email address.
+            if ($user->status == 'Academic') {
+                // Pattern matches string that has an @ as part of the email,
+                // has either a .edu.xxx or .ac.xxx compontent, where xxx is a
+                // country domain such as edu.au. It also recognizes a .edu email
+                // with no country at the end for the US case.
+                // This does not recognize academic domains in countries that do
+                // not use the .edu. or .ac. format, such as Canada and Germany
+                $edu_regex = '/@[^@]*\.(edu|ac)(\.[a-z]{2,})?$/i';
+                // If it is not an academic email then it requires approval
+                if (!preg_match($edu_regex, $user->email)) {
+                    // Set status to requiring approval
+                    $user->status = 'Academic-Approval Pending';
+                    // Set email confirmation to be true
+                    $user->email_confirmed_date = null;
+                    Log::info('UtilController::subscriptionCustomerUpdate - Academic user approval required, status = ' . $user->status); 
+                }
+            }
+            Log::info('UtilController::subscriptionCustomerUpdate - user status = ' . $user->status); 
+
+            // Set the user subscription start and end.
             $user->stripe_subscription_start = Carbon::createFromTimestamp($subscriptionItem->current_period_start);
             $user->stripe_subscription_end = Carbon::createFromTimestamp($subscriptionItem->current_period_end);
+            Log::info('UtilController::subscriptionCustomerUpdate - start = ' . $subscriptionItem->current_period_start . ' end = ' . $subscriptionItem->current_period_end); 
             $user->save();
         } elseif ($stripeData->type == 'customer.subscription.updated') {
             Log::info('UtilController::subscriptionCustomerUpdate - Customer subscription = ' . json_encode($stripeData, JSON_PRETTY_PRINT));
@@ -228,8 +305,7 @@ class UtilController extends Controller
             $user = User::where('stripe_customer', $customerID)->first();
             if ($user == null) {
                 Log::error('UtilController::subscriptionCustomerUpdate: Could not find user with stripe customer id ' . $customerID);
-
-                return;
+                abort(400,'Could not find user using customer id');
             }
 
             // Check the list of subscription items. We expect only one,
@@ -240,6 +316,22 @@ class UtilController extends Controller
 
             // Get the first subscription item, we ignore if there is more than one
             $subscriptionItem = $subscriptionData->items->data[0];
+            // Get the subscription product being updated
+            $stripeProduct = $subscriptionItem->plan->product;
+            Log::info('UtilController::subscriptionCustomerUpdate - Stripe product = ' . $stripeProduct);
+            // Get the stripe product list as JSON string into a dictionary
+            $stripeDictionary = json_decode(config('services.stripe.products'));
+            Log::info('UtilController::subscriptionCustomerUpdate - Stripe dictionary = ' . json_encode($stripeDictionary));
+
+            // Update the user access status based on their product. Product
+            // list is defined in the environment file for the App.
+            Log::info('UtilController::subscriptionCustomerUpdate - user ' . $user->stripe_customer . ' status = ' . $user->status); 
+            if (property_exists($stripeDictionary, $stripeProduct)) {
+                $user->status = $stripeDictionary->$stripeProduct;
+                Log::info('UtilController::subscriptionCustomerUpdate - Setting user status to ' . $user->status); 
+            }
+
+            // Get the start and end of the subscription and update it.
             $user->stripe_subscription_start = Carbon::createFromTimestamp($subscriptionItem->current_period_start);
             $user->stripe_subscription_end = Carbon::createFromTimestamp($subscriptionItem->current_period_end);
             Log::info('UtilController::subscriptionCustomerUpdate - updating subscription for user ' . $user->username . ' from ' . $user->stripe_subscription_start . ' to ' . $user->stripe_subscription_end);
