@@ -94,10 +94,10 @@ class User extends Authenticatable
 
         // Handle commercial subscription outside of subscription start/end
         $now = Carbon::now();
-        if ($status_level == 'Commercial' &&
+        if (($status_level == 'Commercial' || $status_level == 'Academic') &&
             ($now > $this->stripe_subscription_end || $now < $this->stripe_subscription_start)) {
-            Log::debug('User::hasAccess: Access denied for resource ' . $resource_type);
-            Log::debug('User::hasAccess: Commercial subscription range ' . $this->stripe_subscription_start . ' to ' . $this->stripe_subscription_end);
+            Log::debug('User::hasAccess: Access denied to ' . $status_level . ' for resource ' . $resource_type);
+            Log::debug('User::hasAccess: Paid subscription range ' . $this->stripe_subscription_start . ' to ' . $this->stripe_subscription_end);
 
             return false;
         }
@@ -234,7 +234,7 @@ class User extends Authenticatable
         return $username;
     }
 
-    public static function add($first_name, $last_name, $email, $password, $country, $institution, $notes, $status = 'Academic-Approval Pending')
+    public static function add($first_name, $last_name, $email, $password, $country, $institution, $notes, $status = 'Limited')
     {
         $user = new User();
 
