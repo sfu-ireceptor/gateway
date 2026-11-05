@@ -34,6 +34,7 @@ return [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+        'products' => env('STRIPE_PRODUCTS'),
     ],
     'tapis' => [
         'enabled' => env('TAPIS_ENABLED', false),
