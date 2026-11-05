@@ -29,11 +29,14 @@
 				<thead>
 						<th class="text-nowrap">Added</th>
 						<th class="text-nowrap">Last Login</th>
+						<th class="text-nowrap">Confirmed</th>
 						<th class="text-nowrap">Name</th>
 						<th class="text-nowrap">Username</th>
 						<th class="text-nowrap">Email</th>
 						<th class="text-nowrap">Status</th>
-						<th class="text-nowrap">Confirmed</th>
+						<th class="text-nowrap">Start</th>
+						<th class="text-nowrap">End</th>
+						<th class="text-nowrap">Customer</th>
 						<th class="text-nowrap">Country</th>
 						<th class="text-nowrap">Institution</th>
 						<th class="text-nowrap">Action</th>
@@ -48,6 +51,9 @@
 							<td class="text-muted text-nowrap">
 								{{ human_date_time($t->last_login, 'M d, Y') }}
 							</td>
+							<td class="text-nowrap">
+								{{ human_date_time($t->email_confirmed_date, 'M d, Y') }}
+							</td>
 							<td class="text-muted text-nowrap">
 								<a href="/admin/edit-user/{{ $t->id }}">{{ str_limit($t->first_name . " " . $t->last_name , $limit = 15, $end = '‥') }}</a>
 							</td>
@@ -58,7 +64,7 @@
 								@endif
 							</td>
 							<td class="text-nowrap">
-								<a href="mailto:{{ $t->email }}">{{ str_limit($t->email,$limit = 15, $end = '‥') }}</a>
+								<a href="mailto:{{ $t->email }}">{{ $t->email }}</a>
 								<!-- <a href="/admin/delete-user/{{ $t->username }}">
 									<button type="button" class="btn btn-default" aria-label="Delete">
 									  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
@@ -69,7 +75,13 @@
 								{{ $t->status }}
 							</td>
 							<td class="text-nowrap">
-								{{ human_date_time($t->email_confirmed_date, 'M d, Y') }}
+								{{ $t->stripe_subscription_start }}
+							</td>
+							<td class="text-nowrap">
+								{{ $t->stripe_subscription_end }}
+							</td>
+							<td class="text-nowrap">
+								<a href="https://dashboard.stripe.com/acct_1TuHHfRy2LaOcFw5/customers/{{$t->stripe_customer}}" target="_blank">{{$t->stripe_customer}}</a>
 							</td>
 							<td class="text-nowrap">
 								{{ str_limit($t->country,$limit = 15, $end = '‥')}}
